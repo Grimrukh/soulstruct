@@ -30,7 +30,7 @@ class GameFile(BaseBinaryFile, abc.ABC):
         from soulstruct.containers import Binder
         binder = Binder.from_bak(binder_path) if from_bak else Binder.from_path(binder_path)
 
-        return binder[entry_id_or_name].to_game_file(cls)
+        return binder[entry_id_or_name].to_binary_file(cls)
 
     @classmethod
     def multiple_from_binder_path(
@@ -40,4 +40,4 @@ class GameFile(BaseBinaryFile, abc.ABC):
         `Binder` source."""
         from soulstruct.containers import Binder
         binder = Binder.from_bak(binder_path) if from_bak else Binder.from_path(binder_path)
-        return [binder[entry_id_or_name].to_game_file(cls) for entry_id_or_name in entry_ids_or_names]
+        return [binder[entry_id_or_name].to_binary_file(cls) for entry_id_or_name in entry_ids_or_names]

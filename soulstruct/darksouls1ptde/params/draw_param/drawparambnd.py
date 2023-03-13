@@ -155,10 +155,10 @@ class DrawParamBND(Binder):
                     f"(You can omit the `paramdefbnd` argument to use Soulstruct's bundled `.paramdefbnd` file for "
                     f"this game, but if you're seeing this warning, it's possible the bundled file is outdated.)"
                 )
-                self.draw_params[param_stem][slot] = entry.to_game_file(ParamDict)
+                self.draw_params[param_stem][slot] = entry.to_binary_file(ParamDict)
             else:
                 try:
-                    self.draw_params[param_stem][slot] = entry.to_game_file(typed_draw_param_class)
+                    self.draw_params[param_stem][slot] = entry.to_binary_file(typed_draw_param_class)
                 except Exception as ex:
                     _LOGGER.error(
                         f"Could not load `DrawParam` from `DrawParamBND` entry '{entry.name}'.\n  Error: {ex}"
@@ -231,7 +231,7 @@ class DrawParamBND(Binder):
                 regenerated_entry_paths.add(entry_path)
                 if entry_path in self.entries_by_path:
                     # Just update data.
-                    self.entries_by_path[entry_path].set_from_game_file(draw_param)
+                    self.entries_by_path[entry_path].set_from_binary_file(draw_param)
                 else:
                     # Add new entry.
                     new_id = self.get_first_new_entry_id_in_range(0, 1000000)

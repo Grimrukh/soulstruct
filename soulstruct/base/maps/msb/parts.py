@@ -36,6 +36,7 @@ class BaseMSBPart(MSBEntry, abc.ABC):
     rotate: Vector3 = field(default_factory=Vector3.zero)
     scale: Vector3 = field(default_factory=lambda: Vector3.ones())
 
+    # Concrete, sized `GroupBitSet` subclass is overridden per game.
     draw_groups: GroupBitSet = field(default_factory=set)
     display_groups: GroupBitSet = field(default_factory=set)
 

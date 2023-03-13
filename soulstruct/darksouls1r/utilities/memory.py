@@ -172,25 +172,26 @@ class DSRMemoryHook(MemoryHook):
         mask = 0x80000000 >> (number % 32)
         return offset, mask
 
+    # region Params
     @memory_hook_validate
     def write_draw_param_to_memory(self, draw_param: DrawParam, area_id: int, slot=0):
         """Write the given `draw_param` for area `area_id` and slot `slot` to game memory.
 
         You MUST NOT change the number of rows in the `DrawParam` since the last time the game was loaded, as the size
         of the binary `DrawParam` data must stay the same. This method will check the DrawParam header to try to
-        prevent this, as otherwise the game will definitely crash from invalid memory.
+        prevent this, as otherwise the game will definitely crash from invalid memory. It will also never sort the
+        `draw_param` before packing it to bytes.
 
         Unlike GameParams, DrawParams are reloaded every time the game is *loaded*, not every time the game is started.
-        This is fortunate for in-game testing, but it means the DrawParam memory addresses need to be reloaded (and
+        This is fortunate for in-game testing, but here it means the DrawParam memory addresses need to be reloaded (and
         re-cached) every time the game is reloaded.
         """
-        if not draw_param.param_info:
-            raise ValueError(f"Cannot write to game memory for Param type '{draw_param.param_type}'.")
         if slot not in {0, 1}:
             raise ValueError(f"Slot must be 0 or 1, not {slot}.")
-        param_file_name = f"m{area_id}_{'1_' if slot == 1 else ''}{draw_param.param_info['file_name']}"
-        param_type = draw_param.param_info["param_type"]
-        self._write_param(draw_param.pack(sort=False), param_file_name, param_type)
+        if not draw_param.path:
+            raise ValueError("DrawParam must have `path` set to write it to memory.")
+        param_file_name = f"m{area_id}_{'1_' if slot == 1 else ''}{draw_param.path.name}"
+        self._write_param(bytes(draw_param.to_writer(sort=False)), param_file_name, draw_param.param_type)
 
     @memory_hook_validate
     def write_game_param_to_memory(self, game_param: Param):
@@ -200,21 +201,15 @@ class DSRMemoryHook(MemoryHook):
         that. Use `write_draw_param_to_memory` for DrawParams, which are reloaded every time the game loads (and require
         the area ID and slot to find the right param).
         """
-        if not game_param.param_info:
-            raise ValueError(f"Cannot write to game memory for Param type '{game_param.param_type}'.")
-        param_file_name = game_param.param_info["file_name"]
-        try:
-            param_type = game_param.param_info["param_type"]
-        except KeyError:
-            print(game_param.param_info)
-            raise
-        self._write_param(game_param.pack(sort=False), param_file_name, param_type)
+        if not game_param.path:
+            raise ValueError("Param must have `path` set to write it to memory.")
+        self._write_param(bytes(game_param.to_writer(sort=False)), game_param.path.name, game_param.param_type)
 
     @memory_hook_validate
     def write_gameparambnd_to_memory(self, gameparambnd: GameParamBND):
         """Write all `GameParam` params with `param_info` defined to game memory."""
         for game_param in gameparambnd.params.values():
-            if game_param.param_info:
+            if isinstance(game_param, Param):  # NOT `ParamDict`
                 self.write_game_param_to_memory(game_param)
 
     @memory_hook_validate
@@ -234,41 +229,38 @@ class DSRMemoryHook(MemoryHook):
     @memory_hook_validate
     def pre_cache_gameparam(self, param: Param, force_recache=False):
         """Find and cache addresses of all given `Params` to avoid doing it one-by-one later."""
-        if not param.param_info:
-            raise ValueError(f"Cannot write to game memory for Param type '{param.param_type}'.")
-        param_file_name = param.param_info["file_name"]
-        if not force_recache and param_file_name in self._address_cache.get("ds1r", {}):
-            return
-        try:
-            param_type = param.param_info["param_type"]
-        except KeyError:
-            print(param.param_info)
-            raise
-        self.get_param_address(param_file_name, param_type)
+        if not param.path:
+            raise ValueError("Param must have `path` set to cache its memory address.")
+        if not force_recache and param.path.name in self._address_cache.get("ds1r", {}):
+            return  # already cached; will not replace
+        self.get_param_address(param.path.name, param.param_type)
 
     @memory_hook_validate
-    def pre_cache_drawparam(self, draw_param: DrawParam, area_id: int, slot: int, force_recache=False):
+    def pre_cache_drawparam(
+        self, draw_param: DrawParam, area_id: int, slot: int, force_recache=False
+    ):
         """Find and cache addresses of all given `DrawParams` to avoid doing it one-by-one later."""
-        if not draw_param.param_info:
-            raise ValueError(f"Cannot write to game memory for Param type '{draw_param.param_type}'.")
+        if not draw_param.path:
+            raise ValueError("DrawParam must have `path` set to cache its memory address.")
         if slot not in {0, 1}:
-            raise ValueError(f"Slot must be 0 or 1, not {slot}.")
-        param_file_name = f"m{area_id}_{'1_' if slot == 1 else ''}{draw_param.param_info['file_name']}"
-        param_type = draw_param.param_info["param_type"]
-        self.get_param_address(param_file_name, param_type, force_recache)
+            raise ValueError(f"`DrawParam` `slot` must be 0 or 1, not {slot}.")
+        param_file_name = f"m{area_id}_{'1_' if slot == 1 else ''}{draw_param.path.name}"
+        self.get_param_address(param_file_name, draw_param.param_type, force_recache)
 
     @memory_hook_validate
-    def pre_cache_drawparams(self, draw_params: list[DrawParam], area_id: int, slot: int, force_recache=False):
+    def pre_cache_drawparams(
+        self, draw_params: list[DrawParam], area_id: int, slot: int, force_recache=False
+    ):
         """Find and cache addresses of all given `DrawParams` to avoid doing it one-by-one later."""
         param_file_names = []
         param_types = []
         for draw_param in draw_params:
-            if not draw_param.param_info:
-                raise ValueError(f"Cannot write to game memory for Param type '{draw_param.param_type}'.")
+            if not draw_param.path:
+                raise ValueError("DrawParam must have `path` set to cache its memory address.")
             if slot not in {0, 1}:
-                raise ValueError(f"Slot must be 0 or 1, not {slot}.")
-            param_file_names.append(f"m{area_id}_{'1_' if slot == 1 else ''}{draw_param.param_info['file_name']}")
-            param_types.append(draw_param.param_info["param_type"])
+                raise ValueError(f"`DrawParam` `slot` must be 0 or 1, not {slot}.")
+            param_file_names.append(f"m{area_id}_{'1_' if slot == 1 else ''}{draw_param.path.name}")
+            param_types.append(draw_param.param_type)
         self.get_param_addresses(param_file_names, param_types, force_recache)
 
     @memory_hook_validate
@@ -317,6 +309,8 @@ class DSRMemoryHook(MemoryHook):
 
         If an address is already cached, it is validated using `param_type` (e.g. "NPC_THINK_PARAM_ST" or
         "LIGHT_SCATTERING_BANK") first.
+
+        NOTE: For DrawParams, `param_file_names` should already include 'mAA' and slot prefix.
         """
         if len(param_file_names) != len(param_types):
             raise ValueError("Number of param file names and paramdef names to scan for must match.")
@@ -399,6 +393,7 @@ class DSRMemoryHook(MemoryHook):
             if result is not None:
                 return result
         return None
+    # endregion
 
 
 def test_dsr_hook():

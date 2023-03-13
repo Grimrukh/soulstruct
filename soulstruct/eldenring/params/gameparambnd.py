@@ -84,10 +84,10 @@ def examine_er_params():
             data_type = getattr(paramdef, param_type)
         except AttributeError:
             # Fall back to `ParamDict` (with no `ParamDef`).
-            param = entry.to_game_file(ParamDict)
+            param = entry.to_binary_file(ParamDict)
             print(f"{entry.name} read as a ParamDict.")
         else:
-            param = entry.to_game_file(TypedParam(data_type))
+            param = entry.to_binary_file(TypedParam(data_type))
             print(f"{entry.name} read successfully.")
 
 

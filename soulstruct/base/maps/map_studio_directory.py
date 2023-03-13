@@ -11,9 +11,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from soulstruct.base.game_file_directory import GameFileMapDirectory
-
-if tp.TYPE_CHECKING:
-    from .msb import MSB
+from .msb import MSB
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -30,7 +28,6 @@ class MapStudioDirectory(GameFileMapDirectory, abc.ABC):
     FILE_NAME_PATTERN: tp.ClassVar[str] = r".*\.msb"
     FILE_CLASS: tp.ClassVar[tp.Type[MSB]]
     FILE_EXTENSION: tp.ClassVar[str] = ".msb"
-
     MAP_STEM_ATTRIBUTE: tp.ClassVar[str] = "msb_file_stem"
 
     # Override file type.
@@ -54,7 +51,10 @@ class MapStudioDirectory(GameFileMapDirectory, abc.ABC):
                     msb.path = directory_path / f"{file_stem}{cls.FILE_EXTENSION}"
                     all_map_stems.remove(file_stem)
                 else:
-                    _LOGGER.warning(f"Ignoring unexpected JSON file in `{cls.__name__}` directory: {file_path.name}")
+                    if file_stem not in cls.QUIETLY_IGNORED_FILE_STEMS:
+                        _LOGGER.warning(
+                            f"Ignoring unexpected JSON file in `{cls.__name__}` directory: {file_path.name}"
+                        )
                     continue
 
         if all_map_stems:

@@ -66,10 +66,10 @@ class GameParamBND(Binder, abc.ABC):
                     f"(You can omit the `paramdefbnd` argument to use Soulstruct's bundled `.paramdefbnd` file for "
                     f"this game, but if you're seeing this warning, it's possible the bundled file is outdated.)"
                 )
-                self.params[entry.stem] = entry.to_game_file(ParamDict)
+                self.params[entry.stem] = entry.to_binary_file(ParamDict)
             else:
                 try:
-                    self.params[entry.stem] = entry.to_game_file(typed_param_class)
+                    self.params[entry.stem] = entry.to_binary_file(typed_param_class)
                 except Exception as ex:
                     _LOGGER.error(f"Could not load `Param` from `GameParamBND` entry '{entry.name}'.\n  Error: {ex}")
                     raise
@@ -117,7 +117,7 @@ class GameParamBND(Binder, abc.ABC):
             entry_path = self.get_default_entry_path(param_name)
             if entry_path in self.entries_by_path:
                 # Just update data.
-                self.entries_by_path[entry_path].set_from_game_file(param)
+                self.entries_by_path[entry_path].set_from_binary_file(param)
             else:
                 # Add new entry.
                 # TODO: Does GameParamBND entry ID matter? Seems to just go from 0 to whatever.

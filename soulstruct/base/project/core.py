@@ -378,7 +378,7 @@ class GameDirectoryProject(abc.ABC):
             gameparambnd = GameParamBND.from_path(export_path)
             internal_name = params_class.PARAM_NICKNAMES[specific_param]
             entry = gameparambnd.find_entry_matching_name(rf"{internal_name}\.param")
-            entry.set_from_game_file(param)
+            entry.set_from_binary_file(param)
             gameparambnd.write()  # same path
         else:
             params.write(export_path)
@@ -407,7 +407,7 @@ class GameDirectoryProject(abc.ABC):
                 talk = talkesdbnd.TALK_ESD_CLASS.from_esp_file(
                     self.project_root / f"talk/{specific_map}/t{specific_talk_id}.esp.py"
                 )
-                esd.set_from_game_file(talk)
+                esd.set_from_binary_file(talk)
                 talkesdbnd.write()  # same path
             else:
                 talkesdbnd = talk_class.FILE_CLASS.from_esp_directory(self.talk_directory / specific_map)

@@ -49,7 +49,7 @@ class ParamDefBND(Binder, abc.ABC):
                 _LOGGER.warning(f"Ignoring unknown entry '{entry.name}' in ParamDefBND Binder.")
                 continue
             try:
-                paramdef = entry.to_game_file(self.PARAMDEF_CLASS)
+                paramdef = entry.to_binary_file(self.PARAMDEF_CLASS)
             except Exception as ex:
                 _LOGGER.error(f"Could not load ParamDef from entry '{entry.name}'. Error: {ex}")
                 raise

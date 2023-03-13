@@ -18,7 +18,7 @@ from soulstruct.utilities.text import pad_chars
 
 from .enums import BaseMSBSubtype, MSBSupertype
 from .field_info import MapFieldMetadata, FIELD_INFO
-from .utils import MSBBrokenEntryReference, GroupBitSet
+from .utils import MSBBrokenEntryReference, GroupBitSet128, GroupBitSet256
 
 try:
     Self = tp.Self
@@ -251,8 +251,10 @@ class MSBEntry(abc.ABC):
         if cls._CUSTOM_JSON_DECODERS is None:
             decoders = {}
             for f in fields(cls):
-                if f.type in (GroupBitSet, GroupBitSet.__name__):
-                    decoders[f.name] = GroupBitSet.from_repr
+                if f.type in (GroupBitSet128, GroupBitSet128.__name__):
+                    decoders[f.name] = GroupBitSet128.from_repr
+                elif f.type in (GroupBitSet256, GroupBitSet256.__name__):
+                    decoders[f.name] = GroupBitSet256.from_repr
                 else:
                     for check_type in (Vector2, Vector3, Vector4):
                         if f.type in (check_type, check_type.__name__):
@@ -636,8 +638,10 @@ class MSBEntry(abc.ABC):
                             display_type = bool
                         case "str":
                             display_type = str
-                        case "GroupBitSet":
-                            display_type = GroupBitSet
+                        case "GroupBitSet128":
+                            display_type = GroupBitSet128
+                        case "GroupBitSet256":
+                            display_type = GroupBitSet256
                         case "Vector2":
                             display_type = Vector2
                         case "Vector3":

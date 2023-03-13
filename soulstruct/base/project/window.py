@@ -295,6 +295,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         self.runtime_tab = None
         self.tab_frames = {}
         self.extra_tabs = []
+        self.loaded_tab_data_types = set()
 
         self.save_all_button = None
         self.save_tab_button = None
@@ -308,6 +309,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         self.build()
         self.deiconify()
 
+        # TODO: hacky spot for this?
         if self.maps_tab:
             self.maps_tab.check_for_repeated_entity_ids()
 
@@ -455,6 +457,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             sticky="nsew",
         )
         self.maps_tab.bind("<Visibility>", self._update_banner)
+        self.loaded_tab_data_types.add(ProjectDataType.Maps)
 
     def create_Enums_tab(self):
         self.enums_tab = self.SmartFrame(
@@ -467,6 +470,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             sticky="nsew",
         )
         self.enums_tab.bind("<Visibility>", self._update_banner)
+        self.loaded_tab_data_types.add(ProjectDataType.Enums)
 
     def create_Params_tab(self):
         self.params_tab = self.SmartFrame(
@@ -477,6 +481,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             sticky="nsew",
         )
         self.params_tab.bind("<Visibility>", self._update_banner)
+        self.loaded_tab_data_types.add(ProjectDataType.Params)
 
     def create_Lighting_tab(self):
         self.lighting_tab = self.SmartFrame(
@@ -487,6 +492,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             sticky="nsew",
         )
         self.lighting_tab.bind("<Visibility>", self._update_banner)
+        self.loaded_tab_data_types.add(ProjectDataType.Lighting)
 
     def create_Text_tab(self):
         self.text_tab = self.SmartFrame(
@@ -497,6 +503,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             sticky="nsew",
         )
         self.text_tab.bind("<Visibility>", self._update_banner)
+        self.loaded_tab_data_types.add(ProjectDataType.Text)
 
     def create_Events_tab(self):
         self.events_tab = self.SmartFrame(
@@ -510,6 +517,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             sticky="nsew",
         )
         self.events_tab.bind("<Visibility>", self._update_banner)
+        self.loaded_tab_data_types.add(ProjectDataType.Events)
 
     def create_AI_tab(self):
         self.ai_tab = self.SmartFrame(
@@ -524,6 +532,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             sticky="nsew",
         )
         self.ai_tab.bind("<Visibility>", self._update_banner)
+        self.loaded_tab_data_types.add(ProjectDataType.AI)
 
     def create_Talk_tab(self):
         self.talk_tab = self.SmartFrame(
@@ -537,6 +546,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             sticky="nsew",
         )
         self.talk_tab.bind("<Visibility>", self._update_banner)
+        self.loaded_tab_data_types.add(ProjectDataType.Talk)
 
     def create_dummy_tab(self, data_type: ProjectDataType, import_func: tp.Callable):
         """Create a tab that just has a big 'Import' button for this data type."""
@@ -749,20 +759,23 @@ class ProjectWindow(SmartFrame, abc.ABC):
             _LOGGER.info(f"Interactive console exited with an unexpected return code: {result.returncode}")
             return
         _LOGGER.info("Interactive console exited properly.")
-        if (
-            self.CustomDialog(
-                title="Reload Project Data?",
-                message="Reload maps, params, lighting, and text data to acquire any changes made in the console?",
-                button_names=("Yes, reload data", "No, do nothing"),
-                button_kwargs=("YES", "NO"),
-                cancel_output=1,
-                default_output=1,
-            )
-        ) == 0:
-            for data_type in self.project.DATA_TYPES:
-                if data_type not in {"maps", "params", "lighting", "text"}:
-                    continue
-                self.project.load(data_type)  # TODO: fix
+        dialog_result = self.CustomDialog(
+            title="Reload Project Data?",
+            message="Reload any existing maps, params, lighting, and text data to acquire changes made in the console?",
+            button_names=("Yes, reload existing data", "No, do nothing"),
+            button_kwargs=("YES", "NO"),
+            cancel_output=1,
+            default_output=1,
+        )
+        if dialog_result == 0:
+            if self.project.maps:
+                self.project.load_Maps()
+            if self.project.params:
+                self.project.load_Params()
+            if self.project.lighting:
+                self.project.load_Lighting()
+            if self.project.text:
+                self.project.load_Text()
 
     def alphanumeric_word_boundaries(self):
         """See: http://www.tcl.tk/man/tcl8.5/TclCmd/library.htm#M19"""
@@ -851,30 +864,32 @@ class ProjectWindow(SmartFrame, abc.ABC):
             return ProjectDataType.Enums
         return ProjectDataType.Maps
 
-    def set_global_map_choice(self, map_id, ignore_tabs=()):
-        data_types = self.data_types
-        if "maps" not in data_types:
-            # Cannot get map to set it globally.
+    def set_global_map_choice(self, map_id, ignore_tabs: tp.Sequence[ProjectDataType] = ()):
+        if ProjectDataType.Maps not in self.project.DATA_TYPES:
+            # `MapStudioDirectory` data class required to resolve map ID (to get data-appropriate file stems).
             return
         # noinspection PyUnresolvedReferences
         game_map = self.project.DATA_TYPES[ProjectDataType.Maps].GET_MAP(map_id)
-        if "maps" not in ignore_tabs and self.maps_tab:
+
+        tabs_to_check = self.loaded_tab_data_types - set(ignore_tabs)
+
+        if ProjectDataType.Maps in tabs_to_check:
             if game_map.msb_file_stem is not None:
                 self.maps_tab.map_choice.var.set(f"{game_map.msb_file_stem} [{game_map.verbose_name}]")
                 self.maps_tab.on_map_choice()
-        if "enums" not in ignore_tabs and self.enums_tab:
+        if ProjectDataType.Enums in tabs_to_check:
             if game_map.msb_file_stem is not None:
                 self.enums_tab.map_choice.var.set(f"{game_map.msb_file_stem} [{game_map.verbose_name}]")
                 self.enums_tab.on_map_choice()
-        if ProjectDataType.Events in data_types and self.events_tab and "events" not in ignore_tabs:
+        if ProjectDataType.Events in tabs_to_check:
             if game_map.emevd_file_stem is not None:
                 self.events_tab.map_choice.var.set(f"{game_map.emevd_file_stem} [{game_map.verbose_name})")
                 self.events_tab.on_map_choice()
-        if ProjectDataType.AI in data_types and self.ai_tab and "ai" not in ignore_tabs:
+        if ProjectDataType.AI in tabs_to_check:
             if game_map.ai_file_stem is not None:
                 self.ai_tab.map_choice.var.set(f"{game_map.ai_file_stem} [{game_map.verbose_name}]")
                 self.ai_tab.on_map_choice()
-        if ProjectDataType.Talk in data_types and self.talk_tab and "talk" not in ignore_tabs:
+        if ProjectDataType.Talk in tabs_to_check:
             if game_map.esd_file_stem is not None:
                 self.talk_tab.map_choice.var.set(f"{game_map.esd_file_stem} [{game_map.verbose_name}]")
                 self.talk_tab.on_map_choice()

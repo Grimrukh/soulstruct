@@ -269,7 +269,7 @@ class MSB(GameFile, abc.ABC):
     def pack_supertype_name(self, writer: BinaryWriter, supertype_name: str):
         """Differs between versions slightly."""
 
-    def find_entry_by_name(
+    def find_entry_name(
         self, name: str, supertypes: tp.Iterable[str] = (), subtypes: tp.Iterable[str] = ()
     ) -> MSBEntry:
         """Get `MSBEntry` with name `name` that is one of the given `entry_subtypes` or any type by default.
@@ -314,7 +314,7 @@ class MSB(GameFile, abc.ABC):
         if isinstance(name, Enum):
             name = name.name
         # noinspection PyTypeChecker
-        return self.find_entry_by_name(name, supertypes=[MSBSupertype.MODELS], subtypes=subtypes)
+        return self.find_entry_name(name, supertypes=[MSBSupertype.MODELS], subtypes=subtypes)
 
     def find_event_name(self, name: str | Enum, subtypes: tp.Iterable[str] = ()) -> BaseMSBEvent:
         """Get `MSBEvent` with name `name` that is one of the given `entry_subtypes` or any type by default.
@@ -324,7 +324,7 @@ class MSB(GameFile, abc.ABC):
         if isinstance(name, Enum):
             name = name.name
         # noinspection PyTypeChecker
-        return self.find_entry_by_name(name, supertypes=[MSBSupertype.EVENTS], subtypes=subtypes)
+        return self.find_entry_name(name, supertypes=[MSBSupertype.EVENTS], subtypes=subtypes)
 
     def find_region_name(self, name: str | Enum, subtypes: tp.Iterable[str] = ()) -> BaseMSBRegion:
         """Get `MSBRegion` with name `name` that is one of the given `entry_subtypes` or any type by default.
@@ -334,7 +334,7 @@ class MSB(GameFile, abc.ABC):
         if isinstance(name, Enum):
             name = name.name
         # noinspection PyTypeChecker
-        return self.find_entry_by_name(name, supertypes=[MSBSupertype.REGIONS], subtypes=subtypes)
+        return self.find_entry_name(name, supertypes=[MSBSupertype.REGIONS], subtypes=subtypes)
 
     def find_part_name(self, name: str | Enum, subtypes: tp.Iterable[str] = ()) -> BaseMSBPart:
         """Get `MSBPart` with name `name` that is one of the given `entry_subtypes` or any type by default.
@@ -344,7 +344,7 @@ class MSB(GameFile, abc.ABC):
         if isinstance(name, Enum):
             name = name.name
         # noinspection PyTypeChecker
-        return self.find_entry_by_name(name, supertypes=[MSBSupertype.PARTS], subtypes=subtypes)
+        return self.find_entry_name(name, supertypes=[MSBSupertype.PARTS], subtypes=subtypes)
 
     def to_dict(self, ignore_defaults=True) -> dict:
         """Return a dictionary form of the MSB.
@@ -494,7 +494,7 @@ class MSB(GameFile, abc.ABC):
         resolved = []
         for entry in entries:
             if isinstance(entry, str):
-                resolved.append(self.find_entry_by_name(entry, supertypes, subtypes))
+                resolved.append(self.find_entry_name(entry, supertypes, subtypes))
             elif isinstance(entry, MSBEntry):
                 resolved.append(entry)
             else:

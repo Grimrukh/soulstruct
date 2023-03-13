@@ -158,13 +158,13 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
         fmgs = {}
         for entry in item_msgbnd.entries:
             try:
-                fmgs["item", entry.entry_id] = entry.to_game_file(FMG)
+                fmgs["item", entry.entry_id] = entry.to_binary_file(FMG)
             except Exception as ex:
                 _LOGGER.error(f"Error encountered while loading FMG '{entry.name}' in `item`: {ex}")
                 raise
         for entry in menu_msgbnd.entries:
             try:
-                fmgs["menu", entry.entry_id] = entry.to_game_file(FMG)
+                fmgs["menu", entry.entry_id] = entry.to_binary_file(FMG)
             except Exception as ex:
                 _LOGGER.error(f"Error encountered while loading FMG '{entry.name}' in `menu`: {ex}")
                 raise
@@ -458,5 +458,8 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
 
 
 def fmg_property(msgbnd_name: str, bnd_index: int):
-    """Assists in assigning properties to FMG nicknames, e.g. `ArmorDescriptions = fmg_property("item", 26)`"""
+    """Assists in assigning properties to FMG nicknames, e.g. `ArmorDescriptions = fmg_property("item", 26)`.
+
+    No setter is available. Contents of an FMG can be replaced completely by setting its `entries` attribute.
+    """
     return property(lambda self: self.fmgs[msgbnd_name, bnd_index])

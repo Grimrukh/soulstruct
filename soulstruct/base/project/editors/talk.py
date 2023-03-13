@@ -12,7 +12,7 @@ from soulstruct.base.project.enums import ProjectDataType
 from soulstruct.base.project.utilities import bind_events, TagData, TkTextEditor
 
 if tp.TYPE_CHECKING:
-    from soulstruct.base.ezstate import TalkDirectory, TalkESDBND
+    from soulstruct.base.ezstate import TalkDirectory, TalkESDBND, ESD
 
 __all__ = ["TalkEditor"]
 _LOGGER = logging.getLogger(__name__)
@@ -329,13 +329,13 @@ class TalkEditor(BaseEditor):
         self.esp_editor.see(f"{number}.0")
         self.esp_editor.highlight_line(number, "found")
 
-    def _find_string(self, _, string=None, flash_bg=True):
+    def _find_string(self, _, string=None, flash_bg=True, regexp=False):
         if string is None:
             string = self.string_to_find.var.get()
         if not string or not self.selected_map_id:
             return
         start_line, start_char = self.esp_editor.index("insert").split(".")
-        index = self.esp_editor.search(string, index=f"{start_line}.{int(start_char) + 1}")
+        index = self.esp_editor.search(string, index=f"{start_line}.{int(start_char) + 1}", regexp=regexp)
 
         if index:
             self.clear_bg_tags()
@@ -348,7 +348,8 @@ class TalkEditor(BaseEditor):
             self.flash_bg(self.string_to_find)
             return False
 
-    def _find_state(self, _, state=None, flash_bg=True):
+    def _find_state(self, _, state: int = None, flash_bg=True):
+        """Search `State` docstrings to find given state index."""
         if state is None:
             state = self.state_to_find.var.get()
             if not state or not self.selected_map_id:
@@ -361,7 +362,9 @@ class TalkEditor(BaseEditor):
                 self.state_to_find.var.set("")
                 return
 
-        if not self._find_string(_, string=f"class State_{state}(State):", flash_bg=False) and flash_bg:
+        # State index is given in `State` class docstring.
+        state_class_with_docstring = rf"class .*\(State\): *\n +\"\"\" *{state}:.*"
+        if not self._find_string(_, string=state_class_with_docstring, flash_bg=False, regexp=True) and flash_bg:
             self.flash_bg(self.state_to_find)
             return False
 
@@ -427,10 +430,11 @@ class TalkEditor(BaseEditor):
             if export_directory is None:
                 return
         export_directory = Path(export_directory)
-        bnd_name = f"script/talk/{self.selected_map_id}.talkesdbnd{'.dcx' if self.talk_class.IS_DCX else ''}"
+        bnd_subpath = f"script/talk/{self.selected_map_id}.talkesdbnd"
         try:
+            # Initialize `TalkESDBND` directly with `talk` dictionary.
             talkesdbnd_class = self.talk_class.FILE_CLASS  # type: tp.Type[TalkESDBND]
-            talkesdbnd_class(talk=self.esp_file_paths[self.selected_map_id]).write(export_directory / bnd_name)
+            talkesdbnd_class(talk=self.esp_file_paths[self.selected_map_id]).write(export_directory / bnd_subpath)
         except Exception as e:
             _LOGGER.exception("Error encountered while trying to export ESP scripts.")
             self.CustomDialog(
@@ -451,7 +455,14 @@ class TalkEditor(BaseEditor):
                 self.mimic_click(self.compile_button)
             talk_id = self.get_entry_id()
             try:
-                self.talk_class.TALKESDBND_CLASS.TALK_ESD_CLASS(self.esp_file_paths[self.selected_map_id][talk_id])
+                # Try to compile the script, but do nothing with it.
+                talkesdbnd_class = self.talk_class.FILE_CLASS  # type: tp.Type[TalkESDBND]
+                talkesd_class = talkesdbnd_class.TALK_ESD_CLASS  # type: tp.Type[ESD]
+                if self.esp_file_paths[self.selected_map_id][talk_id].is_dir():
+                    # TODO: Not actually implemented yet (multiple scripts not supported by GUI editor).
+                    talkesd_class.from_esp_directory(self.esp_file_paths[self.selected_map_id][talk_id])
+                else:
+                    talkesd_class.from_esp_file(self.esp_file_paths[self.selected_map_id][talk_id])
             except ESDScriptError as e:
                 _LOGGER.error(
                     f"Error encountered when parsing ESP script {talk_id} in {self.selected_map_id}. "

@@ -4,7 +4,7 @@ from __future__ import annotations
 __all__ = ["MapStudioDirectory"]
 
 import typing as tp
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from soulstruct.base.game_file_directory import map_property
 from soulstruct.base.maps.map_studio_directory import MapStudioDirectory as _BaseMapStudioDirectory
@@ -31,8 +31,29 @@ class MapStudioDirectory(_BaseMapStudioDirectory):
     ALL_MAPS: tp.ClassVar = tuple(m for m in ALL_MAPS if m.msb_file_stem)
     GET_MAP: tp.ClassVar = staticmethod(get_map)
 
+    QUIETLY_IGNORED_FILE_STEMS: tp.ClassVar = {
+        "m12_00_00_00",  # pre-DLC Darkroot Garden MSB (PC version always has DLC)
+        "m99_80_00_00",  # DSR test maps
+        "m99_80_00_01",
+        "m99_80_00_02",
+        "m99_80_10_00",
+        "m99_80_10_01",
+        "m99_80_10_02",
+        "m99_80_20_00",
+        "m99_99_97_00",
+        "m99_99_98_00",
+        "m99_99_98_03",
+        "m99_99_98_07",
+        "m99_99_98_08",
+        "m99_99_98_09",
+        "m99_99_98_20",
+        "m99_99_98_23",
+        "m99_99_98_25",
+        "m99_99_99_99",
+    }
+
     # Type hint override.
-    files: dict[str, MSB]
+    files: dict[str, MSB] = field(default_factory=dict)
 
     Common = map_property(COMMON)  # type: MSB
     Depths = map_property(DEPTHS)  # type: MSB

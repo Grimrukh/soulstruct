@@ -56,7 +56,7 @@ class LuaBND(Binder):
             pass
         else:
             # Load initial goals from `LuaInfo`. We will still scan below for other 'loose' goals and files.
-            luabnd.goals = info_entry.to_game_file(LuaInfo).goals
+            luabnd.goals = info_entry.to_binary_file(LuaInfo).goals
 
         for entry in luabnd.entries:
             goal_match = _GOAL_SCRIPT_RE.match(entry.name)
@@ -154,7 +154,7 @@ class LuaBND(Binder):
             gnl_entry = self.entries_by_id[1000000]
         except KeyError:
             return []
-        return gnl_entry.to_game_file(LuaGNL).names
+        return gnl_entry.to_binary_file(LuaGNL).names
 
     def compile_all(self, output_directory=None, include_unknown_scripts=False):
         """Compile all goals (and optionally, other Lua scripts) to Lua bytecode.
@@ -337,13 +337,13 @@ class LuaBND(Binder):
                 #  global names on its own yet.
                 gnl_names = self.get_gnl_names()
                 luagnl = LuaGNL(names=gnl_names)
-                entries_by_id[1000000].set_from_game_file(luagnl)
+                entries_by_id[1000000].set_from_binary_file(luagnl)
         if pack_luainfo:
             if 1000001 not in entries_by_id:
                 _LOGGER.warning(f"No existing `LuaInfo` file in {self.path.name}. Will not write a new one.")
             else:
                 luainfo = LuaInfo(goals=self.goals)
-                entries_by_id[1000001].set_from_game_file(luainfo)
+                entries_by_id[1000001].set_from_binary_file(luainfo)
         for lua_list, use_decompiled in zip(
             (self.goals, self.unknown_scripts),
             (use_decompiled_goals, use_decompiled_unknown_scripts),

@@ -28,6 +28,10 @@ class MapStudioDirectory(_BaseMapStudioDirectory):
     ALL_MAPS: tp.ClassVar = tuple(m for m in ALL_MAPS if m.msb_file_stem)
     GET_MAP: tp.ClassVar = staticmethod(get_map)
 
+    QUIETLY_IGNORED_FILE_STEMS: tp.ClassVar = {
+        "m12_00_00_00",  # pre-DLC Darkroot Garden MSB (PC version always has DLC)
+    }
+
     # Type hint override.
     files: dict[str, MSB]
 

@@ -14,7 +14,7 @@ from pathlib import Path
 from soulstruct.utilities.binary import *
 
 if tp.TYPE_CHECKING:
-    from soulstruct.base.game_file import GAME_FILE_T
+    from soulstruct.base.base_binary_file import BASE_BINARY_FILE_T
     from .core import BinderFlags
 
 
@@ -211,8 +211,8 @@ class BinderEntry:
         """Compress data (with `zlib` level 7) before setting it to `.data` attribute, if appropriate."""
         self.data = zlib.compress(data, level=7) if self.flags.is_compressed else data
 
-    def set_from_game_file(self, game_file: GAME_FILE_T):
-        self.set_uncompressed_data(bytes(game_file))
+    def set_from_binary_file(self, binary_file: BASE_BINARY_FILE_T):
+        self.set_uncompressed_data(bytes(binary_file))
 
     def get_packed_path(self, encoding: str) -> bytes:
         """Encodes path and null-terminates."""
@@ -223,10 +223,20 @@ class BinderEntry:
         """Update just the basename of `path`."""
         self.path = str(Path(self.path).parent) + f"\\{new_name}"
 
-    def to_game_file(self, game_file_cls: tp.Type[GAME_FILE_T]) -> GAME_FILE_T:
-        game_file = game_file_cls.from_bytes(self.get_uncompressed_data())
-        game_file.path = self.path
-        return game_file
+    def to_binary_file(self, binary_file_cls: tp.Type[BASE_BINARY_FILE_T]) -> BASE_BINARY_FILE_T:
+        binary_file = binary_file_cls.from_bytes(self.get_uncompressed_data())
+        binary_file.path = self.path
+        return binary_file
+
+    @property
+    def id(self):
+        """Legacy alias for `entry_id`."""
+        return self.entry_id
+
+    @id.setter
+    def id(self, value):
+        """Legacy alias for `entry_id`."""
+        self.entry_id = value
 
     @property
     def data_size(self) -> int:

@@ -14,7 +14,7 @@ from soulstruct.base.game_types import GAME_TYPE, GameObject, GameObjectSequence
 from soulstruct.base.game_types.map_types import *
 from soulstruct.base.maps.msb.enums import MSBSupertype, BaseMSBModelSubtype, BaseMSBRegionSubtype
 from soulstruct.base.maps.msb.models import BaseMSBModel
-from soulstruct.base.maps.msb.utils import GroupBitSet
+from soulstruct.base.maps.msb.utils import GroupBitSet, GroupBitSet128
 from soulstruct.base.project.utilities import (
     bind_events,
     NameSelectionBox,
@@ -295,6 +295,7 @@ class MapFieldRow(FieldRow):
     def build_field_context_menu(self):
         """For linked fields, adds an option to select an entry name from the linked table."""
         self.context_menu.delete(0, "end")
+
         if issubclass(self.field_type, GameObject):
             for field_link in self.field_links:
                 field_link.add_to_context_menu(self.context_menu)
@@ -308,7 +309,7 @@ class MapFieldRow(FieldRow):
                 )
 
         # Users can open a dialog of checkbuttons.
-        if self.field_type == list and self.field_name.endswith("_groups"):
+        if self.field_type == GroupBitSet128:
             self.context_menu.add_command(label="Show checkbuttons", command=self._set_group_checkbuttons)
 
         msb_type, msb_subtype = self.master.active_category.split(": ")
@@ -424,9 +425,11 @@ class MapFieldRow(FieldRow):
             self.build_field_context_menu()
 
     def _set_group_checkbuttons(self):
+        # TODO: Check BIT_COUNT of type and show appropriate number of checks.
+        current_group_bit_set = self.master.get_selected_field_dict()[self.field_name]  # type: GroupBitSet
         new_bit_set = GroupBitSetEditBox(
             self.master,
-            initial_bit_set=self.master.get_selected_field_dict()[self.field_name],
+            initial_bit_set=current_group_bit_set.enabled_bits,
             window_title=f"Modify {self.field_nickname}",
         ).go()
         if new_bit_set is None:
@@ -443,12 +446,13 @@ class MapFieldRow(FieldRow):
         """Operates on individual vector component `float` fields."""
         return self._string_to_float(string)
 
-    def _string_to_MapEntry(self, string):
-        """Look up new `MSBEntry` name."""
-
-    def _string_to_GroupBitSet(self, string):
+    def _string_to_GroupBitSet128(self, string):
         enabled_bits_list = ast.literal_eval(string)
-        return GroupBitSet(set(enabled_bits_list), bit_count=self.master.GROUP_BIT_COUNT)
+        try:
+            return GroupBitSet128(set(enabled_bits_list))
+        except (TypeError, ValueError):
+            raise InvalidFieldValueError(
+                f"Could not interpret string as a `GroupBitSet128` for field {self.field_nickname}: {string}"
 
     def _string_to_Map(self, string):
         try:
@@ -494,7 +498,6 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
     FIELD_ROW_CLASS = MapFieldRow
 
     GAME_TYPES_MODULE: ModuleType
-    GROUP_BIT_COUNT: int
     CHARACTER_MODELS: dict[int, str] = None
 
     entry_rows: list[MapEntryRow]

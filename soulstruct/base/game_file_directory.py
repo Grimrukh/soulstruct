@@ -85,7 +85,7 @@ class GameFileDirectory(tp.Generic[BASE_BINARY_FILE_T], abc.ABC):
 
 
 @dataclass(slots=True)
-class GameFileMapDirectory(tp.Generic[BASE_BINARY_FILE_T], GameFileDirectory[BASE_BINARY_FILE_T], abc.ABC):
+class GameFileMapDirectory(GameFileDirectory[BASE_BINARY_FILE_T], abc.ABC):
     """Game file directory that expects to find a file for each game map in `ALL_MAPS`, which should be defined by the
     game-specific subclass.
 
@@ -100,6 +100,8 @@ class GameFileMapDirectory(tp.Generic[BASE_BINARY_FILE_T], GameFileDirectory[BAS
     # Name of `Map` attribute to use when determining which stems to look for. (Should also work for 'common' files.)
     # `emevd_file_stem` is the default because it contains the least irregularities so far, in my experience.
     MAP_STEM_ATTRIBUTE: tp.ClassVar[str] = "emevd_file_stem"
+    # Any unexpected files found in here will be ignored as usual, but will not log a warning.
+    QUIETLY_IGNORED_FILE_STEMS: tp.ClassVar[set[str]] = set()
 
     # NOTE: Game-specific subclasses will generally want to define map name getter properties, a la:
     #  `UndeadBurg = property(lambda self: self.files[UNDEAD_BURG.msb_file_stem])`
@@ -126,9 +128,10 @@ class GameFileMapDirectory(tp.Generic[BASE_BINARY_FILE_T], GameFileDirectory[BAS
                     files[file_stem] = cls.FILE_CLASS.from_path(file_path)
                     all_map_stems.remove(file_stem)
                 else:
-                    _LOGGER.warning(
-                        f"Ignoring file with unrecognized map stem in `{cls.__name__}` directory: {file_path.name}"
-                    )
+                    if file_stem not in cls.QUIETLY_IGNORED_FILE_STEMS:
+                        _LOGGER.warning(
+                            f"Ignoring file with unrecognized map stem in `{cls.__name__}` directory: {file_path.name}"
+                        )
                     continue
             else:
                 # _LOGGER.warning(f"Ignoring unexpected file in `{cls.__name__}` directory: {file_path.name}")

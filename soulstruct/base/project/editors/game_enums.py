@@ -58,8 +58,8 @@ class EnumEntryRow(EntryRow):
     ENTRY_ID_WIDTH = 15
     SHOW_ENTRY_ID = True
     EDIT_ENTRY_ID = True
-    ENTRY_TEXT_WIDTH = 30
-    ENTRY_DESCRIPTION_WIDTH = 120
+    ENTRY_TEXT_WIDTH = 40
+    ENTRY_DESCRIPTION_WIDTH = 110
 
     # noinspection PyMissingConstructor
     def __init__(self, editor: EnumsEditor, row_index: int, main_bindings: dict = None):
@@ -671,7 +671,7 @@ class EnumsEditor(BaseEditor):
         for (attr_name, name), description in descriptions_by_attr_and_id.items():
             # attr_name not actually used, as name uniqueness should have already been resolved
             try:
-                entry = msb.find_entry_by_name(name)
+                entry = msb.find_entry_name(name)
             except KeyError:
                 continue  # shouldn't happen (as missing entity ID should be skipped) but just in case
             entry.description = description

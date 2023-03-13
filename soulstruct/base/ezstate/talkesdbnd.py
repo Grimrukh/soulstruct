@@ -45,7 +45,7 @@ class TalkESDBND(Binder, abc.ABC):
                 continue
             talk_id = int(match.group(1))
             try:
-                self.talk[talk_id] = entry.to_game_file(self.TALK_ESD_CLASS)
+                self.talk[talk_id] = entry.to_binary_file(self.TALK_ESD_CLASS)
             except Exception as ex:
                 _LOGGER.error(f"Could not load talk ESD 't{talk_id}' from TalkESDBND entry '{entry.name}'. Error: {ex}")
                 raise
@@ -104,7 +104,7 @@ class TalkESDBND(Binder, abc.ABC):
             entry_path = self.get_default_entry_path(talk_entry_name)
             if entry_path in self.entries_by_path:
                 # Just update data.
-                self.entries_by_path[entry_path].set_from_game_file(talk_esd)
+                self.entries_by_path[entry_path].set_from_binary_file(talk_esd)
             else:
                 # Add new entry.
                 new_id = self.get_default_entry_id(talk_entry_name)

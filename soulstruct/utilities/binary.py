@@ -39,6 +39,7 @@ __all__ = [
     "BitFieldWriter",
 ]
 
+import copy
 import dataclasses
 import enum
 import hashlib
@@ -1517,6 +1518,12 @@ class BinaryStruct:
             for name, value in self.get_binary_field_values().items()
             if value is not None and (not ignore_underscore_prefix or not name.startswith("_"))
         }
+
+    def copy(self) -> Self:
+        return copy.copy(self)
+
+    def deepcopy(self) -> Self:
+        return copy.deepcopy(self)
 
     def pop(self, field_name: str) -> tp.Any:
         """Simply sets `field_name` to None, marking it as 'consumed', without triggering type checkers.

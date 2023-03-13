@@ -667,6 +667,7 @@ class SequenceNameEditBox(SmartFrame):
 
 class GroupBitSetEditBox(SmartFrame):
     """Displays 128 checkbuttons to toggle for e.g. draw groups, display groups, navmesh groups."""
+    # TODO: Support 256-bit groups.
 
     def __init__(
         self,

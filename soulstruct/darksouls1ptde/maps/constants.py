@@ -205,7 +205,12 @@ def get_map_variable_name(source: MAP_SOURCE_TYPING):
         try:
             area_id, block_id, cc_id, dd_id = source
         except ValueError:
-            raise ValueError(
-                f"Can only generate a variable name for an unknown map from source `(aa, bb, cc, dd)`, not: {repr(source)} of type {type(source)}"
-            )
+            try:
+                area_id, block_id = source
+                cc_id = dd_id = 0
+            except ValueError:
+                raise ValueError(
+                    f"Can only generate a variable name for an unknown map from source `(aa, bb, cc, dd)`, not: "
+                    f"{repr(source)} of type {type(source)}"
+                )
         return f"({area_id}, {block_id}, {cc_id}, {dd_id})"

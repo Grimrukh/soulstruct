@@ -1014,7 +1014,7 @@ class Binder(BaseBinaryFile):
     def add_or_replace_entry_name(
         self, entry_name: str, game_file: GameFile, new_entry_id: int = None, new_entry_flags: BinderFlags = None
     ):
-        """Create or replace `BinderEntry` with name `entry_name` using data from packed `game_file`.
+        """Create or replace `BinderEntry` with name `entry_name` using data from packed `binary_file`.
         
         If `entry_name` is already in the Binder (with any parent path), that entry's data will simply be replaced;
         `new_entry_id` will not be used/generated and the existing entry's full path and flags will be kept.
@@ -1037,12 +1037,12 @@ class Binder(BaseBinaryFile):
             self.add_entry(entry)
         else:
             # Just modify existing entry's data.
-            existing_entry.set_from_game_file(game_file)
+            existing_entry.set_from_binary_file(game_file)
 
     def add_or_replace_entry_id(
         self, entry_id: int, game_file: GameFile, new_entry_name: str = None, new_entry_flags: BinderFlags = None
     ):
-        """Create or replace `BinderEntry` with ID `entry_id` using data from packed `game_file`.
+        """Create or replace `BinderEntry` with ID `entry_id` using data from packed `binary_file`.
 
         If `entry_id` is already in the Binder, that entry's data will simply be replaced; `new_entry_name` will not be
         used and the existing entry's full path and flags will be kept.
@@ -1064,7 +1064,7 @@ class Binder(BaseBinaryFile):
             self.add_entry(entry)
         else:
             # Just modify existing entry's data.
-            existing_entry.set_from_game_file(game_file)
+            existing_entry.set_from_binary_file(game_file)
 
     def __getitem__(self, id_or_path_or_name) -> BinderEntry:
         """Shortcut for access by ID (int) or path (str) or basename (str).
