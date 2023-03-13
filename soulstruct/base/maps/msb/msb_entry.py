@@ -715,7 +715,7 @@ class MSBEntry(abc.ABC):
                             f"MSB entry type `{cls.__name__}` needs `Binary(length)` metadata for field `{f.name}`."
                         )
                 field_types[f.name] = f"{ann[5:-1]}[{length}]"
-            elif ann in _BASIC_ENTRY_TYPES or ann == "GroupBitSet":
+            elif ann in _BASIC_ENTRY_TYPES or ann.startswith("GroupBitSet"):
                 field_types[f.name] = ann
             else:
                 raise TypeError(f"Could not parse field type annotation '{ann}' for `{cls.__name__}.{f.name}`.")

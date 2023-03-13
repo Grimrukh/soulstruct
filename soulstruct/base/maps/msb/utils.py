@@ -78,29 +78,29 @@ class GroupBitSet(abc.ABC):
     # Only field.
     enabled_bits: set[int]
 
-    def __init__(self, uints_or_bit_set: list[int] | set[int]):
-        if isinstance(uints_or_bit_set, self.__class__):
+    def __init__(self, uint_list_or_bit_set: list[int] | set[int]):
+        if isinstance(uint_list_or_bit_set, self.__class__):
             # Just copy bits from other instance.
-            self.enabled_bits = uints_or_bit_set.enabled_bits
-        elif isinstance(uints_or_bit_set, list):
+            self.enabled_bits = uint_list_or_bit_set.enabled_bits
+        elif isinstance(uint_list_or_bit_set, list):
             # List of unsigned integers (e.g. from packed `MSB` file).
-            self.enabled_bits = int_group_to_bit_set(uints_or_bit_set, assert_size=len(uints_or_bit_set))
-        elif isinstance(uints_or_bit_set, set):
-            if not all(isinstance(i, int) and i < self.BIT_COUNT for i in uints_or_bit_set):
+            self.enabled_bits = int_group_to_bit_set(uint_list_or_bit_set, assert_size=len(uint_list_or_bit_set))
+        elif isinstance(uint_list_or_bit_set, set):
+            if not all(isinstance(i, int) and i < self.BIT_COUNT for i in uint_list_or_bit_set):
                 raise TypeError(f"All `set` flags passed to this `GroupBitSet` must be less than {self.BIT_COUNT}.")
-            self.enabled_bits = uints_or_bit_set
+            self.enabled_bits = uint_list_or_bit_set
         else:
-            raise TypeError(f"Cannot initialize `{self.__class__.__name__}` from {type(uints_or_bit_set)}.")
+            raise TypeError(f"Cannot initialize `{self.__class__.__name__}` from {type(uint_list_or_bit_set)}.")
 
     @classmethod
     def from_repr(cls, repr_string: str):
         """Also handles JSON decoding."""
         if (match := cls._REPR_RE.match(repr_string)) is None:
             raise ValueError(f"Invalid string/JSON source for `{cls.__name__}`: {repr_string}")
-        bit_tuple = ast.literal_eval(match.group(2))
+        bit_tuple = ast.literal_eval(match.group(1))
         if isinstance(bit_tuple, int):
             bit_tuple = (bit_tuple,)  # formatting quirk (no single comma for single-element tuple in JSON)
-        return cls(uints_or_bit_set=set(bit_tuple))
+        return cls(uint_list_or_bit_set=set(bit_tuple))
 
     def to_sorted_bit_list(self) -> list[int]:
         """For GUI display, mainly."""
@@ -139,13 +139,13 @@ class GroupBitSet(abc.ABC):
     # TODO: Add more set methods here, like union and intersection.
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, init=False)
 class GroupBitSet128(GroupBitSet):
     BIT_COUNT: tp.ClassVar[int] = 128
     _REPR_RE: tp.ClassVar[re.Pattern] = re.compile(r"^GroupBitSet128(\([\d, ]*\))$")
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, init=False)
 class GroupBitSet256(GroupBitSet):
     BIT_COUNT: tp.ClassVar[int] = 256
     _REPR_RE: tp.ClassVar[re.Pattern] = re.compile(r"^GroupBitSet256(\([\d, ]*\))$")

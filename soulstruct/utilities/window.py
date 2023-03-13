@@ -249,10 +249,10 @@ class SmartFrame(tk.Frame):
 
         if self._ON_IMAGE is None:
             self.__class__._ON_IMAGE = tk.PhotoImage(width=48, height=24)
-            self.__class__._ON_IMAGE.put(("green",), to=(24, 0, 47, 23))
+            self.__class__._ON_IMAGE.put(("#4F4",), to=(24, 0, 47, 23))
         if self._OFF_IMAGE is None:
             self.__class__._OFF_IMAGE = tk.PhotoImage(width=48, height=24)
-            self.__class__._OFF_IMAGE.put(("red",), to=(0, 0, 23, 23))
+            self.__class__._OFF_IMAGE.put(("#D66",), to=(0, 0, 23, 23))
 
         # Current frame tracked, defaults to master frame.
         self.master_frame = self.current_frame = self.Frame(
@@ -554,6 +554,15 @@ class SmartFrame(tk.Frame):
             borderwidth=0,
             **kwargs,
         )
+        checkbutton.var = boolean_var
+        return checkbutton
+
+    @_embed_component
+    def ClassicCheckbutton(self, frame=None, command=None, initial_state=False, text="", **kwargs):
+        """Default checkbutton style, with a box and tick."""
+        self.set_style_defaults(kwargs)
+        boolean_var = tk.BooleanVar(value=initial_state)
+        checkbutton = tk.Checkbutton(frame, text=text, variable=boolean_var, command=command, **kwargs)
         checkbutton.var = boolean_var
         return checkbutton
 

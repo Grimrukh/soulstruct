@@ -20,7 +20,7 @@ from dataclasses import dataclass, field
 from soulstruct.base.maps.msb import MSBEntry
 from soulstruct.base.maps.msb.parts import *
 from soulstruct.base.maps.msb.field_info import MapFieldInfo
-from soulstruct.base.maps.msb.utils import GroupBitSet
+from soulstruct.base.maps.msb.utils import GroupBitSet128
 from soulstruct.darksouls1ptde.game_types import *
 from soulstruct.exceptions import InvalidFieldValueError
 from soulstruct.utilities.binary import *
@@ -54,8 +54,8 @@ class MSBPart(BaseMSBPart, abc.ABC):
         translate: Vector3
         rotate: Vector3
         scale: Vector3
-        draw_groups: GroupBitSet = field(**BinaryArray(4, uint))
-        display_groups: GroupBitSet = field(**BinaryArray(4, uint))
+        draw_groups: GroupBitSet128 = field(**BinaryArray(4, uint))
+        display_groups: GroupBitSet128 = field(**BinaryArray(4, uint))
         # No backread groups.
         supertype_data_offset: int
         subtype_data_offset: int
@@ -93,8 +93,8 @@ class MSBPart(BaseMSBPart, abc.ABC):
     # Subclasses may also use more appropriate defaults for convenience, as these Part supertype fields in DS1 are
     # really sporadic in which Part subtypes actually use each of them.
     sib_path: str = ""
-    draw_groups: GroupBitSet = field(default_factory=set)
-    display_groups: GroupBitSet = field(default_factory=set)
+    draw_groups: GroupBitSet128 = field(default_factory=set)
+    display_groups: GroupBitSet128 = field(default_factory=set)
     ambient_light_id: int = field(default=-1, **MapFieldInfo(game_type=BakedLightParam))
     fog_id: int = field(default=-1, **MapFieldInfo(game_type=FogParam))
     scattered_light_id: int = field(default=-1, **MapFieldInfo(game_type=ScatteredLightParam))
@@ -374,7 +374,7 @@ class MSBCollision(MSBPart):
         sound_space_type: byte
         _environment_event_index: short
         reflect_plane_height: float
-        navmesh_groups: GroupBitSet = field(**BinaryArray(4, uint))
+        navmesh_groups: GroupBitSet128 = field(**BinaryArray(4, uint))
         vagrant_entity_ids: list[int] = field(**BinaryArray(3))
         _place_name_banner_id: short  # -1 means use map area/block, and any negative value means banner is forced
         starts_disabled: bool
@@ -388,7 +388,7 @@ class MSBCollision(MSBPart):
 
     # Field type overrides.
     model: MSBCollisionModel = None
-    display_groups: GroupBitSet = field(default_factory=lambda: set(range(MSBPart.GROUP_BIT_COUNT)))  # all on by default
+    display_groups: GroupBitSet128 = field(default_factory=lambda: set(range(MSBPart.GROUP_BIT_COUNT)))  # all on by default
     is_shadow_source: bool = True
     is_shadow_destination: bool = True
     draw_by_reflect_cam: bool = True
@@ -397,7 +397,7 @@ class MSBCollision(MSBPart):
     sound_space_type: int = 0
     environment_event: MSBEnvironmentEvent = None
     reflect_plane_height: float = 0.0
-    navmesh_groups: GroupBitSet = field(default_factory=lambda: set(range(MSBPart.GROUP_BIT_COUNT)))  # all on by default
+    navmesh_groups: GroupBitSet128 = field(default_factory=lambda: set(range(MSBPart.GROUP_BIT_COUNT)))  # all on by default
     vagrant_entity_ids: list[int] = field(default_factory=lambda: [-1, -1, -1])
     place_name_banner_id: int = field(default=-1, **MapFieldInfo(game_type=PlaceName))
     force_place_name_banner: bool = True  # necessary default because `place_name_banner_id` defaults to -1
@@ -523,14 +523,14 @@ class MSBNavmesh(MSBPart):
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
-        navmesh_groups: GroupBitSet = field(**BinaryArray(4, uint))
+        navmesh_groups: GroupBitSet128 = field(**BinaryArray(4, uint))
         _pad1: bytes = field(**BinaryPad(16))
 
     # Type/default overrides.
     model: MSBNavmeshModel = None
     is_shadow_source: bool = True
 
-    navmesh_groups: GroupBitSet = field(default_factory=lambda: set(range(MSBPart.GROUP_BIT_COUNT)))  # all on by default
+    navmesh_groups: GroupBitSet128 = field(default_factory=lambda: set(range(MSBPart.GROUP_BIT_COUNT)))  # all on by default
 
     HIDE_FIELDS = (
         "scale",

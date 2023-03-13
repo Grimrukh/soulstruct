@@ -666,17 +666,20 @@ class SequenceNameEditBox(SmartFrame):
 
 
 class GroupBitSetEditBox(SmartFrame):
-    """Displays 128 checkbuttons to toggle for e.g. draw groups, display groups, navmesh groups."""
-    # TODO: Support 256-bit groups.
+    """Displays 128 or 256 checkbuttons to toggle for e.g. draw groups, display groups, navmesh groups."""
 
     def __init__(
         self,
         master: SmartFrame,
         initial_bit_set=None,
+        bit_count=128,
         window_title="Editing Bit Groups",
     ):
+        if bit_count not in {128, 256}:
+            raise ValueError(f"`bit_count` must be 128 or 256, not {bit_count}.")
         super().__init__(toplevel=True, master=master, window_title=window_title)
         self.editor = master
+        self.bit_count = bit_count
         self.initial_bit_set = initial_bit_set
         self.output = None
         self._checkbuttons = []
@@ -685,19 +688,20 @@ class GroupBitSetEditBox(SmartFrame):
 
     def build(self):
         with self.set_master(auto_rows=0):
-            with self.set_master(padx=10, pady=10):  # 4 rows x 8 columns
-                for row in range(8):
+            with self.set_master(padx=10, pady=10):  # 8 rows x 16 columns
+                for row in range(8 if self.bit_count == 128 else 16):
                     for col in range(16):
                         i = row * 16 + col
                         self._checkbuttons.append(
                             self.Checkbutton(
                                 initial_state=i in self.initial_bit_set,
-                                text=str(i),
+                                label=str(i),
+                                label_position="left",
                                 row=row,
                                 column=col,
                                 selectcolor="#000",
                                 command=lambda i_=i: self._checkbutton_toggle(i_),
-                                sticky="W",
+                                sticky="e",
                             )
                         )
                         self._checkbutton_toggle(i)

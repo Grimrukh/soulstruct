@@ -14,7 +14,7 @@ from soulstruct.base.game_types import GAME_TYPE, GameObject, GameObjectSequence
 from soulstruct.base.game_types.map_types import *
 from soulstruct.base.maps.msb.enums import MSBSupertype, BaseMSBModelSubtype, BaseMSBRegionSubtype
 from soulstruct.base.maps.msb.models import BaseMSBModel
-from soulstruct.base.maps.msb.utils import GroupBitSet, GroupBitSet128
+from soulstruct.base.maps.msb.utils import GroupBitSet, GroupBitSet128, GroupBitSet256
 from soulstruct.base.project.utilities import (
     bind_events,
     NameSelectionBox,
@@ -251,7 +251,12 @@ class MapFieldRow(FieldRow):
         self.value_label.var.set(value.emevd_file_stem)
         self._activate_value_widget(self.value_label)
 
-    def _update_field_GroupBitSet(self, value: GroupBitSet):
+    def _update_field_GroupBitSet128(self, value: GroupBitSet128):
+        """Update `set` field with a sorted list."""
+        self.value_label.var.set(repr(value.to_sorted_bit_list()))
+        self._activate_value_widget(self.value_label)
+
+    def _update_field_GroupBitSet256(self, value: GroupBitSet256):
         """Update `set` field with a sorted list."""
         self.value_label.var.set(repr(value.to_sorted_bit_list()))
         self._activate_value_widget(self.value_label)
@@ -309,8 +314,8 @@ class MapFieldRow(FieldRow):
                 )
 
         # Users can open a dialog of checkbuttons.
-        if self.field_type == GroupBitSet128:
-            self.context_menu.add_command(label="Show checkbuttons", command=self._set_group_checkbuttons)
+        if issubclass(self.field_type, GroupBitSet):
+            self.context_menu.add_command(label="Modify groups with checkbuttons", command=self._set_group_checkbuttons)
 
         msb_type, msb_subtype = self.master.active_category.split(": ")
         if msb_type == "Regions" or msb_subtype in {"Characters", "Objects", "PlayerStarts"}:
@@ -430,13 +435,15 @@ class MapFieldRow(FieldRow):
         new_bit_set = GroupBitSetEditBox(
             self.master,
             initial_bit_set=current_group_bit_set.enabled_bits,
+            bit_count=current_group_bit_set.BIT_COUNT,  # class variable
             window_title=f"Modify {self.field_nickname}",
         ).go()
         if new_bit_set is None:
             return
-        field_changed = self.master.change_field_value(self.field_name, new_bit_set)
+        new_group_bit_set = current_group_bit_set.__class__(new_bit_set)
+        field_changed = self.master.change_field_value(self.field_name, new_group_bit_set)
         if field_changed:
-            self.update_field_value_display(new_bit_set)
+            self.update_field_value_display(new_group_bit_set)
 
     @property
     def editable(self):
@@ -453,6 +460,16 @@ class MapFieldRow(FieldRow):
         except (TypeError, ValueError):
             raise InvalidFieldValueError(
                 f"Could not interpret string as a `GroupBitSet128` for field {self.field_nickname}: {string}"
+            )
+
+    def _string_to_GroupBitSet256(self, string):
+        enabled_bits_list = ast.literal_eval(string)
+        try:
+            return GroupBitSet256(set(enabled_bits_list))
+        except (TypeError, ValueError):
+            raise InvalidFieldValueError(
+                f"Could not interpret string as a `GroupBitSet256` for field {self.field_nickname}: {string}"
+            )
 
     def _string_to_Map(self, string):
         try:
@@ -764,7 +781,7 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
                 width=5,
             )
 
-        if field_type == GroupBitSet:
+        if issubclass(field_type, GroupBitSet):
             field_value: GroupBitSet
             initial_text = repr(field_value.to_sorted_bit_list())
             return self.Entry(

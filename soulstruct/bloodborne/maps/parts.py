@@ -21,7 +21,7 @@ from dataclasses import dataclass, field
 from soulstruct.base.maps.msb import MSBEntry
 from soulstruct.base.maps.msb.parts import *
 from soulstruct.base.maps.msb.field_info import MapFieldInfo
-from soulstruct.base.maps.msb.utils import GroupBitSet
+from soulstruct.base.maps.msb.utils import GroupBitSet256
 from soulstruct.bloodborne.game_types import *
 from soulstruct.exceptions import InvalidFieldValueError
 from soulstruct.utilities.binary import *
@@ -57,9 +57,9 @@ class MSBPart(BaseMSBPart, abc.ABC):
         translate: Vector3
         rotate: Vector3
         scale: Vector3
-        draw_groups: GroupBitSet = field(**BinaryArray(8, uint))
-        display_groups: GroupBitSet = field(**BinaryArray(8, uint))
-        backread_groups: GroupBitSet = field(**BinaryArray(8, uint))
+        draw_groups: GroupBitSet256 = field(**BinaryArray(8, uint))
+        display_groups: GroupBitSet256 = field(**BinaryArray(8, uint))
+        backread_groups: GroupBitSet256 = field(**BinaryArray(8, uint))
         _pad1: bytes = field(init=False, **BinaryPad(4))
         supertype_data_offset: long
         subtype_data_offset: long
@@ -86,7 +86,7 @@ class MSBPart(BaseMSBPart, abc.ABC):
     GROUP_BIT_COUNT: tp.ClassVar[int] = 256
 
     # NOTE: `model` defined by subclasses.
-    backread_groups: GroupBitSet = field(default_factory=set)
+    backread_groups: GroupBitSet256 = field(default_factory=set)
     part_unk_x04_x05: int = field(default=-1, **MapFieldInfo(
         "Unknown Parts Data [x04-x05]", "Unknown parts integer. Common values: -1, 0, 8"))
     part_unk_x05_x06: int = field(default=-1, **MapFieldInfo(
@@ -418,7 +418,7 @@ class MSBCollision(MSBPartWithSceneGParam):
 
     # Field type overrides.
     model: MSBCollisionModel = None
-    display_groups: GroupBitSet = field(default_factory=lambda: set(range(MSBPart.GROUP_BIT_COUNT)))
+    display_groups: GroupBitSet256 = field(default_factory=lambda: set(range(MSBPart.GROUP_BIT_COUNT)))
 
     hit_filter_id: int = field(default=CollisionHitFilter.Normal.value, **MapFieldInfo(game_type=CollisionHitFilter))
     sound_space_type: int = 0
