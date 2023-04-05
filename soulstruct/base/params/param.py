@@ -322,7 +322,7 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
         row_pointer_structs = [row_pointer_struct_type.from_bytes(reader) for _ in range(row_count)]
 
         # Reliable row data offset (unlike header one).
-        row_data_offset = reader.position  # Reliable row data offset.
+        row_data_offset = reader.position
 
         # Row size is lazily determined.
         if len(row_pointer_structs) == 0:

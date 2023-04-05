@@ -139,13 +139,13 @@ class GroupBitSet(abc.ABC):
     # TODO: Add more set methods here, like union and intersection.
 
 
-@dataclass(slots=True, init=False)
+@dataclass(slots=True, init=False, repr=False)
 class GroupBitSet128(GroupBitSet):
     BIT_COUNT: tp.ClassVar[int] = 128
     _REPR_RE: tp.ClassVar[re.Pattern] = re.compile(r"^GroupBitSet128(\([\d, ]*\))$")
 
 
-@dataclass(slots=True, init=False)
+@dataclass(slots=True, init=False, repr=False)
 class GroupBitSet256(GroupBitSet):
     BIT_COUNT: tp.ClassVar[int] = 256
     _REPR_RE: tp.ClassVar[re.Pattern] = re.compile(r"^GroupBitSet256(\([\d, ]*\))$")

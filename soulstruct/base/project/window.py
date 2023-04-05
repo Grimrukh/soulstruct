@@ -373,6 +373,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 self.create_dummy_tab(ProjectDataType.Maps, self.project.import_Maps)
 
         if "enums" in self.tab_frames:
+            # TODO: Raises exception if `self.project.maps` data is missing.
             if self.project.enums_directory.is_dir():
                 self.create_Enums_tab()
             else:
