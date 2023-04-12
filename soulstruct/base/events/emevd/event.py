@@ -10,7 +10,7 @@ import typing as tp
 from dataclasses import dataclass, field
 from types import GenericAlias
 
-from soulstruct.base.game_types import GAME_TYPE, Flag, GameObject, GameEnumsManager
+from soulstruct.base.game_types import GAME_INT_TYPE, Flag, GameObjectInt, GameEnumsManager
 from soulstruct.utilities.binary import *
 
 from .enums import OnRestBehavior
@@ -105,7 +105,7 @@ class SingleEventArg:
     combined_fmt: str = field(default="")
     combined_py_types: tuple[tp.Type, ...] = ()
     # Subset of the above; ONLY contains game types (for enum lookups).
-    combined_game_types: tuple[GAME_TYPE, ...] = ()
+    combined_game_types: tuple[GAME_INT_TYPE, ...] = ()
 
     def add_info(self, event_arg: EventArgRepl):
         """Merge in information from a single replacement usage."""
@@ -165,14 +165,14 @@ class SingleEventArg:
                 origin = tp.get_origin(py_type)
             except AttributeError:  # implies `py_type` is a real Python type (no `__origin__`)
                 all_py_types.append(py_type)
-                if issubclass(py_type, GameObject):
+                if issubclass(py_type, GameObjectInt):
                     all_game_types.append(py_type)
             else:
                 union_types = tp.get_args(py_type) if origin is tp.Union else ()
                 for union_type in union_types:
                     if union_type not in all_py_types:
                         all_py_types.append(union_type)
-                        if issubclass(union_type, GameObject):
+                        if issubclass(union_type, GameObjectInt):
                             all_game_types.append(union_type)
         self.combined_py_types = tuple(all_py_types)
         self.combined_game_types = tuple(all_game_types)
@@ -208,7 +208,7 @@ class EventSignature:
         for event_arg, name in zip(self.event_args, arg_names, strict=True):
             game_object_types = {
                 py_type for py_type in event_arg.combined_py_types
-                if issubclass(py_type, GameObject)
+                if issubclass(py_type, GameObjectInt)
             }
             if len(game_object_types) == 1:
                 py_type_name = next(iter(game_object_types)).__name__ + " | int"

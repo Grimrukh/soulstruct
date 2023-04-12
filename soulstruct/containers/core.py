@@ -515,8 +515,9 @@ class Binder(BaseBinaryFile):
             raise ValueError(
                 f"Invalid Binder manifest `binder_type`: {binder_type}. Must be of format '{{BND|BXF}}{{3|4}}'."
             )
-        version = int(binder_type[3])
-        if version not in {3, 4}:
+        try:
+            version = BinderVersion(int(binder_type[3]))
+        except ValueError:
             raise ValueError(
                 f"Invalid Binder manifest `binder_type`: {binder_type}. Must be of format '{{BND|BXF}}{{3|4}}'."
             )

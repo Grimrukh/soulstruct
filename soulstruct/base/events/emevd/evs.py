@@ -12,7 +12,7 @@ import typing as tp
 from functools import partial
 from pathlib import Path
 
-from soulstruct.base.game_types.basic_types import GameObject, FlagRange, MapFlagSuffix
+from soulstruct.base.game_types.basic_types import GameObjectInt, FlagRange, MapFlagSuffix
 from soulstruct.games import Game, get_game
 from soulstruct.utilities.files import import_arbitrary_file
 from .exceptions import NoNegateError, NoSkipOrReturnError
@@ -565,9 +565,9 @@ class EVSParser(abc.ABC):
             # Method of a game object or `.Add` method of a condition group.
             attr = node.func.attr
             game_object = self._parse_nodes(node.func.value)
-            if not isinstance(game_object, GameObject):
+            if not isinstance(game_object, GameObjectInt):
                 raise EVSSyntaxError(
-                    node, "Only methods of `GameObject` subclasses can be called as instructions."
+                    node, "Only methods of `GameObjectInt` subclasses can be called as instructions."
                 )
             _, args, kwargs = self._parse_function_call(node)
             try:
@@ -575,7 +575,7 @@ class EVSParser(abc.ABC):
             except AttributeError:
                 raise EVSAttributeError(node, game_object.__name__, attr)
             except Exception as e:
-                raise EVSValueError(node, f"Error occurred in GameObject method call:\n    {str(e)}")
+                raise EVSValueError(node, f"Error occurred in GameObjectInt method call:\n    {str(e)}")
 
         if not isinstance(node.func, ast.Name):
             raise EVSSyntaxError(node, "Function must be a name.")
@@ -621,7 +621,7 @@ class EVSParser(abc.ABC):
 
         raise EVSSyntaxError(
             node,
-            f"Name {repr(name)} cannot be called in an expression. Only instructions and GameObject\n"
+            f"Name {repr(name)} cannot be called in an expression. Only instructions and GameObjectInt\n"
             f"methods can be called outside of assignments and argument values.",
         )
 
@@ -849,7 +849,7 @@ class EVSParser(abc.ABC):
         # 5. The condition is a 'compilable' game object in the global namespace that requires no arguments.
         if isinstance(node, (ast.Attribute, ast.Name)):
             game_object = self._parse_nodes(node)  # This will raise an EmevdNameError if the name is invalid.
-            if not isinstance(game_object, GameObject):
+            if not isinstance(game_object, GameObjectInt):
                 raise EVSValueError(
                     node.lineno, f"Only (some) `GameObjectObject` subclasses are directly testable."
                 )
@@ -1121,10 +1121,10 @@ class EVSParser(abc.ABC):
         # Constant / Event Argument
         if isinstance(node, (ast.Attribute, ast.Name)):
             game_object = self._parse_nodes(node)  # This will raise an `EmevdNameError` if the name is invalid.
-            if not isinstance(game_object, GameObject):
+            if not isinstance(game_object, GameObjectInt):
                 raise EVSValueError(
                     node.lineno,
-                    f"Only (some) `GameObject` subclasses are directly testable, not {type(game_object).__name__}.",
+                    f"Only (some) `GameObjectInt` subclasses are directly testable, not {type(game_object).__name__}.",
                 )
             elif isinstance(game_object, FlagRange):
                 raise EVSValueError(
@@ -1701,7 +1701,7 @@ def _parse_event_arguments(
     """Parse argument nodes of given event function node and return:
         - dictionary mapping argument names to `(write_offset, size)` tuples for creating `EventArgRepl` instances
         - event's argument format string, e.g. `"iIIBh"`
-        - dictionary mapping argument names (where applicable) to `GameObject` subclasses
+        - dictionary mapping argument names (where applicable) to `GameObjectInt` subclasses
     """
     arg_names = []  # type: list[str]
     arg_types = ""
@@ -1727,7 +1727,7 @@ def _parse_event_arguments(
         arg_type_node = arg_node.annotation
 
         if isinstance(arg_type_node, ast.BinOp):
-            # `{GameObject} | int` type hints are accepted (but no others).
+            # `{GameObjectInt} | int` type hints are accepted (but no others).
             if not isinstance(arg_type_node.op, ast.BitOr):
                 raise EVSSyntaxError(
                     event_node,

@@ -14,7 +14,7 @@ import typing as tp
 
 from soulstruct.base.game_types.game_enums_manager import GameEnumsManager
 from soulstruct.base.events.emevd.enums import BaseEMEVDFlags
-from soulstruct.base.game_types import GameObject
+from soulstruct.base.game_types import GameObjectInt
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -109,7 +109,7 @@ def _process_arg_types(
             # All union types should be `MapEntity` subclasses; this will be enforced by the checkout method
             # below (invalid types will have no entity ID dictionaries).
 
-        if union_types or issubclass(arg_type, GameObject):
+        if union_types or issubclass(arg_type, GameObjectInt):
 
             if arg_value == 10000:
                 args[arg_name] = Variable("PLAYER")

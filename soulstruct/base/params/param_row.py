@@ -21,7 +21,7 @@ from dataclasses import dataclass, field
 from enum import IntEnum
 from types import MappingProxyType
 
-from soulstruct.base.game_types import GAME_TYPE
+from soulstruct.base.game_types import GAME_INT_TYPE
 from soulstruct.base.params.paramdef.field_types import base_type
 from soulstruct.utilities.binary import *
 
@@ -43,7 +43,7 @@ class DynamicParamField(abc.ABC):
     POSSIBLE_TYPES = set()
 
     @abc.abstractmethod
-    def __call__(self, data: ParamRow) -> tuple[GAME_TYPE, str, str]:
+    def __call__(self, data: ParamRow) -> tuple[GAME_INT_TYPE, str, str]:
         ...
 
 
@@ -214,9 +214,9 @@ class ParamFieldMetadata:
     """Not a `NamedTuple` as it may be modified with defaults."""
     internal_name: str
     param_enum: tp.Type[base_type] = None
-    game_type: GAME_TYPE = None
+    game_type: GAME_INT_TYPE = None
     hide: bool = False
-    dynamic_callback: DynamicParamField | tp.Callable[[ParamRow], tuple[GAME_TYPE, str, str]] | None = None
+    dynamic_callback: DynamicParamField | tp.Callable[[ParamRow], tuple[GAME_INT_TYPE, str, str]] | None = None
     tooltip: str = "TOOLTIP-TODO"
     is_pad: bool = False
 
@@ -225,7 +225,7 @@ def ParamField(
     field_type: tp.Type[PRIMITIVE_FIELD_TYPING],
     internal_name: str,
     param_enum: tp.Type[base_type] = None,
-    game_type: GAME_TYPE = None,
+    game_type: GAME_INT_TYPE = None,
     length: int | None = None,
     encoding: str = None,
     bit_count: int = -1,

@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import typing as tp
 
-from soulstruct.base.game_types import BaseParam, GAME_TYPE
+from soulstruct.base.game_types import BaseParam, GAME_INT_TYPE
 from soulstruct.base.params.param_row import ParamRow, ParamFieldMetadata
 from soulstruct.base.project.editors.base_editor import EntryRow
 from soulstruct.base.project.editors.field_editor import FieldRow, BaseFieldEditor
@@ -253,7 +253,7 @@ class ParamsEditor(BaseFieldEditor):
                 raise ValueError("No params category selected.")
         return self.params.get_param(category)[entry_id]
 
-    def get_field_display_info(self, field_dict: ParamRow, field_name) -> tuple[str, bool, GAME_TYPE, str]:
+    def get_field_display_info(self, field_dict: ParamRow, field_name) -> tuple[str, bool, GAME_INT_TYPE, str]:
         field_metadata = field_dict.get_field_metadata(field_name)  # type: ParamFieldMetadata
         if field_metadata.dynamic_callback:
             game_type, suffix, tooltip = field_metadata.dynamic_callback(field_dict)

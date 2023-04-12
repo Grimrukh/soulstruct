@@ -25,7 +25,7 @@ from functools import wraps
 from .exceptions import NoSkipOrReturnError, NoNegateError
 
 if tp.TYPE_CHECKING:
-    from soulstruct.base.game_types import GAME_TYPE
+    from soulstruct.base.game_types import GAME_INT_TYPE
     from soulstruct.utilities.binary import BinaryReader
 
 _LOGGER = logging.getLogger(__name__)
@@ -101,9 +101,9 @@ class EventArgumentData:
     specified with properly type-annotated event arguments.
     """
     offset_tuple: tuple[int, int]
-    arg_class: tp.Optional[GAME_TYPE]
+    arg_class: tp.Optional[GAME_INT_TYPE]
 
-    def __init__(self, offset_tuple: tuple[int, int], arg_class: tp.Optional[GAME_TYPE] = None):
+    def __init__(self, offset_tuple: tuple[int, int], arg_class: tp.Optional[GAME_INT_TYPE] = None):
         self.offset_tuple = offset_tuple
         self.arg_class = arg_class
 

@@ -72,7 +72,7 @@ class GameEnumsManager(abc.ABC):
         missing_enum_game_types: str
         enum_value: int
 
-        def __init__(self, game_types: tp.Sequence[GAME_TYPE], enum_value: int):
+        def __init__(self, game_types: tp.Sequence[GAME_INT_TYPE], enum_value: int):
             self.missing_enum_game_types = "Any" if not game_types else " | ".join(gt.__name__ for gt in game_types)
             self.enum_value = enum_value
             super().__init__(f"Missing `{self.missing_enum_game_types}` enum value: {enum_value}")
@@ -80,14 +80,14 @@ class GameEnumsManager(abc.ABC):
     class AmbiguousEnumValueError(EnumManagerError):
         """Indicates a specific enum value was found in multiple NON-STAR modules, and should not be used."""
 
-    # List of `GameObject` types that are valid enum keys (e.g. can appear as EMEVD instruction/event arguments).
-    VALID_GAME_TYPES: dict[GAME_TYPE, dict[int, GameObject]]
+    # List of `GameObjectInt` types that are valid enum keys (e.g. can appear as EMEVD instruction/event arguments).
+    VALID_GAME_TYPES: dict[GAME_INT_TYPE, dict[int, GameObjectInt]]
 
     # Maps module stems (e.g. 'm10_01_00_00_enums') to dictionaries mapping game types to `{value: GameEnumInfo}`
     # dictionaries. When an enum is checked out, a 'star_module' can be passed, which will be checked first. If the
     # enum is not found there, the other modules will be checked; if found THERE, only the used enum names will be
     # imported into EVS from that non-star module.
-    enums: dict[str, dict[GAME_TYPE, dict[int, GameEnumInfo]]]
+    enums: dict[str, dict[GAME_INT_TYPE, dict[int, GameEnumInfo]]]
     all_event_ids: list[int]
     all_common_event_ids: list[int]
 
@@ -146,12 +146,12 @@ class GameEnumsManager(abc.ABC):
         return inspect.getmembers(
             module,
             lambda o: (
-                inspect.isclass(o) and issubclass(o, GameObject)
+                inspect.isclass(o) and issubclass(o, GameObjectInt)
                 and (not o.__module__ or o.__module__.endswith(module_name))
             )
         )
 
-    def _check_existing_enum_value(self, module_name: str, game_type: GAME_TYPE, enum_member: IntEnum):
+    def _check_existing_enum_value(self, module_name: str, game_type: GAME_INT_TYPE, enum_member: IntEnum):
         """Checks if this `enum_member.value` already exists ANYWHERE in any modules."""
         if enum_member.value not in self.all_enum_values:
             self.all_enum_values[enum_member.value] = (module_name, game_type, enum_member.__class__)
@@ -178,7 +178,7 @@ class GameEnumsManager(abc.ABC):
     def _parse_game_type_enum(
         self,
         module_name: str,
-        game_type: GAME_TYPE,
+        game_type: GAME_INT_TYPE,
         enum_member: IntEnum,
     ):
         if issubclass(game_type, MapEntity):
@@ -194,10 +194,10 @@ class GameEnumsManager(abc.ABC):
         enum_dict[enum_member.value] = GameEnumInfo(enum_member, module_name)
 
     def _load_module(self, module_name: str, module: ModuleType):
-        """Iterate over all `GameObject`-inheriting classes in `module` and register their IDs and values."""
+        """Iterate over all `GameObjectInt`-inheriting classes in `module` and register their IDs and values."""
         self.enums[module_name] = {}  # reset
         for game_enum_name, game_enum_class in self._get_module_members(module_name, module):
-            game_enum_class: GAME_TYPE | tp.Iterable
+            game_enum_class: GAME_INT_TYPE | tp.Iterable
 
             match_found = False
             for enum_member in game_enum_class:
@@ -216,7 +216,7 @@ class GameEnumsManager(abc.ABC):
     def check_out_enum(
         self,
         enum_value: int,
-        *game_types: GAME_TYPE | tp.Sequence[GAME_TYPE],
+        *game_types: GAME_INT_TYPE | tp.Sequence[GAME_INT_TYPE],
         star_module_names: tp.Sequence[str] = None,
     ) -> GameEnumInfo:
         """Attempt to check out an enum with one of the given `game_types` and `enum_value`.
@@ -319,7 +319,7 @@ class GameEnumsManager(abc.ABC):
     def check_out_enum_variable(
         self,
         enum_value: int,
-        *game_types: GAME_TYPE | tp.Sequence[GAME_TYPE],
+        *game_types: GAME_INT_TYPE | tp.Sequence[GAME_INT_TYPE],
         star_module_names: tp.Sequence[str] = None,
     ) -> str:
         """Calls `check_out_enum()` but only returns `enum_info.get_variable_string()`."""

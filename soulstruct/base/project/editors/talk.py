@@ -4,6 +4,7 @@ import logging
 import os
 import re
 import typing as tp
+import tkinter as tk
 from pathlib import Path
 
 from soulstruct.base.ezstate.esd.exceptions import ESDScriptError
@@ -378,11 +379,15 @@ class TalkEditor(BaseEditor):
 
     def _control_f_search(self, _):
         if self.selected_map_id:
-            highlighted = self.esp_editor.selection_get()
-            self.string_to_find.var.set(highlighted)
-            self.string_to_find.select_range(0, "end")
-            self.string_to_find.icursor("end")
-            self.string_to_find.focus_force()
+            try:
+                highlighted = self.esp_editor.selection_get()
+            except tk.TclError:  # no selection: just focus on find box
+                self.string_to_find.focus_force()
+            else:
+                self.string_to_find.var.set(highlighted)
+                self.string_to_find.select_range(0, "end")
+                self.string_to_find.icursor("end")
+                self.string_to_find.focus_force()
 
     def _highlight_error(self, lineno):
         self.esp_editor.mark_set("insert", f"{lineno}.0")

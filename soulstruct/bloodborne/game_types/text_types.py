@@ -32,7 +32,7 @@ __all__ = [
 from enum import IntEnum
 import typing as tp
 
-from soulstruct.base.game_types import GameObject, Text
+from soulstruct.base.game_types import GameObjectInt, Text
 from .map_types import CoordEntityTyping
 
 if tp.TYPE_CHECKING:
@@ -232,7 +232,7 @@ class Subtitle(Text):
 # TODO: I haven't yet bothered with classes for internal text types.
 
 
-class StringOffset(GameObject, IntEnum):
+class StringOffset(GameObjectInt):
     """Simple enum for string offsets to be passed to certain EMEVD instructions in later games.
 
     You are very unlikely to use those instructions, and hence this type.

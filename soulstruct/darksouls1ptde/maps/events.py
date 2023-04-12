@@ -200,10 +200,10 @@ class MSBSpawnerEvent(MSBEvent):
     max_interval: float = 1.0
     initial_spawn_count: int = 1
     spawn_parts: list[MSBPart] = field(
-        default_factory=lambda: [None] * 32, **MapFieldInfo(game_type=GameObjectSequence((Character, 32)))
+        default_factory=lambda: [None] * 32, **MapFieldInfo(game_type=GameObjectIntSequence((Character, 32)))
     )
     spawn_regions: list[MSBRegion] = field(
-        default_factory=lambda: [None] * 4, **MapFieldInfo(GameObjectSequence((Region, 4)))
+        default_factory=lambda: [None] * 4, **MapFieldInfo(GameObjectIntSequence((Region, 4)))
     )
 
     _spawn_parts_indices: list[int] = field(default=None, **BinaryArray(32))

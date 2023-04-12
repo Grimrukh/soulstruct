@@ -227,6 +227,12 @@ class FMG(GameFile):
 
         return writer
 
+    def to_dict(self, sort=True) -> dict:
+        """Optionally (and by default) sorts text entries before converting to dictionary."""
+        if sort:
+            self.sort()
+        return super(GameFile, self).to_dict()
+
     def __getitem__(self, index: int):
         return self.entries[index]
 

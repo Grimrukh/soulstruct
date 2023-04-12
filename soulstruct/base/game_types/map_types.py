@@ -69,9 +69,9 @@ __all__ = [
 ]
 
 import typing as tp
-from enum import IntEnum, unique
+from enum import unique
 
-from .basic_types import GameObject
+from .basic_types import GameObject, GameObjectInt
 
 
 class Map(GameObject):
@@ -209,33 +209,16 @@ class MapEntry(GameObject):
 
 
 @unique
-class MapEntity(MapEntry, IntEnum):
+class MapEntity(MapEntry, GameObjectInt):
     """Any MSB entry with an entity ID (enum values)."""
 
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False) -> [str, str]:
         raise NotImplementedError
 
-    @classmethod
-    def auto_generate(cls, ranges: dict[tp.Type[MapEntity], tuple[int, int]], count: int, map_range_start: int):
-        """Get value for `auto()`.
-
-        Raises `TypeError` if not valid for this class, and `NotImplementedError` if not implemented for given `game`.
-        """
-        start_value, max_value = ranges[cls]
-        value = map_range_start + start_value + count
-        if value > map_range_start + max_value:
-            raise ValueError(f"Too many members in `{cls.__name__}` for `auto()` range `({start_value}, {max_value})`.")
-        return value
-
-    # noinspection PyMethodOverriding
-    @staticmethod
-    def _generate_next_value_(name, start, count, last_values):
-        raise ValueError("Cannot use `auto()` for this `MapEntity` subclass.")
-
 
 # region MODELS
-class MapModel(MapEntry):
+class MapModel(MapEntry, GameObjectInt):
     """3D model ID of something."""
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):

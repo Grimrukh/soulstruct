@@ -186,9 +186,9 @@ class MSBSpawnerEvent(MSBEvent):
     max_interval: float = 1.0
     initial_spawn_count: int = 1
     spawn_parts: list[MSBPart] = field(
-        default_factory=lambda: [None] * 32, **MapFieldInfo(game_type=GameObjectSequence((Character, 32))))
+        default_factory=lambda: [None] * 32, **MapFieldInfo(game_type=GameObjectIntSequence((Character, 32))))
     spawn_regions: list[MSBRegion] = field(
-        default_factory=lambda: [None] * 8, **MapFieldInfo(GameObjectSequence((Region, 8))))
+        default_factory=lambda: [None] * 8, **MapFieldInfo(GameObjectIntSequence((Region, 8))))
 
     _spawn_parts_indices: list[int] = field(default=None, **BinaryArray(32))
     _spawn_regions_indices: list[int] = field(default=None, **BinaryArray(8))
@@ -302,7 +302,7 @@ class MSBPatrolRouteEvent(MSBEvent):
 
     unk_x00_x04: int = -1
     patrol_regions: list[MSBRegion] = field(
-        default_factory=lambda: [None] * 32, **MapFieldInfo(game_type=GameObjectSequence((Region, 32))))
+        default_factory=lambda: [None] * 32, **MapFieldInfo(game_type=GameObjectIntSequence((Region, 32))))
 
     _patrol_regions_indices: list[int] = field(default=None, **BinaryArray(32))
 
@@ -345,9 +345,9 @@ class MSBPlatoonEvent(MSBEvent):
         _platoon_parent_indices: list[int] = field(**BinaryArray(2))
 
     platoon_characters: list[MSBCharacter] = field(
-        default_factory=lambda: [None] * 30, **MapFieldInfo(game_type=GameObjectSequence((Character, 30))))
+        default_factory=lambda: [None] * 30, **MapFieldInfo(game_type=GameObjectIntSequence((Character, 30))))
     platoon_parents: list[MSBPart] = field(
-        default_factory=lambda: [None] * 2, **MapFieldInfo(game_type=GameObjectSequence((MapPart, 2))))
+        default_factory=lambda: [None] * 2, **MapFieldInfo(game_type=GameObjectIntSequence((MapPart, 2))))
     platoon_id_script_active: int = -1
     state: int = -1
 

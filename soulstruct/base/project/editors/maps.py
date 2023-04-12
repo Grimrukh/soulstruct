@@ -10,7 +10,7 @@ import typing as tp
 from types import ModuleType
 
 from soulstruct.exceptions import InvalidFieldValueError
-from soulstruct.base.game_types import GAME_TYPE, GameObject, GameObjectSequence
+from soulstruct.base.game_types import GAME_TYPE, GAME_INT_TYPE, GameObjectInt, GameObjectIntSequence
 from soulstruct.base.game_types.map_types import *
 from soulstruct.base.maps.msb.enums import MSBSupertype, BaseMSBModelSubtype, BaseMSBRegionSubtype
 from soulstruct.base.maps.msb.models import BaseMSBModel
@@ -133,8 +133,8 @@ class MapEntryRow(EntryRow):
 
         # For converting to Python scripting.
         self.context_menu.add_command(
-            label="Copy as Python Instance",
-            command=lambda: self.master.copy_python_instance_text(self.row_index),
+            label="Copy Python Constructor",
+            command=lambda: self.master.copy_python_constructor_text(self.row_index),
         )
 
 
@@ -201,8 +201,8 @@ class MapFieldRow(FieldRow):
 
     # region Value Update Methods
 
-    def _update_field_GameObject(self, value):
-        """Adds any recognized `GameObject` names as hints."""
+    def _update_field_GameObjectInt(self, value):
+        """Adds any recognized `GameObjectInt` names as hints."""
         try:
             self.field_links = self.master.get_field_links(self.field_type, value)
         except ValueError:
@@ -301,12 +301,12 @@ class MapFieldRow(FieldRow):
         """For linked fields, adds an option to select an entry name from the linked table."""
         self.context_menu.delete(0, "end")
 
-        if issubclass(self.field_type, GameObject):
+        if issubclass(self.field_type, GameObjectInt):
             for field_link in self.field_links:
                 field_link.add_to_context_menu(self.context_menu)
             if issubclass(self.field_type, MapEntry):
                 self.context_menu.add_command(
-                    label="Select linked entry name from list", command=self.choose_linked_map_entry
+                    label="Select linked entry from list", command=self.choose_linked_map_entry
                 )
             if self.field_type == self.master.GAME_TYPES_MODULE.CharacterModel:
                 self.context_menu.add_command(
@@ -344,12 +344,9 @@ class MapFieldRow(FieldRow):
                     self._add_copy_option(copy_menu, **kwargs, y_offset=-0.1)
                 self.context_menu.add_cascade(label="Copy from hook...", foreground="#FFF", menu=copy_menu)
 
-        if issubclass(self.field_type, GameObjectSequence):
+        if issubclass(self.field_type, GameObjectIntSequence):
             self.context_menu.add_command(
-                label=f"Edit sequence names in popout box",
-                command=lambda: self.master.popout_sequence_name_edit(
-                    self.field_name, self.field_nickname, self.field_type.game_object_type
-                ),
+                label="Select linked entries from list", command=self.choose_linked_map_entries
             )
             if self.field_type.game_object_type is Region:
                 # Option to add a point to a list of Points, based on current player translate/rotate.
@@ -375,28 +372,96 @@ class MapFieldRow(FieldRow):
         # Wait for user to select entry name.
         selected_name = NameSelectionBox(self.master, display_names).go()
 
-        if selected_name is not None:
-            selected_entry = entries[display_names.index(selected_name)]
-            self.field_links = self.master.linker.soulstruct_link(self.field_type, selected_entry)
+        if selected_name is None:
+            # User cancelled.
+            return
+
+        selected_entry = entries[display_names.index(selected_name)]
+        self.field_links = self.master.linker.soulstruct_link(self.field_type, selected_entry)
+        # noinspection PyTypeChecker
+        entry_link = self.field_links[0]  # type: MapsLink
+        if not entry_link.entry:
+            # Shouldn't be possible.
+            selected_name = selected_name + "  {BROKEN LINK}"
+            self.link_missing = True
+            self.master.CustomDialog(
+                title="Map Link Error",
+                message="Map link was broken after selecting map entry from list. This should not happen; "
+                "please try restarting Soulstruct, and inform Grimrukh if the problem persists.",
+            )
+            selected_entry = None
+        else:
+            self.link_missing = False
+            selected_entry = entry_link.entry
+
+        self.master.change_field_value(self.field_name, selected_entry)
+        self.value_label.var.set(selected_name)  # already includes any model tail we want
+        self.build_field_context_menu()
+
+    def choose_linked_map_entries(self):
+        """NOTE: Currently assumes that `game_object_type` is specifically a `MapEntry` subclass."""
+        if not issubclass(self.field_type, GameObjectIntSequence):
+            return  # option shouldn't even appear
+
+        msb_entry = self.master.get_selected_field_dict()
+        current_sequence = msb_entry[self.field_name]
+        current_names = [e.name if e else "" for e in current_sequence]
+        valid_entries = [
+            entry for entry in self.master.linker.get_map_entry_subtype_list(self.field_type.game_object_type)
+            if not entry.name.startswith("_EnvironmentEvent")  # exclude all these (too many)
+        ]
+        valid_display_names = [e.name for e in valid_entries]
+
+        try:
+            new_names = SequenceNameEditBox(
+                self.master,
+                initial_names=current_names,
+                valid_names=valid_display_names,
+                window_title=f"Editing {self.field_nickname}",
+            ).go()
+        except Exception as ex:
+            _LOGGER.error(ex, exc_info=True)
+            return self.master.CustomDialog(
+                "Sequence Name Error",
+                f"Error occurred while setting sequence entries:\n\n{ex}",
+            )
+
+        if new_names is None:
+            # User cancelled.
+            return
+
+        selected_entries = []
+        label_names = []
+        for name in new_names:
+            if not name:  # empty sequence entry
+                selected_entries.append(None)
+                label_names.append("None")
+                continue
+
+            selected_entry = valid_entries[valid_display_names.index(name)]
+            self.field_links = self.master.linker.soulstruct_link(self.field_type.game_object_type, selected_entry)
             # noinspection PyTypeChecker
             entry_link = self.field_links[0]  # type: MapsLink
             if not entry_link.entry:
                 # Shouldn't be possible.
-                selected_name = selected_name + "  {BROKEN LINK}"
+                label_names.append("None")
                 self.link_missing = True
                 self.master.CustomDialog(
                     title="Map Link Error",
                     message="Map link was broken after selecting map entry from list. This should not happen; "
-                    "please try restarting Soulstruct, and inform Grimrukh if the problem persists.",
+                            "please try restarting Soulstruct, and inform Grimrukh if the problem persists.",
                 )
                 selected_entry = None
             else:
                 self.link_missing = False
                 selected_entry = entry_link.entry
+                label_names.append(selected_entry.name)
+            selected_entries.append(selected_entry)
 
-            self.master.change_field_value(self.field_name, selected_entry)
-            self.value_label.var.set(selected_name)  # already includes any model tail we want
-            self.build_field_context_menu()
+        self.master.change_field_value(self.field_name, selected_entries)
+        self.update_field_value_display(selected_entries)
+        # self.value_label.var.set(f"[{', '.join(label_names)}]")  # same display string that `GameObjectIntSequence` uses
+        self.build_field_context_menu()
 
     def choose_character_model(self):
         if not issubclass(self.field_type, self.master.GAME_TYPES_MODULE.CharacterModel):
@@ -690,7 +755,7 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
         self.refresh_entries()
         return deleted_entry
 
-    def copy_python_instance_text(self, row_index: int, category=None):
+    def copy_python_constructor_text(self, row_index: int, category=None):
         """Copies valid string representation of given entry to clipboard."""
         if row_index is None:
             self.bell()
@@ -754,7 +819,13 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
         field_value = self.get_field_dict(self.get_entry_id(self.active_row_index))[field_row.field_name]
 
         if issubclass(field_type, MapEntry):
+            # Pop-out editor to choose a map entry.
             field_row.choose_linked_map_entry()
+            return None
+
+        if issubclass(field_type, GameObjectIntSequence) and issubclass(field_type.game_object_type, MapEntry):
+            # Pop-out editor to choose multiple map entries.
+            field_row.choose_linked_map_entries()
             return None
 
         if issubclass(field_type, Vector3):
@@ -767,18 +838,6 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
                 sticky="ew",
                 width=5,
                 column="xyz".index(self.e_coord),
-            )
-
-        if issubclass(field_type, MapEntry):
-            field_value: MSBEntry
-            initial_text = field_value.name
-            return self.Entry(
-                field_row.value_box,
-                initial_text=initial_text,
-                integers_only=field_type == int,
-                numbers_only=field_type == float,
-                sticky="ew",
-                width=5,
             )
 
         if issubclass(field_type, GroupBitSet):
@@ -964,7 +1023,7 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
         """NOTE: Includes hidden fields (which are filtered by caller if option set)."""
         return field_dict.get_field_names() if field_dict else ()
 
-    def get_field_links(self, field_type: GAME_TYPE, field_value, valid_null_values=None) -> list:
+    def get_field_links(self, field_type: GAME_INT_TYPE, field_value, valid_null_values=None) -> list:
         """Game subclasses can override this to support more link types."""
         if valid_null_values is None:
             valid_null_values = {0: "Default/None", -1: "Default/None"}

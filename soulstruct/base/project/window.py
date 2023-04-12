@@ -856,14 +856,14 @@ class ProjectWindow(SmartFrame, abc.ABC):
 
     @property
     def current_data_type(self) -> ProjectDataType | None:
-        """Return name of current tab's data type (or None if not data type is connected to the active tab)."""
+        """Return current tab's data type (or None if no data type is associated with the active tab)."""
         tab_index = self.page_tabs.index(self.page_tabs.select())
         tab_name = self.ordered_tabs[tab_index]
         if tab_name == "runtime":
             return None
         if tab_name == "enums":
             return ProjectDataType.Enums
-        return ProjectDataType.Maps
+        return ProjectDataType(tab_name)
 
     def set_global_map_choice(self, map_id, ignore_tabs: tp.Sequence[ProjectDataType] = ()):
         if ProjectDataType.Maps not in self.project.DATA_TYPES:
@@ -951,6 +951,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         self.project.save_all()
 
     def _save_data(self, data_type: ProjectDataType, mimic_click=False, single_script_only=False):
+        _LOGGER.info(f"Saving {data_type.name} data...")
         if data_type == ProjectDataType.Events:
             # Saves '.evs.py' file(s) to project 'events' directory.
             self.events_tab.save_selected_evs() if single_script_only else self.events_tab.save_all_evs()
@@ -984,6 +985,8 @@ class ProjectWindow(SmartFrame, abc.ABC):
         ) != 0:
             return
 
+        _LOGGER.info(f"Reloading {data_type.name} data...")
+
         if data_type == ProjectDataType.Events:
             # No need to reload `EventDirectory` instance.
             self.events_tab.scan_evs_files()
@@ -1011,6 +1014,8 @@ class ProjectWindow(SmartFrame, abc.ABC):
 
         if mimic_click:
             self.mimic_click(self.export_all_button)
+
+        _LOGGER.info("Exporting all data...")
 
         try:
             self._thread_with_loading_dialog(
@@ -1043,6 +1048,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 self.events_tab.export_selected_evs(export_directory)
                 if mimic_click:
                     self.mimic_click(self.export_tab_button)
+                _LOGGER.info("Exporting selected event script...")
                 return
             elif data_type == ProjectDataType.Talk:
                 # All talk scripts in selected map are exported.
@@ -1052,6 +1058,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 self.talk_tab.export_all_in_map(export_directory)
                 if mimic_click:
                     self.mimic_click(self.export_tab_button)
+                _LOGGER.info("Exporting selected talk script...")
                 return
             # Otherwise, ignore `single_script_only` argument.
 
@@ -1059,6 +1066,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             self.mimic_click(self.export_tab_button)
 
         export_func = getattr(self.project, f"export_{data_type.name}")
+        _LOGGER.info(f"Exporting {data_type.name} data...")
 
         try:
             self._thread_with_loading_dialog(

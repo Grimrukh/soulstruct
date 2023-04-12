@@ -9,7 +9,9 @@ from ast import literal_eval
 from enum import IntEnum
 
 from soulstruct.exceptions import InvalidFieldValueError
-from soulstruct.base.game_types import GAME_TYPE, GameObject, GameObjectSequence, MapEntry, BaseParam
+from soulstruct.base.game_types import (
+    GAME_INT_TYPE, GameObjectInt, GameObjectIntSequence, MapEntry, BaseParam
+)
 from soulstruct.base.project.editors.base_editor import BaseEditor
 from soulstruct.base.project.links import WindowLinker
 from soulstruct.base.project.utilities import bind_events, NumberEditBox
@@ -22,7 +24,7 @@ if tp.TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-FieldTypeTyping = tp.Union[GAME_TYPE, tp.Type[GameObjectSequence], type, tp.Iterable]
+FieldTypeTyping = tp.Union[GAME_INT_TYPE, tp.Type[GameObjectIntSequence], type, tp.Iterable]
 
 
 class FieldRow:
@@ -170,10 +172,10 @@ class FieldRow:
         self.tooltip.text = f"{self.field_nickname}: {self.field_docstring}"
         self.unhide()
 
-    def _update_field_GameObjectSequence(self, value):
+    def _update_field_GameObjectIntSequence(self, value):
         if self.field_type.count != len(value):
             raise ValueError(
-                f"Length of value {value} does not match number of objects in `GameObjectSequence` for field "
+                f"Length of value {value} does not match number of objects in `GameObjectIntSequence` for field "
                 f"{self.field_name}."
             )
         self.field_links = []
@@ -183,7 +185,7 @@ class FieldRow:
         valid_count = sum(v is not None for v in value)
         self._set_linked_value_label(f"<{valid_count} entries>", multiple_hint="{MULTIPLE}")
 
-    def _update_field_GameObject(self, value):
+    def _update_field_GameObjectInt(self, value):
         self.field_links = self.master.get_field_links(self.field_type, value)
         self._update_field_int(value)
 
@@ -235,15 +237,15 @@ class FieldRow:
         # Try a super-type method.
         if issubclass(self.field_type, str):
             return self._set_linked_value_label
-        if issubclass(self.field_type, GameObjectSequence):
-            return self._update_field_GameObjectSequence
-        if issubclass(self.field_type, GameObject):
-            return self._update_field_GameObject
+        if issubclass(self.field_type, GameObjectIntSequence):
+            return self._update_field_GameObjectIntSequence
+        if issubclass(self.field_type, GameObjectInt):
+            return self._update_field_GameObjectInt
         if issubclass(self.field_type, IntEnum):
             return self._update_field_IntEnum
 
         raise AttributeError(
-            f"Could not find field update method '_update_field_{field_type_name}' or a superclass."
+            f"Could not find field update method '_update_field_{field_type_name}' or a superclass.\n"
             f"    Field: {self.field_name}")
 
     def _set_linked_value_label(self, value_text, multiple_hint="{AMBIGUOUS}"):
@@ -260,7 +262,7 @@ class FieldRow:
 
     def _set_field_fg(self, value):
         """Color field text ('fg') depending on whether value is some default that shouldn't draw attention."""
-        if issubclass(self.field_type, GameObject):
+        if issubclass(self.field_type, (GameObjectInt, GameObjectIntSequence)):
             self.field_name_label["fg"] = self.master.FIELD_NAME_FG
             self.value_label["fg"] = self.master.FIELD_NAME_FG_GAME_TYPE
         elif self._is_default(self.field_type, value, self.field_nickname):
@@ -300,7 +302,10 @@ class FieldRow:
     def editable(self):
         return self.active_value_widget is self.value_label
 
-    def _string_to_GameObjectSequence(self, string):
+    def _string_to_GameObjectIntSequence(self, string):
+        """TODO: Not sure what uses this anymore, as Maps tab handles all MapEntry sequences with a pop-out.
+            But a new class field that's a list of non-MapEntry ints or strings could theoretically use it...
+        """
         try:
             new_value = literal_eval(string)
             if isinstance(new_value, tuple):
@@ -315,21 +320,15 @@ class FieldRow:
                 continue  # None is valid for any type.
             if issubclass(game_object_type, BaseParam) and not isinstance(new_value_i, int):
                 raise ValueError(f"Found non-integer {game_object_type} value in sequence: {new_value_i}")
-            elif issubclass(game_object_type, MapEntry) and not isinstance(new_value_i, str):
-                raise ValueError(f"Found non-string {game_object_type} name in sequence: {new_value_i}")
         return new_value
 
-    def _string_to_GameObject(self, string):
-        # Assume all non-`MapEntry` fields use integers (e.g. `BaseParam`, `Text`).
-        if issubclass(self.field_type, MapEntry):
-            return string
-        else:
-            try:
-                return int(string)
-            except ValueError:
-                raise InvalidFieldValueError(
-                    f"Value of field {self.field_nickname} must be an integer ({self.field_type})."
-                )
+    def _string_to_GameObjectInt(self, string):
+        try:
+            return int(string)
+        except ValueError:
+            raise InvalidFieldValueError(
+                f"Value of field {self.field_nickname} must be an integer ({self.field_type})."
+            )
 
     def _string_to_int(self, string):
         if not string.strip("-"):
@@ -380,10 +379,11 @@ class FieldRow:
         # Try a super-type method.
         if issubclass(self.field_type, str):
             return lambda value: value
-        if issubclass(self.field_type, GameObjectSequence):
-            return self._string_to_GameObjectSequence
-        if issubclass(self.field_type, GameObject):
-            return self._string_to_GameObject
+        if issubclass(self.field_type, GameObjectIntSequence):
+            return self._string_to_GameObjectIntSequence
+        if issubclass(self.field_type, GameObjectInt):
+            return self._string_to_GameObjectInt
+        # NOTE: There is no `_string_to_GameObject` method for non-int game types. These must be handled manually.
         if issubclass(self.field_type, IntEnum):
             raise NotImplementedError
 
@@ -784,7 +784,7 @@ class BaseFieldEditor(BaseEditor, abc.ABC):
     def _get_field_edit_widget(self, row_index):
         """Create and return `Entry` widget for editing a field value.
 
-        Should not be called for "(select to edit)" field types (`GameObjectSequence`).
+        Should not be called for "(select to edit)" field types (`GameObjectIntSequence`).
         """
         field_row = self.field_rows[row_index]
         if not field_row.editable:

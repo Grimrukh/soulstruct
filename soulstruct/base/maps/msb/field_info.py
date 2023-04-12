@@ -4,7 +4,7 @@ __all__ = ["MapFieldMetadata", "MapFieldInfo", "FIELD_INFO"]
 
 from dataclasses import dataclass
 
-from soulstruct.base.game_types import GAME_TYPE
+from soulstruct.base.game_types import GAME_INT_TYPE
 
 
 @dataclass(slots=True)
@@ -18,11 +18,11 @@ class MapFieldMetadata:
     """
     nickname: str = ""
     tooltip: str = ""
-    game_type: GAME_TYPE = None
+    game_type: GAME_INT_TYPE = None
 
 
 def MapFieldInfo(
-    nickname="", tooltip="", game_type: GAME_TYPE = None
+    nickname="", tooltip="", game_type: GAME_INT_TYPE = None
 ) -> dict[str, dict[str, MapFieldMetadata]]:
     """Convenience generator for use with ** in `field()`."""
     return {"metadata": {"msb": MapFieldMetadata(nickname, tooltip, game_type)}}

@@ -189,8 +189,8 @@ class TkTextEditor(tk.Text):
         self.bind("<Home>", self._home_key)
         self.bind("<Control-slash>", self._toggle_comment)
         self.bind("<Control-BackSpace>", self._delete_word)
-        self.bind("<less>", self._decrease_font_size)
-        self.bind("<greater>", self._increase_font_size)
+        self.bind("<Control-less>", self._decrease_font_size)
+        self.bind("<Control-greater>", self._increase_font_size)
 
     def _callback(self, result, *args):
         if self.callback:
@@ -628,7 +628,8 @@ class SequenceNameEditBox(SmartFrame):
                         self.Entry(initial_text=name, width=self._width)
                     )
                     if self._valid_names:
-                        self.Button(text=f"Choose Name", width=12, bg="#422", command=lambda: self.select_name(i))
+                        self.Button(text="Choose Name", width=12, bg="#422", command=lambda i_=i: self.select_name(i_))
+                    self.Button(text="Clear", width=6, bg="#422", command=lambda i_=i: self.clear_name(i_))
             with self.set_master(auto_columns=0, padx=10, pady=10, grid_defaults={"padx": 10}):
                 self.Button(
                     text="Confirm changes", command=lambda: self.done(True), **self.editor.DEFAULT_BUTTON_KWARGS["YES"]
@@ -646,6 +647,9 @@ class SequenceNameEditBox(SmartFrame):
         selected_name = NameSelectionBox(self.master, self._valid_names).go()
         if selected_name is not None:
             self._entries[name_index].var.set(selected_name)
+
+    def clear_name(self, name_index: int):
+        self._entries[name_index].var.set("")
 
     def go(self):
         self.wait_visibility()

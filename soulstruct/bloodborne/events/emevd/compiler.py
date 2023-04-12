@@ -62,8 +62,8 @@ def compile_instruction(instr_name: str, *args, **kwargs) -> list[str]:
 
 
 def compile_game_object_test(
-    game_object_type: GAME_TYPE,
-    game_object: tp.Union[GameObject, tuple],
+    game_object_type: GAME_INT_TYPE,
+    game_object: tp.Union[GameObjectInt, tuple],
     negate=False,
     condition: int = None,
     skip_lines=0,
