@@ -460,7 +460,6 @@ class MapFieldRow(FieldRow):
 
         self.master.change_field_value(self.field_name, selected_entries)
         self.update_field_value_display(selected_entries)
-        # self.value_label.var.set(f"[{', '.join(label_names)}]")  # same display string that `GameObjectIntSequence` uses
         self.build_field_context_menu()
 
     def choose_character_model(self):
@@ -724,7 +723,7 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
         subtype_list = self._get_category_subtype_list()
         source_msb_entry = subtype_list[subtype_index]
         msb_entry = source_msb_entry.copy()
-        msb_entry.name = text if text is None else source_msb_entry.name + " <COPY>"
+        msb_entry.name = text if text is not None else source_msb_entry.name + " <COPY>"
         return self._add_entry(subtype_index + offset, text=msb_entry.name, new_field_dict=msb_entry)
 
     def add_relative_entry_and_copy_player_transform(

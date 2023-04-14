@@ -455,13 +455,13 @@ class EnumsEditor(BaseEditor):
         game_map = self.maps.GET_MAP(self.map_choice_stem)
         module_path = self.enums_directory / f"{game_map.emevd_file_stem}_enums.py"
         if not module_path.is_file():
-            return self.error_dialog("No Entity Module", "Entity module not yet created in project 'events' folder.")
-        evs_path = self.enums_directory / f"{game_map.emevd_file_stem}.evs.py"
-        if not evs_path.is_file():
-            return self.error_dialog("No EVS Script", "EVS script not yet imported into project 'events' folder.")
+            return self.error_dialog(
+                "No Entity Module",
+                f"Entity module for map {game_map} not yet created in project.",
+            )
         sys.path.append(str(module_path.parent))
 
-        try:
+        try:  # test if module is valid Python
             entity_module = import_arbitrary_file(module_path)
         except Exception as ex:
             return self.error_dialog("Import Error", f"Could not import {module_path.name}. Error:\n\n{str(ex)}")
@@ -595,7 +595,7 @@ class EnumsEditor(BaseEditor):
             found_map_entry_class_names.append(attr_name)
             for entity_enum in attr:
                 try:
-                    entry = msb.find_entry_by_entity_id(entity_enum.name, allow_multiple=False)
+                    entry = msb.find_entry_name(entity_enum.name)
                 except ValueError:
                     return self.error_dialog(
                         "Duplicate Entity Names",
