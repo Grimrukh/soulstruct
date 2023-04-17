@@ -193,28 +193,15 @@ class Map(GameObject):
 class MapEntry(GameObject):
     """Anything that appears in an MSB."""
     @classmethod
-    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False) -> [str, str]:
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False) -> tuple[str, str | None]:
         """Returns the pluralized name of the MSB type (e.g. "Parts") and the non-pluralized name of the subtype
-        (e.g. "Character")."""
+        (e.g. "Character") or `None` if this is a supertype."""
         raise NotImplementedError
-
-    @classmethod
-    def get_msb_class_name(cls) -> str:
-        """Returns the name of the Soulstruct MSB class (e.g. "MSBRegionBox").
-
-        By default, this is done by simply prefixing "MSB" to the class name."""
-        if cls.__name__ == "MapEntry":
-            raise NotImplementedError("MapEntry base class has no corresponding non-abstract MSB class.")
-        return f"MSB{cls.__name__}"
 
 
 @unique
 class MapEntity(MapEntry, GameObjectInt):
     """Any MSB entry with an entity ID (enum values)."""
-
-    @classmethod
-    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False) -> [str, str]:
-        raise NotImplementedError
 
 
 # region MODELS
@@ -224,31 +211,26 @@ class MapModel(MapEntry, GameObjectInt):
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
         return "Models", None
 
-    @classmethod
-    def get_msb_class_name(cls) -> str:
-        """All MSB models use the same class."""
-        return "MSBModel"
-
 
 class MapPieceModel(MapModel):
     """Map piece model (e.g. m0000). """
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
-        return ("Models", "MapPieces") if pluralized_subtype else ("Models", "MapPiece")
+        return ("Models", "MapPieceModels") if pluralized_subtype else ("Models", "MapPieceModel")
 
 
 class ObjectModel(MapModel):
     """Object model (e.g. o0000). """
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
-        return ("Models", "Objects") if pluralized_subtype else ("Models", "Object")
+        return ("Models", "ObjectModels") if pluralized_subtype else ("Models", "ObjectModel")
 
 
 class AssetModel(MapModel):
     """Asset model (e.g. o0000). """
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
-        return ("Models", "Assets") if pluralized_subtype else ("Models", "Asset")
+        return ("Models", "AssetModels") if pluralized_subtype else ("Models", "AssetModel")
 
 
 class CharacterModel(MapModel):
@@ -258,28 +240,28 @@ class CharacterModel(MapModel):
     """
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
-        return ("Models", "Characters") if pluralized_subtype else ("Models", "Character")
+        return ("Models", "CharacterModels") if pluralized_subtype else ("Models", "CharacterModel")
 
 
 class PlayerModel(MapModel):
     """Sometimes c0000 is registered as this type instead of a CharacterModel."""
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
-        return ("Models", "Players") if pluralized_subtype else ("Models", "Player")
+        return ("Models", "PlayerModels") if pluralized_subtype else ("Models", "PlayerModel")
 
 
 class CollisionModel(MapModel):
     """Map piece model (e.g. h0000). """
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
-        return ("Models", "Collisions") if pluralized_subtype else ("Models", "Collision")
+        return ("Models", "CollisionModels") if pluralized_subtype else ("Models", "CollisionModel")
 
 
 class NavmeshModel(MapModel):
     """Navmesh model (e.g. n0000). """
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
-        return ("Models", "Navmeshes") if pluralized_subtype else ("Models", "Navmesh")
+        return ("Models", "NavmesheModels") if pluralized_subtype else ("Models", "NavmeshModel")
 # endregion
 
 

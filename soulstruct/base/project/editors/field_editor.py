@@ -10,7 +10,7 @@ from enum import IntEnum
 
 from soulstruct.exceptions import InvalidFieldValueError
 from soulstruct.base.game_types import (
-    GAME_INT_TYPE, GameObjectInt, GameObjectIntSequence, MapEntry, BaseParam
+    GAME_INT_TYPE, GameObjectInt, GameObjectIntSequence, BaseParam
 )
 from soulstruct.base.project.editors.base_editor import BaseEditor
 from soulstruct.base.project.links import WindowLinker
@@ -194,7 +194,7 @@ class FieldRow:
         try:
             enum_name = getattr(self.field_type(value), "name")
         except ValueError:
-            value_text = f"Unknown: {value}"
+            value_text = f"{value} <Unknown>"
         else:
             value_text = f"{value} {camel_case_to_spaces(enum_name)}"
         self.value_combobox.var.set(value_text)
@@ -208,7 +208,7 @@ class FieldRow:
 
     def _update_field_bool(self, value):
         if value not in {0, 1}:
-            raise ValueError(f"Field with 'bool' type has non-boolean value: {value}")
+            raise ValueError(f"Field {self.field_name} with 'bool' type has non-boolean value: {value}")
         self.value_checkbutton.var.set(value)
         self.value_checkbutton.config(fg="#3F3" if value else "#F33", text="ON" if value else "OFF")
         self._activate_value_widget(self.value_checkbutton)

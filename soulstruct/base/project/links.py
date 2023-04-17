@@ -99,11 +99,8 @@ class WindowLinker:
             # Technically, map links only care about entry list type, (except for the collision field of Map
             # Connections and the Environment field of Collisions), but I'm sometimes adding some additional subtype
             # enforcement (e.g. model types).
-            if (
-                entry.SUBTYPE_ENUM.name == "Player" and entry_subtype_name == "Character"
-                and entry.name == "c0000"
-            ):
-                # c0000 model happens to be in "Player" category for this map.
+            if entry.name == "c0000" and entry_subtype_name in ("CharacterModel", "PlayerModel"):
+                # c0000 model can have Character or Player subtype.
                 pass
             elif entry.SUBTYPE_ENUM.name == "UnusedObject" and entry_subtype_name in {"Object", "Asset"}:
                 pass
@@ -117,11 +114,10 @@ class WindowLinker:
         try:
             entry_subtype_index = entry_list.index_entry(entry)
             pluralized_name = entry.SUBTYPE_ENUM.pluralized_name
-            if pluralized_name in {"Characters", "Players"} and entry.name == "c0000":
+            if pluralized_name in {"CharacterModels", "PlayerModels"} and entry.name == "c0000":
                 # Check if map has `c0000` model (as every map should).
                 if not active_msb.has_c0000_model():
                     raise LinkError(f"Could not find player model c0000 in Character or Player model lists.")
-                pluralized_name = "Players"  # redirect c0000 to 'Player' models
             return [
                 MapsLink(
                     self,
@@ -165,6 +161,9 @@ class WindowLinker:
         entry_supertype_name, entry_subtype_name = entry_game_type.get_msb_entry_supertype_subtype()
         active_msb = self.window.maps_tab.get_selected_msb()  # type: MSB
         if entry_subtype_name:
+            # Handle annoying special case: `c0000` model can appear as a Character or Player model.
+            if entry_supertype_name == "Models" and entry_subtype_name in {"CharacterModel", "PlayerModel"}:
+                return list(active_msb["CharacterModel"]) + list(active_msb["PlayerModel"])
             return list(active_msb[entry_subtype_name])
         return active_msb.get_supertype_list(entry_supertype_name)
 

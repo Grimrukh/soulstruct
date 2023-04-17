@@ -622,14 +622,17 @@ class MSBEntry(abc.ABC):
 
             if display_type is None:
                 # Parse field type string.
-                f_type_str = field_types[f.name]
-                if re.match(r".*\[.*", f_type_str):
+                field_type_str = field_types[f.name]
+                if re.match(r".*\[.*", field_type_str):
                     display_type = list
-                elif re.match(r"MSB(.*Model)", f_type_str):  # display links not specific to a model subtype
-                    display_type = getattr(game_types_module, "MapModel")
+                elif field_type_str.startswith("MSBCharacterModel | MSBPlayerModel"):
+                    # Annoying case: c0000 characters can use either character or player c0000 model.
+                    display_type = getattr(game_types_module, "CharacterModel")
+                elif match := re.match(r"MSB(.*Model)", field_type_str):
+                    display_type = getattr(game_types_module, match.group(1))
                 else:
                     # TODO: Move basic map game types to `base` submodule so `game_types_module` isn't needed here?
-                    match f_type_str:
+                    match field_type_str:
                         case "int":
                             display_type = int
                         case "float":
@@ -657,7 +660,9 @@ class MSBEntry(abc.ABC):
                         case "MSBCollision":
                             display_type = getattr(game_types_module, "Collision")
                         case _:
-                            raise TypeError(f"Cannot get display type of MSB entry field `{f.name}` type: {f_type_str}")
+                            raise TypeError(
+                                f"Cannot get display type of MSB entry field `{f.name}` type: {field_type_str}"
+                            )
 
             field_metadata[f.name] = (nickname, tooltip, display_type)
 

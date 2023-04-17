@@ -38,6 +38,7 @@ class MSBSupertype(StrEnum):
 class BaseMSBSubtype(IntEnum):
     @property
     def pluralized_name(self):
+        """Handles library-wide special cases here out of laziness."""
         if self.name in ("Box", "Navmesh"):
             return self.name + "es"
         elif self.name in ("VFX", "Wind", "Treasure", "Navigation", "NPCInvasion", "WindVFX", "Other"):

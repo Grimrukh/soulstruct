@@ -388,7 +388,7 @@ class MSBCollision(MSBPart):
 
     # Field type overrides.
     model: MSBCollisionModel = None
-    display_groups: GroupBitSet128 = field(default_factory=lambda: set(range(MSBPart.GROUP_BIT_COUNT)))  # all on by default
+    display_groups: GroupBitSet128 = field(default_factory=lambda: set(range(MSBPart.GROUP_BIT_COUNT)))  # ALL ON
     is_shadow_source: bool = True
     is_shadow_destination: bool = True
     draw_by_reflect_cam: bool = True
@@ -397,7 +397,7 @@ class MSBCollision(MSBPart):
     sound_space_type: int = 0
     environment_event: MSBEnvironmentEvent = None
     reflect_plane_height: float = 0.0
-    navmesh_groups: GroupBitSet128 = field(default_factory=lambda: set(range(MSBPart.GROUP_BIT_COUNT)))  # all on by default
+    navmesh_groups: GroupBitSet128 = field(default_factory=lambda: set(range(MSBPart.GROUP_BIT_COUNT)))  # ALL ON
     vagrant_entity_ids: list[int] = field(default_factory=lambda: [-1, -1, -1])
     place_name_banner_id: int = field(default=-1, **MapFieldInfo(game_type=PlaceName))
     force_place_name_banner: bool = True  # necessary default because `place_name_banner_id` defaults to -1
@@ -470,25 +470,21 @@ class MSBCollision(MSBPart):
         super(MSBCollision, self).indices_to_objects(entry_lists)
         self._consume_index(entry_lists, "environments", "environment_event")
 
-    @property
-    def force_place_name_banner(self):
+    def get_force_place_name_banner(self):
         return self._force_place_name_banner
 
-    @force_place_name_banner.setter
-    def force_place_name_banner(self, value: bool):
+    def set_force_place_name_banner(self, value: bool):
         if not value and self.place_name_banner_id == -1:
             raise InvalidFieldValueError(
-                "Banner must appear when area name is set to default (-1). You must specify the area name manually to "
-                "set this to False."
+                "Banner must appear when area name is set to default (-1).\n"
+                "You must specify the area name manually to set this to False."
             )
         self._force_place_name_banner = bool(value)
 
-    @property
-    def play_region_id(self):
+    def get_play_region_id(self):
         return self._play_region_id
 
-    @play_region_id.setter
-    def play_region_id(self, value):
+    def set_play_region_id(self, value):
         if value != 0 and self._stable_footing_flag != 0:
             raise InvalidFieldValueError(
                 f"Cannot set 'play_region_id' to a non-zero value ({value}) while `stable_footing_flag` is non-zero."
@@ -497,12 +493,10 @@ class MSBCollision(MSBPart):
             raise InvalidFieldValueError("'play_region_id' must be an integer greater than or equal to -9.")
         self._play_region_id = value
 
-    @property
-    def stable_footing_flag(self):
+    def get_stable_footing_flag(self):
         return self._stable_footing_flag
 
-    @stable_footing_flag.setter
-    def stable_footing_flag(self, value):
+    def set_stable_footing_flag(self, value):
         if not isinstance(value, int) or value < -1:
             raise InvalidFieldValueError(
                 f"`stable_footing_flag` must be an integer no less than -1 (Collision '{self.name}')."
@@ -513,6 +507,17 @@ class MSBCollision(MSBPart):
                 f"is just -1: {self._play_region_id} (Collision '{self.name}')."
             )
         self._stable_footing_flag = value
+
+
+MSBCollision.force_place_name_banner = property(
+    MSBCollision.get_force_place_name_banner, MSBCollision.set_force_place_name_banner
+)
+MSBCollision.stable_footing_flag = property(
+    MSBCollision.get_stable_footing_flag, MSBCollision.set_stable_footing_flag
+)
+MSBCollision.play_region_id = property(
+    MSBCollision.get_play_region_id, MSBCollision.set_play_region_id
+)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -530,7 +535,7 @@ class MSBNavmesh(MSBPart):
     model: MSBNavmeshModel = None
     is_shadow_source: bool = True
 
-    navmesh_groups: GroupBitSet128 = field(default_factory=lambda: set(range(MSBPart.GROUP_BIT_COUNT)))  # all on by default
+    navmesh_groups: GroupBitSet128 = field(default_factory=lambda: set(range(MSBPart.GROUP_BIT_COUNT)))  # ALL ON
 
     HIDE_FIELDS = (
         "scale",

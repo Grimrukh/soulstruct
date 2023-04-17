@@ -395,8 +395,7 @@ class MSBPlayerStart(MSBPart):
     model: MSBCharacterModel | MSBPlayerModel = None
 
 
-# noinspection PyRedeclaration
-@dataclass(slots=True, eq=False, repr=False)
+@dataclass(slots=True, eq=False, repr=False, init=False)
 class MSBCollision(MSBPartWithSceneGParam):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Collision
@@ -485,25 +484,21 @@ class MSBCollision(MSBPartWithSceneGParam):
         super(MSBCollision, self).indices_to_objects(entry_lists)
         self._consume_index(entry_lists, "environments", "environment_event")
 
-    @property
-    def force_place_name_banner(self):
+    def get_force_place_name_banner(self):
         return self._force_place_name_banner
 
-    @force_place_name_banner.setter
-    def force_place_name_banner(self, value: bool):
+    def set_force_place_name_banner(self, value: bool):
         if not value and self.place_name_banner_id == -1:
             raise InvalidFieldValueError(
-                "Banner must appear when area name is set to default (-1). You must specify the area name manually to "
-                "set this to False."
+                "Banner must appear when area name is set to default (-1).\n"
+                "You must specify the area name manually to set this to False."
             )
         self._force_place_name_banner = bool(value)
 
-    @property
-    def play_region_id(self):
+    def get_play_region_id(self):
         return self._play_region_id
 
-    @play_region_id.setter
-    def play_region_id(self, value):
+    def set_play_region_id(self, value):
         if value != 0 and self._stable_footing_flag != 0:
             raise InvalidFieldValueError(
                 f"Cannot set 'play_region_id' to a non-zero value ({value}) while `stable_footing_flag` is non-zero."
@@ -512,12 +507,10 @@ class MSBCollision(MSBPartWithSceneGParam):
             raise InvalidFieldValueError("'play_region_id' must be an integer greater than or equal to -9.")
         self._play_region_id = value
 
-    @property
-    def stable_footing_flag(self):
+    def get_stable_footing_flag(self):
         return self._stable_footing_flag
 
-    @stable_footing_flag.setter
-    def stable_footing_flag(self, value):
+    def set_stable_footing_flag(self, value):
         if not isinstance(value, int) or value < -1:
             raise InvalidFieldValueError(
                 f"`stable_footing_flag` must be an integer no less than -1 (Collision '{self.name}')."
@@ -528,6 +521,17 @@ class MSBCollision(MSBPartWithSceneGParam):
                 f"is just -1: {self._play_region_id} (Collision '{self.name}')."
             )
         self._stable_footing_flag = value
+
+
+MSBCollision.force_place_name_banner = property(
+    MSBCollision.get_force_place_name_banner, MSBCollision.set_force_place_name_banner
+)
+MSBCollision.stable_footing_flag = property(
+    MSBCollision.get_stable_footing_flag, MSBCollision.set_stable_footing_flag
+)
+MSBCollision.play_region_id = property(
+    MSBCollision.get_play_region_id, MSBCollision.set_play_region_id
+)
 
 
 class MSBNavmesh(MSBPart):

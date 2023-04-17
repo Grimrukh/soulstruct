@@ -4,7 +4,7 @@ __all__ = ["MapFieldMetadata", "MapFieldInfo", "FIELD_INFO"]
 
 from dataclasses import dataclass
 
-from soulstruct.base.game_types import GAME_INT_TYPE
+from soulstruct.base.game_types import GAME_TYPE
 
 
 @dataclass(slots=True)
@@ -18,11 +18,11 @@ class MapFieldMetadata:
     """
     nickname: str = ""
     tooltip: str = ""
-    game_type: GAME_INT_TYPE = None
+    game_type: GAME_TYPE = None
 
 
 def MapFieldInfo(
-    nickname="", tooltip="", game_type: GAME_INT_TYPE = None
+    nickname="", tooltip="", game_type: GAME_TYPE = None
 ) -> dict[str, dict[str, MapFieldMetadata]]:
     """Convenience generator for use with ** in `field()`."""
     return {"metadata": {"msb": MapFieldMetadata(nickname, tooltip, game_type)}}
@@ -227,6 +227,15 @@ FIELD_INFO = {
         "If True, this entity will not be illuminated by point lights (I think).",
     ),
 
+    "MapPiece[model]": (
+        "Map Piece Model",
+        "Model in MSB to use for instantiating this map piece.",
+    ),
+
+    "Object[model]": (
+        "Object Model",
+        "Model in MSB to use for instantiating this object.",
+    ),
     "Object[animation_ids]": (
         "Animation IDs",
         "Default animation IDs for object (e.g. corpse poses). Only the first is used, according to Pav.",
@@ -236,6 +245,10 @@ FIELD_INFO = {
         "Offsets for model VFX param IDs. Only the first is used, according to Pav.",
     ),
 
+    "Character[model]": (
+        "Character Model",
+        "Model in MSB to use for instantiating this character.",
+    ),
     "Character[ai_id]": (
         "AI ID",
         "Character's AI param ID. If set to -1, the default AI ID from the Character param (below) will be used.",
@@ -278,10 +291,14 @@ FIELD_INFO = {
     ),
 
     "PlayerStart[model]": (
-        "Player Start Model (c0000)",
+        "Player Model [c0000]",
         "Character model to use for this PlayerStart. This should always be c0000.",
     ),
 
+    "Collision[model]": (
+        "Collision Model",
+        "Model in MSB to use for instantiating this collision.",
+    ),
     "Collision[display_groups]": (
         "Display Groups",
         "Display groups of collision. These display groups will be active when the player is standing on this "
@@ -304,22 +321,24 @@ FIELD_INFO = {
         "Vertical height of the reflect plane for this collision (for screen space reflections).",
     ),
     "Collision[place_name_banner_id]": (
-        "Area Name",
-        "Name of area that this collision is in, which determines the area banner that is shown when you step on "
-        "this collision (a linked texture ID lookup) and the area name that appears in the load screen (text ID). "
-        "Set it to -1 to use the default area name for this map (i.e. text ID XXYY for map 'mXX_YY').",
+        "Place Name",
+        "ID of place/zone banner that is shown when you step on this collision, which involves both a linked texture "
+        "ID lookup), a 'PlaceName' text lookup shown at the character select screen, and a 'PlaceName' text lookup for "
+        "an optional subtitle that can appear below the banner (all blank in DS1 by default and possibly disabled in "
+        "later games).\n\n"
+        "Set it to -1 to use the default place ID for this map, e.g. to use 1001 for map m10_01_00_00.",
     ),
     "Collision[force_place_name_banner]": (
-        "Show Area Banner",
-        "By default, the game will only show an area name banner when you enter a map (e.g. after warping). If "
-        "this option is enabled, the area name banner will be shown when you step on this collision if the area ID "
+        "Show Place Name Banner",
+        "By default, the game will only show a place name banner when you enter a map (e.g. after warping). If "
+        "this option is enabled, the place name banner will be shown when you step on this collision if the area ID "
         "changes to a new value. Typical usage is to have this disabled for collisions that are very close to a "
-        "different area (a 'silent area transition') and have it enabled for collisions that are further away, "
-        "which produces a 'delayed area banner' effect.\n\n"
+        "different place (a 'silent zone transition') and have it enabled for collisions that are further away, "
+        "which produces a 'delayed zone banner' effect.\n\n"
         ""
-        "Do NOT enable this for two adjacent collisions with different area names, or moving back and forth "
-        "between those collisions will build up a huge queue of area banners to display, which can only be cleared "
-        "by restarting the game entirely.",
+        "Do NOT enable this for two adjacent collisions with different place names, or moving back and forth "
+        "between those collisions will build up a huge queue of place  banners to display, which can only be cleared "
+        "by restarting the game entirely!",
     ),
     "Collision[starts_disabled]": (
         "Starts Disabled",

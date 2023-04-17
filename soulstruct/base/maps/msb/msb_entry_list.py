@@ -136,10 +136,13 @@ class MSBEntryList(list[MSBEntryType]):
 
         Does NOT add the new entry to this list, unlike `new()`.
         """
-        return self.subtype_info.entry_class()
+        # noinspection PyArgumentList
+        return self.subtype_info.entry_class(name=f"Default{self.subtype_info.entry_class.__name__}")
 
     def new(self, new_index=-1, **kwargs) -> MSBEntryType:
         """Create a new `MSBEntry` of this list's subtype and append it to list (or insert it at `new_index`)."""
+        # noinspection PyArgumentList
+        kwargs.setdefault("name", f"Default{self.subtype_info.entry_class.__name__}")
         # noinspection PyArgumentList
         entry = self.subtype_info.entry_class(**kwargs)
         if new_index >= 0:

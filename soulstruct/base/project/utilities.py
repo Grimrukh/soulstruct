@@ -18,6 +18,7 @@ __all__ = [
     "TagData",
     "TkTextEditor",
     "NameSelectionBox",
+    "CategorizedNameSelectionBox",
     "NumberEditBox",
     "TextEditBox",
     "EntryTextEditBox",
@@ -307,10 +308,13 @@ class NameSelectionBox(SmartFrame):
     WIDTH = 50  # characters
     HEIGHT = 20  # lines
 
-    def __init__(self, master, names, list_name="List"):
+    output: str | None  # name
+
+    def __init__(self, master, names, list_name="List", split_string=""):
         super().__init__(toplevel=True, master=master, window_title=f"Select Entry from {list_name}")
 
         self.output = None
+        self.split_string = split_string
 
         with self.set_master(padx=20, pady=20, auto_rows=0):
             self.Label(text="Double-click an entry to select it.")
@@ -342,6 +346,97 @@ class NameSelectionBox(SmartFrame):
     def done(self, confirm=True):
         if confirm:
             self.output = self._names.get(self._names.curselection())
+            if self.split_string:
+                self.output = self.output.split(self.split_string)[0]
+        self.quit()
+
+
+class CategorizedNameSelectionBox(SmartFrame):
+    """Small pop-out widget that allows you to select a name from one of multiple category lists, chosen by dropdown."""
+
+    WIDTH = 50  # characters
+    HEIGHT = 20  # lines
+
+    output: tuple[str, str] | None  # category, name
+
+    def __init__(
+        self, master, categories: dict[str, list[str]], initial_category: str = "", list_name="List", split_string=""
+    ):
+        super().__init__(toplevel=True, master=master, window_title=f"Select Entry from {list_name}")
+
+        self.categories = categories
+        self.output = None
+        self.split_string = split_string
+        if not initial_category:
+            initial_category = list(categories.keys())[0]
+        elif initial_category not in categories:
+            raise ValueError(f"Initial category '{initial_category}' not in categories.")
+
+        with self.set_master(padx=40, pady=40, auto_rows=0):
+            self.Label(text="Double-click an entry to select it.", pady=(0, 20))
+            self._category = self.Combobox(
+                values=list(categories.keys()),
+                initial_value=initial_category,
+                width=self.WIDTH,
+                font=("Consolas", 14),
+                on_select_function=self._update_category,
+                sticky="e",
+                label="Category:",
+                label_position="above",
+            )
+            self._name_filter = self.Entry(
+                width=self.WIDTH - 10,
+                font=("Consolas", 14),
+                label="Filter:",
+                label_position="left",
+                sticky="e",
+                pady=10,
+            ).var
+            self._name_filter.trace("w", lambda n, i, m: self._filter_names(self._name_filter.get()))
+            self._names = self.Listbox(
+                values=categories[initial_category],
+                width=self.WIDTH,
+                height=self.HEIGHT,
+                vertical_scrollbar=True,
+                selectmode="single",
+                font=("Consolas", 14),
+                sticky="e",
+            )
+
+        self._names.bind("<Double-Button-1>", lambda e: self.done(True))
+
+        self.bind_all("<Escape>", lambda e: self.done(False))
+        self.protocol("WM_DELETE_WINDOW", lambda: self.done(False))
+        self.resizable(width=False, height=False)
+        self.set_geometry(relative_position=(0.5, 0.3), transient=True)
+
+    def _update_category(self, _):
+        """Called on dropdown change. Updates the list of names to match the selected category."""
+        self._names.delete(0, "end")
+        for name in self.categories[self._category.var.get()]:
+            self._names.insert("end", name)
+
+    def _filter_names(self, filter_text: str):
+        """Called on text change. Filters the list of names to match the entered text."""
+        self._names.delete(0, "end")
+        for name in self.categories[self._category.var.get()]:
+            if filter_text.lower() in name.lower():
+                self._names.insert("end", name)
+
+    def go(self):
+        self.wait_visibility()
+        self.grab_set()
+        self.mainloop()
+        self.destroy()
+        return self.output
+
+    def done(self, confirm=True):
+        if confirm:
+            category = self._category.var.get()
+            name = self._names.get(self._names.curselection())
+            if self.split_string:
+                name = name.split(self.split_string)[0]
+            self.output = category, name
         self.quit()
 
 
@@ -442,10 +537,10 @@ class TextEditBox(SmartFrame):
             self._text.insert("end", self.initial_text)
             with self.set_master(auto_columns=0, padx=10, pady=10, grid_defaults={"padx": 10}):
                 self.Button(
-                    text="Confirm changes", command=lambda: self.done(True), **self.editor.DEFAULT_BUTTON_KWARGS["YES"]
+                    text="Confirm", command=lambda: self.done(True), **self.editor.DEFAULT_BUTTON_KWARGS["YES"]
                 )
                 self.Button(
-                    text="Cancel changes", command=lambda: self.done(False), **self.editor.DEFAULT_BUTTON_KWARGS["NO"]
+                    text="Cancel", command=lambda: self.done(False), **self.editor.DEFAULT_BUTTON_KWARGS["NO"]
                 )
 
         self.bind_all("<Escape>", lambda e: self.done(False))

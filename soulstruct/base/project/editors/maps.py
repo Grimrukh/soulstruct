@@ -7,6 +7,7 @@ import ast
 import logging
 import math
 import typing as tp
+from enum import IntEnum
 from types import ModuleType
 
 from soulstruct.exceptions import InvalidFieldValueError
@@ -18,6 +19,8 @@ from soulstruct.base.maps.msb.utils import GroupBitSet, GroupBitSet128, GroupBit
 from soulstruct.base.project.utilities import (
     bind_events,
     NameSelectionBox,
+    CategorizedNameSelectionBox,
+    TextEditBox,
     EntryTextEditBox,
     SequenceNameEditBox,
     GroupBitSetEditBox,
@@ -301,22 +304,47 @@ class MapFieldRow(FieldRow):
         """For linked fields, adds an option to select an entry name from the linked table."""
         self.context_menu.delete(0, "end")
 
+        has_custom_int_option = True
         if issubclass(self.field_type, GameObjectInt):
+            # Add links to other game objects.
             for field_link in self.field_links:
                 field_link.add_to_context_menu(self.context_menu)
-            if issubclass(self.field_type, MapEntry):
+            has_custom_int_option = False
+        if issubclass(self.field_type, GameObjectIntSequence):
+            self.context_menu.add_command(
+                label="Select linked entries from list", command=self.choose_linked_map_entries
+            )
+            if self.field_type.game_object_type is Region or self.field_type.game_object_type is RegionPoint:
+                # Option to add a point to a list of Points, based on current player translate/rotate.
+                # NOTE: Assumes that Points are sufficient for any `Region` sequence, which I think is true for all
+                # sequence fields I've seen.
                 self.context_menu.add_command(
-                    label="Select linked entry from list", command=self.choose_linked_map_entry
+                    label=f"Add new Point from player translate + rotate",
+                    command=lambda: self.master.add_point_from_player_position(self.field_name, self.field_nickname),
+                )
+        if issubclass(self.field_type, MapEntry):
+            self.context_menu.add_command(
+                label="Select linked entry from list", command=self.choose_linked_map_entry
+            )
+            has_custom_int_option = False
+            if issubclass(self.field_type, MapModel):
+                self.context_menu.add_command(
+                    label=f"Set model by name and add if needed", command=self.choose_and_add_new_model
                 )
             if self.field_type == self.master.GAME_TYPES_MODULE.CharacterModel:
                 self.context_menu.add_command(
                     label="Select model from complete list", command=self.choose_character_model
                 )
+        if has_custom_int_option:
+            # Users can enter their own custom integer values for (non-`GameObject`) IntEnums.
+            if issubclass(self.field_type, IntEnum):
+                self.context_menu.add_command(label="Set custom integer value", command=self._set_custom_intenum_value)
 
         # Users can open a dialog of checkbuttons.
         if issubclass(self.field_type, GroupBitSet):
             self.context_menu.add_command(label="Modify groups with checkbuttons", command=self._set_group_checkbuttons)
 
+        # Add memory-copying options.
         msb_type, msb_subtype = self.master.active_category.split(": ")
         if msb_type == "Regions" or msb_subtype in {"Characters", "Objects", "PlayerStarts"}:
             copy_fields = ("translate", "rotate")
@@ -344,49 +372,52 @@ class MapFieldRow(FieldRow):
                     self._add_copy_option(copy_menu, **kwargs, y_offset=-0.1)
                 self.context_menu.add_cascade(label="Copy from hook...", foreground="#FFF", menu=copy_menu)
 
-        if issubclass(self.field_type, GameObjectIntSequence):
-            self.context_menu.add_command(
-                label="Select linked entries from list", command=self.choose_linked_map_entries
-            )
-            if self.field_type.game_object_type is Region:
-                # Option to add a point to a list of Points, based on current player translate/rotate.
-                # NOTE: Assumes that Points are sufficient, which I think is true for all sequence fields I've seen.
-                self.context_menu.add_command(
-                    label=f"Add new Point from player translate + rotate",
-                    command=lambda: self.master.add_point_from_player_position(self.field_name, self.field_nickname),
-                )
-
     def choose_linked_map_entry(self):
+        """Pop-out window where user can select a map entry name from among linked category type(s)."""
         if not issubclass(self.field_type, MapEntry):
             return  # option shouldn't even appear
         entries = self.master.linker.get_map_entry_subtype_list(self.field_type)
 
-        display_names = [e.name for e in entries]
-        if self.master.character_models and self.field_type.__name__ in ("CharacterModel", "PlayerModel"):
-            # Add suffix with model name.
-            # Connections) but I'm sometimes adding some additional subtype enforcement (e.g. model types).
-            for i, name in enumerate(display_names):
-                model_id = int(name.lstrip("c"))
-                display_names[i] += f"  {{{self.master.character_models.get(model_id, 'UNKNOWN')}}}"
+        categories = {}  # type: dict[str, list[str]]
+        for entry in entries:
+            display_name = entry.name
+
+            if self.master.character_models and entry.SUBTYPE_ENUM.name in ("CharacterModel", "PlayerModel"):
+                model_id = int(entry.name.lstrip("c"))
+                display_name += f"  {{{self.master.character_models.get(model_id, 'UNKNOWN')}}}"
+            categories.setdefault(entry.SUBTYPE_ENUM.pluralized_name, []).append(display_name)
+
+        # Choose initial entry subtype based on current value (if present) or a standard default otherwise.
+        current_entry = self.master.get_selected_field_dict()[self.field_name]
+        if current_entry is not None:
+            initial_category = current_entry.SUBTYPE_ENUM.pluralized_name
+            if initial_category not in categories:
+                initial_category = ""  # unusual!
+        elif self.field_name == "draw_parent":
+            initial_category = "Collisions"
+        else:
+            initial_category = ""
 
         # Wait for user to select entry name.
-        selected_name = NameSelectionBox(self.master, display_names).go()
+        selected_category_and_name = CategorizedNameSelectionBox(self.master, categories, initial_category).go()
 
-        if selected_name is None:
+        if selected_category_and_name is None:
             # User cancelled.
             return
-
-        selected_entry = entries[display_names.index(selected_name)]
+        selected_name = selected_category_and_name[1]  # don't care about category
+        selected_name = selected_name.split("  {")[0]  # remove any model tail
+        entry_names = [entry.name for entry in entries]
+        selected_entry = entries[entry_names.index(selected_name)]
         self.field_links = self.master.linker.soulstruct_link(self.field_type, selected_entry)
         # noinspection PyTypeChecker
         entry_link = self.field_links[0]  # type: MapsLink
         if not entry_link.entry:
             # Shouldn't be possible.
-            selected_name = selected_name + "  {BROKEN LINK}"
+            selected_name += "  {BROKEN LINK}"
             self.link_missing = True
             self.master.CustomDialog(
-                title="Map Link Error",
-                message="Map link was broken after selecting map entry from list. This should not happen; "
+                title="Map Entry Link Error",
+                message="Map entry link was broken after selecting map entry from list. This should not happen; "
                 "please try restarting Soulstruct, and inform Grimrukh if the problem persists.",
             )
             selected_entry = None
@@ -396,6 +427,57 @@ class MapFieldRow(FieldRow):
 
         self.master.change_field_value(self.field_name, selected_entry)
         self.value_label.var.set(selected_name)  # already includes any model tail we want
+        self.build_field_context_menu()
+
+    def choose_and_add_new_model(self):
+        """Pop-out window where user can enter a new model name, then create a new model of that name if needed."""
+        if not issubclass(self.field_type, MapModel):
+            return  # shouldn't be possible
+
+        new_model_name = TextEditBox(self.master, allow_newlines=False, window_title="New Model Name", width=40).go()
+
+        if new_model_name is None:
+            return  # do nothing
+
+        existing_entries = self.master.linker.get_map_entry_subtype_list(self.field_type)
+        existing_entry_names = [entry.name for entry in existing_entries]
+        if new_model_name in existing_entry_names:
+            self.master.CustomDialog(
+                title="Model Name Exists",
+                message=f"Model name '{new_model_name}' already exists in MSB.\nSetting field to existing model.",
+            )
+        else:
+            # Offer to create models (after checking if they're valid) then update field display again if done.
+            new_model_created = self.master.add_models(self.field_type, new_model_name)
+            if not new_model_created:
+                return
+
+        entries = self.master.linker.get_map_entry_subtype_list(self.field_type)  # should include just-added model
+        entry_names = [entry.name for entry in entries]
+        selected_model = entries[entry_names.index(new_model_name)]
+        self.field_links = self.master.linker.soulstruct_link(self.field_type, selected_model)
+        # noinspection PyTypeChecker
+        entry_link = self.field_links[0]  # type: MapsLink
+        if not entry_link.entry:
+            # Shouldn't be possible.
+            new_model_name += "  {BROKEN LINK}"
+            self.link_missing = True
+            self.master.CustomDialog(
+                title="Map Entry Link Error",
+                message="Map entry link was broken after creating/choosing new model. This should not happen; "
+                        "please try restarting Soulstruct, and inform Grimrukh if the problem persists.",
+            )
+            selected_model = None
+        else:
+            self.link_missing = False
+            selected_model = entry_link.entry
+            # Add new model tail for characters.
+            if self.master.character_models and selected_model.SUBTYPE_ENUM.name in ("CharacterModel", "PlayerModel"):
+                model_id = int(selected_model.name.lstrip("c"))
+                new_model_name += f"  {{{self.master.character_models.get(model_id, 'UNKNOWN')}}}"
+
+        self.master.change_field_value(self.field_name, selected_model)
+        self.value_label.var.set(new_model_name)
         self.build_field_context_menu()
 
     def choose_linked_map_entries(self):
@@ -466,32 +548,49 @@ class MapFieldRow(FieldRow):
         if not issubclass(self.field_type, self.master.GAME_TYPES_MODULE.CharacterModel):
             return  # option shouldn't even appear
         names = [f"c{model_id:04d}  {{{model_name}}}" for model_id, model_name in self.master.character_models.items()]
-        selected_name = NameSelectionBox(self.master, names).go()
-        if selected_name is not None:
-            selected_name = selected_name.split("  {")[0]  # remove suffix
-            self.field_links = self.master.linker.soulstruct_link(self.field_type, selected_name)
-            if not self.field_links[0].name:
-                # noinspection PyTypeChecker
-                self.master.add_models(self.field_type, selected_name)
-                self.field_links = self.master.linker.soulstruct_link(self.field_type, selected_name)
-            if self.field_links[0].name:
-                model_id = int(selected_name[1:])  # ignore 'c' prefix
-                try:
-                    display_name = selected_name + f"  {{{self.master.character_models[model_id]}}}"
-                except KeyError:
-                    display_name = selected_name + "  {UNKNOWN}"
-                if self.link_missing:
-                    self.link_missing = False
-                    self._update_colors()
-            else:
-                display_name = selected_name + "  {BROKEN LINK}"
-                if not self.link_missing:
-                    self.link_missing = True
-                    self._update_colors()
 
-            self.master.change_field_value(self.field_name, selected_name)
-            self.value_label.var.set(display_name)
-            self.build_field_context_menu()
+        new_model_name = NameSelectionBox(self.master, names, split_string="  {").go()
+
+        existing_entries = self.master.linker.get_map_entry_subtype_list(self.field_type)
+        existing_entry_names = [entry.name for entry in existing_entries]
+        if new_model_name in existing_entry_names:
+            self.master.CustomDialog(
+                title="Model Name Exists",
+                message=f"Model name '{new_model_name}' already exists in MSB.\nSetting field to existing model.",
+            )
+        else:
+            # noinspection PyTypeChecker
+            new_model_created = self.master.add_models(self.field_type, new_model_name)
+            if not new_model_created:
+                return
+
+        entries = self.master.linker.get_map_entry_subtype_list(self.field_type)  # should include just-added model
+        entry_names = [entry.name for entry in entries]
+        selected_model = entries[entry_names.index(new_model_name)]
+        self.field_links = self.master.linker.soulstruct_link(self.field_type, selected_model)
+        # noinspection PyTypeChecker
+        entry_link = self.field_links[0]  # type: MapsLink
+        if not entry_link.entry:
+            # Shouldn't be possible.
+            new_model_name += "  {BROKEN LINK}"
+            self.link_missing = True
+            self.master.CustomDialog(
+                title="Map Entry Link Error",
+                message="Map entry link was broken after creating/choosing new model. This should not happen; "
+                        "please try restarting Soulstruct, and inform Grimrukh if the problem persists.",
+            )
+            selected_model = None
+        else:
+            self.link_missing = False
+            selected_model = entry_link.entry
+            # Add new model tail for characters.
+            if self.master.character_models and selected_model.SUBTYPE_ENUM.name in ("CharacterModel", "PlayerModel"):
+                model_id = int(selected_model.name.lstrip("c"))
+                new_model_name += f"  {{{self.master.character_models.get(model_id, 'UNKNOWN')}}}"
+
+        self.master.change_field_value(self.field_name, selected_model)
+        self.value_label.var.set(new_model_name)
+        self.build_field_context_menu()
 
     def _set_group_checkbuttons(self):
         # TODO: Check BIT_COUNT of type and show appropriate number of checks.
@@ -518,7 +617,12 @@ class MapFieldRow(FieldRow):
         return self._string_to_float(string)
 
     def _string_to_GroupBitSet128(self, string):
-        enabled_bits_list = ast.literal_eval(string)
+        try:
+            enabled_bits_list = ast.literal_eval(string)
+        except ValueError:
+            raise InvalidFieldValueError(
+                f"Could not interpret string as a `GroupBitSet128` for field {self.field_nickname}: {string}"
+            )
         try:
             return GroupBitSet128(set(enabled_bits_list))
         except (TypeError, ValueError):
@@ -527,7 +631,12 @@ class MapFieldRow(FieldRow):
             )
 
     def _string_to_GroupBitSet256(self, string):
-        enabled_bits_list = ast.literal_eval(string)
+        try:
+            enabled_bits_list = ast.literal_eval(string)
+        except ValueError:
+            raise InvalidFieldValueError(
+                f"Could not interpret string as a `GroupBitSet256` for field {self.field_nickname}: {string}"
+            )
         try:
             return GroupBitSet256(set(enabled_bits_list))
         except (TypeError, ValueError):
@@ -579,7 +688,6 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
     FIELD_ROW_CLASS = MapFieldRow
 
     GAME_TYPES_MODULE: ModuleType
-    CHARACTER_MODELS: dict[int, str] = None
 
     entry_rows: list[MapEntryRow]
     field_rows: list[MapFieldRow]
@@ -714,6 +822,8 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
         self._cancel_entry_text_edit()
         new_field_dict.name = text
         subtype_list.insert(subtype_index, new_field_dict)
+        if subtype_index == -1:  # select last element in list (just added)
+            subtype_index = len(subtype_list) - 1
         self.select_entry_id(subtype_index, set_focus_to_text=True, edit_if_already_selected=False)
         # TODO: ActionHistory stuff?
         return True
@@ -884,17 +994,6 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
                 row.update_field_value_display(new_value)
             self._cancel_field_value_edit()
 
-            if (
-                issubclass(row.field_type, MapModel)
-                and issubclass(
-                    row.field_type, (self.GAME_TYPES_MODULE.CharacterModel, self.GAME_TYPES_MODULE.ObjectModel)
-                ) and row.field_links[0].name is None
-            ):
-                # Offer to create models (after checking if they're valid) then update field display again if done.
-                new_model_created = self.add_models(row.field_type, new_value)
-                if new_model_created:
-                    row.update_field_value_display(new_value)
-
     def change_field_value(self, field_name: str, new_value):
         field_dict = self.get_selected_field_dict()
         old_value = field_dict[field_name]
@@ -1030,14 +1129,31 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
             field_type, field_value, valid_null_values=valid_null_values, map_override=None,
         )
 
-    def add_models(self, model_game_type: tp.Type[MapModel], model_name):
+    def add_models(self, model_game_type: tp.Type[MapModel], model_name, auto_yes_if_valid=False):
         map_stem = self.map_choice_stem
         _, model_subtype_name = model_game_type.get_msb_entry_supertype_subtype()
         if self.linker.validate_model_subtype(model_game_type, model_name, map_stem=map_stem):
+            if auto_yes_if_valid:
+                result = 0
+            else:
+                result = self.CustomDialog(
+                    title=f"Add {model_subtype_name} Model",
+                    message=f"Add {model_subtype_name} {model_name} to map?",
+                    button_names=("Yes, add it", "No, don't add it"),
+                    button_kwargs=("YES", "NO"),
+                    return_output=0,
+                    default_output=0,
+                    cancel_output=1,
+                )
+            if result == 0:
+                self.get_selected_msb().new_model(model_subtype_name, name=model_name, map_stem=map_stem)
+                return True
+        else:
             result = self.CustomDialog(
-                title=f"Add {model_subtype_name} Model",
-                message=f"Add {model_subtype_name} model {model_name} to map?",
-                button_names=("Yes, add it", "No, leave as missing"),
+                title=f"Add Unknown {model_subtype_name} Model",
+                message=f"Game file cannot be found for {model_subtype_name} '{model_name}'.\n"
+                        f"Are you sure you want to add it to the map?",
+                button_names=("Yes, add it", "No, don't add it"),
                 button_kwargs=("YES", "NO"),
                 return_output=0,
                 default_output=0,
@@ -1046,12 +1162,6 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
             if result == 0:
                 self.get_selected_msb().new_model(model_subtype_name, name=model_name, map_stem=map_stem)
                 return True
-        else:
-            self.CustomDialog(
-                title=f"Invalid {model_subtype_name} Model",
-                message=f"{model_subtype_name} model {model_name} does not have any data in the game files.\n"
-                f"This will likely cause severe problems in your game!",
-            )
 
         return False
 
