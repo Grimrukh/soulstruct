@@ -258,7 +258,7 @@ class MSB(GameFile, abc.ABC):
                         )
                         raise
 
-            if supertype_name == list(MSB_ENTRY_SUPERTYPES.values())[-1]:
+            if supertype_name == MSBSupertype.PARTS:
                 writer.fill("next_list_offset", 0, obj=supertype_list)  # zero offset
             else:
                 writer.fill_with_position("next_list_offset", obj=supertype_list)

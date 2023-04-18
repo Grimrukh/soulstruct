@@ -13,7 +13,7 @@ from soulstruct.darksouls1ptde.maps.constants import *
 
 @dataclass(slots=True)
 class TalkDirectory(_BaseTalkDirectory):
-    ALL_MAPS: tp.ClassVar = ALL_MAPS
+    ALL_MAPS: tp.ClassVar = ALL_MAPS[1:]
     GET_MAP: tp.ClassVar = staticmethod(get_map)
     FILE_CLASS: tp.ClassVar = TalkESDBND
 

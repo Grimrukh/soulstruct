@@ -279,7 +279,7 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
 
     @classmethod
     def from_reader(cls, reader: BinaryReader):
-        """Use a `ParamDefBND` to """
+        """Reads a `Param` from a `BinaryReader` loaded from a binary `.param` file."""
 
         # Peek at struct-affecting info:
         byte_order = ByteOrder.BigEndian if reader["b", 0x2c] == -1 else ByteOrder.LittleEndian
@@ -458,7 +458,7 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
                 f"Incompatible 'param_type' in JSON: {data['param_type']}. Expected `{cls.ROW_TYPE.__name__}`."
             )
         data["flags1"] = ParamFlags1(int(data.pop("flags1", 0)))
-        data["flags2"] = ParamFlags1(int(data.pop("flags2", 0)))
+        data["flags2"] = ParamFlags2(int(data.pop("flags2", 0)))
         rows = data.pop("rows")  # type: dict[int, dict | ParamRow]
         data["rows"] = {}
         for row_id, row in rows.items():

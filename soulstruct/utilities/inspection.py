@@ -1,7 +1,15 @@
 from __future__ import annotations
 
-__all__ = ["print_binary_as_integers", "get_hex_repr", "write_hex_repr", "profile_function", "Timer"]
+__all__ = [
+    "print_binary_as_integers",
+    "get_hex_repr",
+    "write_hex_repr",
+    "profile_function",
+    "Timer",
+    "find_errant_prints",
+]
 
+import contextlib
 import cProfile
 import logging
 import pstats
@@ -87,3 +95,24 @@ class Timer:
             _LOGGER.error(f"{self._name} FAILED after {time.time() - self._start} s.")
         else:
             _LOGGER.info(f"{self._name} COMPLETED in {time.time() - self._start} s.")
+
+
+@contextlib.contextmanager
+def find_errant_prints():
+    """Replaces builtin `print` with a version that prints the file, line, and function name of the caller."""
+    import builtins
+    from inspect import getframeinfo, stack
+
+    # Enter
+    original_print = print
+
+    def new_print(*args, **kwargs):
+        caller = getframeinfo(stack()[1][0])
+        original_print("FN:", caller.filename, "Line:", caller.lineno, "Func:", caller.function, ":::", *args, **kwargs)
+
+    builtins.print = new_print
+
+    yield
+
+    # Exit
+    builtins.print = original_print

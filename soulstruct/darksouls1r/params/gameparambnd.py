@@ -152,6 +152,10 @@ class GameParamBND(_BaseGameParamBND):
 
     GET_BUNDLED_PARAMDEFBND: tp.ClassVar[tp.Callable] = GET_BUNDLED_PARAMDEFBND
 
+    @classmethod
+    def get_default_entry_path(cls, entry_name: str) -> str:
+        return f"N:\\FRPG\\data\\INTERROOT_x64\\param\\GameParam\\{entry_name}"
+
     def rename_entries_from_text(self, text: MSGDirectory, param_nickname: str = None):
         """Rename item param entries according to their (presumably more desirable) names in DS1 Text data.
 

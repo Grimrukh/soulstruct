@@ -31,6 +31,7 @@ class RegionHeader(BinaryStruct):
     unknown_offset_2: int
     subtype_data_offset: int
     entity_id_offset: int
+    _pad2: bytes = field(init=False, **BinaryPad(4))
 
 
 @dataclass(slots=True, eq=False, repr=False)

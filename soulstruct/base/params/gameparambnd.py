@@ -178,8 +178,11 @@ class GameParamBND(Binder, abc.ABC):
 
             binder_kwargs["params"][param_stem] = param
 
-        gameparambnd = super(GameParamBND, cls).from_dict(binder_kwargs)
+        # noinspection PyTypeChecker
+        gameparambnd = super(GameParamBND, cls).from_dict(binder_kwargs)  # type: Self
+
         # gameparambnd.regenerate_binder_entries()  # TODO: no need to create entries until needed, right?
+
         return gameparambnd
 
     def to_dict(self, ignore_pads=True, ignore_defaults=True) -> dict[str, tp.Any]:
@@ -254,7 +257,7 @@ class GameParamBND(Binder, abc.ABC):
         if param_stem in self.params:  # easy case
             return self.params[param_stem]
         if param_stem in self.PARAM_NICKNAMES.values():  # values are Soulstruct nicknames
-            return self.params[self.PARAM_NICKNAMES[param_stem]]
+            return self.params[self.PARAM_NICKNAMES[param_stem]]  # `BiDict` value-to-key lookup
         raise KeyError(f"Cannot find `Param` named '{param_stem}' (from '{param_name}').")
 
     # Overrides `Binder.__getitem__`.

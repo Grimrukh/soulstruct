@@ -282,7 +282,8 @@ class ParamsEditor(BaseFieldEditor):
         if valid_null_values is None:
             valid_null_values = {0: "Default/None", -1: "Default/None"}
         else:
-            print(field_type, field_value, valid_null_values)
+            # TODO: probably want to remove this?
+            print("Field type/value/null values:", field_type, field_value, valid_null_values)
         try:
             return self.linker.soulstruct_link(field_type, field_value, valid_null_values=valid_null_values)
         except IndexError:

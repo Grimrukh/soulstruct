@@ -120,20 +120,22 @@ class EMEVD(GameFile, abc.ABC):
         return cls.from_numeric_string(evs_parser.numeric_emevd, evs_parser.map_name)
 
     @classmethod
-    def from_evs_string(cls, evs_string: str, script_directory: Path | str = None) -> Self:
+    def from_evs_string(cls, evs_string: str, map_name: str = None, script_directory: Path | str = None) -> Self:
         try:
-            parser = cls.EVS_PARSER(evs_string, script_directory=script_directory)
+            parser = cls.EVS_PARSER(evs_string, map_name=map_name, script_directory=script_directory)
         except Exception as ex:
             raise EMEVDError(f"Error occurred while parsing EVS string: {ex}")
         return cls.from_evs_parser(parser)
 
     @classmethod
-    def from_evs_path(cls, evs_path: Path | str, script_directory: Path | str = None) -> Self:
+    def from_evs_path(cls, evs_path: Path | str, map_name: str = None, script_directory: Path | str = None) -> Self:
         evs_path = Path(evs_path)
         if script_directory is None:
             script_directory = evs_path.parent
         try:
-            emevd = cls.from_evs_string(evs_path.read_text(), script_directory)
+            if map_name is None:
+                map_name = evs_path.name.split(".")[0]
+            emevd = cls.from_evs_string(evs_path.read_text(), map_name=map_name, script_directory=script_directory)
         except Exception as ex:
             raise EMEVDError(f"Error while parsing EVS file: {evs_path}.\n  Error: {ex}")
         emevd.map_name = evs_path.name.split(".")[0]
@@ -147,6 +149,8 @@ class EMEVD(GameFile, abc.ABC):
 
     @classmethod
     def from_path(cls, path: str | Path) -> Self:
+        """Adds `map_name` attribute to the unpacked binary EMEVD."""
+        # noinspection PyTypeChecker
         emevd = super(EMEVD, cls).from_path(path)  # type: Self
         emevd.map_name = emevd.path.name.split(".")[0]
         return emevd
@@ -347,8 +351,8 @@ class EMEVD(GameFile, abc.ABC):
             # Import written first to avoid 'unused' warnings for standard imports.
             imports = f"# [COMMON_FUNC]\nfrom .common_func import *\n" + imports
 
-        # Create imports.
-        if enums_manager:
+        # Create imports (if any modules were actually passed in here).
+        if enums_manager and enums_manager.modules:
             if warn_missing_enums:
                 for missing_enum_ex in enums_manager.missing_enums:
                     if "Flag" in missing_enum_ex.missing_enum_game_types:

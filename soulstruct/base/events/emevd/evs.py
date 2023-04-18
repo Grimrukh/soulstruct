@@ -12,7 +12,7 @@ import typing as tp
 from functools import partial
 from pathlib import Path
 
-from soulstruct.base.game_types.basic_types import GameObjectInt, FlagRange, MapFlagSuffix
+from soulstruct.base.game_types.basic_types import GameObjectInt, GAME_TYPE, FlagRange, MapFlagSuffix
 from soulstruct.games import Game, get_game
 from soulstruct.utilities.files import import_arbitrary_file
 from .exceptions import NoNegateError, NoSkipOrReturnError
@@ -116,6 +116,7 @@ class EVSParser(abc.ABC):
             evs_source: string or Path pointing to an EVS file, or direct string input (auto-detected based on
                 any newlines being present in value).
             map_name: optional override for map name, which will otherwise be auto-detected from the EVS file name.
+            script_directory: optional override for the directory from which to search for relative imports.
         """
         if isinstance(evs_source, Path) or "\n" not in evs_source:
             evs_path = Path(evs_source)
@@ -365,10 +366,16 @@ class EVSParser(abc.ABC):
         self.numeric_emevd += "\n\nlinked:\n" + "\n".join(str(offset) for offset in self.linked_offsets)
         self.numeric_emevd += "\n\nstrings:\n" + "\n".join(self.strings_with_offsets)
 
-    def _compile_event_function(self, event_info: EventInfo):
+    def _compile_event_function(self, event_info: EventInfo) -> list[str]:
         """ Writes header, then iterates over all nodes in function body. """
 
         event_emevd = _header(event_info.id, event_info.on_rest_behavior)
+
+        if not event_info.nodes:
+            # Empty event functions will break the game. Add a dummy 'End()' instruction.
+            event_emevd += self.COMPILE("End")
+            _LOGGER.warning(f"Event {event_info.name} has no instructions. Added dummy 'End()' instruction.")
+            return event_emevd
 
         for node in event_info.nodes:
             if not isinstance(node, EventStatementTypes):
@@ -607,7 +614,7 @@ class EVSParser(abc.ABC):
 
         if name in {"EnableThisFlag", "DisableThisFlag"}:
             if self.current_event.args:
-                raise EVSNameError(
+                raise EVSSyntaxError(
                     node,
                     "Cannot use 'EnableThisFlag' or 'DisableThisFlag' shortcuts in an event that "
                     "takes arguments (the slot number cannot be determined from within).",
@@ -980,7 +987,7 @@ class EVSParser(abc.ABC):
         negate=False,
         condition=None,
         skip_lines=0,
-    ):
+    ) -> list[str]:
         """Called on the argument of Condition() or Await(), or on a non-simple IF test node.
 
         Always results in the use of a condition group, but if `skip_lines` is given instead of `condition`, that group
@@ -1159,7 +1166,7 @@ class EVSParser(abc.ABC):
 
     def _compile_condition_skip_or_return(
         self, node, condition, negate=False, skip_lines=0, end_event=False, restart_event=False
-    ):
+    ) -> list[str]:
         if skip_lines > 0:
             if negate:
                 if condition in self.finished_conditions:
@@ -1187,7 +1194,7 @@ class EVSParser(abc.ABC):
         else:
             raise ValueError
 
-    def _compile_boolean_condition(self, node: ast.BoolOp, negate, condition, skip_lines):
+    def _compile_boolean_condition(self, node: ast.BoolOp, negate, condition, skip_lines) -> list[str]:
         if isinstance(node.op, ast.Or):
             i = self._check_out_OR(node)
         elif isinstance(node.op, ast.And):
@@ -1254,7 +1261,7 @@ class EVSParser(abc.ABC):
         end_event=False,
         restart_event=False,
         **kwargs,
-    ):
+    ) -> list[str]:
         tests = self.EMEDF_TESTS[node.id]
         event_layers = format_event_layers(kwargs.pop("event_layers", None))
         instruction_lines = []

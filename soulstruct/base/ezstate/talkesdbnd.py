@@ -112,6 +112,9 @@ class TalkESDBND(Binder, abc.ABC):
                 self.add_entry(new_entry)
                 _LOGGER.debug(f"New ESD entry added to TalkESDBND (ID {new_id}): {talk_entry_name}")
 
+        # Sort entries by name.
+        self.entries.sort(key=lambda entry: entry.name)
+
     def __getitem__(self, talk_id):
         return self.talk[talk_id]
 

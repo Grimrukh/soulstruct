@@ -375,6 +375,7 @@ class EventsEditor(SmartFrame):
             # Simply attempts to parse the EVS into EMEVD; the result is not used.
             self.events_class.FILE_CLASS.from_evs_string(
                 evs_string=self._get_current_text(),
+                map_name=self.selected_map_id,
                 script_directory=str(self.evs_file_paths[self.selected_map_id].parent)
             )
         except EVSError as ex:
@@ -403,6 +404,7 @@ class EventsEditor(SmartFrame):
         try:
             emevd = self.events_class.FILE_CLASS.from_evs_string(
                 evs_string=self.evs_file_paths[self.selected_map_id],
+                map_name=self.selected_map_id,
                 script_directory=str(self.evs_file_paths[self.selected_map_id].parent),
             )
         except Exception as ex:

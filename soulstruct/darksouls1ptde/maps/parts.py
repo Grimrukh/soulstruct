@@ -149,14 +149,17 @@ class MSBPart(BaseMSBPart, abc.ABC):
             supertype_data_offset=RESERVED,
             subtype_data_offset=RESERVED,
         )
+        strings_position = writer.position - entry_offset
         writer.fill("name_offset", writer.position - entry_offset, obj=self)
-        packed_name = self.name.encode(self.NAME_ENCODING) + b"\0\0"
+        packed_name = self.name.encode(self.NAME_ENCODING) + b"\0"
         writer.append(packed_name)
         writer.fill("sib_path_offset", writer.position - entry_offset, obj=self)
-        packed_sib_path = (self.sib_path.encode(self.NAME_ENCODING) + b"\0\0") if self.sib_path else b"\0\0"
-        while len(packed_name + packed_sib_path) % 4 != 0:
-            packed_sib_path += b"\0"
+        packed_sib_path = (self.sib_path.encode(self.NAME_ENCODING) + b"\0") if self.sib_path else b"\0"
         writer.append(packed_sib_path)
+        writer.pad_align(4)
+        # Minimum combined length of name and SIB path is 20 bytes, so pad if necessary.
+        if writer.position - strings_position < 20:
+            writer.pad(0x14 - (writer.position - strings_position))
 
 
 @dataclass(slots=True, eq=False, repr=False)

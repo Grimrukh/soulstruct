@@ -977,7 +977,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
     def _reload_data(self, data_type: ProjectDataType):
         if self.CustomDialog(
             title="Reload Project Data?",
-            message=f"Are you sure you want to reload project {data_type} data? Any unsaved changes will be lost.",
+            message=f"Are you sure you want to reload project {data_type.name} data? Any unsaved changes will be lost.",
             button_names=("Yes, reload data", "No, do nothing"),
             button_kwargs=("YES", "NO"),
             cancel_output=1,

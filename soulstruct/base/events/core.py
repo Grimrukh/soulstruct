@@ -81,7 +81,7 @@ def convert_events(
         output_path = output_directory / (name + output_ext)
         name_stem = name.split(".")[0]
         try:
-            if input_type == "evs":
+            if input_type in {"evs", "evs.py"}:
                 emevd = emevd_class.from_evs_path(source_path, script_directory=input_directory)
             elif input_type == "numeric":
                 emevd = emevd_class.from_numeric_path(source_path, map_name=name_stem)

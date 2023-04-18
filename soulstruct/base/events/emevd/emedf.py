@@ -4,6 +4,7 @@ __all__ = [
     "ArgType",
     "add_common_emedf_info",
     "build_emedf_aliases_tests",
+    "get_coord_entity_type",
     "HIDE_NAME",
     "BOOL",
     "INT",
@@ -20,6 +21,7 @@ from pathlib import Path
 
 from soulstruct.utilities.files import read_json
 from .enums import BaseNegatableEMEVDEnum
+from .utils import get_coord_entity_type
 
 
 class ArgType(IntEnum):

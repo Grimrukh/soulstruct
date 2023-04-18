@@ -6,7 +6,7 @@ import typing as tp
 from dataclasses import dataclass, field
 
 from soulstruct.base.ezstate.talkesdbnd import TalkESDBND as _BaseTalkESDBND
-from soulstruct.containers import BinderVersion, BinderVersion4Info
+from soulstruct.containers import BinderVersion, BinderVersion4Info, DCXType
 from soulstruct.games import BLOODBORNE
 
 from .esd import TalkESD
@@ -16,7 +16,7 @@ from .esd import TalkESD
 class TalkESDBND(_BaseTalkESDBND):
     TALK_ESD_CLASS: tp.ClassVar = TalkESD
 
-    dcx_type = BLOODBORNE.default_dcx_type
+    dcx_type: DCXType = BLOODBORNE.default_dcx_type
     version: BinderVersion = BinderVersion.V4
     v4_info: BinderVersion4Info = field(default_factory=lambda: BinderVersion4Info(False, False, True, 0))
 

@@ -23,12 +23,12 @@ __all__ = [
     "IfPlayerHasItem",
     "IfPlayerHasWeapon",
     "IfPlayerHasArmor",
-    "IfPlayerHasRing",
+    "IfPlayerHasTalisman",
     "IfPlayerHasGood",
     "IfPlayerDoesNotHaveItem",
     "IfPlayerDoesNotHaveWeapon",
     "IfPlayerDoesNotHaveArmor",
-    "IfPlayerDoesNotHaveRing",
+    "IfPlayerDoesNotHaveTalisman",
     "IfPlayerDoesNotHaveGood",
     "IfActionButton",
     "DefineLabel",
@@ -304,7 +304,7 @@ def Move(
                 destination_type = get_coord_entity_type(CoordEntityType, destination)
             except AttributeError:
                 raise AttributeError(
-                    "Warp destination has no category. Use 'destination_type' keyword or a " "typed destination."
+                    "Warp destination has no category. Use 'destination_type' keyword or a typed destination."
                 )
     if copy_draw_parent is not None and set_draw_parent is not None:
         raise ValueError("You cannot copy and set the draw parent at the same time.")
@@ -381,8 +381,8 @@ def IfPlayerHasArmor(condition: int, armor: ArmorTyping, including_storage: bool
 
 
 @_compile
-def IfPlayerHasRing(condition: int, ring: AccessoryTyping, including_storage: bool = False):
-    return IfPlayerItemState(condition, True, ring, ItemType.Ring, including_storage)
+def IfPlayerHasTalisman(condition: int, ring: AccessoryTyping, including_storage: bool = False):
+    return IfPlayerItemState(condition, True, ring, ItemType.Talisman, including_storage)
 
 
 @_compile
@@ -408,8 +408,8 @@ def IfPlayerDoesNotHaveArmor(condition: int, armor: ArmorTyping, including_stora
 
 
 @_compile
-def IfPlayerDoesNotHaveRing(condition: int, ring: AccessoryTyping, including_storage: bool = False):
-    return IfPlayerItemState(condition, False, ring, ItemType.Ring, including_storage)
+def IfPlayerDoesNotHaveTalisman(condition: int, ring: AccessoryTyping, including_storage: bool = False):
+    return IfPlayerItemState(condition, False, ring, ItemType.Talisman, including_storage)
 
 
 @_compile

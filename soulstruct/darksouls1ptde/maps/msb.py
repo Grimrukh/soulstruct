@@ -18,6 +18,7 @@ from .models import *
 from .events import *
 from .regions import *
 from .parts import *
+from ...containers import DCXType
 
 
 @dataclass(slots=True)
@@ -114,6 +115,8 @@ class MSB(_BaseMSB):
     HAS_HEADER: tp.ClassVar[bool] = False
     LONG_VARINTS: tp.ClassVar[bool] = False
     NAME_ENCODING: tp.ClassVar[str] = "shift_jis_2004"
+
+    dcx_type: DCXType | None = field(default=DCXType.Null, kw_only=True)
 
     map_piece_models: MSBEntryList[MSBMapPieceModel] = field(default_factory=empty_list("MODEL", "MapPieceModel"))
     object_models: MSBEntryList[MSBObjectModel] = field(default_factory=empty_list("MODEL", "ObjectModel"))

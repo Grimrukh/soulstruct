@@ -538,7 +538,7 @@ class Binder(BaseBinaryFile):
         make_dirs=True,
         check_hash=False,
     ):
-        """Writes both the `BHD` and `BDT` files at once.
+        """Writes the `BND` file, or writes both the `BHD` and `BDT` files at once for split binders.
 
         Missing directories in given path will be created automatically if `make_dirs` is True. Otherwise, they must
         already exist.

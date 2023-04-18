@@ -1,8 +1,9 @@
 __all__ = ["MSB"]
 
-from enum import Enum
 import logging
 import typing as tp
+from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
 
 from soulstruct.base.maps.utilities import MAP_SOURCE_TYPING
@@ -27,6 +28,7 @@ class FindEntry(tp.Protocol[ENTRY_T]):
         ...
 
 
+@dataclass(slots=True)
 class MSB(_PTDE_MSB):
     """Only difference from DS1PTDE is in the methods."""
 

@@ -6,7 +6,7 @@ import typing as tp
 from dataclasses import dataclass
 
 from soulstruct.base.ezstate.talkesdbnd import TalkESDBND as _BaseTalkESDBND
-from soulstruct.containers import BinderVersion
+from soulstruct.containers import BinderVersion, BinderVersion4Info, DCXType
 from soulstruct.games import DARK_SOULS_PTDE
 from .esd import TalkESD
 
@@ -15,9 +15,9 @@ from .esd import TalkESD
 class TalkESDBND(_BaseTalkESDBND):
     TALK_ESD_CLASS: tp.ClassVar = TalkESD
 
-    dcx_type = DARK_SOULS_PTDE.default_dcx_type
+    dcx_type: DCXType = DARK_SOULS_PTDE.default_dcx_type
     version: BinderVersion = BinderVersion.V3
-    v4_info = None
+    v4_info: BinderVersion4Info = None
 
     @classmethod
     def get_default_entry_path(cls, entry_name: str) -> str:

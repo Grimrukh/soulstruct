@@ -22,10 +22,11 @@ import typing as tp
 from enum import IntEnum
 from functools import wraps
 
+from soulstruct.base.game_types import GameObjectInt, GAME_INT_TYPE
+
 from .exceptions import NoSkipOrReturnError, NoNegateError
 
 if tp.TYPE_CHECKING:
-    from soulstruct.base.game_types import GAME_INT_TYPE
     from soulstruct.utilities.binary import BinaryReader
 
 _LOGGER = logging.getLogger(__name__)
@@ -108,6 +109,7 @@ class EventArgumentData:
         self.arg_class = arg_class
 
     def get_coord_entity_type(self, coord_entity_type_enum: tp.Type[IntEnum]):
+        """Forwards to `get_coord_entity_type` with `self.arg_class` as `arg_or_type`."""
         try:
             return get_coord_entity_type(coord_entity_type_enum, self.arg_class)
         except KeyError:
@@ -119,11 +121,23 @@ class EventArgumentData:
         return f"EventArgumentData({self.offset_tuple[0]}, {self.offset_tuple[1]})"
 
 
-def get_coord_entity_type(coord_entity_type_enum: tp.Type[IntEnum], arg_type) -> IntEnum:
-    try:
-        return coord_entity_type_enum[arg_type.__name__]
-    except KeyError:
-        raise KeyError(f"Cannot auto-detect `CoordEntityType` from argument type: {arg_type.__name__}")
+def get_coord_entity_type(
+    coord_entity_type_enum: tp.Type[IntEnum],
+    arg_or_type: EventArgumentData | GameObjectInt | GAME_INT_TYPE,
+) -> IntEnum:
+    """Automatically detect `CoordEntityType` from argument `arg_or_type`."""
+    if isinstance(arg_or_type, EventArgumentData):
+        arg_or_type = arg_or_type.arg_class
+    if isinstance(arg_or_type, GameObjectInt):
+        arg_or_type = arg_or_type.__class__
+
+    # Check supported types using names of types in `__mro__`.
+    mro_names = [parent_type.__name__ for parent_type in arg_or_type.__mro__]
+    for coord_entity_name in coord_entity_type_enum.__members__:  # type: ignore
+        if coord_entity_name in mro_names:
+            return coord_entity_type_enum[coord_entity_name]
+
+    raise KeyError(f"Cannot auto-detect `CoordEntityType` from argument type: {arg_or_type.__name__}")
 
 
 def get_byte_offset_from_struct(format_string: str) -> dict[int, tuple[int, str]]:

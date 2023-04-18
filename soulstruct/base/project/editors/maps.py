@@ -551,6 +551,10 @@ class MapFieldRow(FieldRow):
 
         new_model_name = NameSelectionBox(self.master, names, split_string="  {").go()
 
+        if new_model_name is None:
+            # User cancelled.
+            return
+
         existing_entries = self.master.linker.get_map_entry_subtype_list(self.field_type)
         existing_entry_names = [entry.name for entry in existing_entries]
         if new_model_name in existing_entry_names:
@@ -593,7 +597,6 @@ class MapFieldRow(FieldRow):
         self.build_field_context_menu()
 
     def _set_group_checkbuttons(self):
-        # TODO: Check BIT_COUNT of type and show appropriate number of checks.
         current_group_bit_set = self.master.get_selected_field_dict()[self.field_name]  # type: GroupBitSet
         new_bit_set = GroupBitSetEditBox(
             self.master,
