@@ -23,6 +23,7 @@ class BaseMSBEvent(MSBEntry, abc.ABC):
     SUPERTYPE_ENUM: tp.ClassVar[MSBSupertype] = MSBSupertype.EVENTS
     SUBTYPE_ENUM: tp.ClassVar[BaseMSBEventSubtype]
     NAME_ENCODING: tp.ClassVar[str] = ""
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region"]
 
     entity_id: int = -1
     attached_part: MSBEntry = None
@@ -41,6 +42,6 @@ class BaseMSBEvent(MSBEntry, abc.ABC):
         self.SUPERTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
-            _attached_part_index=self.try_index(entry_lists["PARTS_PARAM_ST"], self.attached_part),
-            _attached_region_index=self.try_index(entry_lists["POINT_PARAM_ST"], self.attached_region),
+            _attached_part_index=self.try_index(entry_lists["PARTS_PARAM_ST"], "attached_part"),
+            _attached_region_index=self.try_index(entry_lists["POINT_PARAM_ST"], "attached_region"),
         )

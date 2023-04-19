@@ -31,21 +31,24 @@ if tp.TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-# Collection of all valid `MSBEntry` field types, and the annotation strings used to detect them and types.
+# Maps valid `MSBEntry` field type annotation strings to their actual types.
+# Note that other types may be acceptable, e.g. `int` can be converted to `float`.
+# `MSBEntry` references are handled separately.
 _BASIC_ENTRY_TYPES = {
-    "bool",
-    "int",
-    "float",
+    "bool": bool,
+    "int": int,
+    "float": float,
     # No `bytes` fields in entries.
-    "str",
-    "list[int]",
-    "list[float]",
+    "str": str,
+    "list[int]": list,
+    "list[float]": list,
     # No `tuple` fields in entries (makes element assignment too annoying).
-    "set[int]",
-    "Vector2",
-    "Vector3",
-    "Vector4",
-}  # type: set[str]
+    "GroupBitSet128": GroupBitSet128,
+    "GroupBitSet256": GroupBitSet256,
+    "Vector2": Vector2,
+    "Vector3": Vector3,
+    "Vector4": Vector4,
+}
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -70,8 +73,10 @@ class MSBEntry(abc.ABC):
     _FIELD_DISPLAY_INFO: tp.ClassVar[MappingProxyType[str, tuple[str, str, tp.Type[tp.Any]]]] = None
     # Cached when first accessed. Maps field names to functions that convert JSON string values to that field's type.
     _CUSTOM_JSON_DECODERS: tp.ClassVar[MappingProxyType[str, tp.Callable[[str], tp.Any]]] = None
-    # Internal field that prevents my `__setattr__` checks during `__init__`.
-    _SETATTR_CHECKS_DISABLED: tp.ClassVar[bool] = False
+
+    # Prevents `__setattr__` type checks when creating instances from binary `MSB` (for efficiency). Can also be enabled
+    # and disabled by the user at will.
+    SETATTR_CHECKS_DISABLED: tp.ClassVar[bool] = False
 
     # Structs for header, supertype data, and (optional but common) subtype data.
     SUPERTYPE_HEADER_STRUCT: tp.ClassVar[tp.Type[BinaryStruct]]
@@ -81,9 +86,6 @@ class MSBEntry(abc.ABC):
     # Basic data fields.
     name: str
     description: str = field(default="", kw_only=True)  # not actually present in MSB until DS2
-
-    def __post_init__(self):
-        self.__class__._SETATTR_CHECKS_DISABLED = True
 
     @classmethod
     def from_msb_reader(cls, reader: BinaryReader) -> Self:
@@ -97,8 +99,10 @@ class MSBEntry(abc.ABC):
             reader.seek(entry_offset + relative_subtype_data_offset)
             kwargs |= cls.unpack_subtype_data(reader)
 
-        cls._SETATTR_CHECKS_DISABLED = True  # will be re-enabled in `__post_init__`
-        return cls(**kwargs)
+        cls.SETATTR_CHECKS_DISABLED = True  # will be re-enabled in `__post_init__`
+        msb_entry = cls(**kwargs)
+        cls.SETATTR_CHECKS_DISABLED = False
+        return msb_entry
 
     @classmethod
     def unpack_header(cls, reader: BinaryReader, entry_offset: int) -> dict[str, tp.Any]:
@@ -124,7 +128,11 @@ class MSBEntry(abc.ABC):
     ):
         """Default: pack header (with name), base data, and type data in that order."""
         entry_offset = writer.position
-        self.pack_header(writer, entry_offset, supertype_index, subtype_index, entry_lists)
+        try:
+            self.pack_header(writer, entry_offset, supertype_index, subtype_index, entry_lists)
+        except Exception:
+            print(self.to_dict(ignore_defaults=False))
+            raise
         supertype_data_offset = writer.position - entry_offset if self.SUPERTYPE_DATA_STRUCT is not None else 0
         writer.fill("supertype_data_offset", supertype_data_offset, obj=self)
         self.pack_supertype_data(writer, entry_offset, entry_lists)
@@ -279,7 +287,10 @@ class MSBEntry(abc.ABC):
     @classmethod
     def from_dict(cls, data: dict[str, tp.Any]) -> Self:
         """Standard dictionary loader."""
-        return cls(**data)
+        cls.SETATTR_CHECKS_DISABLED = True
+        msb_entry = cls(**data)
+        cls.SETATTR_CHECKS_DISABLED = False
+        return msb_entry
 
     @classmethod
     def from_json_dict(cls, data: dict[str, tp.Any]) -> tuple[Self, dict[str, dict]]:
@@ -324,7 +335,10 @@ class MSBEntry(abc.ABC):
                 # `__setattr__` enforcer should be able to convert all JSON values to their proper types.
                 kwargs[field_name] = field_value
 
-        return cls(**kwargs), deferred_refs
+        cls.SETATTR_CHECKS_DISABLED = True
+        msb_entry = cls(**kwargs)
+        cls.SETATTR_CHECKS_DISABLED = False
+        return msb_entry, deferred_refs
 
     def to_dict(self, ignore_defaults=True) -> dict[str, tp.Any]:
         """Similar to `asdict`, but optionally (and by default) omits fields with their default values for brevity.
@@ -354,7 +368,7 @@ class MSBEntry(abc.ABC):
                 subtype_list = msb.get_list_of_entry(value)
                 data[name] = {
                     "subtype_list_name": subtype_list.subtype_info.subtype_list_name,
-                    "subtype_index": subtype_list.index_entry(value)
+                    "subtype_index": subtype_list.index(value)
                 }
             elif isinstance(value, list) and any(isinstance(element, MSBEntry) for element in value):
                 # Construct a reference dictionary. (There are no real dictionary fields in `MSBEntry` subclasses.)
@@ -368,7 +382,7 @@ class MSBEntry(abc.ABC):
                             ref_subtype_list = msb.get_list_of_entry(element)
                         ref_list.append({
                             "subtype_list_name": ref_subtype_list.subtype_info.subtype_list_name,
-                            "subtype_index": ref_subtype_list.index_entry(element)
+                            "subtype_index": ref_subtype_list.index(element)
                         })
                 data[name] = ref_list
             elif isinstance(value, BaseVector):
@@ -400,10 +414,10 @@ class MSBEntry(abc.ABC):
     def __setattr__(self, key: str, value: tp.Any):
         """Enforces correct type and field presence.
 
-        NOTE: Typically deactivated during class creation, as it is too slow. It's more for validating MSB edits after
-        it is loaded.
+        This is slow and is deactivated when reading binary MSBs.
         """
-        if self.__class__._SETATTR_CHECKS_DISABLED:
+        if self.__class__.SETATTR_CHECKS_DISABLED:
+            # Bypass validation.
             super(MSBEntry, self).__setattr__(key, value)
             return
 
@@ -411,7 +425,13 @@ class MSBEntry(abc.ABC):
 
         if key in {"name", "description"}:
             if not isinstance(value, str):
-                raise ValueError(f"MSB entry {key} must be a string.")
+                raise ValueError(f"MSB entry `{key}` must be a string.")
+            super(MSBEntry, self).__setattr__(key, value)
+            return
+
+        if key == "entity_enum":
+            if not isinstance(value, IntEnum):
+                raise ValueError(f"MSB entry `{key}` must be an Entity.")
             super(MSBEntry, self).__setattr__(key, value)
             return
 
@@ -501,19 +521,11 @@ class MSBEntry(abc.ABC):
                     super(MSBEntry, self).__setattr__(field_name, value)
                     return
 
-                if field_type == "set[int]":
-                    int_set = set()
-                    if not isinstance(value, (set, list, tuple)):
-                        raise TypeError(
-                            f"Group set field `{self.cls_name}.{field_name}` must be an int set/sequence, not: {value}"
-                        )
-                    for v in value:
-                        if not isinstance(v, int):
-                            raise TypeError(
-                                f"Group set field `{self.cls_name}.{field_name}` cannot contain non-int: {v}"
-                            )
-                        int_set.add(v)
-                    super(MSBEntry, self).__setattr__(field_name, int_set)
+                if field_type in {"GroupBitSet128", "GroupBitSet256"}:
+                    # `GroupBitSet` subclass of some maximum count.
+                    if not isinstance(value, (GroupBitSet128, GroupBitSet256)):
+                        value = (GroupBitSet128 if field_type.endswith("128") else GroupBitSet256)(set(value))
+                    super(MSBEntry, self).__setattr__(field_name, value)
                     return
 
                 # Type is exactly correct.
@@ -522,29 +534,31 @@ class MSBEntry(abc.ABC):
                     return
 
                 # Try to convert to basic type.
-                if field_type in ("Vector2", "Vector3", "Vector4"):
+                if field_type in {"Vector2", "Vector3", "Vector4"}:
                     vector_type = {"Vector2": Vector2, "Vector3": Vector3, "Vector4": Vector4}[field_type]
                     try:
-                        vector_value = vector_type(*value)
+                        vector_value = vector_type(value)
                     except (ValueError, TypeError):
                         raise ValueError(
                             f"Can only assign sequences or `{field_type}` to `{field_type}` "
-                            f"field `{self.cls_name}.{field_name}`."
+                            f"field `{self.cls_name}.{field_name}`, not: {value}"
                         )
                     super(MSBEntry, self).__setattr__(key, vector_value)
                     return
 
-                if field_type in ("bool", "int", "float", "str"):
-                    py_type = globals()[field_type]
+                if field_type in {"bool", "int", "float", "str"}:
+                    py_type = _BASIC_ENTRY_TYPES.get(field_type)
                     if isinstance(value, int) and py_type is float:
-                        value = float(value)  # acceptable cast
+                        value = float(value)  # acceptable conversion
                     elif not isinstance(value, py_type):
                         raise TypeError(f"Invalid type for `{field_type}` field `{self.cls_name}.{field_name}: {value}")
                     super(MSBEntry, self).__setattr__(key, value)
+                    return
 
                 # Shouldn't be able to reach this, but just in case.
                 raise ValueError(
-                    f"Could not set/convert value {repr(value)} for assignment to field `{self.cls_name}.{field_name}`."
+                    f"Could not set/convert value {repr(value)} for assignment to field "
+                    f"`{self.cls_name}.{field_name}` (type `{field_type}`)."
                 )
 
         raise ValueError(f"Invalid `MSBEntry` subclass field: `{self.cls_name}.{key}`")
@@ -564,10 +578,11 @@ class MSBEntry(abc.ABC):
         # Special exceptions (with warnings) for unused character/object models, which have been known
         # to reference the wrong model type in Undead Burg in DSR (thanks QLOC?).
         if self.cls_name == "MSBUnusedCharacter" and value.__class__.__name__ == "MSBObjectModel":
-            _LOGGER.warning(
-                f"`MSBUnusedCharacter` '{self.name}' uses an `MSBObjectModel`: '{value.name}'.\n"
-                f"    This happens, e.g., in m10_01_00_00 in vanilla DSR (unused bonfire 'o0200_0004')."
-            )
+            # TODO: Could do a hash check for vanilla DSR file to skip m10_01 warning. But that seems REALLY try-hard.
+            # _LOGGER.warning(
+            #     f"`MSBUnusedCharacter` '{self.name}' uses an `MSBObjectModel`: '{value.name}'.\n"
+            #     f"    This happens, e.g., in m10_01_00_00 in vanilla DSR (unused bonfire 'o0200_0004')."
+            # )
             return True
         return False
 
@@ -720,7 +735,7 @@ class MSBEntry(abc.ABC):
                             f"MSB entry type `{cls.__name__}` needs `Binary(length)` metadata for field `{f.name}`."
                         )
                 field_types[f.name] = f"{ann[5:-1]}[{length}]"
-            elif ann in _BASIC_ENTRY_TYPES or ann.startswith("GroupBitSet"):
+            elif ann in _BASIC_ENTRY_TYPES:
                 field_types[f.name] = ann
             else:
                 raise TypeError(f"Could not parse field type annotation '{ann}' for `{cls.__name__}.{f.name}`.")
@@ -821,15 +836,19 @@ class MSBEntry(abc.ABC):
         setattr(self, field_name, entries)
         setattr(self, indices_field_name, None)
 
-    @staticmethod
-    def try_index(entry_list: list, entry_or_entry_list: MSBEntry | list[MSBEntry | None]) -> int | list[int]:
+    def try_index(
+        self,
+        entry_list: list,
+        source_field_name: str,
+    ) -> int | list[int]:
         """Find index of single entry or indices of all entries in list.
 
         Returns -1 (or puts -1 in list) if an entry is `None`. Searches by `is` (ID), NOT dataclass equality.
         Raises a `ValueError` if an entry cannot be found in the list.
 
-        Note that unlike `MSBEntryList.index_entry()`, non-null entries MUST be present here.
+        Note that unlike `MSBEntryList.index(entry)`, non-null entries MUST be present here.
         """
+        entry_or_entry_list = getattr(self, source_field_name)  # type: MSBEntry | list[MSBEntry | None]
         if entry_or_entry_list is None:
             return -1  # non-set single entry
         if isinstance(entry_or_entry_list, list):
@@ -843,13 +862,19 @@ class MSBEntry(abc.ABC):
                             indices.append(i)
                             break
                     else:
-                        raise ValueError(f"Could not find referenced entry `{entry.name}` in MSB list while packing.")
+                        raise ValueError(
+                            f"Could not find referenced entry `{entry.name}` for "
+                            f"`{self.name}.{source_field_name}` in MSB list while packing."
+                        )
             return indices
         # Otherwise, single entry.
         for i, e in enumerate(entry_list):
             if e is entry_or_entry_list:
                 return i
-        raise ValueError(f"Could not find referenced entry `{entry_or_entry_list.name}` in MSB list while packing.")
+        raise ValueError(
+            f"Could not find referenced entry `{entry_or_entry_list.name}` for "
+            f"`{self.name}.{source_field_name}` in MSB list while packing."
+        )
 
     @property
     def cls_name(self) -> str:

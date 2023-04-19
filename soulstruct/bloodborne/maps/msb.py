@@ -164,9 +164,7 @@ class MSB(_BaseMSB):
         if not isinstance(collision, MSBCollision):
             collision = self.collisions.find_entry_name(collision)
         name = kwargs["name"]
-        new_collision = self.collisions.duplicate(
-            copy_entry=collision, at_next_index=at_next_index, **kwargs,
-        )
+        new_collision = self.collisions.duplicate(collision, at_next_index=at_next_index, **kwargs)
         if not new_collision.environment_event:
             return new_collision
 

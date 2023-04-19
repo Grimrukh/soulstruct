@@ -32,7 +32,7 @@ class BaseVector(abc.ABC):
         if len(data) != self.LENGTH:
             raise ValueError(f"Vector must have length {self.LENGTH} (got {len(data)})")
         if isinstance(data, np.ndarray):
-            self._data = data.astype(np.float32)
+            self._data = data.astype(float)
         else:
             self._data = np.array(data, dtype=float)
 

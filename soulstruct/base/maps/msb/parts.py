@@ -28,6 +28,7 @@ class BaseMSBPart(MSBEntry, abc.ABC):
     SUPERTYPE_ENUM: tp.ClassVar[MSBSupertype] = MSBSupertype.PARTS
     SUBTYPE_ENUM: tp.ClassVar[BaseMSBPartSubtype]
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = None
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model"]
 
     model: BaseMSBModel = None
     entity_id: int = -1

@@ -7,6 +7,8 @@ import logging
 import typing as tp
 from enum import IntEnum
 
+from soulstruct.utilities.misc import IDList
+
 from .enums import MSBSupertype
 from .msb_entry import MSBEntry
 from .utils import MSBSubtypeInfo
@@ -26,7 +28,7 @@ MSBEntryType = tp.TypeVar("MSBEntryType", bound=MSBEntry)
 
 
 # NOT a dataclass.
-class MSBEntryList(list[MSBEntryType]):
+class MSBEntryList(IDList[MSBEntryType]):
 
     supertype: MSBSupertype
     subtype_info: MSBSubtypeInfo
@@ -53,11 +55,12 @@ class MSBEntryList(list[MSBEntryType]):
             entry_name = entry_name.name
         entries = [entry for entry in self if entry.name == entry_name]
         if not entries:
-            raise KeyError(f"Entry name '{entry_name}' does not appear in {self.__class__.__name__}.")
+            raise KeyError(f"Entry name '{entry_name}' does not appear in MSB `{self.subtype_name}` list.")
         elif len(entries) >= 2:
+            print(entries)
             raise ValueError(
-                f"Entry name '{entry_name}' appears more than once in {self.__class__.__name__}. You must access it by "
-                f"global index or local subtype-specific index."
+                f"Entry name '{entry_name}' appears more than once in MSB `{self.subtype_name}` list. You must access "
+                f"it by global index or local subtype-specific index."
             )
         return entries[0]
 
@@ -65,6 +68,9 @@ class MSBEntryList(list[MSBEntryType]):
         return [entry for entry in self if entry.name in entry_names]
 
     def __getitem__(self, index_or_name: int | IntEnum | str) -> MSBEntryType:
+        if isinstance(index_or_name, IntEnum):
+            # Search by enum name.
+            return self.find_entry_name(index_or_name.name)
         if isinstance(index_or_name, int):
             return super().__getitem__(index_or_name)
         return self.find_entry_name(index_or_name)
@@ -114,23 +120,6 @@ class MSBEntryList(list[MSBEntryType]):
             *[entry.copy() for entry in self if filter_func(entry)],
         )
 
-    def contains_entry(self, entry: MSBEntry):
-        """Checks if `entry` is in this list, by ID, not `__eq__`."""
-        for e in self:
-            if e is entry:
-                return True
-        return False
-
-    def index(self, value, start=None, stop=None):
-        raise TypeError(f"Cannot use `MSBEntryList.index()` as it is brutally slow. Use `.index_entry(entry)` instead.")
-
-    def index_entry(self, entry: MSBEntry) -> int:
-        """Index exact instance `entry`. Returns -1 if absent rather than raising an error."""
-        for i, e in enumerate(self):
-            if e is entry:
-                return i
-        return -1
-
     def default_entry(self) -> MSBEntryType:
         """Create a new `MSBEntry` of this list's subtype, with all default field values, and return it.
 
@@ -141,6 +130,14 @@ class MSBEntryList(list[MSBEntryType]):
 
     def new(self, new_index=-1, **kwargs) -> MSBEntryType:
         """Create a new `MSBEntry` of this list's subtype and append it to list (or insert it at `new_index`)."""
+        if "entity_enum" in kwargs:
+            if "name" in kwargs or "entity_id" in kwargs:
+                raise ValueError(
+                    "Cannot specify both `entity_enum` and `name` or `entity_id` when creating a new MSB entry."
+                )
+            entity_enum = kwargs.pop("entity_enum")
+            kwargs["name"] = entity_enum.name
+            kwargs["entity_id"] = entity_enum.value
         # noinspection PyArgumentList
         kwargs.setdefault("name", f"Default{self.subtype_info.entry_class.__name__}")
         # noinspection PyArgumentList
@@ -152,7 +149,7 @@ class MSBEntryList(list[MSBEntryType]):
         return entry
 
     def duplicate(
-        self, entry_or_index_or_name: MSBEntryType | int | str | IntEnum, index_offset=0, **kwargs
+        self, entry_or_index_or_name: MSBEntryType | int | str | IntEnum, index_offset: int = None, **kwargs
     ) -> MSBEntryType:
         """Duplicate the specified `entry`.
 
@@ -171,10 +168,10 @@ class MSBEntryList(list[MSBEntryType]):
             index = entry_or_index_or_name
         elif isinstance(entry_or_index_or_name, str):
             entry = self.find_entry_name(entry_or_index_or_name)
-            index = self.index_entry(entry)  # -1 if not found
+            index = self.index(entry)  # -1 if not found
         elif isinstance(entry_or_index_or_name, MSBEntry):
             entry = entry_or_index_or_name
-            index = self.index_entry(entry)  # -1 if not found
+            index = self.index(entry)  # -1 if not found
         else:
             raise TypeError("`entry_or_index_or_name` must be an `MSBEntry` or index of one in this list.")
         
@@ -189,13 +186,16 @@ class MSBEntryList(list[MSBEntryType]):
         for field_name, field_value in kwargs.items():
             setattr(duplicated, field_name, field_value)
 
+        if index_offset is None:
+            index_offset = 0 if index != -1 else -1
+
         if index_offset >= 0 and index != -1:
             self.insert(index + index_offset, duplicated)
         else:
-            if index_offset >= 0:
+            if index_offset >= 0 and index != -1:
                 _LOGGER.warning(
                     f"Cannot insert duplicate of entry `{entry.name}` at index offset {index_offset} (source entry is "
-                    f"not in this list)."
+                    f"not in this list). Inserting at end."
                 )
             self.append(duplicated)
 

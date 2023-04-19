@@ -37,8 +37,10 @@ class BaseMSBModel(MSBEntry, abc.ABC):
         """Models have no supertype or subtype data, just a header."""
         entry_offset = reader.position
         kwargs = cls.unpack_header(reader, entry_offset)
-        cls._SETATTR_CHECKS_DISABLED = True  # will be re-enabled in `__post_init__`
-        return cls(**kwargs)
+        cls.SETATTR_CHECKS_DISABLED = True
+        msb_model = cls(**kwargs)
+        cls.SETATTR_CHECKS_DISABLED = False
+        return msb_model
 
     @classmethod
     def unpack_header(cls, reader: BinaryReader, entry_offset: int) -> dict[str, tp.Any]:

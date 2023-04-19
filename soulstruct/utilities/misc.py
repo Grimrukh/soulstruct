@@ -5,11 +5,13 @@ __all__ = [
     "BiDict",
     "get_startupinfo",
     "Flags8",
+    "IDList",
 ]
 
 import abc
 import logging
 import subprocess
+import typing as tp
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -128,3 +130,48 @@ class Flags8(abc.ABC):
     @classmethod
     def default(cls):
         return cls(0)
+
+
+IDListElementType = tp.TypeVar("IDListElementType")
+
+
+class IDList(list[IDListElementType]):
+    """List that checks for membership by object ID instead of equality."""
+    def __contains__(self, item: IDListElementType):
+        for i in self:
+            if id(i) == id(item):
+                return True
+        return False
+
+    def index(self, item: IDListElementType, start=None, stop=None) -> int:
+        """Index exact instance `entry`. Returns -1 if absent rather than raising an error."""
+        for i, e in enumerate(self):
+            if start is not None and i < start:
+                continue
+            if stop is not None and i >= stop:
+                break
+            if e is item:
+                return i
+        return -1
+
+    def remove(self, item: IDListElementType):
+        """Remove entry from this list, by ID, not `__eq__`."""
+        for i, e in enumerate(self):
+            if e is item:
+                del self[i]
+                return
+        raise ValueError(f"Item `{item}` is not in list.")
+
+    def count(self, item: IDListElementType):
+        """Counts the number of times the exact instance `item` appears in this list."""
+        return sum(1 for i in self if id(i) == id(item))
+
+    def __eq__(self, other):
+        return all(id(a) == id(b) for a, b in zip(self, other))
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        """Hash by ID, not `__eq__`."""
+        return hash(tuple(id(i) for i in self))

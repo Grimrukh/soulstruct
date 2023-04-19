@@ -93,7 +93,7 @@ def build_ffxbnd(
     if check_area_ffxbnd and (block_match := _BLOCK_FFXBND_RE.match(str(ffxbnd_path))):
         area_ffxbnd_path = ffxbnd_path.parent / f"FRPG_SfxBnd_m{block_match.group(1)}.ffxbnd{block_match.group(3)}"
         try:
-            area_ffxbnd = BND3(area_ffxbnd_path)
+            area_ffxbnd = Binder.from_path(area_ffxbnd_path)
         except FileNotFoundError:
             _LOGGER.warning(
                 f"Could not find area-level FFXBND file {area_ffxbnd_path}. It will not be checked for existing files."
@@ -171,7 +171,7 @@ def build_ffxbnd(
             if not source_path.is_file():
                 _LOGGER.error(f"Could not find FFXBND source file '{source_path}' for extra {file_type} {extra_id}.")
                 continue
-            source_bnd = open_ffxbnd_sources.setdefault(extra_source_file_name, BND3(source_path))
+            source_bnd = open_ffxbnd_sources.setdefault(extra_source_file_name, Binder.from_path(source_path))
             try:
                 # No need to make a copy of the source file.
                 source_entry = source_bnd.entries_by_name[file_name]
@@ -186,11 +186,11 @@ def build_ffxbnd(
                 raise ValueError(
                     f"Source path suffix '{extra_source_path.suffix}' does not match file type {file_type}."
                 )
-            source_entry = BND3.BinderEntry(
+            source_entry = BinderEntry(
                 data=extra_source_path.read_bytes(),
                 entry_id=entry_id,
                 path=entry_path,
-                flags=2,
+                # Default flags (0x2).
             )
 
         ffxbnd.add_entry(source_entry)
@@ -209,7 +209,7 @@ def build_ffxbnd(
         ffxbnd.write(write_ffxbnd_path)
         return ffxbnd
 
-    for chr_model in msb.models.Characters:
+    for chr_model in msb.character_models:
         model_id = int(chr_model.name[1:])
 
         # Check extra character directory.
@@ -242,11 +242,11 @@ def build_ffxbnd(
                         )
                         continue
 
-                    source_entry = BND3.BinderEntry(
+                    source_entry = BinderEntry(
                         data=extra_file_path.read_bytes(),
                         entry_id=entry_id,
                         path=entry_path,
-                        flags=2,
+                        # Default flags (0x2).
                     )
                     ffxbnd.add_entry(source_entry)
                     existing_file_names.add(file_name)
@@ -282,7 +282,7 @@ def build_ffxbnd(
                 _LOGGER.error(f"Could not find FFX source file '{source_path}' for FFX {ffx_id} "
                               f"(character model {model_id}).")
                 continue
-            source_bnd = open_ffxbnd_sources.setdefault(source_file_name, BND3(source_path))
+            source_bnd = open_ffxbnd_sources.setdefault(source_file_name, Binder.from_path(source_path))
             try:
                 source_entry = source_bnd.entries_by_name[ffx_file_name]
             except KeyError:
@@ -352,7 +352,7 @@ def import_map_piece_flver(
     existing_tpf_paths = set()
     bhd = None
     for bhd_path in dest_texture_dir.glob("m*tpfbhd"):  # does not search `GI_EnvM_mXX.tpfbhd`
-        bhd = BXF3(bhd_path)
+        bhd = Binder.from_path(bhd_path)
         for entry in bhd.entries:
             existing_tpf_paths.add(entry.path)
     if bhd is None:
@@ -375,13 +375,13 @@ def find_flver_textures(flver_path: str | Path) -> list[BinderEntry]:
     flver_path = Path(flver_path)
     texture_dir = flver_path.parent.parent / flver_path.parent.name[0:3]  # e.g. "m10"
 
-    flver = FLVER(flver_path)
+    flver = FLVER.from_path(flver_path)
     tpf_paths = {f"\\{Path(texture_path).stem}.tpf.dcx" for texture_path in flver.get_all_texture_paths()}
     tpf_count = len(tpf_paths)
     tpf_entries = []
 
     for bhd_path in texture_dir.glob("m*tpfbhd"):  # does not search `GI_EnvM_mXX.tpfbhd`
-        bhd = BXF3(bhd_path)
+        bhd = Binder.from_path(bhd_path)
         print(f"Searching BHD: {bhd_path}")
         for entry in bhd.entries:
             if entry.path in tpf_paths:
@@ -423,7 +423,7 @@ def dump_all_map_textures(dump_directory: str | Path, map_directory: str | Path 
     for area in range(10, 18 + 1):
         area_dir = map_directory / f"m{area}"
         for bhd_path in area_dir.glob("*.tpfbhd"):
-            bxf = BXF3.from_bak(bhd_path, create_bak_if_missing=False)
+            bxf = Binder.from_path(bhd_path)
             for entry in bxf.entries:
                 tpf_path = dump_directory / entry.name
                 if not tpf_path.exists():  # may have been unpacked elsewhere already

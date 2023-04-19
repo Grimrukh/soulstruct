@@ -52,7 +52,7 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
     # case of conflicts) and the results written to BOTH base and patch.
     BASE_PATCH_FMGS: tp.ClassVar[dict[(str, int), (str, int)]] = {}
 
-    # DCX compression type to use for `FMG` entries. Typically Null.
+    # DCX compression type to use for `FMG` entries (as `FMG` does not have game-specific subclasses). Typically Null.
     FMG_DCX_TYPE: tp.ClassVar[DCXType] = DCXType.Null
 
     # Override file type.
@@ -137,7 +137,8 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
                 except FileNotFoundError:
                     raise FileNotFoundError(f"Could not find text (FMG) JSON file: {directory / json_name}")
                 fmg.dcx_type = cls.FMG_DCX_TYPE
-                entry_path = cls.FILE_CLASS.get_default_entry_path(json_stem + ".fmg")
+                fmg_stem = cls.DEFAULT_ENTRY_STEMS[(msgbnd_name, entry_id)]
+                entry_path = cls.FILE_CLASS.get_default_entry_path(fmg_stem + ".fmg")
                 entry = BinderEntry(bytes(fmg), entry_id, entry_path, cls.FILE_CLASS.DEFAULT_ENTRY_FLAGS)
                 entries.append(entry)
                 fmgs[(msgbnd_name, entry_id)] = fmg
@@ -203,6 +204,7 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
 
     def regenerate_binders(self):
         """Regenerate `item` and `menu` MSGBNDs from all FMGs."""
+
         # First, remove any binder entries that are not present in `fmgs`.
         fmg_keys = self.fmgs.keys()
         for msgbnd_name in ("item", "menu"):

@@ -58,12 +58,13 @@ class MSBSubtypeInfo(tp.NamedTuple):
 
     def matches_name(self, name: str) -> bool:
         """Check if `name` is one of the valid specifiers for this MSB entry subtype."""
-        return name.lower() in {
+        name_options = {
             self.subtype_list_name.lower(),
             self.subtype_enum.name.lower(),
             self.subtype_enum.pluralized_name.lower(),
             self.entry_class.__name__.lower(),
         }
+        return name.lower() in name_options
 
 
 @dataclass(slots=True)
@@ -78,17 +79,20 @@ class GroupBitSet(abc.ABC):
     # Only field.
     enabled_bits: set[int]
 
-    def __init__(self, uint_list_or_bit_set: list[int] | set[int]):
+    def __init__(self, uint_list_or_bit_set: GroupBitSet | list[int] | set[int]):
         if isinstance(uint_list_or_bit_set, self.__class__):
             # Just copy bits from other instance.
-            self.enabled_bits = uint_list_or_bit_set.enabled_bits
+            self.enabled_bits = uint_list_or_bit_set.enabled_bits.copy()
         elif isinstance(uint_list_or_bit_set, list):
             # List of unsigned integers (e.g. from packed `MSB` file).
             self.enabled_bits = int_group_to_bit_set(uint_list_or_bit_set, assert_size=len(uint_list_or_bit_set))
         elif isinstance(uint_list_or_bit_set, set):
             if not all(isinstance(i, int) and i < self.BIT_COUNT for i in uint_list_or_bit_set):
-                raise TypeError(f"All `set` flags passed to this `GroupBitSet` must be less than {self.BIT_COUNT}.")
-            self.enabled_bits = uint_list_or_bit_set
+                raise TypeError(
+                    f"Set passed to `{self.__class__.__name__}` must be integers all less than {self.BIT_COUNT}, not: "
+                    f"{uint_list_or_bit_set}"
+                )
+            self.enabled_bits = uint_list_or_bit_set.copy()
         else:
             raise TypeError(f"Cannot initialize `{self.__class__.__name__}` from {type(uint_list_or_bit_set)}.")
 
@@ -118,10 +122,18 @@ class GroupBitSet(abc.ABC):
         bit_tuple = "(" + ", ".join(str(i) for i in sorted(self.enabled_bits)) + ")"
         return f"{self.__class__.__name__}{bit_tuple}"
 
+    def copy(self) -> Self:
+        return self.__class__(self.enabled_bits)
+
     def add(self, bit: int):
         if not 0 <= bit <= self.BIT_COUNT:
             raise ValueError(f"Bit {bit} is out of range for {self.BIT_COUNT}-bit `{self.__class__.__name__}`.")
         self.enabled_bits.add(bit)
+
+    def remove(self, bit: int):
+        if not 0 <= bit <= self.BIT_COUNT:
+            raise ValueError(f"Bit {bit} is out of range for {self.BIT_COUNT}-bit `{self.__class__.__name__}`.")
+        self.enabled_bits.remove(bit)
 
     def __or__(self, other: Self | set[int]) -> Self:
         cls = self.__class__
@@ -131,10 +143,13 @@ class GroupBitSet(abc.ABC):
             return cls(self.enabled_bits | other)
         raise TypeError(f"Cannot combine `{cls.__name__}` with {type(other)}. Must be a `set` or the same type.")
 
-    def remove(self, bit: int):
-        if not 0 <= bit <= self.BIT_COUNT:
-            raise ValueError(f"Bit {bit} is out of range for {self.BIT_COUNT}-bit `{self.__class__.__name__}`.")
-        self.enabled_bits.remove(bit)
+    def __sub__(self, other: Self | set[int]) -> Self:
+        cls = self.__class__
+        if isinstance(other, cls):
+            return cls(self.enabled_bits - other.enabled_bits)
+        elif isinstance(other, set):
+            return cls(self.enabled_bits - other)
+        raise TypeError(f"Cannot subtract `{cls.__name__}` from {type(other)}. Must be a `set` or the same type.")
 
     # TODO: Add more set methods here, like union and intersection.
 
@@ -193,7 +208,10 @@ def merge(msb_1: MSB, msb_2: MSB, filter_func: tp.Callable = None, allow_repeate
 
 
 def rotate_entry(
-    entry: MSBEntry, rotation: Matrix3 | Vector3 | list | tuple | int | float, pivot_point=(0, 0, 0), radians=False,
+    entry: MSBEntry,
+    rotation: Matrix3 | Vector3 | list | tuple | int | float,
+    pivot_point: Vector3 | tuple[float, float, float] = (0.0, 0.0, 0.0),
+    radians=False,
 ):
     """Modify entity `translate` and `rotate` by rotating entry around some `pivot_point` in world coordinates.
 
@@ -211,7 +229,7 @@ def move_map(
     end_translate: Vector3 | None = None,
     start_rotate: Vector3 | None = None,
     end_rotate: Vector3 | None = None,
-    selected_entries: tp.Sequence[MSBEntry | str] = (),
+    selected_entries=(),
 ):
     """Move everything with a transform in given `MSB` relative to an initial and a final reference point.
 
@@ -226,8 +244,6 @@ def move_map(
 
     Optionally, move only a subset of entry names given in `selected_entry_names`.
     """
-    selected_entries = msb.resolve_entries_list(selected_entries, supertypes=("parts", "regions"))
-
     if start_translate is None:
         start_translate = Vector3.zero()
     if end_translate is None:
@@ -251,30 +267,30 @@ def move_map(
 
 def rotate_part_or_region(
     entry: BaseMSBPart | BaseMSBRegion,
-    rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float],
-    pivot_point: Vector3 = None,
+    rotation: Matrix3 | Vector3 | list | tuple | int | float,
+    pivot_point: Vector3 | tuple[float, float, float] = (0.0, 0.0, 0.0),
     radians=False,
 ):
     """Modify entity `translate` and `rotate` by rotating entity around some `pivot_point` in world coordinates.
     Default `pivot_point` is the world origin (0, 0, 0). Default rotation units are degrees.
     """
-    if not isinstance(entry, (BaseMSBPart, BaseMSBRegion)):
+    if not hasattr(entry, "translate") or not hasattr(entry, "rotate"):
         raise TypeError(
-            f"Cannot rotate MSB entry type: `{entry.__class__.__name__}`. Only parts and regions can be rotated."
+            f"Cannot rotate MSB entry type: `{entry.__class__.__name__}`. "
+            f"It must have `translate` and `rotate` attributes."
         )
     rotation = resolve_rotation(rotation, radians)
-    if pivot_point is None:
-        pivot_point = Vector3.zero()
+    pivot_point = Vector3(pivot_point)
     entry.rotate = (rotation @ Matrix3.from_euler_angles(entry.rotate)).to_euler_angles()
     entry.translate = (rotation @ (entry.translate - pivot_point)) + pivot_point
 
 
 def rotate_all_in_world(
     msb: MSB,
-    rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float],
-    pivot_point: Vector3 = None,
+    rotation: Matrix3 | Vector3 | list | tuple | int | float,
+    pivot_point: Vector3 | tuple[float, float, float] = (0.0, 0.0, 0.0),
     radians=False,
-    selected_entries: tp.Sequence[MSBEntry | str] = (),
+    selected_entries=(),
 ):
     """Rotate every Part and Region in the map around the given `pivot_point` by the Euler angles specified by
     `rotation`, modifying both `.rotate` and (unless equal to `pivot_point`) `.translate` for each entry.
@@ -291,8 +307,7 @@ def rotate_all_in_world(
     selected_entries = msb.resolve_entries_list(selected_entries, supertypes=("parts", "regions"))
 
     rotation_m = resolve_rotation(rotation)
-    if pivot_point is None:
-        pivot_point = Vector3.zero()
+    pivot_point = Vector3(pivot_point)
     for part in msb.get_parts():
         if not selected_entries or part in selected_entries:
             rotate_part_or_region(part, rotation_m, pivot_point=pivot_point, radians=radians)

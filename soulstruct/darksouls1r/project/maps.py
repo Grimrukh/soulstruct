@@ -28,7 +28,11 @@ class MapsEditor(BaseMapsEditor):
                 valid_null_values = {0: "Default/None", -1: "Default/None"}
 
         if issubclass(field_type, BaseDrawParam) and self.active_category.endswith("MapConnections"):
-            map_override = self.get_selected_field_dict().connected_map.emevd_file_stem
+            map_id = [
+                map_id_part if map_id_part != -1 else 0
+                for map_id_part in self.get_selected_field_dict().connected_map_id
+            ]
+            map_override = f"m{map_id[0]:02d}_{map_id[1]:02d}_{map_id[2]:02d}_{map_id[3]:02d}"
         else:
             map_override = None
         return self.linker.soulstruct_link(

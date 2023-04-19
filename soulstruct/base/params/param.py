@@ -12,6 +12,7 @@ from pathlib import Path
 from types import ModuleType
 
 from soulstruct.base.game_file import GameFile
+from soulstruct.containers import DCXType
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.text import pad_chars
 from soulstruct.utilities.files import write_json
@@ -496,6 +497,7 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
     def from_json(cls, json_path: str | Path) -> Self:
         if cls.ROW_TYPE is None:
             raise TypeError("Cannot call `Param.from_json()` on `Param` of unknown row type.")
+        # noinspection PyTypeChecker
         return super(Param, cls).from_json(json_path)
 
     def write_json(
@@ -799,4 +801,4 @@ def TypedParam(row_type: tp.Type[ParamRow]):
             continue
         if param_subclass.ROW_TYPE is row_type:
             return param_subclass
-    return type(f"Param_{row_type.__name__}", (Param,), {"ROW_TYPE": row_type})
+    return type(f"Param_{row_type.__name__}", (Param,), {"ROW_TYPE": row_type, "dcx_type": DCXType.Null})

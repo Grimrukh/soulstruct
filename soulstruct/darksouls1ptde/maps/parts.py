@@ -144,7 +144,7 @@ class MSBPart(BaseMSBPart, abc.ABC):
             name_offset=RESERVED,
             _subtype_int=self.SUBTYPE_ENUM.value,
             _subtype_index=subtype_index,
-            model_index=self.try_index(entry_lists["MODEL_PARAM_ST"], self.model),
+            model_index=self.try_index(entry_lists["MODEL_PARAM_ST"], "model"),
             sib_path_offset=RESERVED,
             supertype_data_offset=RESERVED,
             subtype_data_offset=RESERVED,
@@ -193,6 +193,7 @@ class MSBObject(MSBPart):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Object
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\FRPG\\data\\Model\\map\\{map_stem}\\sib\\o_layout.SIB"
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model", "draw_parent"]
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
@@ -201,7 +202,7 @@ class MSBObject(MSBPart):
         break_term: sbyte
         net_sync_type: sbyte
         _pad2: bytes = field(init=False, **BinaryPad(2))
-        default_animation_id: short
+        default_animation: short
         unk_x0e_x10: short
         unk_x10_x14: int
         _pad3: bytes = field(init=False, **BinaryPad(4))
@@ -230,7 +231,7 @@ class MSBObject(MSBPart):
 
     break_term: int = 0
     net_sync_type: int = 0
-    default_animation_id: int = -1
+    default_animation: int = -1
     unk_x0e_x10: int = 0
     unk_x10_x14: int = 0
 
@@ -240,7 +241,7 @@ class MSBObject(MSBPart):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
-            _draw_parent_index=self.try_index(entry_lists["PARTS_PARAM_ST"], self.draw_parent),
+            _draw_parent_index=self.try_index(entry_lists["PARTS_PARAM_ST"], "draw_parent"),
         )
 
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
@@ -253,6 +254,7 @@ class MSBCharacter(MSBPart):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Character
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = ""  # empty
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model", "draw_parent", "patrol_regions"]
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
@@ -313,8 +315,8 @@ class MSBCharacter(MSBPart):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
-            _draw_parent_index=self.try_index(entry_lists["PARTS_PARAM_ST"], self.draw_parent),
-            _patrol_regions_indices=self.try_index(entry_lists["POINT_PARAM_ST"], self.patrol_regions),
+            _draw_parent_index=self.try_index(entry_lists["PARTS_PARAM_ST"], "draw_parent"),
+            _patrol_regions_indices=self.try_index(entry_lists["POINT_PARAM_ST"], "patrol_regions"),
         )
 
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
@@ -370,6 +372,7 @@ class MSBCollision(MSBPart):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Collision
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\FRPG\\data\\Model\\map\\{map_stem}\\sib\\h_layout.SIB"
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model", "environment_event"]
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
@@ -409,7 +412,7 @@ class MSBCollision(MSBPart):
     stable_footing_flag: int = 0  # TODO: event flag type
     camera_1_id: int = field(default=-1, **MapFieldInfo(game_type=CameraParam))
     camera_2_id: int = field(default=-1, **MapFieldInfo(game_type=CameraParam))
-    unk_x27_x28: int = field(default=0, **MapFieldInfo("Unknown [x27-x28]", "Unknown Collision byte.")),
+    unk_x27_x28: int = field(default=0, **MapFieldInfo("Unknown [x27-x28]", "Unknown Collision byte."))
     attached_bonfire: int = 0
 
     _environment_event_index: int = None
@@ -464,7 +467,7 @@ class MSBCollision(MSBPart):
         return self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
-            _environment_event_index=self.try_index(entry_lists["environments"], self.environment_event),
+            _environment_event_index=self.try_index(entry_lists["environments"], "environment_event"),
             _place_name_banner_id=internal_place_name_banner_id,
             _play_region_id=play_region_id,
         )
@@ -593,6 +596,7 @@ class MSBMapConnection(MSBPart):
     """
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.MapConnection
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = ""
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model", "collision"]
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
@@ -615,7 +619,7 @@ class MSBMapConnection(MSBPart):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
-            _collision_index=self.try_index(entry_lists["collisions"], self.collision),
+            _collision_index=self.try_index(entry_lists["collisions"], "collision"),
         )
 
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):

@@ -14,18 +14,18 @@ from .vector import Vector3, Vector4
 class Matrix3:
     """Basic wrapper for 3x3 `np.ndarray` that can be constructed from various input types."""
 
-    _data: np.ndarray = field(default_factory=lambda: np.zeros((3, 3), dtype=np.float32))
+    _data: np.ndarray = field(default_factory=lambda: np.zeros((3, 3), dtype=float))
 
     def __init__(self, data: np.ndarray | list | tuple):
         """Construct `Matrix3` from an existing `ndarray` or a input that can be converted to a 3x3 `np.ndarray`."""
         if isinstance(data, np.ndarray):
             if data.shape != (3, 3):
                 raise ValueError(f"Input array must be 3x3, but shape is {data.shape}.")
-            self._data = data.astype(np.float32)
+            self._data = data.astype(float)
         elif isinstance(data, (list, tuple)):
             # Nested rows.
             if len(data) == 3 and all(isinstance(row, (list, tuple)) for row in data):
-                self._data = np.array(data, dtype=np.float32)
+                self._data = np.array(data, dtype=float)
             else:
                 raise ValueError(f"Cannot construct Matrix3 from shape of nested lists: {data}.")
         else:
@@ -40,7 +40,7 @@ class Matrix3:
         """Create `Matrix3` from flattened elements, in row-first order."""
         if len(data) != 9:
             raise ValueError(f"Input list must have 9 elements, but has {len(data)}.")
-        return cls(np.array(data, dtype=np.float32).reshape((3, 3)))
+        return cls(np.array(data, dtype=float).reshape((3, 3)))
 
     def to_flat_row_order(self) -> list[float]:
         # noinspection PyTypeChecker
@@ -51,7 +51,7 @@ class Matrix3:
         """Create `Matrix` from flattened elements, in column-first order."""
         if len(data) != 9:
             raise ValueError(f"Input list must have 9 elements, but has {len(data)}.")
-        return cls(np.array(data, dtype=np.float32).reshape((3, 3)).T)
+        return cls(np.array(data, dtype=float).reshape((3, 3)).T)
 
     def to_flat_column_order(self) -> list[int] | list[float]:
         # noinspection PyTypeChecker
@@ -135,18 +135,18 @@ class Matrix3:
 class Matrix4:
     """Basic wrapper for 3x3 `np.ndarray` that can be constructed from various input types."""
 
-    _data: np.ndarray = field(default_factory=lambda: np.zeros((4, 4), dtype=np.float32))
+    _data: np.ndarray = field(default_factory=lambda: np.zeros((4, 4), dtype=float))
 
     def __init__(self, data: np.ndarray | list | tuple):
         """Construct `Matrix4` from an existing `ndarray` or a input that can be converted to a 4x4 `np.ndarray`."""
         if isinstance(data, np.ndarray):
             if data.shape != (4, 4):
                 raise ValueError(f"Input array must be 4x4, but shape is {data.shape}.")
-            self._data = data.astype(np.float32)
+            self._data = data.astype(float)
         elif isinstance(data, (list, tuple)):
             # Nested rows.
             if len(data) == 4 and all(isinstance(row, (list, tuple)) for row in data):
-                self._data = np.array(data, dtype=np.float32)
+                self._data = np.array(data, dtype=float)
             else:
                 raise ValueError(f"Cannot construct Matrix4 from shape of nested lists: {data}.")
         else:
@@ -161,7 +161,7 @@ class Matrix4:
         """Create `Matrix4` from flattened elements, in row-first order."""
         if len(data) != 16:
             raise ValueError(f"Input list must have 16 elements, but has {len(data)}.")
-        return cls(np.array(data, dtype=np.float32).reshape((4, 4)))
+        return cls(np.array(data, dtype=float).reshape((4, 4)))
 
     def to_flat_row_order(self) -> list[float]:
         # noinspection PyTypeChecker
@@ -172,7 +172,7 @@ class Matrix4:
         """Create `Matrix` from flattened elements, in column-first order."""
         if len(data) != 16:
             raise ValueError(f"Input list must have 16 elements, but has {len(data)}.")
-        return cls(np.array(data, dtype=np.float32).reshape((4, 4)).T)
+        return cls(np.array(data, dtype=float).reshape((4, 4)).T)
 
     def to_flat_column_order(self) -> list[int] | list[float]:
         # noinspection PyTypeChecker
@@ -224,7 +224,7 @@ class Matrix4:
             [0.0, 1.0, 0.0, translate.y],
             [0.0, 0.0, 1.0, translate.z],
             [0.0, 0.0, 0.0, 1.0],
-        ]))
+        ], dtype=float))
 
     @classmethod
     def from_scale(cls, scale: Vector3) -> Matrix4:
@@ -233,7 +233,7 @@ class Matrix4:
             [0.0, scale.y, 0.0, 0.0],
             [0.0, 0.0, scale.z, 0.0],
             [0.0, 0.0, 0.0, 1.0],
-        ]))
+        ], dtype=float))
 
     @classmethod
     def from_rotation_matrix3(cls, rotation: Matrix3) -> Matrix4:
@@ -242,7 +242,7 @@ class Matrix4:
             [rotation[1, 0], rotation[1, 1], rotation[1, 2], 0.0],
             [rotation[2, 0], rotation[2, 1], rotation[2, 2], 0.0],
             [0.0, 0.0, 0.0, 1.0],
-        ]))
+        ], dtype=float))
 
     def get_translate(self) -> Vector3:
         return Vector3(self._data[:3, 3])

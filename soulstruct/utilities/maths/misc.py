@@ -8,11 +8,9 @@ __all__ = [
 ]
 
 import math
-import typing as tp
 
-if tp.TYPE_CHECKING:
-    from .matrix import Matrix3
-    from .vector import Vector3
+from .matrix import Matrix3
+from .vector import Vector3
 
 
 def shift_msb_coordinates(distance: float, translate=(0.0, 0.0, 0.0), ry=0.0):
@@ -35,7 +33,7 @@ def resolve_rotation(rotation: Matrix3 | Vector3 | list | tuple | int | float, r
     """Return a rotation `Matrix3` from various shortcut input types (e.g. single value or Euler angle vector)."""
     if isinstance(rotation, (int, float)):
         # Single rotation value is a shortcut for Y rotation (i.e. around vertical in-game axis).
-        return Matrix3.from_euler_angles(0.0, rotation, 0.0, radians=radians)
+        return Matrix3.from_euler_angles((0.0, rotation, 0.0), radians=radians)
     elif isinstance(rotation, (Vector3, list, tuple)):
         return Matrix3.from_euler_angles(rotation, radians=radians)
     elif isinstance(rotation, Matrix3):

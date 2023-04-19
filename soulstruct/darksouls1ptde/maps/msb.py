@@ -161,6 +161,64 @@ class MSB(_BaseMSB):
         packed_name += b"\0" * (16 - len(packed_name))  # pad to 16 characters (NOTE: 32 in older Soulstruct)
         writer.append(packed_name)
 
+    # region Auto Model Creation
+
+    def auto_map_piece_model(self, model_name: str, map_stem: str) -> MSBMapPieceModel:
+        """Find `model_name` Map Piece Model in MSB, or create it if missing."""
+        try:
+            return self.map_piece_models[model_name]
+        except KeyError:
+            map_piece_model = self.map_piece_models.new(name=model_name)
+            map_piece_model.set_auto_sib_path(map_stem)
+            return map_piece_model
+
+    def auto_object_model(self, model_name: str) -> MSBObjectModel:
+        """Find `model_name` Object Model in MSB, or create it if missing."""
+        try:
+            return self.object_models[model_name]
+        except KeyError:
+            object_model = self.object_models.new(name=model_name)
+            object_model.set_auto_sib_path()
+            return object_model
+
+    def auto_character_model(self, model_name: str) -> MSBCharacterModel:
+        """Find `model_name` Character Model in MSB, or create it if missing."""
+        try:
+            return self.character_models[model_name]
+        except KeyError:
+            character_model = self.character_models.new(name=model_name)
+            character_model.set_auto_sib_path()
+            return character_model
+
+    def auto_player_model(self, model_name: str) -> MSBPlayerModel:
+        """Find `model_name` Player Model in MSB, or create it if missing."""
+        try:
+            return self.player_models[model_name]
+        except KeyError:
+            player_model = self.player_models.new(name=model_name)
+            player_model.set_auto_sib_path()
+            return player_model
+
+    def auto_collision_model(self, model_name: str, map_stem: str) -> MSBCollisionModel:
+        """Find `model_name` Collision Model in MSB, or create it if missing."""
+        try:
+            return self.collision_models[model_name]
+        except KeyError:
+            collision_model = self.collision_models.new(name=model_name)
+            collision_model.set_auto_sib_path(map_stem)
+            return collision_model
+
+    def auto_navmesh_model(self, model_name: str, map_stem: str) -> MSBNavmeshModel:
+        """Find `model_name` Navmesh Model in MSB, or create it if missing."""
+        try:
+            return self.navmesh_models[model_name]
+        except KeyError:
+            navmesh_model = self.navmesh_models.new(name=model_name)
+            navmesh_model.set_auto_sib_path(map_stem)
+            return navmesh_model
+
+    # endregion
+
     # region Utility Methods
     def duplicate_collision_with_environment_event(
         self, collision: MSBCollision | str, at_next_index=True, **kwargs,
@@ -171,9 +229,7 @@ class MSB(_BaseMSB):
         if not isinstance(collision, MSBCollision):
             collision = self.collisions.find_entry_name(collision)
         name = kwargs["name"]
-        new_collision = self.collisions.duplicate(
-            copy_entry=collision, at_next_index=at_next_index, **kwargs,
-        )
+        new_collision = self.collisions.duplicate(collision, at_next_index=at_next_index, **kwargs)
         if not new_collision.environment_event:
             return new_collision
 
@@ -189,8 +245,12 @@ class MSB(_BaseMSB):
         return new_collision
 
     def create_map_connection_from_collision(
-        self, collision: MSBCollision | str, connected_map, name=None, draw_groups=None, display_groups=None
-    ):
+        self, collision: MSBCollision | str,
+        connected_map_id: tuple[int, int, int, int],
+        name=None,
+        draw_groups=None,
+        display_groups=None,
+    ) -> MSBMapConnection:
         """Creates a new `MapConnection` that references and copies the transform of the given `collision`.
 
         The `name` and `map_id` of the new `MapConnection` must be given. You can also specify its `draw_groups` and
@@ -199,18 +259,18 @@ class MSB(_BaseMSB):
         if not isinstance(collision, MSBCollision):
             collision = self.collisions.find_entry_name(collision)
         if name is None:
-            game_map = get_map(connected_map)
+            game_map = get_map(connected_map_id)
             name = collision.name + f"_[{game_map.area_id:02d}_{game_map.block_id:02d}]"
         if name in self.map_connections.get_entry_names():
             raise ValueError(f"{repr(name)} is already the name of an existing `MSBMapConnection`.")
         map_connection = self.map_connections.new(
             name=name,
-            connected_map=connected_map,
+            model=collision.model,
+            connected_map_id=connected_map_id,
             collision=collision,
             translate=collision.translate.copy(),
             rotate=collision.rotate.copy(),
             scale=collision.scale.copy(),  # for completion's sake
-            model=collision.model,
         )
         if draw_groups is not None:  # otherwise keep same draw groups
             map_connection.draw_groups = draw_groups
@@ -220,7 +280,7 @@ class MSB(_BaseMSB):
 
     def new_c1000(self, name: str, **kwargs) -> MSBCharacter:
         """Useful to create basic c1000 instances as debug warp points."""
-        return self.characters.new(name=name, model_name="c1000", **kwargs)
+        return self.characters.new(name=name, model=self.auto_character_model("c1000"), **kwargs)
 
     # endregion
 
@@ -379,7 +439,7 @@ class MSB(_BaseMSB):
             name = f"_ObjAct_{obj.name.lstrip('_')}"
         return self.obj_acts.new(
             name=name,
-            obj_act_part_name=obj.name,
+            obj_act_part=obj,
             obj_act_entity_id=obj_act_entity_id,
             obj_act_param_id=obj_act_param_id,
             obj_act_state=obj_act_state,

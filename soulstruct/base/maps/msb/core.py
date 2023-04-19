@@ -15,6 +15,7 @@ from soulstruct.base.game_file import GameFile
 from soulstruct.base.game_types.map_types import MapEntity
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.files import write_json
+from soulstruct.utilities.misc import IDList
 
 from .msb_entry import MSBEntry
 from .msb_entry_list import MSBEntryList
@@ -188,7 +189,7 @@ class MSB(GameFile, abc.ABC):
     def get_list_of_entry(self, entry: MSBEntry) -> MSBEntryList:
         """Find subtype list that contains exact instance `entry` (e.g. for an event's attached region/part)."""
         for entry_list in self:
-            if entry_list.contains_entry(entry):
+            if entry in entry_list:
                 return entry_list
         raise ValueError(f"Entry '{entry.name}' does not appear anywhere in this MSB.")
 
@@ -241,7 +242,7 @@ class MSB(GameFile, abc.ABC):
                 entry: MSBEntry
                 writer.fill_with_position("entry_offset", obj=entry)
                 subtype_name = self.MSB_ENTRY_SUBTYPES[supertype_name][entry.SUBTYPE_ENUM.name].subtype_list_name
-                subtype_index = entry_lists[subtype_name].index_entry(entry)
+                subtype_index = entry_lists[subtype_name].index(entry)
                 if supertype_name == MSBSupertype.MODELS:
                     entry: BaseMSBModel
                     instance_count = model_instance_counts.get(entry.name, 0)
@@ -345,6 +346,65 @@ class MSB(GameFile, abc.ABC):
             name = name.name
         # noinspection PyTypeChecker
         return self.find_entry_name(name, supertypes=[MSBSupertype.PARTS], subtypes=subtypes)
+
+    def reattach_entry_references(self, warn_reattachments=False):
+        """Iterate over all Parts and Events, and reattach same-named references to other entries in this MSB.
+
+        For example, if an `MSBCharacter.draw_parent` is set to a collision that is no longer in this MSB, this method
+        will search for a collision with the same name and reattach that reference. If no name match is found, an error
+        is raised.
+
+        Must be called manually so you know what you're doing.
+        """
+        for subtype_name, entry_list in zip(("part", "event"), (self.get_parts(), self.get_events())):
+            for entry in entry_list:
+                for field_name in entry.MSB_ENTRY_REFERENCES:
+                    field_value = getattr(entry, field_name)
+                    if field_value is None:
+                        if subtype_name == "part" and field_name == "model":  # cannot be None
+                            raise ValueError(f"Part {entry} has no model.")
+                        continue  # can be None  # TODO: but there are some fields that should almost never be None!
+                    if isinstance(field_value, list):
+                        for i, item in enumerate(tuple(field_value)):
+                            if item is None:
+                                continue
+                            if not isinstance(item, MSBEntry):
+                                raise ValueError(
+                                    f"Index {i} of sequence field `{field_name}` of {subtype_name} '{entry.name}' "
+                                    f"is not an MSBEntry: {item}"
+                                )
+                            try:
+                                referenced_entry = self.find_entry_name(item.name)
+                            except KeyError:
+                                raise KeyError(
+                                    f"Could not find entry with name '{item.name}' referenced by index {i} of sequence "
+                                    f"field `{field_name}` in {subtype_name} '{entry.name}'."
+                                )
+                            if item is referenced_entry:
+                                continue  # already attached
+                            field_value[i] = referenced_entry  # attach to same-named entity
+                        continue
+
+                    if not isinstance(field_value, MSBEntry):
+                        raise ValueError(
+                            f"Field `{field_name}` of {subtype_name} '{entry.name}' is not an MSBEntry: {field_value}"
+                        )
+
+                    try:
+                        referenced_entry = self.find_entry_name(field_value.name)
+                    except KeyError:
+                        raise KeyError(
+                            f"Could not find entry with name '{field_value.name}' referenced by "
+                            f"field `{field_name}` in {subtype_name} '{entry.name}'."
+                        )
+                    if field_value is referenced_entry:
+                        continue  # already attached
+                    setattr(entry, field_name, referenced_entry)  # attach to same-named entity
+                    if warn_reattachments:
+                        _LOGGER.warning(
+                            f"Reattached dangling reference to '{field_value.name}' in "
+                            f"field `{field_name}` of {subtype_name} '{entry.name}'."
+                        )
 
     def to_dict(self, ignore_defaults=True) -> dict:
         """Return a dictionary form of the MSB.
@@ -473,7 +533,7 @@ class MSB(GameFile, abc.ABC):
 
     @classmethod
     def resolve_subtype_name(cls, subtype_name: str, assert_supertype_name: str = None) -> str:
-        """Parse `subtype_name` (which could be an enemy name or class name) to its subtype list name."""
+        """Parse `subtype_name` (which could be an enum name or class name) to its subtype list name."""
         for supertype_name, subtype_info_list in cls.MSB_ENTRY_SUBTYPES.items():
             if assert_supertype_name is not None and supertype_name != assert_supertype_name:
                 continue
@@ -487,11 +547,11 @@ class MSB(GameFile, abc.ABC):
         entries: tp.Sequence[str | MSBEntry],
         supertypes: tp.Iterable[str] = (),
         subtypes: tp.Iterable[str] = (),
-    ) -> list[MSBEntry]:
+    ) -> IDList[MSBEntry]:
         """Lists of entries can include names of entries, if unique, or the actual `MSBEntry` instances."""
         if not entries:
-            return []
-        resolved = []
+            return IDList()
+        resolved = IDList()
         for entry in entries:
             if isinstance(entry, str):
                 resolved.append(self.find_entry_name(entry, supertypes, subtypes))
@@ -560,7 +620,7 @@ class MSB(GameFile, abc.ABC):
         if entity_id <= 0:
             raise ValueError(f"Cannot find MSB entry using default entity ID value {entity_id}.")
         results = []
-        for supertype_name in MSB_ENTRY_SUPERTYPES[1:]:
+        for supertype_name in (MSBSupertype.EVENTS, MSBSupertype.REGIONS, MSBSupertype.PARTS):  # not MODELS
             supertype_list = self.get_supertype_list(supertype_name)
             results.extend([entry for entry in supertype_list if entry.get_entity_id() == entity_id])
         if not results:
@@ -697,14 +757,46 @@ class MSB(GameFile, abc.ABC):
         with module_path.open("w", encoding="utf-8") as f:
             f.write(module_text)
 
-    def new_model(self, model_subtype_name: str, name: str, sib_path="", map_stem=""):
-        subtype_list_name = self.resolve_subtype_name(model_subtype_name, MSBSupertype.MODELS)
-        model = self[subtype_list_name].new(name=name, sib_path=sib_path)  # type: BaseMSBModel
-        if not model.sib_path:
-            if map_stem:  # prevents empty `map_stem` from being formatted
-                model.set_auto_sib_path(map_stem=map_stem)
-            else:
-                model.set_auto_sib_path()
+    def get_or_create_model(
+        self,
+        model_subtype_name: str,
+        name: str,
+        sib_path="",
+        map_stem="",
+        replace_existing=False,
+    ) -> BaseMSBModel:
+        """Get or create a model of the given subtype, with the given name and SIB path.
+
+        Specify `replace_existing` if you want to replace an existing model with the same name, e.g. with a new SIB.
+        """
+        for subtype_name, part_info in self.MSB_ENTRY_SUBTYPES[MSBSupertype.PARTS].items():
+            # Redirect part subtype names to their corresponding model subtype names.
+            if part_info.matches_name(model_subtype_name):
+                subtype_list_name = f"{subtype_name}Model"
+                break
+        else:
+            subtype_list_name = self.resolve_subtype_name(model_subtype_name, MSBSupertype.MODELS)
+        model_list = self[subtype_list_name]
+        try:
+            model = model_list.find_entry_name(name)  # model with this name already exists
+            if not replace_existing:
+                return model
+        except KeyError:
+            model = self[subtype_list_name].new(name=name, sib_path=sib_path)  # type: BaseMSBModel
+            if not model.sib_path:
+                if map_stem:  # prevents empty `map_stem` from being formatted
+                    model.set_auto_sib_path(map_stem=map_stem)
+                else:
+                    model.set_auto_sib_path()
+        else:
+            # Modify existing model.
+            model.sib_path = sib_path
+            if not model.sib_path:
+                if map_stem:  # prevents empty `map_stem` from being formatted
+                    model.set_auto_sib_path(map_stem=map_stem)
+                else:
+                    model.set_auto_sib_path()
+        return model
 
     def has_c0000_model(self) -> bool:
         """Common check for character/player model c0000, which should be in every MSB (in every game)."""

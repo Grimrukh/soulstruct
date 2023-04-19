@@ -299,7 +299,7 @@ class KnockbackParam(BaseGameParam):
     """Knockback entry."""
     @classmethod
     def get_param_nickname(cls):
-        return "Knockback"
+        return "Knockbacks"
 
 
 class MenuColorsParam(BaseGameParam):

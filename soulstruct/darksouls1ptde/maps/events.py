@@ -126,6 +126,7 @@ class MSBWindEvent(MSBEvent):
 class MSBTreasureEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Treasure
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "treasure_part"]
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
@@ -166,7 +167,7 @@ class MSBTreasureEvent(MSBEvent):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
-            _treasure_part_index=self.try_index(entry_lists["PARTS_PARAM_ST"], self.treasure_part),
+            _treasure_part_index=self.try_index(entry_lists["PARTS_PARAM_ST"], "treasure_part"),
         )
 
 
@@ -175,6 +176,7 @@ class MSBSpawnerEvent(MSBEvent):
     """Attributes are identical to base event, except there are eight spawn region slots."""
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Spawner
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "spawn_parts", "spawn_regions"]
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
@@ -218,8 +220,8 @@ class MSBSpawnerEvent(MSBEvent):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
-            _spawn_parts_indices=self.try_index(entry_lists["PARTS_PARAM_ST"], self.spawn_parts),
-            _spawn_regions_indices=self.try_index(entry_lists["POINT_PARAM_ST"], self.spawn_regions),
+            _spawn_parts_indices=self.try_index(entry_lists["PARTS_PARAM_ST"], "spawn_parts"),
+            _spawn_regions_indices=self.try_index(entry_lists["POINT_PARAM_ST"], "spawn_regions"),
         )
 
 
@@ -245,6 +247,7 @@ class MSBObjActEvent(MSBEvent):
     """Attributes are identical to base event, except the param ID is 32-bit rather than 16-bit."""
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.ObjAct
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "obj_act_part"]
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
@@ -271,7 +274,7 @@ class MSBObjActEvent(MSBEvent):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
-            _obj_act_part_index=self.try_index(entry_lists["PARTS_PARAM_ST"], self.obj_act_part),
+            _obj_act_part_index=self.try_index(entry_lists["PARTS_PARAM_ST"], "obj_act_part"),
         )
 
 
@@ -279,6 +282,7 @@ class MSBObjActEvent(MSBEvent):
 class MSBSpawnPointEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.SpawnPoint
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "spawn_point_region"]
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
@@ -297,7 +301,7 @@ class MSBSpawnPointEvent(MSBEvent):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
-            _spawn_point_region_index=self.try_index(entry_lists["POINT_PARAM_ST"], self.spawn_point_region),
+            _spawn_point_region_index=self.try_index(entry_lists["POINT_PARAM_ST"], "spawn_point_region"),
         )
 
 
@@ -319,6 +323,7 @@ class MSBMapOffsetEvent(MSBEvent):
 class MSBNavigationEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Navigation
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "navigation_region"]
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
@@ -337,7 +342,7 @@ class MSBNavigationEvent(MSBEvent):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
-            _navigation_region_index=self.try_index(entry_lists["POINT_PARAM_ST"], self.navigation_region),
+            _navigation_region_index=self.try_index(entry_lists["POINT_PARAM_ST"], "navigation_region"),
         )
 
 
@@ -368,6 +373,7 @@ class MSBEnvironmentEvent(MSBEvent):
 class MSBNPCInvasionEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.NPCInvasion
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "spawn_point_region"]
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
@@ -390,5 +396,5 @@ class MSBNPCInvasionEvent(MSBEvent):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
-            _spawn_point_region_index=self.try_index(entry_lists["POINT_PARAM_ST"], self.spawn_point_region),
+            _spawn_point_region_index=self.try_index(entry_lists["POINT_PARAM_ST"], "spawn_point_region"),
         )

@@ -3,6 +3,8 @@ from __future__ import annotations
 __all__ = ["MapFieldMetadata", "MapFieldInfo", "FIELD_INFO"]
 
 from dataclasses import dataclass
+from enum import IntEnum
+import typing as tp
 
 from soulstruct.base.game_types import GAME_TYPE
 
@@ -22,7 +24,7 @@ class MapFieldMetadata:
 
 
 def MapFieldInfo(
-    nickname="", tooltip="", game_type: GAME_TYPE = None
+    nickname="", tooltip="", game_type: GAME_TYPE | tp.Type[IntEnum] = None
 ) -> dict[str, dict[str, MapFieldMetadata]]:
     """Convenience generator for use with ** in `field()`."""
     return {"metadata": {"msb": MapFieldMetadata(nickname, tooltip, game_type)}}
@@ -103,7 +105,7 @@ FIELD_INFO = {
     ),
 
     # DS1
-    "Object[default_animation_id]": (
+    "Object[default_animation]": (
         "Default Animation ID",
         "Default animation for object to play (or just pose in)."
     ),

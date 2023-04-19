@@ -98,6 +98,7 @@ class MSBVFXEvent(MSBEvent):
 class MSBTreasureEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Treasure
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "treasure_part"]
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
@@ -148,7 +149,7 @@ class MSBTreasureEvent(MSBEvent):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
-            _treasure_part_index=self.try_index(entry_lists["PARTS_PARAM_ST"], self.treasure_part),
+            _treasure_part_index=self.try_index(entry_lists["PARTS_PARAM_ST"], "treasure_part"),
         )
 
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
@@ -161,6 +162,7 @@ class MSBSpawnerEvent(MSBEvent):
     """Attributes are identical to base event, except there are eight spawn region slots."""
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Spawner
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "spawn_parts", "spawn_regions"]
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
@@ -202,8 +204,8 @@ class MSBSpawnerEvent(MSBEvent):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
-            _spawn_parts_indices=self.try_index(entry_lists["PARTS_PARAM_ST"], self.spawn_parts),
-            _spawn_regions_indices=self.try_index(entry_lists["POINT_PARAM_ST"], self.spawn_regions),
+            _spawn_parts_indices=self.try_index(entry_lists["PARTS_PARAM_ST"], "spawn_parts"),
+            _spawn_regions_indices=self.try_index(entry_lists["POINT_PARAM_ST"], "spawn_regions"),
         )
 
 
@@ -229,6 +231,7 @@ class MSBObjActEvent(MSBEvent):
     """Attributes are identical to base event, except the param ID is 32-bit rather than 16-bit."""
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.ObjAct
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "obj_act_part"]
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
@@ -252,7 +255,7 @@ class MSBObjActEvent(MSBEvent):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
-            _obj_act_part_index=self.try_index(entry_lists["PARTS_PARAM_ST"], self.obj_act_part),
+            _obj_act_part_index=self.try_index(entry_lists["PARTS_PARAM_ST"], "obj_act_part"),
         )
 
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
@@ -264,6 +267,7 @@ class MSBObjActEvent(MSBEvent):
 class MSBWindVFXEvent(MSBEvent):
     
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.WindVFX
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "wind_region"]
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
@@ -280,7 +284,7 @@ class MSBWindVFXEvent(MSBEvent):
 
     def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
-            self, writer, _wind_region_index=self.try_index(entry_lists["POINT_PARAM_ST"], self.wind_region)
+            self, writer, _wind_region_index=self.try_index(entry_lists["POINT_PARAM_ST"], "wind_region")
         )
 
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
@@ -293,6 +297,7 @@ class MSBPatrolRouteEvent(MSBEvent):
     """Defines a patrol route through a sequence of up to 32 regions."""
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.PatrolRoute
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "patrol_regions"]
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
@@ -310,7 +315,7 @@ class MSBPatrolRouteEvent(MSBEvent):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
-            _patrol_regions_indices=self.try_index(entry_lists["POINT_PARAM_ST"], self.patrol_regions),
+            _patrol_regions_indices=self.try_index(entry_lists["POINT_PARAM_ST"], "patrol_regions"),
         )
 
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
@@ -335,6 +340,9 @@ class MSBPlatoonEvent(MSBEvent):
     """Defines a group (platoon) of enemies."""
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Platoon
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = [
+        "attached_part", "attached_region", "platton_characters", "platoon_parents"
+    ]
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
@@ -386,6 +394,7 @@ class MSBMultiSummonEvent(MSBEvent):
 class MSBSpawnPointEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.SpawnPoint
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "spawn_point_region"]
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
@@ -400,7 +409,7 @@ class MSBSpawnPointEvent(MSBEvent):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
-            _spawn_point_region_index=self.try_index(entry_lists["POINT_PARAM_ST"], self.spawn_point_region),
+            _spawn_point_region_index=self.try_index(entry_lists["POINT_PARAM_ST"], "spawn_point_region"),
         )
 
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
@@ -426,6 +435,7 @@ class MSBMapOffsetEvent(MSBEvent):
 class MSBNavigationEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Navigation
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "navigation_region"]
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
@@ -440,7 +450,7 @@ class MSBNavigationEvent(MSBEvent):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
-            _navigation_region_index=self.try_index(entry_lists["POINT_PARAM_ST"], self.navigation_region),
+            _navigation_region_index=self.try_index(entry_lists["POINT_PARAM_ST"], "navigation_region"),
         )
 
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):

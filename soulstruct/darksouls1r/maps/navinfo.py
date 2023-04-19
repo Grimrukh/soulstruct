@@ -129,7 +129,7 @@ class ExistingConnectionError(NavInfoError):
 
 @dataclass(slots=True)
 class NavmeshAABBStruct(BinaryStruct):
-    map_id: list[int] = field(**BinaryArray(4, byte))  # (DD, CC, BB, AA) reversed format
+    map_id: list[int] = field(**BinaryArray(4, byte))  # stored as (DD, CC, BB, AA) reversed format
     _index: int  # just index in `MCP` file
     connected_aabbs_count: int
     connected_aabbs_offset: int
@@ -149,7 +149,7 @@ class NavmeshAABB:
     these AABB volumes.
     """
 
-    map_id: tuple[int, int, int, int] = (-1, -1, -1, -1)
+    map_id: tuple[int, int, int, int] = (-1, -1, -1, -1)  # NOTE: -1 cannot be packed to this `byte` field (must be set)
     aabb_start: Vector3 = field(default_factory=Vector3.zero)
     aabb_end: Vector3 = field(default_factory=Vector3.zero)
     connected_aabbs: list[NavmeshAABB] = field(default_factory=list)
@@ -299,13 +299,14 @@ class MCP(GameFile):
     aabbs: list[NavmeshAABB] = field(default_factory=list)
 
     @classmethod
-    def from_reader(cls, reader: BinaryReader):
+    def from_reader(cls, reader: BinaryReader) -> MCP:
         header = cls.MCPHeader.from_bytes(reader)
         reader.seek(header.pop("aabbs_offset"))
         aabbs = [NavmeshAABB.from_mcp_reader(reader) for _ in range(header.pop("aabbs_count"))]
         for aabb in aabbs:
             # Resolve indices into `NavmeshAABB` instances.
             aabb.set_connected_aabbs(aabbs)
+        return cls(aabbs=aabbs)
 
     def to_writer(self) -> BinaryWriter:
         writer = BinaryWriter(byte_order=ByteOrder.LittleEndian)
@@ -600,7 +601,10 @@ class GateNode:
         return self._connected_aabb_index is not None
 
     def to_mcg_writer(self, writer: BinaryWriter, connected_nodes_offset: int, connected_edges_offset: int):
-        """The offsets passed in are written earlier in the file, and are already known."""
+        """The offsets passed in are written earlier in the file, and are already known.
+
+        No reserved fields.
+        """
         if self._connected_aabb_index is None:
             raise ValueError("Must call `MCG.set_indices(aabbs)` just before writing it.")
         self.validate_connections()
@@ -615,15 +619,13 @@ class GateNode:
         ).to_writer(writer)
         self._connected_aabb_index = None  # consumed
 
-    def pack_connected_node_indices(self, writer: BinaryWriter, mcg_nodes: list[GateNode]):
-        writer.fill_with_position("connected_nodes_offset", obj=self)
+    def pack_connected_node_indices(self, mcg_writer: BinaryWriter, mcg_nodes: list[GateNode]):
         _connected_node_indices = [mcg_nodes.index(node) for node in self.connected_nodes]
-        writer.pack(f"<{len(_connected_node_indices)}i", *_connected_node_indices)
+        mcg_writer.pack(f"<{len(_connected_node_indices)}i", *_connected_node_indices)
 
-    def pack_connected_edge_indices(self, writer: BinaryWriter, mcg_edges: list[GateEdge]):
-        writer.fill_with_position("connected_edges_offset", obj=self)
+    def pack_connected_edge_indices(self, mcg_writer: BinaryWriter, mcg_edges: list[GateEdge]):
         _connected_edge_indices = [mcg_edges.index(edge) for edge in self.connected_edges]
-        writer.pack(f"<{len(_connected_edge_indices)}i", *_connected_edge_indices)
+        mcg_writer.pack(f"<{len(_connected_edge_indices)}i", *_connected_edge_indices)
 
     def add_connection(self, other_node: GateNode, edge: GateEdge):
         """Add a connection to `other_node` via `edge`.
@@ -669,12 +671,15 @@ class GateNode:
     #     self.remove_connections(nodes=node_connections_to_delete)
 
     def rotate_in_world(
-        self, rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float], pivot_point=(0, 0, 0), radians=False
+        self,
+        rotation: Matrix3 | Vector3 | list | tuple | int | float,
+        pivot_point: Vector3 | tuple[float, float, float] = (0.0, 0.0, 0.0),
+        radians=False,
     ):
-        """Modify node `translate` by rotating it around some `pivot_point` by `rotation` Euler angles` in world."""
+        """Modify node `translate` by rotating it around some `pivot_point` by `rotation` Euler angles in world."""
         if isinstance(rotation, (int, float)):
             # Single rotation value is a shortcut for Y rotation.
-            rotation = Matrix3.from_euler_angles(0.0, rotation, 0.0, radians=radians)
+            rotation = Matrix3.from_euler_angles((0.0, rotation, 0.0), radians=radians)
         elif isinstance(rotation, (Vector3, list, tuple)):
             rotation = Matrix3.from_euler_angles(rotation, radians=radians)
         elif not isinstance(rotation, Matrix3):
@@ -716,7 +721,7 @@ class GateEdge:
         unk2_count: int  # unknown indices; likely related to use of end node
         unk2_offset: int
         _aabb_index: int
-        map_id: list[byte] = field(**BinaryArray(4))  # TODO: Is this also reversed?
+        map_id: list[int] = field(**BinaryArray(4, byte))  # stored as (DD, CC, BB, AA) reversed format
         cost: float  # for AI navigation, presumably
 
     start_node: GateNode | None = None
@@ -724,7 +729,7 @@ class GateEdge:
     aabb: NavmeshAABB | None = None
     unk1_indices: list[int] = field(default_factory=list)
     unk2_indices: list[int] = field(default_factory=list)
-    map_id: tuple[int, int, int, int] = (-1, -1, -1, -1)
+    map_id: tuple[int, int, int, int] = (-1, -1, -1, -1)  # NOTE: -1 cannot be packed to this `byte` field (must be set)
     cost: float = 0.0
 
     _start_node_index: int | None = None
@@ -741,7 +746,10 @@ class GateEdge:
         with reader.temp_offset(edge.unk2_offset):
             unk2_indices = list(reader.unpack(f"{edge.unk2_count}i"))
 
-        return edge.to_object(cls, map_id=list(edge.map_id), unk1_indices=unk1_indices, unk2_indices=unk2_indices)
+        _reversed_map_id = edge.pop("map_id")
+        map_id = (_reversed_map_id[3], _reversed_map_id[2], _reversed_map_id[1], _reversed_map_id[0])
+
+        return edge.to_object(cls, map_id=map_id, unk1_indices=unk1_indices, unk2_indices=unk2_indices)
 
     def set_references(self, aabbs: list[NavmeshAABB], gate_nodes: list[GateNode]):
         self.start_node = gate_nodes[self._start_node_index]
@@ -764,6 +772,8 @@ class GateEdge:
         """The offsets passed in are written earlier in the file and are already known."""
         if self._aabb_index is None:
             raise ValueError("Must call `MCG.set_indices(aabbs)` before writing it.")
+        if -1 in self.map_id:
+            raise ValueError(f"Map ID of MCG `GateEdge` has not been changed from invalid default: {self.map_id}")
         self.GateEdgeHeader(
             _start_node_index=gate_nodes.index(self.start_node),
             unk1_count=len(self.unk1_indices),
@@ -1093,6 +1103,7 @@ class NavInfo:
     map_path: Path  # path to game `map/mAA_BB_CC_DD` directory (NOT `MapStudio`)
     _msb: MSB  # MSB to pull navmeshes from; read from `MapStudio` adjacent to `map_path` by default
     map_stem: str  # detected from `map_path` by default
+    map_id: tuple[int, int, int, int]  # map ID tuple for AABBs and edges (e.g. (10, 1, 0, 0))
 
     msb_path: Path
     mcp: MCP
@@ -1103,6 +1114,8 @@ class NavInfo:
         if not self.map_path.is_dir():
             raise ValueError(f"Map directory does not exist: {self.map_path}")
         self.map_stem = self.map_path.name if map_stem is None else map_stem
+        aa, bb, cc, dd = [int(x) for x in self.map_stem[1:].split("_")]
+        self.map_id = (aa, bb, cc, dd)
 
         if msb is None:
             self.msb_path = (self.map_path / f"../MapStudio/{self.map_stem}.msb").resolve()
@@ -1218,7 +1231,7 @@ class NavInfo:
             node = self.mcg.nodes[node]
         elif node not in self.mcg.nodes:
             raise ValueError("Given `node` does not appear in this `NavInfo`.")
-        for edge in [e for e in self.mcg.edges if node in {e.start_node, e.end_node}]:
+        for edge in [e for e in self.mcg.edges if node is e.start_node or node is e.end_node]:
             self.mcg.delete_edge(edge)
         self.mcg.nodes.remove(node)
 
@@ -1250,6 +1263,7 @@ class NavInfo:
             start_node=start_node,
             end_node=end_node,
             aabb=aabb,
+            map_id=self.map_id,
         )
         self.edges.append(edge)
         start_node.add_connection(end_node, edge)

@@ -114,7 +114,7 @@ class MapEntryRow(EntryRow):
         if msb_type == "Regions" or (msb_type == "Parts" and msb_subtype in {"Characters", "Objects", "PlayerStarts"}):
             copy_fields = ("translate", "rotate")
             if msb_subtype in {"Characters", "Objects"}:
-                copy_fields += ("draw_parent_name",)
+                copy_fields += ("draw_parent",)
         self.context_menu.add_command(
             label="Duplicate Entry to Next Index + Copy Player Transform",
             command=lambda: self.master.add_relative_entry_and_copy_player_transform(
@@ -284,19 +284,19 @@ class MapFieldRow(FieldRow):
             self.value_label.var.set(value_text)  # TODO: probably redundant in terms of update efficiency
         self._activate_value_widget(self.value_label)
 
-    def _add_copy_option(self, menu, translate=False, rotate=False, draw_parent_name=False, y_offset=0.0):
+    def _add_copy_option(self, menu, translate=False, rotate=False, draw_parent=False, y_offset=0.0):
         text = []
         if translate:
             text.append(f"translate ({y_offset} Y)" if y_offset != 0.0 else "translate")
         if rotate:
             text.append("rotate")
-        if draw_parent_name:
+        if draw_parent:
             text.append("draw parent")
         label = f"Copy player {' + '.join(text)}"
         menu.add_command(
             label=label,
             command=lambda: self.master.copy_player_position(
-                translate=translate, rotate=rotate, draw_parent_name=draw_parent_name, y_offset=y_offset,
+                translate=translate, rotate=rotate, draw_parent=draw_parent, y_offset=y_offset,
             )
         )
 
@@ -349,7 +349,7 @@ class MapFieldRow(FieldRow):
         if msb_type == "Regions" or msb_subtype in {"Characters", "Objects", "PlayerStarts"}:
             copy_fields = ("translate", "rotate")
             if msb_subtype in {"Characters", "Objects"}:
-                copy_fields += ("draw_parent_name",)
+                copy_fields += ("draw_parent",)
             if self.field_name in copy_fields:
                 copy_menu = self.master.Menu(tearoff=0)
                 if len(copy_fields) == 3:
@@ -840,11 +840,11 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
         return self._add_entry(subtype_index + offset, text=msb_entry.name, new_field_dict=msb_entry)
 
     def add_relative_entry_and_copy_player_transform(
-        self, entry_index, translate=False, rotate=False, draw_parent_name=False
+        self, entry_index, translate=False, rotate=False, draw_parent=False
     ):
         self.add_relative_entry(entry_index)
         # Duplicated entry is selected, so we can apply player transform now.
-        self.copy_player_position(translate=translate, rotate=rotate, draw_parent_name=draw_parent_name)
+        self.copy_player_position(translate=translate, rotate=rotate, draw_parent=draw_parent)
 
     def add_new_default_entry(self, entry_index=-1):
         """Add a new `MSBEntry` instance of the appropriate subtype to the end of the list, with all default values."""
@@ -1149,7 +1149,7 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
                     cancel_output=1,
                 )
             if result == 0:
-                self.get_selected_msb().new_model(model_subtype_name, name=model_name, map_stem=map_stem)
+                self.get_selected_msb().get_or_create_model(model_subtype_name, name=model_name, map_stem=map_stem)
                 return True
         else:
             result = self.CustomDialog(
@@ -1163,14 +1163,14 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
                 cancel_output=1,
             )
             if result == 0:
-                self.get_selected_msb().new_model(model_subtype_name, name=model_name, map_stem=map_stem)
+                self.get_selected_msb().get_or_create_model(model_subtype_name, name=model_name, map_stem=map_stem)
                 return True
 
         return False
 
-    def copy_player_position(self, translate=False, rotate=False, draw_parent_name=False, y_offset=0.0):
-        if not translate and not rotate and not draw_parent_name:
-            raise ValueError("At least one of `translate`, `rotate`, and `draw_parent_name` should be True.")
+    def copy_player_position(self, translate=False, rotate=False, draw_parent=False, y_offset=0.0):
+        if not translate and not rotate and not draw_parent:
+            raise ValueError("At least one of `translate`, `rotate`, and `draw_parent` should be True.")
         new_translate = None
         new_rotate_y = None
         new_collision = None
@@ -1191,7 +1191,7 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
             if self.linker.runtime_hook():
                 # Call this function again.
                 return self.copy_player_position(
-                    translate=translate, rotate=rotate, draw_parent_name=draw_parent_name, y_offset=y_offset,
+                    translate=translate, rotate=rotate, draw_parent=draw_parent, y_offset=y_offset,
                 )
             return
         try:
@@ -1202,7 +1202,7 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
                 new_translate = Vector3([player_x, player_y, player_z])
             if rotate:
                 new_rotate_y = math.degrees(self.linker.get_game_value("player_angle"))
-            if draw_parent_name:
+            if draw_parent:
                 map_prefix = self.map_choice_stem[:6]  # e.g. "m10_02"
                 display_group_ints = self.linker.get_game_value(f"{map_prefix}_display_groups")
                 display_groups = int_group_to_bit_set(display_group_ints, assert_size=4)  # TODO: Other game sizes.
@@ -1245,8 +1245,8 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
             field_dict["translate"] = new_translate
         if rotate:
             field_dict["rotate"].y = new_rotate_y
-        if draw_parent_name:
-            field_dict["draw_parent_name"] = new_collision.name
+        if draw_parent:
+            field_dict["draw_parent"] = new_collision
         self.refresh_fields()
 
     def popout_sequence_name_edit(self, field_name: str, field_nickname: str, game_object_type: GAME_TYPE):

@@ -79,6 +79,7 @@ class MSBPart(BaseMSBPart, abc.ABC):
         part_unk_x0e_x0f: byte
         part_unk_x0f_x10: byte
 
+    # Set by further abstract subclasses.
     GPARAM_STRUCT: tp.ClassVar[BinaryStruct] = None
     SCENE_GPARAM_STRUCT: tp.ClassVar[BinaryStruct] = None
 
@@ -192,7 +193,7 @@ class MSBPart(BaseMSBPart, abc.ABC):
             _instance_index=0,  # TODO: Need to pass in...
             _subtype_int=self.SUBTYPE_ENUM.value,
             _subtype_index=subtype_index,
-            model_index=self.try_index(entry_lists["MODEL_PARAM_ST"], self.model),
+            model_index=self.try_index(entry_lists["MODEL_PARAM_ST"], "model"),
             sib_path_offset=RESERVED,
             supertype_data_offset=RESERVED,
             subtype_data_offset=RESERVED,
@@ -278,6 +279,7 @@ class MSBMapPiece(MSBPartWithGParam):
 class MSBObject(MSBPartWithGParam):
     """Interactable object. Note that Bloodborne has six-digit model IDs for Objects."""
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Object
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model", "draw_parent"]
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
@@ -311,7 +313,7 @@ class MSBObject(MSBPartWithGParam):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
-            _draw_parent_index=self.try_index(entry_lists["PARTS_PARAM_ST"], self.draw_parent),
+            _draw_parent_index=self.try_index(entry_lists["PARTS_PARAM_ST"], "draw_parent"),
         )
 
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
@@ -323,6 +325,7 @@ class MSBObject(MSBPartWithGParam):
 class MSBCharacter(MSBPartWithGParam):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Character
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model", "draw_parent", "patrol_regions"]
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
@@ -367,8 +370,8 @@ class MSBCharacter(MSBPartWithGParam):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
-            _draw_parent_index=self.try_index(entry_lists["PARTS_PARAM_ST"], self.draw_parent),
-            _patrol_regions_indices=self.try_index(entry_lists["POINT_PARAM_ST"], self.patrol_regions),
+            _draw_parent_index=self.try_index(entry_lists["PARTS_PARAM_ST"], "draw_parent"),
+            _patrol_regions_indices=self.try_index(entry_lists["POINT_PARAM_ST"], "patrol_regions"),
         )
 
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
@@ -400,6 +403,7 @@ class MSBCollision(MSBPartWithSceneGParam):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Collision
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\SPRJ\\data\\Model\\map\\{map_stem}\\sib\\h_layout.SIB"
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model", "environment_event"]
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
@@ -475,7 +479,7 @@ class MSBCollision(MSBPartWithSceneGParam):
         return self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
-            _environment_event_index=self.try_index(entry_lists["environments"], self.environment_event),
+            _environment_event_index=self.try_index(entry_lists["environments"], "environment_event"),
             _place_name_banner_id=internal_place_name_banner_id,
             _play_region_id=play_region_id,
         )
@@ -569,6 +573,7 @@ class MSBMapConnection(MSBPart):
     Uses collision models, and almost always has the same model as the linked `MSBCollision`.
     """
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.MapConnection
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model", "collision"]
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
@@ -591,7 +596,7 @@ class MSBMapConnection(MSBPart):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
-            _collision_index=self.try_index(entry_lists["collisions"], self.collision),
+            _collision_index=self.try_index(entry_lists["collisions"], "collision"),
         )
 
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
