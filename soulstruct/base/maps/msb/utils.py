@@ -117,6 +117,10 @@ class GroupBitSet(abc.ABC):
         """Enables seamless `BinaryStruct` field packing."""
         return iter(self.to_uints())
 
+    def __contains__(self, bit: int) -> bool:
+        """Container check for enabled bits (otherwise it would use `__iter__` above and get the uint fields)."""
+        return bit in self.enabled_bits
+
     def __repr__(self) -> str:
         """Also used for JSON."""
         bit_tuple = "(" + ", ".join(str(i) for i in sorted(self.enabled_bits)) + ")"

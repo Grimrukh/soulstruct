@@ -1216,7 +1216,7 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
                 # NOTE: `.collisions` subtype is always present, but still not defined in base class.
                 search = [
                     col for col in self.get_selected_msb()["collisions"]
-                    if col.display_groups == display_groups
+                    if col.display_groups.enabled_bits == display_groups
                 ]
                 if len(search) > 1:
                     # Find lowest-index collision.

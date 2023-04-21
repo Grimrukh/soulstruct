@@ -112,7 +112,7 @@ class WindowLinker:
                     f"does not match enforced type of field ({entry_subtype_name})."
                 )
         try:
-            entry_subtype_index = entry_list.index_entry(entry)
+            entry_subtype_index = entry_list.index(entry)
             pluralized_name = entry.SUBTYPE_ENUM.pluralized_name
             if pluralized_name in {"CharacterModels", "PlayerModels"} and entry.name == "c0000":
                 # Check if map has `c0000` model (as every map should).
