@@ -462,12 +462,13 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
         data["flags2"] = ParamFlags2(int(data.pop("flags2", 0)))
         rows = data.pop("rows")  # type: dict[int, dict | ParamRow]
         data["rows"] = {}
+        row_name_encoding = cls.get_name_encoding(data["big_endian"], data["flags2"])
         for row_id, row in rows.items():
             row_id = int(row_id)  # JSON keys are strings
             if isinstance(row, ParamRow):
                 data["rows"][row_id] = row  # direct assignment
             elif isinstance(row, dict):
-                data["rows"][row_id] = cls.ROW_TYPE.from_dict(row)
+                data["rows"][row_id] = cls.ROW_TYPE.from_dict(row, row_name_encoding=row_name_encoding)
             else:
                 raise TypeError(
                     f"Each entry in dictionary 'rows' must be a `{cls.ROW_TYPE.__name__}` instance or dictionary "
@@ -489,8 +490,10 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
             "paramdef_format_version": self.paramdef_format_version,
             "rows": {},
         }
+        # Row name encoding needed to update `RawName`.
+        row_name_encoding = self.get_name_encoding(self.big_endian, self.flags2)
         for i in sorted(self.rows):
-            data["rows"][i] = self.rows[i].to_dict(ignore_pads, ignore_defaults, use_internal_names)
+            data["rows"][i] = self.rows[i].to_dict(ignore_pads, ignore_defaults, use_internal_names, row_name_encoding)
         return data
 
     @classmethod

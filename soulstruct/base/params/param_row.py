@@ -143,12 +143,16 @@ class ParamRow(BinaryStruct):
         return cls.get_all_field_metadata()[field_name]
 
     def to_dict(
-        self, ignore_pads=True, ignore_defaults=True, use_internal_names=False
+        self, ignore_pads=True, ignore_defaults=True, use_internal_names=False, row_name_encoding="shift_jis_2004",
     ) -> dict[str, PARAM_VALUE_TYPING]:
         """Allows options for not including pads, defaults, or sizes, and whether keys are internal names.
 
         NOTE: `RawName` is written as its string repr, e.g. 'b"name"', which will be read with `literal_eval`.
+        It is also updated here from `Name` if `Name` is set.
         """
+        if self.Name:
+            # Update `RawName` before exporting dictionary.
+            self.RawName = self.Name.encode(row_name_encoding)
         data = {"RawName": repr(self.RawName), "Name": self.Name}
         for binary_field in self.get_binary_fields():
             info = binary_field.metadata["param"]  # type: ParamFieldMetadata
@@ -174,21 +178,26 @@ class ParamRow(BinaryStruct):
         return self.get_binary_field_names()
 
     def __repr__(self):
-        names = [f"\n    {key} = {value}" for key, value in self.to_dict(ignore_pads=True)]
-        return f"\nName: {self.try_name}" + "".join(names)
+        field_values = [f"\n    {key} = {value}" for key, value in self.to_dict(ignore_pads=True)]
+        return f"\nName: {self.try_name}" + "".join(field_values)
 
     @classmethod
-    def from_dict(cls, data: dict[str, tp.Any]):
-        """`RawName` is written to dictionary as a string repr."""
-        raw_name = ast.literal_eval(data.pop("RawName"))  # type: bytes
+    def from_dict(cls, data: dict[str, tp.Any], row_name_encoding="shift_jis_2004"):
+        """We prefer to set `RawName` from `Name`, but fall back to `RawName` if `Name` is empty."""
+        if data["Name"]:
+            raw_name = data["Name"].encode(row_name_encoding)  # type: bytes
+            data.pop("RawName")  # replace with encoded `Name` if possible
+        else:
+            raw_name = ast.literal_eval(data.pop("RawName"))  # type: bytes
         return cls(RawName=raw_name, **data)
 
     @classmethod
     def from_reader(cls, reader: BinaryReader, raw_name: bytes, name: str = "") -> ParamRow:
+        """`name` may be empty if `raw_name` failed to decode (unfortunately does happen in some vanilla Params)."""
         try:
             row = cls.from_bytes(reader)
         except Exception as ex:
-            raise ValueError(f"Could not read ParamRow of data type `{cls.__name__}`: {ex}")
+            raise ValueError(f"Could not read `ParamRow` of data type `{cls.__name__}`: {ex}")
         row.RawName = raw_name
         row.Name = name
         return row

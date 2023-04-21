@@ -97,6 +97,17 @@ class GroupBitSet(abc.ABC):
             raise TypeError(f"Cannot initialize `{self.__class__.__name__}` from {type(uint_list_or_bit_set)}.")
 
     @classmethod
+    def from_range(cls, first_bit: int, last_bit: int) -> Self:
+        """Create a `GroupBitSet` with all bits in the given range enabled (inclusive at both ends)."""
+        if not 0 <= first_bit <= last_bit <= cls.BIT_COUNT:
+            raise ValueError(f"Invalid range for `{cls.__name__}`: {first_bit} to {last_bit} (max {cls.BIT_COUNT}).")
+        return cls(set(range(first_bit, last_bit + 1)))
+
+    @classmethod
+    def empty(cls) -> Self:
+        return cls(set())
+
+    @classmethod
     def from_repr(cls, repr_string: str):
         """Also handles JSON decoding."""
         if (match := cls._REPR_RE.match(repr_string)) is None:
