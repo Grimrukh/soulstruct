@@ -294,7 +294,7 @@ class MSBCharacter(MSBPart):
     _draw_parent_index: int = None
     _patrol_regions_indices: list[int] = field(default=None, **BinaryArray(8))
 
-    HIDE_NAMES = (
+    HIDE_FIELDS = (
         "scale",
         "display_groups",
         "platoon_id",
@@ -422,7 +422,7 @@ class MSBCollision(MSBPart):
     _play_region_id: int = field(default=0, repr=False)
     _stable_footing_flag: int = field(default=0, repr=False)
 
-    HIDE_NAMES = (
+    HIDE_FIELDS = (
         "scale",
         # "unk_x27_x28",  # TODO: Not hiding this, as some rare collisions do use it, e.g. Anor Londo spinning tower.
         "use_depth_bias_float",
