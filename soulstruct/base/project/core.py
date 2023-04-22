@@ -42,6 +42,7 @@ if tp.TYPE_CHECKING:
     DATA_OBJECT_TYPING = tp.Union[
         AIScriptDirectory,
         # `Events` has no data object, just plaintext EVS scripts.
+        GameEnumsManager,
         DrawParamDirectory,
         GameParamBND,
         MapStudioDirectory,
@@ -52,6 +53,7 @@ if tp.TYPE_CHECKING:
     DATA_CLASS_TYPING = tp.Union[
         AIScriptDirectory,
         EventDirectory,
+        GameEnumsManager,
         DrawParamDirectory,
         GameParamBND,
         MapStudioDirectory,
@@ -99,7 +101,7 @@ class GameDirectoryProject(abc.ABC):
 
     # Instance data dictionary. Contents should be accessed with properties (`ai`, `maps`, etc.).
     # Values here are not necessarily classes from `DATA_TYPES.values()`, e.g. Events/Talk are stored as plaintext.
-    _data: dict[ProjectDataType, DATA_OBJECT_TYPING]
+    _data: dict[ProjectDataType, DATA_OBJECT_TYPING | None]
     _vanilla_game_root: Path | None
 
     def __init__(self, project_path="", with_window: ProjectWindow = None, game_root: Path | str = None):
@@ -400,7 +402,7 @@ class GameDirectoryProject(abc.ABC):
         if specific_map:
             if (
                 specific_talk_id > -1
-                and (export_path / f"t{specific_talk_id}{talk_class.get_default_extension()}").is_file()
+                and (export_path / f"t{specific_talk_id}{talk_class.FILE_CLASS.get_default_extension()}").is_file()
             ):
                 talkesdbnd = talk_class.FILE_CLASS.from_path(export_path)
                 esd = talkesdbnd.find_entry_matching_name(rf"t{specific_talk_id}.esd")
@@ -504,44 +506,50 @@ class GameDirectoryProject(abc.ABC):
 
     # region Project Load Methods
 
-    def load_AI(self) -> AIScriptDirectory | None:
+    def load_AI(self) -> bool:
         ai_class = self.get_data_class(ProjectDataType.AI)  # type: tp.Type[AIScriptDirectory]
         ai_dir = self.project_root / "ai_scripts"
         if not ai_dir.is_dir():
-            return None  # no AI data (yet)
+            self._data[ProjectDataType.AI] = None  # no AI data (yet)
+            return False
         try:
-            return ai_class.from_unpacked_luabnds(ai_dir)
+            self._data[ProjectDataType.AI] = ai_class.from_unpacked_luabnds(ai_dir)
+            return True
         except Exception as ex:
             _LOGGER.error(ex)
             raise SoulstructProjectError(
                 f"An error occurred while trying to load AI data from 'ai_scripts' directory:\n\n{ex}"
             )
 
-    def load_Lighting(self) -> DrawParamDirectory | None:
+    def load_Lighting(self) -> bool:
         lighting_class = self.get_data_class(ProjectDataType.Lighting)  # type: tp.Type[DrawParamDirectory]
         lighting_dir = self.project_root / "lighting"
         if not lighting_dir.is_dir():
-            return None  # no Lighting data (yet)
+            self._data[ProjectDataType.Lighting] = None  # no Lighting data (yet)
+            return False
         try:
-            return lighting_class.from_json_directory(lighting_dir)
+            self._data[ProjectDataType.Lighting] = lighting_class.from_json_directory(lighting_dir)
+            return True
         except Exception as ex:
             _LOGGER.error(ex)
             raise SoulstructProjectError(
                 f"An error occurred while trying to load Lighting data from 'lighting' directory:\n\n{ex}"
             )
 
-    def load_Enums(self) -> GameEnumsManager | None:
+    def load_Enums(self) -> bool:
         enums_class = self.get_data_class(ProjectDataType.Enums)  # type: tp.Type[GameEnumsManager]
         enums_dir = self.enums_directory
         if not enums_dir.is_dir():
-            return None  # no Enums data (yet)
+            self._data[ProjectDataType.Enums] = None  # no Enums data (yet)
+            return False
 
         if enums_dir.name == "events":  # must end in 'enums.py'
             module_paths = list(enums_dir.rglob("*_enums.py"))
         else:  # any Python modules can be used
             module_paths = list(enums_dir.rglob("*.py"))
         try:
-            return enums_class(module_paths)
+            self._data[ProjectDataType.Enums] = enums_class(module_paths)
+            return True
         except Exception as ex:
             _LOGGER.error(ex)
             raise SoulstructProjectError(
@@ -550,39 +558,45 @@ class GameDirectoryProject(abc.ABC):
 
     # `Events` EVS scripts are loaded by `EventsEditor` for text display.
 
-    def load_Params(self) -> GameParamBND | None:
+    def load_Params(self) -> bool:
         params_class = self.get_data_class(ProjectDataType.Params)  # type: tp.Type[GameParamBND]
         params_dir = self.project_root / "params"
         if not params_dir.is_dir():
-            return None  # no Params data (yet)
+            self._data[ProjectDataType.Params] = None  # no Params data (yet)
+            return False
         try:
-            return params_class.from_json_directory(params_dir)
+            self._data[ProjectDataType.Params] = params_class.from_json_directory(params_dir)
+            return True
         except Exception as ex:
             _LOGGER.error(ex)
             raise SoulstructProjectError(
                 f"An error occurred while trying to load Params data from 'params' directory:\n\n{ex}"
             )
 
-    def load_Maps(self) -> MapStudioDirectory | None:
+    def load_Maps(self) -> bool:
         maps_class = self.get_data_class(ProjectDataType.Maps)  # type: tp.Type[MapStudioDirectory]
         maps_dir = self.project_root / "maps"
         if not maps_dir.is_dir():
-            return None  # no Maps data (yet)
+            self._data[ProjectDataType.Maps] = None
+            return False
         try:
-            return maps_class.from_json_directory(maps_dir)
+            self._data[ProjectDataType.Maps] = maps_class.from_json_directory(maps_dir)
+            return True
         except Exception as ex:
             _LOGGER.error(ex)
             raise SoulstructProjectError(
                 f"An error occurred while trying to load Maps data from 'maps' directory:\n\n{ex}"
             )
 
-    def load_Text(self) -> MSGDirectory | None:
+    def load_Text(self) -> bool:
         text_class = self.get_data_class(ProjectDataType.Text)  # type: tp.Type[MSGDirectory]
         text_dir = self.project_root / "text"
         if not text_dir.is_dir():
-            return None  # no Text data (yet)
+            self._data[ProjectDataType.Text] = None  # no Text data (yet)
+            return False
         try:
-            return text_class.from_json_directory(text_dir)
+            self._data[ProjectDataType.Text] = text_class.from_json_directory(text_dir)
+            return True
         except Exception as ex:
             _LOGGER.error(ex)
             raise SoulstructProjectError(
@@ -642,9 +656,10 @@ class GameDirectoryProject(abc.ABC):
 
     # region Process/Backup Utilities
     def export_timestamped_backup(self, data_type=None):
-        # TODO: Use this?
-        timestamped = self.project_root / "export" / self._get_timestamp(for_path=True)
-        self.export_data(data_type=data_type, export_directory=timestamped)
+        """TODO: Not used anywhere at the moment."""
+        timestamped_dir = self.project_root / "export" / self._get_timestamp(for_path=True)
+        export_func = getattr(self, f"export_{data_type}")
+        export_func(timestamped_dir)
 
     def restore_backup(self, target=None, delete_baks=False):
         """Restores '.bak' files, deleting whatever they would replace."""
@@ -881,7 +896,7 @@ class GameDirectoryProject(abc.ABC):
                 continue  # loaded by their own Editor classes (from plaintext project scripts/modules).
 
             load_func = getattr(self, f"load_{data_type.name}")
-            self._data[data_type] = load_func()  # no arguments for any load functions
+            load_func()  # no arguments for any load functions
             _LOGGER.info(f"Loaded {data_type.name} data from project.")
 
         if rewrite_config:
@@ -1083,12 +1098,14 @@ class GameDirectoryProject(abc.ABC):
             return False
         return True
 
-    def warning(self, msg, with_window: ProjectWindow = None, dialog_title="Soulstruct Warning"):
+    @staticmethod
+    def warning(msg, with_window: ProjectWindow = None, dialog_title="Soulstruct Warning"):
         _LOGGER.warning(msg)
         if with_window:
             with_window.CustomDialog(dialog_title, msg)
 
-    def error(self, msg, with_window: ProjectWindow = None, dialog_title="Soulstruct Error"):
+    @staticmethod
+    def error(msg, with_window: ProjectWindow = None, dialog_title="Soulstruct Error"):
         _LOGGER.error(msg)
         if with_window:
             with_window.CustomDialog(dialog_title, msg)

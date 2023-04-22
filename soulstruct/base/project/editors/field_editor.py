@@ -791,7 +791,7 @@ class BaseFieldEditor(BaseEditor, abc.ABC):
             raise TypeError("Cannot edit a boolean or dropdown field. (Internal error, tell the developer!)")
         field_type = field_row.field_type
         field_value = self.get_field_dict(self.get_entry_id(self.active_row_index))[field_row.field_name]
-        initial_text = repr(sorted(field_value)) if issubclass(field_type, list) else str(field_value)
+        initial_text = str(field_value)
         return self.Entry(
             field_row.value_box,
             initial_text=initial_text,

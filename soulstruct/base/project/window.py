@@ -998,7 +998,8 @@ class ProjectWindow(SmartFrame, abc.ABC):
             return
 
         load_func = getattr(self.project, f"load_{data_type.name}")
-        load_func()
+        load_func()  # no arguments for any load functions
+        _LOGGER.info(f"Reloaded {data_type.name} data from project.")
         self.flash_bg(self)
 
     def _export_all(self,  export_directory=None, mimic_click=False):

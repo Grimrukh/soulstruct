@@ -787,6 +787,16 @@ class GroupBitSetEditBox(SmartFrame):
 
     def build(self):
         with self.set_master(auto_rows=0):
+            with self.set_master(auto_columns=0, padx=10, pady=10, grid_defaults={"padx": 10}):
+                self.Button(
+                    text="Enable All", command=self._enable_all,
+                    **self.editor.DEFAULT_BUTTON_KWARGS["YES"]
+                )
+                self.Button(
+                    text="Disable All", command=self._disable_all,
+                    **self.editor.DEFAULT_BUTTON_KWARGS["NO"]
+                )
+
             with self.set_master(padx=10, pady=10):  # 8 rows x 16 columns
                 for row in range(8 if self.bit_count == 128 else 16):
                     for col in range(16):
@@ -834,6 +844,16 @@ class GroupBitSetEditBox(SmartFrame):
             else:
                 self.output = output_bit_set
         self.quit()
+
+    def _enable_all(self):
+        for checkbutton in self._checkbuttons:
+            checkbutton.var.set(True)
+            checkbutton.config(fg="#FFF")
+
+    def _disable_all(self):
+        for checkbutton in self._checkbuttons:
+            checkbutton.var.set(False)
+            checkbutton.config(fg="#555")
 
     def _checkbutton_toggle(self, i):
         """Modify appearance of Checkbutton when toggled."""
