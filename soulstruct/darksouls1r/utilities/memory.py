@@ -2,13 +2,14 @@ from __future__ import annotations
 
 __all__ = ["DSRMemoryHook", "MemoryDrawParam"]
 
+import copy
 import logging
 import pickle
 import struct
 import typing as tp
 from types import MappingProxyType
 
-from soulstruct.darksouls1r.params import Param, GameParamBND, ParamRow, DrawParam
+from soulstruct.darksouls1r.params import Param, GameParamBND, ParamRow
 from soulstruct.utilities.memory import *
 from soulstruct.utilities.files import PACKAGE_PATH
 
@@ -456,6 +457,10 @@ class MemoryDrawParam(tp.Generic[PARAM_ROW_DATA_T]):
 
     def __getitem__(self, row_id: int) -> PARAM_ROW_DATA_T:
         return self.row_dict[row_id]
+
+    def copy(self) -> MemoryDrawParam:
+        """Return a deep copy of this `MemoryDrawParam`."""
+        return copy.deepcopy(self)
 
     def _read_rows(self, param_data_address: int) -> dict[int, PARAM_ROW_DATA_T]:
         row_count = self.hook.read_int16(param_data_address + self.PARAM_ROW_COUNT_OFFSET)
