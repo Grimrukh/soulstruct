@@ -184,7 +184,7 @@ class DrawParamBND(Binder):
     def unpack_all_param_rows(self, paramdefbnd: ParamDefBND = None):
         """Unpack all row data of all `Param` entries with `paramdefbnd` (defaults to bundled file)."""
         if paramdefbnd is None:
-            paramdefbnd = GET_BUNDLED_PARAMDEFBND()
+            paramdefbnd = self.GET_BUNDLED_PARAMDEFBND()
         for draw_param_0, draw_param_1 in self.draw_params.values():
             if draw_param_0:
                 draw_param_0.unpack_rows(paramdefbnd)
@@ -227,6 +227,8 @@ class DrawParamBND(Binder):
 
         for draw_param_stem, draw_param_slots in self.draw_params.items():
             for slot, draw_param in enumerate(draw_param_slots):
+                if draw_param is None:
+                    continue  # slot missing
                 entry_path = self.get_draw_param_entry_path(draw_param_stem, slot)
                 regenerated_entry_paths.add(entry_path)
                 if entry_path in self.entries_by_path:
@@ -246,6 +248,10 @@ class DrawParamBND(Binder):
 
         self._alphabetize_entry_names()
 
+    @classmethod
+    def get_default_entry_path(cls, entry_name: str) -> str:
+        return f"N:\\FRPG\\data\\INTERROOT_win32\\param\\DrawParam\\{entry_name}"
+
     def write(
         self,
         file_path: None | str | Path = None,
@@ -258,7 +264,7 @@ class DrawParamBND(Binder):
                 f"Cannot write `DrawParamBND` to a split `BXF` file. (Invalid `bdt_file_path`: {bdt_file_path})"
             )
         self.regenerate_entries()
-        super().write(file_path, make_dirs=make_dirs, check_hash=check_hash)
+        super(DrawParamBND, self).write(file_path, make_dirs=make_dirs, check_hash=check_hash)
 
     @classmethod
     def from_json_directory(cls, directory: Path | str) -> Self:
@@ -292,14 +298,15 @@ class DrawParamBND(Binder):
             try:
                 row_type = getattr(cls.PARAMDEF_MODULE, param_dict["param_type"])
             except KeyError:
-                raise KeyError(f"DrawParam JSON `{param_stem}.json` does not have 'param_type' key.")
+                raise KeyError(f"DrawParam JSON `{json_nickname_stem}.json` does not have 'param_type' key.")
             except AttributeError:
                 raise ValueError(
-                    f"Unknown 'param_type' `{param_dict['param_type']} in DrawParam JSON: {param_stem}.json"
+                    f"Unknown 'param_type' `{param_dict['param_type']} in DrawParam JSON: {json_nickname_stem}.json"
                 )
             typed_draw_param_class = TypedDrawParam(row_type)
             kwargs["draw_params"].setdefault(param_stem, [None, None])
-            kwargs["draw_params"][param_stem][slot] = typed_draw_param_class.from_dict(param_dict)
+            draw_param = kwargs["draw_params"][param_stem][slot] = typed_draw_param_class.from_dict(param_dict)
+            draw_param.path = Path(f"{draw_param.get_file_path(param_stem)}")
 
         drawparambnd = cls.from_dict(kwargs)
         drawparambnd.path = directory  # TODO: auto-detect better default path, e.g. for binary?

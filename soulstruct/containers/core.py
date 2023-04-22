@@ -555,7 +555,7 @@ class Binder(BaseBinaryFile):
             check_hash (bool): if True, files will not be written if both BHD and BDT files with same hashes already
                 exist. (Default: False)
         """
-        file_path = self._get_file_path(file_path)
+        file_path = self.get_file_path(file_path)
         if make_dirs:
             file_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -1003,7 +1003,7 @@ class Binder(BaseBinaryFile):
     @classmethod
     def get_default_entry_path(cls, entry_name: str) -> str:
         """Optional method that can be overridden (usually by a game subclass) to generate a full entry path."""
-        raise BinderError("`get_default_entry_path()` not defined on this `Binder` class/subclass.")
+        raise BinderError(f"`get_default_entry_path()` not defined on this `Binder` class/subclass: `{cls.__name__}`")
 
     def get_default_entry_id(self, entry_name: str) -> int:
         """Method that can be overridden (usually by a game subclass) to generate a full entry path.

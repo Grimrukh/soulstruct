@@ -14,7 +14,7 @@ from .msb import MSB
 
 
 @dataclass(slots=True)
-class MapStudioDirectory(_BaseMapStudioDirectory):
+class MapStudioDirectory(_BaseMapStudioDirectory[MSB]):
     """Dark Souls (either version) `MapStudio` directory.
 
     The format of these files is exactly the same in PTD and DSR. The vanilla DSR files have a few new additions (the

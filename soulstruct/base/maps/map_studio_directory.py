@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["MapStudioDirectory"]
+__all__ = ["MapStudioDirectory", "MSB_T"]
 
 import abc
 import json
@@ -15,9 +15,11 @@ from .msb import MSB
 
 _LOGGER = logging.getLogger(__name__)
 
+MSB_T = tp.TypeVar("MSB_T", bound=MSB)
+
 
 @dataclass(slots=True)
-class MapStudioDirectory(GameFileMapDirectory, abc.ABC):
+class MapStudioDirectory(GameFileMapDirectory[MSB_T], abc.ABC):
     """Unpack MSB map data files from a `MapStudio` directory into one single modifiable structure.
 
     Note that you only need to reload the map (e.g. by saving and quitting, or getting sufficiently far away from
@@ -72,7 +74,7 @@ class MapStudioDirectory(GameFileMapDirectory, abc.ABC):
             data[msb_file_stem] = msb.to_dict(ignore_defaults=ignore_defaults)
         json_path = Path(json_path)
         json_path.parent.mkdir(exist_ok=True, parents=True)
-        with Path(json_path).open("wb") as f:
+        with Path(json_path).open("w") as f:
             json.dump(data, f)
 
     def write_json_directory(self, directory_path: str | Path = None, ignore_defaults=True):

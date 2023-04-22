@@ -104,8 +104,12 @@ class GroupBitSet(abc.ABC):
         return cls(set(range(first_bit, last_bit + 1)))
 
     @classmethod
-    def empty(cls) -> Self:
+    def all_off(cls) -> Self:
         return cls(set())
+
+    @classmethod
+    def all_on(cls) -> Self:
+        return cls(set(range(cls.BIT_COUNT)))
 
     @classmethod
     def from_repr(cls, repr_string: str):
@@ -149,6 +153,14 @@ class GroupBitSet(abc.ABC):
         if not 0 <= bit <= self.BIT_COUNT:
             raise ValueError(f"Bit {bit} is out of range for {self.BIT_COUNT}-bit `{self.__class__.__name__}`.")
         self.enabled_bits.remove(bit)
+
+    def intersection(self, other: Self | set[int]) -> Self:
+        cls = self.__class__
+        if isinstance(other, cls):
+            return cls(self.enabled_bits & other.enabled_bits)
+        elif isinstance(other, set):
+            return cls(self.enabled_bits & other)
+        raise TypeError(f"Cannot intersect `{cls.__name__}` with {type(other)}. Must be a `set` or the same type.")
 
     def __or__(self, other: Self | set[int]) -> Self:
         cls = self.__class__

@@ -1,16 +1,16 @@
 from __future__ import annotations
 
+__all__ = ["DSRMemoryHook", "MemoryDrawParam"]
+
 import logging
 import pickle
 import struct
 import typing as tp
+from types import MappingProxyType
 
+from soulstruct.darksouls1r.params import Param, GameParamBND, ParamRow, DrawParam
 from soulstruct.utilities.memory import *
 from soulstruct.utilities.files import PACKAGE_PATH
-
-if tp.TYPE_CHECKING:
-    from soulstruct.darksouls1r.params import Param, GameParamBND
-    from soulstruct.darksouls1r.params.draw_param import DrawParam
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -29,6 +29,7 @@ class DSRMemoryHook(MemoryHook):
     BASE_ADDRESS = 0x140000000
     EVENT_FLAG_OFFSETS = (0x141D19950, 0, 0)
 
+    # NOTE: Still needed for `GameParam` for now.
     PARAM_MEM_SEARCH_REGIONS = (
         (0x31000000, 0x33000000),
         (0x35000000, 0x36000000),
@@ -174,32 +175,11 @@ class DSRMemoryHook(MemoryHook):
 
     # region Params
     @memory_hook_validate
-    def write_draw_param_to_memory(self, draw_param: DrawParam, area_id: int, slot=0):
-        """Write the given `draw_param` for area `area_id` and slot `slot` to game memory.
-
-        You MUST NOT change the number of rows in the `DrawParam` since the last time the game was loaded, as the size
-        of the binary `DrawParam` data must stay the same. This method will check the DrawParam header to try to
-        prevent this, as otherwise the game will definitely crash from invalid memory. It will also never sort the
-        `draw_param` before packing it to bytes.
-
-        Unlike GameParams, DrawParams are reloaded every time the game is *loaded*, not every time the game is started.
-        This is fortunate for in-game testing, but here it means the DrawParam memory addresses need to be reloaded (and
-        re-cached) every time the game is reloaded.
-        """
-        if slot not in {0, 1}:
-            raise ValueError(f"Slot must be 0 or 1, not {slot}.")
-        if not draw_param.path:
-            raise ValueError("DrawParam must have `path` set to write it to memory.")
-        param_file_name = f"m{area_id}_{'1_' if slot == 1 else ''}{draw_param.path.name}"
-        self._write_param(bytes(draw_param.to_writer(sort=False)), param_file_name, draw_param.param_type)
-
-    @memory_hook_validate
     def write_game_param_to_memory(self, game_param: Param):
         """Write the given `GameParam` Param (NOT the entire `GameParamBND`) to game memory.
 
         GameParams are loaded into memory only once, when the game is launched, and their addresses do not change after
-        that. Use `write_draw_param_to_memory` for DrawParams, which are reloaded every time the game loads (and require
-        the area ID and slot to find the right param).
+        that.
         """
         if not game_param.path:
             raise ValueError("Param must have `path` set to write it to memory.")
@@ -228,7 +208,7 @@ class DSRMemoryHook(MemoryHook):
 
     @memory_hook_validate
     def pre_cache_gameparam(self, param: Param, force_recache=False):
-        """Find and cache addresses of all given `Params` to avoid doing it one-by-one later."""
+        """Find and cache addresses of given `Param` to avoid doing it lazily at write time."""
         if not param.path:
             raise ValueError("Param must have `path` set to cache its memory address.")
         if not force_recache and param.path.name in self._address_cache.get("ds1r", {}):
@@ -236,32 +216,20 @@ class DSRMemoryHook(MemoryHook):
         self.get_param_address(param.path.name, param.param_type)
 
     @memory_hook_validate
-    def pre_cache_drawparam(
-        self, draw_param: DrawParam, area_id: int, slot: int, force_recache=False
-    ):
-        """Find and cache addresses of all given `DrawParams` to avoid doing it one-by-one later."""
-        if not draw_param.path:
-            raise ValueError("DrawParam must have `path` set to cache its memory address.")
-        if slot not in {0, 1}:
-            raise ValueError(f"`DrawParam` `slot` must be 0 or 1, not {slot}.")
-        param_file_name = f"m{area_id}_{'1_' if slot == 1 else ''}{draw_param.path.name}"
-        self.get_param_address(param_file_name, draw_param.param_type, force_recache)
+    def get_memory_draw_param(
+        self, draw_param_row_type: tp.Type[ParamRow], draw_param_stem: str, area_id: int, is_extra_slot=False
+    ) -> MemoryDrawParam:
+        """Uses actual pointer table! No need to cache anymore, as no searching is required.
 
-    @memory_hook_validate
-    def pre_cache_drawparams(
-        self, draw_params: list[DrawParam], area_id: int, slot: int, force_recache=False
-    ):
-        """Find and cache addresses of all given `DrawParams` to avoid doing it one-by-one later."""
-        param_file_names = []
-        param_types = []
-        for draw_param in draw_params:
-            if not draw_param.path:
-                raise ValueError("DrawParam must have `path` set to cache its memory address.")
-            if slot not in {0, 1}:
-                raise ValueError(f"`DrawParam` `slot` must be 0 or 1, not {slot}.")
-            param_file_names.append(f"m{area_id}_{'1_' if slot == 1 else ''}{draw_param.path.name}")
-            param_types.append(draw_param.param_type)
-        self.get_param_addresses(param_file_names, param_types, force_recache)
+        Returns object can be modified, read from memory, and written to memory as long as this hook is valid.
+        """
+        return MemoryDrawParam(
+            self,
+            draw_param_row_type,
+            draw_param_stem,
+            area_id,
+            is_extra_slot=is_extra_slot,
+        )
 
     @memory_hook_validate
     @memory_hook_cache
@@ -394,6 +362,185 @@ class DSRMemoryHook(MemoryHook):
                 return result
         return None
     # endregion
+
+
+PARAM_ROW_DATA_T = tp.TypeVar("PARAM_ROW_DATA_T", bound=ParamRow)
+
+
+class MemoryDrawParam(tp.Generic[PARAM_ROW_DATA_T]):
+    """Interface to reading/writing a single DrawParam table in memory."""
+
+    # Base address of DrawParam manager struct (in DSR 1.03).
+    DRAW_PARAM_BASE = 0x141D1C468
+    # Bytes between slot 0 pointer and slot 1 pointer.
+    DRAW_PARAM_SLOT_1_OFFSET = 0x138
+    # Size of all draw param pointers combined per area, plus header.
+    AREA_DRAW_PARAM_SIZE = 0x280
+    # Offset in Param where row count (short) is stored.
+    PARAM_ROW_COUNT_OFFSET = 0xA
+    # Offset in Param where row pointer structs begin (i.e. header size).
+    PARAM_ROW_POINTER_OFFSET = 0x30
+
+    # Maps DrawParam types to their pointer offsets in the DrawParam manager struct.
+    POINTER_OFFSETS = {
+        "DofBank": 0x10,
+        "EnvLightTexBank": 0x28,
+        "FogBank": 0x40,
+        "LensFlareBank": 0x58,
+        "LensFlareExBank": 0x70,
+        "LightBank": 0x88,
+        "s_LightBank": 0xA0,
+        "LightScatteringBank": 0xB8,
+        # Unused: 0xD0
+        "PointLightBank": 0xE8,
+        "ShadowBank": 0x100,
+        "ToneCorrectBank": 0x118,
+        "ToneMapBank": 0x130,
+    }
+
+    hook: DSRMemoryHook
+    draw_param_row_type: tp.Type[PARAM_ROW_DATA_T]
+    area_id: int
+    is_extra_slot: bool
+
+    draw_param_stem: str  # e.g. 'FogBank'
+
+    draw_param_file_stem: str  # e.g. 'm12_1_FogBank' for row type `FOG_BANK` in `area_id` 12 with `is_extra_slot=True`
+    row_dict: MappingProxyType[int, PARAM_ROW_DATA_T]  # row ID -> row data (cannot change size)
+
+    def __init__(
+        self,
+        hook: DSRMemoryHook,
+        draw_param_row_type: tp.Type[PARAM_ROW_DATA_T],
+        draw_param_stem: str,
+        area_id: int,
+        is_extra_slot=False,
+    ):
+        self.hook = hook
+        self.draw_param_row_type = draw_param_row_type
+        self.area_id = area_id
+        self.is_extra_slot = is_extra_slot
+
+        self.draw_param_stem = draw_param_stem
+
+        if draw_param_stem.startswith("s_"):
+            self.draw_param_file_stem = f"s{area_id:02d}{'_1' if is_extra_slot else ''}_{draw_param_stem[2:]}"
+        else:
+            self.draw_param_file_stem = f"m{area_id:02d}{'_1' if is_extra_slot else ''}_{draw_param_stem}"
+
+        self.row_dict = MappingProxyType({})
+
+    def read_from_memory(self):
+        """Read all rows from memory into `row_dict`.
+
+        NOTE: This will overwrite any changes you've made to `row_dict` since the last read!
+        """
+        param_data_address = self._get_param_data_address()
+        if param_data_address == 0:
+            return  # cannot read
+
+        self.row_dict = MappingProxyType(self._read_rows(param_data_address))
+
+    def write_to_memory(self):
+        """Write current `row_dict` to memory."""
+        if not self.row_dict:
+            raise RuntimeError(
+                f"Cannot write DrawParam `{self.draw_param_file_stem}` to memory before calling `read_from_memory()`."
+            )
+
+        param_data_address = self._get_param_data_address()
+        if param_data_address == 0:
+            return  # cannot write
+
+        self._write_rows(param_data_address)
+
+    def __getitem__(self, row_id: int) -> PARAM_ROW_DATA_T:
+        return self.row_dict[row_id]
+
+    def _read_rows(self, param_data_address: int) -> dict[int, PARAM_ROW_DATA_T]:
+        row_count = self.hook.read_int16(param_data_address + self.PARAM_ROW_COUNT_OFFSET)
+        _LOGGER.info(f"Reading {row_count} rows from memory for Param {self.draw_param_stem}.")
+
+        row_dict = {}
+        param_row_ptr_address = param_data_address + self.PARAM_ROW_POINTER_OFFSET  # first row pointer
+        for i in range(row_count):
+            row_id = self.hook.read_int32(param_row_ptr_address + i * 12 + 0)
+            data_offset = self.hook.read_int32(param_row_ptr_address + i * 12 + 4)
+            name_offset = self.hook.read_int32(param_row_ptr_address + i * 12 + 8)
+            raw_name = self.hook.read_z_bytes(param_data_address + name_offset)
+            if raw_name:
+                _LOGGER.debug(f"Loaded {self.draw_param_stem} row {row_id} with RawName: {raw_name}")
+            try:
+                name = raw_name.decode("shift_jis_2004")
+            except UnicodeDecodeError:
+                name = ""  # cannot decode
+            row_data = self.hook.read(param_data_address + data_offset, size=self.draw_param_row_type.get_size())
+            row_dict[row_id] = self.draw_param_row_type.from_reader(row_data, raw_name=raw_name, name=name)
+        return row_dict
+
+    def _write_rows(self, param_data_address: int):
+        """Write `row_dict`."""
+        row_count = self.hook.read_int16(param_data_address + self.PARAM_ROW_COUNT_OFFSET)
+        if row_count != len(self.row_dict):
+            _LOGGER.error(
+                f"DrawParam `{self.draw_param_file_stem}` has {row_count} rows in memory. Cannot write "
+                f"{len(self.row_dict)} rows to it. (Did you reload the game with a new row count?)"
+            )
+
+        param_row_ptr_address = param_data_address + self.PARAM_ROW_POINTER_OFFSET  # first row pointer
+        for i, (row_id, row_data) in enumerate(self.row_dict.items()):
+            row_data: PARAM_ROW_DATA_T
+            data_offset = self.hook.read_int32(param_row_ptr_address + i * 12 + 4)
+            name_offset = self.hook.read_int32(param_row_ptr_address + i * 12 + 8)
+            raw_name = self.hook.read_z_bytes(param_data_address + name_offset)
+            if raw_name:
+                _LOGGER.debug(f"Writing {self.draw_param_stem} row {row_id} with RawName: {raw_name}")
+            self.hook.write(param_data_address + data_offset, bytes(row_data))
+
+    def _get_area_draw_param_list_address(self):
+        draw_param_list_address = self.hook.read_int64(self.DRAW_PARAM_BASE)
+        area_start = draw_param_list_address + 0x18 + (self.area_id - 10) * self.AREA_DRAW_PARAM_SIZE
+
+        area_id_bytes = self.hook.read(area_start, 4)
+        area_id = struct.unpack('>i', area_id_bytes)[0]  # area ID is big-endian for some reason
+        if area_id == -1:
+            _LOGGER.warning(f"Area {self.area_id} has not been loaded yet.", True)
+            return 0
+        if area_id != self.area_id:
+            raise Exception(f"Area ID mismatch in memory: {area_id} != {self.area_id}")
+
+        return area_start
+
+    def _get_param_data_address(self) -> int:
+        """Get the address where the loaded `DrawParam` starts."""
+        area_start = self._get_area_draw_param_list_address()
+        if area_start == 0:
+            return 0
+
+        pointer_offset = self.POINTER_OFFSETS[self.draw_param_stem]
+
+        draw_param_header_address = self.hook.read_int64(
+            area_start + pointer_offset + (self.DRAW_PARAM_SLOT_1_OFFSET if self.is_extra_slot else 0)
+        )
+        if draw_param_header_address == 0:
+            if self.is_extra_slot:
+                _LOGGER.warning(f"Slot 1 DrawParam '{self.draw_param_file_stem}' is empty.")
+            else:
+                raise MemoryHookCallError(
+                    f"Slot 0 DrawParam '{self.draw_param_file_stem}' is empty. This should never happen!"
+                )
+            return 0
+
+        file_stem_address = self.hook.read_int64(draw_param_header_address + 0x8)
+        param_file_stem = self.hook.read_utf16_z_string(file_stem_address)
+        if param_file_stem == self.draw_param_file_stem:
+            return self.hook.read_int64(draw_param_header_address + 0x38)
+
+        _LOGGER.error(
+            f"Expected DrawParam file stem '{self.draw_param_file_stem}', but found '{param_file_stem}'. "
+            f"Param not loaded."
+        )
+        return 0
 
 
 def test_dsr_hook():

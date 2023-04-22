@@ -1,3 +1,4 @@
+"""NOTE: Complete copy of PTDE code, rather than inheriting, to properly use the generic type `BASE_BINARY_FILE_T`."""
 from __future__ import annotations
 
 __all__ = ["DrawParamDirectory"]

@@ -133,7 +133,7 @@ class BaseBinaryFile:
             make_dirs (bool): if True, any directories in `file_path` that are missing will be created. (Default: True)
             check_hash (bool): if True, file will not be written if file with same hash already exists. (Default: False)
         """
-        file_path = self._get_file_path(file_path)
+        file_path = self.get_file_path(file_path)
         if make_dirs:
             file_path.parent.mkdir(parents=True, exist_ok=True)
         packed_dcx = bytes(self)
@@ -164,7 +164,7 @@ class BaseBinaryFile:
         write_json(file_path, json_dict, indent=indent, encoding=encoding, encoder=BaseJSONEncoder)
 
     def create_bak(self, file_path: None | str | Path = None, make_dirs=True):
-        file_path = self._get_file_path(file_path)
+        file_path = self.get_file_path(file_path)
         if make_dirs:
             file_path.parent.mkdir(parents=True, exist_ok=True)
         create_bak(file_path)
@@ -172,7 +172,7 @@ class BaseBinaryFile:
     def copy(self):
         return copy.deepcopy(self)
 
-    def _get_file_path(self, file_path: None | str | Path) -> Path:
+    def get_file_path(self, file_path: None | str | Path) -> Path:
         """Get default path of binary file, based on `EXT` and `dcx_type`."""
         if file_path is None:
             if self.path is None:

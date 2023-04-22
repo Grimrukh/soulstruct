@@ -394,7 +394,7 @@ class MSBCollision(MSBPart):
 
     # Field type overrides.
     model: MSBCollisionModel = None
-    display_groups: GroupBitSet128 = field(default_factory=lambda: set(range(MSBPart.GROUP_BIT_COUNT)))  # ALL ON
+    display_groups: GroupBitSet128 = field(default_factory=GroupBitSet128.all_on)  # all ON by default
     is_shadow_source: bool = True
     is_shadow_destination: bool = True
     draw_by_reflect_cam: bool = True
@@ -403,7 +403,7 @@ class MSBCollision(MSBPart):
     sound_space_type: int = 0
     environment_event: MSBEnvironmentEvent = None
     reflect_plane_height: float = 0.0
-    navmesh_groups: GroupBitSet128 = field(default_factory=lambda: set(range(MSBPart.GROUP_BIT_COUNT)))  # ALL ON
+    navmesh_groups: GroupBitSet128 = None  # defaults to being the same as `display_groups`
     vagrant_entity_ids: list[int] = field(default_factory=lambda: [-1, -1, -1])
     place_name_banner_id: int = field(default=-1, **MapFieldInfo(game_type=PlaceName))
     force_place_name_banner: bool = True  # necessary default because `place_name_banner_id` defaults to -1
@@ -427,6 +427,11 @@ class MSBCollision(MSBPart):
         # "unk_x27_x28",  # TODO: Not hiding this, as some rare collisions do use it, e.g. Anor Londo spinning tower.
         "use_depth_bias_float",
     )
+
+    def __post_init__(self):
+        """`navmesh_groups` default (if `None`) to same as `display_groups`."""
+        if self.navmesh_groups is None:
+            self.navmesh_groups = self.display_groups.copy()
 
     @classmethod
     def unpack_subtype_data(cls, reader: BinaryReader) -> dict[str, tp.Any]:
@@ -541,7 +546,7 @@ class MSBNavmesh(MSBPart):
     model: MSBNavmeshModel = None
     is_shadow_source: bool = True
 
-    navmesh_groups: GroupBitSet128 = field(default_factory=lambda: set(range(MSBPart.GROUP_BIT_COUNT)))  # ALL ON
+    navmesh_groups: GroupBitSet128 = field(default_factory=GroupBitSet128.all_off)  # all OFF by default
 
     HIDE_FIELDS = (
         "scale",

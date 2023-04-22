@@ -244,7 +244,7 @@ class MemoryHook(abc.ABC):
             kernel32.ReadProcessMemory(self.p_handle, address, buffer, size, c.byref(bytes_read))
         except WindowsError as e:
             raise MemoryHookCallError(e)
-        value = bytes(buffer[: bytes_read.value])
+        value = bytes(buffer[:bytes_read.value])
         if fmt:
             values = struct.unpack(fmt, value)
             if len(values) == 1:
@@ -292,6 +292,42 @@ class MemoryHook(abc.ABC):
 
     def read_double(self, address):
         return self.read(address, size=8, fmt="<d")
+
+    def read_z_bytes(self, address) -> bytes:
+        """Read a null-terminated single-byte-character string, without decoding it."""
+        raw_string = b""
+        read_address = address
+        while True:
+            value = self.read(read_address, size=1)
+            if value[0] == 0:
+                # Null termination found.
+                return raw_string
+            raw_string += value
+            read_address += 1
+
+    def read_z_string(self, address, encoding: str) -> str:
+        """Read a null-terminated single-byte-character string."""
+        raw_string = b""
+        read_address = address
+        while True:
+            value = self.read(read_address, size=1)
+            if value[0] == 0:
+                # Null termination found.
+                return raw_string.decode(encoding)
+            raw_string += value
+            read_address += 1
+
+    def read_utf16_z_string(self, address, big_endian=False) -> str:
+        """Read a null-terminated UTF-16 string."""
+        raw_string = b""
+        read_address = address
+        while True:
+            value = self.read(read_address, size=2)
+            if value[0] == 0 and value[1] == 0:
+                # Null termination found.
+                return raw_string.decode("utf-16-be" if big_endian else "utf-16-le")
+            raw_string += value
+            read_address += 2
 
     def write_int16(self, address, value):
         return self.write(address, data=(value,), fmt="<h")

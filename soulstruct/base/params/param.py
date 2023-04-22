@@ -218,6 +218,8 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
     PARAMDEF_MODULE: tp.ClassVar[ModuleType] = None
     GET_BUNDLED_PARAMDEFBND: tp.ClassVar[tp.Callable] = None
 
+    EXT: tp.ClassVar[str] = ".param"
+
     @dataclass(slots=True)
     class RowPointerStruct32(BinaryStruct):
         row_id: int
@@ -804,4 +806,7 @@ def TypedParam(row_type: tp.Type[ParamRow]):
             continue
         if param_subclass.ROW_TYPE is row_type:
             return param_subclass
-    return type(f"Param_{row_type.__name__}", (Param,), {"ROW_TYPE": row_type, "dcx_type": DCXType.Null})
+    new_param_subclass = type(f"Param_{row_type.__name__}", (Param,), {"ROW_TYPE": row_type})
+    new_param_subclass.__module__ = row_type.__module__
+    new_param_subclass.dcx_type = DCXType.Null
+    return new_param_subclass

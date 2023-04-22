@@ -1359,7 +1359,10 @@ class BinaryStruct:
         return obj
 
     def to_bytes(self, byte_order: ByteOrder = None, long_varints: bool = None):
-        """"""
+        """Convert struct to `bytes`, but with the ability to first update `byte_order` or `long_varints`.
+
+        You can call simply `bytes(binary_struct)` if you do not need to change the byte order or varint size.
+        """
         if byte_order is not None:
             self.byte_order = byte_order
         if long_varints is not None:

@@ -166,7 +166,7 @@ class GameFileMapDirectory(GameFileDirectory[BASE_BINARY_FILE_T], abc.ABC):
             f"`{self.__class__.__name__}` written to `{directory_path}` successfully ({len(self.files)} files)."
         )
 
-    def __getitem__(self, map_source: str | tuple):
+    def __getitem__(self, map_source: str | tuple) -> BASE_BINARY_FILE_T:
         game_map = self.GET_MAP(map_source)
         map_stem = getattr(game_map, self.MAP_STEM_ATTRIBUTE)
         for file_name, file_instance in self.files.items():

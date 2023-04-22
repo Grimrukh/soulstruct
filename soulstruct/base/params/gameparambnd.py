@@ -168,9 +168,11 @@ class GameParamBND(Binder, abc.ABC):
                         f"Using generic `ParamDict`."
                     )
                     param = ParamDict.from_dict(param)
+                    param.path = Path(f"{param_stem}{ParamDict.EXT}")
                 else:
                     param_class = TypedParam(data_type)
                     param = param_class.from_dict(param)
+                    param.path = Path(f"{param_stem}{param_class.EXT}")
             elif not isinstance(param, Param):
                 raise TypeError(
                     f"Invalid type for '{param_stem}' in GameParamBND dictionary: {type(param).__name__}"
