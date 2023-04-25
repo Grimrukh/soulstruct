@@ -18,7 +18,7 @@ from soulstruct.utilities.text import pad_chars
 
 from .enums import BaseMSBSubtype, MSBSupertype
 from .field_info import MapFieldMetadata, FIELD_INFO
-from .utils import MSBBrokenEntryReference, GroupBitSet128, GroupBitSet256
+from .utils import MSBBrokenEntryReference, GroupBitSet128, GroupBitSet256, GroupBitSet1024
 
 try:
     Self = tp.Self
@@ -45,9 +45,11 @@ _BASIC_ENTRY_TYPES = {
     # No `tuple` fields in entries (makes element assignment too annoying).
     "GroupBitSet128": GroupBitSet128,
     "GroupBitSet256": GroupBitSet256,
+    "GroupBitSet1024": GroupBitSet1024,
     "Vector2": Vector2,
     "Vector3": Vector3,
     "Vector4": Vector4,
+    # "BaseShape": BaseShape,  # TODO: move to base module
 }
 
 
@@ -65,6 +67,8 @@ class MSBEntry(abc.ABC):
     HIDE_FIELDS: tp.ClassVar[tuple[str, ...]] = ()
     # Number of bits in draw/display/navmesh/backread groups (e.g. 128 or 256).
     GROUP_BIT_COUNT: tp.ClassVar[int]
+    # Names of fields that reference other MSB entries.
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = []
     # Cached when first accessed. Maps field names to their default values. Immutable.
     _FIELD_DEFAULTS: tp.ClassVar[MappingProxyType[str, tp.Any]] = None
     # Cached when first accessed. Maps field names to types for enforcement, or type names for `MSBEntry` subclasses.
@@ -181,7 +185,7 @@ class MSBEntry(abc.ABC):
         if isinstance(value, IntEnum):
             value = value.value
         try:
-            setattr(self, field_name, value)
+            setattr(self, field_name, value)  # will go through validation
         except AttributeError:
             raise KeyError(f"Field {repr(field_name)} does not exist in MSB entry type {self.__class__.__name__}.")
 
@@ -221,7 +225,7 @@ class MSBEntry(abc.ABC):
         if "entity_id" not in self.get_field_names():
             raise TypeError(f"MSB entry subtype `{self.__class__.__name__}` does not have the `entity_id` field.")
         self.name = value.name
-        setattr(self, "entity_id", value.value)
+        setattr(self, "entity_id", value.value)  # attribute validated (`object.__setattr__` not used)
 
     def copy(self):
         """Copy entry with only shallow copies of fields referencing other `MSBEntry`s."""
@@ -263,6 +267,8 @@ class MSBEntry(abc.ABC):
                     decoders[f.name] = GroupBitSet128.from_repr
                 elif f.type in (GroupBitSet256, GroupBitSet256.__name__):
                     decoders[f.name] = GroupBitSet256.from_repr
+                elif f.type in (GroupBitSet1024, GroupBitSet1024.__name__):
+                    decoders[f.name] = GroupBitSet1024.from_repr
                 else:
                     for check_type in (Vector2, Vector3, Vector4):
                         if f.type in (check_type, check_type.__name__):
@@ -279,7 +285,7 @@ class MSBEntry(abc.ABC):
         if not isinstance(entity_enum, IntEnum):
             raise TypeError(f"`entity_enum` must be an `IntEnum` subclass, not `{type(entity_enum)}`.")
         if "entity_id" in self.get_field_names(visible_only=False):
-            setattr(self, "entity_id", entity_enum.value)
+            object.__setattr__(self, "entity_id", entity_enum.value)
             self.name = entity_enum.name
         else:
             raise TypeError(f"MSB entry class `{self.__class__.__name__}` has no `entity_id` field.")
@@ -347,7 +353,9 @@ class MSBEntry(abc.ABC):
         `to_json_dict()`.
         """
         default_values = self.get_default_values() if ignore_defaults else {}
-        data = {"name": self.name, "description": self.description}
+        data = {"name": self.name}
+        if not ignore_defaults or self.description:
+            data["description"] = self.description
         for name in self.get_field_names(visible_only=False):
             value = getattr(self, name)
             if default_values and value == default_values[name]:
@@ -358,7 +366,9 @@ class MSBEntry(abc.ABC):
     def to_json_dict(self, msb: MSB, ignore_defaults=True) -> dict[str, tp.Any]:
         """NOTE: This converts types to JSON-ready types. Use `.asdict()` for a straightforward field value mapping."""
         default_values = self.get_default_values() if ignore_defaults else {}
-        data = {"name": self.name, "description": self.description}
+        data = {"name": self.name}
+        if not ignore_defaults or self.description:
+            data["description"] = self.description
         for name in self.get_field_names(visible_only=False):
             value = getattr(self, name)
             if default_values and value == default_values[name]:
@@ -521,10 +531,16 @@ class MSBEntry(abc.ABC):
                     super(MSBEntry, self).__setattr__(field_name, value)
                     return
 
-                if field_type in {"GroupBitSet128", "GroupBitSet256"}:
+                if field_type in {"GroupBitSet128", "GroupBitSet256", "GroupBitSet1024"}:
                     # `GroupBitSet` subclass of some maximum count.
-                    if not isinstance(value, (GroupBitSet128, GroupBitSet256)):
-                        value = (GroupBitSet128 if field_type.endswith("128") else GroupBitSet256)(set(value))
+                    if not isinstance(value, (GroupBitSet128, GroupBitSet256, GroupBitSet1024)):
+                        # Lists will be interpreted as packed uints, and sets as enabled bits.
+                        if field_type.endswith("128"):
+                            value = GroupBitSet128(value)
+                        elif field_type.endswith("256"):
+                            value = GroupBitSet256(value)
+                        else:  # field_type.endswith("1024"):
+                            value = GroupBitSet1024(value)
                     super(MSBEntry, self).__setattr__(field_name, value)
                     return
 
@@ -583,6 +599,16 @@ class MSBEntry(abc.ABC):
             #     f"`MSBUnusedCharacter` '{self.name}' uses an `MSBObjectModel`: '{value.name}'.\n"
             #     f"    This happens, e.g., in m10_01_00_00 in vanilla DSR (unused bonfire 'o0200_0004')."
             # )
+            return True
+        if self.cls_name == "MSBUnusedCharacter" and value.__class__.__name__ == "MSBAssetModel":
+            # Happens in Elden Ring: e.g. 'AEG099_320'
+            return True
+        if self.cls_name == "MSBUnusedAsset" and value.__class__.__name__ == "MSBCharacterModel":
+            # Happens in Elden Ring.
+            return True
+        if self.cls_name == "MSBMapConnection" and value.__class__.__name__ == "MSBMapPieceModel":
+            # Happens in Elden Ring. TODO: Seems that 'MapConnection' class can attach to Map Pieces...
+            # In Agheel's Lake, for map (32, 0, 0, 1), which is CLOSE to Sellia Crystal Tunnel (32, 8, 0, 0)...
             return True
         return False
 
@@ -660,6 +686,8 @@ class MSBEntry(abc.ABC):
                             display_type = GroupBitSet128
                         case "GroupBitSet256":
                             display_type = GroupBitSet256
+                        case "GroupBitSet1024":
+                            display_type = GroupBitSet1024
                         case "Vector2":
                             display_type = Vector2
                         case "Vector3":
@@ -705,7 +733,7 @@ class MSBEntry(abc.ABC):
         for f in fields(cls):
             ann = f_annotations[f.name]
             if not isinstance(ann, str):
-                ann = ann.__name__
+                ann = ann.__name__  # can't be certain when annotation types will be preserved, so we always use strings
 
             # Check `MSBEntry` types first.
             if re.match(r"MSBEntry", ann):  # not allowed
@@ -713,6 +741,8 @@ class MSBEntry(abc.ABC):
             elif re.match(r"MSB.*", ann):
                 # `MSBEntry` subclass. `__setattr__` will confirm that any set `value` has this name in its MRO.
                 # NOTE: Will match pipe unions and check them appropriately.
+                field_types[f.name] = ann  # str
+            elif ann == "BaseShape":
                 field_types[f.name] = ann  # str
             elif ann in {"list[int]", "list[float]"} or re.match(r"list\[MSB[\w, ]*]", ann):
                 # List of `MSBEntry` subclasses. Check binary metadata for length and store in type string.
@@ -816,8 +846,8 @@ class MSBEntry(abc.ABC):
             entry = entry_lists[list_name][index] if index != -1 else None
         except IndexError:
             entry = MSBBrokenEntryReference(list_name, index)
-        setattr(self, field_name, entry)
-        setattr(self, index_field_name, None)
+        object.__setattr__(self, field_name, entry)
+        object.__setattr__(self, index_field_name, None)
 
     def _consume_indices(self, entry_lists: dict[str, list[MSBEntry]], list_name: str, field_name: str):
         indices_field_name = f"_{field_name}_indices"
@@ -833,8 +863,8 @@ class MSBEntry(abc.ABC):
                 except IndexError:
                     entry = MSBBrokenEntryReference(list_name, index)
             entries.append(entry)
-        setattr(self, field_name, entries)
-        setattr(self, indices_field_name, None)
+        object.__setattr__(self, field_name, entries)
+        object.__setattr__(self, indices_field_name, None)
 
     def try_index(
         self,

@@ -15,7 +15,7 @@ from soulstruct.base.game_types import GAME_TYPE, GAME_INT_TYPE, GameObjectInt, 
 from soulstruct.base.game_types.map_types import *
 from soulstruct.base.maps.msb.enums import MSBSupertype, BaseMSBModelSubtype, BaseMSBRegionSubtype
 from soulstruct.base.maps.msb.models import BaseMSBModel
-from soulstruct.base.maps.msb.utils import GroupBitSet, GroupBitSet128, GroupBitSet256
+from soulstruct.base.maps.msb.utils import GroupBitSet, GroupBitSet128, GroupBitSet256, GroupBitSet1024
 from soulstruct.base.project.utilities import (
     bind_events,
     NameSelectionBox,
@@ -260,6 +260,11 @@ class MapFieldRow(FieldRow):
         self._activate_value_widget(self.value_label)
 
     def _update_field_GroupBitSet256(self, value: GroupBitSet256):
+        """Update `set` field with a sorted list."""
+        self.value_label.var.set(repr(value.to_sorted_bit_list()))
+        self._activate_value_widget(self.value_label)
+
+    def _update_field_GroupBitSet1024(self, value: GroupBitSet1024):
         """Update `set` field with a sorted list."""
         self.value_label.var.set(repr(value.to_sorted_bit_list()))
         self._activate_value_widget(self.value_label)
@@ -645,6 +650,20 @@ class MapFieldRow(FieldRow):
         except (TypeError, ValueError):
             raise InvalidFieldValueError(
                 f"Could not interpret string as a `GroupBitSet256` for field {self.field_nickname}: {string}"
+            )
+
+    def _string_to_GroupBitSet1024(self, string):
+        try:
+            enabled_bits_list = ast.literal_eval(string)
+        except ValueError:
+            raise InvalidFieldValueError(
+                f"Could not interpret string as a `GroupBitSet1024` for field {self.field_nickname}: {string}"
+            )
+        try:
+            return GroupBitSet1024(set(enabled_bits_list))
+        except (TypeError, ValueError):
+            raise InvalidFieldValueError(
+                f"Could not interpret string as a `GroupBitSet1024` for field {self.field_nickname}: {string}"
             )
 
     def _string_to_Map(self, string):

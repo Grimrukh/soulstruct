@@ -15,7 +15,7 @@ from soulstruct.utilities.future import StrEnum
 
 
 class MSBSupertype(StrEnum):
-    """Same for all games."""
+    """Same for most games."""
     MODELS = "MODEL_PARAM_ST"
     EVENTS = "EVENT_PARAM_ST"
     REGIONS = "POINT_PARAM_ST"

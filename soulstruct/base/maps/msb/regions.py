@@ -29,8 +29,7 @@ class BaseMSBRegion(MSBEntry, abc.ABC):
 
     # Further specify subtype enum type.
     SUBTYPE_ENUM: tp.ClassVar[BaseMSBRegionSubtype]
-    # Regions have no supertype data struct.
-    SUPERTYPE_DATA_STRUCT: tp.ClassVar = None
+    SUPERTYPE_DATA_STRUCT: tp.ClassVar[tp.Type[BinaryStruct]] = None  # most games' region don't have any
     UNKNOWN_DATA_SIZE: tp.ClassVar[int]
 
     entity_id: int = -1
@@ -53,15 +52,14 @@ class BaseMSBRegion(MSBEntry, abc.ABC):
 
     @classmethod
     def unpack_header(cls, reader: BinaryReader, entry_offset: int) -> dict[str, tp.Any]:
-        region_start = reader.position
         header = cls.SUPERTYPE_HEADER_STRUCT.from_bytes(reader)
 
-        cls.check_null_field(reader, region_start + header.pop("unknown_offset_1"))
-        cls.check_null_field(reader, region_start + header.pop("unknown_offset_2"))
+        cls.check_null_field(reader, entry_offset + header.pop("unknown_offset_1"))
+        cls.check_null_field(reader, entry_offset + header.pop("unknown_offset_2"))
 
         header_subtype_int = header.pop("_subtype_int")
         if header_subtype_int != cls.SUBTYPE_ENUM.value:
-            raise ValueError(f"Unexpected MSB event subtype index for `{cls.__name__}`: {header_subtype_int}")
+            raise ValueError(f"Unexpected MSB region subtype index for `{cls.__name__}`: {header_subtype_int}")
 
         name = reader.unpack_string(offset=entry_offset + header.pop("name_offset"), encoding=cls.NAME_ENCODING)
         entity_id = reader["i", entry_offset + header.pop("entity_id_offset")]
@@ -71,6 +69,10 @@ class BaseMSBRegion(MSBEntry, abc.ABC):
     @classmethod
     def unpack_supertype_data(cls, reader: BinaryReader) -> dict[str, tp.Any]:
         raise TypeError("MSB regions contain no supertype data.")
+
+    def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
+        """In later games, regions have references to other MSB entries."""
+        pass
 
     def to_msb_writer(
         self, writer: BinaryWriter, supertype_index: int, subtype_index: int, entry_lists: dict[str, list[MSBEntry]]

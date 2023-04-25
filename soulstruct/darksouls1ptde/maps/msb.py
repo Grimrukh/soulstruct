@@ -83,7 +83,7 @@ def empty_list(supertype_prefix: str, subtype_enum_name: str) -> tp.Callable[[],
     return lambda: MSBEntryList(supertype=supertype, subtype_info=subtype_info)
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, kw_only=True)
 class MSB(_BaseMSB):
     SUPERTYPE_LIST_HEADER: tp.ClassVar[tp.Type[BinaryStruct]] = MSBEntrySuperlistHeader
     MSB_ENTRY_SUBTYPES: tp.ClassVar[dict[str, dict[str, MSBSubtypeInfo]]] = MSB_ENTRY_SUBTYPES

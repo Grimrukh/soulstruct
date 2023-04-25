@@ -790,7 +790,7 @@ FIELD_INFO = {
         "Platoon Parent Names",
         "Parent parts of this Platoon.",
     ),
-    "Platoon[platoon_id_script_active]": (
+    "Platoon[platoon_id_script_activate]": (
         "Platoon Active Script ID",
         "Unknown. Possibly an AI param ID.",
     ),

@@ -55,7 +55,7 @@ MSB_ENTRY_SUBTYPES = {
         "DarkLock": MSBSubtypeInfo(MSBEventSubtype.DarkLock, MSBDarkLockEvent, "dark_locks"),
         "Platoon": MSBSubtypeInfo(MSBEventSubtype.Platoon, MSBPlatoonEvent, "platoons"),
         "MultiSummon": MSBSubtypeInfo(MSBEventSubtype.MultiSummon, MSBMultiSummonEvent, "multi_summons"),
-        "Other": MSBSubtypeInfo(MSBEventSubtype.Other, MSBOtherEvent, "other_events"),
+        "OtherEvent": MSBSubtypeInfo(MSBEventSubtype.OtherEvent, MSBOtherEvent, "other_events"),
     },
     "POINT_PARAM_ST": {
         "Point": MSBSubtypeInfo(MSBRegionSubtype.Point, MSBRegionPoint, "points"),
@@ -78,7 +78,7 @@ MSB_ENTRY_SUBTYPES = {
         "UnusedObject": MSBSubtypeInfo(MSBPartSubtype.UnusedObject, MSBUnusedObject, "unused_objects"),
         "UnusedCharacter": MSBSubtypeInfo(MSBPartSubtype.UnusedCharacter, MSBUnusedCharacter, "unused_characters"),
         "MapConnection": MSBSubtypeInfo(MSBPartSubtype.MapConnection, MSBMapConnection, "map_connections"),
-        "Other": MSBSubtypeInfo(MSBPartSubtype.Other, MSBOtherPart, "other_parts"),
+        "OtherPart": MSBSubtypeInfo(MSBPartSubtype.OtherPart, MSBOtherPart, "other_parts"),
     },
 }
 
@@ -89,7 +89,7 @@ def empty_list(supertype_prefix: str, subtype_enum_name: str) -> tp.Callable[[],
     return lambda: MSBEntryList(supertype=supertype, subtype_info=subtype_info)
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, kw_only=True)
 class MSB(_BaseMSB):
     SUPERTYPE_LIST_HEADER: tp.ClassVar[tp.Type[BinaryStruct]] = MSBEntrySuperlistHeader
     MSB_ENTRY_SUBTYPES: tp.ClassVar[dict[str, dict[str, MSBSubtypeInfo]]] = MSB_ENTRY_SUBTYPES
@@ -129,7 +129,7 @@ class MSB(_BaseMSB):
     dark_locks: MSBEntryList[MSBDarkLockEvent] = field(default_factory=empty_list("EVENT", "DarkLock"))
     platoons: MSBEntryList[MSBPlatoonEvent] = field(default_factory=empty_list("EVENT", "Platoon"))
     multi_summons: MSBEntryList[MSBMultiSummonEvent] = field(default_factory=empty_list("EVENT", "MultiSummon"))
-    other_events: MSBEntryList[MSBOtherEvent] = field(default_factory=empty_list("EVENT", "Other"))
+    other_events: MSBEntryList[MSBOtherEvent] = field(default_factory=empty_list("EVENT", "OtherEvent"))
 
     points: MSBEntryList[MSBRegionPoint] = field(default_factory=empty_list("POINT", "Point"))
     circles: MSBEntryList[MSBRegionCircle] = field(default_factory=empty_list("POINT", "Circle"))
@@ -147,7 +147,7 @@ class MSB(_BaseMSB):
     unused_objects: MSBEntryList[MSBUnusedObject] = field(default_factory=empty_list("PARTS", "UnusedObject"))
     unused_characters: MSBEntryList[MSBUnusedCharacter] = field(default_factory=empty_list("PARTS", "UnusedCharacter"))
     map_connections: MSBEntryList[MSBMapConnection] = field(default_factory=empty_list("PARTS", "MapConnection"))
-    other_parts: MSBEntryList[MSBOtherPart] = field(default_factory=empty_list("PARTS", "Other"))
+    other_parts: MSBEntryList[MSBOtherPart] = field(default_factory=empty_list("PARTS", "OtherPart"))
 
     def pack_supertype_name(self, writer: BinaryWriter, supertype_name: str):
         packed_name = supertype_name.encode(self.NAME_ENCODING)

@@ -87,7 +87,7 @@ class MSBPart(BaseMSBPart, abc.ABC):
     GROUP_BIT_COUNT: tp.ClassVar[int] = 256
 
     # NOTE: `model` defined by subclasses.
-    backread_groups: GroupBitSet256 = field(default_factory=set)
+    backread_groups: GroupBitSet256 = field(default_factory=GroupBitSet256.all_off)
     part_unk_x04_x05: int = field(default=-1, **MapFieldInfo(
         "Unknown Parts Data [x04-x05]", "Unknown parts integer. Common values: -1, 0, 8"))
     part_unk_x05_x06: int = field(default=-1, **MapFieldInfo(
@@ -129,7 +129,7 @@ class MSBPart(BaseMSBPart, abc.ABC):
             reader.seek(entry_offset + relative_scene_gparam_data_offset)
             kwargs |= cls.SCENE_GPARAM_STRUCT.from_bytes(reader).to_dict(ignore_underscore_prefix=False)
 
-        cls._SETATTR_CHECKS_DISABLED = True  # will be re-enabled in `__post_init__`
+        cls.SETATTR_CHECKS_DISABLED = True  # will be re-enabled in `__post_init__`
         return cls(**kwargs)
 
     @classmethod
@@ -421,11 +421,11 @@ class MSBCollision(MSBPartWithSceneGParam):
 
     # Field type overrides.
     model: MSBCollisionModel = None
-    display_groups: GroupBitSet256 = field(default_factory=lambda: set(range(MSBPart.GROUP_BIT_COUNT)))
+    display_groups: GroupBitSet256 = field(default_factory=GroupBitSet256.all_on)
 
     hit_filter_id: int = field(default=CollisionHitFilter.Normal.value, **MapFieldInfo(game_type=CollisionHitFilter))
     sound_space_type: int = 0
-    environment_event: MSBEnvironmentEvent = None
+    environment_event: MSBEnvironmentEvent = None  # NOTE: imported under TYPE_CHECKING to avoid circular import
     reflect_plane_height: float = 0.0
     place_name_banner_id: int = field(default=-1, **MapFieldInfo(game_type=PlaceName))
     force_place_name_banner: bool = True  # necessary default because `place_name_banner_id` defaults to -1
@@ -610,7 +610,7 @@ class MSBMapConnection(MSBPart):
 class MSBOtherPart(MSBPart):
     """Unknown part (enum -1). No data."""
 
-    SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Other
+    SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.OtherPart
     SUBTYPE_DATA_STRUCT: tp.ClassVar = None
 
     model: MSBOtherModel = None

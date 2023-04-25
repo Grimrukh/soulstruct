@@ -774,8 +774,8 @@ class GroupBitSetEditBox(SmartFrame):
         bit_count=128,
         window_title="Editing Bit Groups",
     ):
-        if bit_count not in {128, 256}:
-            raise ValueError(f"`bit_count` must be 128 or 256, not {bit_count}.")
+        if bit_count not in {128, 256, 1024}:
+            raise ValueError(f"`bit_count` must be 128, 256, or 1024, not {bit_count}.")
         super().__init__(toplevel=True, master=master, window_title=window_title)
         self.editor = master
         self.bit_count = bit_count
@@ -797,10 +797,19 @@ class GroupBitSetEditBox(SmartFrame):
                     **self.editor.DEFAULT_BUTTON_KWARGS["NO"]
                 )
 
-            with self.set_master(padx=10, pady=10):  # 8 rows x 16 columns
-                for row in range(8 if self.bit_count == 128 else 16):
-                    for col in range(16):
-                        i = row * 16 + col
+            with self.set_master(padx=10, pady=10):
+
+                # Calculate the number of rows and columns to use.
+                if self.bit_count == 128:
+                    row_count, col_count = 8, 16
+                elif self.bit_count == 256:
+                    row_count, col_count = 16, 16
+                else:  # 1024
+                    row_count, col_count = 32, 32  # TODO: maybe too many rows?
+
+                for row in range(row_count):
+                    for col in range(col_count):
+                        i = row * col_count + col
                         self._checkbuttons.append(
                             self.Checkbutton(
                                 initial_state=i in self.initial_bit_set,

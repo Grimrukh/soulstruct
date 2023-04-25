@@ -341,12 +341,12 @@ class MSBPlatoonEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Platoon
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = [
-        "attached_part", "attached_region", "platton_characters", "platoon_parents"
+        "attached_part", "attached_region", "platoon_characters", "platoon_parents"
     ]
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
-        platoon_id_script_active: int
+        platoon_id_script_activate: int
         state: int
         _pad1: bytes = field(**BinaryPad(16))
         _platoon_character_indices: list[int] = field(**BinaryArray(30))
@@ -356,7 +356,7 @@ class MSBPlatoonEvent(MSBEvent):
         default_factory=lambda: [None] * 30, **MapFieldInfo(game_type=GameObjectIntSequence((Character, 30))))
     platoon_parents: list[MSBPart] = field(
         default_factory=lambda: [None] * 2, **MapFieldInfo(game_type=GameObjectIntSequence((MapPart, 2))))
-    platoon_id_script_active: int = -1
+    platoon_id_script_activate: int = -1
     state: int = -1
 
     _platoon_characters_indices: list[int] = field(default=None, **BinaryArray(30))
@@ -484,6 +484,6 @@ class MSBEnvironmentEvent(MSBEvent):
 @dataclass(slots=True, eq=False, repr=False)
 class MSBOtherEvent(MSBEvent):
 
-    SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Other
+    SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.OtherEvent
 
     SUBTYPE_DATA_STRUCT: tp.ClassVar = None

@@ -7,6 +7,7 @@ __all__ = [
     "GroupBitSet",
     "GroupBitSet128",
     "GroupBitSet256",
+    "GroupBitSet1024",
 ]
 
 import abc
@@ -40,7 +41,7 @@ class MSB_JSONEncoder(json.JSONEncoder):
     """Handles a few extra types that appear as `MSBEntry` field types."""
 
     def default(self, obj):
-        if isinstance(obj, (Vector2, Vector3, Vector4, GroupBitSet128, GroupBitSet256)):
+        if isinstance(obj, (Vector2, Vector3, Vector4, GroupBitSet)):
             return repr(obj)
 
 
@@ -191,6 +192,13 @@ class GroupBitSet128(GroupBitSet):
 class GroupBitSet256(GroupBitSet):
     BIT_COUNT: tp.ClassVar[int] = 256
     _REPR_RE: tp.ClassVar[re.Pattern] = re.compile(r"^GroupBitSet256(\([\d, ]*\))$")
+
+
+@dataclass(slots=True, init=False, repr=False)
+class GroupBitSet1024(GroupBitSet):
+    """For Part collision masks in Elden Ring."""
+    BIT_COUNT: tp.ClassVar[int] = 1024
+    _REPR_RE: tp.ClassVar[re.Pattern] = re.compile(r"^GroupBitSet1024(\([\d, ]*\))$")
 
 
 def merge(msb_1: MSB, msb_2: MSB, filter_func: tp.Callable = None, allow_repeated_names=False) -> MSB:

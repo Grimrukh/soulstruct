@@ -46,7 +46,7 @@ class MSBEventSubtype(BaseMSBEventSubtype):
     DarkLock = 15
     Platoon = 16
     MultiSummon = 17
-    Other = -1
+    OtherEvent = -1
 
     @classmethod
     def get_plural_supertype_name(cls):
@@ -79,7 +79,7 @@ class MSBPartSubtype(BaseMSBPartSubtype):
     UnusedObject = 9
     UnusedCharacter = 10
     MapConnection = 11
-    Other = -1
+    OtherPart = -1
 
     @classmethod
     def get_plural_supertype_name(cls):

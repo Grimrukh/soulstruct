@@ -28,7 +28,7 @@ class FindEntry(tp.Protocol[ENTRY_T]):
         ...
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, kw_only=True)
 class MSB(_PTDE_MSB):
     """Only difference from DS1PTDE is in the methods."""
 
