@@ -18,7 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
-from .entities.m60_52_40_00_entities import *
+from .enums.m60_52_40_00_enums import *
 
 
 @ContinueOnRest(0)

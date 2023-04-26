@@ -1,11 +1,13 @@
-"""Reads Matt's entity ID dump to vanilla `entities` modules.
+"""Converts Matt's entity ID dump to vanilla `enums` modules for Elden Ring in Soulstruct.
 
 Source: https://soulsmods.github.io/data/er/entities.html
+
+TODO: Needs updating from latest Elden Ring patch... can scan MSBs myself now.
 """
 
 __all__ = [
-    "create_vanilla_entities",
-    "copy_vanilla_entities",
+    "create_vanilla_enums",
+    "copy_vanilla_enums",
 ]
 
 import re
@@ -52,7 +54,7 @@ NEW_NAMES = {
 }
 
 
-def create_vanilla_entities(entities_dir: Path | str = None):
+def create_vanilla_enums(entities_dir: Path | str = None):
 
     entities = {}
 
@@ -126,14 +128,14 @@ def create_vanilla_entities(entities_dir: Path | str = None):
         (entities_dir / f"{map_id}_enums.py").write_text(module_string)
 
 
-def copy_vanilla_entities(entities_dir: Path | str):
-    """Save time by copying vanilla entities bundled in Soulstruct.
+def copy_vanilla_enums(enums_dir: Path | str):
+    """Save time by copying vanilla enums bundled in Soulstruct.
 
     May require updates when Elden Ring updates.
     """
-    source_entities = Path(__file__).parent / "vanilla/entities"
-    shutil.copytree(source_entities, entities_dir)
+    bundled_enums = Path(__file__).parent / "vanilla/enums"
+    shutil.copytree(bundled_enums, enums_dir)
 
 
 if __name__ == '__main__':
-    create_vanilla_entities()
+    create_vanilla_enums()

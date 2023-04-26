@@ -16,7 +16,7 @@ strings:
 """
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
-from .entities.m60_41_50_00_entities import Characters as m60_41_Characters
+from .enums.m60_41_50_00_enums import Characters as m60_41_Characters
 
 
 @ContinueOnRest(0)

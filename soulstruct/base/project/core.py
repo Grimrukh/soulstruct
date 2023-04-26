@@ -256,7 +256,7 @@ class GameDirectoryProject(abc.ABC):
         enums_folder = self.enums_directory
         for map_stem, msb in maps.files.items():
             game_map = maps.GET_MAP(map_stem)
-            msb.write_entities_module(enums_folder / f"{game_map.emevd_file_stem}_enums.py")
+            msb.write_enums_module(enums_folder / f"{game_map.emevd_file_stem}_enums.py")
 
         # No data to set (Python module files on disk ARE the project data).
 

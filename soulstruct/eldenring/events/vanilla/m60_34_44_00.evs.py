@@ -19,7 +19,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
-from .entities.m60_34_44_00_entities import *
+from .enums.m60_34_44_00_enums import *
 
 
 @ContinueOnRest(0)

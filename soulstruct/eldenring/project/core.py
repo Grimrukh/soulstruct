@@ -9,7 +9,7 @@ from pathlib import Path
 from soulstruct.base.project.core import GameDirectoryProject as _BaseGameDirectoryProject, ProjectDataType
 
 from soulstruct.eldenring.events import EventDirectory
-from soulstruct.eldenring.events.create_vanilla_entities import copy_vanilla_entities
+from soulstruct.eldenring.events.create_vanilla_enums import copy_vanilla_enums
 from soulstruct.eldenring.maps import MapStudioDirectory
 from soulstruct.eldenring.text import MSGDirectory
 
@@ -56,7 +56,6 @@ class GameDirectoryProject(_BaseGameDirectoryProject):
         use_enums_in_event_scripts=True,
         copy_python_events_submodule=False,
     ):
-        """Offers entities directory creation."""
         if use_enums_in_event_scripts:
             self.warn_long_event_import()
         super().import_Events(import_directory, use_enums_in_event_scripts, copy_python_events_submodule)

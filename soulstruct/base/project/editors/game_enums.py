@@ -687,7 +687,7 @@ class EnumsEditor(BaseEditor):
 
         msb = self.get_selected_msb()
         try:
-            msb.write_entities_module(module_path, area_id=game_map.area_id, block_id=game_map.block_id)
+            msb.write_enums_module(module_path, area_id=game_map.area_id, block_id=game_map.block_id)
         except Exception as ex:
             self.CustomDialog(
                 "Write Failed", f"An error occurred while writing '{{project}}/events/{module_path.name}':\n{ex}"

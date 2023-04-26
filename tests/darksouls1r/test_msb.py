@@ -90,7 +90,7 @@ class MSBTest(unittest.TestCase):
 
     def test_entities_module(self):
         msb = MSB.from_path("resources/m10_00_00_00.msb")
-        msb.write_entities_module("test_m10_00_00_00_entities.py")
+        msb.write_enums_module("test_m10_00_00_00_entities.py")
 
     def tearDown(self):
         for test_file in Path(".").glob("_test*"):

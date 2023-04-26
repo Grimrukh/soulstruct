@@ -18,8 +18,8 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
-from .entities.m12_07_00_00_entities import *
-from .entities.m60_45_37_00_entities import Assets as m60_45_Assets
+from .enums.m12_07_00_00_enums import *
+from .enums.m60_45_37_00_enums import Assets as m60_45_Assets
 
 
 @ContinueOnRest(0)

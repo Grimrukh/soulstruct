@@ -69,31 +69,34 @@ class GameDirectoryProject(_BaseGameDirectoryProject):
 
         return base_dict
 
-    def write_entities_modules_with_bundled_vanilla(self, map_studio_directory: MapStudioDirectory):
-        """Write vanilla entities packaged with Soulstruct for DSR (adding any new entries in MSB)."""
+    def write_enums_modules_with_bundled_vanilla(self, map_studio_directory: MapStudioDirectory):
+        """Write vanilla enums packaged with Soulstruct for DSR (adding any new entries in MSB).
+
+        TODO: Uses vanilla enums from PTDE, which are currently only those shared in both versions.
+        """
         try:
-            vanilla_common_entities = PACKAGE_PATH(
-                f"darksouls1ptde/events/vanilla_entities/common_entities.py"
+            vanilla_common_enums = PACKAGE_PATH(
+                f"darksouls1ptde/events/vanilla/enums/common_enums.py"
             ).read_text()
         except FileNotFoundError:
-            _LOGGER.warning("Could not find `common_entities.py` in Soulstruct for this game. Ignoring.")
+            _LOGGER.warning("Could not find `common_enums.py` in Soulstruct for this game. Ignoring.")
             pass
         else:
-            _LOGGER.info("Writing `common_entities.py` to project from Soulstruct.")
-            common_entities_path = self.enums_directory / "common_enums.py"
-            common_entities_path.parent.mkdir(parents=True, exist_ok=True)
-            common_entities_path.write_text(vanilla_common_entities)
+            _LOGGER.info("Writing `common_enums.py` to project from Soulstruct.")
+            common_enums_path = self.enums_directory / "common_enums.py"
+            common_enums_path.parent.mkdir(parents=True, exist_ok=True)
+            common_enums_path.write_text(vanilla_common_enums)
             # `EventDirectory.to_evs()` will automatically add non-star imports from `common` if it exists.
 
         for map_stem, msb in map_studio_directory.files.items():
             game_map = map_studio_directory.GET_MAP(map_stem)
             try:
                 vanilla_module = PACKAGE_PATH(
-                    f"darksouls1ptde/events/vanilla_entities/{game_map.emevd_file_stem}_entities.py"
+                    f"darksouls1ptde/events/vanilla/enums/{game_map.emevd_file_stem}_enums.py"
                 ).read_text()
             except FileNotFoundError:
                 vanilla_module = ""
-            msb.write_entities_module(
+            msb.write_enums_module(
                 self.enums_directory / f"{game_map.emevd_file_stem}_enums.py",
                 append_to_module=vanilla_module,
             )
@@ -146,13 +149,14 @@ class GameDirectoryProject(_BaseGameDirectoryProject):
         self.enums_in_events_folder = put_enums_in_events_folder
 
         if use_bundled_vanilla_enums:
-            # Includes MSB entities.
-            self.write_entities_modules_with_bundled_vanilla(maps)
+            # Enums modules will contain predefined vanilla MSB entity IDs *and* any new IDs from the MSB.
+            self.write_enums_modules_with_bundled_vanilla(maps)
         else:
+            # Enums modules will only contain IDs from the MSB, with their MSB names.
             enums_folder = self.enums_directory
             for map_stem, msb in maps.files.items():
                 game_map = maps.GET_MAP(map_stem)
-                msb.write_entities_module(enums_folder / f"{game_map.emevd_file_stem}_enums.py")
+                msb.write_enums_module(enums_folder / f"{game_map.emevd_file_stem}_enums.py")
 
     def copy_events_submodule(self, with_window: ProjectWindow = None):
         """Also need PTDE submodule for DSR."""

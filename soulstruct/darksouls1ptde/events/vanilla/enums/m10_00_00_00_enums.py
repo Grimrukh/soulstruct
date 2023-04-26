@@ -1,4 +1,12 @@
-from soulstruct.darksouls1r.game_types import *
+from soulstruct.darksouls1ptde.game_types import *
+
+
+class Characters(Character):
+    Domnhall = 6260
+    SolaireSummon = 6541
+    KnightKirkInvader = 6562
+
+    GapingDragon = 1000800
 
 
 class Flags(Flag):
@@ -56,3 +64,7 @@ class Flags(Flag):
     GapingDragonUnknownBodyPart = 11005397
     GapingDragonHeadHit = 11005398
     EraseSummonSign = 11005990
+
+
+class RegionVolumes(RegionVolume):
+    GapingDragonArena = 1002999

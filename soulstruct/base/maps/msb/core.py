@@ -590,7 +590,7 @@ class MSB(GameFile, abc.ABC):
         Repeated IDs across different supertypes will be ignored.
         """
         repeats = {}
-        for supertype_name in list(MSB_ENTRY_SUPERTYPES.keys())[1:]:  # skip 'MODEL_PARAM_ST'
+        for supertype_name in list(self.MSB_ENTRY_SUPERTYPES.keys())[1:]:  # skip 'MODEL_PARAM_ST'
             supertype_list = self.get_supertype_list(supertype_name)
             entity_ids = set()
             repeated_entries = []  # type: list[MSBEntry]
@@ -668,7 +668,7 @@ class MSB(GameFile, abc.ABC):
         """Iterate over all subtype lists."""
         return iter(self.get_all_subtype_lists())
 
-    def write_entities_module(
+    def write_enums_module(
         self,
         module_path: str | Path = None,
         area_id: int = None,
@@ -676,9 +676,9 @@ class MSB(GameFile, abc.ABC):
         # TODO: cc_id and dd_id for Elden Ring
         append_to_module: str = ""
     ):
-        """Generates a '{mXX_YY}_enums.py' file with entity IDs for import into EVS script.
+        """Generates a '{mXX_YY}_enums.py' file with entity IDs for import into EVS scripts.
 
-        If `append_to_module` text is given, all map entities will be appended to it.
+        If `append_to_module` text is given, all map enums will be appended to it.
         """
         if module_path is None:
             if self.path is None:

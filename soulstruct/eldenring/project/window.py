@@ -4,6 +4,7 @@ import typing as tp
 
 from soulstruct.base.project.enums import ProjectDataType
 from soulstruct.base.project.window import ProjectWindow as _BaseProjectWindow, ImportSettings, ProjectCreatorWizard
+from soulstruct.eldenring.constants import CHARACTER_MODELS
 
 from .core import GameDirectoryProject
 from .links import WindowLinker
@@ -13,7 +14,7 @@ class ProjectWindow(_BaseProjectWindow):
     PROJECT_CLASS = GameDirectoryProject
     LINKER_CLASS = WindowLinker
     RUNTIME_MANAGER_CLASS = None
-    CHARACTER_MODELS = {}  # TODO
+    CHARACTER_MODELS = CHARACTER_MODELS
 
     project: GameDirectoryProject
 
