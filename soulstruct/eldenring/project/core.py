@@ -10,6 +10,7 @@ from soulstruct.base.project.core import GameDirectoryProject as _BaseGameDirect
 
 from soulstruct.eldenring.events import EventDirectory
 from soulstruct.eldenring.events.create_vanilla_entities import copy_vanilla_entities
+from soulstruct.eldenring.maps import MapStudioDirectory
 from soulstruct.eldenring.text import MSGDirectory
 
 if tp.TYPE_CHECKING:
@@ -25,15 +26,17 @@ class GameDirectoryProject(_BaseGameDirectoryProject):
         # ProjectDataType.AI: AIScriptDirectory,
         # ProjectDataType.Talk: TalkDirectory,  # modified via ESP state machine script files
         ProjectDataType.Text: MSGDirectory,
-        # ProjectDataType.Maps: MapStudioDirectory,
+        ProjectDataType.Maps: MapStudioDirectory,
         ProjectDataType.Enums: None,  # modified via Python modules; must be loaded after `Maps`
         ProjectDataType.Events: EventDirectory,  # modified via EVS event script files
     }
 
     events: EventDirectory
+    maps: MapStudioDirectory
     text: MSGDirectory
 
-    def warn_long_event_import(self, with_window: ProjectWindow = None):
+    @staticmethod
+    def warn_long_event_import(with_window: ProjectWindow = None):
         if with_window:
             with_window.CustomDialog(
                 title="Long Operation Warning",

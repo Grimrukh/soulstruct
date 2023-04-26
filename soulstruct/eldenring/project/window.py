@@ -37,5 +37,5 @@ class ProjectWindow(_BaseProjectWindow):
         import_settings = wizard.go()
         if import_settings:
             if import_settings.data_type_settings.get(ProjectDataType.Events, {}).get("use_enums_in_event_scripts"):
-                self.project.warn_long_event_import(with_window=self)
+                GameDirectoryProject.warn_long_event_import(with_window=self)
         return import_settings

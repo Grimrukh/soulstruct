@@ -28,6 +28,7 @@ class MapStudioDirectory(_BaseMapStudioDirectory):
     # Type hint override.
     files: dict[str, MSB]
 
+    # TODO: These don't have EMEVD (or are test/demo maps). Could still support them here, though.
     QUIETLY_IGNORED_FILE_STEMS: tp.ClassVar = {
         "m10_00_00_99.msb",
         "m10_01_00_99.msb",

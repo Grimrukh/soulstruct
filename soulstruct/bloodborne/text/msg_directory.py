@@ -2,8 +2,7 @@ __all__ = ["MSGDirectory"]
 
 import typing as tp
 
-from soulstruct.base.text.msg_directory import MSGDirectory as _BaseMSGDirectory, fmg_property
-from soulstruct.base.text.fmg import FMG
+from soulstruct.base.text.msg_directory import MSGDirectory as _BaseMSGDirectory, FMG, fmg_property
 from .msgbnd import MSGBND
 
 

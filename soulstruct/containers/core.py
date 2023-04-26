@@ -207,7 +207,7 @@ class BinderVersion4Info:
     most_recent_paths: list[str] = field(init=False, repr=False, default_factory=list)
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, kw_only=True)
 class Binder(BaseBinaryFile):
     """Collection of files, with their own internal IDs, paths, and flags, glued together into one file on disk.
 

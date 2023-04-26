@@ -1,169 +1,156 @@
-"""
-Currently uses original FMG names as dictionary names, and lists all as non-internal.
-"""
-
 __all__ = ["MSGDirectory"]
 
 import typing as tp
-from dataclasses import dataclass
 
-from soulstruct.base.text import MSGDirectory as _BaseMSGDirectory, FMG
-from soulstruct.base.text.msg_directory import fmg_property
-from soulstruct.utilities.misc import BiDict
+from soulstruct.base.text.msg_directory import MSGDirectory as _BaseMSGDirectory, FMG, fmg_property
 from .msgbnd import MSGBND
 
 
-@dataclass(slots=True)
 class MSGDirectory(_BaseMSGDirectory):
-    FILE_CLASS: tp.ClassVar = MSGBND
+    FILE_CLASS: tp.ClassVar[tp.Type[MSGBND]] = MSGBND
 
-    # TODO: Auto-generate all this stuff, with nicknames added.
-
-    _MSGBND_INDEX_NAMES = BiDict(
-        # item.msgbnd.dcx
-        (10, "GoodNames"),
-        (11, "WeaponNames"),
-        (12, "ArmorNames"),
-        (13, "TalismanNames"),
-        (14, "SpellNames"),
-        (18, "NPCNames"),
-        (19, "PlaceNames"),
-        (20, "GoodSummaries"),
-        (21, "WeaponSummaries"),
-        (22, "ArmorSummaries"),
-        (23, "TalismanSummaries"),
-        (24, "GoodDescriptions"),
-        (25, "WeaponDescriptions"),
-        (26, "ArmorDescriptions"),
-        (27, "TalismanDescriptions"),
-        (28, "SpellSummaries"),
-        (29, "SpellDescriptions"),
-        (35, "GemNames"),
-        (36, "GemSummaries"),
-        (37, "GemDescriptions"),
-        (41, "GoodDialogs"),
-        (42, "WeaponArtNames"),
-        (43, "WeaponArtSummaries"),
-        (44, "WeaponEffects"),
-        (45, "GemEffects"),
-        (46, "GoodTips"),
-
-        # menu.msgbnd.dcx
-        (1, "Subtitles"),
-        (2, "SoapstoneMessages"),
-        (3, "OpeningSubtitles"),
-        (31, "NetworkMessages"),
-        (32, "ActionButtonText"),
-        (33, "EventTextTalk"),
-        (34, "EventTextMap"),
-        (200, "MenuText"),
-        (201, "LineHelp"),
-        (202, "KeyGuide"),
-        (203, "SystemMessages"),
-        (204, "Dialogues"),
-        (205, "LoadingTitle"),
-        (206, "LoadingText"),
-        (207, "TutorialTitle"),
-        (208, "TutorialBody"),
-        (209, "TextEmbedImageName"),
-        (210, "TermsOfService"),
-    )
+    DEFAULT_ENTRY_STEMS = {
+        # ITEM
+        ("item", 10): "GoodsName",
+        ("item", 11): "WeaponName",
+        ("item", 12): "ProtectorName",
+        ("item", 13): "AccessoryName",
+        ("item", 14): "MagicName",
+        ("item", 18): "NpcName",
+        ("item", 19): "PlaceName",
+        ("item", 20): "GoodsInfo",
+        ("item", 21): "WeaponInfo",
+        ("item", 22): "ProtectorInfo",
+        ("item", 23): "AccessoryInfo",
+        ("item", 24): "GoodsCaption",
+        ("item", 25): "WeaponCaption",
+        ("item", 26): "ProtectorCaption",
+        ("item", 27): "AccessoryCaption",
+        ("item", 28): "MagicInfo",
+        ("item", 29): "MagicCaption",
+        ("item", 35): "GemName",
+        ("item", 36): "GemInfo",
+        ("item", 37): "GemCaption",
+        ("item", 41): "GoodsDialog",
+        ("item", 42): "ArtsName",
+        ("item", 43): "ArtsCaption",
+        ("item", 44): "WeaponEffect",
+        ("item", 45): "GemEffect",
+        ("item", 46): "GoodsInfo2",
+        # MENU
+        ("menu", 1): "TalkMsg",
+        ("menu", 2): "BloodMsg",
+        ("menu", 3): "MovieSubtitle",
+        ("menu", 31): "NetworkMessage",
+        ("menu", 32): "ActionButtonText",
+        ("menu", 33): "EventTextForTalk",
+        ("menu", 34): "EventTextForMap",
+        ("menu", 200): "GR_MenuText",
+        ("menu", 201): "GR_LineHelp",
+        ("menu", 202): "GR_KeyGuide",
+        ("menu", 203): "GR_System_Message_win64",
+        ("menu", 204): "GR_Dialogues",
+        ("menu", 205): "LoadingTitle",
+        ("menu", 206): "LoadingText",
+        ("menu", 207): "TutorialTitle",
+        ("menu", 208): "TutorialBody",
+        ("menu", 209): "TextEmbedImageName_win64",
+        ("menu", 210): "ToS_win64",
+    }
 
     MAIN_CATEGORIES = (
-        "GoodNames",
-        "WeaponNames",
+        "AccessoryCaptions",
+        "AccessoryInfo",
+        "AccessoryNames",
+        "ActionButtonText",
+        "ArmorCaptions",
+        "ArmorInfo",
         "ArmorNames",
-        "TalismanNames",
-        "SpellNames",
+        "ArtsCaptions",
+        "ArtsNames",
+        "EventTextMap",
+        "EventTextTalk",
+        "GemCaptions",
+        "GemEffects",
+        "GemInfo",
+        "GemNames",
+        "GoodsCaptions",
+        "GoodsDialogs",
+        "GoodsInfo",
+        "GoodsTips",
+        "GoodsNames",
+        "LoadingText",
+        "LoadingTitle",
+        "NetworkMessages",
         "NPCNames",
         "PlaceNames",
-        "GoodSummaries",
-        "WeaponSummaries",
-        "ArmorSummaries",
-        "TalismanSummaries",
-        "GoodDescriptions",
-        "WeaponDescriptions",
-        "ArmorDescriptions",
-        "TalismanDescriptions",
-        "SpellSummaries",
-        "SpellDescriptions",
-        "GemNames",
-        "GemSummaries",
-        "GemDescriptions",
-        "GoodDialogs",
-        "WeaponArtNames",
-        "WeaponArtSummaries",
-        "WeaponEffects",
-        "GemEffects",
-        "GoodTips",
-
-        "Subtitles",
         "SoapstoneMessages",
-        "NetworkMessages",
-        "ActionButtonText",
-        "EventTextTalk",
-        "EventTextMap",
-        "Dialogues",
-        "LoadingTitle",
-        "LoadingText",
-        "TutorialTitle",
+        "SpellCaptions",
+        "SpellInfo",
+        "SpellNames",
+        "Subtitles",
+        "SystemMessageWin64",
+        "TalkMessages",
         "TutorialBody",
+        "TutorialTitle",
+        "WeaponCaptions",
+        "WeaponEffects",
+        "WeaponInfo",
+        "WeaponNames",
     )
 
     INTERNAL_CATEGORIES = (
-        "OpeningSubtitles",
-        "MenuText",
-        "LineHelp",
         "KeyGuide",
-        "SystemMessages",
-        "TextEmbedImageName",
+        "LineHelp",
+        "MovieSubtitles",
+        "SystemMessagesWin64",
         "TermsOfService",
+        "TextEmbedImageNames",
     )
 
     ALL_CATEGORIES = ALL_FMG_NAMES = MAIN_CATEGORIES + INTERNAL_CATEGORIES
 
-    GoodNames: dict
-    WeaponNames: dict
-    ArmorNames: dict
-    TalismanNames: dict
-    SpellNames: dict
-    NPCNames: dict
-    PlaceNames: dict
-    GoodSummaries: dict
-    WeaponSummaries: dict
-    ArmorSummaries: dict
-    TalismanSummaries: dict
-    GoodDescriptions: dict
-    WeaponDescriptions: dict
-    ArmorDescriptions: dict
-    TalismanDescriptions: dict
-    SpellSummaries: dict
-    SpellDescriptions: dict
-    GemNames: dict
-    GemSummaries: dict
-    GemDescriptions: dict
-    GoodDialogs: dict
-    WeaponArtNames: dict
-    WeaponArtSummaries: dict
-    WeaponEffects: dict
-    GemEffects: dict
-    GoodTips: dict
-
-    Subtitles: dict
-    SoapstoneMessages: dict
-    OpeningSubtitles: dict
-    NetworkMessages: dict
-    ActionButtonText: dict
-    EventTextTalk: dict
-    EventTextMap: dict
-    MenuText: dict
-    LineHelp: dict
-    KeyGuide: dict
-    SystemMessages: dict
-    Dialogues: dict
-    LoadingTitle: dict
-    LoadingText: dict
-    TutorialTitle: dict
-    TutorialBody: dict
-    TextEmbedImageName: dict
-    TermsOfService: dict
+    AccessoryCaptions = fmg_property("item", 27)  # type: FMG
+    AccessoryInfo = fmg_property("item", 23)  # type: FMG
+    AccessoryNames = fmg_property("item", 13)  # type: FMG
+    ActionButtonText = fmg_property("menu", 32)  # type: FMG
+    ArmorCaptions = fmg_property("item", 26)  # type: FMG
+    ArmorInfo = fmg_property("item", 22)  # type: FMG
+    ArmorNames = fmg_property("item", 12)  # type: FMG
+    ArtsCaptions = fmg_property("item", 43)  # type: FMG
+    ArtsNames = fmg_property("item", 42)  # type: FMG
+    EventTextMap = fmg_property("menu", 34)  # type: FMG
+    EventTextTalk = fmg_property("menu", 33)  # type: FMG
+    GemCaptions = fmg_property("item", 37)  # type: FMG
+    GemEffects = fmg_property("item", 45)  # type: FMG
+    GemInfo = fmg_property("item", 36)  # type: FMG
+    GemNames = fmg_property("item", 35)  # type: FMG
+    GoodsCaptions = fmg_property("item", 24)  # type: FMG
+    GoodsDialogs = fmg_property("item", 41)  # type: FMG
+    GoodsInfo = fmg_property("item", 20)  # type: FMG
+    GoodsTips = fmg_property("item", 46)  # type: FMG
+    GoodsNames = fmg_property("item", 10)  # type: FMG
+    KeyGuide = fmg_property("menu", 202)  # type: FMG
+    LineHelp = fmg_property("menu", 201)  # type: FMG
+    LoadingText = fmg_property("menu", 206)  # type: FMG
+    LoadingTitle = fmg_property("menu", 205)  # type: FMG
+    MenuText = fmg_property("menu", 200)  # type: FMG
+    MovieSubtitles = fmg_property("menu", 3)  # type: FMG
+    NetworkMessages = fmg_property("menu", 31)  # type: FMG
+    NPCNames = fmg_property("item", 18)  # type: FMG
+    PlaceNames = fmg_property("item", 19)  # type: FMG
+    SoapstoneMessages = fmg_property("menu", 2)  # type: FMG
+    SpellCaptions = fmg_property("item", 29)  # type: FMG
+    SpellInfo = fmg_property("item", 28)  # type: FMG
+    SpellNames = fmg_property("item", 14)  # type: FMG
+    Subtitles = fmg_property("menu", 204)  # type: FMG
+    SystemMessageWin64 = fmg_property("menu", 203)  # type: FMG
+    TalkMessages = fmg_property("menu", 1)  # type: FMG
+    TermsOfService = fmg_property("menu", 210)  # type: FMG
+    TextEmbedImageNames = fmg_property("menu", 209)  # type: FMG
+    TutorialBody = fmg_property("menu", 208)  # type: FMG
+    TutorialTitle = fmg_property("menu", 207)  # type: FMG
+    WeaponCaptions = fmg_property("item", 25)  # type: FMG
+    WeaponEffects = fmg_property("item", 44)  # type: FMG
+    WeaponInfo = fmg_property("item", 21)  # type: FMG
+    WeaponNames = fmg_property("item", 11)  # type: FMG
