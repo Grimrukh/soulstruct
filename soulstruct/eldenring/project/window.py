@@ -7,6 +7,7 @@ from soulstruct.base.project.window import ProjectWindow as _BaseProjectWindow, 
 from soulstruct.eldenring.constants import CHARACTER_MODELS
 
 from .core import GameDirectoryProject
+from .maps import MapsEditor
 from .links import WindowLinker
 
 
@@ -15,6 +16,7 @@ class ProjectWindow(_BaseProjectWindow):
     LINKER_CLASS = WindowLinker
     RUNTIME_MANAGER_CLASS = None
     CHARACTER_MODELS = CHARACTER_MODELS
+    MAPS_EDITOR_CLASS = MapsEditor
 
     project: GameDirectoryProject
 

@@ -59,24 +59,24 @@ class MSGDirectory(_BaseMSGDirectory):
     }
 
     MAIN_CATEGORIES = (
-        "AccessoryCaptions",
-        "AccessoryInfo",
+        "AccessoryDescriptions",
+        "AccessorySummaries",
         "AccessoryNames",
         "ActionButtonText",
-        "ArmorCaptions",
-        "ArmorInfo",
+        "ArmorDescriptions",
+        "ArmorSummaries",
         "ArmorNames",
-        "ArtsCaptions",
+        "ArtsDescriptions",
         "ArtsNames",
         "EventTextMap",
         "EventTextTalk",
-        "GemCaptions",
-        "GemEffects",
-        "GemInfo",
-        "GemNames",
-        "GoodsCaptions",
+        "AshOfWarDescriptions",
+        "AshOfWarEffects",
+        "AshOfWarSummaries",
+        "AshOfWarNames",
+        "GoodsDescriptions",
         "GoodsDialogs",
-        "GoodsInfo",
+        "GoodsSummaries",
         "GoodsTips",
         "GoodsNames",
         "LoadingText",
@@ -85,17 +85,17 @@ class MSGDirectory(_BaseMSGDirectory):
         "NPCNames",
         "PlaceNames",
         "SoapstoneMessages",
-        "SpellCaptions",
-        "SpellInfo",
+        "SpellDescriptions",
+        "SpellSummaries",
         "SpellNames",
         "Subtitles",
         "SystemMessageWin64",
         "TalkMessages",
         "TutorialBody",
         "TutorialTitle",
-        "WeaponCaptions",
+        "WeaponDescriptions",
         "WeaponEffects",
-        "WeaponInfo",
+        "WeaponSummaries",
         "WeaponNames",
     )
 
@@ -110,24 +110,24 @@ class MSGDirectory(_BaseMSGDirectory):
 
     ALL_CATEGORIES = ALL_FMG_NAMES = MAIN_CATEGORIES + INTERNAL_CATEGORIES
 
-    AccessoryCaptions = fmg_property("item", 27)  # type: FMG
-    AccessoryInfo = fmg_property("item", 23)  # type: FMG
+    AccessoryDescriptions = fmg_property("item", 27)  # type: FMG
+    AccessorySummaries = fmg_property("item", 23)  # type: FMG
     AccessoryNames = fmg_property("item", 13)  # type: FMG
     ActionButtonText = fmg_property("menu", 32)  # type: FMG
-    ArmorCaptions = fmg_property("item", 26)  # type: FMG
-    ArmorInfo = fmg_property("item", 22)  # type: FMG
+    ArmorDescriptions = fmg_property("item", 26)  # type: FMG
+    ArmorSummaries = fmg_property("item", 22)  # type: FMG
     ArmorNames = fmg_property("item", 12)  # type: FMG
-    ArtsCaptions = fmg_property("item", 43)  # type: FMG
+    ArtsDescriptions = fmg_property("item", 43)  # type: FMG
     ArtsNames = fmg_property("item", 42)  # type: FMG
     EventTextMap = fmg_property("menu", 34)  # type: FMG
     EventTextTalk = fmg_property("menu", 33)  # type: FMG
-    GemCaptions = fmg_property("item", 37)  # type: FMG
-    GemEffects = fmg_property("item", 45)  # type: FMG
-    GemInfo = fmg_property("item", 36)  # type: FMG
-    GemNames = fmg_property("item", 35)  # type: FMG
-    GoodsCaptions = fmg_property("item", 24)  # type: FMG
+    AshOfWarDescriptions = fmg_property("item", 37)  # type: FMG
+    AshOfWarEffects = fmg_property("item", 45)  # type: FMG
+    AshOfWarSummaries = fmg_property("item", 36)  # type: FMG
+    AshOfWarNames = fmg_property("item", 35)  # type: FMG
+    GoodsDescriptions = fmg_property("item", 24)  # type: FMG
     GoodsDialogs = fmg_property("item", 41)  # type: FMG
-    GoodsInfo = fmg_property("item", 20)  # type: FMG
+    GoodsSummaries = fmg_property("item", 20)  # type: FMG
     GoodsTips = fmg_property("item", 46)  # type: FMG
     GoodsNames = fmg_property("item", 10)  # type: FMG
     KeyGuide = fmg_property("menu", 202)  # type: FMG
@@ -140,8 +140,8 @@ class MSGDirectory(_BaseMSGDirectory):
     NPCNames = fmg_property("item", 18)  # type: FMG
     PlaceNames = fmg_property("item", 19)  # type: FMG
     SoapstoneMessages = fmg_property("menu", 2)  # type: FMG
-    SpellCaptions = fmg_property("item", 29)  # type: FMG
-    SpellInfo = fmg_property("item", 28)  # type: FMG
+    SpellDescriptions = fmg_property("item", 29)  # type: FMG
+    SpellSummaries = fmg_property("item", 28)  # type: FMG
     SpellNames = fmg_property("item", 14)  # type: FMG
     Subtitles = fmg_property("menu", 204)  # type: FMG
     SystemMessageWin64 = fmg_property("menu", 203)  # type: FMG
@@ -150,7 +150,7 @@ class MSGDirectory(_BaseMSGDirectory):
     TextEmbedImageNames = fmg_property("menu", 209)  # type: FMG
     TutorialBody = fmg_property("menu", 208)  # type: FMG
     TutorialTitle = fmg_property("menu", 207)  # type: FMG
-    WeaponCaptions = fmg_property("item", 25)  # type: FMG
+    WeaponDescriptions = fmg_property("item", 25)  # type: FMG
     WeaponEffects = fmg_property("item", 44)  # type: FMG
-    WeaponInfo = fmg_property("item", 21)  # type: FMG
+    WeaponSummaries = fmg_property("item", 21)  # type: FMG
     WeaponNames = fmg_property("item", 11)  # type: FMG

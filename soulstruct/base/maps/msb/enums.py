@@ -34,6 +34,11 @@ class MSBSupertype(StrEnum):
             return cls.PARTS
         raise ValueError(f"Cannot resolve unknown MSB supertype name: {supertype}")
 
+    @classmethod
+    def entity_id_supertypes(cls):
+        """Returns all supertypes whose entries use entity IDs."""
+        return cls.EVENTS, cls.REGIONS, cls.PARTS
+
 
 class BaseMSBSubtype(IntEnum):
     @property

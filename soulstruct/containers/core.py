@@ -525,6 +525,22 @@ class Binder(BaseBinaryFile):
         binder_kwargs["version"] = version
         binder_kwargs["flags"] = BinderFlags(manifest["flags"])
         binder_kwargs["dcx_type"] = DCXType[manifest["dcx_type"]]
+
+        if version == BinderVersion.V4:
+            # Read V4-specific info.
+            try:
+                binder_kwargs["v4_info"] = BinderVersion4Info(
+                    unknown1=binder_kwargs.pop("unknown1"),
+                    unknown2=binder_kwargs.pop("unknown2"),
+                    unicode=binder_kwargs.pop("unicode"),
+                    hash_table_type=binder_kwargs.pop("hash_table_type"),
+                )
+            except KeyError:
+                raise BinderError(
+                    "Binder manifest JSON file does not contain all required keys for Binder V4: "
+                    "'unknown1', 'unknown2', 'unicode', 'hash_table_type'."
+                )
+
         return binder_kwargs
 
     # endregion

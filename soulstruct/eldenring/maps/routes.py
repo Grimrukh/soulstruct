@@ -10,7 +10,7 @@ from soulstruct.base.maps.msb.msb_entry import MSBEntry
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.text import pad_chars
 
-from .enums import MSBRouteSubtype
+from .enums import MSBSupertype, MSBRouteSubtype
 
 try:
     Self = tp.Self
@@ -21,7 +21,8 @@ except AttributeError:
 @dataclass(slots=True, eq=False, repr=False)
 class MSBRoute(MSBEntry):
 
-    NAME_ENCODING = "utf-16-le"
+    NAME_ENCODING: tp.ClassVar[str] = "utf-16-le"
+    SUPERTYPE_ENUM: tp.ClassVar = MSBSupertype.ROUTES
 
     @dataclass(slots=True)
     class SUPERTYPE_HEADER_STRUCT(BinaryStruct):

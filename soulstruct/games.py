@@ -229,6 +229,7 @@ ELDEN_RING = Game(
     executable_name="ELDENRING.exe",
     default_file_paths={
         "EventDirectory": "event",
+        "MapStudioDirectory": "map/MapStudio",
         "MSGDirectory": "msg/engus",
     },
 )

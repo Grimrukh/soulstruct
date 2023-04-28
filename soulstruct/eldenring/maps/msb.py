@@ -11,7 +11,6 @@ from soulstruct.base.maps.msb import MSB as _BaseMSB, MSBEntryList
 from soulstruct.base.maps.msb.enums import BaseMSBSubtype
 from soulstruct.base.maps.msb.utils import MSBSubtypeInfo
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.future import StrEnum
 
 from .constants import get_map
 from .enums import *
@@ -20,33 +19,6 @@ from .events import *
 from .regions import *
 from .routes import *
 from .parts import *
-
-
-class MSBSupertype(StrEnum):
-    """Same for most games."""
-    MODELS = "MODEL_PARAM_ST"
-    EVENTS = "EVENT_PARAM_ST"
-    REGIONS = "POINT_PARAM_ST"
-    ROUTES = "ROUTE_PARAM_ST"
-    LAYERS = "LAYER_PARAM_ST"  # empty supertype
-    PARTS = "PARTS_PARAM_ST"
-
-    @classmethod
-    def resolve(cls, supertype: str) -> MSBSupertype:
-        """Resolve various forms of the supertype name into this enum."""
-        if supertype.upper().startswith("MODEL"):
-            return cls.MODELS
-        if supertype.upper().startswith("EVENT"):
-            return cls.EVENTS
-        if supertype.upper().startswith("REGION") or supertype.upper().startswith("POINT"):
-            return cls.REGIONS
-        if supertype.upper().startswith("ROUTE"):
-            return cls.ROUTES
-        if supertype.upper().startswith("LAYER"):
-            return cls.LAYERS
-        if supertype.upper().startswith("PARTS"):
-            return cls.PARTS
-        raise ValueError(f"Cannot resolve unknown MSB supertype name: {supertype}")
 
 
 @dataclass(slots=True)
@@ -183,7 +155,8 @@ def empty_list(supertype_prefix: str, subtype_enum_name: str) -> tp.Callable[[],
 @dataclass(slots=True, kw_only=True)
 class MSB(_BaseMSB):
     SUPERTYPE_LIST_HEADER: tp.ClassVar[tp.Type[BinaryStruct]] = MSBEntrySuperlistHeader
-    MSB_ENTRY_SUPERTYPES = {
+    MSB_SUPERTYPE_ENUM: tp.ClassVar = MSBSupertype
+    MSB_ENTRY_SUPERTYPES: tp.ClassVar = {
         MSBSupertype.MODELS: MSBModel,
         MSBSupertype.EVENTS: MSBEvent,
         MSBSupertype.REGIONS: MSBRegion,

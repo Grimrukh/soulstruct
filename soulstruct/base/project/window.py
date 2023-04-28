@@ -310,7 +310,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         self.deiconify()
 
         # TODO: hacky spot for this?
-        if self.maps_tab:
+        if isinstance(self.maps_tab, MapsEditor):
             self.maps_tab.check_for_repeated_entity_ids()
 
     def build(self):
