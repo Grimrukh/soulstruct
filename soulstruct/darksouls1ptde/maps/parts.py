@@ -292,7 +292,7 @@ class MSBCharacter(MSBPart):
     damage_animation: int = -1
 
     _draw_parent_index: int = None
-    _patrol_regions_indices: list[int] = None
+    _patrol_regions_indices: list[int] = field(default=None, **BinaryArray(8))
 
     HIDE_FIELDS = (
         "scale",

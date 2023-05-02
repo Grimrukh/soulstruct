@@ -30,7 +30,7 @@ __all__ = [
 ]
 
 import typing as tp
-from enum import IntEnum, EnumType
+from enum import IntEnum, EnumMeta
 
 
 class GameObject:
@@ -53,7 +53,7 @@ class GameObject:
 GAME_TYPE = tp.Type[GameObject]
 
 
-class GameObjectIntMeta(EnumType):
+class GameObjectIntMeta(EnumMeta):
     """Allows easy specification of `auto()` behavior for `IntEnum`-mixed subclasses."""
 
     @classmethod

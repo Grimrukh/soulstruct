@@ -195,7 +195,7 @@ def soulstruct_main(ss_args) -> bool:
     if ss_args.tpfunpack is not None:
         from soulstruct.containers.tpf import TPF
         tpf = TPF(ss_args.tpfunpack)
-        tpf.write_unpacked_dir()
+        tpf.write_unpacked_directory()
         return False
 
     if ss_args.tpfpack is not None:

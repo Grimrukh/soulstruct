@@ -31,12 +31,12 @@ class FLVERBone:
     """Bone in a FLVER model. Named to distinguish it from Havok bones in my `soulstruct-havok` package."""
 
     name: str
-    translate: Vector3
-    rotate: Vector3  # Euler angles (radians)
-    scale: Vector3
-    bounding_box_min: Vector3
-    bounding_box_max: Vector3
-    unk_x3c: int  # seems to be 1 for root bones?
+    translate: Vector3 = field(default_factory=Vector3.zero)
+    rotate: Vector3 = field(default_factory=Vector3.zero)  # Euler angles (radians)
+    scale: Vector3 = field(default_factory=Vector3.one)
+    bounding_box_min: Vector3 = field(default_factory=Vector3.zero)
+    bounding_box_max: Vector3 = field(default_factory=Vector3.zero)
+    unk_x3c: int = 0  # seems to be 1 for root bones?
     parent_index: int = -1
     child_index: int = -1
     next_sibling_index: int = -1
@@ -101,7 +101,7 @@ class FLVERBone:
             f"  translate = {self.translate}",
             f"  rotate = {self.rotate}",
         ]
-        if not self.scale == Vector3.ones():
+        if not self.scale == Vector3.one():
             lines.append(f"  scale = {self.scale}")
         lines.append(f"  parent_index = {self.parent_index}")
         if self.next_sibling_index != -1:

@@ -7,6 +7,7 @@ import logging
 import multiprocessing
 import json
 import re
+import shutil
 import tempfile
 import typing as tp
 import zlib
@@ -170,8 +171,8 @@ class TPFTexture:
         TPFTextureStruct.object_to_writer(
             self,
             writer,
-            file_offset=RESERVED,
-            file_size=RESERVED,
+            data_offset=RESERVED,
+            data_size=RESERVED,
             texture_type=texture_type,
             mipmap_count=mipmap_count,
         )
@@ -232,6 +233,35 @@ class TPFTexture:
 
     def write_dds(self, dds_path: str | Path):
         Path(dds_path).write_bytes(self.data)
+
+    def replace_dds(self, image_path: Path | str, dds_format: str = None):
+        if dds_format is None:
+            dds = self.get_dds()
+            dds_format = dds.texconv_format
+            if "TYPELESS" in dds_format:
+                old_dds_format = dds_format
+                dds_format = old_dds_format.replace("TYPELESS", "UNORM")
+                _LOGGER.info(f"Changing DDS format '{old_dds_format}' to '{dds_format}' for conversion.")
+        image_path = Path(image_path)
+        with tempfile.TemporaryDirectory() as dds_dir:
+            temp_image_path = Path(dds_dir, f"temp{image_path.suffix}")
+            shutil.copy2(image_path, temp_image_path)
+            result = texconv("-f", dds_format, "-o", dds_dir, "-y", temp_image_path)
+            if result.returncode == 0:
+                try:
+                    self.data = Path(dds_dir, "temp.dds").read_bytes()
+                except FileNotFoundError:
+                    stdout = "\n    ".join(result.stdout.decode().split("\r\n")[3:])  # drop copyright lines
+                    raise ValueError(
+                        f"Could not convert image {image_path} to DDS with format {dds_format}:\n    {stdout}"
+                    )
+            else:
+                stdout = result.stdout.decode().split("\r\n")[0]  # drop copyright lines
+                raise ValueError(
+                    f"Could not convert texture source bytes.\n"
+                    f"   stdout: {stdout}\n"
+                    f"   stderr: {result.stderr}"
+                )
 
     def get_png_data(self, fmt="rgba") -> bytes:
         with tempfile.TemporaryDirectory() as png_dir:
@@ -344,10 +374,11 @@ class TPF(GameFile):
             if len(texture.data) > 0:
                 writer.pad_align(4)
             texture.pack_data(writer)
-        writer.fill("data_size", writer.position - data_start, obj=self)
+        writer.fill("_data_size", writer.position - data_start, obj=self)
+        writer.fill("file_count", len(self.textures), obj=self)
         return writer
 
-    def write_unpacked_dir(self, directory=None):
+    def write_unpacked_directory(self, directory=None):
         if directory is None:
             if self.path:
                 directory = self.path.with_suffix(self.path.suffix + ".unpacked")
@@ -401,6 +432,13 @@ class TPF(GameFile):
                 f"Failed to convert {fail_count} out of {total_count} textures from {input_format} to {output_format}."
             )
 
+    def find_texture_name(self, name: str) -> TPFTexture:
+        """Find texture by name."""
+        for texture in self.textures:
+            if texture.name == name:
+                return texture
+        raise ValueError(f"Could not find texture with name {name}.")
+
     def get_all_png_data(self, fmt="rgba") -> list[tp.Optional[bytes]]:
         png_datas = []
         for tex in self.textures:
@@ -430,19 +468,25 @@ class TPF(GameFile):
         )
 
     @classmethod
-    def collect_tpf_entries(cls, tpfbhd_directory: str | Path) -> dict[str, BinderEntry]:
-        """Build a dictionary mapping TPF entry stems to `BinderEntry` instances."""
+    def collect_tpf_entries(cls, tpfbhd_directory: str | Path) -> dict[str, BinderEntry | TPFTexture]:
+        """Build a dictionary mapping TPF entry stems to `BinderEntry` instances or `TPFTexture`s from loose TPFs."""
         from soulstruct.containers import Binder
 
         tpf_re = re.compile(rf"(.*)\.tpf(\.dcx)?$")
         tpfbhd_directory = Path(tpfbhd_directory)
         tpf_entries = {}
-        for bhd_path in tpfbhd_directory.glob("*.tpfbhd"):
-            bxf = Binder.from_path(bhd_path)
-            for entry in bxf.entries:
-                match = tpf_re.match(entry.name)
-                if match:
-                    tpf_entries[entry.minimal_stem] = entry
+        for tpf_path in tpfbhd_directory.glob("*.tpf*"):
+            if tpf_path.name.endswith(".tpfbhd"):
+                bxf = Binder.from_path(tpf_path)
+                for entry in bxf.entries:
+                    match = tpf_re.match(entry.name)
+                    if match:
+                        tpf_entries[entry.minimal_stem] = entry
+            elif tpf_re.match(tpf_path.name):
+                # Load all textures from 'loose' TPF (usually 'mXX_9999.tpf').
+                tpf = TPF.from_path(tpf_path)
+                for texture in tpf.textures:
+                    tpf_entries[texture.stem] = texture
         return tpf_entries
 
     @classmethod

@@ -4,7 +4,10 @@ As always, courtesy of SoulsFormats by TKGP:
 """
 from __future__ import annotations
 
-__all__ = ["DDS", "DDSD", "DDSCAPS", "DDSCAPS2", "texconv", "get_converted_texture_data", "convert_dds_file"]
+__all__ = [
+    "DDS", "DDSD", "DDSCAPS", "DDSCAPS2", "texconv", "get_converted_texture_data", "convert_dds_file",
+    "convert_image_to_dds",
+]
 
 import logging
 import subprocess
@@ -337,7 +340,12 @@ def convert_dds_file(
     """
     if input_fourcc is not None:
         # Check that DDS starts with the asserted format.
-        dds = DDS(dds_path)
+        dds = DDS.from_path(dds_path)
         if dds.header.fourcc.decode() != input_fourcc:
             raise ValueError(f"DDS format {dds.header.fourcc} does not match `input_format` {input_fourcc}")
     return texconv("-f", output_format, "-o", output_dir, "-y", dds_path)
+
+
+def convert_image_to_dds(image_path: str | Path, output_dir: str | Path, output_format: str):
+    """Convert image file path (JPG, PNG, etc.) to a different format using DirectX-powered `texconv.exe`."""
+    return texconv("-f", output_format, "-o", output_dir, "-y", image_path)

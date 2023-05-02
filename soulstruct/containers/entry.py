@@ -164,9 +164,9 @@ class BinderEntryHeader:
         if binder_flags.has_names:
             writer.reserve("entry_path_offset", "i", obj=self)
 
-    def pack_path(self, header_writer: BinaryWriter, entry_writer: BinaryWriter, path_bytes: bytes):
-        header_writer.fill("entry_path_offset", entry_writer.position, obj=self)
-        entry_writer.append(path_bytes)
+    def pack_path(self, header_writer: BinaryWriter, path_bytes: bytes):
+        header_writer.fill("entry_path_offset", header_writer.position, obj=self)
+        header_writer.append(path_bytes)
 
     def pack_data(self, header_writer: BinaryWriter, entry_writer: BinaryWriter, entry_data: bytes):
         header_writer.fill("entry_data_offset", entry_writer.position, obj=self)

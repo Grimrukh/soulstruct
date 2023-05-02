@@ -289,6 +289,7 @@ class Binder(BaseBinaryFile):
                 reader.close()
             return instance
 
+        # BHD/BDT file.
         bdt_reader = BinaryReader(bdt_data) if not isinstance(bdt_data, BinaryReader) else bdt_data
 
         if is_dcx(bdt_reader):
@@ -391,7 +392,7 @@ class Binder(BaseBinaryFile):
             v4_info.most_recent_entry_count = len(entries)
             v4_info.most_recent_paths = [entry.path for entry in entries]
 
-        return cls(entries=entries, **header_kwargs)
+        return cls(entries=entries, is_split_bxf=bdt_reader is not None, **header_kwargs)
 
     @classmethod
     def _read_header_v3(cls, reader: BinaryReader) -> tuple[dict[str, tp.Any], list[BinderEntryHeader]]:
@@ -688,6 +689,8 @@ class Binder(BaseBinaryFile):
         else:
             raise ValueError(f"Cannot pack BND version: {self.version}")
 
+        writer.fill_with_position("file_size", obj=self)
+
         return writer
 
     def _to_split_writers(self) -> tuple[BinaryWriter, BinaryWriter]:
@@ -706,12 +709,15 @@ class Binder(BaseBinaryFile):
         else:
             raise ValueError(f"Cannot pack BND version: {self.version}")
 
+        # File size is zero for BXF.
+        header_writer.fill("file_size", 0, obj=self)
+
         return header_writer, entry_writer
 
     def _header_to_writer_v3(self) -> BinaryWriter:
 
         return BinderHeaderV3(
-            version=b"BHD3" if self.is_split_bxf else b"BND3",
+            version=b"BHF3" if self.is_split_bxf else b"BND3",
             signature=self.signature,
             flags=byte(self.flags.to_byte(self.bit_big_endian)),
             big_endian=self.big_endian,
@@ -734,12 +740,11 @@ class Binder(BaseBinaryFile):
         if self.flags.has_names:
             for entry, entry_header in zip(sorted_entries, sorted_entry_headers):
                 packed_path = entry.get_packed_path(encoding=self.ENTRY_PATH_ENCODING)
-                entry_header.pack_path(header_writer, entry_writer, packed_path)
+                entry_header.pack_path(header_writer, packed_path)
 
         for entry, entry_header in zip(sorted_entries, sorted_entry_headers):
+            entry_writer.pad_align(16)
             entry_header.pack_data(header_writer, entry_writer, entry.data)
-
-        header_writer.fill("file_size", entry_writer.position, obj=self)
 
     def _header_to_writer_v4(self) -> BinaryWriter:
 
@@ -747,7 +752,7 @@ class Binder(BaseBinaryFile):
             raise AttributeError("`Binder version `V4` must have a `v4_info`.")
 
         return BinderHeaderV4(
-            version=b"BHD4" if self.is_split_bxf else b"BND4",
+            version=b"BHF4" if self.is_split_bxf else b"BND4",
             unknown1=self.v4_info.unknown1,
             unknown2=self.v4_info.unknown2,
             big_endian=self.big_endian,
@@ -798,7 +803,7 @@ class Binder(BaseBinaryFile):
         if self.flags.has_names:
             path_encoding = entry_writer.get_utf_16_encoding() if self.v4_info.unicode else self.ENTRY_PATH_ENCODING
             for entry, entry_header in zip(sorted_entries, sorted_entry_headers):
-                entry_header.pack_path(header_writer, entry_writer, entry.get_packed_path(encoding=path_encoding))
+                entry_header.pack_path(header_writer, entry.get_packed_path(encoding=path_encoding))
 
         if self.v4_info.hash_table_type == 4:
             header_writer.fill_with_position("_hash_table_offset", obj=self)

@@ -211,8 +211,8 @@ class Mesh:
     Vertex: tp.ClassVar[tp.Type[Vertex]] = Vertex
     FaceSet: tp.ClassVar[tp.Type[FaceSet]] = FaceSet
 
-    is_bind_pose: bool
-    material_index: int
+    is_bind_pose: bool = False
+    material_index: int = 0
     default_bone_index: int = -1
     bone_indices: list[int] = field(default_factory=list)
     bounding_box: tp.Optional[BoundingBox] = None

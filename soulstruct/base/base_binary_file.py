@@ -72,12 +72,12 @@ class BaseBinaryFile:
     def from_path(cls, path: str | Path) -> Self:
         path = Path(path)
         try:
-            game_file = cls.from_bytes(BinaryReader(path))
+            binary_file = cls.from_bytes(BinaryReader(path))
         except Exception:
             _LOGGER.error(f"Error occurred while reading `{cls.__name__}` with path '{path}'. See traceback.")
             raise
-        game_file.path = path
-        return game_file
+        binary_file.path = path
+        return binary_file
 
     @classmethod
     def from_bytes(cls, data: bytes | bytearray | tp.BinaryIO | BinaryReader | BinderEntry) -> Self:
@@ -221,14 +221,14 @@ class BaseBinaryFile:
         file_path = Path(file_path)
         bak_path = file_path.with_name(file_path.name + ".bak")
         if bak_path.is_file():
-            game_file = cls.from_path(bak_path)
-            game_file.path = game_file.path.with_suffix("")  # remove ".bak" extension
-            return game_file
+            binary_file = cls.from_path(bak_path)
+            binary_file.path = binary_file.path.with_suffix("")  # remove ".bak" extension
+            return binary_file
         else:
-            game_file = cls.from_path(file_path)
+            binary_file = cls.from_path(file_path)
             if create_bak_if_missing:
                 create_bak(file_path)
-            return game_file
+            return binary_file
 
     @classmethod
     def get_game(cls) -> Game:

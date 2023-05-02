@@ -119,7 +119,7 @@ class BaseVector(abc.ABC):
         return cls(np.zeros(cls.LENGTH, dtype=float))
 
     @classmethod
-    def ones(cls) -> Self:
+    def one(cls) -> Self:
         return cls(np.ones(cls.LENGTH, dtype=float))
 
     @property

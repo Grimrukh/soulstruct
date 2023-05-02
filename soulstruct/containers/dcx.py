@@ -43,7 +43,7 @@ class DCXType(Enum):
     DCX_DFLT_11000_44_9_15 = 9  # DCX header, deflate compression. Used in the ER regulation.
     DCX_KRAK = 10  # DCX header, Oodle compression. Used in Sekiro and Elden Ring.
 
-    def get_version_info(self) -> tuple | tuple[bytes, int, int, int, int, int]:
+    def get_version_info(self) -> tuple[bytes, int, int, int, int, int]:
         return DCX_VERSION_INFO[self]
 
     @classmethod

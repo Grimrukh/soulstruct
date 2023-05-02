@@ -1015,6 +1015,11 @@ class BinaryStruct:
             if field_metadata.single_asserted is not None:
                 setattr(self, field.name, field_metadata.single_asserted)
 
+        if not hasattr(self, "byte_order"):
+            self.byte_order = None
+        if not hasattr(self, "long_varints"):
+            self.long_varints = None
+
     @property
     def cls_name(self):
         return self.__class__.__name__

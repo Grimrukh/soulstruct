@@ -378,6 +378,10 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
         """Sort rows by ID."""
         self.rows = {row_id: self.rows[row_id] for row_id in sorted(self.rows)}
 
+    def _get_dcx_type(self) -> DCXType:
+        """Params never have DCX applied individually."""
+        return DCXType.Null
+
     def to_writer(self, sort=True) -> BinaryWriter:
         # if len(self.entries) > 5461:
         #     raise SoulstructError(
@@ -808,5 +812,4 @@ def TypedParam(row_type: tp.Type[ParamRow]):
             return param_subclass
     new_param_subclass = type(f"Param_{row_type.__name__}", (Param,), {"ROW_TYPE": row_type})
     new_param_subclass.__module__ = row_type.__module__
-    new_param_subclass.dcx_type = DCXType.Null
     return new_param_subclass

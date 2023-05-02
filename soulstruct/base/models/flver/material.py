@@ -126,9 +126,9 @@ class TextureStruct(BinaryStruct):
 @dataclass(slots=True)
 class Texture:
 
-    path: str
-    texture_type: str
-    scale: Vector2 = field(default_factory=Vector2.ones)
+    path: str = ""
+    texture_type: str = ""
+    scale: Vector2 = field(default_factory=Vector2.one)
     unk_x10: int = 1
     unk_x11: bool = True
     unk_x14: float = 0.0
@@ -181,10 +181,10 @@ class Material:
 
     Texture: tp.ClassVar[tp.Type[Texture]] = Texture
 
-    name: str
-    mtd_path: str
-    flags: int
-    unk_x18: int
+    name: str = ""
+    mtd_path: str = ""
+    flags: int = 0
+    unk_x18: int = 0
     gx_index: int = -1
     textures: list[Texture] = field(default_factory=list)
 
