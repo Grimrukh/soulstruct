@@ -182,13 +182,13 @@ def soulstruct_main(ss_args) -> bool:
 
     if ss_args.binderpack is not None:
         from soulstruct.containers import Binder
-        binder = Binder(ss_args.binderpack)
+        binder = Binder.from_unpacked_path(ss_args.binderpack)
         binder.write()
         return False
 
     if ss_args.binderunpack is not None:
         from soulstruct.containers import Binder
-        binder = Binder(ss_args.binderunpack)
+        binder = Binder.from_path(ss_args.binderunpack)
         binder.write_unpacked_directory()
         return False
 

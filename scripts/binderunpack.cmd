@@ -1,0 +1,1 @@
+"%~dp0..\..\venv311\Scripts\python.exe" -m soulstruct --binderunpack "%~1"
