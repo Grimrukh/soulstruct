@@ -66,6 +66,7 @@ class TONE_MAP_BANK(ParamRow):
         float, "lightShaftAttenRate", default=0.949999988079071,
         tooltip="Smaller values will shorten the light shafts more.",
     )
+    # NOTE: Absent from `a99` DrawParam (present in `default`).
     InverseToneMapMultiplier: float = ParamField(
         float, "inverseToneMapMul", default=3.0,
         tooltip="New tone mapping field. (Added in DSR)",

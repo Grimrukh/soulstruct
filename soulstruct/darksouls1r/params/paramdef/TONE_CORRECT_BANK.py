@@ -45,7 +45,8 @@ class TONE_CORRECT_BANK(ParamRow):
         float, "hue", default=0.0,
         tooltip="Color hue correction value.",
     )
-    SFXMultiplier: float = ParamField(
+    # NOTE: Absent from `default` and `m99` DrawParams.
+    VFXMultiplier: float = ParamField(
         float, "sfxMultiplier", default=1.0,
         tooltip="Visual effect multiplier. (Added in DSR)",
     )

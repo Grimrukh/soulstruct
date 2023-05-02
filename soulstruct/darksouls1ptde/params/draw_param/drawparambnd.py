@@ -117,53 +117,60 @@ class DrawParamBND(Binder):
     def __post_init__(self):
         if self.draw_params:
             return
-
-        # Load from binary Binder source.
         for entry in self.entries:
-            if not (match := _DRAW_PARAM_FILE_NAME_RE.match(entry.name)):
-                _LOGGER.warning(f"Ignoring malformed `DrawParamBND` entry name: '{entry.name}'")
-                continue
+            self.load_from_entry(entry)
 
-            map_area = match.group(1)
-            if map_area.startswith("s"):
-                map_area = f"m{map_area[1:]}"
-            if not self.map_area:
-                self.map_area = map_area
-            elif map_area != self.map_area:
-                raise ValueError(
-                    f"Found conflicting map area prefixes in `DrawParamBND` entry names: "
-                    f"'{self.map_area}' vs. '{map_area}'"
-                )
-            slot = int(match.group(2)[1]) if match.group(2) else 0
-            if slot not in {0, 1}:
-                raise ValueError(
-                    "Only slot 0 (`mXX_ParamName.param`) and slot 1 (`mXX_1_ParamName.param`) are valid in "
-                    "DrawParam file name."
-                )
-            param_stem = match.group(3).strip("_")
-            if match.group(1).startswith("s"):
-                param_stem = "s_" + param_stem
+    def load_from_entry(self, entry: BinderEntry):
+        """Load from binary Binder source."""
+        if not (match := _DRAW_PARAM_FILE_NAME_RE.match(entry.name)):
+            _LOGGER.warning(f"Ignoring malformed `DrawParamBND` entry name: '{entry.name}'")
+            return
 
-            self.draw_params.setdefault(param_stem, [None, None])
+        map_area = match.group(1)
+        if map_area.startswith("s"):
+            map_area = f"m{map_area[1:]}"
+        if not self.map_area:
+            self.map_area = map_area
+        elif map_area != self.map_area:
+            raise ValueError(
+                f"Found conflicting map area prefixes in `DrawParamBND` entry names: "
+                f"'{self.map_area}' vs. '{map_area}'"
+            )
+        slot = int(match.group(2)[1]) if match.group(2) else 0
+        if slot not in {0, 1}:
+            raise ValueError(
+                "Only slot 0 (`mXX_ParamName.param`) and slot 1 (`mXX_1_ParamName.param`) are valid in "
+                "DrawParam file name."
+            )
+        param_stem = match.group(3).strip("_")
+        if match.group(1).startswith("s"):
+            param_stem = "s_" + param_stem
 
-            try:
-                typed_draw_param_class = self.get_typed_draw_param_class(entry)
-            except TypedDrawParamError:
-                _LOGGER.warning(
-                    f"Loaded `DrawParamBND` entry '{entry.name}' as a generic `ParamDict`. You must call "
-                    f"`unpack_all_param_rows(paramdefbnd)` to manually interpret the row data using a `ParamDefBND`. "
-                    f"(You can omit the `paramdefbnd` argument to use Soulstruct's bundled `.paramdefbnd` file for "
-                    f"this game, but if you're seeing this warning, it's possible the bundled file is outdated.)"
-                )
-                self.draw_params[param_stem][slot] = entry.to_binary_file(ParamDict)
-            else:
-                try:
-                    self.draw_params[param_stem][slot] = entry.to_binary_file(typed_draw_param_class)
-                except Exception as ex:
-                    _LOGGER.error(
-                        f"Could not load `DrawParam` from `DrawParamBND` entry '{entry.name}'.\n  Error: {ex}"
-                    )
-                    raise
+        self.draw_params.setdefault(param_stem, [None, None])
+
+        try:
+            typed_draw_param_class = self.get_typed_draw_param_class(entry)
+        except TypedDrawParamError:
+            _LOGGER.warning(
+                f"Loaded `DrawParamBND` entry '{entry.name}' as a generic `ParamDict`. You must call "
+                f"`unpack_all_param_rows(paramdefbnd)` to manually interpret the row data using a `ParamDefBND`. "
+                f"(You can omit the `paramdefbnd` argument to use Soulstruct's bundled `.paramdefbnd` file for "
+                f"this game, but if you're seeing this warning, it's possible the bundled file is outdated.)"
+            )
+            self.draw_params[param_stem][slot] = entry.to_binary_file(ParamDict)
+        else:
+            self.assign_param_from_entry(entry, param_stem, slot, typed_draw_param_class)
+
+    def assign_param_from_entry(
+        self, entry: BinderEntry, param_stem: str, slot: int, typed_draw_param_class: tp.Type[DrawParam]
+    ):
+        try:
+            self.draw_params[param_stem][slot] = entry.to_binary_file(typed_draw_param_class)
+        except Exception as ex:
+            _LOGGER.error(
+                f"Could not load `DrawParam` from `DrawParamBND` entry '{entry.name}'.\n  Error: {ex}"
+            )
+            raise
 
     def get_typed_draw_param_class(self, entry: BinderEntry):
         try:

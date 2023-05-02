@@ -143,17 +143,26 @@ class ParamRow(BinaryStruct):
         return cls.get_all_field_metadata()[field_name]
 
     def to_dict(
-        self, ignore_pads=True, ignore_defaults=True, use_internal_names=False, row_name_encoding="shift_jis_2004",
+        self,
+        ignore_pads=True,
+        ignore_defaults=True,
+        use_internal_names=False,
+        row_name_encoding="shift_jis_2004",
+        binary_fields_only=False,
+
     ) -> dict[str, PARAM_VALUE_TYPING]:
         """Allows options for not including pads, defaults, or sizes, and whether keys are internal names.
 
         NOTE: `RawName` is written as its string repr, e.g. 'b"name"', which will be read with `literal_eval`.
         It is also updated here from `Name` if `Name` is set.
         """
-        if self.Name:
-            # Update `RawName` before exporting dictionary.
-            self.RawName = self.Name.encode(row_name_encoding)
-        data = {"RawName": repr(self.RawName), "Name": self.Name}
+        if not binary_fields_only:
+            if self.Name:
+                # Update `RawName` before exporting dictionary.
+                self.RawName = self.Name.encode(row_name_encoding)
+            data = {"RawName": repr(self.RawName), "Name": self.Name}
+        else:
+            data = {}
         for binary_field in self.get_binary_fields():
             info = binary_field.metadata["param"]  # type: ParamFieldMetadata
             if ignore_pads and info.is_pad:
@@ -204,11 +213,13 @@ class ParamRow(BinaryStruct):
 
     # `to_writer()` does not need overriding, as name is packed later.
 
-    def pack_name(self, writer: BinaryWriter, encoding: str):
+    def get_packed_name(self, encoding: str) -> bytes:
         raw_name = self.Name.encode(encoding) if self.Name else self.RawName
         terminator = b"\0\0" if encoding.replace("-", "").startswith("utf16") else b"\0"
-        raw_name = raw_name.rstrip(b"\0") + terminator
-        writer.append(raw_name)
+        raw_stripped = raw_name.rstrip(b"\0")
+        if not raw_stripped:
+            return b""  # zero offset for name
+        return raw_stripped + terminator
 
     def compare(self, other_row: ParamRow):
         """Prints each field that differs between the given `ParamRow` and this one (ignoring names)."""

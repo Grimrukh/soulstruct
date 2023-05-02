@@ -404,7 +404,9 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
             writer.reserve("param_type_offset", "q", obj=self)
             writer.pad(20)
         else:
-            writer.append(pad_chars(self.param_type, encoding="ASCII", null_terminate=False, alignment=32))
+            writer.append(pad_chars(
+                self.param_type, encoding="ASCII", null_terminate=True, alignment=32, pad=b"\x20")
+            )
 
         writer.pack(
             "4b", -1 if self.big_endian else 0, self.flags1.pack(), self.flags2.pack(), self.paramdef_format_version
@@ -446,11 +448,15 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
             writer.fill_with_position("param_type_offset", obj=self)
             writer.append(self.param_type.encode("ASCII") + b"\0")
 
-        # Pack row names.
+        # Pack row names (if not empty).
         writer.fill_with_position("row_names_offset", obj=self)
         for row_id, row in self.rows.items():
-            writer.fill_with_position(f"row_name_offset{row_id}", obj=self)
-            row.pack_name(writer, self.get_name_encoding(self.big_endian, self.flags2))
+            packed_name = row.get_packed_name(self.get_name_encoding(self.big_endian, self.flags2))
+            if packed_name:
+                writer.fill_with_position(f"row_name_offset{row_id}", obj=self)
+                writer.append(packed_name)
+            else:
+                writer.fill(f"row_name_offset{row_id}", 0, obj=self)
 
         return writer
 

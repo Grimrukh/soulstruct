@@ -42,6 +42,7 @@ class DrawParamDirectory(GameFileDirectory[DrawParamBND], abc.ABC):
         "a16": "New Londo Ruins / Valley of Drakes (00)",
         "a17": "Duke's Archives (00)",
         "a18": "Kiln of the First Flame (00), Undead Asylum (01)",
+        "a99": "Test Map",
         "default": "Menus",
     }
 
@@ -57,6 +58,7 @@ class DrawParamDirectory(GameFileDirectory[DrawParamBND], abc.ABC):
     a16 = drawparambnd_property("a16")  # type: DrawParamBND
     a17 = drawparambnd_property("a17")  # type: DrawParamBND
     a18 = drawparambnd_property("a18")  # type: DrawParamBND
+    a99 = drawparambnd_property("a99")  # type: DrawParamBND
     default = drawparambnd_property("default")  # type: DrawParamBND
 
     def get_drawparambnd(self, draw_param_stem: str) -> DrawParamBND:
