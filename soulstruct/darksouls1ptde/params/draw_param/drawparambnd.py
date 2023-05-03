@@ -259,6 +259,14 @@ class DrawParamBND(Binder):
     def get_default_entry_path(cls, entry_name: str) -> str:
         return f"N:\\FRPG\\data\\INTERROOT_win32\\param\\DrawParam\\{entry_name}"
 
+    @classmethod
+    def resolve_draw_param_stem(cls, draw_param_stem_or_nickname: str):
+        if draw_param_stem_or_nickname in cls.PARAM_NICKNAMES.values():
+            return cls.PARAM_NICKNAMES[draw_param_stem_or_nickname]  # get BiDict key
+        if draw_param_stem_or_nickname not in cls.PARAM_NICKNAMES:
+            raise ValueError(f"Invalid `DrawParam` stem or nickname: {draw_param_stem_or_nickname}")
+        return draw_param_stem_or_nickname  # already a valid stem
+
     def write(
         self,
         file_path: None | str | Path = None,

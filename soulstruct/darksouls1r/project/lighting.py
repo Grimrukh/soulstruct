@@ -7,7 +7,7 @@ from soulstruct.base.project.editors.lighting import LightingEditor as _BaseLigh
 from soulstruct.exceptions import InvalidFieldValueError
 
 if tp.TYPE_CHECKING:
-    from soulstruct.darksouls1r.params.draw_param import DrawParam
+    from soulstruct.darksouls1r.params.draw_param import DrawParam, DrawParamDirectory
     from .links import WindowLinker
 
 _LOGGER = logging.getLogger(__name__)
@@ -21,6 +21,10 @@ class LightingEditor(_BaseLightingEditor):
         self.auto_inject = None
         self.injection_delay_warning_done = False
         super().__init__(project, linker, master=master, toplevel=toplevel)
+
+    @property
+    def lighting(self) -> DrawParamDirectory:
+        return self._project.lighting
 
     def build(self, super_only=False):
         with self.set_master(sticky="nsew", row_weights=[0, 1], column_weights=[1], auto_rows=0):
@@ -63,7 +67,7 @@ class LightingEditor(_BaseLightingEditor):
 
             super(_BaseLightingEditor, self).build()
 
-    def get_category_data(self, category=None) -> tp.Union[DrawParam, dict]:
+    def get_category_data(self, category=None) -> DrawParam | dict:
         """Overridden just for return type."""
         if category is None:
             category = self.active_category
@@ -92,12 +96,11 @@ class LightingEditor(_BaseLightingEditor):
             if not self.linker.runtime_hook():
                 return
 
-        self._show_injection_warning()
-
         self.linker.inject_draw_param(
             draw_param=self.get_category_data(),
+            draw_param_stem=self.lighting.resolve_draw_param_stem(self.active_category),
             area_id=int(self.get_map_area_name()[1:3]),
-            slot=int(self.slot_choice.var.get()),
+            is_extra_slot=int(self.slot_choice.var.get()) == 1,
         )
 
     def toggle_auto_inject(self):
@@ -119,7 +122,6 @@ class LightingEditor(_BaseLightingEditor):
                 return
             if not self.linker.runtime_hook():
                 return
-            self._show_injection_warning()
 
     def change_field_value(self, field_name: str, new_value):
         """Auto-injects new value if enabled."""
@@ -135,21 +137,10 @@ class LightingEditor(_BaseLightingEditor):
             self.CustomDialog(title="Field Value Error", message=str(e))
             return False
         if self.auto_inject.var.get():
-            self._show_injection_warning()
             self.linker.inject_draw_param(
                 draw_param=self.get_category_data(),
+                draw_param_stem=self.lighting.resolve_draw_param_stem(self.active_category),
                 area_id=int(self.get_map_area_name()[1:3]),
-                slot=int(self.slot_choice.var.get()),
+                is_extra_slot=int(self.slot_choice.var.get()) == 1,
             )
         return True
-
-    def _show_injection_warning(self):
-        if not self.injection_delay_warning_done:
-            self.CustomDialog(
-                title="Injecting Lighting Data",
-                message=(
-                    "Note that Soulstruct will briefly pause the first time you inject a new lighting table\n"
-                    "as it locates and saves the table's location in game memory."
-                ),
-            )
-            self.injection_delay_warning_done = True

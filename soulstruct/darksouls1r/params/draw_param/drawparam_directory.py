@@ -185,3 +185,7 @@ class DrawParamDirectory(GameFileDirectory[DrawParamBND], abc.ABC):
     @classmethod
     def get_all_file_stems(cls) -> list[str]:
         return [f"{area_name}_DrawParam" for area_name in cls.DRAW_PARAM_AREAS]
+
+    @classmethod
+    def resolve_draw_param_stem(cls, draw_param_stem_or_nickname: str):
+        return cls.FILE_CLASS.resolve_draw_param_stem(draw_param_stem_or_nickname)

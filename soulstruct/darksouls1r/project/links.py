@@ -16,8 +16,8 @@ class WindowLinker(_BaseWindowLinker):
 
     window: ProjectWindow
 
-    def inject_draw_param(self, draw_param: DrawParam, area_id: int, slot=0):
-        return self.window.runtime_tab.inject_draw_param(draw_param, area_id, slot)
+    def inject_draw_param(self, draw_param: DrawParam, draw_param_stem: str, area_id: int, is_extra_slot=False):
+        return self.window.runtime_tab.inject_draw_param(draw_param, draw_param_stem, area_id, is_extra_slot)
 
     def get_current_map_id(self) -> tp.Optional[tp.Tuple[int, int, int, int]]:
         return self.window.runtime_tab.get_current_map_id()

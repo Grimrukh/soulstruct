@@ -10,8 +10,12 @@ import typing as tp
 from types import MappingProxyType
 
 from soulstruct.darksouls1r.params import Param, GameParamBND, ParamRow
+from soulstruct.utilities.binary import ByteOrder
 from soulstruct.utilities.memory import *
 from soulstruct.utilities.files import PACKAGE_PATH
+
+if tp.TYPE_CHECKING:
+    from soulstruct.darksouls1r.params.draw_param import DrawParam
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -223,6 +227,8 @@ class DSRMemoryHook(MemoryHook):
         """Uses actual pointer table! No need to cache anymore, as no searching is required.
 
         Returns object can be modified, read from memory, and written to memory as long as this hook is valid.
+
+        Does NOT read from memory automatically. Use `MemoryDrawParam.read_from_memory()` to do that.
         """
         return MemoryDrawParam(
             self,
@@ -436,6 +442,9 @@ class MemoryDrawParam(tp.Generic[PARAM_ROW_DATA_T]):
 
         NOTE: This will overwrite any changes you've made to `row_dict` since the last read!
         """
+        if not self.hook.try_hooked():
+            _LOGGER.warning(f"Cannot read DrawParam `{self.draw_param_file_stem}` from unhooked memory.")
+
         param_data_address = self._get_param_data_address()
         if param_data_address == 0:
             return  # cannot read
@@ -444,6 +453,9 @@ class MemoryDrawParam(tp.Generic[PARAM_ROW_DATA_T]):
 
     def write_to_memory(self):
         """Write current `row_dict` to memory."""
+        if not self.hook.try_hooked():
+            _LOGGER.warning(f"Cannot write DrawParam `{self.draw_param_file_stem}` to unhooked memory.")
+
         if not self.row_dict:
             raise RuntimeError(
                 f"Cannot write DrawParam `{self.draw_param_file_stem}` to memory before calling `read_from_memory()`."
@@ -461,6 +473,20 @@ class MemoryDrawParam(tp.Generic[PARAM_ROW_DATA_T]):
     def copy(self) -> MemoryDrawParam:
         """Return a deep copy of this `MemoryDrawParam`."""
         return copy.deepcopy(self)
+
+    def set_from_draw_param(self, draw_param: DrawParam):
+        if draw_param.ROW_TYPE != self.draw_param_row_type:
+            raise ValueError(
+                f"DrawParam of type `{draw_param.ROW_TYPE}` is not the correct type for "
+                f"this MemoryDrawParam (`{self.draw_param_row_type}`)."
+            )
+        if len(draw_param.rows) != len(self.row_dict):
+            raise ValueError(
+                f"DrawParam of type `{draw_param.ROW_TYPE}` does not have the correct number of rows "
+                f"({len(draw_param.rows)}) for this MemoryDrawParam ({len(self.row_dict)})."
+            )
+        # Copy all row data.
+        self.row_dict = MappingProxyType({row_id: row for row_id, row in draw_param.rows.items()})
 
     def _read_rows(self, param_data_address: int) -> dict[int, PARAM_ROW_DATA_T]:
         row_count = self.hook.read_int16(param_data_address + self.PARAM_ROW_COUNT_OFFSET)
@@ -500,7 +526,7 @@ class MemoryDrawParam(tp.Generic[PARAM_ROW_DATA_T]):
             raw_name = self.hook.read_z_bytes(param_data_address + name_offset)
             if raw_name:
                 _LOGGER.debug(f"Writing {self.draw_param_stem} row {row_id} with RawName: {raw_name}")
-            self.hook.write(param_data_address + data_offset, bytes(row_data))
+            self.hook.write(param_data_address + data_offset, row_data.to_bytes(byte_order=ByteOrder.LittleEndian))
 
     def _get_area_draw_param_list_address(self):
         draw_param_list_address = self.hook.read_int64(self.DRAW_PARAM_BASE)

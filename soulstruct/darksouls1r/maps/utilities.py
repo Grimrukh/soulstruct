@@ -39,6 +39,7 @@ def build_ffxbnd(
     write_ffxbnd_path: Path = None,
     extra_sources: tp.Sequence[tuple[tp.Union[int, str], str, str]] = (),
     extra_character_ffx_directory: Path = None,
+    remapped_character_ffx_sources: dict[int, int] = None,
     check_area_ffxbnd=True,
     prefer_bak=True,
 ) -> Binder:
@@ -65,6 +66,8 @@ def build_ffxbnd(
             be a string.
         extra_character_ffx_directory: optional path to a directory containing loose FFX/FLVER/TPF files in character
             model subdirectories, to be used for models not on the known path.
+        remapped_character_ffx_sources: optional dictionary mapping new character model names to names in the vanilla
+            bundled `CHARACTER_FFX_SOURCES` dictionary (e.g. for 'mutated' characters who still want the same FFX).
         check_area_ffxbnd (bool): if True (default), and if `ffxbnd_path` is a block FFXBND file (with 'mAA_BB' in its
             file stem), the corresponding area FFXBND file ('mAA.ffxbnd') will also be checked if it exists. Any FFX
             already existing in that file will count just like existing FFX in the given block file.
@@ -88,6 +91,8 @@ def build_ffxbnd(
     next_ffx_id = max(existing_ffx_ids) + 1 if existing_ffx_ids else 0
     next_tpf_id = max(existing_tpf_ids) + 1 if existing_tpf_ids else 0
     next_flver_id = max(existing_flver_ids) + 1 if existing_flver_ids else 0
+    if not remapped_character_ffx_sources:
+        remapped_character_ffx_sources = {}
 
     # If a block) FFXBND is specified, also check its area FFXBND for existing files, if requested.
     if check_area_ffxbnd and (block_match := _BLOCK_FFXBND_RE.match(str(ffxbnd_path))):
@@ -264,12 +269,14 @@ def build_ffxbnd(
                 # Found character model's folder, so stop searching for it.
                 continue
 
-        if model_id not in CHARACTER_FFX_SOURCES:
+        ffx_source_model_id = remapped_character_ffx_sources.get(model_id, model_id)
+
+        if ffx_source_model_id not in CHARACTER_FFX_SOURCES:
             _LOGGER.warning(f"Vanilla FFX sources for character model {chr_model.name} are not known.")
             continue
 
         # TODO: Only FFX files (not FLVER or TPF) are in `CHARACTER_FFX_SOURCES` at the moment.
-        for ffx_id, source_file_name in CHARACTER_FFX_SOURCES[model_id].items():
+        for ffx_id, source_file_name in CHARACTER_FFX_SOURCES[ffx_source_model_id].items():
             ffx_file_name = f"f{ffx_id:07d}.ffx"  # ID can still be longer than seven digits
             if ffx_file_name in existing_file_names:
                 # Already existing (or added from extra character sources).
@@ -280,7 +287,7 @@ def build_ffxbnd(
                     source_path = bak_path
             if not source_path.is_file():
                 _LOGGER.error(f"Could not find FFX source file '{source_path}' for FFX {ffx_id} "
-                              f"(character model {model_id}).")
+                              f"(character model {ffx_source_model_id}).")
                 continue
             source_bnd = open_ffxbnd_sources.setdefault(source_file_name, Binder.from_path(source_path))
             try:
@@ -288,7 +295,7 @@ def build_ffxbnd(
             except KeyError:
                 _LOGGER.error(
                     f"Could not find FFX file '{ffx_file_name}' in source BND '{source_path}' (character model "
-                    f"{model_id})."
+                    f"{ffx_source_model_id})."
                 )
                 continue
             source_entry.entry_id = next_ffx_id
