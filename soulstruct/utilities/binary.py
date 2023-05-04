@@ -1507,6 +1507,14 @@ class BinaryStruct:
         """Fill reserved `field_name` in `writer` as reserved with the ID of this instance."""
         writer.fill(field_name, *values, obj=self)
 
+    def fill_multiple(self, writer: BinaryWriter, **field_names_values: tp.Any):
+        """Fill multiple reserved fields in `writer` as reserved with the ID of this instance.
+
+        Can only be used with single-value reserved field formats.
+        """
+        for field_name, value in field_names_values.items():
+            writer.fill(field_name, value, obj=self)
+
     def assert_field_values(self, **field_values):
         for field_name, field_value in field_values.items():
             try:

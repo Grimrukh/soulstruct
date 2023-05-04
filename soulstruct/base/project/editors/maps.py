@@ -1239,7 +1239,7 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
                 ]
                 if len(search) > 1:
                     # Find lowest-index collision.
-                    new_collision = min(search, key=lambda c: int(c.model_name[1:5]))
+                    new_collision = min(search, key=lambda c: int(c.model.name[1:5]))
                 elif search:
                     new_collision = search[0]
                 else:

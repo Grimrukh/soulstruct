@@ -68,7 +68,7 @@ class BaseVector(abc.ABC):
         return self.__class__(np.multiply(other, self))
 
     def __truediv__(self, other) -> Self:
-        return self.__class__(np.true_divide(other, self))
+        return self.__class__(np.true_divide(self, other))
 
     def __rtruediv__(self, other) -> Self:
         return self.__class__(np.true_divide(other, self))
@@ -89,7 +89,7 @@ class BaseVector(abc.ABC):
 
     def __abs__(self) -> float:
         """Get norm of `Vector`."""
-        return math.sqrt(sum(v ** 2 for v in self._data))
+        return math.sqrt(np.sum(np.power(self._data, 2)))
 
     def __hash__(self):
         """Simply hashed by tuple of data."""
