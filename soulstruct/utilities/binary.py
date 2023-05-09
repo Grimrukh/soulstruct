@@ -427,7 +427,7 @@ class BinaryWriter(BinaryBase):
         if obj is not None:
             name = f"{obj.__class__.__name__}__{id(obj)}({name})"
             if name not in self.reserved:
-                raise ValueError(f"Field {repr(name)} reserved by `{type(obj).__name__}` object not found.")
+                raise ValueError(f"Field {repr(name)} is not reserved by `{type(obj).__name__}` object.")
         elif name not in self.reserved:
             raise ValueError(f"Name {repr(name)} is not reserved in `BytesWriter`.")
         offset, fmt = self.reserved[name]  # fmt endianness already specified
@@ -1139,13 +1139,6 @@ class BinaryStruct:
         if not cls._STRUCT_INITIALIZED:
             cls._initialize_struct_cls()
 
-        if isinstance(data, (bytes, bytearray)):
-            reader = BinaryReader(data)
-        elif isinstance(data, (io.BufferedIOBase, BinaryReader)):
-            reader = data  # assumes it is at the correct offset already
-        else:
-            raise TypeError("`data` must be `bytes`, `bytearray`, or opened `io.BufferedIOBase`.")
-
         if byte_order is None:
             if isinstance(data, BinaryReader):
                 byte_order = data.default_byte_order
@@ -1160,6 +1153,13 @@ class BinaryStruct:
             if isinstance(data, BinaryReader):
                 long_varints = data.long_varints
             # Otherwise, leave as `None` and allow errors to occur if varint fields are found.
+
+        if isinstance(data, (bytes, bytearray)):
+            reader = BinaryReader(data)
+        elif isinstance(data, (io.BufferedIOBase, BinaryReader)):
+            reader = data  # assumes it is at the correct offset already
+        else:
+            raise TypeError("`data` must be `bytes`, `bytearray`, or opened `io.BufferedIOBase`.")
 
         cls_name = cls.__name__
         field_values = {}  # type: dict[str, tp.Any]  # maps field names to final values

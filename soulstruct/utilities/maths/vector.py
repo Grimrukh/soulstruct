@@ -85,7 +85,7 @@ class BaseVector(abc.ABC):
                 elements.append("<SINGLE_MIN>")
             else:
                 elements.append(f"{x:.{self.REPR_PRECISION}}")
-        return f"{self.__class__.__name__}({', '.join(elements)})"
+        return f"{self.__class__.__name__}(({', '.join(elements)}))"
 
     def __abs__(self) -> float:
         """Get norm of `Vector`."""
@@ -209,7 +209,7 @@ class Vector3(BaseVector):
         return Vector3([self._data[0], self._data[2], self._data[1]])
 
 
-@dataclass(slots=True, init=False)
+@dataclass(slots=True, init=False, repr=False, eq=False)
 class Vector4(BaseVector):
     """Simple [x, y, z, w] container."""
     LENGTH: tp.ClassVar[int] = 4
