@@ -73,14 +73,17 @@ def compare_binary_files(
     else:
         pad = 3 * row_size - 1
 
-    print(f"{YELLOW}Offset{RESET} | {YELLOW}{file1_path.name:<{pad}}{RESET} | {YELLOW}{file2_path.name:<{pad}}{RESET} ")
-
     data1 = file1_path.read_bytes()
     data2 = file2_path.read_bytes()
     offset = 0
     last_diff_row_offset = -1
 
     last_rows = []  # type: list[tuple[int, bytes, bytes]]
+
+    header1 = file1_path.name + f" ({len(data1)} bytes)"
+    header2 = file2_path.name + f" ({len(data2)} bytes)"
+
+    print(f"{YELLOW}Offset{RESET} | {YELLOW}{header1:<{pad}}{RESET} | {YELLOW}{header2:<{pad}}{RESET} ")
 
     while offset < min(len(data1), len(data2)):
         row1 = data1[offset : offset + row_size]
