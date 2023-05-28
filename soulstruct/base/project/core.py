@@ -325,7 +325,7 @@ class GameDirectoryProject(abc.ABC):
 
     def export_all(self, export_directory: Path | str):
         for data_type in self.DATA_TYPES:
-            export_func = getattr(self, f"export_{data_type}")
+            export_func = getattr(self, f"export_{data_type.name}")
             export_func(export_directory)
 
     def export_AI(self, export_directory: Path | str, specific_map=""):

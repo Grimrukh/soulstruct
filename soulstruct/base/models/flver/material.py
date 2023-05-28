@@ -34,6 +34,7 @@ class MTDInfo:
     edge: bool = field(init=False, default=False)
     water: bool = field(init=False, default=False)
     foliage: bool = field(init=False, default=False)  # extra two UV slots for foliage animation (in DS1)
+    no_tangents: bool = field(init=False, default=False)  # no tangent data in vertex buffer (in DS1)
 
     def __post_init__(self):
         if dsbh_match := self.MTD_DSB_RE.match(self.mtd_name):
@@ -46,6 +47,7 @@ class MTDInfo:
             self.lightmap = bool(ml_match.group(2))
         if "[Dn]" in self.mtd_name:
             self.diffuse = True
+            self.no_tangents = True  # TODO: A few [D] shaders also don't use tangents...
         if "[We]" in self.mtd_name:
             self.water = True
             self.bumpmap = True
