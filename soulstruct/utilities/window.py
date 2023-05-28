@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import tkinter as tk
+import typing as tp
 from contextlib import contextmanager
 from ctypes import windll
 from functools import wraps
@@ -9,7 +10,7 @@ from typing import Optional
 from tkinter.constants import *
 from tkinter import filedialog, messagebox, ttk
 
-__all__ = ["SmartFrame", "CustomDialog", "ToolTip", "bind_to_all_children"]
+__all__ = ["SmartFrame", "CustomDialog", "ToolTip", "bind_to_all_children", "embed_component"]
 _LOGGER = logging.getLogger(__name__)
 
 _GRID_KEYWORDS = {"column", "columnspan", "in", "ipadx", "ipady", "padx", "pady", "row", "rowspan", "sticky"}
@@ -78,7 +79,7 @@ def _grid_label(frame, label, component, label_position):
         )
 
 
-def _embed_component(component_func):
+def embed_component(component_func):
     """Handles labels and scrollbars for any decorated widget function."""
 
     @wraps(component_func)
@@ -127,7 +128,7 @@ def _embed_component(component_func):
             if label_bg is None:
                 label_bg = kwargs.get("bg", self.STYLE_DEFAULTS["bg"])
             if label_fg is None:
-                label_fg = kwargs.get("text_fg", self.STYLE_DEFAULTS["text_fg"])
+                label_fg = kwargs.get("fg", self.STYLE_DEFAULTS["fg"])
             label_font = self.resolve_font(label_font, "label")
             inherit_bg = frame.cget("bg")
             frame = tk.Frame(frame, bg=inherit_bg)
@@ -201,11 +202,11 @@ class SmartFrame(tk.Frame):
 
     STYLE_DEFAULTS = {
         "bg": "#111",
-        "text_fg": "#FFF",
-        "text_cursor_fg": "#FFF",
-        "disabled_fg": "#888",
-        "disabled_bg": "#444",
-        "readonly_bg": "#444",
+        "fg": "#FFF",  # text foreground
+        "insertbackground": "#FFF",  # text cursor background
+        "disabledforeground": "#888",
+        "disabledbackground": "#444",
+        "readonlybackground": "#444",
     }
 
     DEFAULT_BUTTON_KWARGS = {
@@ -400,16 +401,20 @@ class SmartFrame(tk.Frame):
     def stop_auto_columns(self):
         self.current_column = None
 
+    def get_style_kwargs(self, kwargs_dict) -> dict[str, tp.Any]:
+        """Return a new dictionary that contains only keywords relevant to style (and also 'font')."""
+        return {k: v for k, v in kwargs_dict.items() if k in self.STYLE_DEFAULTS or k == "font"}
+
     def set_style_defaults(self, kwargs_dict, text=False, cursor=False, entry=False):
         kwargs_dict.setdefault("bg", self.STYLE_DEFAULTS.get("bg", None))
         if text:
-            kwargs_dict.setdefault("fg", self.STYLE_DEFAULTS.get("text_fg", None))
+            kwargs_dict.setdefault("fg", self.STYLE_DEFAULTS.get("fg", None))
         if cursor:
-            kwargs_dict.setdefault("insertbackground", self.STYLE_DEFAULTS.get("text_cursor_fg", None))
+            kwargs_dict.setdefault("insertbackground", self.STYLE_DEFAULTS.get("insertbackground", None))
         if entry:
-            kwargs_dict.setdefault("disabledforeground", self.STYLE_DEFAULTS.get("disabled_fg", None))
-            kwargs_dict.setdefault("disabledbackground", self.STYLE_DEFAULTS.get("disabled_bg", None))
-            kwargs_dict.setdefault("readonlybackground", self.STYLE_DEFAULTS.get("readonly_bg", None))
+            kwargs_dict.setdefault("disabledforeground", self.STYLE_DEFAULTS.get("disabledforeground", None))
+            kwargs_dict.setdefault("disabledbackground", self.STYLE_DEFAULTS.get("disabledbackground", None))
+            kwargs_dict.setdefault("readonlybackground", self.STYLE_DEFAULTS.get("readonlybackground", None))
             kwargs_dict.setdefault("font", self.FONT_DEFAULTS.get("entry", None))
 
     def resolve_font(
@@ -460,7 +465,7 @@ class SmartFrame(tk.Frame):
             toplevel.columnconfigure(i, weight=w)
         return toplevel
 
-    @_embed_component
+    @embed_component
     def Notebook(self, frame=None, row_weights=(), column_weights=(), **kwargs):
         notebook = ttk.Notebook(frame, **kwargs)
         for i, w in enumerate(row_weights):
@@ -469,7 +474,7 @@ class SmartFrame(tk.Frame):
             notebook.columnconfigure(i, weight=w)
         return notebook
 
-    @_embed_component
+    @embed_component
     def Frame(self, frame=None, row_weights=(), column_weights=(), **kwargs):
         self.set_style_defaults(kwargs)
         frame = tk.Frame(frame, **kwargs)
@@ -479,7 +484,7 @@ class SmartFrame(tk.Frame):
             frame.columnconfigure(i, weight=w)
         return frame
 
-    @_embed_component
+    @embed_component
     def SmartFrame(self, frame=None, smart_frame_class=None, row_weights=(), column_weights=(), **kwargs):
         if smart_frame_class is None:
             smart_frame_class = SmartFrame
@@ -492,7 +497,7 @@ class SmartFrame(tk.Frame):
             smart_frame.columnconfigure(i, weight=w)
         return smart_frame
 
-    @_embed_component
+    @embed_component
     def Canvas(self, frame=None, row_weights=(), column_weights=(), **kwargs):
         self.set_style_defaults(kwargs)
         canvas = tk.Canvas(frame, **kwargs)
@@ -502,7 +507,7 @@ class SmartFrame(tk.Frame):
             canvas.columnconfigure(i, weight=w)
         return canvas
 
-    @_embed_component
+    @embed_component
     def Button(
         self,
         command,
@@ -537,7 +542,7 @@ class SmartFrame(tk.Frame):
         button.var = text_var
         return button
 
-    @_embed_component
+    @embed_component
     def Checkbutton(self, frame=None, command=None, initial_state=False, text="", **kwargs):
         self.set_style_defaults(kwargs)
         boolean_var = tk.BooleanVar(value=initial_state)
@@ -557,7 +562,7 @@ class SmartFrame(tk.Frame):
         checkbutton.var = boolean_var
         return checkbutton
 
-    @_embed_component
+    @embed_component
     def ClassicCheckbutton(self, frame=None, command=None, initial_state=False, text="", **kwargs):
         """Default checkbutton style, with a box and tick."""
         self.set_style_defaults(kwargs)
@@ -566,7 +571,7 @@ class SmartFrame(tk.Frame):
         checkbutton.var = boolean_var
         return checkbutton
 
-    @_embed_component
+    @embed_component
     def Combobox(
         self, frame=None, values=None, initial_value=None, readonly=True, width=20, on_select_function=None, **kwargs
     ):
@@ -584,18 +589,18 @@ class SmartFrame(tk.Frame):
         if frame is None:
             frame = self.current_frame
         self.set_style_defaults(kwargs)
-        if "command_text_fg" not in kwargs and "text_fg" in self.STYLE_DEFAULTS:
-            kwargs["command_text_fg"] = self.STYLE_DEFAULTS["text_fg"]
+        if "command_text_fg" not in kwargs and "fg" in self.STYLE_DEFAULTS:
+            kwargs["command_text_fg"] = self.STYLE_DEFAULTS["fg"]
         menu = SmartMenu(frame, tearoff=tearoff, **kwargs)
         return menu
 
-    @_embed_component
+    @embed_component
     def Scrollbar(self, frame=None, **kwargs):
         if frame is None:
             frame = self.current_frame
         return tk.Scrollbar(frame, **kwargs)
 
-    @_embed_component
+    @embed_component
     def Entry(self, frame=None, initial_text="", integers_only=False, numbers_only=False, **kwargs):
         if "text" in kwargs:
             _LOGGER.warning(
@@ -617,7 +622,7 @@ class SmartFrame(tk.Frame):
             entry.config(validate="key", validatecommand=v_cmd)
         return entry
 
-    @_embed_component
+    @embed_component
     def Label(self, text="", frame=None, font=None, **kwargs):
         self.set_style_defaults(kwargs, text=True)
         font = self.resolve_font(font, "label")
@@ -631,7 +636,7 @@ class SmartFrame(tk.Frame):
         label.var = string_var
         return label
 
-    @_embed_component
+    @embed_component
     def Listbox(self, frame=None, values=(), on_select_function=None, **kwargs):
         self.set_style_defaults(kwargs, text=True)
         listbox = tk.Listbox(frame, **kwargs)
@@ -641,13 +646,13 @@ class SmartFrame(tk.Frame):
             listbox.bind("<<ListboxSelect>>", on_select_function)
         return listbox
 
-    @_embed_component
+    @embed_component
     def PanedWindow(self, frame=None, **kwargs):
         self.set_style_defaults(kwargs)
         paned_window = tk.PanedWindow(frame, **kwargs)
         return paned_window
 
-    @_embed_component
+    @embed_component
     def Radiobutton(self, frame=None, command=None, variable=None, **kwargs):
         self.set_style_defaults(kwargs)
         if variable is None:
@@ -656,16 +661,16 @@ class SmartFrame(tk.Frame):
         radiobutton.var = variable
         return radiobutton
 
-    @_embed_component
+    @embed_component
     def Separator(self, frame=None, orientation=HORIZONTAL, **kwargs):
         self.set_style_defaults(kwargs)
         return ttk.Separator(frame, orient=orientation)
 
-    @_embed_component
+    @embed_component
     def Progressbar(self, frame=None, **kwargs):
         return ttk.Progressbar(frame, **kwargs)
 
-    @_embed_component
+    @embed_component
     def Scale(self, frame=None, limits=(0, 100), orientation=HORIZONTAL, variable=None, **kwargs):
         self.set_style_defaults(kwargs)
         if variable is None:
@@ -676,14 +681,14 @@ class SmartFrame(tk.Frame):
         scale.var = variable
         return scale
 
-    @_embed_component
+    @embed_component
     def TextBox(self, frame=None, initial_text="", **kwargs):
         self.set_style_defaults(kwargs, text=True, cursor=True, entry=False)
         text_box = tk.Text(frame, **kwargs)
         text_box.insert(1.0, initial_text)
         return text_box
 
-    @_embed_component
+    @embed_component
     def CustomWidget(
         self, frame=None, custom_widget_class=None, set_style_defaults=(), row_weights=(), column_weights=(), **kwargs
     ):
