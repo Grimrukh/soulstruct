@@ -419,6 +419,11 @@ class MSBCollision(MSBPartWithSceneGParam):
         camera_1_id: short
         camera_2_id: short
 
+    # Internally managed. (It's important that these come before their wrapper fields!)
+    _force_place_name_banner: bool = field(default=True, repr=False)
+    _play_region_id: int = field(default=0, repr=False)
+    _stable_footing_flag: int = field(default=0, repr=False)
+
     # Field type overrides.
     model: MSBCollisionModel = None
     display_groups: GroupBitSet256 = field(default_factory=GroupBitSet256.all_on)
@@ -439,11 +444,6 @@ class MSBCollision(MSBPartWithSceneGParam):
     attached_lantern: int = 0
 
     _environment_event_index: int = None
-
-    # Internally managed.
-    _force_place_name_banner: bool = field(default=True, repr=False)
-    _play_region_id: int = field(default=0, repr=False)
-    _stable_footing_flag: int = field(default=0, repr=False)
 
     @classmethod
     def unpack_subtype_data(cls, reader: BinaryReader) -> dict[str, tp.Any]:

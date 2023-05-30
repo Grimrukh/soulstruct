@@ -392,6 +392,11 @@ class MSBCollision(MSBPart):
         camera_2_id: short
         _pad1: bytes = field(**BinaryPad(16))
 
+    # Internally managed. (It's important that these come before their wrapper fields!)
+    _force_place_name_banner: bool = field(default=True, repr=False)
+    _play_region_id: int = field(default=0, repr=False)
+    _stable_footing_flag: int = field(default=0, repr=False)
+
     # Field type overrides.
     model: MSBCollisionModel = None
     display_groups: GroupBitSet128 = field(default_factory=GroupBitSet128.all_on)  # all ON by default
@@ -416,11 +421,6 @@ class MSBCollision(MSBPart):
     attached_bonfire: int = 0
 
     _environment_event_index: int = None
-
-    # Internally managed.
-    _force_place_name_banner: bool = field(default=True, repr=False)
-    _play_region_id: int = field(default=0, repr=False)
-    _stable_footing_flag: int = field(default=0, repr=False)
 
     HIDE_FIELDS = (
         "scale",

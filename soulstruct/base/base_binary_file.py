@@ -104,6 +104,11 @@ class BaseBinaryFile:
         return binary_file
 
     @classmethod
+    def from_binder_entry(cls, binder_entry: BinderEntry) -> Self:
+        """Load instance from a `BinderEntry`."""
+        return binder_entry.to_binary_file(cls)
+
+    @classmethod
     def from_dict(cls, data: dict) -> Self:
         """Load file from given `data` dictionary. Simply calls initializer by default."""
         # noinspection PyArgumentList

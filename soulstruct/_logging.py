@@ -77,9 +77,10 @@ def handle_unhandled_exception(exc_type, exc_value, exc_traceback):
 
 sys.excepthook = handle_unhandled_exception
 
-_LOGGER.info(
-    f"Log file {LOG_PATH} opened with level {logging.getLevelName(FILE_HANDLER.level)} ({FILE_HANDLER.level})."
-)
+# NOTE: Disabled, as it's annoying with `multiprocessing`.
+# _LOGGER.info(
+#     f"Log file {LOG_PATH} opened with level {logging.getLevelName(FILE_HANDLER.level)} ({FILE_HANDLER.level})."
+# )
 if not colorama:
     _LOGGER.info(
         f"Install `colorama` in your Python environment with `python -m pip install colorama` to enable colorful "

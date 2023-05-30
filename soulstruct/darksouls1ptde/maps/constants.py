@@ -194,7 +194,7 @@ ALL_MAPS = (
 )
 
 
-def get_map(source: MAP_SOURCE_TYPING):
+def get_map(source: MAP_SOURCE_TYPING) -> Map:
     return _get_map_base(source, game_maps=ALL_MAPS)
 
 
