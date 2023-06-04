@@ -44,6 +44,9 @@ class BaseBinaryFile:
     # If given, extension will be enforced (before DCX is checked) when calling `.write()`.
     EXT: tp.ClassVar[str] = ""
 
+    # Internal type wrapped by `dcx_type` property, which converts string values to `DCXType`.
+    _dcx_type: DCXType | None = field(init=False, repr=False)  # default will be handled by `dcx_type` property below
+
     # Default DCX compression type for file. If `None`, then `get_game().default_dcx_type` will be used.
     dcx_type: DCXType | None = field(default=None, kw_only=True)
     # Records origin path of file if loaded from disk (or a `BinderEntry`). Not always available.
@@ -245,12 +248,15 @@ class BaseBinaryFile:
     def cls_name(self) -> str:
         return self.__class__.__name__
 
-    def __setattr__(self, key: str, value):
-        """Converts `dcx_type` name string (e.g. from JSON) appropriately."""
-        if key == "dcx_type" and isinstance(value, str):
-            super(BaseBinaryFile, self).__setattr__(key, DCXType[value])
-            return
-        super(BaseBinaryFile, self).__setattr__(key, value)
+    def get_dcx_type(self) -> DCXType:
+        return self._dcx_type
+
+    def set_dcx_type(self, dcx_type: DCXType):
+        if isinstance(dcx_type, str):
+            dcx_type = DCXType[dcx_type]
+        elif not isinstance(dcx_type, DCXType) and dcx_type is not None:
+            raise TypeError(f"DCX type must be a string or `None` or `DCXType` enum, not {dcx_type}.")
+        self._dcx_type = dcx_type
 
     def __repr__(self) -> str:
         lines = [f"{self.cls_name}("]
@@ -258,6 +264,11 @@ class BaseBinaryFile:
             lines.append(f"    {field_name}={repr(field_value)}")
         lines.append(")")
         return "\n".join(lines)
+
+
+BaseBinaryFile.dcx_type = property(
+    BaseBinaryFile.get_dcx_type, BaseBinaryFile.set_dcx_type
+)
 
 
 BASE_BINARY_FILE_T = tp.TypeVar("BASE_BINARY_FILE_T", bound="BaseBinaryFile")

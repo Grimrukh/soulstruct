@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 __all__ = [
+    "compare_binary_data",
     "compare_binary_files",
     "print_binary_as_integers",
     "get_hex_repr",
@@ -56,32 +57,27 @@ def try_ascii(bytes_: bytes, default=".", red_indices=()) -> str:
     return string
 
 
-def compare_binary_files(
-    file1_path: Path | str,
-    file2_path: Path | str,
+def compare_binary_data(
+    data1: bytes,
+    data2: bytes,
     row_size=16,
     context_rows=8,
     with_ascii=True,
     first_diff_only=False,
+    header1="Data 1",
+    header2="Data 2",
 ):
-    """Compare two binary files, printing out any differences."""
-    file1_path = Path(file1_path)
-    file2_path = Path(file2_path)
-    print(f"Comparing '{file1_path.name}' and '{file2_path.name}':")
+    offset = 0
+    last_diff_row_offset = -1
     if with_ascii:
         pad = 4 * row_size - 1
     else:
         pad = 3 * row_size - 1
 
-    data1 = file1_path.read_bytes()
-    data2 = file2_path.read_bytes()
-    offset = 0
-    last_diff_row_offset = -1
+    header1 += f"({len(data1)} bytes)"
+    header2 += f"({len(data2)} bytes)"
 
     last_rows = []  # type: list[tuple[int, bytes, bytes]]
-
-    header1 = file1_path.name + f" ({len(data1)} bytes)"
-    header2 = file2_path.name + f" ({len(data2)} bytes)"
 
     print(f"{YELLOW}Offset{RESET} | {YELLOW}{header1:<{pad}}{RESET} | {YELLOW}{header2:<{pad}}{RESET} ")
 
@@ -135,7 +131,35 @@ def compare_binary_files(
             offset += row_size
 
     if last_diff_row_offset == -1:
-        print(f"Files {file1_path.name} and {file2_path.name} are identical.")
+        print(f"{header1} and {header2} are identical.")
+
+
+def compare_binary_files(
+    file1_path: Path | str,
+    file2_path: Path | str,
+    row_size=16,
+    context_rows=8,
+    with_ascii=True,
+    first_diff_only=False,
+):
+    """Compare two binary files, printing out any differences."""
+    file1_path = Path(file1_path)
+    file2_path = Path(file2_path)
+    print(f"Comparing '{file1_path.name}' and '{file2_path.name}':")
+
+    data1 = file1_path.read_bytes()
+    data2 = file2_path.read_bytes()
+
+    compare_binary_data(
+        data1,
+        data2,
+        row_size=row_size,
+        context_rows=context_rows,
+        with_ascii=with_ascii,
+        first_diff_only=first_diff_only,
+        header1=file1_path.name,
+        header2=file2_path.name,
+    )
 
 
 def print_binary_as_integers(file_path: Path):
