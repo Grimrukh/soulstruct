@@ -1003,16 +1003,16 @@ class Binder(BaseBinaryFile):
             f"No entry ID in the range [{min_id_inclusive}, {max_id_exclusive}) is available."
         )
 
-    def find_entries_matching_name(self, regex: str | re.Pattern) -> list[BinderEntry]:
+    def find_entries_matching_name(self, regex: str | re.Pattern, flags=0) -> list[BinderEntry]:
         """Returns a list of entries whose names match the given `regex` pattern."""
-        return [entry for entry in self.entries if re.match(regex, entry.name)]
+        return [entry for entry in self.entries if re.match(regex, entry.name, flags=flags)]
 
-    def find_entry_matching_name(self, regex: str | re.Pattern) -> BinderEntry:
+    def find_entry_matching_name(self, regex: str | re.Pattern, flags=0) -> BinderEntry:
         """Returns a single entry whose name matches the given `regex` pattern.
 
         Only one match must exist.
         """
-        matches = [entry for entry in self.entries if re.match(regex, entry.name)]
+        matches = [entry for entry in self.entries if re.match(regex, entry.name, flags=flags)]
         if len(matches) > 1:
             raise ValueError(
                 f"Found multiple Binder entries with name matching '{regex}':\n  {[m.path for m in matches]}"
@@ -1079,7 +1079,7 @@ class Binder(BaseBinaryFile):
             # Create new entry.
             if new_entry_name is None:
                 raise ValueError(f"`new_entry_name` must be given for new entry ID {entry_id} to be created.")
-            entry_path = self.get_default_entry_path(new_entry_name) if r"\\" not in new_entry_name else new_entry_name
+            entry_path = self.get_default_entry_path(new_entry_name) if "\\" not in new_entry_name else new_entry_name
             if new_entry_flags is None:
                 new_entry_flags = self.DEFAULT_ENTRY_FLAGS
             entry = BinderEntry(bytes(game_file), entry_id, entry_path, new_entry_flags)
