@@ -8,9 +8,10 @@ import typing as tp
 from dataclasses import dataclass, field
 from pathlib import Path
 
+import numpy as np
 from soulstruct.base.game_file import GameFile
 from soulstruct.containers import Binder, TPF
-from soulstruct.utilities.maths import Vector3, Vector4, Matrix3
+from soulstruct.utilities.maths import Vector3, Vector4, Matrix3, SINGLE_MIN, SINGLE_MAX
 from soulstruct.utilities.binary import *
 
 from .bone import FLVERBone
@@ -473,6 +474,8 @@ class FLVER(GameFile):
                 else:
                     vertex.position = [scale_factor * vertex.position[i] for i in range(3)]
 
+    # region Materials/Textures
+
     def replace_tpf_name(self, old_name: str, new_name: str):
         """Iterate over all `Material` textures and replace all '{old_name}.tga' names with '{new_name}.tga'."""
         for material in self.materials:
@@ -536,6 +539,98 @@ class FLVER(GameFile):
             return self.materials[mesh_or_index.material_index]
         raise TypeError("Argument must be a `FLVER.Mesh` in this FLVER or a mesh index.")
 
+    # endregion
+
+    # region Bones
+
+    def sort_mesh_bone_indices(self):
+        """Sort all `mesh.bone_indices` in ascending order and update local bone indices of all vertices."""
+        for mesh in self.meshes:
+            if not mesh.bone_indices:
+                continue  # this mesh/FLVER has global vertex bone indices
+            old_mesh_indices = mesh.bone_indices.copy()
+            mesh.bone_indices.sort()
+            for vertex in mesh.vertices:
+                for i in range(len(vertex.bone_indices)):
+                    if vertex.bone_weights[i] == 0.0:
+                        continue  # no bone index
+                    bone_index = old_mesh_indices[vertex.bone_indices[i]]
+                    vertex.bone_indices[i] = mesh.bone_indices.index(bone_index)  # new mesh bone index
+
+    def refresh_bounding_boxes(self, refresh_bone_bounding_boxes=False):
+        """Refresh global bounding box of FLVER from minimum and maximum of all mesh vertices.
+
+        Can optionally refresh bone bounding boxes as well in the same vertex loop, rather than needing to call that
+        method (below) separately and loop over all vertices again.
+        """
+        bone_local_vertex_x = {}  # type: dict[int, list[float]]
+        bone_local_vertex_y = {}  # type: dict[int, list[float]]
+        bone_local_vertex_z = {}  # type: dict[int, list[float]]
+        if refresh_bone_bounding_boxes:
+            # Create default (undefined) bounding boxes.
+            bone_arma_translate_inv_rotates = [
+                (transform[0], transform[1].inverse())
+                for transform in self.get_bone_armature_space_transforms()
+            ]
+        else:
+            bone_arma_translate_inv_rotates = []
+
+        all_x = []
+        all_y = []
+        all_z = []
+        for mesh in self.meshes:
+            for v in mesh.vertices:
+                all_x.append(v.position[0])
+                all_y.append(v.position[1])
+                all_z.append(v.position[2])
+                if not refresh_bone_bounding_boxes:
+                    continue
+
+                for v_bone_index, bone_weight in zip(v.bone_indices, v.bone_weights):
+                    if bone_weight == 0.0:
+                        continue  # bone index is unused
+                    bone_index = mesh.bone_indices[v_bone_index] if mesh.bone_indices else v_bone_index
+                    # Unfortunately, we need to convert every vertex to the bone's space to compare it against the
+                    # current bounding box, because the bounding box is in bone space.
+                    arma_translate, inv_arma_rotate = bone_arma_translate_inv_rotates[bone_index]
+                    v_local = inv_arma_rotate @ Vector3((  # squeezing out whatever performance we can
+                        v.position[0] - arma_translate.x,
+                        v.position[1] - arma_translate.y,
+                        v.position[2] - arma_translate.z,
+                    ))
+                    bone_local_vertex_x.setdefault(bone_index, []).append(v_local[0])
+                    bone_local_vertex_y.setdefault(bone_index, []).append(v_local[1])
+                    bone_local_vertex_z.setdefault(bone_index, []).append(v_local[2])
+
+        if refresh_bone_bounding_boxes:
+            for bone_index, bone in enumerate(self.bones):
+                if bone_index in bone_local_vertex_x:
+                    bone.bounding_box_min = Vector3((
+                        min(bone_local_vertex_x[bone_index]),
+                        min(bone_local_vertex_y[bone_index]),
+                        min(bone_local_vertex_z[bone_index]),
+                    ))
+                    bone.bounding_box_max = Vector3((
+                        max(bone_local_vertex_x[bone_index]),
+                        max(bone_local_vertex_y[bone_index]),
+                        max(bone_local_vertex_z[bone_index]),
+                    ))
+                else:
+                    bone.bounding_box_min = Vector3((SINGLE_MAX, SINGLE_MAX, SINGLE_MAX))
+                    bone.bounding_box_max = Vector3((SINGLE_MIN, SINGLE_MIN, SINGLE_MIN))
+
+        if all_x or all_y or all_z:
+            self.bounding_box_min = Vector3((min(all_x), min(all_y), min(all_z)))
+            self.bounding_box_max = Vector3((max(all_x), max(all_y), max(all_z)))
+        else:
+            # No vertex data in ANY mesh. Highly suspect, obviously.
+            _LOGGER.warning("No vertex data in any mesh. Setting FLVER bounding box min/max to zero vectors.")
+            self.bounding_box_min = Vector3.zero()
+            self.bounding_box_max = Vector3.zero()
+
+    # TODO: method that recalculates a single bone's bounding box, which is slightly more efficient in that it can skip
+    #  any meshes that don't have it as a `mesh.bone_index`.
+
     def get_root_bones(self) -> list[FLVERBone]:
         """Return all bones with no parent."""
         return [bone for bone in self.bones if bone.parent_index == -1]
@@ -544,6 +639,8 @@ class FLVER(GameFile):
         """Compute the FLVER armature space transforms of all bones at once by moving downward through the hierarchy.
 
         Note that bone scale is not inherited. All scale values are local.
+
+        Also note that we can't cache this because any/all parent bone transforms could change. It's inexpensive anyway.
         """
         root_bones = self.get_root_bones()
         # Start with local transforms. They will be changed to armature space transforms one at a time, recursively.
@@ -616,3 +713,5 @@ class FLVER(GameFile):
                 if any(v.bone_weights):
                     return False
         return True
+
+    # endregion

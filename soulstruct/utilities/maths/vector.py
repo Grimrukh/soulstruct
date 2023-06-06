@@ -11,6 +11,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from .constants import SINGLE_MIN, SINGLE_MAX
+
 try:
     Self = tp.Self
 except AttributeError:
@@ -79,10 +81,10 @@ class BaseVector(abc.ABC):
     def __repr__(self):
         elements = []
         for x in self._data:
-            if x == 340282346638528859811704183484516925440.0:
-                elements.append("<SINGLE_MAX>")
-            elif x == -340282346638528859811704183484516925440.0:
+            if x == SINGLE_MIN:
                 elements.append("<SINGLE_MIN>")
+            elif x == SINGLE_MAX:
+                elements.append("<SINGLE_MAX>")
             else:
                 elements.append(f"{x:.{self.REPR_PRECISION}}")
         return f"{self.__class__.__name__}(({', '.join(elements)}))"
@@ -113,6 +115,9 @@ class BaseVector(abc.ABC):
 
     def copy(self) -> Self:
         return self.__class__(self._data.copy())
+
+    def is_close(self, other: BaseVector, rtol: float = 1e-05, atol: float = 1e-08) -> bool:
+        return np.allclose(self._data, other._data, rtol=rtol, atol=atol)
 
     @classmethod
     def zero(cls) -> Self:
@@ -180,7 +185,35 @@ class Vector3(BaseVector):
         return Vector3(np.cross(self._data, other_vector._data))
 
     def multiply_by_matrix(self, matrix3: Matrix3):
-        return Vector3(np.inner(matrix3, self._data))
+        return Vector3(np.inner(matrix3.data, self._data))
+
+    # noinspection PyPackageRequirements
+    def is_same_euler_rotation(self, other_euler: Vector3, order="xzy", tolerance: float = 1e-6) -> bool:
+        """Checks if two Euler rotations are the same, within a tolerance.
+
+        Typically only needed for debugging. Requires either `scipy` or Blender `mathutils` to be installed. Note that
+        the exact meaning of `tolerance` depends on which one happens (angle tolerance or rot-mat element tolerance).
+        """
+        try:
+            from scipy.spatial.transform import Rotation
+        except ImportError:
+            try:
+                from mathutils import Euler
+            except ImportError:
+                raise ImportError(
+                    "Either `scipy` or Blender `mathutils` must be installed to use `Vector3.is_same_euler_rotation()`."
+                )
+            else:
+                # mathutils method: compare quaternion angles
+                this_quat = Euler(self._data).to_quaternion()
+                other_quat = Euler(other_euler._data).to_quaternion()
+                angle = this_quat.rotation_difference(other_quat).angle
+                return angle < tolerance or angle < (2 * math.pi - tolerance)
+        else:
+            # scipy method: compare all rotation matrix elements
+            this_mat = Rotation.from_euler(order, self._data).as_matrix()
+            other_mat = Rotation.from_euler(order, other_euler._data).as_matrix()
+            return np.allclose(this_mat, other_mat, atol=tolerance)
 
     def get_as_axes(self, axes: str) -> Vector2 | Vector3:
         """Reorder and/or negate axes, e.g. `get_as_axes("-x-zy")`."""
@@ -242,4 +275,4 @@ class Vector4(BaseVector):
         raise ValueError(f"Cannot read `Vector4` string: {repr_string}")
 
     def multiply_by_matrix(self, matrix4: Matrix4) -> Vector4:
-        return Vector4(np.inner(matrix4, self._data))
+        return Vector4(np.inner(matrix4.data, self._data))
