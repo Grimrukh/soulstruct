@@ -36,9 +36,12 @@ class FLVERBone:
     scale: Vector3 = field(default_factory=Vector3.one)
     bounding_box_min: Vector3 = field(default_factory=Vector3.zero)
     bounding_box_max: Vector3 = field(default_factory=Vector3.zero)
-    unk_x3c: int = 0  # seems to be 1 for root bones?
+    # TODO: almost certainly flags. In DSR, seems to be 1 IFF bone is NOT in the main hierarchy. In Elden Ring, more
+    #  flag values are used: 1 still means 'not in main hierarchy', but Dmypoly bones use 2, 'cXXXX_whatever' bones
+    #  use 4, and main bones use either 8 (mostly) or 10 (unclear - combined with Dmypoly flag?). Definitely bitfield.
+    unk_x3c: int = 0
     parent_index: int = -1
-    child_index: int = -1
+    child_index: int = -1  # NOTE: only indicates first child, but bone can have many children (can use siblings)
     next_sibling_index: int = -1
     previous_sibling_index: int = -1
 
@@ -56,13 +59,17 @@ class FLVERBone:
         writer.fill_with_position("_name_offset", obj=self)
         writer.pack_z_string(self.name, encoding)
 
+    def get_bone_index(self, bones: list[FLVERBone]) -> int:
+        """Get index of this `FLVERBone` in given list from `FLVER`."""
+        return bones.index(self)
+
     def get_parent(self, bones: list[FLVERBone]) -> tp.Optional[FLVERBone]:
         if self.parent_index != -1:
             return bones[self.parent_index]
         return None
 
     def get_all_parents(self, bones: list[FLVERBone], include_self=True) -> list[FLVERBone]:
-        """Get all parents, from the highest to this FLVERBone."""
+        """Get all parents, from the highest to this `FLVERBone`."""
         parents = [self] if include_self else []
         bone = self
         while bone.parent_index != -1:
@@ -71,9 +78,18 @@ class FLVERBone:
         return list(reversed(parents))
 
     def get_child(self, bones: list[FLVERBone]) -> tp.Optional[FLVERBone]:
+        """Get the bone specified by `child_index`.
+
+        Note that some bones have multiple children, which can only be detected by inspecting their parent.
+        """
         if self.child_index != -1:
             return bones[self.child_index]
         return None
+
+    def get_all_immediate_children(self, bones: list[FLVERBone]) -> list[FLVERBone]:
+        """Get all immediate children of this `FLVERBone` by checking all bones' parent indices."""
+        index = self.get_bone_index(bones)
+        return [bone for bone in bones if bone.parent_index == index]
 
     def get_next_sibling(self, bones: list[FLVERBone]) -> tp.Optional[FLVERBone]:
         if self.next_sibling_index != -1:
@@ -85,14 +101,29 @@ class FLVERBone:
             return bones[self.previous_sibling_index]
         return None
 
-    def get_absolute_translate_rotate(self, bones: list[FLVERBone]) -> tuple[Vector3, Matrix3]:
-        """Accumulates parents' translates and rotates."""
+    def get_local_transform(self) -> tuple[Vector3, Matrix3, Vector3]:
+        """Return combined local transform of `FLVERBone`, converting rotation Euler to a 3x3 matrix."""
+        rot_mat3 = Matrix3.from_euler_angles(self.rotate, radians=True, order="xzy")
+        return self.translate.copy(), rot_mat3, self.scale.copy()
+
+    def set_local_transform(self, transform: tuple[Vector3, Matrix3, Vector3]):
+        """Set local transform of `FLVERBone`, converting rotation 3x3 matrix to Euler."""
+        self.translate = transform[0].copy()
+        self.rotate = transform[1].to_euler_angles(radians=True, order="xzy")
+        self.scale = transform[2].copy()
+
+    def get_armature_space_transform(self, bones: list[FLVERBone]) -> tuple[Vector3, Matrix3, Vector3]:
+        """Accumulates parents' translates and rotates. Always uses bone's local scale (but copied).
+
+        If all bones need to converted at once, the `FLVER.get_bone_armature_space_transforms()` method is more
+        efficient, as it avoids recalculating the same parent transforms more than once.
+        """
         absolute_translate = Vector3.zero()
         rotate = Matrix3.identity()
         for bone in self.get_all_parents(bones, include_self=True):
             absolute_translate += rotate @ bone.translate
             rotate @= Matrix3.from_euler_angles(bone.rotate, radians=True, order="xzy")
-        return absolute_translate, rotate
+        return absolute_translate, rotate, self.scale.copy()
 
     def __repr__(self):
         lines = [

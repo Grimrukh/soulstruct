@@ -57,6 +57,10 @@ class Matrix3:
         # noinspection PyTypeChecker
         return self._data.T.flatten().tolist()
 
+    def inverse(self) -> Matrix3:
+        """Return the inverse of this matrix."""
+        return Matrix3(np.linalg.inv(self._data))
+
     def __matmul__(self, other: Matrix3 | Vector3):
         if isinstance(other, Matrix3):
             return Matrix3(np.matmul(self._data, other._data))
@@ -108,8 +112,27 @@ class Matrix3:
 
     def to_euler_angles(self, radians=False, order="xzy") -> Vector3:
         """Only supports order XZY for now (standard FromSoft usage)."""
+
+        # TODO: testing XYZ
+        if order == "xyz":
+            sy = math.sqrt(self[0, 0] * self[0, 0] + self[1, 0] * self[1, 0])
+
+            singular = sy < 1e-6
+
+            if not singular:
+                x = math.atan2(self[2, 1], self[2, 2])
+                y = math.atan2(-self[2, 0], sy)
+                z = math.atan2(self[1, 0], self[0, 0])
+            else:
+                x = math.atan2(-self[1, 2], self[1, 1])
+                y = math.atan2(-self[2, 0], sy)
+                z = 0
+            if radians:
+                return Vector3([x, y, z])
+            return Vector3([math.degrees(x), math.degrees(y), math.degrees(z)])
+
         if order != "xzy":
-            raise ValueError("Can only compute Euler angles for XZY rotation, as used in DS1 at least.")
+            raise ValueError("Can only convert `Matrix3` to Euler angles for XZY rotation (FromSoft standard).")
 
         if self[1, 0] < 1:
             if self[1, 0] > -1:
@@ -128,7 +151,17 @@ class Matrix3:
             y = math.atan2(self[2, 1], self[2, 2])
             x = 0
 
-        return Vector3([x, y, z]) if radians else Vector3([math.degrees(x), math.degrees(y), math.degrees(z)])
+        if radians:
+            return Vector3([x, y, z])
+        return Vector3([math.degrees(x), math.degrees(y), math.degrees(z)])
+
+    def to_swapped_yz(self) -> Matrix3:
+        """Swaps Y and Z axes of a rotation matrix."""
+        return Matrix3.from_flat_row_order([
+            self[0, 0], self[0, 2], self[0, 1],
+            self[2, 0], self[2, 2], self[2, 1],
+            self[1, 0], self[1, 2], self[1, 1],
+        ])
 
 
 @dataclass(slots=True)
@@ -178,9 +211,13 @@ class Matrix4:
         # noinspection PyTypeChecker
         return self._data.T.flatten().tolist()
 
+    def inverse(self) -> Matrix4:
+        """Return the inverse of this matrix."""
+        return Matrix4(np.linalg.inv(self._data))
+
     def __matmul__(self, other: Matrix4 | Vector4):
         if isinstance(other, Matrix4):
-            return Matrix3(self._data * other._data)
+            return Matrix4(self._data * other._data)
         elif isinstance(other, Vector4):
             return Vector4(np.inner(self._data, other))
         raise TypeError(f"Can only multiply `Matrix4` with another `Matrix4` or a `Vector4`, not `{type(other)}`.")

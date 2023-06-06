@@ -132,7 +132,7 @@ class Texture:
     texture_type: str = ""
     scale: Vector2 = field(default_factory=Vector2.one)
     unk_x10: int = 1
-    unk_x11: bool = True
+    unk_x11: bool = True  # TODO: possibly 'has_texture'? seems to correlate with non-empty path
     unk_x14: float = 0.0
     unk_x18: float = 0.0
     unk_x1C: float = 0.0
@@ -160,7 +160,12 @@ class Texture:
         self.path = str(Path(self.path).with_name(name))
 
     @property
-    def stem(self):
+    def path_parent(self) -> str:
+        """Directory part of FLVER texture path, as a string. Includes trailing backslash."""
+        return str(Path(self.path).parent) + "\\"
+
+    @property
+    def stem(self) -> str:
         """Typically just removes '.tga' extension from FLVER texture path."""
         return Path(self.path).stem
 
@@ -276,6 +281,21 @@ class Material:
             if texture.texture_type == texture_type:
                 return texture
         return None
+
+    def get_shared_texture_path_prefix(self, exclude_names=True, exclude_empty_paths=True) -> str:
+        shared_texture_prefix = ""
+        for texture in self.textures:
+            if exclude_empty_paths and not texture.path:
+                continue  # empty paths do not count
+            path_part = texture.path_parent if exclude_names else texture.path
+            if shared_texture_prefix == "":
+                shared_texture_prefix = path_part
+                continue
+            for i, (a, b) in enumerate(zip(shared_texture_prefix, path_part)):
+                if a != b:
+                    shared_texture_prefix = shared_texture_prefix[:i]
+                    break
+        return shared_texture_prefix
 
     @property
     def mtd_name(self):

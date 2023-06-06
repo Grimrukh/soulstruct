@@ -10,7 +10,7 @@ from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.containers import Binder, TPF
-from soulstruct.utilities.maths import Vector3, Vector4
+from soulstruct.utilities.maths import Vector3, Vector4, Matrix3
 from soulstruct.utilities.binary import *
 
 from .bone import FLVERBone
@@ -449,7 +449,7 @@ class FLVER(GameFile):
                 **kwargs,
             )
         for bone in self.bones:
-            bone_position = bone.get_absolute_translate_rotate(self.bones)[0]
+            bone_position = bone.get_armature_space_transform(self.bones)[0]
             axes.scatter(*bone_position.to_xzy(), color="blue", s=10)
         if auto_show:
             plt.show()
@@ -535,6 +535,73 @@ class FLVER(GameFile):
                 raise ValueError("Given mesh is not in this FLVER.")
             return self.materials[mesh_or_index.material_index]
         raise TypeError("Argument must be a `FLVER.Mesh` in this FLVER or a mesh index.")
+
+    def get_root_bones(self) -> list[FLVERBone]:
+        """Return all bones with no parent."""
+        return [bone for bone in self.bones if bone.parent_index == -1]
+
+    def get_bone_armature_space_transforms(self) -> list[tuple[Vector3, Matrix3, Vector3]]:
+        """Compute the FLVER armature space transforms of all bones at once by moving downward through the hierarchy.
+
+        Note that bone scale is not inherited. All scale values are local.
+        """
+        root_bones = self.get_root_bones()
+        # Start with local transforms. They will be changed to armature space transforms one at a time, recursively.
+        armature_space_transforms = [bone.get_local_transform() for bone in self.bones]
+        done_indices = set()
+
+        def local_to_parent_space(bone: FLVERBone, parent_transform: tuple[Vector3, Matrix3, Vector3]):
+            index = bone.get_bone_index(self.bones)
+            if index in done_indices:
+                raise ValueError(f"Bone '{bone.name}' is a child of multiple bones.")
+            done_indices.add(index)
+            local_translate, local_rotate_matrix, local_scale = armature_space_transforms[index]
+            parent_translate, parent_rotate_matrix, _ = parent_transform
+            bone_armature_transform = (
+                parent_translate + parent_rotate_matrix @ local_translate,
+                parent_rotate_matrix @ local_rotate_matrix,
+                local_scale,  # scale not inherited
+            )
+            armature_space_transforms[index] = bone_armature_transform
+            for child_bone in bone.get_all_immediate_children(self.bones):
+                local_to_parent_space(child_bone, bone_armature_transform)
+
+        for root_bone in root_bones:
+            local_to_parent_space(root_bone, (Vector3.zero(), Matrix3.identity(), Vector3.one()))
+
+        return armature_space_transforms
+
+    def set_bone_armature_space_transforms(self, armature_space_transforms: list[tuple[Vector3, Matrix3, Vector3]]):
+        """Use given `armature_space_transforms` to set the local transforms of each `FLVERBone`, by applying the
+        inverse of each parent's armature space transform (conveniently available).
+
+        Note that bone scale is not inherited. All scale vectors in `armature_space_transforms` will be set directly as
+        the local bone scales.
+        """
+
+        if (arma_count := len(armature_space_transforms)) != len(self.bones):
+            raise ValueError(f"Expected {len(self.bones)} armature space transforms, but got {arma_count}.")
+
+        parent_inv_rots = {}  # type: dict[int, Matrix3]
+
+        for bone_index, bone in enumerate(self.bones):
+            arma_transform = armature_space_transforms[bone_index]
+            parent_index = bone.parent_index
+            if parent_index == -1:
+                # Root bone: armature space transform is local transform.
+                bone.set_local_transform(arma_transform)
+                continue
+
+            # Get parent transform and apply inverse to this bone's armature space transform.
+            arma_translate, arma_rotate_matrix, arma_scale = arma_transform
+            parent_arma_translate, parent_arma_rotate_matrix, _ = armature_space_transforms[parent_index]
+            parent_arma_inv_rotate = parent_inv_rots.setdefault(parent_index, parent_arma_rotate_matrix.inverse())
+
+            bone.set_local_transform((
+                parent_arma_inv_rotate @ (arma_translate - parent_arma_translate),
+                parent_arma_inv_rotate @ arma_rotate_matrix,
+                arma_scale,  # scale not inherited
+            ))
 
     def check_if_all_zero_bone_weights(self) -> bool:
         """Reliable (so far) indicator of map piece FLVER, as opposed to character/object FLVER.
