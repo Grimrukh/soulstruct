@@ -549,7 +549,7 @@ class MSB(GameFile, abc.ABC):
     def get_subtype_list_names(cls) -> tuple[str]:
         if cls._SUBTYPE_LIST_NAMES is not None:
             return cls._SUBTYPE_LIST_NAMES
-        cls._SUBTYPE_LIST_NAMES = tuple(f.name for f in fields(cls) if f.name not in {"path", "dcx_type"})
+        cls._SUBTYPE_LIST_NAMES = tuple(f.name for f in fields(cls) if f.name not in {"path", "_dcx_type", "dcx_type"})
         return cls._SUBTYPE_LIST_NAMES
 
     def get_all_subtype_lists(self) -> list[MSBEntryList]:
