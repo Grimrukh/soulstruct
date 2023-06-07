@@ -169,6 +169,13 @@ class Texture:
         """Typically just removes '.tga' extension from FLVER texture path."""
         return Path(self.path).stem
 
+    def __hash__(self) -> int:
+        """Used mostly by `Material` hash."""
+        return hash((
+            self.path, self.texture_type, self.scale.x, self.scale.y, self.unk_x10, self.unk_x11, self.unk_x14,
+            self.unk_x18, self.unk_x1C
+        ))
+
 
 @dataclass(slots=True)
 class MaterialStruct(BinaryStruct):
@@ -333,3 +340,11 @@ class Material:
         lines.append(f"  textures = [\n{textures}\n  ]")
         lines.append(")")
         return "\n".join(lines)
+
+    def __hash__(self) -> int:
+        """Game FLVERs reuse identical `Material` instances across multiple meshes.
+
+        You can hash each material to check if any two materials are identical.
+        """
+        texture_hashes = tuple(hash(tex) for tex in self.textures)
+        return hash((self.name, self.mtd_path, self.flags, self.gx_index, self.unk_x18, texture_hashes))

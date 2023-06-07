@@ -29,17 +29,17 @@ class DummyStruct(BinaryStruct):
 @dataclass(slots=True)
 class Dummy:
 
-    translate: Vector3
-    color_rgba: list[int]  # always stored as RGBA
-    forward: Vector3
-    reference_id: short
-    parent_bone_index: short
-    upward: Vector3
-    attach_bone_index: short
-    flag_1: bool
-    use_upward_vector: bool
-    unk_x30: int  # only used in Sekiro
-    unk_x34: int  # only used in Sekiro
+    translate: Vector3 = field(default_factory=Vector3.zero)
+    color_rgba: list[int] = field(default_factory=lambda: [255, 255, 255, 255])  # always stored as RGBA
+    forward: Vector3 = field(default_factory=lambda: Vector3((0, 0, 1)))
+    reference_id: short = 0
+    parent_bone_index: short = -1
+    upward: Vector3 = field(default_factory=lambda: Vector3((0, 1, 0)))
+    attach_bone_index: short = -1
+    flag_1: bool = True  # seems to be enabled more often than disabled
+    use_upward_vector: bool = True  # seems more common
+    unk_x30: int = 0  # only used in Sekiro+
+    unk_x34: int = 0  # only used in Sekiro+
 
     @classmethod
     def from_flver_reader(cls, reader: BinaryReader, flver_version: Version) -> Dummy:

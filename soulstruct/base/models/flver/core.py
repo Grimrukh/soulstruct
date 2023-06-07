@@ -8,7 +8,6 @@ import typing as tp
 from dataclasses import dataclass, field
 from pathlib import Path
 
-import numpy as np
 from soulstruct.base.game_file import GameFile
 from soulstruct.containers import Binder, TPF
 from soulstruct.utilities.maths import Vector3, Vector4, Matrix3, SINGLE_MIN, SINGLE_MAX
