@@ -543,13 +543,24 @@ class FLVER(GameFile):
     # region Bones
 
     def sort_mesh_bone_indices(self):
-        """Sort all `mesh.bone_indices` in ascending order and update local bone indices of all vertices."""
+        """Sort all `mesh.bone_indices` in ascending order and update local bone indices of all vertices.
+
+        Handles both standard bone weights (where a weight of -1.0 means no weight) and 'pose' bone weights, as is used
+        by map pieces (all indices are the same, all weights are 0.0).
+        """
         for mesh in self.meshes:
             if not mesh.bone_indices:
                 continue  # this mesh/FLVER has global vertex bone indices
             old_mesh_indices = mesh.bone_indices.copy()
             mesh.bone_indices.sort()
             for vertex in mesh.vertices:
+                # Check map piece 'pose' case, where all four weights are 0.0:
+                if all(weight == 0.0 for weight in vertex.bone_weights):
+                    bone_index = old_mesh_indices[vertex.bone_indices[0]]  # all four indices should be the same
+                    vertex.bone_indices = [mesh.bone_indices.index(bone_index)] * 4  # new mesh bone index
+                    continue
+
+                # Standard case, where at least one bone weight is non-zero:
                 for i in range(len(vertex.bone_indices)):
                     if vertex.bone_weights[i] == 0.0:
                         continue  # no bone index
