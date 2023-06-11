@@ -1,6 +1,11 @@
 from __future__ import annotations
 
-__all__ = ["DSRMemoryHook", "MemoryDrawParam"]
+__all__ = [
+    "DSRMemoryHook",
+    "MemoryDrawParam",
+    "MemoryHookCallError",
+    "UnhookedError",
+]
 
 import copy
 import logging

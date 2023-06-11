@@ -52,6 +52,10 @@ class BaseBinaryFile:
     # Records origin path of file if loaded from disk (or a `BinderEntry`). Not always available.
     path: Path | None = field(default=None, kw_only=True)
 
+    def __post_init__(self):
+        if not hasattr(self, "_dcx_type"):
+            self._dcx_type = None  # needed in Python 3.10
+
     # region Read Methods
 
     @classmethod
@@ -249,6 +253,8 @@ class BaseBinaryFile:
         return self.__class__.__name__
 
     def get_dcx_type(self) -> DCXType:
+        if not hasattr(self, "_dcx_type"):
+            self._dcx_type = None  # for Python 3.10
         return self._dcx_type
 
     def set_dcx_type(self, dcx_type: DCXType):

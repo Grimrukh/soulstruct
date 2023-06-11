@@ -206,3 +206,45 @@ class MSGDirectory(_BaseMSGDirectory):
     WeaponNamesPatch = fmg_property("item", 115)  # type: FMG
     WeaponSummaries = fmg_property("item", 21)  # type: FMG
     WeaponSummariesPatch = fmg_property("item", 114)  # type: FMG
+
+    @classmethod
+    def repair_dsr_patch_fmgs(cls, item_bnd_path, menu_bnd_path):
+        """Open given DSR text BNDs, rename FMGs to their vanilla names, and duplicate base entry data to any Patch
+        (DLC) binder entries (creating them if needed).
+
+        Useful for repairing well-meaning attempts to do away with the 'patch' FMGs in DSR in old Soulstruct versions.
+        """
+        from soulstruct.containers import Binder
+
+        item = Binder.from_path(item_bnd_path)
+        menu = Binder.from_path(menu_bnd_path)
+
+        # Rename item FMGs.
+        for (file, entry_id), stem in cls.DEFAULT_ENTRY_STEMS.items():
+            binder = item if file == "item" else menu
+            try:
+                base_entry = binder.entries_by_id[entry_id]
+            except KeyError:
+                if (file, entry_id) in cls.BASE_PATCH_FMGS.values():
+                    continue  # missing DLC entry will be created when base entry is found
+                raise ValueError(f"Base entry not found for {file} {entry_id}.")
+            if (file, entry_id) in cls.BASE_PATCH_FMGS:
+                _, dlc_entry_id = cls.BASE_PATCH_FMGS[(file, entry_id)]
+                base_entry.set_path_name(stem + ".fmg")
+                # Copy to DLC entry if it doesn't already exist.
+                try:
+                    patch_entry = binder.entries_by_id[dlc_entry_id]
+                except KeyError:
+                    patch_entry = base_entry.copy()
+                    patch_entry.id = dlc_entry_id
+                    binder.add_entry(patch_entry)
+                else:
+                    # Make sure patch entry has same data as base entry and same stem.
+                    patch_entry.data = base_entry.data
+                    patch_entry.set_path_name(stem + ".fmg")
+            else:
+                # Just fix stem.
+                base_entry.set_path_name(stem + ".fmg")
+
+        item.write()
+        menu.write()

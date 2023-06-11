@@ -155,7 +155,10 @@ class Texture:
         writer.pack_z_string(self.texture_type, encoding=encoding)
 
     def set_name(self, name: str):
-        """Set '.tga' name of `path`."""
+        """Set `path` to '{name}.tga'.
+
+        Any existing '.tga' or '.tpf' extension in `name` will be removed and replaced with '.tga'.
+        """
         name = name.removesuffix(".tga").removesuffix(".tpf") + ".tga"
         self.path = str(Path(self.path).with_name(name))
 

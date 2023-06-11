@@ -35,6 +35,7 @@ class TalkESDBND(Binder, abc.ABC):
     talk: dict[int, ESD] = field(default_factory=dict)
 
     def __post_init__(self):
+        super(Binder, self).__post_init__()
         if self.talk:
             return
 

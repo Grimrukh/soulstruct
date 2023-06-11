@@ -260,12 +260,13 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
         """Iterate over all `MSGDirectory` property names (e.g. "WeaponDescriptions") and remove empty strings from all
         FMGs in properties that match `category_name_regex` pattern (e.g. r".*Descriptions").
 
+        Modifies FMGs in-place, unlike the `FMG.remove_empty_strings()` method.
+
         Default `category_name_regex` will match all FMG names.
         """
         matching_fmgs = list(self.get_matching_fmgs(category_name_regex).values())
-        for fmg_key, fmg in self.fmgs.items():
-            if fmg in matching_fmgs:
-                self.fmgs[fmg_key] = fmg.remove_empty_strings()
+        for fmg in matching_fmgs:
+            fmg.entries = {string_id: string for string_id, string in fmg.entries.items() if string}
 
     def apply_line_limits(self, category_name_regex: str = "", max_chars_per_line: int = None, max_lines: int = None):
         """Iterate over all `MSGDirectory` property names (e.g. "WeaponDescriptions") and apply given word wrap and line

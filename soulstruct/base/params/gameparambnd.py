@@ -48,6 +48,7 @@ class GameParamBND(Binder, abc.ABC):
     _reload_warning_given: bool = field(init=False)
 
     def __post_init__(self):
+        super(Binder, self).__post_init__()
         self._reload_warning_given = False
         if self.params:  # passed to constructor; do not unpack from entries
             return
