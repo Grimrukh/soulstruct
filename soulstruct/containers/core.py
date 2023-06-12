@@ -582,8 +582,10 @@ class Binder(BaseBinaryFile):
                 name_parts = file_path.name.split(".")
                 bdt_name = name_parts[0] + "." + ".".join(name_parts[1:]).replace("bhd", "bdt")
                 bdt_file_path = file_path.with_name(bdt_name)
-            elif make_dirs:  # only needed if not next to BHD file (as will be the case above)
-                bdt_file_path.parent.mkdir(parents=True, exist_ok=True)
+            else:
+                bdt_file_path = Path(bdt_file_path)
+                if make_dirs:  # only needed if not next to BHD file (as will be the case above)
+                    bdt_file_path.parent.mkdir(parents=True, exist_ok=True)
             packed_bhd, packed_bdt = self.get_split_bytes()
             if check_hash and file_path.is_file() and bdt_file_path.is_file():
                 bhd_match = get_blake2b_hash(file_path) == get_blake2b_hash(packed_bhd)
@@ -893,7 +895,7 @@ class Binder(BaseBinaryFile):
                 find_entry_basename = f"__{entry['id']}__{entry['name']}" if use_id_prefix else entry['name']
                 with (directory / find_entry_basename).open("rb") as entry_file:
                     entry_data = entry_file.read()
-                unsorted_entries[entry['id']] = (f"{root}\\{entry['name']}", entry_data, entry['flags'])
+                unsorted_entries[entry['id']] = (str(Path(root).joinpath(entry["name"])), entry_data, entry['flags'])
         for entry_id, (path, data, flags) in sorted(unsorted_entries.items()):
             self.add_entry(BinderEntry(entry_id=entry_id, path=path, data=data, flags=flags))
 
@@ -1050,7 +1052,7 @@ class Binder(BaseBinaryFile):
             existing_entry = self.entries_by_name[entry_name]
         except (ValueError, KeyError):
             # Create new entry.
-            entry_path = self.get_default_entry_path(entry_name) if r"\\" not in entry_name else entry_name
+            entry_path = self.get_default_entry_path(entry_name) if "\\" not in entry_name else entry_name
             if new_entry_id is None:
                 new_entry_id = self.get_default_entry_id(entry_name)
             if new_entry_flags is None:

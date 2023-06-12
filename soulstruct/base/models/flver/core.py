@@ -585,6 +585,21 @@ class FLVER(GameFile):
         else:
             bone_arma_translate_inv_rotates = []
 
+        def add_bone_vertex(_v, _bone_index: int):
+            # Unfortunately, we need to convert every vertex to the bone's space to compare it against the
+            # current bounding box, because the bounding box is in bone space.
+            arma_translate, inv_arma_rotate = bone_arma_translate_inv_rotates[_bone_index]
+            v_local = inv_arma_rotate @ Vector3(
+                (  # squeezing out whatever performance we can
+                    _v.position[0] - arma_translate.x,
+                    _v.position[1] - arma_translate.y,
+                    _v.position[2] - arma_translate.z,
+                )
+            )
+            bone_local_vertex_x.setdefault(_bone_index, []).append(v_local[0])
+            bone_local_vertex_y.setdefault(_bone_index, []).append(v_local[1])
+            bone_local_vertex_z.setdefault(_bone_index, []).append(v_local[2])
+
         all_x = []
         all_y = []
         all_z = []
@@ -593,24 +608,21 @@ class FLVER(GameFile):
                 all_x.append(v.position[0])
                 all_y.append(v.position[1])
                 all_z.append(v.position[2])
+
                 if not refresh_bone_bounding_boxes:
                     continue
+
+                if all(weight == 0.0 for weight in v.bone_weights):
+                    # Map piece 'pose' case, where all four weights are 0.0. All four bone indices are the same bone.
+                    v_bone_index = mesh.bone_indices[v.bone_indices[0]]  # all four indices should be the same
+                    bone_index = mesh.bone_indices[v_bone_index] if mesh.bone_indices else v_bone_index
+                    add_bone_vertex(v, bone_index)
 
                 for v_bone_index, bone_weight in zip(v.bone_indices, v.bone_weights):
                     if bone_weight == 0.0:
                         continue  # bone index is unused
                     bone_index = mesh.bone_indices[v_bone_index] if mesh.bone_indices else v_bone_index
-                    # Unfortunately, we need to convert every vertex to the bone's space to compare it against the
-                    # current bounding box, because the bounding box is in bone space.
-                    arma_translate, inv_arma_rotate = bone_arma_translate_inv_rotates[bone_index]
-                    v_local = inv_arma_rotate @ Vector3((  # squeezing out whatever performance we can
-                        v.position[0] - arma_translate.x,
-                        v.position[1] - arma_translate.y,
-                        v.position[2] - arma_translate.z,
-                    ))
-                    bone_local_vertex_x.setdefault(bone_index, []).append(v_local[0])
-                    bone_local_vertex_y.setdefault(bone_index, []).append(v_local[1])
-                    bone_local_vertex_z.setdefault(bone_index, []).append(v_local[2])
+                    add_bone_vertex(v, bone_index)
 
         if refresh_bone_bounding_boxes:
             for bone_index, bone in enumerate(self.bones):

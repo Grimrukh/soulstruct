@@ -53,6 +53,17 @@ class DCXType(Enum):
     def get_version_info(self) -> tuple[bytes, int, int, int, int, int]:
         return DCX_VERSION_INFO[self]
 
+    def process_path(self, path: Path | str) -> Path | str:
+        """Add or remove '.dcx' extension to/from `path` as appropriate.
+
+        Returns `Path` or `str` (depending on input type).
+        """
+        is_path = isinstance(path, Path)
+        new_path = Path(path).with_name(path.name.removesuffix(".dcx"))
+        if self.value >= 2:
+            new_path = path.with_name(path.name + ".dcx")
+        return new_path if is_path else str(new_path)
+
     @classmethod
     def detect(cls, reader: BinaryReader) -> DCXType:
         """Detect type of DCX. Resets offset when done."""
