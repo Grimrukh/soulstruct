@@ -156,9 +156,9 @@ class BaseBinaryFile:
         with file_path.open("wb") as f:
             f.write(packed_dcx)
 
-    def to_dict(self) -> dict:
-        """Create a dictionary from file instance. Uses `dataclasses.asdict()` by default."""
-        return asdict(self)
+    def to_dict(self) -> dict[str, tp.Any]:
+        """Create a dictionary from file instance. Uses `dataclasses.asdict()` by default and ignores '_dcx_type'."""
+        return asdict(self, dict_factory=lambda d: {k: v for (k, v) in d if k != "_dcx_type"})
 
     def write_json(self, file_path: None | str | Path, encoding="utf-8", indent=4):
         """Create a dictionary from instance and write it to a JSON file.

@@ -489,7 +489,7 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
 
         return cls(**data)
 
-    def to_dict(self, ignore_pads=True, ignore_defaults=True, use_internal_names=False):
+    def to_dict(self, ignore_pads=True, ignore_defaults=True, use_internal_names=False) -> dict[str, tp.Any]:
         """Provides options to ignore pad fields and/or fields with default values."""
         data = {
             "param_type": self.param_type,

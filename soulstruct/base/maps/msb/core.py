@@ -429,7 +429,7 @@ class MSB(GameFile, abc.ABC):
                             f"field `{field_name}` of {subtype_name} '{entry.name}'."
                         )
 
-    def to_dict(self, ignore_defaults=True) -> dict:
+    def to_dict(self, ignore_defaults=True) -> dict[str, tp.Any]:
         """Return a dictionary form of the MSB.
 
         Fully serializes `MSBEntry` contents by converting inter-entry references to dictionaries.

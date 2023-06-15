@@ -257,7 +257,7 @@ class EMEVD(GameFile, abc.ABC):
             event.update_signature()
         self.event_signatures = {event_id: event.signature for event_id, event in self.events.items()}
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, tp.Any]:
         self.regenerate_signatures()
 
         return {
