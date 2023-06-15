@@ -453,15 +453,15 @@ class MSBCollision(MSBPartWithSceneGParam):
         internal_place_name_banner_id = data.pop("_place_name_banner_id")
         if internal_place_name_banner_id != -1:
             data["place_name_banner_id"] = abs(internal_place_name_banner_id)
-        data["_force_place_name_banner"] = internal_place_name_banner_id < 0
+        data["force_place_name_banner"] = internal_place_name_banner_id < 0
         
         internal_play_region_id = data.pop("_play_region_id")
         if internal_play_region_id > -10:
-            data["_play_region_id"] = internal_play_region_id
-            data["_stable_footing_flag"] = 0
+            data["play_region_id"] = internal_play_region_id
+            data["stable_footing_flag"] = 0
         else:
-            data["_play_region_id"] = 0
-            data["_stable_footing_flag"] = -internal_play_region_id - 10
+            data["play_region_id"] = 0
+            data["stable_footing_flag"] = -internal_play_region_id - 10
         
         return data
 
