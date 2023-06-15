@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import typing as tp
 
 from soulstruct.base.project.editors.base_editor import EntryRow
@@ -8,6 +9,8 @@ from soulstruct.base.project.editors.field_editor import BaseFieldEditor
 if tp.TYPE_CHECKING:
     from soulstruct.base.params import Param, ParamRow, ParamFieldMetadata
     from soulstruct.darksouls1ptde.params.draw_param import DrawParamBND, DrawParamDirectory
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class LightingEntryRow(EntryRow):
@@ -45,11 +48,21 @@ class LightingEntryRow(EntryRow):
             label="Duplicate Entry to Next Available ID",
             command=lambda: self.master.add_entry_to_next_available_id(self.entry_id),
         )
+        self.context_menu.add_command(
+            label="Copy Row Data",
+            command=lambda: self.master.copy_row(self.entry_id),
+        )
+        # TODO: option should only appear if there's something to paste, but then I'd want to regenerate the context
+        #  menus of every entry immediately after copying one of them...
+        self.context_menu.add_command(
+            label="Paste Row Data",
+            command=lambda: self.master.paste_row(self.entry_id),
+        )
         text_links = self.master.linker.get_param_entry_text_links(self.entry_id)
         if text_links:
             self.context_menu.add_separator()
             for text_link in text_links:
-                text_link.add_to_context_menu(self.context_menu, foreground=self.STYLE_DEFAULTS["text_fg"])
+                text_link.add_to_context_menu(self.context_menu, foreground=self.STYLE_DEFAULTS["fg"])
 
 
 class LightingEditor(BaseFieldEditor):
@@ -64,6 +77,10 @@ class LightingEditor(BaseFieldEditor):
 
     ENTRY_ROW_CLASS = LightingEntryRow
     entries: list[LightingEntryRow]
+
+    # `(category, dict)` stored by a right-click 'copy' command (ready for pasting into another row).
+    # TODO: most useful with Lighting but no reason this couldn't be a `BaseFieldEditor` implementation.
+    copied_row: tuple[str, dict] | None = None
 
     def __init__(self, project, linker, master=None, toplevel=False):
         self.map_area_choice = None
@@ -152,6 +169,39 @@ class LightingEditor(BaseFieldEditor):
         map_draw_param.copy_slot_0_to_slot_1()
         self.slot_choice.config(values=["0", "1"])
         self.refresh_entries(reset_field_display=True)
+
+    def copy_row(self, entry_id: int, category=None):
+        try:
+            if category is None:
+                category = self.active_category
+                if category is None:
+                    raise ValueError("No Lighting category selected.")
+            self.copied_row = (category, self.get_field_dict(entry_id, category).to_dict(
+                ignore_defaults=False, binary_fields_only=True
+            ))
+        except ValueError as ex:
+            _LOGGER.warning(f"Lighting row copy operation failed. Error: {ex}")
+
+    def paste_row(self, entry_id: int, category=None) -> bool:
+        if self.copied_row is None:
+            self.info_dialog("No Copied Row", "No Lighting row has been copied.")
+            return False
+        if category is None:
+            category = self.active_category
+            if category is None:
+                raise ValueError("No Lighting category selected.")
+        copied_category, copied_row = self.copied_row
+        if category != copied_category:
+            # Paste option shouldn't even be offered.
+            self.warning_dialog(
+                "Lighting Type Mismatch", f"Cannot copy/paste Lighting row from '{copied_category}' into '{category}'."
+            )
+            return False
+        selected_row = self.get_field_dict(entry_id)
+        for field_name, field_value in copied_row.items():
+            selected_row[field_name] = field_value
+        self.refresh_fields()
+        return True
 
     def get_map_area_name(self):
         return self.map_area_choice.get().split(" [")[0]

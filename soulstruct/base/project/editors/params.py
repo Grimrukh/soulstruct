@@ -76,7 +76,7 @@ class ParamEntryRow(EntryRow):
         if text_links:
             self.context_menu.add_separator()
             for text_link in text_links:
-                text_link.add_to_context_menu(self.context_menu, foreground=self.STYLE_DEFAULTS["text_fg"])
+                text_link.add_to_context_menu(self.context_menu, foreground=self.STYLE_DEFAULTS["fg"])
         if self.master.active_category in {"Weapons", "Armor", "Rings", "Goods", "Spells"}:
             self.context_menu.add_separator()
             self.context_menu.add_command(

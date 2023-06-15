@@ -551,26 +551,26 @@ class MSBNavmesh(MSBPart):
 
     HIDE_FIELDS = (
         "scale",
-        "sib_path"
-        "draw_groups"
-        "display_groups"
-        "ambient_light_id"
-        "fog_id"
-        "scattered_light_id"
-        "lens_flare_id"
-        "shadow_id"
-        "dof_id"
-        "tone_map_id"
-        "point_light_id"
-        "tone_correction_id"
-        "lod_id"
-        "is_shadow_source"
-        "is_shadow_destination"
-        "is_shadow_only"
-        "draw_by_reflect_cam"
-        "draw_only_reflect_cam"
-        "use_depth_bias_float"
-        "disable_point_light_effect"
+        "sib_path",
+        "draw_groups",
+        "display_groups",
+        "ambient_light_id",
+        "fog_id",
+        "scattered_light_id",
+        "lens_flare_id",
+        "shadow_id",
+        "dof_id",
+        "tone_map_id",
+        "point_light_id",
+        "tone_correction_id",
+        "lod_id",
+        "is_shadow_source",
+        "is_shadow_destination",
+        "is_shadow_only",
+        "draw_by_reflect_cam",
+        "draw_only_reflect_cam",
+        "use_depth_bias_float",
+        "disable_point_light_effect",
     )
 
 
