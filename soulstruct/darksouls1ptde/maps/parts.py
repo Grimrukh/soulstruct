@@ -208,7 +208,7 @@ class MSBObject(MSBPart):
         _pad3: bytes = field(init=False, **BinaryPad(4))
 
     HIDE_FIELDS: tp.ClassVar[tuple] = (
-        "scale",
+        "scale",  # NOTE: works, but only object visual FLVER will be scaled (not HKX collision or animations)
         "display_groups",
         "lens_flare_id",
         "shadow_id",

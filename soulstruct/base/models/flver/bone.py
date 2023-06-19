@@ -34,6 +34,8 @@ class FLVERBone:
     translate: Vector3 = field(default_factory=Vector3.zero)
     rotate: Vector3 = field(default_factory=Vector3.zero)  # Euler angles (radians)
     scale: Vector3 = field(default_factory=Vector3.one)
+    # Mesh vertices weighted to this bone will only be drawn if this bounding box is in the camera's current view.
+    # NOTE: units are in local bone space for character
     bounding_box_min: Vector3 = field(default_factory=Vector3.zero)
     bounding_box_max: Vector3 = field(default_factory=Vector3.zero)
     # TODO: almost certainly flags. In DSR, seems to be 1 IFF bone is NOT in the main hierarchy. In Elden Ring, more

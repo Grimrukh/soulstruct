@@ -567,7 +567,11 @@ class FLVER(GameFile):
                     bone_index = old_mesh_indices[vertex.bone_indices[i]]
                     vertex.bone_indices[i] = mesh.bone_indices.index(bone_index)  # new mesh bone index
 
-    def refresh_bounding_boxes(self, refresh_bone_bounding_boxes=False):
+    def refresh_bounding_boxes(
+        self,
+        refresh_bone_bounding_boxes=False,
+        bone_bounding_boxes_in_armature_space=False,
+    ):
         """Refresh global bounding box of FLVER from minimum and maximum of all mesh vertices.
 
         Can optionally refresh bone bounding boxes as well in the same vertex loop, rather than needing to call that
@@ -589,13 +593,16 @@ class FLVER(GameFile):
             # Unfortunately, we need to convert every vertex to the bone's space to compare it against the
             # current bounding box, because the bounding box is in bone space.
             arma_translate, inv_arma_rotate = bone_arma_translate_inv_rotates[_bone_index]
-            v_local = inv_arma_rotate @ Vector3(
-                (  # squeezing out whatever performance we can
-                    _v.position[0] - arma_translate.x,
-                    _v.position[1] - arma_translate.y,
-                    _v.position[2] - arma_translate.z,
+            if bone_bounding_boxes_in_armature_space:
+                v_local = _v.position  # use armature space for bone bounding box min/max
+            else:
+                v_local = inv_arma_rotate @ Vector3(
+                    (  # squeezing out whatever performance we can
+                        _v.position[0] - arma_translate.x,
+                        _v.position[1] - arma_translate.y,
+                        _v.position[2] - arma_translate.z,
+                    )
                 )
-            )
             bone_local_vertex_x.setdefault(_bone_index, []).append(v_local[0])
             bone_local_vertex_y.setdefault(_bone_index, []).append(v_local[1])
             bone_local_vertex_z.setdefault(_bone_index, []).append(v_local[2])
@@ -603,7 +610,7 @@ class FLVER(GameFile):
         all_x = []
         all_y = []
         all_z = []
-        for mesh in self.meshes:
+        for i, mesh in enumerate(self.meshes):
             for v in mesh.vertices:
                 all_x.append(v.position[0])
                 all_y.append(v.position[1])
@@ -614,8 +621,7 @@ class FLVER(GameFile):
 
                 if all(weight == 0.0 for weight in v.bone_weights):
                     # Map piece 'pose' case, where all four weights are 0.0. All four bone indices are the same bone.
-                    v_bone_index = mesh.bone_indices[v.bone_indices[0]]  # all four indices should be the same
-                    bone_index = mesh.bone_indices[v_bone_index] if mesh.bone_indices else v_bone_index
+                    bone_index = mesh.bone_indices[v.bone_indices[0]]  # all four indices should be the same
                     add_bone_vertex(v, bone_index)
 
                 for v_bone_index, bone_weight in zip(v.bone_indices, v.bone_weights):

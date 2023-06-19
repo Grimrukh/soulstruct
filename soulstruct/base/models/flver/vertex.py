@@ -108,6 +108,8 @@ class LayoutMember:
         )
 
     def __repr__(self):
+        if self.index > 0:
+            return f"{self.member_type.name}({self.index})<{self.size}, {self.member_format.name}>"
         return f"{self.member_type.name}<{self.size}, {self.member_format.name}>"
 
     @property

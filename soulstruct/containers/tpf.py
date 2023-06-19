@@ -81,7 +81,7 @@ class TPFTextureStruct(BinaryStruct, abc.ABC):
 @dataclass(slots=True)
 class TPFTexture:
 
-    name: str = ""
+    name: str = ""  # no file extension (just stem)
     format: int = 1
     texture_type: TextureType = TextureType.Texture
     mipmap_count: int = 0

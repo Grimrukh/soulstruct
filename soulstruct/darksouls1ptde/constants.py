@@ -22,6 +22,7 @@ CHARACTER_MODELS = {
     1202: "Giant Rat",
     1203: "Snow Rat",
     2060: "Infested Ghoul",
+    2220: "Unused Knight (DSR)",
     2230: "Stray Demon",
     2231: "Demon Firesage",
     2232: "Asylum Demon",

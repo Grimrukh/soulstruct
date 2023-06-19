@@ -18,10 +18,19 @@ from .version import Version
 class MTDInfo:
     """Various booleans that indicate required textures for a specific MTD shader."""
 
-    MTD_DSB_RE = re.compile(r".*\[(D)?(S)?(B)?(H)?].*")  # g_Diffuse, g_Specular, g_Bumpmap, g_Height
-    MTD_ML_RE = re.compile(r".*\[(M)?(L)?].*")  # g_Lightmap, double DSB slots
+    # g_Diffuse, g_Specular, g_Bumpmap, g_Height
+    MTD_DSB_RE: tp.ClassVar[re.Pattern] = re.compile(r".*\[(D)?(S)?(B)?(H)?].*")
+
+    # g_Lightmap, double DSB slots
+    MTD_ML_RE: tp.ClassVar[re.Pattern] = re.compile(r".*\[(M)?(L)?].*")
+
     # Checked separately: [Dn] (g_Diffuse only), [We] (g_Bumpmap only)
-    MTD_FOLIAGE_PREFIXES = {"M_2Foliage", "M_3Ivy"}  # MTD name prefixes that indicate two extra UV slots
+
+    # TODO: Not sure if 'M_\d*' is a general pattern for extra UV slots, or if it's just a non-enforced hint.
+    MTD_FOLIAGE_PREFIXES: tp.ClassVar[str, int] = {
+        "M_2Foliage": 1,
+        "M_3Ivy": 2,
+    }  # MTD name prefixes that indicate two extra UV slots, and the required index of their first UV data.
 
     mtd_name: str
     diffuse: bool = field(init=False, default=False)
@@ -33,8 +42,8 @@ class MTDInfo:
     alpha: bool = field(init=False, default=False)
     edge: bool = field(init=False, default=False)
     water: bool = field(init=False, default=False)
-    foliage: bool = field(init=False, default=False)  # extra two UV slots for foliage animation (in DS1)
     no_tangents: bool = field(init=False, default=False)  # no tangent data in vertex buffer (in DS1)
+    extra_uv_maps: None | tuple[int, int] = field(init=False, default=None)  # extra UV slots and first index of them
 
     def __post_init__(self):
         if dsbh_match := self.MTD_DSB_RE.match(self.mtd_name):
@@ -51,8 +60,10 @@ class MTDInfo:
         if "[We]" in self.mtd_name:
             self.water = True
             self.bumpmap = True
-        if any(self.mtd_name.startswith(prefix) for prefix in self.MTD_FOLIAGE_PREFIXES):
-            self.foliage = True
+        for prefix, first_uv_index in self.MTD_FOLIAGE_PREFIXES.items():
+            if self.mtd_name.startswith(prefix):
+                self.extra_uv_maps = (2, first_uv_index)
+                break  # can't match more than one
         self.alpha = "_Alp" in self.mtd_name
         self.edge = "_Edge" in self.mtd_name
 
