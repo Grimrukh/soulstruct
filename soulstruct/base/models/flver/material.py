@@ -18,19 +18,29 @@ from .version import Version
 class MTDInfo:
     """Various booleans that indicate required textures for a specific MTD shader."""
 
-    # g_Diffuse, g_Specular, g_Bumpmap, g_Height
-    MTD_DSB_RE: tp.ClassVar[re.Pattern] = re.compile(r".*\[(D)?(S)?(B)?(H)?].*")
+    # g_Diffuse, g_Specular, g_Bumpmap, g_Height. These all appear in the same square brackets in the same order.
+    MTD_DSB_RE: tp.ClassVar[re.Pattern] = re.compile(r".*\[(D)?(S)?(B)?(H)?\].*")
 
-    # g_Lightmap, double DSB slots
-    MTD_ML_RE: tp.ClassVar[re.Pattern] = re.compile(r".*\[(M)?(L)?].*")
+    # Double DSB slots
+    MTD_M_RE: tp.ClassVar[re.Pattern] = re.compile(r".*\[(M|ML|LM)\].*")
+
+    # g_Lightmap
+    MTD_L_RE: tp.ClassVar[re.Pattern] = re.compile(r".*\[(L|ML|LM)\].*")
 
     # Checked separately: [Dn] (g_Diffuse only), [We] (g_Bumpmap only)
 
-    # TODO: Not sure if 'M_\d*' is a general pattern for extra UV slots, or if it's just a non-enforced hint.
+    # TODO: Not sure if 'M_{n}*' is a general pattern for extra UV slots at n - 1, or if it's just a non-enforced hint.
     MTD_FOLIAGE_PREFIXES: tp.ClassVar[str, int] = {
         "M_2Foliage": 1,
         "M_3Ivy": 2,
     }  # MTD name prefixes that indicate two extra UV slots, and the required index of their first UV data.
+
+    # TODO: Hardcoding a set of 'water' shader names I've encountered in DSR.
+    WATER_NAMES: tp.ClassVar[set[str]] = {
+        "A14_numa.mtd",  # Blighttown swamp
+        "A12_DarkRiver.mtd",
+        "A12_DarkWater.mtd",
+    }
 
     mtd_name: str
     diffuse: bool = field(init=False, default=False)
@@ -51,13 +61,14 @@ class MTDInfo:
             self.specular = bool(dsbh_match.group(2))
             self.bumpmap = bool(dsbh_match.group(3))
             self.height = bool(dsbh_match.group(4))
-        if ml_match := self.MTD_ML_RE.match(self.mtd_name):
-            self.multiple = bool(ml_match.group(1))
-            self.lightmap = bool(ml_match.group(2))
+
+        self.multiple = bool(self.MTD_M_RE.match(self.mtd_name))
+        self.lightmap = bool(self.MTD_L_RE.match(self.mtd_name))
+
         if "[Dn]" in self.mtd_name:
             self.diffuse = True
             self.no_tangents = True  # TODO: A few [D] shaders also don't use tangents...
-        if "[We]" in self.mtd_name:
+        if "[We]" in self.mtd_name or self.mtd_name in self.WATER_NAMES:
             self.water = True
             self.bumpmap = True
         for prefix, first_uv_index in self.MTD_FOLIAGE_PREFIXES.items():

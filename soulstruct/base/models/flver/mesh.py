@@ -14,6 +14,10 @@ from soulstruct.utilities.binary import *
 from .bounding_box import BoundingBox, BoundingBoxWithUnknown
 from .vertex import BufferLayout, Vertex, VertexBuffer
 
+if tp.TYPE_CHECKING:
+    from .core import FLVER
+    from .material import Material
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -373,6 +377,33 @@ class Mesh:
                 face = " ".join("/".join([str(v + vertex_offset + 1)] * 3) for v in triangles[j:j + 3])
                 lines.append(f"f {face}")
         return "\n".join(lines)
+
+    def get_material(self, flver: FLVER) -> Material:
+        """Shortcut accessor."""
+        if self.material_index < 0:
+            raise ValueError(f"Mesh has negative material index: {self.material_index}")
+        return flver.materials[self.material_index]
+
+    @property
+    def layout_index(self):
+        """Shortcut for returning `vertex_buffers[0].layout_index`. Raises an error if there are 2+ vertex buffers."""
+        if not self.vertex_buffers:
+            raise ValueError("Mesh has no vertex buffers.")
+        if len(self.vertex_buffers) > 1:
+            raise ValueError("Mesh has multiple vertex buffers. Cannot use `layout_index` shortcut property.")
+        return self.vertex_buffers[0].layout_index
+
+    def get_buffer_layout(self, flver: FLVER, vertex_buffer_index=0) -> BufferLayout:
+        """Shortcut for returning `flver.buffer_layouts[self.vertex_buffers[vertex_buffer_index].layout_index]`."""
+        return flver.buffer_layouts[self.vertex_buffers[vertex_buffer_index].layout_index]
+
+    def set_buffer_layout(self, flver: FLVER, layout: BufferLayout, vertex_buffer_index=0):
+        """Shortcut for setting `flver.buffer_layouts[self.vertex_buffers[vertex_buffer_index].layout_index]`.
+
+        Note, of course, that other meshes could be pointing to the same layout index! Make sure they are also both
+        using the same material in that case.
+        """
+        flver.buffer_layouts[self.vertex_buffers[vertex_buffer_index].layout_index] = layout
 
     @property
     def allow_primitive_restarts(self):
