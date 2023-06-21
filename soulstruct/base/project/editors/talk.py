@@ -439,7 +439,13 @@ class TalkEditor(BaseEditor):
         try:
             # Initialize `TalkESDBND` directly with `talk` dictionary.
             talkesdbnd_class = self.talk_class.FILE_CLASS  # type: tp.Type[TalkESDBND]
-            talkesdbnd_class(talk=self.esp_file_paths[self.selected_map_id]).write(export_directory / bnd_subpath)
+            talk_class = talkesdbnd_class.TALK_ESD_CLASS
+            talk_dict = {
+                talk_id: talk_class.from_auto_detect_source_type(esp_path)[0]
+                for talk_id, esp_path in self.esp_file_paths[self.selected_map_id].items()
+            }
+            talkesdbnd = talkesdbnd_class.from_talk_dict(talk_dict)
+            talkesdbnd.write(export_directory / bnd_subpath)
         except Exception as e:
             _LOGGER.exception("Error encountered while trying to export ESP scripts.")
             self.CustomDialog(

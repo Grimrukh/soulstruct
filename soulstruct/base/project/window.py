@@ -1059,7 +1059,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 self.talk_tab.export_all_in_map(export_directory)
                 if mimic_click:
                     self.mimic_click(self.export_tab_button)
-                _LOGGER.info("Exporting selected talk script...")
+                _LOGGER.info("Exporting talk scripts for selected map...")
                 return
             # Otherwise, ignore `single_script_only` argument.
 

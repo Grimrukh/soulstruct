@@ -269,7 +269,11 @@ class ESD(GameFile, abc.ABC):
         _LOGGER.debug(f"Compiling single-file ESD state machine: {esp_file.name}")
         compiler = ESPCompiler(esp_file, cls.ESD_TYPE)
         # TODO: Read state machine index from docstring. Only default to 1 (and warn) if necessary.
-        esd = cls(magic=[0, 0, 0, 0], esd_name=esp_file.stem + cls.EXT, state_machines={1: compiler.states})
+        esd = cls(
+            magic=[0, 0, 0, 0],
+            esd_name=esp_file.name.split(".")[0] + cls.EXT,  # makes sure to remove '.esp' and '.py' suffix, etc.
+            state_machines={1: compiler.states},
+        )
         esd.path = esp_file.parent / esd.esd_name
         return esd
 
