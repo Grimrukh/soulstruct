@@ -215,7 +215,7 @@ class Matrix4:
         """Return the inverse of this matrix."""
         return Matrix4(np.linalg.inv(self._data))
 
-    def __matmul__(self, other: Matrix4 | Vector4):
+    def __matmul__(self, other: Matrix4 | Vector4 | Vector3):
         if isinstance(other, Matrix4):
             return Matrix4(self._data * other._data)
         elif isinstance(other, Vector3):
