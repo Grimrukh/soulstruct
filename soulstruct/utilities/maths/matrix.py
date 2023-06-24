@@ -218,9 +218,13 @@ class Matrix4:
     def __matmul__(self, other: Matrix4 | Vector4):
         if isinstance(other, Matrix4):
             return Matrix4(self._data * other._data)
+        elif isinstance(other, Vector3):
+            return Vector3(np.inner(self._data, (other.x, other.y, other.z, 1.0))[:3])
         elif isinstance(other, Vector4):
             return Vector4(np.inner(self._data, other))
-        raise TypeError(f"Can only multiply `Matrix4` with another `Matrix4` or a `Vector4`, not `{type(other)}`.")
+        raise TypeError(
+            f"Can only multiply `Matrix4` with another `Matrix4` or a `Vector3` or `Vector4`, not `{type(other)}`."
+        )
 
     def __neg__(self):
         return self.__class__(-self._data)
