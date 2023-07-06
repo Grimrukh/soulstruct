@@ -177,6 +177,9 @@ class MSBMapPiece(MSBPart):
     HIDE_FIELDS = (
         "scale",
         "display_groups",
+        "lens_flare_id",
+        "shadow_id",
+        "dof_id",
         "tone_map_id",
         "point_light_id",
         "tone_correction_id",
@@ -185,6 +188,12 @@ class MSBMapPiece(MSBPart):
         "use_depth_bias_float",
         "disable_point_light_effect",
     )
+
+    def set_all_lighting_fields(self, value: int):
+        """Set all (Map Piece-used) lighting fields to the same value."""
+        self.ambient_light_id = value
+        self.fog_id = value
+        self.scattered_light_id = value
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -247,6 +256,12 @@ class MSBObject(MSBPart):
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
         super(MSBObject, self).indices_to_objects(entry_lists)
         self._consume_index(entry_lists, "PARTS_PARAM_ST", "draw_parent")
+
+    def set_all_lighting_fields(self, value: int):
+        """Set all (Object-used) lighting fields to the same value."""
+        self.ambient_light_id = value
+        self.fog_id = value
+        self.scattered_light_id = value
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -519,6 +534,18 @@ class MSBCollision(MSBPart):
                 f"is just -1: {self._play_region_id} (Collision '{self.name}')."
             )
         self._stable_footing_flag = value
+
+    def set_all_lighting_fields(self, value: int):
+        """Set all lighting fields to the same value."""
+        self.ambient_light_id = value
+        self.fog_id = value
+        self.scattered_light_id = value
+        self.lens_flare_id = value
+        self.shadow_id = value
+        self.dof_id = value
+        self.tone_map_id = value
+        self.point_light_id = value
+        self.tone_correction_id = value
 
 
 MSBCollision.force_place_name_banner = property(

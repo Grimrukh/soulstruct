@@ -16,6 +16,7 @@ from soulstruct.base.game_types.map_types import MapEntity
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.files import write_json
 from soulstruct.utilities.misc import IDList
+from soulstruct.utilities.text import PY_NAME_RE
 
 from .msb_entry import MSBEntry
 from .msb_entry_list import MSBEntryList
@@ -38,7 +39,6 @@ _LOGGER = logging.getLogger(__name__)
 
 
 MAP_NAME_RE = re.compile(r"m(\d\d)_(\d\d)_.*")
-PY_NAME_RE = re.compile(r"^[A-z_][\w_]*$")  # valid Python variable name
 
 # NOTE: Completely absent in DS1 and earlier.
 MSB_HEADER_BYTES = struct.pack("4sII??BB", b"MSB ", 1, 16, False, False, 1, 255)

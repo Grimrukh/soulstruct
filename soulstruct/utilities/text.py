@@ -1,7 +1,9 @@
-__all__ = ["word_wrap", "camel_case_to_spaces", "string_to_identifier", "pad_chars", "indent_lines"]
+__all__ = ["PY_NAME_RE", "word_wrap", "camel_case_to_spaces", "string_to_identifier", "pad_chars", "indent_lines"]
 
 import re
 import textwrap
+
+PY_NAME_RE = re.compile(r"^[A-z_][\w_]*$")  # valid Python variable name
 
 
 def word_wrap(text, line_limit=50):

@@ -107,3 +107,14 @@ class CollisionHitFilter(IntEnum):
     Slide = 21  # yellow
     FallProtection = 22  # permeable for projectiles
     LevelExit_B = 23  # glowing turquoise
+
+    def is_solid_to_player(self) -> bool:
+        """Generous definition. Currently includes some unknown types for safety."""
+        if self <= 8:
+            return True
+        return self in {
+            self.Unknown_10,
+            self.Unknown_12,
+            self.GroupSwitch,
+            self.Unknown_18,
+        }
