@@ -434,6 +434,18 @@ EMEDF |= {
         "args": {},
         "arg_types": "",
     },
+    (2009, 15): {
+        "alias": "NightfallStoreCameraOffset",
+        "docstring": "Special instruction added by Meowmaritus for immediate camera manipulation in Nightfall.",
+        "args": {},
+        "arg_types": "",
+    },
+    (2009, 16): {
+        "alias": "NightfallApplyStoredCameraOffset",
+        "docstring": "Special instruction added by Meowmaritus for immediate camera manipulation in Nightfall.",
+        "args": {},
+        "arg_types": "",
+    },
 }
 
 

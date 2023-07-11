@@ -537,6 +537,8 @@ __all__ = [
     "NightfallSetSpecialMovement",  # 2009[10]
     "NightfallClearSpecialMovement",  # 2009[11]
     "NightfallCameraResetRequest",  # 2009[12]
+    "NightfallStoreCameraOffset",  # 2009[15]
+    "NightfallApplyStoredCameraOffset",  # 2009[16]
     "EnableThisFlag",
     "DisableThisFlag",
     # Custom instructions from `compiler`:
@@ -4368,6 +4370,18 @@ def NightfallClearSpecialMovement():
 
 
 def NightfallCameraResetRequest():
+    """
+    Special instruction added by Meowmaritus for immediate camera manipulation in Nightfall.
+    """
+
+
+def NightfallStoreCameraOffset():
+    """
+    Special instruction added by Meowmaritus for immediate camera manipulation in Nightfall.
+    """
+
+
+def NightfallApplyStoredCameraOffset():
     """
     Special instruction added by Meowmaritus for immediate camera manipulation in Nightfall.
     """
