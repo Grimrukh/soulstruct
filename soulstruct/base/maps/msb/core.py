@@ -370,7 +370,7 @@ class MSB(GameFile, abc.ABC):
         # noinspection PyTypeChecker
         return self.find_entry_name(name, supertypes=[self.MSB_SUPERTYPE_ENUM.PARTS], subtypes=subtypes)
 
-    def reattach_entry_references(self, warn_reattachments=False):
+    def reattach_entry_references(self, warn_reattachments=False, backup_converter: tp.Callable[[str], str] = None):
         """Iterate over all Parts and Events, and reattach same-named references to other entries in this MSB.
 
         For example, if an `MSBCharacter.draw_parent` is set to a collision that is no longer in this MSB, this method
@@ -399,10 +399,19 @@ class MSB(GameFile, abc.ABC):
                             try:
                                 referenced_entry = self.find_entry_name(item.name)
                             except KeyError:
-                                raise KeyError(
-                                    f"Could not find entry with name '{item.name}' referenced by index {i} of sequence "
-                                    f"field `{field_name}` in {subtype_name} '{entry.name}'."
-                                )
+                                if backup_converter:
+                                    try:
+                                        referenced_entry = self.find_entry_name(backup_converter(item.name))
+                                    except KeyError:
+                                        raise KeyError(
+                                            f"Could not find entry with name '{item.name}' referenced by index {i} of "
+                                            f"sequence field `{field_name}` in {subtype_name} '{entry.name}'."
+                                        )
+                                else:
+                                    raise KeyError(
+                                        f"Could not find entry with name '{item.name}' referenced by index {i} of "
+                                        f"sequence field `{field_name}` in {subtype_name} '{entry.name}'."
+                                    )
                             if item is referenced_entry:
                                 continue  # already attached
                             field_value[i] = referenced_entry  # attach to same-named entity
@@ -416,10 +425,19 @@ class MSB(GameFile, abc.ABC):
                     try:
                         referenced_entry = self.find_entry_name(field_value.name)
                     except KeyError:
-                        raise KeyError(
-                            f"Could not find entry with name '{field_value.name}' referenced by "
-                            f"field `{field_name}` in {subtype_name} '{entry.name}'."
-                        )
+                        if backup_converter:
+                            try:
+                                referenced_entry = self.find_entry_name(backup_converter(field_value.name))
+                            except KeyError:
+                                raise KeyError(
+                                    f"Could not find entry with name '{field_value.name}' referenced by "
+                                    f"field `{field_name}` in {subtype_name} '{entry.name}'."
+                                )
+                        else:
+                            raise KeyError(
+                                f"Could not find entry with name '{field_value.name}' referenced by "
+                                f"field `{field_name}` in {subtype_name} '{entry.name}'."
+                            )
                     if field_value is referenced_entry:
                         continue  # already attached
                     setattr(entry, field_name, referenced_entry)  # attach to same-named entity
