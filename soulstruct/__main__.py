@@ -94,10 +94,10 @@ parser.add_argument(
     action="store_true",
     help=word_wrap("Open Soulstruct Mod Manager for given installation path. Defaults to `DSR_PATH` variable."),
 )
-parser.add_argument("--binderpack", action="store", help=word_wrap("Repack a BND/BXF from the given source path."))
-parser.add_argument("--binderunpack", action="store", help=word_wrap("Unpack a BND/BXF from the given source path."))
-parser.add_argument("--tpfpack", action="store", help=word_wrap("Unpack a BND/BXF from the given source path."))
-parser.add_argument("--tpfunpack", action="store", help=word_wrap("Unpack a TPF from the given source path."))
+parser.add_argument("--binderpack", action="store", help=word_wrap("Repack a BND/BXF from the given source directory."))
+parser.add_argument("--binderunpack", action="store", help=word_wrap("Unpack a BND/BXF from the given source file."))
+parser.add_argument("--tpfpack", action="store", help=word_wrap("Repack a TPF from the given source directory."))
+parser.add_argument("--tpfunpack", action="store", help=word_wrap("Unpack a TPF from the given source file."))
 parser.add_argument(
     "--consoleLogLevel",
     action="store",
@@ -194,12 +194,14 @@ def soulstruct_main(ss_args) -> bool:
 
     if ss_args.tpfunpack is not None:
         from soulstruct.containers.tpf import TPF
-        tpf = TPF(ss_args.tpfunpack)
+        tpf = TPF.from_path(ss_args.tpfunpack)
         tpf.write_unpacked_directory()
         return False
 
     if ss_args.tpfpack is not None:
-        print("ERROR: TPF pack not yet implemented.")
+        from soulstruct.containers.tpf import TPF
+        tpf = TPF.from_unpacked_path(ss_args.tpfpack)
+        tpf.write()
         return False
 
     # No specific type. Open entire Soulstruct Project.

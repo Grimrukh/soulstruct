@@ -249,7 +249,8 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 self.CustomDialog(title="Project Error", message="No directory chosen. Quitting Soulstruct.")
                 raise SoulstructProjectError("No directory chosen. Quitting Soulstruct.")
 
-        self.toplevel.title(f"{self.PROJECT_CLASS.get_game().name} Project Editor: {Path(project_path)}")
+        project_name = Path(project_path).resolve().name
+        self.toplevel.title(f"{self.PROJECT_CLASS.get_game().name} Project Editor: {project_name}")
 
         try:
             self.project = self.PROJECT_CLASS(project_path, with_window=self, game_root=game_root)

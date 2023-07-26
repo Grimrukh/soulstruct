@@ -1,26 +1,38 @@
 from __future__ import annotations
 
-__all__ = ["TPFTexture", "TPF", "batch_get_tpf_texture_png_data"]
+__all__ = [
+    "TPFTexture",
+    "TPF",
+    "TPFPlatform",
+    "TextureType",
+    "TextureHeader",
+    "TextureFloatStruct",
+    "batch_get_tpf_texture_png_data",
+]
 
 import abc
 import logging
 import multiprocessing
-import json
 import re
 import shutil
 import tempfile
 import typing as tp
 import zlib
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from enum import IntEnum
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.base.textures.dds import DDS, DDSCAPS2, texconv, convert_dds_file
 from soulstruct.utilities.binary import *
+from soulstruct.utilities.files import read_json, write_json
 
-from .dcx import decompress
+from .dcx import DCXType, decompress
 
+try:
+    Self = tp.Self
+except AttributeError:
+    Self = "TPF"
 
 if tp.TYPE_CHECKING:
     from .entry import BinderEntry
@@ -87,6 +99,7 @@ class TPFTexture:
     mipmap_count: int = 0
     texture_flags: int = 0  # {2, 3} -> DCX-compressed; unknown otherwise
     data: bytes = b""
+
     header: TextureHeader | None = None
     unknown_floats: tuple[int, list[float]] | None = None
 
@@ -221,10 +234,6 @@ class TPFTexture:
         writer.fill("data_size", len(data), obj=self)
         writer.append(data)
 
-    @property
-    def stem(self) -> str:
-        return Path(self.name).stem
-
     def get_dds(self) -> DDS:
         return DDS.from_bytes(self.data)
 
@@ -315,7 +324,7 @@ class TPFTexture:
             f"    name = '{self.name}'\n"
             f"    format = {self.format}\n"
             f"    texture_type = {self.texture_type.name}\n"
-            f"    mipmaps = {self.mipmap_count}\n"
+            f"    mipmap_count = {self.mipmap_count}\n"
             f"    texture_flags = {self.texture_flags}\n"
             f"    data = <{len(self.data)} bytes>\n"
             f"    has_header = {self.header is not None}\n"
@@ -358,6 +367,59 @@ class TPF(GameFile):
             textures=textures, platform=platform, encoding_type=tpf_struct.encoding_type, tpf_flags=tpf_struct.tpf_flags
         )
 
+    @classmethod
+    def from_unpacked_path(cls, path: str | Path) -> Self:
+        """Load manifest JSON or unpacked TPF directory containing a manifest JSON."""
+        path = Path(path)
+        if path.is_dir():
+            directory = path
+            manifest_path = directory / "tpf_manifest.json"
+            if not manifest_path.exists():
+                raise FileNotFoundError(f"Binder manifest JSON file not found: {manifest_path}")
+        elif path.name == "tpf_manifest.json":
+            directory = path.parent
+            manifest_path = path
+        else:
+            raise ValueError(
+                f"Invalid file source for `{cls.__name__}`: {path}. Must be a manifest JSON file or unpacked folder "
+                f"containing one."
+            )
+
+        if not manifest_path.is_file():
+            raise FileNotFoundError(f"Could not find TPF manifest file: {manifest_path}")
+        manifest = read_json(manifest_path, encoding="shift-jis")
+
+        textures = []
+        for entry in manifest["entries"]:
+            dds_path = directory / f"{entry['name']}.dds"
+            if not dds_path.is_file():
+                raise FileNotFoundError(f"Could not find DDS file for TPF texture {entry['name']}: {dds_path}")
+            textures.append(TPFTexture(
+                name=entry["name"],
+                format=entry["format"],
+                texture_type=TextureType[entry["texture_type"]],
+                mipmap_count=entry["mipmap_count"],
+                texture_flags=entry["texture_flags"],
+                data=dds_path.read_bytes(),
+                header=TextureHeader(**entry["header"]) if entry.get("header", None) is not None else None,
+                unknown_floats=entry.get("unknown_floats", None),
+            ))
+
+        tpf = cls(
+            dcx_type=DCXType[manifest["dcx_type"]],
+            platform=TPFPlatform[manifest["platform"]],
+            encoding_type=manifest["encoding_type"],
+            tpf_flags=manifest["tpf_flags"],
+            textures=textures,
+        )
+
+        if directory.suffix == ".unpacked":  # only this suffix is automatically removed
+            tpf.path = directory.with_name(directory.name[:-9])
+        else:
+            tpf.path = directory  # writing this path will conflict with this unpacked folder source
+
+        return tpf
+
     def to_writer(self) -> BinaryWriter:
         """Pack TPF file to bytes."""
         byte_order = self.platform.get_byte_order()
@@ -390,24 +452,31 @@ class TPF(GameFile):
 
         texture_entries = []
         for texture in self.textures:
+            if texture.header is not None:
+                raise ValueError("Cannot write unpacked TPF directory for console TPFs.")
+            if texture.unknown_floats is not None:
+                raise ValueError("Cannot write unpacked TPF directory for TPFs with unknown floats.")
+
             texture_dict = {
                 "name": texture.name,
                 "format": texture.format,
                 "texture_type": texture.texture_type.name,
-                "mipmaps": texture.mipmap_count,
+                "mipmap_count": texture.mipmap_count,
                 "texture_flags": texture.texture_flags,
+                "header": asdict(texture.header) if texture.header is not None else None,
+                "unknown_floats": texture.unknown_floats,  # likely `None`
             }
             texture_entries.append(texture_dict)
-            texture.write_dds(directory / f"{texture.stem}.dds")  # TODO: should already be '.dds', no?
+            texture.write_dds(directory / f"{texture.name}.dds")
         tpf_manifest = self.get_json_header()
         tpf_manifest["entries"] = texture_entries
 
         # NOTE: Binder manifest is always encoded in shift-JIS, not `shift_jis_2004`.
-        with (directory / "tpf_manifest.json").open("w", encoding="shift-jis") as f:
-            json.dump(tpf_manifest, f, indent=4)
+        write_json(directory / "tpf_manifest.json", tpf_manifest, encoding="shift-jis", indent=4)
 
     def get_json_header(self):
         return {
+            "dcx_type": self.dcx_type.name,
             "platform": self.platform.name,
             "encoding_type": self.encoding_type,
             "tpf_flags": self.tpf_flags,
@@ -486,7 +555,7 @@ class TPF(GameFile):
                 # Load all textures from 'loose' TPF (usually 'mXX_9999.tpf').
                 tpf = TPF.from_path(tpf_path)
                 for texture in tpf.textures:
-                    tpf_entries[texture.stem] = texture
+                    tpf_entries[texture.name] = texture
         return tpf_entries
 
     @classmethod
