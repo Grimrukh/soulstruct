@@ -169,7 +169,8 @@ class TkTextEditor(tk.Text):
         """Text widget that uses some Tcl voodoo (courtesy of Tkinter wizard Bryan Oakley) to allow arbitrary callbacks
         whenever a 'mark', 'set', or 'insert' Tcl command occurs (e.g. updating a line number tracker).
 
-        Also includes methods for scanning and tagging arbitrary regex patterns, which should be given in `cls.TAGS`.
+        Also includes methods for scanning and tagging arbitrary regex patterns, which should be given in `cls.TAGS`,
+        and for auto-indenting new lines based on the previous line's indent.
 
         See: https://stackoverflow.com/a/13840728
         """
@@ -186,6 +187,7 @@ class TkTextEditor(tk.Text):
         self.tag_configure("found", background="#224433")
         self.tag_configure("error", background="#443322")
 
+        self.bind("<Return>", self._auto_indent_newline)
         self.bind("<Tab>", self._tab_four_spaces)
         self.bind("<Home>", self._home_key)
         self.bind("<Control-slash>", self._toggle_comment)
@@ -287,6 +289,18 @@ class TkTextEditor(tk.Text):
     def _delete_word(self, _):
         """Deletes the word before the cursor."""
         self.delete("insert wordstart", "insert")
+        return "break"
+
+    def _auto_indent_newline(self, _):
+        """Inserts a newline with the same leading spaces as the current line."""
+        current_line = self.index(tk.INSERT).split('.')[0]
+        line_text = self.get(f"{current_line}.0", f"{current_line}.end")
+        leading_space_count = len(line_text) - len(line_text.lstrip())
+
+        # Create a new line and add the leading spaces.
+        self.insert(tk.INSERT, '\n' + ' ' * leading_space_count)
+
+        # Return 'break' to prevent the default newline behavior.
         return "break"
 
     def _decrease_font_size(self, _):

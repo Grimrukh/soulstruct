@@ -7,7 +7,7 @@ class StrEnum(str, Enum):
     """
     FROM PYTHON 3.11
 
-    Enum where members are also (and must be) strings
+    Enum where members are also (and must be) strings.
     """
 
     def __new__(cls, *values):

@@ -29,7 +29,7 @@ class GameSelector(SmartFrame):
                     command=lambda g=game: self.done(g),
                     bg="#422",
                     fg="#FFF",
-                    width=30,
+                    width=40,
                     pady=10,
                     padx=10,
                 )

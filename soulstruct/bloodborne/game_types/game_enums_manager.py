@@ -21,4 +21,11 @@ class GameEnumsManager(_BaseGameEnumsManager):
         NavigationEvent,
         RegionVolume,
         RegionPoint,
+        Text,
+        ItemLotParam,
+        WeaponParam,
+        ArmorParam,
+        GoodParam,
+        AccessoryParam,
+        Animation,
     )

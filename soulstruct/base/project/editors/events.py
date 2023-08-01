@@ -198,7 +198,7 @@ class EventsEditor(SmartFrame):
         with self.set_master(auto_columns=0, pady=10, column_weights=[1, 1, 1], sticky="n"):
             self.compile_button = self.Button(
                 text="Save & Compile",
-                width=15,
+                width=17,
                 padx=5,
                 command=self._compile_selected,
                 tooltip_text="Save script, then compile it to test syntax. Text will flash blue if test is successful. "
@@ -206,14 +206,14 @@ class EventsEditor(SmartFrame):
             )
             self.reload_button = self.Button(
                 text="Reload Script",
-                width=15,
+                width=17,
                 padx=5,
                 command=self.reload_selected,
                 tooltip_text="Reload script from project. Unsaved changes to current script will be lost. (Ctrl + R)",
             )
             self.Button(
                 text="Reload & Export",
-                width=15,
+                width=17,
                 padx=5,
                 bg="#822",
                 command=self.reload_and_export,

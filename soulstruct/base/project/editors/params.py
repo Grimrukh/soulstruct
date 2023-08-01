@@ -1,13 +1,22 @@
 from __future__ import annotations
 
+__all__ = [
+    "ParamsEditor",
+    "ParamFieldRow",
+    "ParamEntryRow",
+    "ParamFinder",
+]
+
 import logging
 import typing as tp
 
 from soulstruct.base.game_types import BaseParam, GAME_INT_TYPE
-from soulstruct.base.params.param_row import ParamRow, ParamFieldMetadata
+from soulstruct.base.params import Param, ParamRow, ParamFieldMetadata
+from soulstruct.base.params.utilities import ParamFieldComparisonType, ParamFieldSearchCondition, find_param_rows
 from soulstruct.base.project.editors.base_editor import EntryRow
 from soulstruct.base.project.editors.field_editor import FieldRow, BaseFieldEditor
 from soulstruct.base.project.utilities import NameSelectionBox
+from soulstruct.utilities.window import SmartFrame
 
 if tp.TYPE_CHECKING:
     from soulstruct.base.params.gameparambnd import GameParamBND
@@ -105,9 +114,18 @@ class ParamsEditor(BaseFieldEditor):
     ENTRY_ROW_CLASS = ParamEntryRow
     entry_rows: list[ParamEntryRow]
 
+    row_conditions: list[ParamFieldSearchCondition]
+    found_rows: dict[int, ParamRow]
+
     def __init__(self, project, linker, master=None, toplevel=False):
         self.go_to_param_id_entry = None
-        self.search_result = None
+
+        self.go_to_next_found_row_button = None
+        self.clear_search_button = None
+        self.row_conditions = []
+        self.found_rows = {}
+        self.found_row_index = 0
+
         super().__init__(project, linker, master=master, toplevel=toplevel, window_title="Soulstruct Params Editor")
 
     @property
@@ -118,10 +136,17 @@ class ParamsEditor(BaseFieldEditor):
         with self.set_master(sticky="nsew", row_weights=[0, 1], column_weights=[1], auto_rows=0):
             with self.set_master(pady=10, sticky="w", row_weights=[1], column_weights=[1, 1], auto_columns=0):
                 self.go_to_param_id_entry = self.Entry(
-                    label="Go to Param ID:", label_position="left", integers_only=True, width=30, padx=10
+                    label="Go to Param ID:", label_position="left", integers_only=True, width=15, padx=(10, 30),
                 )
                 self.go_to_param_id_entry.bind("<Return>", self.go_to_param_id)
-                self.search_result = self.Label(fg="#CCF").var
+
+                self.Button(text="Set Field Conditions", command=self.set_field_conditions, padx=10, bg="#622")
+                self.go_to_next_found_row_button = self.Button(
+                    text="Go to Next Hit", command=self.go_to_next_found_row, padx=10, bg="#622", state="disabled",
+                )
+                self.clear_search_button = self.Button(
+                    text="Clear Search", command=self.clear_search, padx=10, bg="#622", state="disabled",
+                )
 
             super().build()
 
@@ -139,9 +164,46 @@ class ParamsEditor(BaseFieldEditor):
                 self.flash_bg(self.go_to_param_id_entry)
                 return
             param_id = max(p_id for p_id in params if p_id < param_id)
-            self.search_result.set(f"Found closest preceding entry: {param_id}")
-            self.after(2000, lambda: self.search_result.set(""))
+            self.CustomDialog("No Exact Match", f"No exact match. Found closest preceding ID: {param_id}")
         self.select_entry_id(param_id, set_focus_to_text=False, edit_if_already_selected=False)
+
+    def set_field_conditions(self):
+        """Open a window to construct or edit search conditions for Param row fields."""
+        if self.active_category is None:
+            self.CustomDialog("No Param Selected", "No Param category has been selected.")
+            return
+        param = self.params[self.active_category]
+        param_finder = ParamFinder(self, param, param_name=self.active_category, initial_conditions=self.row_conditions)
+        new_conditions = param_finder.go()
+        if new_conditions is not None:
+            self.row_conditions = new_conditions
+            self.found_rows = find_param_rows(param, self.row_conditions)
+            if not self.found_rows:
+                self.CustomDialog("No Search Results", "No rows match the given conditions.")
+            else:
+                self.CustomDialog(
+                    "Search Results",
+                    f"Found {len(self.found_rows)} rows that match the given conditions.\n"
+                    f"Click 'Go to Next Hit' to cycle through them."
+                )
+                self.go_to_next_found_row_button.config(state="normal")
+                self.clear_search_button.config(state="normal")
+                return
+
+    def go_to_next_found_row(self):
+        """Go to next condition search result. Does nothing if no search has been performed."""
+        if not self.found_rows:
+            # Button should not be active in this case.
+            self.CustomDialog("No Search Results", "No row search has been performed.")
+            return
+        self.found_row_index = (self.found_row_index + 1) % len(self.found_rows)
+        row_id = list(self.found_rows.keys())[self.found_row_index]
+        self.select_entry_id(row_id, set_focus_to_text=False, edit_if_already_selected=False)
+
+    def clear_search(self):
+        self.row_conditions = []
+        self.go_to_next_found_row_button.config(state="disabled")
+        self.clear_search_button.config(state="disabled")
 
     def find_all_param_references(self, param_id):
         """Iterates over all params to find references to this param ID, and presents them in a pop-out list."""
@@ -298,3 +360,111 @@ class ParamsEditor(BaseFieldEditor):
             self.CustomDialog("Item Text Error", f"Could not edit item text. Error:\n\n{e}")
         else:
             self.refresh_entries()
+
+
+class ParamFinder(SmartFrame):
+    """Allows the user to construct a search query for a given Param."""
+
+    WIDTH = 70  # characters
+    HEIGHT = 20  # lines
+
+    editor: ParamsEditor
+    conditions: list[ParamFieldSearchCondition] | None
+
+    def __init__(self, master: ParamsEditor, param: Param, param_name="List", initial_conditions=None):
+        super().__init__(toplevel=True, master=master, window_title=f"Find Param in {param_name}")
+
+        self.editor = master
+        self.conditions = []
+
+        with self.set_master(padx=20, pady=20, auto_rows=0):
+            self.Label(text="Add search conditions to the list below.\nDouble click a condition to remove it.")
+            with self.set_master(auto_columns=0, grid_defaults={"padx": 5}):
+                self._field_nickname_combobox = self.Combobox(
+                    values=param.ROW_TYPE.get_binary_field_names(),
+                    initial_value="",
+                    width=40,
+                    font=("Consolas", 14),
+                )
+                self._condition_combobox = self.Combobox(
+                    values=[c.value for c in ParamFieldComparisonType],
+                    initial_value="==",
+                    width=4,
+                    font=("Consolas", 14),
+                )
+                self._value_entry = self.Entry(
+                    width=10,
+                    font=("Consolas", 14),
+                    numbers_only=True,
+                )
+                self._add_condition_button = self.Button(
+                    text="Add Condition",
+                    command=self._add_condition,
+                    bg="#622",
+                )
+
+            self._condition_listbox = self.Listbox(
+                values=[],
+                width=self.WIDTH,
+                height=self.HEIGHT,
+                vertical_scrollbar=True,
+                selectmode="single",
+                font=("Consolas", 14),
+                padx=20,
+                pady=20,
+            )
+
+            self._condition_listbox.bind("<Double-Button-1>", lambda e: self._remove_condition())
+
+            with self.set_master(auto_columns=0, padx=10, pady=10, grid_defaults={"padx": 10}):
+                self.Button(
+                    text="Confirm", command=lambda: self.done(True), **self.editor.DEFAULT_BUTTON_KWARGS["YES"]
+                )
+                self.Button(
+                    text="Cancel", command=lambda: self.done(False), **self.editor.DEFAULT_BUTTON_KWARGS["NO"]
+                )
+
+        if initial_conditions:
+            self.conditions = initial_conditions
+            for condition in initial_conditions:
+                self._condition_listbox.insert("end", str(condition))
+
+        self.bind_all("<Escape>", lambda e: self.done(False))
+        self.protocol("WM_DELETE_WINDOW", lambda: self.done(False))
+        self.resizable(width=False, height=False)
+        self.set_geometry(relative_position=(0.5, 0.3), transient=True)
+
+    def _add_condition(self):
+        field_nickname = self._field_nickname_combobox.get()
+        condition = self._condition_combobox.get()
+        value = self._value_entry.var.get()
+        if not field_nickname or not condition or not value:
+            return  # not valid
+
+        condition = ParamFieldSearchCondition(field_nickname, ParamFieldComparisonType(condition), float(value))
+        self.conditions.append(condition)
+        self._condition_listbox.insert("end", str(condition))
+
+        self._field_nickname_combobox.set("")
+        self._condition_combobox.set("==")
+        self._value_entry.var.set("")
+
+    def _remove_condition(self):
+        """Remove selected entry from list."""
+        selection = self._condition_listbox.curselection()
+        if not selection:
+            return
+        self._condition_listbox.delete(selection[0])
+        self.conditions.pop(selection[0])
+
+    def go(self):
+        self.wait_visibility()
+        self.grab_set()
+        self.mainloop()
+        self.destroy()
+        return self.conditions
+
+    def done(self, confirm=True):
+        if not confirm:
+            self.conditions = None
+        self.quit()

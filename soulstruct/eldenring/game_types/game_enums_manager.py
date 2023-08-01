@@ -22,4 +22,11 @@ class GameEnumsManager(_BaseGameEnumsManager):
         # TODO: New region subtypes? EMEDF would need to specify them to be any use...
         #  Could also still use `RegionPoint` vs. `RegionVolume` for enum/argument purposes?
         Region,
+        Text,
+        ItemLotParam,
+        WeaponParam,
+        ArmorParam,
+        GoodParam,
+        AccessoryParam,
+        Animation,
     )

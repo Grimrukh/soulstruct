@@ -142,7 +142,8 @@ class GameEnumsManager(abc.ABC):
         for module_name, module in self.modules.items():
             self._load_module(module_name, module)
 
-    def _get_module_members(self, module_name: str, module: ModuleType):
+    @staticmethod
+    def _get_module_members(module_name: str, module: ModuleType):
         return inspect.getmembers(
             module,
             lambda o: (
@@ -152,27 +153,35 @@ class GameEnumsManager(abc.ABC):
         )
 
     def _check_existing_enum_value(self, module_name: str, game_type: GAME_INT_TYPE, enum_member: IntEnum):
-        """Checks if this `enum_member.value` already exists ANYWHERE in any modules."""
+        """Checks if this `enum_member.value` already exists ANYWHERE in any modules.
+
+        Logs a warning if the same value is found in a different module, but only if the enum value is seven or more
+        digits (rather than, say, a reused NPC entity ID like 6000).
+
+        Also logs a warning if the same value already exists with a different enum type. Note that this has plenty of
+        vanilla occurrences, even though I consider it bad practice! (Sorry FromSoft.)
+        """
         if enum_member.value not in self.all_enum_values:
             self.all_enum_values[enum_member.value] = (module_name, game_type, enum_member.__class__)
             return
 
         existing_module_name, existing_game_type, existing_enum_type = self.all_enum_values[enum_member.value]
         if game_type in existing_enum_type.__mro__ or existing_enum_type in game_type.__mro__:
-            # Type match (one is child of the other). Only warn if they are in different modules.
-            if existing_module_name != module_name:
+            # Type match (one is child of the other). Only warn if they are in different modules and the enum value is
+            # seven or more digits (rather than, say, a reused NPC entity ID like 6000).
+            if existing_module_name != module_name and enum_member.value >= 1_000_000:
                 _LOGGER.warning(
-                    f"Enum value {enum_member.value} of type `{enum_member.__class__.__name__}` (for "
+                    f"Enum value {enum_member.value} of type `{enum_member.__class__.__name__}` (for argument type "
                     f"`{game_type.__name__}`) was defined in module '{module_name}' after already being defined in "
                     f"module '{existing_module_name}'. Harmless, but potentially redundant, as cross-map imports "
                     f"are supported by EVS decompilation."
                 )
         else:
             _LOGGER.warning(
-                f"Enum value {enum_member.value} of type `{enum_member.__class__.__name__}` (for "
+                f"Enum value {enum_member.value} of type `{enum_member.__class__.__name__}` (for argument type "
                 f"`{game_type.__name__}`) in module '{module_name} was already defined with type "
-                f"`{existing_enum_type.__name__}` (for `{existing_game_type.__name__}`) in module "
-                f"'{existing_module_name}. This shouldn't cause a game issue, but it may cause you headaches."
+                f"`{existing_enum_type.__name__}` (for argument type `{existing_game_type.__name__}`) in module "
+                f"'{existing_module_name}'. This shouldn't cause a game issue, but it may cause you headaches."
             )
 
     def _parse_game_type_enum(
@@ -358,7 +367,8 @@ class GameEnumsManager(abc.ABC):
 
         return imports
 
-    def _is_protected(self, value: int) -> bool:
+    @staticmethod
+    def _is_protected(value: int) -> bool:
         """Only checked for `MapEntity` (entity ID) enums."""
         return 10000 <= value <= 10010
 

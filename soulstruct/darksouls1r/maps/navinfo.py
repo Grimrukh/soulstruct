@@ -17,11 +17,13 @@ Detailed information about the relationship between MSB navmeshes and collisions
 
     - Each navmesh in a map has a corresponding "room" in that map's MCP file. These rooms simply index the navmeshes
     in the order they are contained inside the MSB. These rooms are simple "AABBs" (axis-aligned bounding boxes) aligned
-    to the world axes, so they aren't particularly veridical to the map geometry. Each room is connected to a list of
+    to the world axes, so they aren't particularly veridical to the map geometry. (I would guess that they are generated
+    in a way that contains all navmesh vertices in that model, plus some padding.) Each room is connected to a list of
     other rooms.
 
-    - Each map also has an MCG file containing a graph that helps AI use the navmesh. The nodes on this graph are
-    "gates" between MCP rooms, with "edges" connecting them that each pass through one room index from the MCP.
+    - Each map also has an MCG file containing a graph that helps AI use the navmesh. The nodes in this graph are
+    "gates" between MCP rooms, with "edges" connecting them that each pass through one room index from the MCP (or
+    equivalently, one navmesh part in the MSB).
 
     - The MCP navmesh rooms control *backread*, based on the player's distance from that room's box (likely a simple
     raycast). The game also only seems to check the distance to rooms that are connected to the one the player is
@@ -40,7 +42,8 @@ Detailed information about the relationship between MSB navmeshes and collisions
     all collisions in all other loaded maps have backread 0.
 
     - These backreads states are "upgraded" by navmesh backread groups. If a navmesh's MCP AABB is within the "hit"
-    backread distance, it is loaded (appears under "WorldBackRead" menu).
+    backread distance, it achieves a non-zero backread level (2) and is loaded (appears under "WorldBackRead" menu).
+    However, only its low-poly version is loaded.
 
     - The distance to the room the player is current inside is always 0.0. If the player is standing inside multiple
     rooms, the game appears to prefer the room that matches the player's navmesh, or that is inside the map of the
@@ -75,7 +78,8 @@ Notes for functional navmesh system:
     work. This will need to be done for enemy behavior anyway.
 
     - It should go without saying that breaking correspondence between the connected nodes and edges of nodes will
-    cause major issues, so don't do this.
+    cause major issues, so don't do this. You can tell if the navmesh system is broken completely because that map will
+    not appear as an option at the bottom of the debug `WorldNvmMan` menu.
 
 Miscellaneous extra notes (made long after the above):
 
@@ -689,11 +693,18 @@ class GateNode:
         self.translate = (rotation @ (self.translate - pivot_point)) + pivot_point
 
     def __repr__(self) -> str:
+        if self.connected_aabb:
+            return (
+                f"GateNode({self.translate}, "
+                f"connected_nodes=<{len(self.connected_nodes)}>, "
+                f"connected_edges=<{len(self.connected_edges)}>, "
+                f"connected_aabb=<AABB>"
+                f")"
+            )
         return (
-            f"GateNode({self.translate},"
+            f"GateNode({self.translate}, "
             f"connected_nodes=<{len(self.connected_nodes)}>, "
-            f"connected_edges=<{len(self.connected_edges)}>, "
-            f"connected_aabb={'<AABB>' if self.connected_aabb else 'None'}"
+            f"connected_edges=<{len(self.connected_edges)}>"
             f")"
         )
 
@@ -702,14 +713,17 @@ class GateNode:
 class GateEdge:
     """Edge between two `GateNode` instances in an `MCG` file.
 
-    Note that these objects in the `MCG` file reference indices of `NavmeshAABB` instances in the `MCP` file.
+    Note that these objects in the `MCG` file reference indices of `NavmeshAABB` instances in the `MCP` file (which in
+    turn should match corresponding `Navmesh` instances in the MSB file).
 
     The two file types (`MCG` and `MCP`) must be carefully synchronized with each other, and also with the actual
     Navmeshes in the MSB, which correspond one-to-one in order to AABBs in the `MCP` file.
 
     Each edge has two sets of unknown indices (too large to be AABBs, nodes, edges, or navmesh parts) and one unknown
     float, which seems very loosely related to the edge length in my research (though is sometimes five digits). TK
-    suspects these are weights, for AI computations presumably.
+    suspects these are weighted costs, for AI computations presumably.
+
+    TODO: Hypothesis: the unknown indices reference individual faces of the navmesh part models?
     """
 
     @dataclass(slots=True)
