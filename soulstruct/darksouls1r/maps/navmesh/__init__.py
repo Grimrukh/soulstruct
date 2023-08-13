@@ -1,4 +1,4 @@
-__all__ = ["NavmeshGraph", "MCP", "NavmeshAABB", "MCG", "GateNode", "GateEdge"]
+__all__ = ["NVM", "NavmeshGraph", "MCP", "NavmeshAABB", "MCG", "GateNode", "GateEdge"]
 
 from .core import NavmeshGraph
 from .mcp import MCP, NavmeshAABB
