@@ -2521,9 +2521,9 @@ def Event_12405250(_, flag: int, navmesh_id: int, flag_1: int):
     MAIN.Await(OR_1)
     
     SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
-    DisableNavmeshType(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Solid)
+    DisableNavmeshType(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
     SkipLines(1)
-    EnableNavmeshType(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Solid)
+    EnableNavmeshType(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
     
     MAIN.Await(FlagEnabled(flag_1))
     
@@ -2541,9 +2541,9 @@ def Event_12405251(_, flag: int, navmesh_id: int, flag_1: int):
     MAIN.Await(OR_1)
     
     SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
-    DisableNavmeshType(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Solid)
+    DisableNavmeshType(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
     SkipLines(1)
-    EnableNavmeshType(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Solid)
+    EnableNavmeshType(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
     
     MAIN.Await(FlagEnabled(flag_1))
     

@@ -8,9 +8,9 @@ from collections import deque
 from dataclasses import dataclass, field
 
 from soulstruct.base.game_file import GameFile
+from soulstruct.darksouls1r.events.emevd.enums import NavmeshType
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector2, Vector3
-from ..events.emevd.enums import NavmeshType
 
 try:
     Self = tp.Self
@@ -27,13 +27,6 @@ class NVMTriangle:
     connected_indices: tuple[int, int, int]  # connected triangle indices along the 1-2, 2-3, and 1-3 edges
     obstacle_count: int  # number of breakable objects on this triangle
     all_flags: int  # used by AI to check if this triangle can be navigated by a given character
-    flag: None | NavmeshType = field(init=False, default=None)
-
-    def __post_init__(self):
-        try:
-            self.flag = NavmeshType(self.all_flags)
-        except ValueError:  # unexpected multiple flags
-            self.flag = None
 
     @classmethod
     def from_nvm_reader(cls, reader: BinaryReader) -> NVMTriangle:
@@ -69,6 +62,42 @@ class NVMTriangle:
     def is_clockwise(self, vertices: list[Vector3]):
         v1, v2, v3 = (vertices[i] for i in self.vertex_indices)
         return line_point_cross(v1, v2, v3) < 0
+
+    @property
+    def flag(self) -> NavmeshType:
+        """Try to access the triangle flags as a single value."""
+        try:
+            return NavmeshType(self.all_flags)
+        except ValueError:  # unexpected multiple flags
+            raise ValueError(f"`NVMTriangle` has multiple flags: {self.all_flags:016b}")
+
+    @flag.setter
+    def flag(self, flag: NavmeshType):
+        """Set the triangle flags to a single value."""
+        self.all_flags = flag.value
+
+    def __repr__(self):
+        try:
+            flag = self.flag
+            if flag == NavmeshType.Default:
+                return (
+                    f"NVMTriangle({self.vertex_indices}, "
+                    f"connected_indices={self.connected_indices}, "
+                    f"obstacle_count={self.obstacle_count})"
+                )
+            return (
+                f"NVMTriangle({self.vertex_indices}, "
+                f"connected_indices={self.connected_indices}, "
+                f"obstacle_count={self.obstacle_count}, "
+                f"flag=<NavmeshType.{flag.name}>)"
+            )
+        except ValueError:
+            return (
+                f"NVMTriangle({self.vertex_indices}, "
+                f"connected_indices={self.connected_indices}, "
+                f"obstacle_count={self.obstacle_count}, "
+                f"all_flags={self.all_flags})"
+            )
 
 
 @dataclass(slots=True)
@@ -154,17 +183,17 @@ class NVMEventEntity:
 @dataclass(slots=True)
 class NVM(GameFile):
     """Holds a navigation mesh (vertices and triangles), per-triangle navigation flags, groups of triangles that can be
-    manipulated with EMEVDS, and a box hierarchy that covers the mesh (which is simple to generate)."""
+    manipulated with EMEVD scripts, and a box quad-tree hierarchy that covers the mesh (which is simple to generate)."""
 
     # TODO: Always correct for DS1. Not sure about DeS.
     BOX_LEVELS: tp.ClassVar[int] = 3  # number of nested quaternary levels in box tree
-    BOX_BORDER: tp.ClassVar[float] = 0.5  # in-game distance units
+    BOX_PADDING: tp.ClassVar[float] = 0.5  # in-game distance units
 
+    # Absolute cross-products smaller than this will NOT be counted as outside triangle.
     # NOTE: I can't find any tolerance that produces EXACTLY the same box contents as the vanilla files in DS1.
-    #  The best inspection I can muster simple indicates that some barely-untouched faces are still assigned to boxes,
+    #  The best inspection I can muster simply indicates that some barely-outside faces are still assigned to boxes,
     #  but similarly narrow gaps are correctly interpreted in other cases (maybe a triangle vs. quad test thing).
     #  It almost certainly should not matter.
-    #  Absolute cross-products smaller than this will NOT be counted as outside triangle
     BOX_TRIANGLE_TOLERANCE: tp.ClassVar[float] = 1E-9
 
     big_endian: bool = False
@@ -175,7 +204,7 @@ class NVM(GameFile):
 
     @dataclass(slots=True)
     class NVMHeaderStruct(BinaryStruct):
-        big_endian: int = field(**Binary(asserted=[1, 0x1000000]))  # 1 (LE) or 0x1000000 (BE)
+        endianness: int = field(**Binary(asserted=[1, 0x1000000]))  # 1 (LE) or 0x1000000 (BE)
         vertices_count: int
         vertices_offset: int = field(init=False, **Binary(asserted=0x80))  # immediately after this header
         triangles_count: int
@@ -225,14 +254,14 @@ class NVM(GameFile):
 
         writer = BinaryWriter(ByteOrder.big_endian_bool(self.big_endian))
         self.NVMHeaderStruct(
-            big_endian=self.big_endian,
+            endianness=0x1000000 if self.big_endian else 1,
             vertices_count=len(self.vertices),
             triangles_count=len(self.triangles),
             triangles_offset=RESERVED,
             root_box_offset=RESERVED,
             entities_count=len(self.event_entities),
             entities_offset=RESERVED,
-        ).to_writer(reserve_obj=self)
+        ).to_writer(writer, reserve_obj=self)
 
         for vertex in self.vertices:
             writer.pack("3f", *vertex)
@@ -312,11 +341,11 @@ class NVM(GameFile):
         x_min = min(v.x for v in self.vertices)
         y_min = min(v.y for v in self.vertices)  # same for all boxes
         z_min = min(v.z for v in self.vertices)
-        root_start_corner = Vector3([x_min, y_min, z_min]) - self.BOX_BORDER
+        root_start_corner = Vector3([x_min, y_min, z_min]) - self.BOX_PADDING
         x_max = max(v.x for v in self.vertices)
         y_max = max(v.y for v in self.vertices)  # same for all boxes
         z_max = max(v.z for v in self.vertices)
-        root_end_corner = Vector3([x_max, y_max, z_max]) + self.BOX_BORDER
+        root_end_corner = Vector3([x_max, y_max, z_max]) + self.BOX_PADDING
 
         def create_box(start_corner: Vector3, end_corner: Vector3, level: int) -> NVMBox:
             # Box will either start or end at these halfway points, depending on its index.
@@ -355,8 +384,9 @@ class NVM(GameFile):
         self.root_box = create_box(root_start_corner, root_end_corner, level=0)
 
     def get_triangle_indices_in_box(self, start_corner: Vector3, end_corner: Vector3) -> list[int]:
-        """For automatic AABB box generation. Any triangle with a vertex in the box will count. Triangles can be part of
-        multiple leaf boxes.
+        """For automatic AABB quad-tree box generation. Any triangle with a vertex in the box will count.
+
+        Triangles can be part of multiple leaf boxes.
 
         TODO: Currently guessing that box intervals are half-open (closed at start, open at end). The border will ensure
          that no edge vertices are lost anyway, and vertices are obviously not likely to land exactly on the bounds.
@@ -407,7 +437,9 @@ class NVM(GameFile):
 
 
 def line_point_cross(a: Vector2, b: Vector2, point: Vector2) -> float:
-    return (b.x - a.x) * (point.y - a.y) - (b.y - a.y) * (point.x - a.x)
+    b_from_a = b - a
+    point_from_a = point - a
+    return b_from_a.x * point_from_a.y - b_from_a.y * point_from_a.x
 
 
 def is_outside(tri_a: Vector2, tri_b: Vector2, point: Vector2, tri_clockwise: bool, tolerance: float = 0.0) -> bool:

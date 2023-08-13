@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 __all__ = [
+    "MISSING_REF",
     "traverse_path_tree",
     "BiDict",
     "get_startupinfo",
@@ -14,6 +15,22 @@ import subprocess
 import typing as tp
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class MissingReference:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(MissingReference, cls).__new__(cls)
+        return cls._instance
+
+    def __repr__(self):
+        return "<Missing Reference>"
+
+
+# Singleton instance of MissingReference, for use as a default value when a reference is missing.
+MISSING_REF = MissingReference()
 
 
 def traverse_path_tree(tree, cur=()):

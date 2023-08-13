@@ -791,9 +791,9 @@ def Event_11100030():
     """Event 11100030"""
     if ThisEventSlotFlagEnabled():
         EndOfAnimation(obj=1101130, animation_id=2)
-        DisableNavmeshType(navmesh_id=1102040, navmesh_type=NavmeshType.Solid)
+        DisableNavmeshType(navmesh_id=1102040, navmesh_type=NavmeshType.Disable)
         End()
-    EnableNavmeshType(navmesh_id=1102040, navmesh_type=NavmeshType.Solid)
+    EnableNavmeshType(navmesh_id=1102040, navmesh_type=NavmeshType.Disable)
     AND_1.Add(FlagDisabled(11100700))
     AND_1.Add(ActionButton(
         prompt_text=10010400,
@@ -810,7 +810,7 @@ def Event_11100030():
     Move(PLAYER, destination=1102090, destination_type=CoordEntityType.Region, short_move=True)
     ForceAnimation(PLAYER, 7120)
     ForceAnimation(1101130, 1, wait_for_completion=True)
-    DisableNavmeshType(navmesh_id=1102040, navmesh_type=NavmeshType.Solid)
+    DisableNavmeshType(navmesh_id=1102040, navmesh_type=NavmeshType.Disable)
 
 
 @ContinueOnRest(11100031)
@@ -853,7 +853,7 @@ def Event_11100135():
     if ThisEventSlotFlagEnabled():
         EndOfAnimation(obj=1101160, animation_id=1)
         EndOfAnimation(obj=1101170, animation_id=1)
-        DisableNavmeshType(navmesh_id=1102041, navmesh_type=NavmeshType.Solid)
+        DisableNavmeshType(navmesh_id=1102041, navmesh_type=NavmeshType.Disable)
         End()
     
     MAIN.Await(ActionButton(
@@ -878,7 +878,7 @@ def Event_11100135():
     PlayCutscene(110000, cutscene_flags=0, player_id=10000)
     ForceAnimation(1101160, 1)
     ForceAnimation(1101170, 1)
-    DisableNavmeshType(navmesh_id=1102041, navmesh_type=NavmeshType.Solid)
+    DisableNavmeshType(navmesh_id=1102041, navmesh_type=NavmeshType.Disable)
 
 
 @ContinueOnRest(11100136)

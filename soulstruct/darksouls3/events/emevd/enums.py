@@ -259,21 +259,21 @@ class NavmeshType(BaseEMEVDEnum):
     NOTE: These bits are in reverse order to the actual NVM triangle flag.
     """
     Default = 0b0000_0000_0000_0000
-    Solid = 0b0000_0000_0000_0001
-    Exit = 0b0000_0000_0000_0010
-    Obstacle = 0b0000_0000_0000_0100  # can stack with other flags
+    Disable = 0b0000_0000_0000_0001
+    Gate = 0b0000_0000_0000_0010  # location of an MCG gate node to connect to another navmesh in the same map
+    Obstacle = 0b0000_0000_0000_0100  # will trigger enemies' 'destroy obstacle' animation; can stack with other flags
     Wall = 0b0000_0000_0000_1000
     Degenerate = 0b0000_0000_0001_0000  # can stack with other flags; likely not supported in EMEVD
-    WallTouchingFloor = 0b0000_0000_0010_0000
+    FloorToWall = 0b0000_0000_0010_0000
     LandingPoint = 0b0000_0000_0100_0000
     Event = 0b0000_0000_1000_0000
-    Cliff = 0b0000_0001_0000_0000
-    WideSpace = 0b0000_0010_0000_0000
+    Edge = 0b0000_0001_0000_0000
+    LargeSpace = 0b0000_0010_0000_0000
     Ladder = 0b0000_0100_0000_0000
     Hole = 0b0000_1000_0000_0000
     Door = 0b0001_0000_0000_0000
     ClosedDoor = 0b0010_0000_0000_0000
-    ObstacleExit = 0b0100_0000_0000_0000
+    MapExit = 0b0100_0000_0000_0000  # used to generate dynamic navmesh gate nodes to connect to other maps
     InsideWall = 0b1000_0000_0000_0000
 
 

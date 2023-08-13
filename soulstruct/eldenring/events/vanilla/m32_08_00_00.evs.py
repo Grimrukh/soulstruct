@@ -219,13 +219,13 @@ def Event_32082580():
 def Event_32082498():
     """Event 32082498"""
     GotoIfFlagEnabled(Label.L0, flag=32080588)
-    EnableNavmeshType(navmesh_id=32082498, navmesh_type=NavmeshType.Solid)
+    EnableNavmeshType(navmesh_id=32082498, navmesh_type=NavmeshType.Disable)
     
     MAIN.Await(FlagEnabled(32080588))
 
     # --- Label 0 --- #
     DefineLabel(0)
-    DisableNavmeshType(navmesh_id=32082498, navmesh_type=NavmeshType.Solid)
+    DisableNavmeshType(navmesh_id=32082498, navmesh_type=NavmeshType.Disable)
     End()
 
 

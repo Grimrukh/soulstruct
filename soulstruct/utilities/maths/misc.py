@@ -29,9 +29,14 @@ def shift(rel_x, rel_z, origin=(0, 0), rotation=0):
     return origin[0] + dx, origin[1] + dz
 
 
-def resolve_rotation(rotation: Matrix3 | Vector3 | list | tuple | int | float, radians=False) -> Matrix3:
-    """Return a rotation `Matrix3` from various shortcut input types (e.g. single value or Euler angle vector)."""
-    if isinstance(rotation, (int, float)):
+def resolve_rotation(rotation: Matrix3 | Vector3 | list | tuple | int | float | None, radians=False) -> Matrix3:
+    """Return a rotation `Matrix3` from various shortcut input types (e.g. single value or Euler angle vector).
+
+    `None` is returned as the identity matrix.
+    """
+    if rotation is None:
+        return Matrix3.identity()
+    elif isinstance(rotation, (int, float)):
         # Single rotation value is a shortcut for Y rotation (i.e. around vertical in-game axis).
         return Matrix3.from_euler_angles((0.0, rotation, 0.0), radians=radians)
     elif isinstance(rotation, (Vector3, list, tuple)):

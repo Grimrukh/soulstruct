@@ -149,8 +149,8 @@ def Event_12042810():
     # --- Label 0 --- #
     DefineLabel(0)
     DisableAI(Characters.MalformedStar)
-    EnableNavmeshType(navmesh_id=12044300, navmesh_type=NavmeshType.Solid)
-    EnableNavmeshType(navmesh_id=12044301, navmesh_type=NavmeshType.Solid)
+    EnableNavmeshType(navmesh_id=12044300, navmesh_type=NavmeshType.Disable)
+    EnableNavmeshType(navmesh_id=12044301, navmesh_type=NavmeshType.Disable)
     AND_2.Add(FlagEnabled(12042805))
     AND_2.Add(CharacterInsideRegion(character=PLAYER, region=12042800))
     
