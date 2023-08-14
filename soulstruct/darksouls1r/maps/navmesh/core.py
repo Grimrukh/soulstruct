@@ -127,12 +127,6 @@ class NavmeshGraph:
         map_path (str or Path): Folder containing MCP and MCG files (e.g. '{game_root}/map/m10_01_00_00').
         msb (MSB or None): MSB instance or file path. If None (default), searched for in adjacent `MapStudio` directory.
         map_stem (str): map name stem, e.g. 'm10_01_00_00'. Auto-detected from `map_path` directory name by default.
-
-    TODO: Time to rehaul this.
-        - `MCP` can be fully auto-generated from the MSB and navmesh models EXCEPT for connectivity.
-            - For each navmesh part, open its model, get its vertex min/maxes, and add (0.5, 1.5, 0.5) dim padding.
-            - TO CHECK: two AABBs are connected IFF there exists an MCG gate between them (i.e. with at least one edge
-            in each of the two navmeshes).
     """
 
     map_path: Path  # path to game `map/mAA_BB_CC_DD` directory (NOT `MapStudio`)

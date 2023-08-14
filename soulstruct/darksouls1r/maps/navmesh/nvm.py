@@ -204,10 +204,15 @@ class NVM(GameFile):
     BOX_TRIANGLE_TOLERANCE: tp.ClassVar[float] = 1E-9
 
     big_endian: bool = False
-    vertices: list[Vector3] = field(default_factory=list)
+    vertices: list[list[float]] = field(default_factory=list)  # stored as `list` rather than `Vector3` for performance
     triangles: list[NVMTriangle] = field(default_factory=list)
     root_box: NVMBox = None
     event_entities: list[NVMEventEntity] = field(default_factory=list)
+
+    def __post_init__(self):
+        if self.root_box is None:
+            # Quadtree boxes are automatically generated from vertex extents.
+            self.generate_quadtree_boxes()
 
     @dataclass(slots=True)
     class NVMHeaderStruct(BinaryStruct):
@@ -236,7 +241,7 @@ class NVM(GameFile):
             raise ValueError(
                 f"Ttriangles offset for NVM should be {expected_triangles_offset}, not {header.triangles_offset}.")
 
-        vertices = [Vector3(reader.unpack("3f")) for _ in range(header.vertices_count)]
+        vertices = [list(reader.unpack("3f")) for _ in range(header.vertices_count)]
         triangles = [NVMTriangle.from_nvm_reader(reader) for _ in range(header.triangles_count)]
 
         reader.seek(header.root_box_offset)
@@ -337,22 +342,34 @@ class NVM(GameFile):
 
         return list(zip(all_boxes, all_indices))
 
-    def generate_boxes(self):
-        """Use level count and bordering to automatically generate boxes.
+    def get_vertex_bounds(
+        self, padding: tp.Sequence[float, float, float] | float | int = None
+    ) -> tuple[Vector3, Vector3]:
+        """Get min/max bounds of all vertices, optionally with padding."""
+        if padding is None:
+            padding = Vector3.zero()
+        elif isinstance(padding, (int, float)):
+            padding = Vector3([padding, padding, padding])
+        x_min = min(v[0] for v in self.vertices)
+        y_min = min(v[1] for v in self.vertices)
+        z_min = min(v[2] for v in self.vertices)
+        bounds_min = Vector3([x_min, y_min, z_min]) - padding
+        x_max = max(v[0] for v in self.vertices)
+        y_max = max(v[1] for v in self.vertices)
+        z_max = max(v[2] for v in self.vertices)
+        bounds_max = Vector3([x_max, y_max, z_max]) + padding
+        return bounds_min, bounds_max
+
+    def generate_quadtree_boxes(self):
+        """Use level count and bordering to automatically generate three layers of quadtree `NVMBox` instances.
 
         These boxes simply divide the axis-aligned XZ extents of the mesh into eight, and stretch Y as needed (same for
-        all boxes). Leaf boxes contain bounded mesh vertices, though some may still be empty.
+        all boxes). Leaf boxes contain bounded mesh vertices, though some may still be empty. Padding is added on each
+        side.
 
         NOTE: Child box order (0, 1, 2, 3) is lowX/lowZ, highX/lowZ, highX/highZ, lowX/highZ.
         """
-        x_min = min(v.x for v in self.vertices)
-        y_min = min(v.y for v in self.vertices)  # same for all boxes
-        z_min = min(v.z for v in self.vertices)
-        root_start_corner = Vector3([x_min, y_min, z_min]) - self.BOX_PADDING
-        x_max = max(v.x for v in self.vertices)
-        y_max = max(v.y for v in self.vertices)  # same for all boxes
-        z_max = max(v.z for v in self.vertices)
-        root_end_corner = Vector3([x_max, y_max, z_max]) + self.BOX_PADDING
+        bounds_min, bounds_max = self.get_vertex_bounds(self.BOX_PADDING)
 
         def create_box(start_corner: Vector3, end_corner: Vector3, level: int) -> NVMBox:
             # Box will either start or end at these halfway points, depending on its index.
@@ -363,9 +380,9 @@ class NVM(GameFile):
             else:
                 triangle_indices = []
                 child_boxes = []
+                x_bisect = start_corner.x + (end_corner.x - start_corner.x) / 2.0
+                z_bisect = start_corner.z + (end_corner.z - start_corner.z) / 2.0
                 for i in range(4):
-                    x_bisect = start_corner.x + (end_corner.x - start_corner.x) / 2.0
-                    z_bisect = start_corner.z + (end_corner.z - start_corner.z) / 2.0
                     if i in {0, 3}:  # low X
                         x_start, x_end = start_corner.x, x_bisect
                     else:  # high X
@@ -375,8 +392,8 @@ class NVM(GameFile):
                     else:  # high Z
                         z_start, z_end = z_bisect, end_corner.z
 
-                    child_start_corner = Vector3([x_start, root_start_corner.y, z_start])
-                    child_end_corner = Vector3([x_end, root_end_corner.y, z_end])
+                    child_start_corner = Vector3([x_start, bounds_min.y, z_start])
+                    child_end_corner = Vector3([x_end, bounds_max.y, z_end])
 
                     child_box = create_box(child_start_corner, child_end_corner, level + 1)
                     child_boxes.append(child_box)
@@ -388,7 +405,8 @@ class NVM(GameFile):
                 child_boxes,
             )
 
-        self.root_box = create_box(root_start_corner, root_end_corner, level=0)
+        # Start recursive box construction.
+        self.root_box = create_box(bounds_min, bounds_max, level=0)
 
     def get_triangle_indices_in_box(self, start_corner: Vector3, end_corner: Vector3) -> list[int]:
         """For automatic AABB quad-tree box generation. Any triangle with a vertex in the box will count.
@@ -408,7 +426,7 @@ class NVM(GameFile):
         ]
 
         for i, triangle in enumerate(self.triangles):
-            tri_vertices = [Vector2([self.vertices[i].x, self.vertices[i].z]) for i in triangle.vertex_indices]
+            tri_vertices = [Vector2([self.vertices[i][0], self.vertices[i][2]]) for i in triangle.vertex_indices]
             clockwise = line_point_cross(*tri_vertices) < 0
             if self.collides(quad_vertices, tri_vertices, clockwise):
                 triangle_indices.append(i)

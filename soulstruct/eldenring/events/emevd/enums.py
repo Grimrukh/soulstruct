@@ -270,9 +270,9 @@ class NavmeshType(BaseEMEVDEnum):
     Disable = 0b0000_0000_0000_0001  # ignored completely during pathfinding
     Gate = 0b0000_0000_0000_0010  # location of an MCG gate node to connect to another navmesh in the same map
     Obstacle = 0b0000_0000_0000_0100  # will trigger enemies' 'destroy obstacle' animation; can stack with other flags
-    Wall = 0b0000_0000_0000_1000  # usually indicates a drop from one floor section to another
-    Degenerate = 0b0000_0000_0001_0000  # seen on triangles with co-linear vertices
-    FloorToWall = 0b0000_0000_0010_0000  # replaces standard floor triangles when they are adjacent to `Wall`
+    Drop = 0b0000_0000_0000_1000  # a drop from one floor section to another; usually extends into air
+    Degenerate = 0b0000_0000_0001_0000  # seen on triangles with co-linear vertices and potentially others
+    DropAdjacent = 0b0000_0000_0010_0000  # replaces standard floor triangles when they are adjacent to `Drop`
     LandingPoint = 0b0000_0000_0100_0000
     Event = 0b0000_0000_1000_0000
     Edge = 0b0000_0001_0000_0000
@@ -282,7 +282,7 @@ class NavmeshType(BaseEMEVDEnum):
     Door = 0b0001_0000_0000_0000
     ClosedDoor = 0b0010_0000_0000_0000
     MapExit = 0b0100_0000_0000_0000  # used to generate dynamic gate nodes to connect to other maps
-    InsideWall = 0b1000_0000_0000_0000
+    InsideWall = 0b1000_0000_0000_0000  # unknown use
 
 
 class NumberButtons(BaseEMEVDEnum):
