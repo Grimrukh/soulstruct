@@ -256,24 +256,24 @@ class CoordEntityType(BaseEMEVDEnum):
 class NavmeshType(BaseEMEVDEnum):
     """Bit flags for Navmesh types.
 
-    NOTE: These bits are in reverse order to the actual NVM triangle flag.
+    NOTE: These EMEVD bit values are in reverse-endian order to the actual NVM triangle flag.
     """
-    Default = 0b0000_0000_0000_0000
-    Disable = 0b0000_0000_0000_0001
+    Default = 0b0000_0000_0000_0000  # no special flags
+    Disable = 0b0000_0000_0000_0001  # ignored completely during pathfinding
     Gate = 0b0000_0000_0000_0010  # location of an MCG gate node to connect to another navmesh in the same map
     Obstacle = 0b0000_0000_0000_0100  # will trigger enemies' 'destroy obstacle' animation; can stack with other flags
-    Wall = 0b0000_0000_0000_1000
-    Degenerate = 0b0000_0000_0001_0000  # can stack with other flags; likely not supported in EMEVD
-    FloorToWall = 0b0000_0000_0010_0000
+    Wall = 0b0000_0000_0000_1000  # usually indicates a drop from one floor section to another
+    Degenerate = 0b0000_0000_0001_0000  # seen on triangles with co-linear vertices
+    FloorToWall = 0b0000_0000_0010_0000  # replaces standard floor triangles when they are adjacent to `Wall`
     LandingPoint = 0b0000_0000_0100_0000
     Event = 0b0000_0000_1000_0000
     Edge = 0b0000_0001_0000_0000
     LargeSpace = 0b0000_0010_0000_0000
-    Ladder = 0b0000_0100_0000_0000
+    Ladder = 0b0000_0100_0000_0000  # used at the bottom and top of ladders (but not on the vertical section itself)
     Hole = 0b0000_1000_0000_0000
     Door = 0b0001_0000_0000_0000
     ClosedDoor = 0b0010_0000_0000_0000
-    MapExit = 0b0100_0000_0000_0000  # used to generate dynamic navmesh gate nodes to connect to other maps
+    MapExit = 0b0100_0000_0000_0000  # used to generate dynamic gate nodes to connect to other maps
     InsideWall = 0b1000_0000_0000_0000
 
 
