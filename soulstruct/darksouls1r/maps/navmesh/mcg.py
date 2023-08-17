@@ -123,6 +123,23 @@ class GateNode:
         _connected_edge_indices = [mcg_edges.index(edge) for edge in self.connected_edges]
         mcg_writer.pack(f"<{len(_connected_edge_indices)}i", *_connected_edge_indices)
 
+    def get_touching_navmeshes(self) -> list[MSBNavmesh]:
+        """Return only the navmesh part instances in `navmeshes` that are touched by this node.
+
+        "Touching a node" means that a navmesh is used by a connected edge or is the `dead_end_navmesh` of this node.
+        """
+        if self.dead_end_navmesh is MISSING_REF:
+            raise ValueError("GateNode has not had its dead-end navmesh deferenced.")
+        touched_navmeshes = []
+        for edge in self.connected_edges:
+            if edge.navmesh not in touched_navmeshes:
+                touched_navmeshes.append(edge.navmesh)
+        if self.dead_end_navmesh and self.dead_end_navmesh not in touched_navmeshes:
+            # NOTE: Dead-end navmeshes should never appear as edge navmeshes (they shouldn't contain any), but checking
+            # just in case.
+            touched_navmeshes.append(self.dead_end_navmesh)
+        return touched_navmeshes
+
     def add_connection(self, other_node: GateNode, edge: GateEdge):
         """Add a connection to `other_node` via `edge`.
 

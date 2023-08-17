@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from soulstruct.base.game_file import GameFile
 from soulstruct.darksouls1r.events.emevd.enums import NavmeshType
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.maths import Vector2, Vector3
+from soulstruct.utilities.maths import Vector2, Vector3, Matrix3
 
 try:
     Self = tp.Self
@@ -343,21 +343,32 @@ class NVM(GameFile):
         return list(zip(all_boxes, all_indices))
 
     def get_vertex_bounds(
-        self, padding: tp.Sequence[float, float, float] | float | int = None
+        self,
+        rotation: Vector3 = None,
+        offset: Vector3 = None,
+        padding: tp.Sequence[float, float, float] | float | int = None,
     ) -> tuple[Vector3, Vector3]:
-        """Get min/max bounds of all vertices, optionally with padding."""
+        """Get min/max bounds of all vertices, optionally with model rotation, offset, and/or padding."""
+        if rotation is not None:
+            # Euler angles in radians given (e.g. from MSB). Use to rotate all vertices before computing AABB.
+            rot_mat = Matrix3.from_euler_angles(rotation, radians=True)
+            aabb_vertices = [rot_mat @ Vector3(v) for v in self.vertices]
+        else:
+            aabb_vertices = self.vertices  # won't be modified
+        if offset is None:
+            offset = Vector3.zero()
         if padding is None:
             padding = Vector3.zero()
         elif isinstance(padding, (int, float)):
             padding = Vector3([padding, padding, padding])
-        x_min = min(v[0] for v in self.vertices)
-        y_min = min(v[1] for v in self.vertices)
-        z_min = min(v[2] for v in self.vertices)
-        bounds_min = Vector3([x_min, y_min, z_min]) - padding
-        x_max = max(v[0] for v in self.vertices)
-        y_max = max(v[1] for v in self.vertices)
-        z_max = max(v[2] for v in self.vertices)
-        bounds_max = Vector3([x_max, y_max, z_max]) + padding
+        x_min = min(v[0] for v in aabb_vertices)
+        y_min = min(v[1] for v in aabb_vertices)
+        z_min = min(v[2] for v in aabb_vertices)
+        bounds_min = Vector3([x_min, y_min, z_min]) - padding + offset
+        x_max = max(v[0] for v in aabb_vertices)
+        y_max = max(v[1] for v in aabb_vertices)
+        z_max = max(v[2] for v in aabb_vertices)
+        bounds_max = Vector3([x_max, y_max, z_max]) + padding + offset
         return bounds_min, bounds_max
 
     def generate_quadtree_boxes(self):
@@ -369,7 +380,7 @@ class NVM(GameFile):
 
         NOTE: Child box order (0, 1, 2, 3) is lowX/lowZ, highX/lowZ, highX/highZ, lowX/highZ.
         """
-        bounds_min, bounds_max = self.get_vertex_bounds(self.BOX_PADDING)
+        bounds_min, bounds_max = self.get_vertex_bounds(padding=self.BOX_PADDING)
 
         def create_box(start_corner: Vector3, end_corner: Vector3, level: int) -> NVMBox:
             # Box will either start or end at these halfway points, depending on its index.

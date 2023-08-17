@@ -34,7 +34,7 @@ class BaseMSBPart(MSBEntry, abc.ABC):
     entity_id: int = -1
     sib_path: str = ""
     translate: Vector3 = field(default_factory=Vector3.zero)
-    rotate: Vector3 = field(default_factory=Vector3.zero)
+    rotate: Vector3 = field(default_factory=Vector3.zero)  # XZY-order Euler angles in radians
     scale: Vector3 = field(default_factory=lambda: Vector3.one())
 
     # Concrete, sized `GroupBitSet` subclass is overridden per game.

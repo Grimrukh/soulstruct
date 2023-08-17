@@ -11,12 +11,12 @@ from itertools import product
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.containers import Binder, BinderEntryNotFoundError
+from soulstruct.containers import Binder, BinderEntryNotFoundError, DCXType
 from soulstruct.darksouls1r.maps.msb import MSB
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
 
-from .mcg import MCG
+from .mcg import MCG, GateNode
 from .nvm import NVM
 from .utilities import import_matplotlib_plt
 
@@ -229,15 +229,18 @@ class MCP(GameFile):
         return cls(aabbs=aabbs)
 
     @classmethod
-    def write_from_msb_mcg_nvm(
+    def from_msb_mcg_nvm_paths(
         cls,
         mcp_path: Path | str,
         msb_path: Path | str = None,
         mcg_path: Path | str = None,
         nvmbnd_path: Path | str = None,
         aabb_padding: tp.Sequence[float, float, float] = None,
+        custom_connected_navmeshes: tp.Sequence[tuple[MSBNavmesh, MSBNavmesh]] = None,
     ) -> Self:
-        """Automatically generate MCP file from other map navmesh component files. Also returns the new `MCP` instance.
+        """Automatically generate MCP file from other map navmesh component files.
+
+        Returns the new `MCP` instance, which the caller will presumably want to write immediately.
 
         For simplicity, this method works with existing binary file paths. This gets around issues related to, for
         example, whether a given `MCG` instance has already had its navmesh parts dereferenced. As this file is
@@ -277,14 +280,23 @@ class MCP(GameFile):
 
         mcg.set_navmesh_references(msb.navmeshes)
 
-        def is_connected(_navmesh1: MSBNavmesh, _navmesh2: MSBNavmesh) -> bool:
-            for node in mcg.nodes:
-                for edge in node.connected_edges:
-                    for other_edge in node.connected_edges:
-                        if edge.navmesh is _navmesh1 and other_edge.navmesh is _navmesh2:
-                            return True
-                        if edge.navmesh is _navmesh2 and other_edge.navmesh is _navmesh1:
-                            return True
+        # Build dictionary mapping node indices to all navmeshes that node touches, rather than iterating many times.
+        node_navmeshes = {}  # type: dict[int, list[MSBNavmesh]]
+        for i, node in enumerate(mcg.nodes):
+            node_navmeshes[i] = node.get_touching_navmeshes()
+
+        def is_connected(navmesh1: MSBNavmesh, navmesh2: MSBNavmesh) -> bool:
+            """Returns whether the two given navmeshes are connected by a `GateNode` in the `MCG` graph."""
+            if custom_connected_navmeshes:
+                if (navmesh1, navmesh2) in custom_connected_navmeshes:
+                    return True
+                if (navmesh2, navmesh1) in custom_connected_navmeshes:
+                    return True
+            for node_index in range(len(mcg.nodes)):
+                _node_navmeshes = node_navmeshes[node_index]
+                if navmesh1 in _node_navmeshes and navmesh2 in _node_navmeshes:
+                    # Found a shared node. Navmesh AABBs should definitely be connected.
+                    return True
             return False
 
         checked_navmesh_pairs = []  # type: list[tuple[int, int]]
@@ -311,6 +323,7 @@ class MCP(GameFile):
 
         aabbs = []
         for navmesh, connected_indices in zip(msb.navmeshes, connected_navmesh_indices):
+            navmesh: MSBNavmesh
             # Find and load `NVM` model.
             model_name = navmesh.model.name + f"A{map_id[0]:02d}.nvm"
             try:
@@ -319,7 +332,12 @@ class MCP(GameFile):
                 raise BinderEntryNotFoundError(f"Could not find NVM model '{model_name}' in NVM binder.")
             nvm = model_entry.to_binary_file(NVM)
 
-            aabb_start, aabb_end = nvm.get_vertex_bounds(aabb_padding)
+            # AABBs are computed based on the final MSB position of the navmesh model.
+            aabb_start, aabb_end = nvm.get_vertex_bounds(
+                rotation=navmesh.rotate,
+                offset=navmesh.translate,
+                padding=aabb_padding,
+            )
             aabb = NavmeshAABB(
                 map_id=map_id,
                 aabb_start=aabb_start,
@@ -328,9 +346,7 @@ class MCP(GameFile):
             )
             aabbs.append(aabb)
 
-        mcp = cls(aabbs=aabbs)
-        mcp.write(mcp_path)
-        return mcp
+        return cls(aabbs=aabbs, dcx_type=DCXType.Null)
 
     def to_writer(self) -> BinaryWriter:
         writer = BinaryWriter(byte_order=ByteOrder.LittleEndian)
@@ -490,7 +506,8 @@ class MCP(GameFile):
             fig = axes.figure
         for i, aabb in enumerate(self.aabbs):
             aabb.draw(label=aabb_labels[i] if aabb_labels else None, axes=axes, aabb_color=aabb_color)
-            for connected_aabb in aabb.connected_aabbs:
+            for connected_aabb_index in aabb.connected_navmesh_part_indices:
+                connected_aabb = self.aabbs[connected_aabb_index]
                 x, z, y = zip(aabb.volume_center, connected_aabb.volume_center)  # NOTE: y, z swapped
                 axes.plot(x, y, z, color="red")
 
