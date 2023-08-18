@@ -197,7 +197,7 @@ class GateEdge:
         end_node_triangles_count: int
         end_node_triangles_offset: int
         _navmesh_part_index: int
-        map_id: list[int] = field(**BinaryArray(4, byte))  # stored as (DD, CC, BB, AA) reversed format
+        _reversed_map_id: list[int] = field(**BinaryArray(4, byte))  # stored as (DD, CC, BB, AA) reversed format
         cost: float  # for AI navigation, presumably
 
     start_node_triangle_indices: list[int] = field(default_factory=list)
@@ -223,7 +223,7 @@ class GateEdge:
         with reader.temp_offset(edge.end_node_triangles_offset):
             end_node_triangle_indices = list(reader.unpack(f"{edge.end_node_triangles_count}i"))
 
-        _reversed_map_id = edge.pop("map_id")
+        _reversed_map_id = edge.pop("_reversed_map_id")
         map_id = (_reversed_map_id[3], _reversed_map_id[2], _reversed_map_id[1], _reversed_map_id[0])
 
         return edge.to_object(
@@ -261,6 +261,7 @@ class GateEdge:
             )
         if -1 in self.map_id:
             raise ValueError(f"Map ID of MCG `GateEdge` has not been changed from invalid default: {self.map_id}")
+        _reversed_map_id = list(reversed(self.map_id))
         self.GateEdgeHeader(
             _start_node_index=gate_nodes.index(self.start_node),
             start_node_triangles_count=len(self.start_node_triangle_indices),
@@ -269,7 +270,7 @@ class GateEdge:
             end_node_triangles_count=len(self.end_node_triangle_indices),
             end_node_triangles_offset=end_node_triangles_offset,
             _navmesh_part_index=self._navmesh_part_index,
-            map_id=list(self.map_id),
+            _reversed_map_id=_reversed_map_id,
             cost=self.cost,
         ).to_writer(writer)
 
@@ -307,7 +308,7 @@ class MCG(GameFile):
 
     nodes: list[GateNode] = field(default_factory=list)
     edges: list[GateEdge] = field(default_factory=list)
-    unknowns: tuple[int, int, int] = (-1, -1, -1)
+    unknowns: tuple[int, int, int] = (0, 0, 0)  # DS1 default
 
     @classmethod
     def from_reader(cls, reader: BinaryReader) -> MCG:
