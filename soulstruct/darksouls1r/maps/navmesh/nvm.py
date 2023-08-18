@@ -46,7 +46,7 @@ class NVMTriangle:
     def to_nvm_writer(self, writer: BinaryWriter):
         writer.pack("6i", *self.vertex_indices, *self.connected_indices)
         obstacles_and_flags = (self.obstacle_count << 2) | (self.reverse_flags_bits(self.flags) << 16)
-        writer.pack("i", obstacles_and_flags)
+        writer.pack("I", obstacles_and_flags)
 
     def has_flag(self, navmesh_type: NavmeshType):
         return self.flags & navmesh_type == navmesh_type
@@ -114,7 +114,7 @@ class NVMBox:
     start_corner: Vector3
     end_corner: Vector3
     triangle_indices: list[int]  # list of triangles contained in this box (only used for leaf box nodes)
-    child_boxes: list[None | NVMBox]  # four child boxes that subdivide this one
+    child_boxes: list[NVMBox]  # four child boxes that subdivide this one (empty for leaf box nodes)
 
     @classmethod
     def from_nvm_reader(cls, reader: BinaryReader) -> NVMBox:
@@ -132,11 +132,13 @@ class NVMBox:
         else:
             triangle_indices = []
 
-        child_boxes = []
-        for child_box_offset in child_box_offsets:
-            if child_box_offset == 0:
-                child_boxes.append(None)
-            else:
+        if child_box_offsets == (0, 0, 0, 0):
+            child_boxes = []
+        elif 0 in child_box_offsets:
+            raise ValueError(f"Child box offsets should be all zero (leaf) or non-zero, not: {child_box_offsets}")
+        else:
+            child_boxes = []
+            for child_box_offset in child_box_offsets:
                 reader.seek(child_box_offset)
                 child_boxes.append(cls.from_nvm_reader(reader))  # recur (no need to reset reader position)
 
@@ -149,12 +151,13 @@ class NVMBox:
         root box itself. A queue of triangle indices (packed earlier in the same order) are passed in.
         """
 
-        child_box_offsets = []
-        for child_box in self.child_boxes:
-            if child_box is not None:
-                child_box_offsets.append(child_box.to_nvm_writer(writer, triangle_index_offsets))
-            else:
-                child_box_offsets.append(0)
+        if not self.child_boxes:
+            child_box_offsets = [0, 0, 0, 0]
+        else:
+            child_box_offsets = [
+                child_box.to_nvm_writer(writer, triangle_index_offsets)
+                for child_box in self.child_boxes
+            ]
 
         box_offset = writer.position
         writer.pack("3f", *self.start_corner)
@@ -165,13 +168,18 @@ class NVMBox:
         writer.pad(16)
         return box_offset
 
+    @property
+    def is_leaf(self):
+        return not self.child_boxes
+
 
 @dataclass(slots=True)
 class NVMEventEntity:
     """List of triangle indices that can be toggled from EMEVD with `entity_id`.
 
     There is generally a corresponding `MSBNavigationEvent` in the MSB, but I don't believe it does anything - it's
-    probably just to make a note of this entity ID. TODO: Confirm.
+    probably just to make a note of this entity ID, or to allow use of the ID in EMEVD, etc.
+        TODO: Confirm that by removing MSB events and seeing if the EMEVD navmesh commands still work in DS1.
     """
     entity_id: int
     triangle_indices: list[int]
@@ -239,9 +247,10 @@ class NVM(GameFile):
         expected_triangles_offset = 0x80 + header.vertices_count * 0xC
         if header.triangles_offset != expected_triangles_offset:
             raise ValueError(
-                f"Ttriangles offset for NVM should be {expected_triangles_offset}, not {header.triangles_offset}.")
+                f"Triangles offset for NVM should be {expected_triangles_offset}, not {header.triangles_offset}.")
 
         vertices = [list(reader.unpack("3f")) for _ in range(header.vertices_count)]
+        print(reader.position_hex)
         triangles = [NVMTriangle.from_nvm_reader(reader) for _ in range(header.triangles_count)]
 
         reader.seek(header.root_box_offset)
@@ -287,9 +296,7 @@ class NVM(GameFile):
         def write_box_triangle_indices(box: NVMBox):
             """Recursive depth-first indices. Note that the root box's indices are written LAST, and its deepest zero-
             indexed child's indices are written FIRST."""
-            if box is None:
-                return
-            # Recur on children.
+            # Recur on children (if any).
             for child_box in box.child_boxes:
                 write_box_triangle_indices(child_box)
             if box.triangle_indices:
@@ -330,6 +337,8 @@ class NVM(GameFile):
         current_index = []  # type: list[int]
 
         def add_children(box: NVMBox):
+            if not box.child_boxes:
+                return  # leaf (no further children)
             for i, child_box in enumerate(box.child_boxes):
                 if child_box is not None and child_box not in all_boxes:
                     current_index.append(i)
@@ -387,33 +396,37 @@ class NVM(GameFile):
 
             if level == self.BOX_LEVELS:  # leaf boxes have indices
                 triangle_indices = self.get_triangle_indices_in_box(start_corner, end_corner)
-                child_boxes = []
-            else:
-                triangle_indices = []
-                child_boxes = []
-                x_bisect = start_corner.x + (end_corner.x - start_corner.x) / 2.0
-                z_bisect = start_corner.z + (end_corner.z - start_corner.z) / 2.0
-                for i in range(4):
-                    if i in {0, 3}:  # low X
-                        x_start, x_end = start_corner.x, x_bisect
-                    else:  # high X
-                        x_start, x_end = x_bisect, end_corner.x
-                    if i in {0, 1}:  # low Z
-                        z_start, z_end = start_corner.z, z_bisect
-                    else:  # high Z
-                        z_start, z_end = z_bisect, end_corner.z
+                return NVMBox(
+                    start_corner,
+                    end_corner,
+                    triangle_indices,
+                    child_boxes=[],
+                )
 
-                    child_start_corner = Vector3([x_start, bounds_min.y, z_start])
-                    child_end_corner = Vector3([x_end, bounds_max.y, z_end])
+            child_boxes = []
+            x_bisect = start_corner.x + (end_corner.x - start_corner.x) / 2.0
+            z_bisect = start_corner.z + (end_corner.z - start_corner.z) / 2.0
+            for i in range(4):
+                if i in {0, 3}:  # low X
+                    x_start, x_end = start_corner.x, x_bisect
+                else:  # high X
+                    x_start, x_end = x_bisect, end_corner.x
+                if i in {0, 1}:  # low Z
+                    z_start, z_end = start_corner.z, z_bisect
+                else:  # high Z
+                    z_start, z_end = z_bisect, end_corner.z
 
-                    child_box = create_box(child_start_corner, child_end_corner, level + 1)
-                    child_boxes.append(child_box)
+                child_start_corner = Vector3([x_start, bounds_min.y, z_start])
+                child_end_corner = Vector3([x_end, bounds_max.y, z_end])
+
+                child_box = create_box(child_start_corner, child_end_corner, level + 1)
+                child_boxes.append(child_box)
 
             return NVMBox(
                 start_corner,
                 end_corner,
-                triangle_indices,
-                child_boxes,
+                triangle_indices=[],
+                child_boxes=child_boxes,
             )
 
         # Start recursive box construction.
