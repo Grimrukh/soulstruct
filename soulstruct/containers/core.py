@@ -25,7 +25,7 @@ from soulstruct.utilities.files import read_json, write_json
 
 from .binder_hash import BinderHashTable
 from .dcx import DCXType, compress, decompress, is_dcx
-from .entry import BinderEntry, BinderEntryFlags, BinderEntryHeader
+from .entry import BinderEntry, BinderEntryHeader
 
 try:
     from typing import Self
@@ -241,7 +241,7 @@ class Binder(BaseBinaryFile):
 
     # Default `BinderEntry.flags` to use when creating new entries with `Binder` utility methods.
     # Default is the most common observed value by far.
-    DEFAULT_ENTRY_FLAGS: tp.ClassVar[BinderEntryFlags] = BinderEntryFlags(0x2)
+    DEFAULT_ENTRY_FLAGS: tp.ClassVar[int] = 0x2
 
     signature: str = "07D7R6"
     flags: BinderFlags = BinderFlags(0b00101110)  # most common flags by far (IDs, names1, names2, compression)

@@ -9,6 +9,7 @@ from __future__ import annotations
 import typing as tp
 import zlib
 from dataclasses import dataclass
+from enum import IntEnum
 from pathlib import Path
 
 from soulstruct.utilities.binary import *
@@ -18,55 +19,37 @@ if tp.TYPE_CHECKING:
     from .core import BinderFlags
 
 
-class BinderEntryFlags(int):
+class BinderEntryFlags(IntEnum):
     """Note that `SoulsFormats` represents these flags as big-endian, including in Yabber XML files. I have noted the
     comparative values next to each bit flag."""
 
-    @property
-    def is_compressed(self):
-        return self & 0b0000_0001 != 0  # big endian: 0x80
-
-    @property
-    def has_flag_1(self):
-        return self & 0b0000_0010 != 0  # big endian: 0x40
-
-    @property
-    def has_flag_2(self):
-        return self & 0b0000_0100 != 0  # big endian: 0x20
-
-    @property
-    def has_flag_3(self):
-        return self & 0b0000_1000 != 0  # big endian: 0x10
-
-    @property
-    def has_flag_4(self):
-        return self & 0b0001_0000 != 0  # big endian: 0x08
-
-    @property
-    def has_flag_5(self):
-        return self & 0b0010_0000 != 0  # big endian: 0x04
-
-    @property
-    def has_flag_6(self):
-        return self & 0b0100_0000 != 0  # big endian: 0x02
-
-    @property
-    def has_flag_7(self):
-        return self & 0b1000_0000 != 0  # big endian: 0x01
+    Compressed = 0b0000_0001  # BE: 0x80
+    Flag1 = 0b0000_0010  # BE: 0x40
+    Flag2 = 0b0000_0100  # BE: 0x20
+    Flag3 = 0b0000_1000  # BE: 0x10
+    Flag4 = 0b0001_0000  # BE: 0x08
+    Flag5 = 0b0010_0000  # BE: 0x04
+    Flag6 = 0b0100_0000  # BE: 0x02
+    Flag7 = 0b1000_0000  # BE: 0x01
 
     @classmethod
-    def from_byte(cls, byte_value: int, bit_big_endian: bool) -> BinderEntryFlags:
-        """Read a byte, reverse it if necessary, and return combined integer."""
-        flags = cls(byte_value)
+    def is_compressed(cls, value: int):
+        return value & cls.Compressed != 0  # big endian: 0x80
+
+    @classmethod
+    def from_byte(cls, byte_value: int, bit_big_endian: bool) -> int:
+        """Read a byte, reverse its bits if necessary, and return integer flags."""
         if not bit_big_endian:
             # Reverse bit order.
-            flags = cls(int(f"{flags:08b}"[::-1], 2))
-        return flags
+            return int(f"{byte_value:08b}"[::-1], 2)
+        return byte_value
 
-    def to_byte(self, bit_big_endian: bool) -> int:
+    @classmethod
+    def to_byte(cls, value: int, bit_big_endian: bool) -> int:
+        """Reverse bits of `value` if necessary, and return it."""
         if not bit_big_endian:
-            return int(f"{self:08b}"[::-1], 2)
-        return int(self)
+            return int(f"{value:08b}"[::-1], 2)
+        return value
 
 
 @dataclass(slots=True)
@@ -79,20 +62,12 @@ class BinderEntryHeader:
     NOTE: Does not use a `BinaryStruct` because the layout is too flexible, based on both binder and binder entry flags.
     """
 
-    flags: BinderEntryFlags
+    flags: int
     compressed_size: int
-    entry_id: tp.Optional[int]
-    path: tp.Optional[str]
-    uncompressed_size: tp.Optional[int]
-    data_offset: int
-
-    def __init__(self, flags, compressed_size, entry_id=None, path=None, uncompressed_size=None, data_offset=-1):
-        self.flags = BinderEntryFlags(flags)
-        self.compressed_size = compressed_size
-        self.entry_id = entry_id
-        self.path = path
-        self.uncompressed_size = uncompressed_size
-        self.data_offset = data_offset
+    entry_id: int | None = None
+    path: str | None = None
+    uncompressed_size: int | None = None
+    data_offset: int = -1
 
     @classmethod
     def from_reader_v3(cls, reader: BinaryReader, binder_flags: BinderFlags, bit_big_endian: bool):
@@ -117,7 +92,7 @@ class BinderEntryHeader:
         )
 
     def into_bnd3_writer(self, writer: BinaryWriter, binder_flags: BinderFlags, bit_big_endian: bool):
-        writer.pack("B", self.flags.to_byte(bit_big_endian))
+        writer.pack("B", BinderEntryFlags.to_byte(self.flags, bit_big_endian))
         writer.pad(3)
         writer.pack("i", self.compressed_size)
         writer.reserve("entry_data_offset", "q" if binder_flags.has_long_offsets else "I", obj=self)
@@ -152,7 +127,7 @@ class BinderEntryHeader:
         )
 
     def into_bnd4_writer(self, writer: BinaryWriter, binder_flags: BinderFlags, bit_big_endian: bool):
-        writer.pack("B", self.flags.to_byte(bit_big_endian))
+        writer.pack("B", BinderEntryFlags.to_byte(self.flags, bit_big_endian))
         writer.pad(3)
         writer.pack("i", -1)
         writer.pack("q", self.compressed_size)
@@ -182,8 +157,8 @@ class BinderEntry:
     entry_id: int | None = None
     # Full internal 'path' (in most cases), encoded in UTF-16 or Shift-JIS with double backslashes.
     path: str | None = None
-    # Only one bit flag's purpose is currently known (compression).
-    flags: BinderEntryFlags = BinderEntryFlags(0x2)
+    # Only one bit flag's purpose is currently known (compression). Default seems stable across games and very common.
+    flags: int = 0x2
 
     @classmethod
     def from_header(cls, binder_reader: BinaryReader, entry_header: BinderEntryHeader) -> BinderEntry:
@@ -203,13 +178,13 @@ class BinderEntry:
 
     def get_uncompressed_data(self) -> bytes:
         """Decompresses compressed data first, if appropriate."""
-        return zlib.decompressobj().decompress(self.data) if self.flags.is_compressed else self.data
+        return zlib.decompressobj().decompress(self.data) if BinderEntryFlags.is_compressed(self.flags) else self.data
 
     __bytes__ = get_uncompressed_data
 
     def set_uncompressed_data(self, data: bytes):
         """Compress data (with `zlib` level 7) before setting it to `.data` attribute, if appropriate."""
-        self.data = zlib.compress(data, level=7) if self.flags.is_compressed else data
+        self.data = zlib.compress(data, level=7) if BinderEntryFlags.is_compressed(self.flags) else data
 
     def set_from_binary_file(self, binary_file: BASE_BINARY_FILE_T):
         self.set_uncompressed_data(bytes(binary_file))

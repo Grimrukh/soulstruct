@@ -1120,7 +1120,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 title="Invalid BND/BHD/BDT File",
                 message=f"A BND/BHD/BDT file (with or without DCX) must be selected.",
             )
-        Binder(target).write_unpacked_directory()
+        Binder.from_path(target).write_unpacked_directory()
 
     def _repack_binder(self):
         target = self.FileDialog.askdirectory(
@@ -1133,7 +1133,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 title="Invalid Directory",
                 message=f"An unpacked BND/BHD/BDT directory (with a 'binder_manifest.json' file) must be selected.",
             )
-        Binder(target).write()
+        Binder.from_path(target).write()
 
     def _set_as_default_project(self):
         """Set this project directory as the Soulstruct default in `config.py`."""

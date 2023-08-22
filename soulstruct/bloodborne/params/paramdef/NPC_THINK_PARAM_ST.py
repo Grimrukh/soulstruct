@@ -221,7 +221,7 @@ class NPC_THINK_PARAM_ST(ParamRow):
         byte, "enableNaviFlg_Edge:1", bit_count=1, default=True,
         tooltip="If True, this NPC will pursue targets off navmesh edges (survivable falls).",
     )
-    CanNavigateLargeSpaces: bool = ParamField(
+    CanNavigateWideSpaces: bool = ParamField(
         byte, "enableNaviFlg_LargeSpace:1", bit_count=1, default=True,
         tooltip="If True, this NPC can enter navmesh regions flagged as 'large spaces'.",
     )

@@ -41,7 +41,7 @@ def add_draw_slot_1_to_drawparam(parambnd_path):
     parambnd_path = Path(parambnd_path)
     if not parambnd_path.is_file():
         raise FileNotFoundError(f"Could not locate DrawParam file: {str(parambnd_path)}")
-    draw_param = Binder(parambnd_path)
+    draw_param = Binder.from_path(parambnd_path)
 
     if len(draw_param) != 12:
         _LOGGER.info(f"DrawParam file {str(parambnd_path)} already has more than one slot.")

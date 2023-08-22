@@ -134,7 +134,7 @@ class WindowLinker(_BaseWindowLinker):
         elif model_game_type == NavmeshModel:
             nvmbnd_path = self.project.game_root / f"map/{map_stem}/{map_stem}.nvmbnd"
             if nvmbnd_path.is_file():
-                navmesh_bnd = Binder(nvmbnd_path)
+                navmesh_bnd = Binder.from_path(nvmbnd_path)
                 if model_name + "A10.nvm" in navmesh_bnd.entries_by_name.keys():
                     return True
 

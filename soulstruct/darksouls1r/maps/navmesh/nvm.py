@@ -247,10 +247,10 @@ class NVM(GameFile):
         expected_triangles_offset = 0x80 + header.vertices_count * 0xC
         if header.triangles_offset != expected_triangles_offset:
             raise ValueError(
-                f"Triangles offset for NVM should be {expected_triangles_offset}, not {header.triangles_offset}.")
+                f"Triangles offset for NVM should be {expected_triangles_offset}, not {header.triangles_offset}."
+            )
 
         vertices = [list(reader.unpack("3f")) for _ in range(header.vertices_count)]
-        print(reader.position_hex)
         triangles = [NVMTriangle.from_nvm_reader(reader) for _ in range(header.triangles_count)]
 
         reader.seek(header.root_box_offset)
