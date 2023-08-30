@@ -17,11 +17,11 @@ from soulstruct.exceptions import SoulstructError
 
 
 class ExistingConnectionError(SoulstructError):
-    """Tried to connect two MCG GateNodes or two MCP AABBs that are already connected."""
+    """Tried to connect two MCG nodes or two MCP AABBs that are already connected."""
 
 
 class MissingConnectionError(SoulstructError):
-    """Tried to disconnect or otherwise falsely assumed two MCG GateNodes or two MCP AABBs are connected."""
+    """Tried to disconnect or otherwise falsely assumed two MCG nodes or two MCP AABBs are connected."""
 
 
 def backup_all_mcp_msg(source_map, dest_map):
@@ -39,12 +39,13 @@ def backup_all_mcp_msg(source_map, dest_map):
 def draw_multiple_maps(map_ids):
     plt = import_matplotlib_plt(raise_if_missing=True)
     from soulstruct import DSR_PATH
+    from .core import NavmeshGraph
 
     fig = plt.figure(figsize=(8, 8))
     axes = fig.add_subplot(111, projection="3d")
     colors = ("cyan", "blue", "green", "pink")
     for i, map_id in enumerate(map_ids):
-        graph = NavInfo(DSR_PATH + f"/map/{map_id}")
+        graph = NavmeshGraph(DSR_PATH + f"/map/{map_id}")
         graph.draw(axes=axes, auto_show=False, aabb_color=colors[i])
     plt.show()
 

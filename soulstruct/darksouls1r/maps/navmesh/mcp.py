@@ -16,7 +16,7 @@ from soulstruct.darksouls1r.maps.msb import MSB
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
 
-from .mcg import MCG, GateNode
+from .mcg import MCG, MCGNode
 from .nvm import NVM
 from .utilities import import_matplotlib_plt
 
@@ -201,7 +201,7 @@ class MCP(GameFile):
     the X or Z axes, unlike the NVM box quadtree.)
 
     The connections between AABBs can be inferred from nodes in the `MCG` graph. My investigation indicates that two
-    navmesh AABBs are connected if and only if there exists a `GateNode` with an edge in each of those navmeshes, with
+    navmesh AABBs are connected if and only if there exists a `MCGNode` with an edge in each of those navmeshes, with
     three exceptions in vanilla DS1 where AABBs are connected but no shared node exists:
         - In m10_00 (Depths), n0032B0 completely covers n0033B0 (other side of bars that look into Giant Rat room).
         - In m12_01 (Royal Wood), n0049B1 completely covers n0050B0 (a patch in first half of Royal Wood).
@@ -286,7 +286,7 @@ class MCP(GameFile):
             node_navmeshes[i] = node.get_touching_navmeshes()
 
         def is_connected(navmesh1: MSBNavmesh, navmesh2: MSBNavmesh) -> bool:
-            """Returns whether the two given navmeshes are connected by a `GateNode` in the `MCG` graph."""
+            """Returns whether the two given navmeshes are connected by a `MCGNode` in the `MCG` graph."""
             if custom_connected_navmeshes:
                 if (navmesh1, navmesh2) in custom_connected_navmeshes:
                     return True

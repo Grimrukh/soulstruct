@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 __all__ = [
-    "GateNode",
-    "GateEdge",
+    "MCGNode",
+    "MCGEdge",
     "MCG",
 ]
 
@@ -25,10 +25,10 @@ _LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)
-class GateNode:
+class MCGNode:
 
     @dataclass(slots=True)
-    class GateNodeHeader(BinaryStruct):
+    class MCGNodeHeader(BinaryStruct):
         connection_count: int
         translate: Vector3
         connected_nodes_offset: int
@@ -40,17 +40,21 @@ class GateNode:
     # TODO: Large offset that increases (usually) by varying multiples of 16. No clue currently what it is.
     unknown_offset: int = 0
     dead_end_navmesh: MSBNavmesh | None = MISSING_REF  # indicates this is the only node connecting to this navmesh
-    connected_nodes: list[GateNode] = field(default_factory=list)
-    connected_edges: list[GateEdge] = field(default_factory=list)
+    connected_nodes: list[MCGNode] = field(default_factory=list)
+    connected_edges: list[MCGEdge] = field(default_factory=list)
 
     # Temporary indices.
-    _dead_end_navmesh_index: int | None = None
+    dead_end_navmesh_index: int | None = None  # not hidden
     _connected_node_indices: list[int] | None = None
     _connected_edge_indices: list[int] | None = None
 
+    @property
+    def is_navmesh_deferenced(self):
+        return self.dead_end_navmesh is not MISSING_REF
+
     @classmethod
-    def from_mcg_reader(cls, reader: BinaryReader) -> GateNode:
-        header = cls.GateNodeHeader.from_bytes(reader)
+    def from_mcg_reader(cls, reader: BinaryReader) -> MCGNode:
+        header = cls.MCGNodeHeader.from_bytes(reader)
 
         with reader.temp_offset(header.connected_nodes_offset):
             _connected_node_indices = list(reader.unpack(f"{header.connection_count}i"))
@@ -61,21 +65,23 @@ class GateNode:
         return cls(
             header.translate,
             header.unknown_offset,
-            _dead_end_navmesh_index=header.dead_end_navmesh_index,
+            dead_end_navmesh_index=header.dead_end_navmesh_index,
             _connected_node_indices=_connected_node_indices,
             _connected_edge_indices=_connected_edge_indices,
         )
 
     def set_dead_end_navmesh_reference(self, navmeshes: list[MSBNavmesh]):
         """De-reference the dead end navmesh index to a navmesh instance. May be `None`."""
-        if self._dead_end_navmesh_index == -1:
+        if self.dead_end_navmesh_index is None:
+            raise ValueError("Node dead-end navmesh index has already been set (ID consumed).")
+        if self.dead_end_navmesh_index == -1:
             self.dead_end_navmesh = None
-        elif self._dead_end_navmesh_index > -1:
-            self.dead_end_navmesh = navmeshes[self._dead_end_navmesh_index]
-        self._dead_end_navmesh_index = None
+        elif self.dead_end_navmesh_index > -1:
+            self.dead_end_navmesh = navmeshes[self.dead_end_navmesh_index]
+        self.dead_end_navmesh_index = None
 
-    def set_connected_nodes_edges_references(self, gate_nodes: list[GateNode], gate_edges: list[GateEdge]):
-        """De-reference other connected `GateNode` instances and `GateEdge` instances."""
+    def set_connected_nodes_edges_references(self, gate_nodes: list[MCGNode], gate_edges: list[MCGEdge]):
+        """De-reference other connected `MCGNode` instances and `MCGEdge` instances."""
         self.connected_nodes = [gate_nodes[i] for i in self._connected_node_indices]
         self._connected_node_indices = None
         self.connected_edges = [gate_edges[i] for i in self._connected_edge_indices]
@@ -92,7 +98,9 @@ class GateNode:
             )
 
     def set_dead_end_navmesh_index(self, navmeshes: list[MSBNavmesh]):
-        self._dead_end_navmesh_index = navmeshes.index(self.dead_end_navmesh) if self.dead_end_navmesh else -1
+        if self.dead_end_navmesh is MISSING_REF:
+            raise ValueError("MCGNode has not had its dead-end navmesh deferenced.")
+        self.dead_end_navmesh_index = navmeshes.index(self.dead_end_navmesh) if self.dead_end_navmesh else -1
         self.dead_end_navmesh = MISSING_REF
 
     def to_mcg_writer(self, writer: BinaryWriter, connected_nodes_offset: int, connected_edges_offset: int):
@@ -100,26 +108,26 @@ class GateNode:
 
         No reserved fields.
         """
-        if self._dead_end_navmesh_index is None:
+        if self.dead_end_navmesh_index is None:
             raise ValueError(
-                "MCG `GateNode.dead_end_navmesh` has not been indexed (e.g. with `MCG.set_indices(navmeshes)`."
+                "MCG `MCGNode.dead_end_navmesh` has not been indexed (e.g. with `MCG.set_indices(navmeshes)`."
             )
         self.validate_connections()
 
-        self.GateNodeHeader(
+        self.MCGNodeHeader(
             connection_count=len(self.connected_nodes),
             translate=self.translate,
             connected_nodes_offset=connected_nodes_offset,
             connected_edges_offset=connected_edges_offset,
-            dead_end_navmesh_index=self._dead_end_navmesh_index,
+            dead_end_navmesh_index=self.dead_end_navmesh_index,
             unknown_offset=self.unknown_offset,
         ).to_writer(writer)
 
-    def pack_connected_node_indices(self, mcg_writer: BinaryWriter, mcg_nodes: list[GateNode]):
+    def pack_connected_node_indices(self, mcg_writer: BinaryWriter, mcg_nodes: list[MCGNode]):
         _connected_node_indices = [mcg_nodes.index(node) for node in self.connected_nodes]
         mcg_writer.pack(f"<{len(_connected_node_indices)}i", *_connected_node_indices)
 
-    def pack_connected_edge_indices(self, mcg_writer: BinaryWriter, mcg_edges: list[GateEdge]):
+    def pack_connected_edge_indices(self, mcg_writer: BinaryWriter, mcg_edges: list[MCGEdge]):
         _connected_edge_indices = [mcg_edges.index(edge) for edge in self.connected_edges]
         mcg_writer.pack(f"<{len(_connected_edge_indices)}i", *_connected_edge_indices)
 
@@ -129,7 +137,7 @@ class GateNode:
         "Touching a node" means that a navmesh is used by a connected edge or is the `dead_end_navmesh` of this node.
         """
         if self.dead_end_navmesh is MISSING_REF:
-            raise ValueError("GateNode has not had its dead-end navmesh deferenced.")
+            raise ValueError("MCGNode has not had its dead-end navmesh deferenced.")
         touched_navmeshes = []
         for edge in self.connected_edges:
             if edge.navmesh not in touched_navmeshes:
@@ -140,7 +148,7 @@ class GateNode:
             touched_navmeshes.append(self.dead_end_navmesh)
         return touched_navmeshes
 
-    def add_connection(self, other_node: GateNode, edge: GateEdge):
+    def add_connection(self, other_node: MCGNode, edge: MCGEdge):
         """Add a connection to `other_node` via `edge`.
 
         Raises an `ExistingConnectionError` if the nodes are already connected.
@@ -164,14 +172,14 @@ class GateNode:
     def __repr__(self) -> str:
         if self.dead_end_navmesh:
             return (
-                f"GateNode({self.translate}, "
+                f"MCGNode({self.translate}, "
                 f"connected_nodes=<{len(self.connected_nodes)}>, "
                 f"connected_edges=<{len(self.connected_edges)}>, "
                 f"dead_end_navmesh=<{self.dead_end_navmesh.name}>"
                 f")"
             )
         return (
-            f"GateNode({self.translate}, "
+            f"MCGNode({self.translate}, "
             f"connected_nodes=<{len(self.connected_nodes)}>, "
             f"connected_edges=<{len(self.connected_edges)}>"
             f")"
@@ -179,8 +187,8 @@ class GateNode:
 
 
 @dataclass(slots=True)
-class GateEdge:
-    """Edge between two `GateNode` instances in an `MCG` file.
+class MCGEdge:
+    """Edge between two `MCGNode` instances in an `MCG` file.
 
     Note that these objects in the `MCG` file reference indices of navmesh parts in the `MSB` file.
 
@@ -189,39 +197,43 @@ class GateEdge:
     """
 
     @dataclass(slots=True)
-    class GateEdgeHeader(BinaryStruct):
-        _start_node_index: int
-        start_node_triangles_count: int
-        start_node_triangles_offset: int
-        _end_node_index: int
-        end_node_triangles_count: int
-        end_node_triangles_offset: int
-        _navmesh_part_index: int
+    class MCGEdgeHeader(BinaryStruct):
+        _node_a_index: int
+        node_a_triangles_count: int
+        node_a_triangles_offset: int
+        _node_b_index: int
+        node_b_triangles_count: int
+        node_b_triangles_offset: int
+        navmesh_index: int
         _reversed_map_id: list[int] = field(**BinaryArray(4, byte))  # stored as (DD, CC, BB, AA) reversed format
         cost: float  # for AI navigation, presumably
 
-    start_node_triangle_indices: list[int] = field(default_factory=list)
-    end_node_triangle_indices: list[int] = field(default_factory=list)
+    node_a_triangles: list[int] = field(default_factory=list)
+    node_b_triangles: list[int] = field(default_factory=list)
     map_id: tuple[int, int, int, int] = (-1, -1, -1, -1)  # NOTE: -1 cannot be packed to this `byte` field (must be set)
     cost: float = 0.0
 
-    start_node: GateNode = MISSING_REF
-    end_node: GateNode = MISSING_REF
+    node_a: MCGNode = MISSING_REF
+    node_b: MCGNode = MISSING_REF
     navmesh: MSBNavmesh = MISSING_REF
 
-    _start_node_index: int | None = None
-    _end_node_index: int | None = None
-    _navmesh_part_index: int | None = None
+    _node_a_index: int | None = None
+    _node_b_index: int | None = None
+    navmesh_index: int | None = None  # not hidden
+
+    @property
+    def is_navmesh_deferenced(self):
+        return self.navmesh is not MISSING_REF
 
     @classmethod
-    def from_mcg_reader(cls, reader: BinaryReader) -> GateEdge:
-        edge = cls.GateEdgeHeader.from_bytes(reader)
+    def from_mcg_reader(cls, reader: BinaryReader) -> MCGEdge:
+        edge = cls.MCGEdgeHeader.from_bytes(reader)
 
-        with reader.temp_offset(edge.start_node_triangles_offset):
-            start_node_triangle_indices = list(reader.unpack(f"{edge.start_node_triangles_count}i"))
+        with reader.temp_offset(edge.node_a_triangles_offset):
+            node_a_triangles = list(reader.unpack(f"{edge.node_a_triangles_count}i"))
 
-        with reader.temp_offset(edge.end_node_triangles_offset):
-            end_node_triangle_indices = list(reader.unpack(f"{edge.end_node_triangles_count}i"))
+        with reader.temp_offset(edge.node_b_triangles_offset):
+            node_b_triangles = list(reader.unpack(f"{edge.node_b_triangles_count}i"))
 
         _reversed_map_id = edge.pop("_reversed_map_id")
         map_id = (_reversed_map_id[3], _reversed_map_id[2], _reversed_map_id[1], _reversed_map_id[0])
@@ -229,66 +241,66 @@ class GateEdge:
         return edge.to_object(
             cls,
             map_id=map_id,
-            start_node_triangle_indices=start_node_triangle_indices,
-            end_node_triangle_indices=end_node_triangle_indices,
+            node_a_triangles=node_a_triangles,
+            node_b_triangles=node_b_triangles,
         )
 
     def set_navmesh_reference(self, navmeshes: list[MSBNavmesh]):
-        self.navmesh = navmeshes[self._navmesh_part_index]
-        self._navmesh_part_index = None  # consumed
+        if self.navmesh_index is None:
+            raise ValueError("Edge navmesh reference has already been set (ID consumed).")
+        self.navmesh = navmeshes[self.navmesh_index]
+        self.navmesh_index = None  # consumed
 
-    def set_node_references(self, gate_nodes: list[GateNode]):
-        self.start_node = gate_nodes[self._start_node_index]
-        self._start_node_index = None  # consumed
-        self.end_node = gate_nodes[self._end_node_index]
-        self._end_node_index = None  # consumed
+    def set_node_references(self, mcg_nodes: list[MCGNode]):
+        self.node_a = mcg_nodes[self._node_a_index]
+        self._node_a_index = None  # consumed
+        self.node_b = mcg_nodes[self._node_b_index]
+        self._node_b_index = None  # consumed
 
     def set_navmesh_index(self, navmeshes: list[MSBNavmesh]):
-        self._navmesh_part_index = navmeshes.index(self.navmesh)
+        self.navmesh_index = navmeshes.index(self.navmesh)
         self.navmesh = MISSING_REF
 
     def to_mcg_writer(
         self,
         writer: BinaryWriter,
-        start_node_triangles_offset: int,
-        end_node_triangles_offset: int,
-        gate_nodes: list[GateNode],
+        node_a_triangles_offset: int,
+        node_b_triangles_offset: int,
+        mcg_nodes: list[MCGNode],
     ):
         """The offsets passed in are written earlier in the file and are already known."""
-        if self._navmesh_part_index is None:
+        if self.navmesh_index is None:
             raise ValueError(
-                "MCG `GateEdge.navmesh` has not been indexed (e.g. with `MCG.set_indices(navmeshes)`."
+                "MCG `MCGEdge.navmesh` has not been indexed (e.g. with `MCG.set_indices(navmeshes)`."
             )
         if -1 in self.map_id:
-            raise ValueError(f"Map ID of MCG `GateEdge` has not been changed from invalid default: {self.map_id}")
+            raise ValueError(f"Map ID of MCG `MCGEdge` has not been changed from invalid default: {self.map_id}")
         _reversed_map_id = list(reversed(self.map_id))
-        self.GateEdgeHeader(
-            _start_node_index=gate_nodes.index(self.start_node),
-            start_node_triangles_count=len(self.start_node_triangle_indices),
-            start_node_triangles_offset=start_node_triangles_offset,
-            _end_node_index=gate_nodes.index(self.end_node),
-            end_node_triangles_count=len(self.end_node_triangle_indices),
-            end_node_triangles_offset=end_node_triangles_offset,
-            _navmesh_part_index=self._navmesh_part_index,
+        self.MCGEdgeHeader(
+            _node_a_index=mcg_nodes.index(self.node_a),
+            node_a_triangles_count=len(self.node_a_triangles),
+            node_a_triangles_offset=node_a_triangles_offset,
+            _node_b_index=mcg_nodes.index(self.node_b),
+            node_b_triangles_count=len(self.node_b_triangles),
+            node_b_triangles_offset=node_b_triangles_offset,
+            navmesh_index=self.navmesh_index,
             _reversed_map_id=_reversed_map_id,
             cost=self.cost,
         ).to_writer(writer)
 
-    def pack_start_node_triangle_indices(self, writer: BinaryWriter):
+    def pack_node_a_triangles(self, writer: BinaryWriter):
         """Happens before header write."""
-        index_count = len(self.start_node_triangle_indices)
-        return writer.pack(f"{index_count}i", *self.start_node_triangle_indices)
+        return writer.pack(f"{len(self.node_a_triangles)}i", *self.node_a_triangles)
 
-    def pack_end_node_triangle_indices(self, writer: BinaryWriter):
+    def pack_node_b_triangles(self, writer: BinaryWriter):
         """Happens before header write."""
-        index_count = len(self.end_node_triangle_indices)
-        return writer.pack(f"{index_count}i", *self.end_node_triangle_indices)
+        return writer.pack(f"{len(self.node_b_triangles)}i", *self.node_b_triangles)
 
-    def is_connecting_nodes(self, first_node: GateNode, second_node: GateNode) -> bool:
+    def is_connecting_nodes(self, first_node: MCGNode, second_node: MCGNode) -> bool:
         """Returns `True` if this edge connects the two given nodes in either direction, and `False` if not."""
         return (
-            first_node is self.start_node and second_node is self.end_node
-            or first_node is self.end_node and second_node is self.start_node
+            first_node is self.node_a and second_node is self.node_b
+            or first_node is self.node_b and second_node is self.node_a
         )
 
 
@@ -306,8 +318,8 @@ class MCG(GameFile):
         unk1: int
         unk2: int
 
-    nodes: list[GateNode] = field(default_factory=list)
-    edges: list[GateEdge] = field(default_factory=list)
+    nodes: list[MCGNode] = field(default_factory=list)
+    edges: list[MCGEdge] = field(default_factory=list)
     unknowns: tuple[int, int, int] = (0, 0, 0)  # DS1 default
 
     @classmethod
@@ -315,9 +327,9 @@ class MCG(GameFile):
         header = cls.MCGHeaderStruct.from_bytes(reader)
         unknowns = (header.unk0, header.unk1, header.unk2)
         reader.seek(header.nodes_offset)
-        nodes = [GateNode.from_mcg_reader(reader) for _ in range(header.nodes_count)]
+        nodes = [MCGNode.from_mcg_reader(reader) for _ in range(header.nodes_count)]
         reader.seek(header.edges_offset)
-        edges = [GateEdge.from_mcg_reader(reader) for _ in range(header.edges_count)]
+        edges = [MCGEdge.from_mcg_reader(reader) for _ in range(header.edges_count)]
 
         mcg = cls(nodes=nodes, edges=edges, unknowns=unknowns)
         mcg.set_node_edge_references()
@@ -362,13 +374,13 @@ class MCG(GameFile):
             unk2=self.unknowns[2],
         ).to_writer(writer, self)
 
-        edge_start_node_triangle_offsets = []
-        edge_end_node_triangle_offsets = []
+        edge_node_a_triangles_offsets = []
+        edge_node_b_triangle_offsets = []
         for edge in self.edges:
-            edge_start_node_triangle_offsets.append(writer.position)
-            edge.pack_start_node_triangle_indices(writer)
-            edge_end_node_triangle_offsets.append(writer.position)
-            edge.pack_end_node_triangle_indices(writer)
+            edge_node_a_triangles_offsets.append(writer.position)
+            edge.pack_node_a_triangles(writer)
+            edge_node_b_triangle_offsets.append(writer.position)
+            edge.pack_node_b_triangles(writer)
 
         connected_node_offsets = []
         connected_edge_offsets = []
@@ -381,7 +393,7 @@ class MCG(GameFile):
         writer.fill_with_position("edges_offset", obj=self)
         for i, edge in enumerate(self.edges):
             edge.to_mcg_writer(
-                writer, edge_start_node_triangle_offsets[i], edge_end_node_triangle_offsets[i], self.nodes
+                writer, edge_node_a_triangles_offsets[i], edge_node_b_triangle_offsets[i], self.nodes
             )
 
         writer.fill_with_position("nodes_offset", obj=self)
@@ -390,14 +402,73 @@ class MCG(GameFile):
 
         return writer
 
-    def get_edges_in_navmesh(self, navmesh: MSBNavmesh) -> list[GateEdge]:
-        """Return a list of all `GateEdge` instances attached to the given `MSBNavmesh`."""
+    def get_navmesh_triangles_by_node(self, ignore_clashes=False) -> list[dict[str, None | tuple[int, list[int]]]]:
+        """Get a list of `((navmesh_a_index, navmesh_a_triangles), (navmesh_b_index, navmesh_b_triangles)` tuples.
+
+        Tuple elements may be `None` if only one or zero connected navmeshes are detected.
+
+        Can optionally permit (with a logged warning) cases where a node has different faces in edges in the same
+        navmesh, which is not ideal but could be fixed later.
+        """
+        all_node_navmesh_triangles = []
+        for node in self.nodes:
+            navmesh_info = {"a": None, "b": None}
+            for edge in node.connected_edges:
+                navmesh_index = edge.navmesh_index
+                if navmesh_index is None:
+                    raise ValueError(
+                        "`MCGEdge` navmesh has been deferenced. Cannot use `get_navmesh_triangles_by_node`."
+                    )
+                if edge.node_a is node:
+                    triangles = edge.node_a_triangles
+                elif edge.node_b is node:
+                    triangles = edge.node_b_triangles
+                else:
+                    raise ValueError(f"Node {node} is not an endpoint node of apparently connected edge {edge}.")
+
+                found = False
+                for key in ("a", "b"):
+                    if found:
+                        break
+                    if navmesh_info[key] is None:
+                        # First edge/navmesh.
+                        navmesh_info[key] = (navmesh_index, triangles)
+                        found = True
+                    elif navmesh_info[key][0] == navmesh_index:
+                        # Check triangles are consistent.
+                        if triangles != navmesh_info[key][1]:
+                            msg = (
+                                 f"Node {node} has inconsistent navmesh triangle indices across edges through navmesh "
+                                 f"index {navmesh_index}: {triangles} vs. {navmesh_info[key][1]}"
+                            )
+                            if ignore_clashes:
+                                _LOGGER.warning(msg)
+                            raise ValueError(msg)
+                        found = True
+
+            # Warn or raise errors about various connection problems.
+            if navmesh_info["a"] is None and navmesh_info["b"] is None:
+                _LOGGER.warning(f"Node {node} has no edges in any navmesh.")
+            elif node.dead_end_navmesh_index != -1 and navmesh_info["b"] is not None:
+                _LOGGER.warning(
+                    f"Node {node} has edges in two navmesh indices ({navmesh_info['a'][0]}, {navmesh_info['b'][0]}) "
+                    f"AND a dead-end navmesh index: {node.dead_end_navmesh_index}"
+                )
+            elif navmesh_info["b"] is None and node.dead_end_navmesh == -1:
+                _LOGGER.warning(f"Node {node} has edges in only one navmesh, but no dead-end navmesh.")
+
+            all_node_navmesh_triangles.append(navmesh_info)
+
+        return all_node_navmesh_triangles
+
+    def get_edges_in_navmesh(self, navmesh: MSBNavmesh) -> list[MCGEdge]:
+        """Return a list of all `MCGEdge` instances attached to the given `MSBNavmesh`."""
         return [edge for edge in self.edges if edge.navmesh is navmesh]
 
     def disconnect_nodes(
         self,
-        first_node: int | GateNode,
-        second_node: int | GateNode,
+        first_node: int | MCGNode,
+        second_node: int | MCGNode,
         ignore_unconnected=True,
     ):
         """Looks for and deletes the edge between the two nodes (in either direction).
@@ -422,8 +493,8 @@ class MCG(GameFile):
 
         edge_matches = []
         for edge in self.edges:
-            forward_match = edge.start_node == first_node and edge.end_node == second_node
-            backward_match = edge.start_node == second_node and edge.end_node == first_node
+            forward_match = edge.node_a == first_node and edge.node_b == second_node
+            backward_match = edge.node_a == second_node and edge.node_b == first_node
             if forward_match or backward_match:
                 edge_matches.append(edge)
         if not edge_matches:
@@ -442,85 +513,86 @@ class MCG(GameFile):
 
     def connect_nodes(
         self,
-        start_node: int | GateNode,
-        end_node: int | GateNode,
+        node_a: int | MCGNode,
+        node_b: int | MCGNode,
         edge_navmesh: int | MSBNavmesh,
-        start_node_navmesh_triangle_indices: list[int],
-        end_node_navmesh_triangle_indices: list[int],
+        node_a_triangles: list[int],
+        node_b_triangles: list[int],
         cost: float = None,  # defaults to twice the distance between the nodes
         map_id=None,  # defaults to `map_id` of last edge in `MCG`
         ignore_connected=False,
     ):
-        """Create a new `GateEdge` that connects the given nodes, with the given navmesh and cost.
+        """Create a new `MCGEdge` that connects the given nodes, with the given navmesh and cost.
 
         Also updates the `connected_nodes` and `connected_edges` lists of the nodes accordingly. If `map_id` is None,
         copies from last edge (as all edges in an MCG will generally have the same map ID). If `cost` is None, it will
         default to twice the distance between the nodes (a very rough observed heuristic).
 
-        Note that `start_node` must always be the node with the smaller MCG index. They will be reversed if necessary.
+        Note that `node_a` must always be the node with the smaller MCG index. They will be reversed if necessary.
 
         If `ignore_connected=False`, an `ExistingConnectionError` is raised if the nodes are already connected.
         """
-        if isinstance(start_node, int):
-            first_node_index = start_node
-            start_node = self.nodes[start_node]
+        if isinstance(node_a, int):
+            node_a_index = node_a
+            node_a = self.nodes[node_a]
         else:
             try:
-                first_node_index = self.nodes.index(start_node)
+                node_a_index = self.nodes.index(node_a)
             except ValueError:
-                raise ValueError(f"Start node {start_node} not found in MCG.")
-        if isinstance(end_node, int):
-            second_node_index = end_node
-            end_node = self.nodes[end_node]
+                raise ValueError(f"Node {node_a} not found in MCG.")
+        if isinstance(node_b, int):
+            node_b_index = node_b
+            node_b = self.nodes[node_b]
         else:
             try:
-                second_node_index = self.nodes.index(end_node)
+                node_b_index = self.nodes.index(node_b)
             except ValueError:
-                raise ValueError(f"End node {end_node} not found in MCG.")
+                raise ValueError(f"Node {node_b} not found in MCG.")
 
-        # Reverse nodes if necessary.
-        if first_node_index > second_node_index:
-            start_node, end_node = end_node, start_node
-            start_node_navmesh_triangle_indices, end_node_navmesh_triangle_indices = (
-                end_node_navmesh_triangle_indices,
-                start_node_navmesh_triangle_indices,
-            )
-            second_node_index, first_node_index = first_node_index, second_node_index
+        if node_a_index == node_b_index:
+            raise ValueError(f"Cannot connect node index {node_a_index} to itself: {node_a}")
+
+        # Reverse nodes if necessary so node A is lowest index.
+        if node_a_index > node_b_index:
+            node_a, node_b = node_b, node_a
+            node_a_triangles, node_b_triangles = node_b_triangles, node_a_triangles
+            node_b_index, node_a_index = node_a_index, node_b_index
 
         # Check edge doesn't already exist.
         for i, edge in enumerate(self.edges):
-            if edge.is_connecting_nodes(start_node, end_node):
+            if edge.is_connecting_nodes(node_a, node_b):
                 if ignore_connected:
                     return  # don't raise error, just return
-                raise ValueError(f"Nodes {start_node} and {end_node} are already connected by edge with index {i}.")
+                raise ValueError(f"Nodes {node_a} and {node_b} are already connected by edge with index {i}.")
 
         if map_id is None:
             if not self.edges:
-                raise ValueError("Must specify `map_id` as no edges are currently in the MCG.")
+                raise ValueError("Must specify `map_id` manually as no edges are currently in the MCG.")
             map_id = self.edges[-1].map_id
 
         if cost is None:
-            cost = 2 * abs(start_node.translate - end_node.translate)
+            # Default cost is twice edge length.
+            cost = 2 * abs(node_a.translate - node_b.translate)
 
-        new_edge = GateEdge(
-            start_node=start_node,
-            end_node=end_node,
+        new_edge = MCGEdge(
+            node_a=node_a,
+            node_b=node_b,
             navmesh=edge_navmesh,
-            start_node_triangle_indices=start_node_navmesh_triangle_indices,
-            end_node_triangle_indices=end_node_navmesh_triangle_indices,
+            node_a_triangles=node_a_triangles,
+            node_b_triangles=node_b_triangles,
             cost=cost,
             map_id=map_id,
         )
 
-        start_node.connected_nodes.append(end_node)
-        start_node.connected_edges.append(new_edge)
+        node_a.connected_nodes.append(node_b)
+        node_a.connected_edges.append(new_edge)
 
-        end_node.connected_nodes.append(start_node)
-        end_node.connected_edges.append(new_edge)
+        node_b.connected_nodes.append(node_a)
+        node_b.connected_edges.append(new_edge)
 
-        _LOGGER.info(f"Created new edge between node indices {first_node_index} and {second_node_index}.")
+        _LOGGER.info(f"Created new edge between node indices {node_a_index} and {node_b_index}.")
 
-    def delete_edge(self, edge: int | GateEdge):
+    def delete_edge(self, edge: int | MCGEdge):
         """Delete given `edge` from in `MCG` and remove all references to its connection in nodes.
 
         Currently, assumes that no two edges have identical (or reversed) start and end nodes, which should be true.
@@ -549,7 +621,7 @@ class MCG(GameFile):
         end_translate: Vector3 = None,
         start_rotate: Vector3 | list | tuple | int | float = None,
         end_rotate: Vector3 | list | tuple | int | float = None,
-        selected_nodes: tp.Iterable[int | GateNode] = None,
+        selected_nodes: tp.Iterable[int | MCGNode] = None,
     ):
         """Rotate and then translate all nodes in MCG in world coordinates, so that an entity with a translate of
         `start_translate` and rotate of `start_rotate` ends up with a translate of `end_translate` and a rotate of
@@ -617,7 +689,7 @@ class MCG(GameFile):
             if node_labels is not None:
                 axes.text(node.translate.x, node.translate.z, node.translate.y, node_labels[i], c=color)
         for edge in self.edges:
-            x, y, z = zip(edge.start_node.translate, edge.end_node.translate)
+            x, y, z = zip(edge.node_a.translate, edge.node_b.translate)
             axes.plot3D(x, z, y, c="black", alpha=0.5)  # NOTE: y and z swapped
         if auto_show:
             plt.show()

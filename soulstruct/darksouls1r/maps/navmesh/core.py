@@ -104,7 +104,7 @@ from soulstruct.darksouls1r.maps.parts import MSBNavmesh
 from soulstruct.utilities.maths import Vector3
 
 from .mcp import MCP, NavmeshAABB
-from .mcg import MCG, GateNode, GateEdge
+from .mcg import MCG, MCGNode, MCGEdge
 from .utilities import ExistingConnectionError, MissingConnectionError, import_matplotlib_plt
 
 _LOGGER = logging.getLogger(__name__)
@@ -224,7 +224,7 @@ class NavmeshGraph:
                 f"MCP ({aabb_count}). This should be fixed ASAP, or navmesh functionality will be broken."
             )
 
-    def get_navmesh_gate_nodes(self, navmesh: NavmeshTyping) -> list[GateNode]:
+    def get_navmesh_gate_nodes(self, navmesh: NavmeshTyping) -> list[MCGNode]:
         """Return all MCG nodes with at least one edge in the given navmesh or who explicitly have this navmesh as
         their dead-end navmesh."""
         navmesh = self._get_navmesh(navmesh)
@@ -255,16 +255,16 @@ class NavmeshGraph:
         translate: Vector3,
         unknown_offset=0,
         dead_end_navmesh: MSBNavmesh = None,
-    ) -> GateNode:
-        """Create and return a new `GateNode` with the given `translate` and optional `dead_end_navmesh`.
+    ) -> MCGNode:
+        """Create and return a new `MCGNode` with the given `translate` and optional `dead_end_navmesh`.
 
         Does not create any connections to other nodes; other methods in this wrapper class should be used for that.
         """
-        node = GateNode(translate=translate, unknown_offset=unknown_offset, dead_end_navmesh=dead_end_navmesh)
+        node = MCGNode(translate=translate, unknown_offset=unknown_offset, dead_end_navmesh=dead_end_navmesh)
         self.mcg.nodes.append(node)
         return node
 
-    def remove_node(self, node: GateNode | int):
+    def remove_node(self, node: MCGNode | int):
         """Delete given node and any edges to it.
 
         Obviously, this will change all node indices that come after it, so be careful.
@@ -273,15 +273,15 @@ class NavmeshGraph:
             node = self.mcg.nodes[node]
         elif node not in self.mcg.nodes:
             raise ValueError("Given `node` does not appear in this `NavmeshGraph`.")
-        node_edges = [e for e in self.mcg.edges if node is e.start_node or node is e.end_node]
+        node_edges = [e for e in self.mcg.edges if node is e.node_a or node is e.node_b]
         for edge in node_edges:
             self.mcg.delete_edge(edge)  # will also remove all references to `node` from other nodes
         self.mcg.nodes.remove(node)
 
     def connect_nodes(
         self,
-        start_node: GateNode | int,
-        end_node: GateNode | int,
+        start_node: MCGNode | int,
+        end_node: MCGNode | int,
         edge_navmesh: NavmeshTyping,
         start_node_triangle_indices: list[int],
         end_node_triangle_indices: list[int],
@@ -291,11 +291,11 @@ class NavmeshGraph:
         """Connect two nodes with a new edge with the given fields."""
         navmesh = self._get_navmesh(edge_navmesh)
         self.mcg.connect_nodes(
-            start_node=start_node,
-            end_node=end_node,
+            node_a=start_node,
+            node_b=end_node,
             edge_navmesh=navmesh,
-            start_node_navmesh_triangle_indices=start_node_triangle_indices,
-            end_node_navmesh_triangle_indices=end_node_triangle_indices,
+            node_a_triangles=start_node_triangle_indices,
+            node_b_triangles=end_node_triangle_indices,
             cost=cost,
             ignore_connected=ignore_connected,
         )
@@ -362,8 +362,8 @@ class NavmeshGraph:
     def add_aabbs_nodes_edges(
         self,
         aabbs: tp.Iterable[NavmeshAABB],
-        nodes: tp.Iterable[GateNode],
-        edges: tp.Iterable[GateEdge],
+        nodes: tp.Iterable[MCGNode],
+        edges: tp.Iterable[MCGEdge],
     ):
         """Add new AABBs, nodes, and edges to this `NavInfo` instance simultaneously.
 
@@ -390,7 +390,7 @@ class NavmeshGraph:
         end_rotate: Vector3 | list | tuple | int | float = None,
         enclose_original=True,
         selected_aabbs: tp.Iterable[int | NavmeshAABB] = None,
-        selected_nodes: tp.Iterable[int | GateNode] = None,
+        selected_nodes: tp.Iterable[int | MCGNode] = None,
     ):
         """Rotate and then translate all AABBs in MCP (enclosing original AABBs by default) and all nodes in MCG in
         world coordinates, so that an entity with a translate of `start_translate` and rotate of `start_rotate` ends up
@@ -438,8 +438,8 @@ class NavmeshGraph:
             for j, (connected_node, connected_edge) in enumerate(zip(node.connected_nodes, node.connected_edges)):
                 connected_node_index = self.nodes.index(connected_node)
                 used_navmeshes.add(connected_edge.navmesh)
-                output += (f"Edge in {connected_edge.navmesh} ({connected_edge.start_node_triangle_indices} "
-                           f"-> {connected_edge.end_node_triangle_indices}, cost = {connected_edge.cost})")
+                output += (f"Edge in {connected_edge.navmesh} ({connected_edge.node_a_triangles} "
+                           f"-> {connected_edge.node_b_triangles}, cost = {connected_edge.cost})")
                 output += f"    --> Node {connected_node_index}\n"
         for navmesh in self.navmeshes:
             if navmesh not in used_navmeshes:
