@@ -877,3 +877,11 @@ class MSB(GameFile, abc.ABC):
         """Retrieve all models that are used by the given part subtype."""
         model_subtype_list_name = self.resolve_subtype_name(part_subtype_name + "Model", self.MSB_SUPERTYPE_ENUM.MODELS)
         return getattr(self, model_subtype_list_name)
+
+    def get_map_stem(self) -> str:
+        """Get the map stem (e.g. 'm10_01_00_00') from the MSB path, if possible."""
+        if self.path is None:
+            raise ValueError("Cannot get map stem from MSB path because it is not known.")
+        if map_name_match := MAP_NAME_RE.match(self.path.name):
+            return map_name_match.group(0)
+        raise ValueError(f"Could not parse map stem from MSB path name: {self.path}")

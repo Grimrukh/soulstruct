@@ -82,6 +82,11 @@ class ProjectWindow(_BaseProjectWindow):
             foreground="#FFF",
             command=self._translate_all_event_region_entity_id_names,
         )
+        maps_menu.add_command(
+            label="Write NVMDUMPs for All Maps",
+            foreground="#FFF",
+            command=self._write_all_nvmdumps,
+        )
 
     def _build_events_submenu(self, events_menu):
         events_menu.add_command(
@@ -149,6 +154,11 @@ class ProjectWindow(_BaseProjectWindow):
         """
         for msb in self.project.maps.files.values():
             msb.translate_entity_id_names()
+
+    def _write_all_nvmdumps(self):
+        """Write NVMDUMP files for all maps."""
+        for map_stem, msb in self.project.maps.files.items():
+            msb.write_nvmdump(self.project.game_root / f"map/{map_stem}/{map_stem}.nvmdump")
 
     def _reload_warp(self):
         if not self.linker.hook_created:

@@ -8,6 +8,7 @@ from pathlib import Path
 
 from soulstruct.base.maps.utilities import MAP_SOURCE_TYPING
 from soulstruct.darksouls1ptde.maps.msb import MSB as _PTDE_MSB, MSBSupertype
+from soulstruct.utilities.files import create_bak
 
 from .constants import VANILLA_MSB_TRANSLATIONS, get_map
 from .models import MSBModel
@@ -128,3 +129,42 @@ class MSB(_PTDE_MSB):
 
         new_model = self.map_piece_models.new(name=f"m{dest_model_id}")
         new_model.set_auto_sib_path(dest_map.msb_file_stem)
+
+    def write_nvmdump(self, nvmdump_path: Path | str, map_stem: str = None):
+        """Write a text dump of the MSB's navmesh parts to the given file path (typically `.nvmdump`).
+
+        `map_stem` of this MSB is required. Will try to auto-detect from `path` if not given.
+        """
+        if map_stem is None:
+            try:
+                map_stem = self.get_map_stem()
+            except ValueError as ex:
+                raise ValueError(f"`map_stem` must be given. Could not detect automatically: {ex}")
+
+        nvmdump_path = Path(nvmdump_path)
+        if nvmdump_path.suffix != ".nvmdump":
+            _LOGGER.warning(f"`nvmdump_path` usually ends with '.nvmdump', not: {nvmdump_path.suffix}")
+
+        nvmdump_lines = []
+        file_path = f"N:\\FRPG\\data\\Model\\map\\{map_stem}\\navimesh"
+        area = int(map_stem[1:3])
+
+        for i, navmesh in enumerate(self.navmeshes):
+            prefix = f"Nvm[{i}]"
+            nvmdump_lines.append(f"{prefix}.Name: {navmesh.name}")
+            nvmdump_lines.append(f"{prefix}.FilePath: {file_path}\\{navmesh.model.name}A{area:02d}.SIB")
+            position = navmesh.translate
+            nvmdump_lines.append(f"{prefix}.Position: {position.x:.6f}, {position.y:.6f}, {position.z:.6f}")
+            angle = navmesh.rotate  # euler angles in degrees
+            nvmdump_lines.append(f"{prefix}.Angle: {angle.x:.6f}, {angle.y:.6f}, {angle.z:.6f}")
+
+        for i, map_offset in enumerate(self.map_offsets):
+            # Rare, but see e.g. vanilla m13_00_00_00. Offset seems to match 'Position' of each navmesh.
+            # Y rotation is also supported but I've not seen it non-zero OR written in a `NVMDUMP`.
+            nvmdump_lines.append(f"MapOffset[{i}].Name: {map_offset.name}")  # name can be empty
+            offset = map_offset.translate  # note name 'Offset' here instead of 'Position
+            nvmdump_lines.append(f"MapOffset[{i}].Offset: {offset.x:.6f}, {offset.y:.6f}, {offset.z:.6f}")
+
+        nvmdump = "\n".join(nvmdump_lines) + "\n"
+        create_bak(nvmdump_path)
+        nvmdump_path.write_text(nvmdump)
