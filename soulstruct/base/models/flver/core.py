@@ -487,7 +487,11 @@ class FLVER(GameFile):
 
         Ignores textures with empty `path`.
         """
-        return {Path(texture.path) for material in self.materials for texture in material.textures if texture.path}
+        return {
+            Path(texture.path)
+            for material in self.materials
+            for texture in material.textures if texture.path
+        }
 
     def get_tpfbhd_directory_path(self) -> Path:
         """Looks for folder containing TPFBHD files adjacent to FLVER's directory.
@@ -547,6 +551,8 @@ class FLVER(GameFile):
 
         Handles both standard bone weights (where a weight of -1.0 means no weight) and 'pose' bone weights, as is used
         by map pieces (all indices are the same, all weights are 0.0).
+
+        TODO: Will likely become much more efficient when vertex data is kept in a NumPy array.
         """
         for mesh in self.meshes:
             if not mesh.bone_indices:

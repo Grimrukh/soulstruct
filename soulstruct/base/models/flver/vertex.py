@@ -513,6 +513,9 @@ class Vertex:
 
     Also note that the fourth element of `normal` is used as an (integer) index for binding to a single bone in some
     cases. It is not part of the actual 3D normal vector.
+
+    TODO: Replace `Vertex` list with a `numpy` array, using the buffer layout to generate the dtype, for faster use,
+     as creating a million instances of this class (even with slots) is slow.
     """
     DEFAULT_NORMAL_W = 127.0
 
