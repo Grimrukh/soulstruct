@@ -379,9 +379,9 @@ class BinaryWriter(BinaryBase):
         terminator = b"\0\0" if encoding.replace("-", "").startswith("utf16") else b"\0"
         self._array += value.encode(encoding) + terminator
 
-    def append(self, other: bytearray | bytes):
+    def append(self, bytes_: bytearray | bytes):
         """Manually add existing binary data (e.g. a packed `BinaryStruct`) all at once."""
-        self._array += other
+        self._array += bytes_
 
     def pack_new_struct(self, new_binary_struct: BinaryStruct, allow_reserved=True):
         if allow_reserved:

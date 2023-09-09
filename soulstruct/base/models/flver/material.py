@@ -29,7 +29,7 @@ class MTDInfo:
 
     # Checked separately: [Dn] (g_Diffuse only), [We] (g_Bumpmap only)
 
-    # TODO: Not sure if 'M_{n}*' is a general pattern for extra UV slots at n - 1, or if it's just a non-enforced hint.
+    # NOTE: The numbers in these shader names are just indices of basic material shaders ('M_4Stone', 'M_7Metal', etc.).
     MTD_FOLIAGE_PREFIXES: tp.ClassVar[str, int] = {
         "M_2Foliage": 1,
         "M_3Ivy": 2,
