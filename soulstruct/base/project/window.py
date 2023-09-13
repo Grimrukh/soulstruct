@@ -15,6 +15,8 @@ from pathlib import Path
 from queue import Queue
 
 from soulstruct.containers import Binder
+from soulstruct.exceptions import RestoreBackupError
+from soulstruct.utilities.files import restore_bak
 from soulstruct.utilities.text import word_wrap
 from soulstruct.utilities.window import SmartFrame
 
@@ -31,7 +33,7 @@ from .editors import (
     TextEditor,
 )
 from .core import GameDirectoryProject, ProjectDataType
-from .exceptions import SoulstructProjectError, RestoreBackupError
+from .exceptions import SoulstructProjectError
 from .icon import SOULSTRUCT_ICON
 from .links import WindowLinker  # TODO: Move to base, with game subclasses
 
@@ -699,10 +701,10 @@ class ProjectWindow(SmartFrame, abc.ABC):
         tools_menu.add_command(label="Restore Game Backup", foreground="#FFF", command=self._restore_game_backup)
         tools_menu.add_separator()
         tools_menu.add_command(
-            label="Restore .bak File", foreground="#FFF", command=lambda: self._restore_backup(full_folder=False)
+            label="Restore .bak File", foreground="#FFF", command=lambda: self._restore_bak(full_folder=False)
         )
         tools_menu.add_command(
-            label="Restore .bak Files", foreground="#FFF", command=lambda: self._restore_backup(full_folder=True)
+            label="Restore .bak Files", foreground="#FFF", command=lambda: self._restore_bak(full_folder=True)
         )
         tools_menu.add_separator()
         tools_menu.add_command(label="Unpack BND", foreground="#FFF", command=self._unpack_binder)
@@ -1085,22 +1087,22 @@ class ProjectWindow(SmartFrame, abc.ABC):
             )
             return self.CustomDialog(title="Export Error", message=message)
 
-    def _restore_backup(self, target=None, full_folder=False):
+    def _restore_bak(self, target=None, full_folder=False):
         if target is None:
             if full_folder:
                 target = self.FileDialog.askdirectory(
-                    title="Choose Folder to Restore Backups", initialdir=str(self.project.game_root)
+                    title="Choose Folder to Restore Bak Files", initialdir=str(self.project.game_root)
                 )
             else:
                 target = self.FileDialog.askopenfilename(
-                    title="Choose File to Restore Backup",
+                    title="Choose Bak File to Restore",
                     initialdir=str(self.project.game_root),
                     filetypes=[("Bak file", ".bak")],
                 )
             if not target:
                 return
         try:
-            count = self.project.restore_backup(target=target)
+            count = restore_bak(target=target)
         except RestoreBackupError as e:
             return self.CustomDialog(title="Restore Backup Error", message=str(e))
         if count:

@@ -12,12 +12,15 @@ import ctypes
 import importlib.util
 import json
 import logging
+import os
 import re
 import shutil
 import string
 import sys
 import types
 from pathlib import Path
+
+from soulstruct.exceptions import RestoreBackupError
 
 _LOGGER = logging.getLogger(__name__)
 LOG_BACKUP_CREATION = True
@@ -58,6 +61,40 @@ def create_bak(file_path, bak_suffix=".bak"):
                 _LOGGER.info(f"Created backup file: '{bak_path}'.")
             return True
     return False
+
+
+def restore_bak(target=None, delete_baks=False):
+    """Restores '.bak' files, deleting whatever they would replace."""
+    target = Path(target)
+    if target.is_file():
+        if target.suffix == ".bak":
+            if (target.with_suffix("")).is_file():
+                os.remove(str(target.with_suffix("")))
+            if delete_baks:
+                os.rename(str(target), str(target.with_suffix("")))
+            else:
+                shutil.copy2(str(target), str(target.with_suffix("")))
+        elif not (target.with_suffix(".bak")).is_file():
+            raise RestoreBackupError(
+                f"Could not find a file '{str(target.with_suffix('.bak'))} to restore. No action taken."
+            )
+        else:
+            os.remove(str(target))
+            if delete_baks:
+                os.rename(str(target.with_suffix(".bak")), str(target))
+            else:
+                shutil.copy2(str(target.with_suffix(".bak")), str(target))
+    elif target.is_dir():
+        count = 0
+        for bak_file in target.glob("*.bak"):
+            restore_bak(bak_file)
+            count += 1
+        if count == 0:
+            raise RestoreBackupError(
+                f"Could not find any '.bak' files to restore in directory '{str(target)}'. No action taken."
+            )
+        else:
+            return count
 
 
 def find_steam_common_paths():

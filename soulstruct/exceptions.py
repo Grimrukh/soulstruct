@@ -2,6 +2,7 @@
 __all__ = [
     "SoulstructError",
     "InvalidFieldValueError",
+    "RestoreBackupError",
 ]
 
 
@@ -12,3 +13,7 @@ class SoulstructError(Exception):
 class InvalidFieldValueError(SoulstructError):
     """Field of a data type was set to an invalid value."""
     # TODO: Probably obsolete.
+
+
+class RestoreBackupError(SoulstructError):
+    pass

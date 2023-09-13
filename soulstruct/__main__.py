@@ -13,6 +13,7 @@ python -m soulstruct [source]
     [--tpfpack]
     [--tpfunpack]
     [--ai]
+    [--restorebak]
     [--consoleLogLevel]
     [--fileLogLevel]
 """
@@ -98,6 +99,7 @@ parser.add_argument("--binderpack", action="store", help=word_wrap("Repack a BND
 parser.add_argument("--binderunpack", action="store", help=word_wrap("Unpack a BND/BXF from the given source file."))
 parser.add_argument("--tpfpack", action="store", help=word_wrap("Repack a TPF from the given source directory."))
 parser.add_argument("--tpfunpack", action="store", help=word_wrap("Unpack a TPF from the given source file."))
+parser.add_argument("--restorebak", action="store", help=word_wrap("Restore a BAK file, overwriting any non-BAK file."))
 parser.add_argument(
     "--consoleLogLevel",
     action="store",
@@ -202,6 +204,12 @@ def soulstruct_main(ss_args) -> bool:
         from soulstruct.containers.tpf import TPF
         tpf = TPF.from_unpacked_path(ss_args.tpfpack)
         tpf.write()
+        return False
+
+    if ss_args.restorebak is not None:
+        from soulstruct.utilities.files import restore_bak
+        count = restore_bak(ss_args.restorebak, delete_baks=False)
+        _LOGGER.info(f"{count} bak files restored (bak files not deleted).")
         return False
 
     # No specific type. Open entire Soulstruct Project.

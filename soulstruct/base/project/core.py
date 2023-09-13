@@ -23,7 +23,7 @@ from soulstruct.utilities.misc import traverse_path_tree
 from soulstruct.utilities.window import CustomDialog
 
 from .enums import ProjectDataType
-from .exceptions import SoulstructProjectError, RestoreBackupError
+from .exceptions import SoulstructProjectError
 from .save_manager import SaveManager
 
 if tp.TYPE_CHECKING:
@@ -660,39 +660,6 @@ class GameDirectoryProject(abc.ABC):
         timestamped_dir = self.project_root / "export" / self._get_timestamp(for_path=True)
         export_func = getattr(self, f"export_{data_type}")
         export_func(timestamped_dir)
-
-    def restore_backup(self, target=None, delete_baks=False):
-        """Restores '.bak' files, deleting whatever they would replace."""
-        target = Path(target)
-        if target.is_file():
-            if target.suffix == ".bak":
-                if (target.with_suffix("")).is_file():
-                    os.remove(str(target.with_suffix("")))
-                if delete_baks:
-                    os.rename(str(target), str(target.with_suffix("")))
-                else:
-                    shutil.copy2(str(target), str(target.with_suffix("")))
-            elif not (target.with_suffix(".bak")).is_file():
-                raise RestoreBackupError(
-                    f"Could not find a file '{str(target.with_suffix('.bak'))} " f"to restore. No action taken."
-                )
-            else:
-                os.remove(str(target))
-                if delete_baks:
-                    os.rename(str(target.with_suffix(".bak")), str(target))
-                else:
-                    shutil.copy2(str(target.with_suffix(".bak")), str(target))
-        elif target.is_dir():
-            count = 0
-            for bak_file in target.glob("*.bak"):
-                self.restore_backup(bak_file)
-                count += 1
-            if count == 0:
-                raise RestoreBackupError(
-                    f"Could not find any '.bak' files to restore in directory '{str(target)}'. " f"No action taken."
-                )
-            else:
-                return count
 
     def launch_game(self, try_force_quit_first=False, threaded=True):
         if not psutil:
