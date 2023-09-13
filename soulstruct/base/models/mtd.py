@@ -116,6 +116,20 @@ class MTD(GameFile):
 
         return writer
 
+    def has_param(self, mtd_param_name: str) -> bool:
+        for param in self.params:
+            if param.name == mtd_param_name:
+                return True
+        return False
+
+    def get_param(self, mtd_param_name: str, default=None) -> bool | int | list[int] | float | list[float]:
+        for param in self.params:
+            if param.name == mtd_param_name:
+                return param.value
+        if default is not None:
+            return default
+        raise KeyError(f"MTD param '{mtd_param_name}' not found in MTD from path '{self.path}' and no default given.")
+
     def __repr__(self):
         params = "\n        ".join(str(p) for p in self.params)
         if params:
@@ -417,7 +431,7 @@ class MTDBlendMode(IntEnum):
 
 class MTDLightingType(IntEnum):
     Null = 0
-    HemDirDifSpxc3 = 1
+    HemDirDifSpcx3 = 1
     HemEnvDifSpc = 3
 
 

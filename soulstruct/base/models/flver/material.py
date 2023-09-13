@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-__all__ = ["MTDInfo", "GXItem", "GXList", "Material", "Texture"]
+__all__ = ["GXItem", "GXList", "Material", "Texture"]
 
-import re
 import typing as tp
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -12,71 +11,6 @@ from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector2
 
 from .version import Version
-
-
-@dataclass(slots=True)
-class MTDInfo:
-    """Various booleans that indicate required textures for a specific MTD shader."""
-
-    # g_Diffuse, g_Specular, g_Bumpmap, g_Height. These all appear in the same square brackets in the same order.
-    MTD_DSB_RE: tp.ClassVar[re.Pattern] = re.compile(r".*\[(D)?(S)?(B)?(H)?\].*")
-
-    # Double DSB slots
-    MTD_M_RE: tp.ClassVar[re.Pattern] = re.compile(r".*\[(M|ML|LM)\].*")
-
-    # g_Lightmap
-    MTD_L_RE: tp.ClassVar[re.Pattern] = re.compile(r".*\[(L|ML|LM)\].*")
-
-    # Checked separately: [Dn] (g_Diffuse only), [We] (g_Bumpmap only)
-
-    # NOTE: The numbers in these shader names are just indices of basic material shaders ('M_4Stone', 'M_7Metal', etc.).
-    MTD_FOLIAGE_PREFIXES: tp.ClassVar[str, int] = {
-        "M_2Foliage": 1,
-        "M_3Ivy": 2,
-    }  # MTD name prefixes that indicate two extra UV slots, and the required index of their first UV data.
-
-    # TODO: Hardcoding a set of 'water' shader names I've encountered in DSR.
-    WATER_NAMES: tp.ClassVar[set[str]] = {
-        "A14_numa.mtd",  # Blighttown swamp
-        "A12_DarkRiver.mtd",
-        "A12_DarkWater.mtd",
-    }
-
-    mtd_name: str
-    diffuse: bool = field(init=False, default=False)
-    specular: bool = field(init=False, default=False)
-    bumpmap: bool = field(init=False, default=False)
-    height: bool = field(init=False, default=False)
-    multiple: bool = field(init=False, default=False)
-    lightmap: bool = field(init=False, default=False)
-    alpha: bool = field(init=False, default=False)
-    edge: bool = field(init=False, default=False)
-    water: bool = field(init=False, default=False)
-    no_tangents: bool = field(init=False, default=False)  # no tangent data in vertex buffer (in DS1)
-    extra_uv_maps: None | tuple[int, int] = field(init=False, default=None)  # extra UV slots and first index of them
-
-    def __post_init__(self):
-        if dsbh_match := self.MTD_DSB_RE.match(self.mtd_name):
-            self.diffuse = bool(dsbh_match.group(1))
-            self.specular = bool(dsbh_match.group(2))
-            self.bumpmap = bool(dsbh_match.group(3))
-            self.height = bool(dsbh_match.group(4))
-
-        self.multiple = bool(self.MTD_M_RE.match(self.mtd_name))
-        self.lightmap = bool(self.MTD_L_RE.match(self.mtd_name))
-
-        if "[Dn]" in self.mtd_name:
-            self.diffuse = True
-            self.no_tangents = True  # TODO: A few [D] shaders also don't use tangents...
-        if "[We]" in self.mtd_name or self.mtd_name in self.WATER_NAMES:
-            self.water = True
-            self.bumpmap = True
-        for prefix, first_uv_index in self.MTD_FOLIAGE_PREFIXES.items():
-            if self.mtd_name.startswith(prefix):
-                self.extra_uv_maps = (2, first_uv_index)
-                break  # can't match more than one
-        self.alpha = "_Alp" in self.mtd_name
-        self.edge = "_Edge" in self.mtd_name
 
 
 @dataclass(slots=True)
@@ -153,7 +87,7 @@ class Texture:
     path: str = ""
     texture_type: str = ""
     scale: Vector2 = field(default_factory=Vector2.one)
-    unk_x10: int = 1
+    unk_x10: int = 1  # can be 0 when `path` is empty, and *very rarely* 2 (for three total materials in DS1)
     unk_x11: bool = True  # TODO: possibly 'has_texture'? seems to correlate with non-empty path
     unk_x14: float = 0.0
     unk_x18: float = 0.0
@@ -297,7 +231,7 @@ class Material:
         flver_writer.pack_z_string(self.mtd_path, encoding=encoding)
 
     def get_texture_dict(self) -> dict[str, Texture]:
-        """Get a dictionary mapping texture types to `Texture` instances.
+        """Get a dictionary mapping texture types to like 'g_Diffuse' to `Texture` instances.
 
         Will raise a `KeyError` if any texture type is repeated.
         """
@@ -338,9 +272,6 @@ class Material:
         """Set '.mtd' name of `mtd_path`."""
         name = name.removesuffix(".mtd") + ".mtd"
         self.mtd_path = str(Path(self.mtd_path).with_name(name))
-
-    def get_mtd_info(self) -> MTDInfo:
-        return MTDInfo(self.mtd_name)
 
     def replace_in_all_texture_names(self, old_string: str, new_string: str):
         """Replace all occurrences of `old_string` in all texture names (at end of paths) with `new_string`."""
