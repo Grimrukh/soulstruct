@@ -6,6 +6,7 @@ __all__ = [
 ]
 
 import typing as tp
+from pathlib import Path
 
 from dataclasses import dataclass, field
 from enum import IntEnum
@@ -129,6 +130,26 @@ class MTD(GameFile):
         if default is not None:
             return default
         raise KeyError(f"MTD param '{mtd_param_name}' not found in MTD from path '{self.path}' and no default given.")
+
+    def has_texture_type(self, mtd_texture_type: str) -> bool:
+        for texture in self.textures:
+            if texture.texture_type == mtd_texture_type:
+                return True
+        return False
+
+    def get_texture_type_uv_index(self, mtd_texture_type: str) -> int:
+        for texture in self.textures:
+            if texture.texture_type == mtd_texture_type:
+                return texture.uv_index
+        raise KeyError(f"MTD texture type '{mtd_texture_type}' not found in MTD from path '{self.path}'.")
+
+    @property
+    def shader_name(self):
+        return Path(self.shader_path).name
+
+    @property
+    def shader_stem(self):
+        return Path(self.shader_path).stem
 
     def __repr__(self):
         params = "\n        ".join(str(p) for p in self.params)

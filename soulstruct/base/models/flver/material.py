@@ -87,8 +87,8 @@ class Texture:
     path: str = ""
     texture_type: str = ""
     scale: Vector2 = field(default_factory=Vector2.one)
-    unk_x10: int = 1  # can be 0 when `path` is empty, and *very rarely* 2 (for three total materials in DS1)
-    unk_x11: bool = True  # TODO: possibly 'has_texture'? seems to correlate with non-empty path
+    unk_x10: int = 1  # always 0 when `path` is empty, and *very rarely* 2 (for three total materials in DS1)
+    unk_x11: bool = True  # seems exactly `bool(path)` in DS1
     unk_x14: float = 0.0
     unk_x18: float = 0.0
     unk_x1C: float = 0.0
@@ -134,6 +134,23 @@ class Texture:
             self.path, self.texture_type, self.scale.x, self.scale.y, self.unk_x10, self.unk_x11, self.unk_x14,
             self.unk_x18, self.unk_x1C
         ))
+
+    def __repr__(self):
+        s = f"Texture(\"{self.path}\", \"{self.texture_type}\""
+        if self.scale[0] != 1.0 or self.scale[1] != 1.0:
+            s += f", scale={self.scale}"
+        if self.unk_x10 != 1:
+            s += f", unk_x10={self.unk_x10}"
+        if not self.unk_x11:
+            s += f", unk_x11={self.unk_x11}"
+        if self.unk_x14 != 0.0:
+            s += f", unk_x14={self.unk_x14}"
+        if self.unk_x18 != 0.0:
+            s += f", unk_x18={self.unk_x18}"
+        if self.unk_x1C != 0.0:
+            s += f", unk_x1C={self.unk_x1C}"
+        s += ")"
+        return s
 
 
 @dataclass(slots=True)
@@ -283,17 +300,19 @@ class Material:
 
     def __repr__(self):
         textures = ",\n".join(["    " + indent_lines(repr(texture)) for texture in self.textures])
+        if textures:
+            textures = "\n" + textures + ",\n  "
         lines = [
             f"Material(",
-            f"  name = {repr(self.name)}",
-            f"  mtd_path = {repr(self.mtd_path)}",
-            f"  flags = {self.flags:032b}",
+            f"  name = {repr(self.name)},",
+            f"  mtd_path = {repr(self.mtd_path)},",
+            f"  flags = 0b{self.flags:032b},  # {self.flags}",
         ]
         if self.gx_index != -1:
-            lines.append(f"  gx_index = {self.gx_index}")
+            lines.append(f"  gx_index = {self.gx_index},")
         if self.unk_x18 != 0:
-            lines.append(f"  unk_x18 = {self.unk_x18}")
-        lines.append(f"  textures = [\n{textures}\n  ]")
+            lines.append(f"  unk_x18 = {self.unk_x18},")
+        lines.append(f"  textures = [{textures}],")
         lines.append(")")
         return "\n".join(lines)
 

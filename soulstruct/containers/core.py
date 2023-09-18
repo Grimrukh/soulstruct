@@ -234,14 +234,14 @@ class Binder(BaseBinaryFile):
     MANIFEST_NAME: tp.ClassVar[str] = "binder_manifest.json"
 
     # Binder entry path encoding.
-    # NOTE: Binder entry paths are *not* encoded in `shift_jis_2004`, unlike most other strings, but are just
-    # `shift-jis`. The relevant difference is that escaped backslashes are decoded to the yen symbol in
-    # `shift_jis_2004`, which we do not want in these files.
+    # NOTE: Binder entry paths are NOT encoded in `shift_jis_2004`, unlike most other strings, but are rather just
+    # `shift-jis`. The relevant difference is that escaped backslashes are decoded to the yen symbol in the former
+    # expanded encoding, which we do not want in these files.
     ENTRY_PATH_ENCODING: tp.ClassVar[str] = "shift-jis"
 
     # Default `BinderEntry.flags` to use when creating new entries with `Binder` utility methods.
-    # Default is the most common observed value by far.
-    DEFAULT_ENTRY_FLAGS: tp.ClassVar[int] = 0x2
+    # Default (2) is the most common observed value by far.
+    DEFAULT_ENTRY_FLAGS: tp.ClassVar[int] = 0b0000_0010  # 2
 
     signature: str = "07D7R6"
     flags: BinderFlags = BinderFlags(0b00101110)  # most common flags by far (IDs, names1, names2, compression)
@@ -486,10 +486,14 @@ class Binder(BaseBinaryFile):
             )
         manifest = read_json(manifest_path, encoding="shift-jis")
         manifest = cls.process_manifest_header(manifest)
-        entry_dicts = manifest.pop("entries")
+
+        # 'entries' is a dictionary mapping entry path roots to either (a) entry dictionaries containing 'flags', 'id',
+        # and 'name' keys, or (b) entry names only if 'flags' is default and 'id' is just the entry index.
+        entries = manifest.pop("entries")
+
         use_id_prefix = manifest.pop("use_id_prefix")
         binder = cls.from_dict(manifest)
-        binder.add_entries_from_manifest(entry_dicts, directory, use_id_prefix)
+        binder.add_entries_from_manifest(entries, directory, use_id_prefix)
         if directory.suffix == ".unpacked":  # only this suffix is automatically removed
             binder.path = directory.with_name(directory.name[:-9])
         else:
@@ -863,13 +867,25 @@ class Binder(BaseBinaryFile):
             directory = Path(directory)
         directory.mkdir(parents=True, exist_ok=True)
 
-        entry_tree_dict = {}
+        entry_tree_dict = {}  # type: dict[str, list[dict[str, int | str]]]
         use_index_prefix = self.has_repeated_entry_names
+
+        # Although the unpacked folder reader supports a mixture of entry names and entry dictionaries, this writer only
+        # does one or the other depending on whether any non-default entry flags or non-index entry IDs are present.
+        use_entry_names_only = all(
+            entry.flags == self.DEFAULT_ENTRY_FLAGS and entry.entry_id == i
+            for i, entry in enumerate(self.entries)
+        )
 
         for i, entry in enumerate(self.entries):
             entry_directory = str(Path(entry.path).parent)  # no trailing backslash
-            entry_dict = {"flags": entry.flags, "id": entry.entry_id if self.flags.has_ids else i, "name": entry.name}
-            entry_tree_dict.setdefault(entry_directory, []).append(entry_dict)
+
+            if use_entry_names_only:
+                entry_tree_dict.setdefault(entry_directory, []).append(entry.name)
+            else:
+                entry_dict = {"flags": entry.flags, "id": entry.entry_id if self.flags.has_ids else i, "name": entry.name}
+                entry_tree_dict.setdefault(entry_directory, []).append(entry_dict)
+
             entry_file_name = f"__{entry.entry_id}__{entry.name}" if use_index_prefix else entry.name
             with (directory / entry_file_name).open("wb") as f:
                 f.write(entry.data)
@@ -887,17 +903,59 @@ class Binder(BaseBinaryFile):
 
     # region Entry Management
 
-    def add_entries_from_manifest(self, entries: dict, directory: str | Path, use_id_prefix: bool):
+    def add_entries_from_manifest(
+        self,
+        entries: dict[str, list[str | dict[str, int | str]]],
+        directory: str | Path,
+        use_id_prefix: bool,
+    ):
+        """Add entries from a manifest dictionary mapping entry roots to entry data names/dicts in `directory`."""
         directory = Path(directory)
-        unsorted_entries = {}  # maps ID to `(path, data, flags)` tuple
-        for root, entry_dicts in entries.items():
-            for entry in entry_dicts:
-                find_entry_basename = f"__{entry['id']}__{entry['name']}" if use_id_prefix else entry['name']
-                with (directory / find_entry_basename).open("rb") as entry_file:
-                    entry_data = entry_file.read()
-                unsorted_entries[entry['id']] = (str(Path(root).joinpath(entry["name"])), entry_data, entry['flags'])
-        for entry_id, (path, data, flags) in sorted(unsorted_entries.items()):
-            self.add_entry(BinderEntry(entry_id=entry_id, path=path, data=data, flags=flags))
+        auto_entry_id = None  # type: int | None  # used to set entry IDs automatically (from index) if not given
+        unsorted_entries = {}  # maps ID to created `BinderEntry`s
+        for root, root_entries in entries.items():
+            for entry in root_entries:
+                if isinstance(entry, str):
+                    # Just entry 'name'. ID will be auto-set and flags will be default.
+                    if auto_entry_id is None:
+                        auto_entry_id = 0  # any 'id' given manually in subsequent entries must now match this!
+                    entry_name = entry
+                    entry_id = auto_entry_id
+                    entry_flags = 2
+                elif isinstance(entry, dict):
+                    entry_name = entry["name"]
+                    if "id" in entry:
+                        entry_id = entry["id"]
+                        if auto_entry_id is not None and entry_id != auto_entry_id:
+                            raise ValueError(
+                                f"Entry '{entry_name}' has custom ID {entry_id} in manifest, which does not match its "
+                                f"automatic index ID {entry_id} as calculated from prior entries without a custom ID."
+                            )
+                    else:
+                        entry_id = auto_entry_id
+                    entry_flags = entry.get("flags", 2)
+                else:
+                    raise TypeError(f"Invalid entry type in manifest: {entry}. Must be `str` (name only) or `dict`.")
+
+                entry_file_name = f"__{entry_id}__{entry_name}" if use_id_prefix else entry_name
+                entry_file_path = directory / entry_file_name
+                if not entry_file_path.is_file():
+                    raise FileNotFoundError(f"Could not find Binder entry file: {entry_file_path}")
+                entry_data = entry_file_path.read_bytes()
+                entry_path = str(Path(root).joinpath(entry_name))
+                unsorted_entries[entry_id] = BinderEntry(
+                    entry_id=entry_id,
+                    path=entry_path,
+                    data=entry_data,
+                    flags=entry_flags,
+                )
+
+                if auto_entry_id is not None:
+                    auto_entry_id += 1
+
+        # Add entries in ID order.
+        for entry_id, binder_entry in sorted(unsorted_entries.items()):
+            self.add_entry(binder_entry)
 
     def add_entry(self, entry: BinderEntry):
         if id(entry) in {id(e) for e in self.entries}:
@@ -1036,7 +1094,7 @@ class Binder(BaseBinaryFile):
         return self.highest_entry_id + 1
 
     def add_or_replace_entry_name(
-        self, entry_name: str, game_file: GameFile, new_entry_id: int = None, new_entry_flags: BinderFlags = None
+        self, entry_name: str, game_file: GameFile, new_entry_id: int = None, new_entry_flags: int = None
     ):
         """Create or replace `BinderEntry` with name `entry_name` using data from packed `binary_file`.
         
@@ -1064,7 +1122,7 @@ class Binder(BaseBinaryFile):
             existing_entry.set_from_binary_file(game_file)
 
     def add_or_replace_entry_id(
-        self, entry_id: int, game_file: GameFile, new_entry_name: str = None, new_entry_flags: BinderFlags = None
+        self, entry_id: int, game_file: GameFile, new_entry_name: str = None, new_entry_flags: int = None
     ):
         """Create or replace `BinderEntry` with ID `entry_id` using data from packed `binary_file`.
 
