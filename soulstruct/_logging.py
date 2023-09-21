@@ -62,9 +62,11 @@ FILE_HANDLER.setFormatter(FILE_FORMATTER)
 FILE_HANDLER.setLevel(logging.DEBUG)  # default
 
 _LOGGER = logging.getLogger("soulstruct")
-_LOGGER.setLevel(1)  # All filtering is done by handlers.
-_LOGGER.addHandler(CONSOLE_HANDLER)
-_LOGGER.addHandler(FILE_HANDLER)
+# Only add if no other handlers have been added (e.g., to avoid stacking up after Blender scripts reload).
+if not _LOGGER.hasHandlers():
+    _LOGGER.setLevel(1)  # All filtering is done by handlers.
+    _LOGGER.addHandler(CONSOLE_HANDLER)
+    _LOGGER.addHandler(FILE_HANDLER)
 
 
 def handle_unhandled_exception(exc_type, exc_value, exc_traceback):

@@ -208,6 +208,24 @@ def soulstruct_main(ss_args) -> bool:
 
     if ss_args.restorebak is not None:
         from soulstruct.utilities.files import restore_bak
+        # NOTE: Dangerous enough that I require user confirmation if the non-BAK file exists.
+        target = Path(ss_args.restorebak)
+        if target.is_file():
+            replaced_path = Path(target.with_name(target.name.removesuffix(".bak")))
+            if replaced_path.is_file() and input(
+                f"Are you sure you want to overwrite file {replaced_path} with restored BAK file? "
+                f"Type 'y' to confirm: "
+            ).lower() != "y":
+                return False
+        elif target.is_dir():
+            if input(
+                f"Are you sure you want to restore all BAK files in {ss_args.restorebak} (overwriting non-BAK files)? "
+                f"Type 'y' to confirm: "
+            ).lower() != "y":
+                return False
+        else:
+            _LOGGER.warning(f"Could not find file or directory {ss_args.restorebak} to restore.")
+            return False
         count = restore_bak(ss_args.restorebak, delete_baks=False)
         _LOGGER.info(f"{count} bak files restored (bak files not deleted).")
         return False

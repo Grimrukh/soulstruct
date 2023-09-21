@@ -210,11 +210,12 @@ def profile_function(print_count: int, sort="tottime", strip_dirs=True):
         def decorated(*args, **kwargs):
             print(f"Profiling function: {func.__name__}")
             with cProfile.Profile() as pr:
-                func(*args, **kwargs)
+                returned = func(*args, **kwargs)
             p = pstats.Stats(pr)
             if strip_dirs:
                 p = p.strip_dirs()
             p.sort_stats(sort).print_stats(print_count)
+            return returned
 
         return decorated
 

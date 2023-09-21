@@ -34,9 +34,6 @@ try:
 except AttributeError:
     Self = "TPF"
 
-if tp.TYPE_CHECKING:
-    from .entry import BinderEntry
-
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -535,28 +532,6 @@ class TPF(GameFile):
             f"    tpf_flags = {self.tpf_flags}\n"
             f")"
         )
-
-    @classmethod
-    def collect_tpf_entries(cls, tpfbhd_directory: str | Path) -> dict[str, BinderEntry | TPFTexture]:
-        """Build a dictionary mapping TPF entry stems to `BinderEntry` instances or `TPFTexture`s from loose TPFs."""
-        from soulstruct.containers import Binder
-
-        tpf_re = re.compile(rf"(.*)\.tpf(\.dcx)?$")
-        tpfbhd_directory = Path(tpfbhd_directory)
-        tpf_entries = {}
-        for tpf_path in tpfbhd_directory.glob("*.tpf*"):
-            if tpf_path.name.endswith(".tpfbhd"):
-                bxf = Binder.from_path(tpf_path)
-                for entry in bxf.entries:
-                    match = tpf_re.match(entry.name)
-                    if match:
-                        tpf_entries[entry.minimal_stem] = entry
-            elif tpf_re.match(tpf_path.name):
-                # Load all textures from 'loose' TPF (usually 'mXX_9999.tpf').
-                tpf = TPF.from_path(tpf_path)
-                for texture in tpf.textures:
-                    tpf_entries[texture.name] = texture
-        return tpf_entries
 
     @classmethod
     def collect_tpf_textures(

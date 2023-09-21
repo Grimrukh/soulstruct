@@ -558,7 +558,7 @@ class Binder(BaseBinaryFile):
         bdt_file_path: None | str | Path = None,
         make_dirs=True,
         check_hash=False,
-    ):
+    ) -> Path | None:
         """Writes the `BND` file, or writes both the `BHD` and `BDT` files at once for split binders.
 
         Missing directories in given path will be created automatically if `make_dirs` is True. Otherwise, they must
@@ -575,6 +575,9 @@ class Binder(BaseBinaryFile):
             make_dirs (bool): if True, any absent directories in both `file_path` and `bdt_file_path` will be created.
             check_hash (bool): if True, files will not be written if both BHD and BDT files with same hashes already
                 exist. (Default: False)
+
+        Returns:
+            Path | None: path of written BND or BHD (not BDT) file. `None` if nothing new is written.
         """
         file_path = self.get_file_path(file_path)
         if make_dirs:
@@ -595,7 +598,7 @@ class Binder(BaseBinaryFile):
                 bhd_match = get_blake2b_hash(file_path) == get_blake2b_hash(packed_bhd)
                 bdt_match = get_blake2b_hash(bdt_file_path) == get_blake2b_hash(packed_bdt)
                 if bhd_match and bdt_match:
-                    return  # don't write files (both match)
+                    return None  # don't write files (both match)
             self.create_bak(file_path, make_dirs=make_dirs)
             self.create_bak(bdt_file_path, make_dirs=make_dirs)
             with file_path.open("wb") as f:
@@ -606,6 +609,7 @@ class Binder(BaseBinaryFile):
             if bdt_file_path is not None:
                 raise ValueError("Cannot pass in `bdt_file_path` when `Binder.is_split_bxf == False`.")
             super(Binder, self).write(file_path, make_dirs=make_dirs, check_hash=check_hash)
+        return file_path
 
     def write_split(
         self,
@@ -1063,22 +1067,26 @@ class Binder(BaseBinaryFile):
             f"No entry ID in the range [{min_id_inclusive}, {max_id_exclusive}) is available."
         )
 
-    def find_entries_matching_name(self, regex: str | re.Pattern, flags=0) -> list[BinderEntry]:
+    def find_entries_matching_name(self, pattern: str | re.Pattern, flags=0, escape=False) -> list[BinderEntry]:
         """Returns a list of entries whose names match the given `regex` pattern."""
-        return [entry for entry in self.entries if re.match(regex, entry.name, flags=flags)]
+        if escape:
+            pattern = re.escape(pattern)
+        return [entry for entry in self.entries if re.match(pattern, entry.name, flags=flags)]
 
-    def find_entry_matching_name(self, regex: str | re.Pattern, flags=0) -> BinderEntry:
+    def find_entry_matching_name(self, pattern: str | re.Pattern, flags=0, escape=False) -> BinderEntry:
         """Returns a single entry whose name matches the given `regex` pattern.
 
         Only one match must exist.
         """
-        matches = [entry for entry in self.entries if re.match(regex, entry.name, flags=flags)]
+        if escape:
+            pattern = re.escape(pattern)
+        matches = [entry for entry in self.entries if re.match(pattern, entry.name, flags=flags)]
         if len(matches) > 1:
             raise ValueError(
-                f"Found multiple Binder entries with name matching '{regex}':\n  {[m.path for m in matches]}"
+                f"Found multiple Binder entries with name matching '{pattern}':\n  {[m.path for m in matches]}"
             )
         if not matches:
-            raise BinderEntryNotFoundError(f"No Binder entries found with name matching '{regex}'.")
+            raise BinderEntryNotFoundError(f"No Binder entries found with name matching '{pattern}'.")
         return matches[0]
 
     @classmethod

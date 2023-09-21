@@ -5,6 +5,7 @@ __all__ = [
     "MTDParam",
 ]
 
+import re
 import typing as tp
 from pathlib import Path
 
@@ -514,3 +515,202 @@ def write_marked_string(writer: BinaryWriter, marker: int, string: str):
     writer.pack("i", len(encoded))
     writer.append(encoded)
     write_marker(writer, marker)
+
+
+@dataclass(slots=True)
+class MTDInfo:
+    """Various booleans that indicate required textures for a specific MTD shader."""
+
+    MTD_DSBH_RE: tp.ClassVar[re.Pattern] = re.compile(r".*\[(D)?(S)?(B)?(H)?\].*")  # TODO: support 'T' (translucency)
+    MTD_M_RE: tp.ClassVar[re.Pattern] = re.compile(r".*\[(M|ML|LM)\].*")
+    MTD_L_RE: tp.ClassVar[re.Pattern] = re.compile(r".*\[(L|ML|LM)\].*")
+    # Checked separately: [Dn] (g_Diffuse only), [We] (g_Bumpmap only)
+
+    # TODO: Hardcoding a set of 'foliage' shader prefixes I've encountered in DSR.
+    MTD_FOLIAGE_PREFIXES: tp.ClassVar[set[str]] = {
+        "M_2Foliage",
+        "M_3Ivy",
+    }
+
+    # All MTD stems in DSR that use a 'FRPG_Water*' SPX shader but don't have [We] in their name.
+    WATER_STEMS: tp.ClassVar[set[str]] = {
+        "M_5Water[B]",  # FRPG_Water_Reflect
+        "A10_00_Water_drainage",  # FRPG_Water_Reflect
+        "A10_01_Water[B]",  # FRPG_Water_Reflect
+        "A11_Water[W]",  # FRPG_Water_Reflect
+        "A12_Little River",  # FRPG_Water_Reflect
+        "A12_River",  # FRPG_Water_Reflect
+        "A12_River_No reflect",  # FRPG_Water_Reflect
+        "A12_Water",  # FRPG_Water_Reflect
+        "A12_Water_lake",  # FRPG_Water_Reflect
+        "A14Water[B]",  # FRPG_Water_Reflect
+        "S[DB]_Alp_water",  # FRPG_WaterWaveSfx
+        "A12_DarkRiver",  # FRPG_Water_Reflect
+        "A12_DarkWater",  # FRPG_Water_Reflect
+        "A12_NewWater",  # FRPG_Water_Reflect
+        "A12_Water_boss",  # FRPG_Water_Reflect
+    }
+
+    SNOW_STEMS: tp.ClassVar[set[str]] = {
+        "M_8Snow",  # FRPG_Snow
+        "A10_slime[D][L]",  # FRPG_Snow_Lit
+        "A11_Snow",  # FRPG_Snow
+        "A11_Snow[L]",  # FRPG_Snow_Lit
+        "A11_Snow_stair",  # FRPG_Snow
+        "A11_Snow_stair[L]",  # FRPG_Snow_Lit
+        "A14_numa",  # FRPG_Snow (Blighttown swamp)
+        "A14_numa2",  # FRPG_Snow (Blighttown swamp)
+        "A15_Tar",  # FRPG_Snow
+        "A18_ash",  # FRPG_Snow
+        "A19_Snow",  # FRPG_Snow
+        "A19_Snow[L]",  # FRPG_Snow_Lit
+    }
+
+    # Subset of `SNOW_STEMS` that use a 'FRPG_Snow*' SPX shader and also have a 'g_SnowMetalMask' param and an extra
+    # 'g_Bumpmap_3' texture type.
+    SNOW_METAL_MASK_STEMS: tp.ClassVar[set[str]] = {
+        "A10_slime[D][L]",  # FRPG_Snow_Lit
+        "A11_Snow",  # FRPG_Snow
+        "A11_Snow[L]",  # FRPG_Snow_Lit
+        "A11_Snow_stair",  # FRPG_Snow
+        "A11_Snow_stair[L]",  # FRPG_Snow_Lit
+        "A14_numa",  # FRPG_Snow (Blighttown swamp)
+        "A14_numa2",  # FRPG_Snow (Blighttown swamp)
+        "A15_Tar",  # FRPG_Snow
+        "A19_Snow",  # FRPG_Snow
+        "A19_Snow[L]",  # FRPG_Snow_Lit
+    }
+
+    # Ordered dict mapping texture type names like 'g_Diffuse' to their FLVER vertex UV index/Blender layer (1-indexed).
+    texture_types: dict[str, int] = field(default_factory=dict)
+    # TODO: Some shaders simply don't use the always-empty 'g_DetailBumpmap', but I can find no reliable way to detect
+    #  this from their MTD names alone. I may have to guess that they do unless the MTD file is provided.
+
+    alpha: bool = False
+    edge: bool = False
+    spec: bool = False
+    detb: bool = False  # I don't think these shaders are used in DS1. Also `g_EnvSpcSlotNo = 2`...
+    is_water: bool = False
+    is_foliage: bool = False  # has 'g_Wind*' params and two extra UV slots for wind animation control
+    is_snow: bool = False  # has 'g_SnowColor', 'g_SnowHeight', and other 'g_Snow*' params
+    has_snow_roughness: bool = False  # has 'g_Bumpmap_3' texture and 'g_Snow[Roughness/MetalMask/DiffuseF0]' params
+    no_tangents: bool = False  # True for unshaded (flag) FLVERs like skybox textures
+
+    @classmethod
+    def from_mtd(cls, mtd: MTD):
+        mtd_info = cls()
+
+        for texture in mtd.textures:
+            # NOTE: Each MTD may not use certain UV indices -- e.g. 'g_Lightmap' always uses 3, even if there is no
+            # second texture slot to use UV index 2. This is obviously desirable to keep the same UV layouts together
+            # and we do the same in Blender.
+            mtd_info.texture_types[texture.texture_type] = texture.uv_index  # 1-indexed!
+
+        blend_mode = mtd.get_param("g_BlendMode", default=0)
+        if blend_mode == 1:
+            mtd_info.edge = True
+        elif blend_mode == 2:
+            mtd_info.alpha = True
+
+        env_spc_slot_no = mtd.get_param("g_EnvSpcSlotNo", default=0)
+        if env_spc_slot_no == 1:
+            mtd_info.spec = True
+
+        detail_bump_power = mtd.get_param("g_DetailBump_BumpPower", default=0.0)
+        if detail_bump_power > 0.0:
+            mtd_info.detb = True
+
+        lighting_type = mtd.get_param("g_LightingType", default=1)
+        if lighting_type == 0:
+            mtd_info.no_tangents = True  # e.g. skybox
+
+        mtd_info.is_water = mtd.shader_stem.startswith("FRPG_Water")
+        mtd_info.is_foliage = mtd.has_param("g_IsFoliage")
+        mtd_info.is_snow = mtd.shader_stem.startswith("FRPG_Snow")
+        mtd_info.has_snow_roughness = mtd.has_param("g_SnowRoughness")  # only present in some Snow shaders
+
+        return mtd_info
+
+    @classmethod
+    def from_mtd_name(cls, mtd_name):
+        """Guess as much information about the shader as possible purely from its name.
+
+        Obviously, getting the texture names right is the most important part, but we can also guess whether the shader
+        uses a lightmap (L), two texture slots (M), or has extra features like alpha (Alp/Edge).
+        """
+        mtd_info = cls()
+        mtd_stem = Path(mtd_name).stem
+
+        if dsbh_match := cls.MTD_DSBH_RE.match(mtd_stem):
+            if dsbh_match.group(1):
+                mtd_info.texture_types["g_Diffuse"] = 1
+            if dsbh_match.group(2):
+                mtd_info.texture_types["g_Specular"] = 1
+            if dsbh_match.group(3):
+                mtd_info.texture_types["g_Bumpmap"] = 1
+            if dsbh_match.group(4):
+                mtd_info.texture_types["g_Height"] = 1
+        elif "[Dn]" in mtd_stem:
+            mtd_info.texture_types["g_Diffuse"] = 1
+            mtd_info.no_tangents = True  # TODO: A few [D] shaders also don't use tangents...
+        elif "[We]" in mtd_stem or mtd_stem in cls.WATER_STEMS:
+            mtd_info.texture_types["g_Bumpmap"] = 1
+            mtd_info.is_water = True
+        else:
+            print(f"# ERROR: Shader name '{mtd_name}' could not be parsed for its textures.")
+
+        if cls.MTD_M_RE.match(mtd_stem):
+            for texture_type, _ in mtd_info.texture_types:
+                mtd_info.texture_types[texture_type + "_2"] = 2
+
+        if cls.MTD_L_RE.match(mtd_stem):
+            mtd_info.texture_types["g_Lightmap"] = 3  # even if there is no second texture slot
+
+        # Has two extra UV slots.
+        mtd_info.is_foliage = any(mtd_name.startswith(prefix) for prefix in cls.MTD_FOLIAGE_PREFIXES)
+        mtd_info.is_snow = mtd_stem in cls.SNOW_STEMS
+        # Has an extra 'g_Bumpmap_3' texture type.
+        mtd_info.has_snow_roughness = mtd_stem in cls.SNOW_METAL_MASK_STEMS
+
+        mtd_info.alpha = "_Alp" in mtd_name
+        mtd_info.edge = "_Edge" in mtd_name
+        mtd_info.spec = "_Spec" in mtd_name
+        mtd_info.detb = "_DetB" in mtd_name
+
+        if "g_Bumpmap" in mtd_info.texture_types:
+            # Add useless 'g_DetailBumpmap' for completion.
+            # TODO: Some shaders, even with 'g_Bumpmap', do not have this. I have no way to detect from the name.
+            #  Currently assuming that it doesn't matter at all if FLVERs have an (empty) texture definition for it.
+            mtd_info.texture_types["g_DetailBumpmap"] = 1  # always
+
+        return mtd_info
+
+    def get_uv_layer_names(self) -> list[str]:
+        """Determine Blender UV layer names, which should correspond with the length of each vertex UV list."""
+        uv_layer_names = []
+        sorted_texture_types = sorted(self.texture_types.items(), key=lambda x: x[1])  # sort by UV index (value)
+        for texture_type, uv_index in sorted_texture_types:
+            name = f"UVMap{uv_index}"
+            if name not in uv_layer_names:
+                uv_layer_names.append(name)
+        if self.is_foliage:
+            uv_layer_names.extend(["UVMapWindA", "UVMapWindB"])
+        return uv_layer_names
+
+    @property
+    def has_two_slots(self):
+        return any(texture_type.endswith("_2") for texture_type in self.texture_types)
+
+    @property
+    def has_bumpmap_3(self):
+        """Snow shaders with roughness have this (and no other shaders in DSR at least)."""
+        return "g_Bumpmap_3" in self.texture_types
+
+    @property
+    def has_lightmap(self):
+        return "g_Lightmap" in self.texture_types
+
+    @property
+    def has_detail_bumpmap(self):
+        return "g_DetailBumpmap" in self.texture_types
+

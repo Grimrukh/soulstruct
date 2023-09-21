@@ -85,10 +85,10 @@ class LayoutMemberStruct(BinaryStruct):
 @dataclass(slots=True)
 class LayoutMember:
 
-    unk_x00: int
     member_format: MemberFormat
     member_type: MemberType
-    index: int  # instance index of this member in its `BufferLayout`
+    unk_x00: int = 0
+    index: int = 0  # instance index of this `MemberType` in its `BufferLayout`
 
     @classmethod
     def from_flver_reader(cls, reader: BinaryReader, asserted_struct_offset: int):
@@ -108,9 +108,10 @@ class LayoutMember:
         )
 
     def __repr__(self):
+        suffix = f" (unk_x00 = {self.unk_x00})" if self.unk_x00 != 0 else ""
         if self.index > 0:
-            return f"{self.member_type.name}({self.index})<{self.size}, {self.member_format.name}>"
-        return f"{self.member_type.name}<{self.size}, {self.member_format.name}>"
+            return f"{self.member_type.name}({self.index})<{self.size}, {self.member_format.name}>{suffix}"
+        return f"{self.member_type.name}<{self.size}, {self.member_format.name}>{suffix}"
 
     @property
     def size(self) -> int:
@@ -657,10 +658,7 @@ class VertexBuffer:
                 f"Vertex buffer size ({self._struct.vertex_size}) != buffer length / vertex count ({expected_size})."
             )
         if self._struct.vertex_size != layout_size:
-            # This happens for a few vanilla meshes; we ignore such meshes.
-            # TODO: I've looked at the buffer data for mesh 0 of m8000B2A10, and it appears very abnormal. In fact,
-            #  some of the 28-byte data clusters appear to just be counting upward as integers; there definitely does
-            #  not seem to be any position float data in there. Later on, they appear to change into random shorts.
+            # Layout could not be fixed in `FLVER` binary file reader. Mark mesh as invalid for user inspection.
             raise VertexBufferSizeError(self._struct.vertex_size, layout_size)
 
         read_func, full_fmt = layout.get_vertex_read_function(uv_factor)

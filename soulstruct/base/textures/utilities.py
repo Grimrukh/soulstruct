@@ -27,7 +27,7 @@ def dump_map_dds(game_map_dir: Path, dump_path: Path):
 def convert_dds_dump(source_dds_dump: Path, dest_dds_dump: Path, output_format="DXT1"):
     dest_dds_dump.mkdir(parents=True, exist_ok=True)
     for source_file in source_dds_dump.glob("*.dds"):
-        dds = DDS(source_file)
+        dds = DDS.from_path(source_file)
         dest_file = dest_dds_dump / source_file.name
         if dds.header.fourcc == b"DX10":
             convert_dds_file(source_file, dest_dds_dump, output_format)

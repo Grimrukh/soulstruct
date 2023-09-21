@@ -348,6 +348,17 @@ class MSBNavigationEvent(MSBEvent):
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBEnvironmentEvent(MSBEvent):
+    """I believe this marks the location (and some data) of the baking point of a cube reflection map. These
+    textures can be found in `mAA/GI_EnvM_mAA.tpfbhd` with names `GI_Env_mAA_BB_####.tpf.dcx`. Each TPF contains an
+    `EnvDif` cube map DDS and an `EnvSpc` cube map DDS (possibly multiple `EnvSpc` maps with `_I` index suffix). These
+    cube maps are used by the `BakedLight` (internal name "LightBank") DrawParam table.
+
+    In other words: I don't think the location of these events does anything in the actual game. But I'm not 100% sure
+    and haven't tested that hypothesis yet (i.e., moving all the events).
+
+    `MSBCollision` parts reference the environment event whose reflection map should be used while the player is
+    standing on that collision, I assume (although I'd expect this to create visible transitions?).
+    """
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Environment
 

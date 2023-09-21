@@ -15,6 +15,7 @@ from soulstruct.utilities.binary import *
 
 from .bone import FLVERBone
 from .dummy import Dummy
+from .layout_repair import check_ds1_layouts
 from .material import GXList, Material, Texture
 from .mesh import FaceSet, Mesh
 from .version import Version
@@ -136,6 +137,10 @@ class FLVER(GameFile):
         vertex_buffers = {i: VertexBuffer.from_flver_reader(reader) for i in range(header.vertex_buffer_count)}
 
         buffer_layouts = [BufferLayout.from_flver_reader(reader) for _ in range(header.buffer_layout_count)]
+
+        if header.version == Version.DarkSouls_A:
+            # Check for botched DS1R buffer layouts (thanks QLOC!).
+            check_ds1_layouts(buffer_layouts, vertex_buffers, meshes, materials)
 
         textures = {i: Texture.from_flver_reader(reader, encoding=encoding) for i in range(header.texture_count)}
 
@@ -706,8 +711,8 @@ class FLVER(GameFile):
         """Use given `armature_space_transforms` to set the local transforms of each `FLVERBone`, by applying the
         inverse of each parent's armature space transform (conveniently available).
 
-        Note that bone scale is not inherited. All scale vectors in `armature_space_transforms` will be set directly as
-        the local bone scales.
+        NOTE: Bone scale is NOT inherited. All scale vectors in `armature_space_transforms` will be treated as local
+        bone scale vectors.
         """
 
         if (arma_count := len(armature_space_transforms)) != len(self.bones):

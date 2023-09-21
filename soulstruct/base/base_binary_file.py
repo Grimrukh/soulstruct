@@ -130,7 +130,7 @@ class BaseBinaryFile:
 
     # endregion
 
-    def write(self, file_path: None | str | Path = None, make_dirs=True, check_hash=False):
+    def write(self, file_path: None | str | Path = None, make_dirs=True, check_hash=False) -> Path | None:
         """Pack game file into `bytes`, then write to given `file_path` (or `self.path` if not given).
 
         Missing directories in given path will be created automatically if `make_dirs` is True. Otherwise, they must
@@ -144,6 +144,9 @@ class BaseBinaryFile:
                 instance creation if a file path is used as a source.
             make_dirs (bool): if True, any directories in `file_path` that are missing will be created. (Default: True)
             check_hash (bool): if True, file will not be written if file with same hash already exists. (Default: False)
+
+        Returns:
+            Path: path that was written to (extensions may be adjusted, e.g. for DCX). `None` if nothing new is written.
         """
         file_path = self.get_file_path(file_path)
         if make_dirs:
@@ -151,10 +154,11 @@ class BaseBinaryFile:
         packed_dcx = bytes(self)
         if check_hash and file_path.is_file():
             if get_blake2b_hash(file_path) == get_blake2b_hash(packed_dcx):
-                return  # don't write file
+                return None  # don't write file
         create_bak(file_path)
         with file_path.open("wb") as f:
             f.write(packed_dcx)
+        return file_path
 
     def to_dict(self) -> dict[str, tp.Any]:
         """Create a dictionary from file instance. Uses `dataclasses.asdict()` by default and ignores '_dcx_type'."""

@@ -406,6 +406,25 @@ class Mesh:
         flver.buffer_layouts[self.vertex_buffers[vertex_buffer_index].layout_index] = layout
 
     @property
+    def cull_back_faces(self):
+        """Get `cull_back_faces` from face set 0 and warn if other face sets have different values."""
+        if not self.face_sets:
+            _LOGGER.warning("Mesh has no face sets.")
+            return False
+        cull = self.face_sets[0].cull_back_faces
+        for face_set in self.face_sets[1:]:
+            if face_set.cull_back_faces != cull:
+                _LOGGER.warning(f"Mesh has face sets with different `cull_back_faces` values. Using index 0: {cull}")
+                return cull
+        return cull
+
+    @cull_back_faces.setter
+    def cull_back_faces(self, value):
+        """Set `cull_back_faces` for all face sets."""
+        for face_set in self.face_sets:
+            face_set.cull_back_faces = value
+
+    @property
     def allow_primitive_restarts(self):
         return len(self.vertices) < 0xFFFF
 
