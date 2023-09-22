@@ -14,7 +14,8 @@ from soulstruct.utilities.text import indent_lines
 from soulstruct.utilities.binary import *
 
 from .bounding_box import BoundingBox, BoundingBoxWithUnknown
-from .vertex import BufferLayout, Vertex, VertexBuffer
+from .vertex import BufferLayout, VertexBuffer
+from .vertex_array import *
 
 if tp.TYPE_CHECKING:
     from .core import FLVER
@@ -150,11 +151,17 @@ class FaceSet:
         return triangle_list
 
     def get_triangles(
-        self, allow_primitive_restarts: bool, include_degenerate_faces=False
+        self, allow_primitive_restarts: bool, include_degenerate_faces=False, vertex_index_offset=0
     ) -> list[tuple[int, int, int]]:
         """Get triangle list and return the triplets as tuples inside a list."""
         tri = self.triangulate(allow_primitive_restarts, include_degenerate_faces)
-        return [(tri[i], tri[i + 1], tri[i + 2]) for i in range(0, len(tri), 3)]
+        return [
+            (
+                vertex_index_offset + tri[i],
+                vertex_index_offset + tri[i + 1],
+                vertex_index_offset + tri[i + 2]
+            ) for i in range(0, len(tri), 3)
+        ]
 
     def get_connected_vertex_indices(self, vertex_index: int) -> set[int]:
         """Find all vertices connected to the given `vertex_index`, including `vertex_index` itself."""
@@ -214,7 +221,6 @@ class MeshStruct(BinaryStruct):
 @dataclass(slots=True)
 class Mesh:
 
-    Vertex: tp.ClassVar[tp.Type[Vertex]] = Vertex
     FaceSet: tp.ClassVar[tp.Type[FaceSet]] = FaceSet
 
     is_bind_pose: bool = False
@@ -296,11 +302,11 @@ class Mesh:
         else:
             _LOGGER.warning("Mesh has no vertex buffers.")
 
-        # Check that unique `MemberType`s do not occur more than once among all `BufferLayout` members.
+        # Check that per-mesh unique `MemberType`s do not occur more than once among all members of all buffers.
         existing_types = set()
         for vertex_buffer in self.vertex_buffers:
             for member in layouts[vertex_buffer.layout_index]:
-                if member.member_type.unique():
+                if member.member_type.is_unique():
                     if member.member_type in existing_types:
                         raise ValueError(
                             f"Unique `LayoutFormat` {member.member_type} found more than once in `BufferLayouts` "
@@ -309,17 +315,6 @@ class Mesh:
                     existing_types.add(member.member_type)
 
         # TODO: SoulsFormats does an extra check here for edge-compressed vertex buffers, which are not supported here.
-
-    def read_vertices(
-        self,
-        reader: BinaryReader,
-        vertex_data_offset: int,
-        layouts: list[BufferLayout],
-        uv_factor: int,
-    ):
-        self.vertex_arrays = []
-        for vertex_buffer in self.vertex_buffers:
-            self.vertex_arrays.append(vertex_buffer.read_buffer(reader, layouts, vertex_data_offset, uv_factor))
 
     def to_flver_writer(self, writer: BinaryWriter):
         MeshStruct.object_to_writer(
@@ -356,78 +351,92 @@ class Mesh:
         writer.pack(f"{len(vertex_buffer_indices)}i", *vertex_buffer_indices)
 
     def get_vertex_positions(self, vertex_array_index=0) -> np.ndarray:
-        """Get a view into the 'position_{c}' columns of the given vertex array.
-
-        The returned view is a convenient way to get the vertex positions as 'vectors' and can be used to modify the
-        vertex positions in-place.
-        """
-        fields = [f"position_{c}" for c in "xyz"]
-        return self.vertex_arrays[vertex_array_index][fields]
+        """Get a view into the 'position_{c}' columns of the given vertex array."""
+        return get_vertex_positions(self.vertex_arrays[vertex_array_index])
 
     def get_vertex_bone_weights(self, vertex_array_index=0) -> np.ndarray:
         """Get a view into the 'bone_weight_{c}' columns of the given vertex array."""
-        fields = [f"bone_weight_{c}" for c in "abcd"]
-        return self.vertex_arrays[vertex_array_index][fields]
+        return get_vertex_bone_weights(self.vertex_arrays[vertex_array_index])
+
+    def get_vertex_bone_indices(self, vertex_array_index=0) -> np.ndarray:
+        """Get a view into the 'bone_index_{c}' columns of the given vertex array."""
+        return get_vertex_bone_indices(self.vertex_arrays[vertex_array_index])
 
     def get_vertex_normals(self, vertex_array_index=0) -> np.ndarray:
         """Get a view into the 'normal_{c}' columns of the given vertex array."""
-        fields = [f"normal_{c}" for c in "xyz"]
-        return self.vertex_arrays[vertex_array_index][fields]
+        return get_vertex_normals(self.vertex_arrays[vertex_array_index])
 
     def get_vertex_tangents(self, vertex_array_index=0) -> np.ndarray:
         """Get a view into the 'tangent_{c}' columns of the given vertex array."""
-        fields = [f"tangent_{c}" for c in "xyz"]
-        return self.vertex_arrays[vertex_array_index][fields]
+        return get_vertex_tangents(self.vertex_arrays[vertex_array_index])
 
     def get_vertex_bitangents(self, vertex_array_index=0) -> np.ndarray:
         """Get a view into the 'bitangent_{c}' columns of the given vertex array."""
-        fields = [f"bitangent_{c}" for c in "xyz"]
-        return self.vertex_arrays[vertex_array_index][fields]
+        return get_vertex_bitangents(self.vertex_arrays[vertex_array_index])
 
     def get_vertex_colors(self, color_index=0, vertex_array_index=0) -> np.ndarray:
         """Get a view into the 'color_{c}_{color_index}' columns of the given vertex array."""
-        fields = [f"color_{c}_{color_index}" for c in "rgba"]
         try:
-            return self.vertex_arrays[vertex_array_index][fields]
+            return get_vertex_colors(self.vertex_arrays[vertex_array_index], color_index)
         except KeyError:
             raise KeyError(f"Vertex array {vertex_array_index} does not have color index {color_index}.")
 
     def get_vertex_uvs(self, uv_index: int, include_w=False, vertex_array_index=0) -> np.ndarray:
-        """Get a view into the 'uv_{c}_{uv_index}' columns of the given vertex array.
-
-        The returned view is a convenient way to get the vertex UVs as 'vectors' and can be used to modify the
-        vertex UVs in-place.
-        """
-        fields = [f"uv_u_{uv_index}", f"uv_v_{uv_index}"]
-        if include_w:  # assumes you know it's valid!
-            fields.append(f"uv_w_{uv_index}")
+        """Get a view into the 'uv_{c}_{uv_index}' columns of the given vertex array."""
         try:
-            return self.vertex_arrays[vertex_array_index][fields]
+            return get_vertex_uvs(self.vertex_arrays[vertex_array_index], uv_index, include_w)
         except KeyError:
             raise KeyError(f"Vertex array {vertex_array_index} does not have UV index {uv_index}.")
 
-    def to_obj(self, name="Mesh", vertex_offset=0) -> str:
+    def get_vertex_all_uvs(self, include_w=False, vertex_array_index=0) -> list[np.ndarray]:
+        """Get a view into ALL 'uv_{c}_{i}' columns of the given vertex array.
+
+        Returns a list of such views, one per UV index. Could be empty if no UVs are present.
+        """
+        return get_vertex_all_uvs(self.vertex_arrays[vertex_array_index], include_w)
+
+    def local_to_global_bone_indices(self, clear_mesh_bone_indices=True):
+        """Transforms `vertex_array` in-place by replacing all `bone_index_{c}` indices with the global bone index in
+        `mesh.bone_indices` that the vertex indexes.
+
+        If `clear_mesh_bone_indices=True` (default), `mesh.bone_indices` will also be cleared, which is consistent with
+        later games that don't use local bone indices at all.
+
+        Will raise a `ValueError` if `mesh.bone_indices` is empty (implying vertex bone indices are already global).
+        """
+        if not self.bone_indices:
+            raise ValueError("Cannot convert local vertex bone indices to global because `mesh.bone_indices` is empty.")
+        for vertex_array in self.vertex_arrays:
+            for c in "abcd":
+                vertex_array[f"bone_index_{c}"] = self.bone_indices[vertex_array[f"bone_index_{c}"]]
+        if clear_mesh_bone_indices:
+            self.bone_indices.clear()
+
+    def to_obj(self, name="Mesh", vertex_offset=0, vertex_array=0) -> str:
         """Convert mesh vertices, normals, UVs, and faces to an OBJ string.
 
         Use `vertex_offset` to offset all vertex indices in face definitions (e.g. if other meshes' vertices have
         been defined in the same file).
         """
         lines = [f"o {name}"]
-        for vertex in self.vertices:
-            position = " ".join(str(x) for x in vertex.position)
-            lines.append(f"v {position}")
-        for vertex in self.vertices:
-            normal = " ".join(str(x) for x in vertex.normal)
-            lines.append(f"vn {normal}")
-        for vertex in self.vertices:
-            if len(vertex.uvs) > 1:
-                print(vertex)
-                raise NotImplementedError("Cannot convert mesh to OBJ because one or more vertices has multiple UVs.")
-            uv = " ".join(str(x) for x in vertex.uvs[0])
-            lines.append(f"vt {uv}")
+
+        # Check if vertices record array has 'uv_u_1' field:
+        vertex = self.vertices[0]
+        if "uv_u_1" in vertex:
+            raise NotImplementedError("Cannot convert mesh to OBJ because one or more vertices has multiple UVs.")
+
+        for position in self.get_vertex_positions(vertex_array):
+            pos_str = " ".join(str(x) for x in position)
+            lines.append(f"v {pos_str}")
+        for normal in self.get_vertex_normals(vertex_array):
+            normal_str = " ".join(str(x) for x in normal)
+            lines.append(f"vn {normal_str}")
+        for uv in self.get_vertex_uvs(uv_index=0, vertex_array_index=vertex_array):
+            uv_str = " ".join(str(x) for x in uv)
+            lines.append(f"vt {uv_str}")
         for i, face_set in enumerate(self.face_sets):
             lines.append(f"# Face Set {i}")
-            triangles = face_set.triangulate(self.allow_primitive_restarts)
+            triangles = face_set.triangulate(allow_primitive_restarts=len(self.vertex_arrays[vertex_array] > 0xFFFF))
             for j in range(0, len(triangles), 3):
                 # TODO: Are these UV/normal assignments correct, given that each vertex has one?
                 face = " ".join("/".join([str(v + vertex_offset + 1)] * 3) for v in triangles[j:j + 3])
@@ -480,9 +489,8 @@ class Mesh:
         for face_set in self.face_sets:
             face_set.cull_back_faces = value
 
-    @property
-    def allow_primitive_restarts(self):
-        return len(self.vertices) < 0xFFFF
+    def vertex_count_exceeds_ushort(self, vertex_array=0):
+        return len(self.vertex_arrays[vertex_array]) < 0xFFFF
 
     def draw(
         self,
@@ -498,10 +506,10 @@ class Mesh:
         import matplotlib.pyplot as plt
         if axes is None:
             axes = plt.figure().add_subplot(111, projection="3d")
-        positions = [[v.position[0], v.position[2], v.position[1]] for v in self.vertices]
+        positions = self.get_vertex_positions()
         axes.scatter(*zip(*positions), c=vertex_color, s=1, alpha=0.1)  # note y/z swapped
         if show_normals:
-            normals = [[v.position[0], v.position[2], v.position[1]] for v in self.vertices]
+            normals = self.get_vertex_normals()
             for position, normal in zip(positions, normals):
                 axes.plot(*zip(position, position + normal), c="black", alpha=0.1)
         if show_origin:
@@ -510,7 +518,6 @@ class Mesh:
             show_face_sets = tuple(range(len(self.face_sets)))
         if show_face_sets:
             from mpl_toolkits.mplot3d import art3d
-            vertices = np.array([[v.position[0], v.position[2], v.position[1]] for v in self.vertices])
             faces = []
             for i, face_set in enumerate(self.face_sets):
                 if i in show_face_sets:
@@ -523,14 +530,13 @@ class Mesh:
             norm = plt.Normalize(colors.min(initial=0), colors.max(initial=1))
             # noinspection PyUnresolvedReferences
             colors = plt.cm.rainbow(norm(colors))
-            pc = art3d.Poly3DCollection(vertices[faces], facecolors=colors, edgecolor="black", linewidth=0.1)
+            pc = art3d.Poly3DCollection(positions[faces], facecolors=colors, edgecolor="black", linewidth=0.1)
             axes.add_collection(pc)
         axes.set(**kwargs)
         if auto_show:
             plt.show()
 
     def __repr__(self):
-        # vertices = ",\n".join([f"    {v.repr_position_only()}" for v in self.vertices])
         face_sets = ",\n".join(["    " + indent_lines(repr(f)) for f in self.face_sets])
         lines = [
             "Mesh(",

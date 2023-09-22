@@ -21,6 +21,9 @@ from .mesh import FaceSet, Mesh
 from .version import Version
 from .vertex import BufferLayout, VertexBuffer, VertexBufferSizeError
 
+if tp.TYPE_CHECKING:
+    import numpy as np
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -158,7 +161,10 @@ class FLVER(GameFile):
             uv_factor = 2048 if header.version >= Version.DarkSouls2_NT else 1024
 
             try:
-                mesh.read_vertices(reader, header.vertex_data_offset, buffer_layouts, uv_factor)
+                mesh.vertex_arrays = [
+                    vertex_buffer.read_buffer(reader, buffer_layouts, header.vertex_data_offset, uv_factor)
+                    for vertex_buffer in mesh.vertex_buffers
+                ]
             except VertexBufferSizeError as ex:
                 _LOGGER.warning(
                     f"Mesh {i} in FLVER has an invalid vertex buffer size ({ex.vertex_size} rather than layout size "
@@ -198,7 +204,7 @@ class FLVER(GameFile):
         true_face_count = 0
         total_face_count = 0
         for mesh in self.meshes:
-            allow_primitive_restarts = len(mesh.vertices) < 2 ** 16 - 1  # max unsigned short value
+            allow_primitive_restarts = len(mesh.vertices) < 0xFFFF  # max unsigned short value
             for face_set in mesh.face_sets:
                 face_set_true_count, face_set_total_count = face_set.get_face_counts(allow_primitive_restarts)
                 true_face_count += face_set_true_count
@@ -442,6 +448,15 @@ class FLVER(GameFile):
             axes.scatter(*bone_position.to_xzy(), color="blue", s=10)
         if auto_show:
             plt.show()
+
+    def get_combined_vertex_array(self) -> tuple[np.recarray, list[int]]:
+        submesh_vertex_arrays = []
+        submesh_loop_offsets = []  # first index of each submesh's loops in combined 'loop data' array
+        for flver_mesh in self.meshes:
+            submesh_vertex_arrays.append(flver_mesh.vertices)
+            submesh_loop_offsets += len(flver_mesh.vertices)
+        from numpy.lib.recfunctions import stack_arrays
+        return stack_arrays(submesh_vertex_arrays), submesh_loop_offsets
 
     def scale_all_translations(self, scale_factor: float | Vector3 | Vector4):
         """Modifies the FLVER in place by scaling all dummies, bones, and vertices by `factor`.

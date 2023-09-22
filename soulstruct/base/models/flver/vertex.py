@@ -5,7 +5,6 @@ __all__ = [
     "MemberFormat",
     "LayoutMember",
     "BufferLayout",
-    "Vertex",
     "VertexBufferSizeError",
     "VertexBuffer",
 ]
@@ -19,7 +18,6 @@ import numpy as np
 
 from soulstruct.exceptions import SoulstructError
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.maths import Vector3
 
 from .version import Version
 
@@ -37,7 +35,7 @@ class MemberType(IntEnum):
     Bitangent = 7  # perpendicular to normal and tangent
     VertexColor = 10  # blending, alpha, etc.
 
-    def unique(self):
+    def is_unique(self):
         """If `True`, this `LayoutFormat` must only appear in one `LayoutMember` per `Mesh`."""
         return self in {self.BoneWeights, self.BoneIndices, self.Bitangent}
 
@@ -161,40 +159,40 @@ DTYPE_PARSER = {
     },
     MemberType.BoneWeights: {
         MemberFormat.Byte4A: (
-            [(f"bone_weights_{i}", "b") for i in range(4)],
-            [(f"bone_weights_{i}", "f") for i in range(4)],
+            [(f"bone_weight_{c}", "b") for c in "abcd"],
+            [(f"bone_weight_{c}", "f") for c in "abcd"],
             [_INT_TO_FLOAT_127] * 4,
         ),
         MemberFormat.Byte4C: (
-            [(f"bone_weights_{i}", "B") for i in range(4)],
-            [(f"bone_weights_{i}", "f") for i in range(4)],
+            [(f"bone_weights_{c}", "B") for c in "abcd"],
+            [(f"bone_weights_{c}", "f") for c in "abcd"],
             [_INT_TO_FLOAT_255] * 4,
         ),
         MemberFormat.UVPair: (
-            [(f"bone_weights_{i}", "h") for i in range(4)],
-            [(f"bone_weights_{i}", "f") for i in range(4)],
+            [(f"bone_weights_{c}", "h") for c in "abcd"],
+            [(f"bone_weights_{c}", "f") for c in "abcd"],
             [_INT_TO_FLOAT_32767] * 4,
         ),
         MemberFormat.Short4ToFloat4A: (
-            [(f"bone_weights_{i}", "h") for i in range(4)],
-            [(f"bone_weights_{i}", "f") for i in range(4)],
+            [(f"bone_weights_{c}", "h") for c in "abcd"],
+            [(f"bone_weights_{c}", "f") for c in "abcd"],
             [_INT_TO_FLOAT_32767] * 4,
         ),
     },
     MemberType.BoneIndices: {
         MemberFormat.Byte4B: (
-            [(f"bone_indices_{i}", "B") for i in range(4)],
-            [(f"bone_indices_{i}", "B") for i in range(4)],
+            [(f"bone_index_{c}", "B") for c in "abcd"],
+            [(f"bone_index_{c}", "B") for c in "abcd"],
             [None, None, None, None],
         ),
         MemberFormat.Byte4E: (
-            [(f"bone_indices_{i}", "B") for i in range(4)],
-            [(f"bone_indices_{i}", "B") for i in range(4)],
+            [(f"bone_index_{c}", "B") for c in "abcd"],
+            [(f"bone_index_{c}", "B") for c in "abcd"],
             [None, None, None, None],
         ),
         MemberFormat.ShortBoneIndices: (
-            [(f"bone_indices_{i}", "h") for i in range(4)],
-            [(f"bone_indices_{i}", "h") for i in range(4)],
+            [(f"bone_index_{c}", "h") for c in "abcd"],
+            [(f"bone_index_{c}", "h") for c in "abcd"],
             [None, None, None, None],
         ),
     },
@@ -534,108 +532,6 @@ class BufferLayout:
             f"    members = [\n        {members}\n    ]\n"
             f")"
         )
-
-
-@dataclass(slots=True)
-class Vertex:
-    """A single mesh vertex.
-
-    This class used to store its data in `Vector` and `Color` classes, but in Python, all that instantiation gets real
-    expensive real quick for large meshes. All data is now stored as lists of floats (ints for `bone_indices`). If you
-    assign a `Vector` to them, it will work fine, as will any class that is iterable and has the right length.
-
-    Note that multiple values (lists of floats) are supported for `uvs`, `tangents`, and `colors`, though most buffer
-    layouts will only have one of each.
-
-    Also note that the fourth element of `normal` is used as an (integer) index for binding to a single bone in some
-    cases. It is not part of the actual 3D normal vector.
-
-    TODO: Replace `Vertex` list with a `numpy` array, using the buffer layout to generate the dtype, for faster use,
-     as creating a million instances of this class (even with slots) is slow.
-    """
-    DEFAULT_NORMAL_W = 127.0
-
-    position: list[float] = field(default_factory=lambda: [0.0] * 3)
-    bone_weights: list[float] = field(default_factory=lambda: [0.0] * 4)
-    bone_indices: list[int] = field(default_factory=lambda: [0] * 4)
-    # NOTE: `normal[3]` can be used to bind to a single bone (as an `int`).
-    normal: list[float] = field(default_factory=lambda: [0.0] * 4)
-    # NOTE: proportion of 1024 (pre-`DarkSouls2_NT`) or 2048
-    uvs: list[list[float]] = field(default_factory=list)
-    tangents: list[list[float]] = field(default_factory=list)
-    bitangent: list[float] = field(default_factory=lambda: [0.0] * 4)
-    colors: list[list[float]] = field(default_factory=list)
-
-    uv_queue: list[list[float]] = field(default_factory=list, init=False, repr=False)
-    tangent_queue: list[list[float]] = field(default_factory=list, init=False, repr=False)
-    color_queue: list[list[float]] = field(default_factory=list, init=False, repr=False)
-
-    def __post_init__(self):
-        if len(self.normal) == 3:
-            self.normal = [*self.normal, self.DEFAULT_NORMAL_W]
-
-    @property
-    def normal_xyz(self) -> list[float]:
-        """Get XYZ of `_normal` as a three-float list, which is suitable for most uses."""
-        return self.normal[:3]
-
-    @normal_xyz.setter
-    def normal_xyz(self, value: Vector3 | tuple | list):
-        """Set XYZ of `normal`."""
-        if len(value) == 3:
-            self.normal = [*value, self.normal[3]]  # keep current `w`
-        else:
-            raise TypeError(f"`Vertex.normal_xyz` can only be set to a 3-length sequence/vector, not: {value}")
-
-    @property
-    def normal_w(self) -> int:
-        """Get `_normal[3]` as an `int`, which is sometimes used to bind the `Vertex` to a single bone."""
-        return int(self.normal[3])
-
-    @normal_w.setter
-    def normal_w(self, value: float | int):
-        self.normal[3] = float(value)
-
-    def clear_lists(self):
-        self.uvs = []
-        self.tangents = []
-        self.colors = []
-
-    def prepare_pack(self):
-        """Queue list types so they can be properly split across buffers."""
-        self.uv_queue = list(reversed(self.uvs))
-        self.tangent_queue = list(reversed(self.tangents))
-        self.color_queue = list(reversed(self.colors))
-
-    def finish_pack(self):
-        """Check queues are empty."""
-        if self.uv_queue:
-            raise ValueError(f"{len(self.uv_queue)} UVs left in vertex queue after it was packed.")
-        if self.tangent_queue:
-            raise ValueError(f"{len(self.tangent_queue)} tangents left in vertex queue after it was packed.")
-        if self.color_queue:
-            raise ValueError(f"{len(self.color_queue)} vertex colors left in vertex queue after it was packed.")
-
-    def repr_position_only(self):
-        return f"Vertex({self.position[0]}, {self.position[1]}, {self.position[2]})"
-
-    def __repr__(self):
-        """Omits default/empty values."""
-        lines = [f"    position = {self.position},"]
-        if any(self.bone_weights):
-            lines += [f"    bone_weights = {self.bone_weights},"]
-        if any(self.bone_indices) or any(self.bone_weights):
-            lines += [f"    bone_indices = {self.bone_indices},"]
-        lines += [f"    normal = {self.normal},"]
-        if self.normal_w != 127:
-            lines += [f"    normal_w = {self.normal_w},"]
-        lines += [f"    uvs = {self.uvs},"]
-        lines += [f"    tangents = {self.tangents},"]
-        if any(self.bitangent):
-            lines += [f"    bitangent = {self.bitangent},"]
-        if any(c != 1.0 for v in self.colors for c in v):
-            lines += [f"    colors = {self.colors},"]
-        return "Vertex(\n" + "\n".join(lines) + "\n)"
 
 
 class VertexBufferSizeError(SoulstructError):
