@@ -11,10 +11,11 @@ __all__ = [
 ]
 
 import logging
-import struct
 import typing as tp
 from dataclasses import dataclass, field
 from enum import IntEnum
+
+import numpy as np
 
 from soulstruct.exceptions import SoulstructError
 from soulstruct.utilities.binary import *
@@ -118,162 +119,258 @@ class LayoutMember:
         return self.member_format.size()
 
 
-# region Buffer Parser Callbacks
-def _int_to_float(scale: float, make_signed=False) -> tuple[tp.Callable, tp.Callable]:
-    if make_signed:
-        def read_func(v: tuple[int, ...]):
-            return [(x - scale) / scale for x in v]
-
-        def write_func(d: list[float]):
-            return [int(x * scale + scale) for x in d]
-    else:
-        def read_func(v: tuple[int, ...]):
-            return [x / scale for x in v]
-
-        def write_func(d: list[float]):
-            return [int(x * scale) for x in d]
-    return read_func, write_func
-
-
-def _int_to_float_normal(v: tuple[int, int, int, int]) -> list[float, float, float, float]:
-    """Does not un-quantize fourth element."""
-    return [(x - 127) / 127.0 for x in v[:3]] + [float(v[3])]
-
-
-def _float_to_int_normal(d: list[float, float, float, float]) -> list[int, int, int, int]:
-    """Does not quantize fourth element."""
-    return [int(d[0] * 127 + 127), int(d[1] * 127 + 127), int(d[2] * 127 + 127), int(d[3])]
-
-
-def _two_shorts_to_one_uv(v: tuple[int, int]) -> list[list[float]]:
-    return [[float(v[0]), float(v[1]), 0.0]]
+_INT_TO_FLOAT_127 = (
+    lambda i: i / 127.0,
+    lambda f: f * 127,
+)
+_INT_TO_FLOAT_255 = (
+    lambda i: i / 255.0,
+    lambda f: f * 255,
+)
+_INT_TO_FLOAT_32767 = (
+    lambda i: i / 32767.0,
+    lambda f: f * 32767,
+)
+_INT_TO_FLOAT_127_SIGNED = (
+    lambda i: (i - 127.0) / 127.0,
+    lambda f: f * 127 + 127,
+)
+_INT_TO_FLOAT_255_SIGNED = (
+    lambda i: (i - 255.0) / 255.0,
+    lambda f: f * 255 + 255,
+)
+_INT_TO_FLOAT_32767_SIGNED = (
+    lambda i: (i - 32767.0) / 32767.0,
+    lambda f: f * 32767 + 32767,
+)
 
 
-def _one_uv_to_two_shorts(d: list[float]) -> list[int, int]:
-    return [int(d[0]), int(d[1])]
-
-
-def _four_shorts_to_one_uv(v: tuple[int, int, int, int]) -> list[list[float]]:
-    if v[3] != 0:
-        raise ValueError("Expected fourth short to be zero in reading UV | Short4ToFloat4B vertex member.")
-    return [[float(v[0]), float(v[1]), float(v[2])]]
-
-
-def _one_uv_to_four_shorts(d: list[float]) -> list[int, int, int, int]:
-    return [int(d[0]), int(d[1]), int(d[2]), 0]
-
-
-def _four_shorts_to_two_uvs(v: tuple[int, int, int, int]) -> list[list[float], list[float]]:
-    return [[float(v[0]), float(v[1]), 0.0], [float(v[2]), float(v[3]), 0.0]]
-
-
-def _four_floats_to_two_uvs(v: tuple[float, float, float, float]) -> list[list[float], list[float]]:
-    return [[v[0], v[1], 0.0], [v[2], v[3], 0.0]]
-
-
-def _one_uv_to_two_floats(d: list[float]) -> list[float, float]:
-    return [d[0], d[1]]
-# endregion
-
-
-class LayoutMemberInfo(tp.NamedTuple):
-    attr: str
-    fmt: str
-    size: int
-    read_callback: tp.Callable = None  # converts `struct.unpack` output tuples to attribute lists (default is `list()`)
-    write_callback: tp.Callable = None  # converts attribute lists to `v` as in `struct.pack(fmt, *v)` (default skipped)
-    has_two_uvs: bool = False
-
-
-# Maps `(LayoutFormat, LayoutType)` key pairs (nested) to `(name, fmt, size, callback)` quadruples.
-# Note that the layout is aware that `uvs`, `tangents`, and `colors` attributes are lists; `+=` will be used on the
-# callback result in these cases.
-LAYOUT_PARSER = {
+DTYPE_PARSER = {
     MemberType.Position: {
-        MemberFormat.Float3: LayoutMemberInfo("position", "3f", 3),
-        MemberFormat.Float4: LayoutMemberInfo(
-            "position", "4f", 4,
-            lambda v: [v[0], v[1], v[2]],
-            lambda d: (d[0], d[1], d[2], 0.0),
+        MemberFormat.Float3: (
+            [("position_x", "f"), ("position_y", "f"), ("position_z", "f")],
+            [("position_x", "f"), ("position_y", "f"), ("position_z", "f")],
+            [None, None, None],
+        ),
+        MemberFormat.Float4: (
+            [("position_x", "f"), ("position_y", "f"), ("position_z", "f"), ("position_w", "f")],
+            [("position_x", "f"), ("position_y", "f"), ("position_z", "f"), ("position_w", "f")],
+            [None, None, None, None],
         ),
         # LayoutType.EdgeCompressed is explicitly not supported.
     },
     MemberType.BoneWeights: {
-        MemberFormat.Byte4A: LayoutMemberInfo("bone_weights", "4b", 4, *_int_to_float(127.0)),
-        MemberFormat.Byte4C: LayoutMemberInfo("bone_weights", "4B", 4, *_int_to_float(255.0)),
-        MemberFormat.UVPair: LayoutMemberInfo("bone_weights", "4h", 4, *_int_to_float(32767.0)),
-        MemberFormat.Short4ToFloat4A: LayoutMemberInfo("bone_weights", "4h", 4, *_int_to_float(32767.0)),
+        MemberFormat.Byte4A: (
+            [(f"bone_weights_{i}", "b") for i in range(4)],
+            [(f"bone_weights_{i}", "f") for i in range(4)],
+            [_INT_TO_FLOAT_127] * 4,
+        ),
+        MemberFormat.Byte4C: (
+            [(f"bone_weights_{i}", "B") for i in range(4)],
+            [(f"bone_weights_{i}", "f") for i in range(4)],
+            [_INT_TO_FLOAT_255] * 4,
+        ),
+        MemberFormat.UVPair: (
+            [(f"bone_weights_{i}", "h") for i in range(4)],
+            [(f"bone_weights_{i}", "f") for i in range(4)],
+            [_INT_TO_FLOAT_32767] * 4,
+        ),
+        MemberFormat.Short4ToFloat4A: (
+            [(f"bone_weights_{i}", "h") for i in range(4)],
+            [(f"bone_weights_{i}", "f") for i in range(4)],
+            [_INT_TO_FLOAT_32767] * 4,
+        ),
     },
     MemberType.BoneIndices: {
-        MemberFormat.Byte4B: LayoutMemberInfo("bone_indices", "4B", 4),
-        MemberFormat.Byte4E: LayoutMemberInfo("bone_indices", "4B", 4),
-        MemberFormat.ShortBoneIndices: LayoutMemberInfo("bone_indices", "4h", 4),
+        MemberFormat.Byte4B: (
+            [(f"bone_indices_{i}", "B") for i in range(4)],
+            [(f"bone_indices_{i}", "B") for i in range(4)],
+            [None, None, None, None],
+        ),
+        MemberFormat.Byte4E: (
+            [(f"bone_indices_{i}", "B") for i in range(4)],
+            [(f"bone_indices_{i}", "B") for i in range(4)],
+            [None, None, None, None],
+        ),
+        MemberFormat.ShortBoneIndices: (
+            [(f"bone_indices_{i}", "h") for i in range(4)],
+            [(f"bone_indices_{i}", "h") for i in range(4)],
+            [None, None, None, None],
+        ),
     },
     MemberType.Normal: {
-        MemberFormat.Float3: LayoutMemberInfo(
-            "normal", "3f", 3,
-            lambda v: [v[0], v[1], v[2], -1.0],
-            lambda d: [d[0], d[1], d[2]],
+        MemberFormat.Float3: (
+            [("normal_x", "f"), ("normal_y", "f"), ("normal_z", "f")],
+            [("normal_x", "f"), ("normal_y", "f"), ("normal_z", "f")],
+            [None, None, None],
         ),
-        MemberFormat.Float4: LayoutMemberInfo("normal", "4f", 4),
-        # Note that we don't modify `w` in any of these quantization cases, except to make it a `float`.
-        MemberFormat.Byte4A: LayoutMemberInfo("normal", "4B", 4, _int_to_float_normal, _float_to_int_normal),
-        MemberFormat.Byte4B: LayoutMemberInfo("normal", "4B", 4, _int_to_float_normal, _float_to_int_normal),
-        MemberFormat.Byte4C: LayoutMemberInfo("normal", "4B", 4, _int_to_float_normal, _float_to_int_normal),
-        MemberFormat.Byte4E: LayoutMemberInfo("normal", "4B", 4, _int_to_float_normal, _float_to_int_normal),
-        MemberFormat.Short2toFloat2: LayoutMemberInfo(
-            "normal", "B3b", 4,
-            lambda v: [v[1] / 127.0, v[2] / 127.0, v[3] / 127.0, v[0]],  # packed in `wxyz` order
-            lambda d: [d[3], int(d[0] * 127), int(d[1] * 127), int(d[2] * 127)],
+        MemberFormat.Float4: (
+            [("normal_x", "f"), ("normal_y", "f"), ("normal_z", "f"), ("normal_w", "i4")],
+            [("normal_x", "f"), ("normal_y", "f"), ("normal_z", "f"), ("normal_w", "i4")],
+            [None, None, None, None],
         ),
-        MemberFormat.Short4ToFloat4A: LayoutMemberInfo(
-            "normal", "4h", 4,
-            lambda v: [v[0] / 32767.0, v[1] / 32767.0, v[2] / 32767.0, float(v[3])],
-            lambda d: [int(d[0] * 32767), int(d[1] * 32767), int(d[2] * 32767), int(d[3])],
+        # Note that we don't modify `w` in any of these quantization cases.
+        MemberFormat.Byte4A: (
+            [("normal_x", "B"), ("normal_y", "B"), ("normal_z", "B"), ("normal_w", "B")],
+            [("normal_x", "f"), ("normal_y", "f"), ("normal_z", "f"), ("normal_w", "B")],
+            [_INT_TO_FLOAT_127_SIGNED, _INT_TO_FLOAT_127_SIGNED, _INT_TO_FLOAT_127_SIGNED, None],
         ),
-        MemberFormat.Short4ToFloat4B: LayoutMemberInfo(
-            "normal", "3Hh", 4,
-            lambda v: [(v[0] - 32767) / 32767.0, (v[1] - 32767) / 32767.0, (v[2] - 32767) / 32767.0, float(v[3])],
-            lambda d: [int(d[0] * 32767 + 32767), int(d[1] * 32767 + 32767), int(d[2] * 32767 + 32767), int(d[3])],
+        MemberFormat.Byte4B: (
+            [("normal_x", "B"), ("normal_y", "B"), ("normal_z", "B"), ("normal_w", "B")],
+            [("normal_x", "f"), ("normal_y", "f"), ("normal_z", "f"), ("normal_w", "B")],
+            [_INT_TO_FLOAT_127_SIGNED, _INT_TO_FLOAT_127_SIGNED, _INT_TO_FLOAT_127_SIGNED, None],
+        ),
+        MemberFormat.Byte4C: (
+            [("normal_x", "B"), ("normal_y", "B"), ("normal_z", "B"), ("normal_w", "B")],
+            [("normal_x", "f"), ("normal_y", "f"), ("normal_z", "f"), ("normal_w", "B")],
+            [_INT_TO_FLOAT_127_SIGNED, _INT_TO_FLOAT_127_SIGNED, _INT_TO_FLOAT_127_SIGNED, None],
+        ),
+        MemberFormat.Byte4E: (
+            [("normal_x", "B"), ("normal_y", "B"), ("normal_z", "B"), ("normal_w", "B")],
+            [("normal_x", "f"), ("normal_y", "f"), ("normal_z", "f"), ("normal_w", "B")],
+            [_INT_TO_FLOAT_127_SIGNED, _INT_TO_FLOAT_127_SIGNED, _INT_TO_FLOAT_127_SIGNED, None],
+        ),
+        MemberFormat.Short2toFloat2: (
+            [("normal_w", "B"), ("normal_x", "b"), ("normal_y", "b"), ("normal_z", "b")],
+            [("normal_x", "f"), ("normal_y", "f"), ("normal_z", "f"), ("normal_w", "B")],
+            [None, _INT_TO_FLOAT_127_SIGNED, _INT_TO_FLOAT_127_SIGNED, _INT_TO_FLOAT_127_SIGNED],
+        ),
+        MemberFormat.Short4ToFloat4A: (
+            [("normal_x", "h"), ("normal_y", "h"), ("normal_z", "h"), ("normal_w", "h")],
+            [("normal_x", "f"), ("normal_y", "f"), ("normal_z", "f"), ("normal_w", "h")],
+            [_INT_TO_FLOAT_32767_SIGNED] * 3 + [None],
+        ),
+        MemberFormat.Short4ToFloat4B: (
+            [("normal_x", "H"), ("normal_y", "H"), ("normal_z", "H"), ("normal_w", "h")],
+            [("normal_x", "f"), ("normal_y", "f"), ("normal_z", "f"), ("normal_w", "h")],
+            [_INT_TO_FLOAT_32767_SIGNED] * 3 + [None],
         ),
     },
     MemberType.UV: {
         # UV read callbacks return a list of 1-2 UV lists, but write callbacks still process one UV list at a time.
         # Writer will detect `Float4` and `UVPair` types are write two queued UVs (in reverse order) as needed.
-        MemberFormat.Float2: LayoutMemberInfo("uvs", "2f", 2, lambda v: [[*v, 0.0]], lambda d: [d[0], d[1]]),
-        MemberFormat.Float3: LayoutMemberInfo("uvs", "3f", 3, lambda v: [list(v)]),
-        MemberFormat.Float4: LayoutMemberInfo(
-            "uvs", "4f", 4, _four_floats_to_two_uvs, _one_uv_to_two_floats, has_two_uvs=True
+        MemberFormat.Float2: (
+            [("uv_u", "f"), ("uv_v", "f")],
+            [("uv_u", "f"), ("uv_v", "f")],
+            [None, None],
+        ),
+        MemberFormat.Float3: (
+            [("uv_u", "f"), ("uv_v", "f"), ("uv_w", "f")],
+            [("uv_u", "f"), ("uv_v", "f"), ("uv_w", "f")],
+            [None, None, None],
+        ),
+        MemberFormat.Float4: (
+            [("uv_u", "f"), ("uv_v", "f"), ("uv_u", "f"), ("uv_v", "f")],
+            [("uv_u", "f"), ("uv_v", "f"), ("uv_u", "f"), ("uv_v", "f")],
+            [None, None, None, None],
         ),
         # All types below this will have their UVs divided by local `uv_factor` by the unpacker.
-        MemberFormat.Byte4A: LayoutMemberInfo("uvs", "2h", 2, _two_shorts_to_one_uv, _one_uv_to_two_shorts),
-        MemberFormat.Byte4B: LayoutMemberInfo("uvs", "2h", 2, _two_shorts_to_one_uv, _one_uv_to_two_shorts),
-        MemberFormat.Short2toFloat2: LayoutMemberInfo("uvs", "2h", 2, _two_shorts_to_one_uv, _one_uv_to_two_shorts),
-        MemberFormat.Byte4C: LayoutMemberInfo("uvs", "2h", 2, _two_shorts_to_one_uv, _one_uv_to_two_shorts),
-        MemberFormat.UV: LayoutMemberInfo("uvs", "2h", 2, _two_shorts_to_one_uv, _one_uv_to_two_shorts),
-        MemberFormat.UVPair: LayoutMemberInfo(
-            "uvs", "4h", 4, _four_shorts_to_two_uvs, _one_uv_to_two_shorts, has_two_uvs=True
+        MemberFormat.Byte4A: (
+            [("uv_u", "h"), ("uv_v", "h")],
+            [("uv_u", "f"), ("uv_v", "f")],
+            [None, None],
         ),
-        MemberFormat.Short4ToFloat4B: LayoutMemberInfo("uvs", "4h", 4, _four_shorts_to_one_uv, _one_uv_to_four_shorts),
+        MemberFormat.Byte4B: (
+            [("uv_u", "h"), ("uv_v", "h")],
+            [("uv_u", "f"), ("uv_v", "f")],
+            [None, None],
+        ),
+        MemberFormat.Short2toFloat2: (
+            [("uv_u", "h"), ("uv_v", "h")],
+            [("uv_u", "f"), ("uv_v", "f")],
+            [None, None],
+        ),
+        MemberFormat.Byte4C: (
+            [("uv_u", "h"), ("uv_v", "h")],
+            [("uv_u", "f"), ("uv_v", "f")],
+            [None, None],
+        ),
+        MemberFormat.UV: (
+            [("uv_u", "h"), ("uv_v", "h")],
+            [("uv_u", "f"), ("uv_v", "f")],
+            [None, None],
+        ),
+        MemberFormat.UVPair: (
+            [("uv_u", "h"), ("uv_v", "h"), ("uv_u", "h"), ("uv_v", "h")],
+            [("uv_u", "f"), ("uv_v", "f"), ("uv_u", "f"), ("uv_v", "f")],
+            [None, None, None, None],
+        ),
+        MemberFormat.Short4ToFloat4A: (
+            [("uv_u", "h"), ("uv_v", "h"), ("uv_w", "h"), ("uv_zero", "h")],
+            [("uv_u", "f"), ("uv_v", "f"), ("uv_w", "f"), ("uv_zero", "f")],
+            [None, None, None, None],
+        ),
     },
     MemberType.Tangent: {
-        MemberFormat.Float4: LayoutMemberInfo("tangents", "4f", 4),
-        MemberFormat.Byte4A: LayoutMemberInfo("tangents", "4B", 4, *_int_to_float(127.0, make_signed=True)),
-        MemberFormat.Byte4B: LayoutMemberInfo("tangents", "4B", 4, *_int_to_float(127.0, make_signed=True)),
-        MemberFormat.Byte4C: LayoutMemberInfo("tangents", "4B", 4, *_int_to_float(127.0, make_signed=True)),
-        MemberFormat.Byte4E: LayoutMemberInfo("tangents", "4B", 4, *_int_to_float(127.0, make_signed=True)),
-        MemberFormat.Short4ToFloat4A: LayoutMemberInfo("tangents", "4B", 4, *_int_to_float(127.0, make_signed=True)),
+        MemberFormat.Float4: (
+            [("tangent_x", "f"), ("tangent_y", "f"), ("tangent_z", "f"), ("tangent_w", "f")],
+            [("tangent_x", "f"), ("tangent_y", "f"), ("tangent_z", "f"), ("tangent_w", "f")],
+            [_INT_TO_FLOAT_127_SIGNED] * 4,
+        ),
+        MemberFormat.Byte4A: (
+            [("tangent_x", "B"), ("tangent_y", "B"), ("tangent_z", "B"), ("tangent_w", "B")],
+            [("tangent_x", "f"), ("tangent_y", "f"), ("tangent_z", "f"), ("tangent_w", "f")],
+            [_INT_TO_FLOAT_127_SIGNED] * 4,
+        ),
+        MemberFormat.Byte4B: (
+            [("tangent_x", "B"), ("tangent_y", "B"), ("tangent_z", "B"), ("tangent_w", "B")],
+            [("tangent_x", "f"), ("tangent_y", "f"), ("tangent_z", "f"), ("tangent_w", "f")],
+            [_INT_TO_FLOAT_127_SIGNED] * 4,
+        ),
+        MemberFormat.Byte4C: (
+            [("tangent_x", "B"), ("tangent_y", "B"), ("tangent_z", "B"), ("tangent_w", "B")],
+            [("tangent_x", "f"), ("tangent_y", "f"), ("tangent_z", "f"), ("tangent_w", "f")],
+            [_INT_TO_FLOAT_127_SIGNED] * 4,
+        ),
+        MemberFormat.Byte4E: (
+            [("tangent_x", "B"), ("tangent_y", "B"), ("tangent_z", "B"), ("tangent_w", "B")],
+            [("tangent_x", "f"), ("tangent_y", "f"), ("tangent_z", "f"), ("tangent_w", "f")],
+            [_INT_TO_FLOAT_127_SIGNED] * 4,
+        ),
+        MemberFormat.Short4ToFloat4A: (
+            [("tangent_x", "B"), ("tangent_y", "B"), ("tangent_z", "B"), ("tangent_w", "B")],
+            [("tangent_x", "f"), ("tangent_y", "f"), ("tangent_z", "f"), ("tangent_w", "f")],
+            [_INT_TO_FLOAT_127_SIGNED] * 4,
+        ),
     },
     MemberType.Bitangent: {
-        MemberFormat.Byte4A: LayoutMemberInfo("bitangent", "4B", 4, *_int_to_float(127.0, make_signed=True)),
-        MemberFormat.Byte4B: LayoutMemberInfo("bitangent", "4B", 4, *_int_to_float(127.0, make_signed=True)),
-        MemberFormat.Byte4C: LayoutMemberInfo("bitangent", "4B", 4, *_int_to_float(127.0, make_signed=True)),
-        MemberFormat.Byte4E: LayoutMemberInfo("bitangent", "4B", 4, *_int_to_float(127.0, make_signed=True)),
+        MemberFormat.Byte4A: (
+            [("bitangent_x", "B"), ("bitangent_y", "B"), ("bitangent_z", "B"), ("bitangent_w", "B")],
+            [("bitangent_x", "f"), ("bitangent_y", "f"), ("bitangent_z", "f"), ("bitangent_w", "f")],
+            [_INT_TO_FLOAT_127_SIGNED] * 4,
+        ),
+        MemberFormat.Byte4B: (
+            [("bitangent_x", "B"), ("bitangent_y", "B"), ("bitangent_z", "B"), ("bitangent_w", "B")],
+            [("bitangent_x", "f"), ("bitangent_y", "f"), ("bitangent_z", "f"), ("bitangent_w", "f")],
+            [_INT_TO_FLOAT_127_SIGNED] * 4,
+        ),
+        MemberFormat.Byte4C: (
+            [("bitangent_x", "B"), ("bitangent_y", "B"), ("bitangent_z", "B"), ("bitangent_w", "B")],
+            [("bitangent_x", "f"), ("bitangent_y", "f"), ("bitangent_z", "f"), ("bitangent_w", "f")],
+            [_INT_TO_FLOAT_127_SIGNED] * 4,
+        ),
+        MemberFormat.Byte4E: (
+            [("bitangent_x", "B"), ("bitangent_y", "B"), ("bitangent_z", "B"), ("bitangent_w", "B")],
+            [("bitangent_x", "f"), ("bitangent_y", "f"), ("bitangent_z", "f"), ("bitangent_w", "f")],
+            [_INT_TO_FLOAT_127_SIGNED] * 4,
+        ),
     },
     MemberType.VertexColor: {
-        MemberFormat.Float4: LayoutMemberInfo("colors", "4f", 4),
-        MemberFormat.Byte4A: LayoutMemberInfo("colors", "4B", 4, *_int_to_float(255.0)),
-        MemberFormat.Byte4C: LayoutMemberInfo("colors", "4B", 4, *_int_to_float(255.0)),
+        MemberFormat.Float4: (
+            [("color_r", "f"), ("color_g", "f"), ("color_b", "f"), ("color_a", "f")],
+            [("color_r", "f"), ("color_g", "f"), ("color_b", "f"), ("color_a", "f")],
+            [None] * 4,
+        ),
+        MemberFormat.Byte4A: (
+            [("color_r", "B"), ("color_g", "B"), ("color_b", "B"), ("color_a", "B")],
+            [("color_r", "f"), ("color_g", "f"), ("color_b", "f"), ("color_a", "f")],
+            [_INT_TO_FLOAT_255] * 4,
+        ),
+        MemberFormat.Byte4C: (
+            [("color_r", "B"), ("color_g", "B"), ("color_b", "B"), ("color_a", "B")],
+            [("color_r", "f"), ("color_g", "f"), ("color_b", "f"), ("color_a", "f")],
+            [_INT_TO_FLOAT_255] * 4,
+        ),
     },
 }
 
@@ -342,136 +439,74 @@ class BufferLayout:
                     count += 2
         return count
 
-    def get_vertex_read_function(self, uv_factor: int) -> tuple[tp.Callable[[tuple, Vertex, int], int], str]:
-        """Construct a relatively efficient function that can be used to read data for each `Vertex` whose data lies
-        in a `VertexBuffer` with this layout."""
+    def get_vertex_colors_count(self):
+        """Return total number of vertex color slots."""
+        return sum(member.member_type == MemberType.VertexColor for member in self.members)
 
-        member_infos = []  # type: list[LayoutMemberInfo]
-        full_fmt = ""  # fmt of data to read
+    def get_numpy_dtype_and_codecs(
+        self, uv_factor: int
+    ) -> tuple[np.dtype, np.dtype, list[tp.Callable], list[tp.Callable]]:
+        """Construct a NumPy compound `dtype` corresponding to a single vertex's data.
 
+        Also returns decompression and compression functions intended to be applied to the corresponding NumPy columns.
+
+        NOTE: Does not perform any compression or decompression of data. Strictly corresponds to the buffer layout.
+        """
+        field_types = []
+        decompressed_field_types = []
+        decompress_funcs = []
+        compress_funcs = []
+        uv_count = 0
+        color_count = 0
         for member in self.members:
-
             if member.member_type == MemberType.Position and member.member_format == MemberFormat.EdgeCompressed:
                 # Explicitly not supported.
                 raise NotImplementedError("Cannot read FLVERs with edge-compressed vertex positions.")
-            if member.member_type not in LAYOUT_PARSER:
+            if member.member_type not in DTYPE_PARSER:
                 raise ValueError(f"Invalid vertex buffer layout member type: {member.member_type}")
 
-            type_parser = LAYOUT_PARSER[member.member_type]
+            type_parser = DTYPE_PARSER[member.member_type]
             if member.member_format not in type_parser:
                 raise NotImplementedError(f"Unsupported vertex buffer layout member type/format: {member}")
 
-            member_info = type_parser[member.member_format]
-
-            # Modify UV callbacks with scale factor, if appropriate.
-            if member.member_type == MemberType.UV and member.member_format in USES_UV_FACTOR:
-                def scaled_uv_callback(v, info=member_info):  # this `member_info` baked in
-                    return [[x / uv_factor for x in uv_list] for uv_list in info.read_callback(v)]
-
-                member_info = LayoutMemberInfo(
-                    member_info.attr, member_info.fmt, member_info.size, read_callback=scaled_uv_callback
-                )
-
-            member_infos.append(member_info)
-            full_fmt += member_info.fmt
-
-        def read_vertex_data(data: tuple, vertex: Vertex, index: int) -> int:
-            for info in member_infos:
-                raw_value = data[index:index + info.size]  # raw tuple
-                value = info.read_callback(raw_value) if info.read_callback is not None else list(raw_value)
-                if info.attr == "uvs":
-                    vertex.uvs += value  # extend with list of one/two UV lists
-                elif info.attr == "tangents":
-                    vertex.tangents.append(value)
-                elif info.attr == "colors":
-                    vertex.colors.append(value)
+            fields, decompressed_fields, codecs = type_parser[member.member_format]
+            if member.member_type == MemberType.UV:
+                # Add UV indices to field names.
+                if member.member_format in {MemberFormat.Float4, MemberFormat.UVPair}:
+                    # Member contains TWO UVs.
+                    field_types += [(f"{f[0]}_{uv_count}", f[1]) for f in fields[:2]]
+                    field_types += [(f"{f[0]}_{uv_count + 1}", f[1]) for f in fields[2:]]
+                    decompressed_field_types += [(f"{f[0]}_{uv_count}", f[1]) for f in decompressed_fields[:2]]
+                    decompressed_field_types += [(f"{f[0]}_{uv_count + 1}", f[1]) for f in decompressed_fields[2:]]
+                    uv_count += 2
                 else:
-                    setattr(vertex, info.attr, value)
-                index += info.size
-            return index
+                    field_types += [(f"{f[0]}_{uv_count}", f[1]) for f in fields]
+                    decompressed_field_types += [(f"{f[0]}_{uv_count}", f[1]) for f in decompressed_fields]
+                    uv_count += 1
+            elif member.member_type == MemberType.VertexColor:
+                # Add color indices to field names.
+                field_types += [(f"{f[0]}_{color_count}", f[1]) for f in fields]
+                decompressed_field_types += [(f"{f[0]}_{color_count}", f[1]) for f in decompressed_fields]
+                color_count += 1
+            else:
+                field_types += fields
+                decompressed_field_types += decompressed_fields
 
-        return read_vertex_data, full_fmt
-
-    def get_vertex_write_function(self, uv_factor: int) -> tp.Callable[[BinaryWriter, Vertex], None]:
-        """Construct a relatively efficient function that can be used to write data for each `Vertex` into a packed
-        `VertexBuffer` with this layout."""
-
-        member_infos = []  # type: list[LayoutMemberInfo]
-        full_fmt = ""  # fmt of data to read
-
-        for member in self.members:
-
-            if member.member_type == MemberType.Position and member.member_format == MemberFormat.EdgeCompressed:
-                # Explicitly not supported.
-                raise NotImplementedError("Cannot write FLVERs with edge-compressed vertex positions.")
-            if member.member_type not in LAYOUT_PARSER:
-                raise ValueError(f"Invalid vertex buffer layout member type: {member.member_type}")
-
-            type_parser = LAYOUT_PARSER[member.member_type]
-            if member.member_format not in type_parser:
-                raise NotImplementedError(f"Unsupported vertex buffer layout member type/format: {member}")
-
-            member_info = type_parser[member.member_format]
-
-            # Modify UV callbacks with scale factor, if appropriate.
-            if member.member_type == MemberType.UV and member.member_format in USES_UV_FACTOR:
-                def scaled_uv_callback(d, info=member_info):  # this `member_info` baked in
-                    return info.write_callback([x * uv_factor for x in d])
-
-                member_info = LayoutMemberInfo(
-                    member_info.attr, member_info.fmt, member_info.size,
-                    write_callback=scaled_uv_callback,
-                    has_two_uvs=member_info.has_two_uvs,
-                )
-
-            member_infos.append(member_info)
-            full_fmt += member_info.fmt
-
-        def write_vertex_data(writer: BinaryWriter, vertex: Vertex):
-
-            # TODO: Change write callbacks to return lists for faster extending here.
-            values = []
-            for info in member_infos:
-
-                if info.attr == "uvs":
-                    try:
-                        uv1 = vertex.uv_queue.pop()
-                    except IndexError:
-                        raise IndexError("Ran out of vertex UVs to buffer.")
-                    values += info.write_callback(uv1) if info.write_callback else uv1
-                    if info.has_two_uvs:
-                        try:
-                            uv2 = vertex.uv_queue.pop()
-                        except IndexError:
-                            raise IndexError("Ran out of vertex UVs to buffer.")
-                        values += info.write_callback(uv2) if info.write_callback else uv2
-                elif info.attr == "tangents":
-                    try:
-                        tangent = vertex.tangent_queue.pop()
-                    except IndexError:
-                        raise IndexError("Ran out of vertex tangents to buffer.")
-                    values += info.write_callback(tangent) if info.write_callback else tangent
-                elif info.attr == "colors":
-                    try:
-                        color = vertex.color_queue.pop()
-                    except IndexError:
-                        raise IndexError("Ran out of vertex colors to buffer.")
-                    values += info.write_callback(color) if info.write_callback else color
+            codecs: list[None | tuple[tp.Callable, tp.Callable]]
+            for codec in codecs:
+                if codec is None:
+                    decompress, compress = lambda x: x, lambda x: x
                 else:
-                    value = getattr(vertex, info.attr)
-                    values += info.write_callback(value) if info.write_callback else value
+                    decompress, compress = codec
+                if member.member_type == MemberType.UV and not member.member_format.name.startswith("Float"):
+                    # Bake in UV factor.
+                    decompress_funcs.append(lambda x, f=decompress: f(x / uv_factor))
+                    compress_funcs.append(lambda x, f=compress: f(x) * uv_factor)
+                else:
+                    decompress_funcs.append(decompress)
+                    compress_funcs.append(compress)
 
-            try:
-                writer.pack("<" + full_fmt, *values)
-            except struct.error:
-                raise ValueError(
-                    f"Could not pack vertex data.\n"
-                    f"    Info: {member_infos}\n"
-                    f"    Format: {full_fmt}\n"
-                    f"    Values: {values}"
-                )
-
-        return write_vertex_data
+        return np.dtype(field_types), np.dtype(decompressed_field_types), decompress_funcs, compress_funcs
 
     def __hash__(self):
         return hash(", ".join(str(m) for m in self.members))
@@ -646,10 +681,9 @@ class VertexBuffer:
         self,
         reader: BinaryReader,
         layouts: list[BufferLayout],
-        vertices: list[Vertex],
         vertex_data_offset: int,
         uv_factor: int,
-    ):
+    ) -> np.ndarray:
         layout = layouts[self.layout_index]
         layout_size = layout.get_total_size()
         expected_size = self._struct.buffer_length / self._struct.vertex_count
@@ -661,15 +695,9 @@ class VertexBuffer:
             # Layout could not be fixed in `FLVER` binary file reader. Mark mesh as invalid for user inspection.
             raise VertexBufferSizeError(self._struct.vertex_size, layout_size)
 
-        read_func, full_fmt = layout.get_vertex_read_function(uv_factor)
-
         with reader.temp_offset(vertex_data_offset + self._struct.buffer_offset):
-            data = reader.unpack("<" + full_fmt * len(vertices))
-            index = 0
-            for vertex in vertices:
-                index = read_func(data, vertex, index)
-
-        self._struct = None
+            buffer_data = reader.read(self._struct.buffer_length)
+            return get_vertex_array(buffer_data, layout, uv_factor)
 
     def get_vertex_count(self) -> int:
         if self._struct is None:
@@ -699,17 +727,35 @@ class VertexBuffer:
         self,
         writer: BinaryWriter,
         buffer_layouts: list[BufferLayout],
-        vertices: list[Vertex],
+        vertex_array: np.ndarray,
         buffer_offset: int,
         uv_factor: int,
     ):
         layout = buffer_layouts[self.layout_index]
         writer.fill("buffer_offset", buffer_offset, obj=self)
-
-        write_func = layout.get_vertex_write_function(uv_factor)
-
-        for vertex in vertices:
-            write_func(writer, vertex)
+        writer.append(get_vertex_buffer(vertex_array, layout, uv_factor))
 
     def __repr__(self):
         return f"VertexBuffer(layout_index={self.layout_index})"
+
+
+def get_vertex_array(buffer_data: bytes, layout: BufferLayout, uv_factor: int) -> np.ndarray:
+    """Convert FLVER vertex buffer to NumPy array 'record' with named columns."""
+    compressed_dtype, decompressed_dtype, dec_funcs, co_funcs = layout.get_numpy_dtype_and_codecs(uv_factor)
+    buffer_array = np.frombuffer(buffer_data, dtype=compressed_dtype)
+    decompressed_columns = []
+    # Iterate over decompressed dtype and func.
+    for decompress, (name, dtype) in zip(dec_funcs, decompressed_dtype.fields.items()):
+        decompressed_columns.append(decompress(buffer_array[name].astype(dtype[0])))
+    return np.rec.fromarrays(decompressed_columns, dtype=decompressed_dtype)
+
+
+def get_vertex_buffer(vertex_array: np.ndarray, layout: BufferLayout, uv_factor: int) -> bytes:
+    """Convert FLVER vertex buffer to NumPy array 'record' with named columns."""
+    compressed_dtype, decompressed_dtype, dec_funcs, co_funcs = layout.get_numpy_dtype_and_codecs(uv_factor)
+    compressed_columns = []
+    # Iterate over compressed dtype and func.
+    for compress, (name, dtype) in zip(co_funcs, compressed_dtype.fields.items()):
+        compressed_columns.append(compress(vertex_array[name]).astype(dtype[0]))
+    buffer_array = np.rec.fromarrays(compressed_columns, dtype=compressed_dtype)
+    return buffer_array.tobytes()

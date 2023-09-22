@@ -8,6 +8,8 @@ import typing as tp
 from dataclasses import dataclass, field
 from enum import IntEnum
 
+import numpy as np
+
 from soulstruct.utilities.text import indent_lines
 from soulstruct.utilities.binary import *
 
@@ -222,7 +224,7 @@ class Mesh:
     bounding_box: tp.Optional[BoundingBox] = None
     face_sets: list[FaceSet] = field(default_factory=list)
     vertex_buffers: list[VertexBuffer] = field(default_factory=list)
-    vertices: list[Vertex] = field(default_factory=list)
+    vertex_arrays: list[np.ndarray] = field(default_factory=list)
 
     invalid_vertex_size: bool = False
 
@@ -259,6 +261,11 @@ class Mesh:
             _vertex_buffer_indices=_vertex_buffer_indices,
             bounding_box=bounding_box,
         )
+
+    @property
+    def vertices(self):
+        """Shortcut for accessing the first vertex array (generally the only array)."""
+        return self.vertex_arrays[0]
 
     def assign_face_sets(self, face_sets: dict[int, FaceSet]):
         self.face_sets = []
@@ -310,11 +317,9 @@ class Mesh:
         layouts: list[BufferLayout],
         uv_factor: int,
     ):
-        # Start with empty vertices. (All vertex buffers have been asserted as having the same size already.)
-        self.vertices = [Vertex() for _ in range(self.vertex_buffers[0].get_vertex_count())]
-        # Load data into them from all buffers (usually just one) attached to this Mesh.
+        self.vertex_arrays = []
         for vertex_buffer in self.vertex_buffers:
-            vertex_buffer.read_buffer(reader, layouts, self.vertices, vertex_data_offset, uv_factor)
+            self.vertex_arrays.append(vertex_buffer.read_buffer(reader, layouts, vertex_data_offset, uv_factor))
 
     def to_flver_writer(self, writer: BinaryWriter):
         MeshStruct.object_to_writer(
@@ -349,6 +354,57 @@ class Mesh:
         vertex_buffer_indices = [first_vertex_buffer_index + i for i in range(len(self.vertex_buffers))]
         writer.fill_with_position("_vertex_buffer_offset", obj=self)
         writer.pack(f"{len(vertex_buffer_indices)}i", *vertex_buffer_indices)
+
+    def get_vertex_positions(self, vertex_array_index=0) -> np.ndarray:
+        """Get a view into the 'position_{c}' columns of the given vertex array.
+
+        The returned view is a convenient way to get the vertex positions as 'vectors' and can be used to modify the
+        vertex positions in-place.
+        """
+        fields = [f"position_{c}" for c in "xyz"]
+        return self.vertex_arrays[vertex_array_index][fields]
+
+    def get_vertex_bone_weights(self, vertex_array_index=0) -> np.ndarray:
+        """Get a view into the 'bone_weight_{c}' columns of the given vertex array."""
+        fields = [f"bone_weight_{c}" for c in "abcd"]
+        return self.vertex_arrays[vertex_array_index][fields]
+
+    def get_vertex_normals(self, vertex_array_index=0) -> np.ndarray:
+        """Get a view into the 'normal_{c}' columns of the given vertex array."""
+        fields = [f"normal_{c}" for c in "xyz"]
+        return self.vertex_arrays[vertex_array_index][fields]
+
+    def get_vertex_tangents(self, vertex_array_index=0) -> np.ndarray:
+        """Get a view into the 'tangent_{c}' columns of the given vertex array."""
+        fields = [f"tangent_{c}" for c in "xyz"]
+        return self.vertex_arrays[vertex_array_index][fields]
+
+    def get_vertex_bitangents(self, vertex_array_index=0) -> np.ndarray:
+        """Get a view into the 'bitangent_{c}' columns of the given vertex array."""
+        fields = [f"bitangent_{c}" for c in "xyz"]
+        return self.vertex_arrays[vertex_array_index][fields]
+
+    def get_vertex_colors(self, color_index=0, vertex_array_index=0) -> np.ndarray:
+        """Get a view into the 'color_{c}_{color_index}' columns of the given vertex array."""
+        fields = [f"color_{c}_{color_index}" for c in "rgba"]
+        try:
+            return self.vertex_arrays[vertex_array_index][fields]
+        except KeyError:
+            raise KeyError(f"Vertex array {vertex_array_index} does not have color index {color_index}.")
+
+    def get_vertex_uvs(self, uv_index: int, include_w=False, vertex_array_index=0) -> np.ndarray:
+        """Get a view into the 'uv_{c}_{uv_index}' columns of the given vertex array.
+
+        The returned view is a convenient way to get the vertex UVs as 'vectors' and can be used to modify the
+        vertex UVs in-place.
+        """
+        fields = [f"uv_u_{uv_index}", f"uv_v_{uv_index}"]
+        if include_w:  # assumes you know it's valid!
+            fields.append(f"uv_w_{uv_index}")
+        try:
+            return self.vertex_arrays[vertex_array_index][fields]
+        except KeyError:
+            raise KeyError(f"Vertex array {vertex_array_index} does not have UV index {uv_index}.")
 
     def to_obj(self, name="Mesh", vertex_offset=0) -> str:
         """Convert mesh vertices, normals, UVs, and faces to an OBJ string.
@@ -453,7 +509,6 @@ class Mesh:
         if show_face_sets == "all":
             show_face_sets = tuple(range(len(self.face_sets)))
         if show_face_sets:
-            import numpy as np
             from mpl_toolkits.mplot3d import art3d
             vertices = np.array([[v.position[0], v.position[2], v.position[1]] for v in self.vertices])
             faces = []

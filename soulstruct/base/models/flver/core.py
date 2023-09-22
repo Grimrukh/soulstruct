@@ -342,32 +342,16 @@ class FLVER(GameFile):
                     vertex_indices_offset=writer.position - vertex_data_start,
                 )
 
-            for vertex_buffer in mesh.vertex_buffers:
-
-                for vertex in mesh.vertices:
-                    vertex.prepare_pack()
-
+            for vertex_buffer, vertex_array in zip(mesh.vertex_buffers, mesh.vertex_arrays):
                 writer.pad_align(16)
                 uv_factor = 2048 if self.version >= Version.DarkSouls2_NT else 1024
                 vertex_buffer.pack_buffer(
                     writer,
                     buffer_layouts=self.buffer_layouts,
-                    vertices=mesh.vertices,
+                    vertex_array=vertex_array,
                     buffer_offset=writer.position - vertex_data_start,
                     uv_factor=uv_factor,
                 )
-
-            for vertex in mesh.vertices:
-                try:
-                    vertex.finish_pack()
-                except ValueError as ex:
-                    mesh_material = self.materials[mesh.material_index]
-                    raise ValueError(
-                        f"Mesh {i} left in invalid state after pack.\n"
-                        f"Material MTD: {mesh_material.mtd_name}\n"
-                        f"Material textures: {', '.join(tex.texture_type for tex in mesh_material.textures)}"
-                        f"Error: {ex}"
-                    )
 
         writer.pad_align(16)
         writer.fill("vertex_data_size", writer.position - vertex_data_start, obj=self)
