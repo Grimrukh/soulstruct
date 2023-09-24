@@ -21,8 +21,8 @@ from .mesh import FaceSet, Mesh
 from .version import Version
 from .vertex import BufferLayout, VertexBuffer, VertexBufferSizeError
 
-if tp.TYPE_CHECKING:
-    import numpy as np
+import numpy as np
+from numpy.lib.recfunctions import stack_arrays
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -450,13 +450,16 @@ class FLVER(GameFile):
             plt.show()
 
     def get_combined_vertex_array(self) -> tuple[np.recarray, list[int]]:
+        """Stack all vertex arrays (index 0) and return it, along with a list of the first row indices of each mesh
+        in the new combined array (so face set vertex indices can be redirected to the combined array)."""
         submesh_vertex_arrays = []
+        current_loop_offset = 0
         submesh_loop_offsets = []  # first index of each submesh's loops in combined 'loop data' array
         for flver_mesh in self.meshes:
+            submesh_loop_offsets.append(current_loop_offset)
+            current_loop_offset += len(flver_mesh.vertices)
             submesh_vertex_arrays.append(flver_mesh.vertices)
-            submesh_loop_offsets += len(flver_mesh.vertices)
-        from numpy.lib.recfunctions import stack_arrays
-        return stack_arrays(submesh_vertex_arrays), submesh_loop_offsets
+        return np.lib.recfunctions.stack_arrays(submesh_vertex_arrays), submesh_loop_offsets
 
     def scale_all_translations(self, scale_factor: float | Vector3 | Vector4):
         """Modifies the FLVER in place by scaling all dummies, bones, and vertices by `factor`.

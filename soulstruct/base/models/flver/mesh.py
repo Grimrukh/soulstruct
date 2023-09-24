@@ -406,9 +406,11 @@ class Mesh:
         """
         if not self.bone_indices:
             raise ValueError("Cannot convert local vertex bone indices to global because `mesh.bone_indices` is empty.")
+        global_bone_indices = np.array(self.bone_indices)  # for vectorized indexing
         for vertex_array in self.vertex_arrays:
             for c in "abcd":
-                vertex_array[f"bone_index_{c}"] = self.bone_indices[vertex_array[f"bone_index_{c}"]]
+                local_bone_index = vertex_array[f"bone_index_{c}"]
+                vertex_array[f"bone_index_{c}"] = global_bone_indices[local_bone_index]
         if clear_mesh_bone_indices:
             self.bone_indices.clear()
 
