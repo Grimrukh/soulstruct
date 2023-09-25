@@ -9,24 +9,24 @@ from ..mtd import MTDInfo
 
 if tp.TYPE_CHECKING:
     from .material import Material
-    from .mesh import Mesh
+    from .submesh import Submesh
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class BufferLayoutFactory:
 
-    member_unkx_00: int
+    member_unk_x00: int
 
-    def __init__(self, unkx_00: int):
-        self.member_unkx_00 = unkx_00
+    def __init__(self, unk_x00: int):
+        self.member_unk_x00 = unk_x00
 
     def member(self, member_type: MemberType, member_format: MemberFormat, index=0):
         return LayoutMember(
             member_type=member_type,
             member_format=member_format,
             index=index,
-            unk_x00=self.member_unkx_00,
+            unk_x00=self.member_unk_x00,
         )
 
     def get_ds1_map_buffer_layout(self, mtd_info: MTDInfo) -> BufferLayout:
@@ -39,7 +39,7 @@ class BufferLayoutFactory:
             # UV/UVPair will be appended here if needed.
         ]
 
-        if not mtd_info.no_tangents:
+        if mtd_info.has_tangent:
             members.insert(3, self.member(MemberType.Tangent, MemberFormat.Byte4C))
             if mtd_info.has_two_slots:  # still has Bitangent
                 # TODO: Why is Bitangent needed for double slots? Does it actually hold a second tangent or something?
@@ -104,7 +104,7 @@ def guess_mtd_layout(mtd_name: str, member_unk_00: int, is_chr: bool) -> BufferL
 def check_ds1_layouts(
     buffer_layouts: list[BufferLayout],
     vertex_buffers: dict[int, VertexBuffer],
-    meshes: list[Mesh],
+    submeshes: list[Submesh],
     materials: list[Material],
 ):
     """
@@ -114,7 +114,7 @@ def check_ds1_layouts(
         m8000B2A10.flver.dcx
     """
 
-    for i, mesh in enumerate(meshes):
+    for i, mesh in enumerate(submeshes):
         material = materials[mesh.material_index]
         buffers = [vertex_buffers[i] for i in mesh._vertex_buffer_indices]
         for buffer in buffers:

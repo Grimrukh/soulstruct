@@ -581,6 +581,14 @@ class MTDInfo:
         "A19_Snow[L]",  # FRPG_Snow_Lit
     }
 
+    NO_TANGENT_STEMS: tp.ClassVar[set[str]] = {
+        "M_Tree[D]_Edge",
+    }
+
+    HAS_BITANGENT_STEMS: tp.ClassVar[set[str]] = {
+        "A10_02_m9000_M[D]",
+    }
+
     # Ordered dict mapping texture type names like 'g_Diffuse' to their FLVER vertex UV index/Blender layer (1-indexed).
     texture_types: dict[str, int] = field(default_factory=dict)
     # TODO: Some shaders simply don't use the always-empty 'g_DetailBumpmap', but I can find no reliable way to detect
@@ -594,7 +602,8 @@ class MTDInfo:
     is_foliage: bool = False  # has 'g_Wind*' params and two extra UV slots for wind animation control
     is_snow: bool = False  # has 'g_SnowColor', 'g_SnowHeight', and other 'g_Snow*' params
     has_snow_roughness: bool = False  # has 'g_Bumpmap_3' texture and 'g_Snow[Roughness/MetalMask/DiffuseF0]' params
-    no_tangents: bool = False  # True for unshaded (flag) FLVERs like skybox textures
+    has_tangent: bool = True  # False for unshaded FLVERs like skybox textures and some trees
+    has_bitangent: bool | None = None  # if `None`, bitangents
 
     @classmethod
     def from_mtd(cls, mtd: MTD):
@@ -621,8 +630,9 @@ class MTDInfo:
             mtd_info.detb = True
 
         lighting_type = mtd.get_param("g_LightingType", default=1)
-        if lighting_type == 0:
-            mtd_info.no_tangents = True  # e.g. skybox
+        if lighting_type == 0:  # e.g. unshaded skybox
+            mtd_info.has_tangent = False
+            mtd_info.has_bitangent = False
 
         mtd_info.is_water = mtd.shader_stem.startswith("FRPG_Water")
         mtd_info.is_foliage = mtd.has_param("g_IsFoliage")
@@ -650,14 +660,19 @@ class MTDInfo:
                 mtd_info.texture_types["g_Bumpmap"] = 1
             if dsbh_match.group(4):
                 mtd_info.texture_types["g_Height"] = 1
-        elif "[Dn]" in mtd_stem:
+        elif "[Dn]" in mtd_stem:  # e.g. unshaded skybox
             mtd_info.texture_types["g_Diffuse"] = 1
-            mtd_info.no_tangents = True  # TODO: A few [D] shaders also don't use tangents...
+            mtd_info.has_tangent = False
+            mtd_info.has_bitangent = False
         elif "[We]" in mtd_stem or mtd_stem in cls.WATER_STEMS:
             mtd_info.texture_types["g_Bumpmap"] = 1
             mtd_info.is_water = True
         else:
             print(f"# ERROR: Shader name '{mtd_name}' could not be parsed for its textures.")
+
+        # TODO: A few [D] shaders also don't use tangents...
+        if mtd_stem in cls.NO_TANGENT_STEMS:
+            mtd_info.no_tangents = True
 
         if cls.MTD_M_RE.match(mtd_stem):
             for texture_type, _ in mtd_info.texture_types:
@@ -713,4 +728,3 @@ class MTDInfo:
     @property
     def has_detail_bumpmap(self):
         return "g_DetailBumpmap" in self.texture_types
-

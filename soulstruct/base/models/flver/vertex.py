@@ -589,6 +589,23 @@ class VertexBuffer:
             )
         if self._struct.vertex_size != layout_size:
             # Layout could not be fixed in `FLVER` binary file reader. Mark mesh as invalid for user inspection.
+
+            # TODO: Printing bytes.
+            with reader.temp_offset(vertex_data_offset + self._struct.buffer_offset):
+                first_vertex_bytes = reader.read(self._struct.vertex_size)
+            # Decode as floats.
+            first_vertex_floats = np.frombuffer(first_vertex_bytes, dtype=np.float32)
+            # Decode as bytes.
+            first_vertex_bytes = np.frombuffer(first_vertex_bytes, dtype=np.uint8)
+            # Decode as shorts.
+            first_vertex_shorts = np.frombuffer(first_vertex_bytes, dtype=np.uint16)
+            # Print all.
+            print(f"\nFLOATS: {first_vertex_floats}")
+            print(f"BYTES: {first_vertex_bytes}")
+            print(f"SHORTS: {first_vertex_shorts}")
+            # Print 'bad' layout.
+            print(f"BAD LAYOUT: {layout}")
+
             raise VertexBufferSizeError(self._struct.vertex_size, layout_size)
 
         with reader.temp_offset(vertex_data_offset + self._struct.buffer_offset):

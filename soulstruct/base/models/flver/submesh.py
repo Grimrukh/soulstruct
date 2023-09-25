@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["FaceSetFlags", "FaceSet", "Mesh"]
+__all__ = ["FaceSetFlags", "FaceSet", "Submesh"]
 
 import logging
 import random
@@ -151,15 +151,15 @@ class FaceSet:
         return triangle_list
 
     def get_triangles(
-        self, allow_primitive_restarts: bool, include_degenerate_faces=False
+        self, allow_primitive_restarts: bool, include_degenerate_faces=False, vertex_index_offset=0
     ) -> list[tuple[int, int, int]]:
         """Get triangle list and return the triplets as tuples inside a list."""
         tri = self.triangulate(allow_primitive_restarts, include_degenerate_faces)
         return [
             (
-                tri[i],
-                tri[i + 1],
-                tri[i + 2]
+                vertex_index_offset + tri[i],
+                vertex_index_offset + tri[i + 1],
+                vertex_index_offset + tri[i + 2]
             ) for i in range(0, len(tri), 3)
         ]
 
@@ -202,7 +202,7 @@ class FaceSet:
 
 
 @dataclass(slots=True)
-class MeshStruct(BinaryStruct):
+class SubmeshStruct(BinaryStruct):
 
     is_bind_pose: bool
     _pad1: bytes = field(init=False, **BinaryPad(3))
@@ -219,20 +219,26 @@ class MeshStruct(BinaryStruct):
 
 
 @dataclass(slots=True)
-class Mesh:
+class Submesh:
+    """A single FLVER submesh that uses a single material.
+
+    FLVER files are exported 3D model files optimized for rendering, not editing. Model faces with different materials
+    are thus already split up into multiple submeshes, and may even be split further to handle large bone counts (older
+    games like DS1 cannot support more than 38 bones per submesh).
+    """
 
     FaceSet: tp.ClassVar[tp.Type[FaceSet]] = FaceSet
 
     is_bind_pose: bool = False
     material_index: int = 0
     default_bone_index: int = -1
-    bone_indices: list[int] = field(default_factory=list)
+    bone_indices: np.ndarray | None = None
     bounding_box: tp.Optional[BoundingBox] = None
     face_sets: list[FaceSet] = field(default_factory=list)
     vertex_buffers: list[VertexBuffer] = field(default_factory=list)
     vertex_arrays: list[np.ndarray] = field(default_factory=list)
 
-    invalid_vertex_size: bool = False
+    invalid_layout_size: bool = False
 
     # Held temporarily while unpacking.
     _face_set_indices: list[int] | None = None
@@ -240,7 +246,7 @@ class Mesh:
 
     @classmethod
     def from_flver_reader(cls, reader: BinaryReader, bounding_box_has_unknown: bool = None):
-        mesh_struct = MeshStruct.from_bytes(reader)
+        mesh_struct = SubmeshStruct.from_bytes(reader)
 
         _bone_count = mesh_struct.pop("_bone_count")
         _bounding_box_offset = mesh_struct.pop("_bounding_box_offset")
@@ -250,7 +256,8 @@ class Mesh:
         _vertex_buffer_count = mesh_struct.pop("_vertex_buffer_count")
         _vertex_buffer_offset = mesh_struct.pop("_vertex_buffer_offset")
 
-        bone_indices = list(reader.unpack(f"{_bone_count}i", offset=_bone_offset))
+        bone_indices = np.array(reader.unpack(f"{_bone_count}i", offset=_bone_offset)) if _bone_count > 0 else None
+
         _face_set_indices = list(reader.unpack(f"{_face_set_count}i", offset=_face_set_offset))
         _vertex_buffer_indices = list(reader.unpack(f"{_vertex_buffer_count}i", offset=_vertex_buffer_offset))
 
@@ -317,10 +324,10 @@ class Mesh:
         # TODO: SoulsFormats does an extra check here for edge-compressed vertex buffers, which are not supported here.
 
     def to_flver_writer(self, writer: BinaryWriter):
-        MeshStruct.object_to_writer(
+        SubmeshStruct.object_to_writer(
             self,
             writer,
-            _bone_count=len(self.bone_indices),
+            _bone_count=len(self.bone_indices) if self.bone_indices is not None else 0,
             _face_set_count=len(self.face_sets),
             _vertex_buffer_count=len(self.vertex_buffers),
         )
@@ -395,24 +402,21 @@ class Mesh:
         """
         return get_vertex_all_uvs(self.vertex_arrays[vertex_array_index], include_w)
 
-    def local_to_global_bone_indices(self, clear_mesh_bone_indices=True):
+    def local_to_global_bone_indices(self):
         """Transforms `vertex_array` in-place by replacing all `bone_index_{c}` indices with the global bone index in
-        `mesh.bone_indices` that the vertex indexes.
+        `mesh.bone_indices` that the vertex indexes, and remove local bone indices from the mesh (consistent with later
+        games that use global bone indices by default).
 
-        If `clear_mesh_bone_indices=True` (default), `mesh.bone_indices` will also be cleared, which is consistent with
-        later games that don't use local bone indices at all.
-
-        Will raise a `ValueError` if `mesh.bone_indices` is empty (implying vertex bone indices are already global).
+        Will raise a `ValueError` if `mesh.bone_indices` is already None (implying vertex bone indices are already
+        global).
         """
-        if not self.bone_indices:
-            raise ValueError("Cannot convert local vertex bone indices to global because `mesh.bone_indices` is empty.")
-        global_bone_indices = np.array(self.bone_indices)  # for vectorized indexing
+        if self.bone_indices is None:
+            raise ValueError("Cannot convert local vertex bone indices to global because `mesh.bone_indices` is None.")
         for vertex_array in self.vertex_arrays:
             for c in "abcd":
                 local_bone_index = vertex_array[f"bone_index_{c}"]
-                vertex_array[f"bone_index_{c}"] = global_bone_indices[local_bone_index]
-        if clear_mesh_bone_indices:
-            self.bone_indices.clear()
+                vertex_array[f"bone_index_{c}"] = self.bone_indices[local_bone_index]
+        self.bone_indices = None
 
     def to_obj(self, name="Mesh", vertex_offset=0, vertex_array=0) -> str:
         """Convert mesh vertices, normals, UVs, and faces to an OBJ string.
@@ -454,6 +458,7 @@ class Mesh:
     @property
     def layout_index(self):
         """Shortcut for returning `vertex_buffers[0].layout_index`. Raises an error if there are 2+ vertex buffers."""
+        # TODO: vertex buffers should not be 'kept' after reading a FLVER at all. Store layout index/indices on submesh.
         if not self.vertex_buffers:
             raise ValueError("Mesh has no vertex buffers.")
         if len(self.vertex_buffers) > 1:
