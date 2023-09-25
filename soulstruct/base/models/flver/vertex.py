@@ -639,19 +639,18 @@ def get_vertex_array(buffer_data: bytes, layout: BufferLayout, uv_factor: int) -
     """Convert FLVER vertex buffer to NumPy array 'record' with named columns."""
     compressed_dtype, decompressed_dtype, dec_funcs, co_funcs = layout.get_numpy_dtype_and_codecs(uv_factor)
     buffer_array = np.frombuffer(buffer_data, dtype=compressed_dtype)
-    decompressed_columns = []
+    decompressed_array = np.empty(len(buffer_array), dtype=decompressed_dtype)
     # Iterate over decompressed dtype and func.
     for decompress, (name, dtype) in zip(dec_funcs, decompressed_dtype.fields.items()):
-        decompressed_columns.append(decompress(buffer_array[name].astype(dtype[0])))
-    return np.rec.fromarrays(decompressed_columns, dtype=decompressed_dtype)
+        decompressed_array[name] = decompress(buffer_array[name].astype(dtype[0]))
+    return decompressed_array
 
 
 def get_vertex_buffer(vertex_array: np.ndarray, layout: BufferLayout, uv_factor: int) -> bytes:
     """Convert FLVER vertex buffer to NumPy array 'record' with named columns."""
     compressed_dtype, decompressed_dtype, dec_funcs, co_funcs = layout.get_numpy_dtype_and_codecs(uv_factor)
-    compressed_columns = []
+    compressed_array = np.empty(len(vertex_array), dtype=compressed_dtype)
     # Iterate over compressed dtype and func.
     for compress, (name, dtype) in zip(co_funcs, compressed_dtype.fields.items()):
-        compressed_columns.append(compress(vertex_array[name]).astype(dtype[0]))
-    buffer_array = np.rec.fromarrays(compressed_columns, dtype=compressed_dtype)
-    return buffer_array.tobytes()
+        compressed_array[name] = compress(vertex_array[name].astype(dtype[0]))
+    return compressed_array.tobytes()

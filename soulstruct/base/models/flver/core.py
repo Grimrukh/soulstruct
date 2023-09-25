@@ -22,7 +22,6 @@ from .version import Version
 from .vertex import BufferLayout, VertexBuffer, VertexBufferSizeError
 
 import numpy as np
-from numpy.lib.recfunctions import stack_arrays
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -449,17 +448,45 @@ class FLVER(GameFile):
         if auto_show:
             plt.show()
 
-    def get_combined_vertex_array(self) -> tuple[np.recarray, list[int]]:
-        """Stack all vertex arrays (index 0) and return it, along with a list of the first row indices of each mesh
-        in the new combined array (so face set vertex indices can be redirected to the combined array)."""
-        submesh_vertex_arrays = []
+    def get_combined_vertex_array(self) -> tuple[np.ndarray, list[int]]:
+        """Stack all meshes' vertex arrays (index 0 only) and return it, along with a list of the first row indices of
+        each mesh in the new combined array (so face set vertex indices can be redirected to it).
+
+        TODO: Only stacks position, bone weights, and bone indices (things needed per Blender vertex). Adjust docs.
+        """
         current_loop_offset = 0
         submesh_loop_offsets = []  # first index of each submesh's loops in combined 'loop data' array
+        dtype = [
+            ("position_x", np.float32), ("position_y", np.float32), ("position_z", np.float32),
+            ("bone_weight_a", np.float32), ("bone_weight_b", np.float32),
+            ("bone_weight_c", np.float32), ("bone_weight_d", np.float32),
+            ("bone_index_a", np.uint16), ("bone_index_b", np.uint16),
+            ("bone_index_c", np.uint16), ("bone_index_d", np.uint16),
+        ]
+        total_vertex_count = sum(len(mesh.vertices) for mesh in self.meshes)
+        combined_array = np.empty(total_vertex_count, dtype=dtype)
+
         for flver_mesh in self.meshes:
             submesh_loop_offsets.append(current_loop_offset)
+            i = current_loop_offset
             current_loop_offset += len(flver_mesh.vertices)
-            submesh_vertex_arrays.append(flver_mesh.vertices)
-        return np.lib.recfunctions.stack_arrays(submesh_vertex_arrays), submesh_loop_offsets
+            j = current_loop_offset
+
+            # TODO: Probably should at least check for position and bone indices?
+            for c in "xyz":
+                combined_array[f"position_{c}"][i:j] = flver_mesh.vertices[f"position_{c}"]
+            if "bone_weight_a" in flver_mesh.vertices.dtype.names:
+                # Bone weights are present. Can simply stack array.
+                for c in "abcd":
+                    combined_array[f"bone_weight_{c}"][i:j] = flver_mesh.vertices[f"bone_weight_{c}"]
+            else:
+                # Bone weights are not present. Create an empty array of the same shape.
+                for c in "abcd":
+                    combined_array[f"bone_weight_{c}"][i:j] = 0.0
+            for c in "abcd":
+                combined_array[f"bone_index_{c}"][i:j] = flver_mesh.vertices[f"bone_index_{c}"]
+
+        return combined_array, submesh_loop_offsets
 
     def scale_all_translations(self, scale_factor: float | Vector3 | Vector4):
         """Modifies the FLVER in place by scaling all dummies, bones, and vertices by `factor`.

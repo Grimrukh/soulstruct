@@ -151,15 +151,15 @@ class FaceSet:
         return triangle_list
 
     def get_triangles(
-        self, allow_primitive_restarts: bool, include_degenerate_faces=False, vertex_index_offset=0
+        self, allow_primitive_restarts: bool, include_degenerate_faces=False
     ) -> list[tuple[int, int, int]]:
         """Get triangle list and return the triplets as tuples inside a list."""
         tri = self.triangulate(allow_primitive_restarts, include_degenerate_faces)
         return [
             (
-                vertex_index_offset + tri[i],
-                vertex_index_offset + tri[i + 1],
-                vertex_index_offset + tri[i + 2]
+                tri[i],
+                tri[i + 1],
+                tri[i + 2]
             ) for i in range(0, len(tri), 3)
         ]
 
