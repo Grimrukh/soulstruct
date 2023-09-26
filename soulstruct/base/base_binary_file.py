@@ -44,6 +44,9 @@ class BaseBinaryFile:
     # If given, extension will be enforced (before DCX is checked) when calling `.write()`.
     EXT: tp.ClassVar[str] = ""
 
+    # If given, this `re.Pattern` will be used to check file names. Usually just `EXT` plus optional DCX extension.
+    PATTERN: tp.ClassVar[re.Pattern | None] = None
+
     # Internal type wrapped by `dcx_type` property, which converts string values to `DCXType`.
     _dcx_type: DCXType | None = field(init=False, repr=False)  # default will be handled by `dcx_type` property below
 

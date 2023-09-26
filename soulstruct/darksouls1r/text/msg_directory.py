@@ -223,7 +223,7 @@ class MSGDirectory(_BaseMSGDirectory):
         for (file, entry_id), stem in cls.DEFAULT_ENTRY_STEMS.items():
             binder = item if file == "item" else menu
             try:
-                base_entry = binder.entries_by_id[entry_id]
+                base_entry = binder.find_entry_id(entry_id, assert_unique=True)
             except KeyError:
                 if (file, entry_id) in cls.BASE_PATCH_FMGS.values():
                     continue  # missing DLC entry will be created when base entry is found
@@ -233,7 +233,7 @@ class MSGDirectory(_BaseMSGDirectory):
                 base_entry.set_path_name(stem + ".fmg")
                 # Copy to DLC entry if it doesn't already exist.
                 try:
-                    patch_entry = binder.entries_by_id[dlc_entry_id]
+                    patch_entry = binder.find_entry_id(dlc_entry_id, assert_unique=True)
                 except KeyError:
                     patch_entry = base_entry.copy()
                     patch_entry.id = dlc_entry_id

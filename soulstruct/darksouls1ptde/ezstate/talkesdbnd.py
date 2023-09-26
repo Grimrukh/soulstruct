@@ -20,7 +20,7 @@ class TalkESDBND(_BaseTalkESDBND):
     v4_info: BinderVersion4Info = None
 
     @classmethod
-    def get_default_entry_path(cls, entry_name: str) -> str:
+    def get_default_new_entry_path(cls, entry_name: str) -> str:
         if not entry_name.endswith(".talkesd"):
             raise ValueError(f"Expected `TalkESDBND` entry name to end with '.talkesd': {entry_name}")
         return f"N:\\FRPG\\data\\INTERROOT_win32\\script\\talk\\{entry_name}"

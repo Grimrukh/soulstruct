@@ -6,7 +6,7 @@ __all__ = [
 ]
 
 import logging
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
@@ -16,7 +16,7 @@ from .submesh import Submesh
 _LOGGER = logging.getLogger(__name__)
 
 
-@dataclass(slots=True, init=False)
+@dataclass(slots=True)
 class MergedMesh:
     """Holds data for a single merged FLVER mesh created from all its submeshes. Optimized for Blender meshes.
 
@@ -38,21 +38,17 @@ class MergedMesh:
     TODO: Currently optimized for DS1, but likely works for other games (if `FLVER` class is supported for them). Also
      only acts on the first vertex array in each submesh, as I haven't encountered any multi-buffer FLVERs yet.
     """
-    flver: FLVER  # stored for posterity and convenient access to materials and layouts
-    material_uv_layers: list[list[str]] | list[None]  # UV layer names used by each material to assign UV data index
-    uv_layers: list[str] | None  # all unique UV layer names used by any material (or None if material UVs not given)
-
     vertex_positions: np.ndarray  # three columns for 'x', 'y', and 'z' (float32)
     vertex_bone_weights: np.ndarray  # four columns for 'a', 'b', 'c', and 'd' (float32)
     vertex_bone_indices: np.ndarray  # four columns for 'a', 'b', 'c', and 'd' (uint16)
 
     loop_vertex_indices: np.ndarray  # one column for 'vertex_index' (uint32)
+
     loop_normals: np.ndarray  # three columns for 'x', 'y', and 'z' (float32)
     loop_normals_w: np.ndarray  # one column for 'w' (uint8)
     loop_tangents: np.ndarray  # three columns for 'x', 'y', and 'z' (float32)
     loop_bitangents: np.ndarray  # three columns for 'x', 'y', and 'z' (float32)
     loop_vertex_colors: list[np.ndarray]  # four columns per array for 'r', 'g', 'b', and 'a' (uint8)
-
     # If `uv_layer_names` is given, this list will have the same length as `uv_layer_names` and each UV array will
     # correspond to the UV layer with the same index. Otherwise, this list will have the same length as the maximum
     # number of UV layers used by any submesh, which may cause layer clashes (e.g. one submesh's second texture UV may
@@ -61,31 +57,39 @@ class MergedMesh:
 
     faces: np.ndarray  # integer array of `[loop0, loop1, loop2, material_index, layout_index]` rows (uint32)
 
-    def __init__(
-        self,
+    # Stored for posterity and convenient access to materials and layouts.
+    flver: FLVER | None = None
+
+    # UV layer names used by each material to assign UV data index.
+    material_uv_layers: list[list[str]] | list[None] = field(default_factory=list)
+
+    # All unique, sorted UV layer names used by any material (or None if material UVs not given).
+    uv_layers: list[str] | None = None
+
+    @classmethod
+    def from_flver(
+        cls,
         flver: FLVER,
         discard_degenerate_faces=False,
         discard_duplicate_faces=False,
         material_uv_layers: list[list[str]] = None,
     ):
         """Construct merged mesh data from all `flver` submeshes."""
-        self.flver = flver
-
         if material_uv_layers:
-            self.material_uv_layers = material_uv_layers
+            material_uv_layers = material_uv_layers
             all_uv_layer_names_set = set()
-            for uv_layers in self.material_uv_layers:
+            for uv_layers in material_uv_layers:
                 all_uv_layer_names_set |= set(uv_layers)
-            self.uv_layers = sorted(all_uv_layer_names_set)
+            uv_layers = sorted(all_uv_layer_names_set)
         else:
-            self.material_uv_layers = [None] * len(flver.materials)
-            self.uv_layers = None
+            material_uv_layers = [None] * len(flver.materials)
+            uv_layers = None
 
-        all_vertices = self.build_stacked_loops(flver.submeshes)
-        unique_vertices, self.loop_vertex_indices = np.unique(all_vertices, return_inverse=True, axis=0)
-        self.vertex_positions = np.column_stack([unique_vertices[c] for c in "xyz"])
-        self.vertex_bone_weights = np.column_stack([unique_vertices[f"bw_{c}"] for c in "abcd"])
-        self.vertex_bone_indices = np.column_stack([unique_vertices[f"bi_{c}"] for c in "abcd"])
+        all_vertices, loop_data_dict = cls.build_stacked_loops(flver.submeshes, material_uv_layers, uv_layers)
+        unique_vertices, loop_vertex_indices = np.unique(all_vertices, return_inverse=True, axis=0)
+        vertex_positions = np.column_stack([unique_vertices[c] for c in "xyz"])
+        vertex_bone_weights = np.column_stack([unique_vertices[f"bw_{c}"] for c in "abcd"])
+        vertex_bone_indices = np.column_stack([unique_vertices[f"bi_{c}"] for c in "abcd"])
 
         # TODO: Do I really need to store the layout index? All the data has already been unpacked.
         #  Also, it should really be *materials* that specify layouts, not submeshes...
@@ -102,7 +106,9 @@ class MergedMesh:
         # Minor optimization: can fill face array of known length directly if no faces are being discarded.
         if not discard_degenerate_faces and not discard_duplicate_faces:
             face_count = sum(len(info[0]) for info in submesh_face_info)
-            self.faces = np.empty((face_count, 5), dtype=np.uint32)  # will be fully initialized
+            faces = np.empty((face_count, 5), dtype=np.uint32)  # will be fully initialized
+        else:
+            faces = None  # created below
 
         # Only used if faces could be discarded.
         valid_face_list = []
@@ -114,20 +120,38 @@ class MergedMesh:
             for triangle in triangles:
                 triangle_row = [*triangle, material_index, layout_index]
                 if discard_degenerate_faces or discard_duplicate_faces:
-                    if self.is_triangle_degenerate(
+                    if cls.is_triangle_degenerate(
                         triangle, discard_degenerate_faces, discard_duplicate_faces, existing_face_set
                     ):
                         continue
                     valid_face_list.append(triangle_row)
                 else:
                     # Can fill array directly.
-                    self.faces[face_index] = triangle_row
+                    faces[face_index] = triangle_row
                     face_index += 1
 
         if discard_degenerate_faces or discard_duplicate_faces:
-            self.faces = np.array(valid_face_list, dtype=np.uint32)
+            faces = np.array(valid_face_list, dtype=np.uint32)
 
-    def build_stacked_loops(self, submeshes: list[Submesh]):
+        return cls(
+            vertex_positions=vertex_positions,
+            vertex_bone_weights=vertex_bone_weights,
+            vertex_bone_indices=vertex_bone_indices,
+            loop_vertex_indices=loop_vertex_indices,
+            **loop_data_dict,
+            faces=faces,
+            flver=flver,
+            material_uv_layers=material_uv_layers,
+            uv_layers=uv_layers,
+        )
+
+    @classmethod
+    def build_stacked_loops(
+        cls,
+        submeshes: list[Submesh],
+        material_uv_layers: list[list[str]],
+        uv_layers: list[str] | None,
+    ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
         """Row-stack all submesh vertices' position and bone data in a single structured array for reduction."""
         dtype = [
             ("x", np.float32), ("y", np.float32), ("z", np.float32),
@@ -140,10 +164,11 @@ class MergedMesh:
         all_vertices = np.empty(total_vertex_count, dtype=dtype)  # will be fully initialized
 
         # These four arrays will be fully initialized.
-        self.loop_normals = np.empty((total_vertex_count, 3), dtype=np.float32)
-        self.loop_normals_w = np.empty((total_vertex_count, 1), dtype=np.uint8)
-        self.loop_tangents = np.empty((total_vertex_count, 4), dtype=np.float32)
-        self.loop_bitangents = np.empty((total_vertex_count, 4), dtype=np.float32)
+        loop_normals = np.empty((total_vertex_count, 3), dtype=np.float32)
+        loop_normals_w = np.empty((total_vertex_count, 1), dtype=np.uint8)
+        loop_tangents = np.empty((total_vertex_count, 4), dtype=np.float32)
+        loop_bitangents = np.empty((total_vertex_count, 4), dtype=np.float32)
+
         loop_vertex_colors_dict = {}  # new arrays added as new color indices are encountered
         loops_uvs_dict = {}  # new arrays added as new UV indices are encountered
 
@@ -154,7 +179,7 @@ class MergedMesh:
             i = offset
             offset += len(vertices)
             j = offset
-            material_uv_layers = self.material_uv_layers[submesh.material_index]
+            material_uv_layers = material_uv_layers[submesh.material_index]
 
             if "position_x" in field_names:
                 for c in "xyz":
@@ -184,44 +209,44 @@ class MergedMesh:
                 # Zeroes already present in empty array.
 
             if "normal_x" in field_names:
-                self.loop_normals[i:j, 0] = vertices["normal_x"]
-                self.loop_normals[i:j, 1] = vertices["normal_y"]
-                self.loop_normals[i:j, 2] = vertices["normal_z"]
+                loop_normals[i:j, 0] = vertices["normal_x"]
+                loop_normals[i:j, 1] = vertices["normal_y"]
+                loop_normals[i:j, 2] = vertices["normal_z"]
             else:
                 # Default to upward (Y) vector.
-                self.loop_normals[i:j, 0] = 0.0
-                self.loop_normals[i:j, 1] = 1.0
-                self.loop_normals[i:j, 2] = 0.0
+                loop_normals[i:j, 0] = 0.0
+                loop_normals[i:j, 1] = 1.0
+                loop_normals[i:j, 2] = 0.0
 
             if "normal_w" in field_names:
-                self.loop_normals_w[i:j, 0] = vertices["normal_w"]
+                loop_normals_w[i:j, 0] = vertices["normal_w"]
             else:
                 # Default to 127.
-                self.loop_normals_w[i:j, 0] = 127
+                loop_normals_w[i:j, 0] = 127
 
             if "tangent_x" in field_names:
-                self.loop_tangents[i:j, 0] = vertices["tangent_x"]
-                self.loop_tangents[i:j, 1] = vertices["tangent_y"]
-                self.loop_tangents[i:j, 2] = vertices["tangent_z"]
-                self.loop_tangents[i:j, 3] = vertices["tangent_w"]
+                loop_tangents[i:j, 0] = vertices["tangent_x"]
+                loop_tangents[i:j, 1] = vertices["tangent_y"]
+                loop_tangents[i:j, 2] = vertices["tangent_z"]
+                loop_tangents[i:j, 3] = vertices["tangent_w"]
             else:
                 # Default to rightward (X) vector.
-                self.loop_tangents[i:j, 0] = 1.0
-                self.loop_tangents[i:j, 1] = 0.0
-                self.loop_tangents[i:j, 2] = 0.0
-                self.loop_tangents[i:j, 3] = 1.0
+                loop_tangents[i:j, 0] = 1.0
+                loop_tangents[i:j, 1] = 0.0
+                loop_tangents[i:j, 2] = 0.0
+                loop_tangents[i:j, 3] = 1.0
 
             if "bitangent_x" in field_names:
-                self.loop_bitangents[i:j, 0] = vertices["bitangent_x"]
-                self.loop_bitangents[i:j, 1] = vertices["bitangent_y"]
-                self.loop_bitangents[i:j, 2] = vertices["bitangent_z"]
-                self.loop_bitangents[i:j, 3] = vertices["bitangent_w"]
+                loop_bitangents[i:j, 0] = vertices["bitangent_x"]
+                loop_bitangents[i:j, 1] = vertices["bitangent_y"]
+                loop_bitangents[i:j, 2] = vertices["bitangent_z"]
+                loop_bitangents[i:j, 3] = vertices["bitangent_w"]
             else:
                 # Default to forward (Z) vector.
-                self.loop_bitangents[i:j, 0] = 0.0
-                self.loop_bitangents[i:j, 1] = 0.0
-                self.loop_bitangents[i:j, 2] = 1.0
-                self.loop_bitangents[i:j, 3] = 1.0
+                loop_bitangents[i:j, 0] = 0.0
+                loop_bitangents[i:j, 1] = 0.0
+                loop_bitangents[i:j, 2] = 1.0
+                loop_bitangents[i:j, 3] = 1.0
 
             # Color and UV arrays are only created as used. They are created with `np.zeros()` so any vertices that
             # don't use a given color or UV index will be zeroes.
@@ -240,31 +265,37 @@ class MergedMesh:
                     uv_i = int(name[-1])
                     if material_uv_layers:
                         # Get FLVER-wide index of this UV from its known layer name in the material.
-                        uv_i = self.uv_layers.index(material_uv_layers[uv_i])
+                        uv_i = uv_layers.index(material_uv_layers[uv_i])
                     uv_array = loops_uvs_dict.setdefault(uv_i, np.zeros((total_vertex_count, 2), dtype=np.float32))
                     uv_array[i:j, 0] = vertices[f"uv_u_{uv_i}"]
                     uv_array[i:j, 1] = vertices[f"uv_v_{uv_i}"]
 
         # Could be empty lists.
-        self.loop_vertex_colors = [loop_vertex_colors_dict[i] for i in sorted(loop_vertex_colors_dict)]
-        self.loop_uvs = [loops_uvs_dict[i] for i in sorted(loops_uvs_dict)]
+        loop_vertex_colors = [loop_vertex_colors_dict[i] for i in sorted(loop_vertex_colors_dict)]
+        loop_uvs = [loops_uvs_dict[i] for i in sorted(loops_uvs_dict)]
 
-        return all_vertices
+        return all_vertices, dict(
+            loop_normals=loop_normals,
+            loop_normals_w=loop_normals_w,
+            loop_tangents=loop_tangents,
+            loop_bitangents=loop_bitangents,
+            loop_vertex_colors=loop_vertex_colors,
+            loop_uvs=loop_uvs,
+        )
 
+    @staticmethod
     def is_triangle_degenerate(
-        self,
-        triangle: tuple[int, int, int],
+        triangle_vertex_indices: tuple[int, int, int],
         discard_degenerate_faces=False,
         discard_duplicate_faces=False,
         existing_face_set: set = None,
     ):
         """Returns True if triangle has two or more identical vertex indices or already exists in some vertex order."""
-        vertex_indices = self.loop_vertex_indices[triangle]
         if discard_degenerate_faces:
-            if len(set(vertex_indices)) < 3:
+            if len(set(triangle_vertex_indices)) < 3:
                 return True  # face with duplicate vertices
         if discard_duplicate_faces:
-            if (triangle_tuple := tuple(sorted(vertex_indices))) in existing_face_set:
+            if (triangle_tuple := tuple(sorted(triangle_vertex_indices))) in existing_face_set:
                 return True  # face with same three vertices in any order
             existing_face_set.add(triangle_tuple)
         return False
@@ -307,3 +338,11 @@ class MergedMesh:
     def reassign_face_materials(self, new_indices: np.ndarray):
         """Reassign all face materials by using their current index to index into `new_indices`."""
         self.faces[:, 3] = new_indices[self.faces[:, 3]]
+
+    def split_mesh(self):
+        """Splits merged mesh into FLVER submeshes.
+
+        TODO:
+            - Probably needs FLVER materials too (e.g. after merging variants in Blender).
+            -
+        """

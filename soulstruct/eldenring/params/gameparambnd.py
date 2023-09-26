@@ -63,7 +63,7 @@ class GameParamBND(_BaseGameParamBND):
         # temp_decrypted.unlink()
 
     @classmethod
-    def get_default_entry_path(cls, entry_name: str) -> str:
+    def get_default_new_entry_path(cls, entry_name: str) -> str:
         if not entry_name.endswith(".param"):
             raise ValueError(f"Expected `GameParamBND` entry name to end in '.param': {entry_name}")
         return f"N:\\GR\\data\\Param\\param\\GameParam\\{entry_name}"

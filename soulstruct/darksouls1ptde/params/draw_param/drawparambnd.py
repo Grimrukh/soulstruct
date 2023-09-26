@@ -225,7 +225,7 @@ class DrawParamBND(Binder):
             entry_name = f"{map_area}_1_{draw_param_stem}.param"
         else:
             raise ValueError(f"Invalid `DrawParamBND` slot: {slot}. Must be 0 or 1.")
-        return self.get_default_entry_path(entry_name)
+        return self.get_default_new_entry_path(entry_name)
 
     def regenerate_entries(self):
         """Regenerate Binder entries from `draw_params` dictionary."""
@@ -239,15 +239,11 @@ class DrawParamBND(Binder):
                     continue  # slot missing
                 entry_path = self.get_draw_param_entry_path(draw_param_stem, slot)
                 regenerated_entry_paths.add(entry_path)
-                if entry_path in self.entries_by_path:
-                    # Just update data.
-                    self.entries_by_path[entry_path].set_from_binary_file(draw_param)
-                else:
-                    # Add new entry.
-                    new_id = self.get_first_new_entry_id_in_range(0, 1000000)
-                    new_entry = BinderEntry(data=bytes(draw_param), entry_id=new_id, path=entry_path)
-                    self.add_entry(new_entry)
-                    _LOGGER.debug(f"New `Param` entry added to `DrawParamBND` (ID {new_id}): {new_entry.name}")
+                new_entry_created = self.add_or_replace_entry_data(
+                    entry_path, draw_param, new_id=self.get_first_new_entry_id_in_range(0, 1000000)
+                )
+                if new_entry_created:
+                    _LOGGER.debug(f"New `Param` entry added to `DrawParamBND`: {entry_path}")
 
         # Remove other entries.
         for entry in list(self.entries):
@@ -257,7 +253,7 @@ class DrawParamBND(Binder):
         self._alphabetize_entry_names()
 
     @classmethod
-    def get_default_entry_path(cls, entry_name: str) -> str:
+    def get_default_new_entry_path(cls, entry_name: str) -> str:
         return f"N:\\FRPG\\data\\INTERROOT_win32\\param\\DrawParam\\{entry_name}"
 
     @classmethod
@@ -361,15 +357,15 @@ class DrawParamBND(Binder):
         write_json(directory / "DrawParamBND_manifest.json", manifest)
 
     def _alphabetize_entry_names(self):
-        """Sort Binder entries (assumed to be just regenerated) by entry name, alphabetically.
+        """Sort Binder entries (assumed to be just regenerated) by entry name, alphabetically, with incrementing IDs.
 
         This is how they are sorted in-game. Unlikely to matter, but good to match game behavior.
         """
         new_entries = []
-        entries_by_name = self.entries_by_name
+        entries_by_name = self.get_entries_by_name()
         for i, entry_name in enumerate(sorted(entries_by_name.keys())):
             entry = entries_by_name[entry_name]
-            entry.entry_id = i
+            entry.entry_id = i  # auto-enumerated IDs
             new_entries.append(entry)
         self.entries = new_entries
 

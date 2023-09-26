@@ -138,7 +138,7 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
                     raise FileNotFoundError(f"Could not find text (FMG) JSON file: {directory / json_name}")
                 fmg.dcx_type = cls.FMG_DCX_TYPE
                 fmg_stem = cls.DEFAULT_ENTRY_STEMS[(msgbnd_name, entry_id)]
-                entry_path = cls.FILE_CLASS.get_default_entry_path(fmg_stem + ".fmg")
+                entry_path = cls.FILE_CLASS.get_default_new_entry_path(fmg_stem + ".fmg")
                 entry = BinderEntry(bytes(fmg), entry_id, entry_path, cls.FILE_CLASS.DEFAULT_ENTRY_FLAGS)
                 entries.append(entry)
                 fmgs[(msgbnd_name, entry_id)] = fmg
@@ -221,7 +221,7 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
                     f"Class `{self.__class__.__name__}` does not have a default entry name for ID {entry_id} "
                     f"in '{msgbnd_name}' MSGBND."
                 )
-            msgbnd.add_or_replace_entry_id(entry_id, fmg, self.DEFAULT_ENTRY_STEMS[msgbnd_name, entry_id] + ".fmg")
+            msgbnd.add_or_replace_entry_data(entry_id, fmg, self.DEFAULT_ENTRY_STEMS[msgbnd_name, entry_id] + ".fmg")
 
     def merge_base_and_patch(self, use_patch_if_conflict=True):
         """Merge all base and patch FMGs together (as per class `BASE_PATCH_FMGS`) and write merged FMG to both.

@@ -9,7 +9,7 @@ import typing as tp
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from soulstruct.containers import Binder, BinderEntry
+from soulstruct.containers import Binder
 from .esd import ESD, ESDType
 
 try:
@@ -51,7 +51,7 @@ class TalkESDBND(Binder, abc.ABC):
                 _LOGGER.error(f"Could not load talk ESD 't{talk_id}' from TalkESDBND entry '{entry.name}'. Error: {ex}")
                 raise
 
-    def get_default_entry_id(self, entry_name: str) -> int:
+    def get_default_new_entry_id(self, entry_name: str) -> int:
         return self.get_first_new_entry_id_in_range(0, 1000000)
 
     @classmethod
@@ -102,16 +102,10 @@ class TalkESDBND(Binder, abc.ABC):
                 self.remove_entry_name(entry_name)
 
         for talk_entry_name, talk_esd in zip(current_entry_names, self.talk.values(), strict=True):
-            entry_path = self.get_default_entry_path(talk_entry_name)
-            if entry_path in self.entries_by_path:
-                # Just update data.
-                self.entries_by_path[entry_path].set_from_binary_file(talk_esd)
-            else:
-                # Add new entry.
-                new_id = self.get_default_entry_id(talk_entry_name)
-                new_entry = BinderEntry(data=bytes(talk_esd), entry_id=new_id, path=entry_path)
-                self.add_entry(new_entry)
-                _LOGGER.debug(f"New ESD entry added to TalkESDBND (ID {new_id}): {talk_entry_name}")
+            entry_path = self.get_default_new_entry_path(talk_entry_name)
+            new_entry_created = self.add_or_replace_entry_data(entry_path, talk_esd)
+            if new_entry_created:
+                _LOGGER.debug(f"New ESD entry added to `TalkESDBND`: {talk_entry_name}")
 
         # Sort entries by name.
         self.entries.sort(key=lambda entry: entry.name)

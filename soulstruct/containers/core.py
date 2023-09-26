@@ -3,7 +3,7 @@ from __future__ import annotations
 __all__ = [
     "BinderFlags",
     "BinderError",
-    "BinderEntryNotFoundError",
+    "EntryNotFoundError",
     "BinderVersion",
     "BinderHeaderV3",
     "BinderHeaderV4",
@@ -36,6 +36,10 @@ if tp.TYPE_CHECKING:
     from soulstruct.base.game_file import GameFile
 
 _LOGGER = logging.getLogger(__name__)
+
+
+# Flexible entry-finding typing that can be passed to `Binder.__getitem__` and a few other methods.
+ENTRY_SPEC = tp.Union[int, str, Path, re.Pattern]
 
 
 class BinderFlags(int):
@@ -115,10 +119,18 @@ class BinderError(Exception):
     pass
 
 
-class BinderEntryNotFoundError(BinderError, KeyError):
+class EntryNotFoundError(BinderError, KeyError):
     """Raised when a `BinderEntry` is not found.
 
     Subclass of `KeyError` for legacy compatibility.
+    """
+
+
+class MultipleEntriesFoundError(BinderError, ValueError):
+    """Raised when multiple `BinderEntry` instances are found matching a given entry specification, usually only when
+    `assert_unique=True`.
+
+    Subclass of `ValueError` for legacy compatibility.
     """
 
 
@@ -887,7 +899,11 @@ class Binder(BaseBinaryFile):
             if use_entry_names_only:
                 entry_tree_dict.setdefault(entry_directory, []).append(entry.name)
             else:
-                entry_dict = {"flags": entry.flags, "id": entry.entry_id if self.flags.has_ids else i, "name": entry.name}
+                entry_dict = {
+                    "flags": entry.flags,
+                    "id": entry.entry_id if self.flags.has_ids else i,
+                    "name": entry.name,
+                }
                 entry_tree_dict.setdefault(entry_directory, []).append(entry_dict)
 
             entry_file_name = f"__{entry.entry_id}__{entry.name}" if use_index_prefix else entry.name
@@ -964,39 +980,116 @@ class Binder(BaseBinaryFile):
     def add_entry(self, entry: BinderEntry):
         if id(entry) in {id(e) for e in self.entries}:
             raise BinderError(f"Given `BinderEntry` instance with ID {entry.entry_id} is already in this binder.")
-        if entry.entry_id in self.entries_by_id:
-            _LOGGER.warning(f"Entry ID {entry.entry_id} appears more than once in this binder. You should fix this!")
+        if entry.entry_id in {e.id for e in self.entries}:
+            _LOGGER.warning(
+                f"Entry ID {entry.entry_id} appears more than once in this Binder. Entry still added, but you should"
+                f"fix this."
+            )
         self.entries.append(entry)
 
     def remove_entry(self, entry: BinderEntry):
-        if entry not in self.entries:
+        """NOTE: Uses `id()` to remove the exact same entry instance. Does not check for field-wise entry equality."""
+        if id(entry) not in {id(e) for e in self.entries}:
             raise KeyError(f"Entry `{entry}` is not in this Binder. Cannot remove it.")
         self.entries.remove(entry)
 
     def remove_entry_id(self, entry_id: int) -> BinderEntry:
-        entry = self.entries_by_id[entry_id]
+        entry = self.find_entry_id(entry_id, assert_unique=True)
         self.entries.remove(entry)
         return entry
 
     def remove_entry_path(self, entry_path: Path | str):
-        entry = self.entries_by_path[str(entry_path)]
+        entry = self.find_entry_path(entry_path, assert_unique=True)
         self.entries.remove(entry)
         return entry
 
     def remove_entry_name(self, entry_name: str):
-        entry = self.entries_by_name[entry_name]
+        entry = self.find_entry_name(entry_name, assert_unique=True)
         self.entries.remove(entry)
         return entry
 
     def clear_entries(self):
-        """Remove all entries from the BND."""
+        """Remove all entries from the Binder."""
         self.entries.clear()
+
+    def create_default_entry(
+        self,
+        entry_data: bytes,
+        entry_id: int = None,
+        entry_name: str = None,
+        entry_path: str | Path = None,
+        entry_flags: int = None,
+    ) -> BinderEntry:
+        """Create a new `BinderEntry`, attempting to replace whichever fields are NOT given with defaults provided by
+        this `Binder` subclass.
+
+        Exactly ONE of `entry_name` and `entry_path` should be given.
+
+        Does NOT add the created entry to this Binder automatically.
+        """
+        if entry_path is None:
+            if entry_name is not None:
+                entry_path = self.get_default_new_entry_path(entry_name)
+            else:
+                raise ValueError("Either `entry_name` or `entry_path` must be given.")
+        elif entry_name is not None:
+            raise ValueError("Only one of `entry_name` or `entry_path` may be given.")
+        else:
+            # May be needed to get default ID below.
+            entry_name = Path(entry_path).name
+        if entry_id is None:
+            entry_id = self.get_default_new_entry_id(entry_name)
+        if entry_flags is None:
+            entry_flags = self.DEFAULT_ENTRY_FLAGS
+        return BinderEntry(entry_data, entry_id, entry_path, entry_flags)
+
+    def add_or_replace_entry_data(
+        self,
+        entry_spec: ENTRY_SPEC,
+        game_file: GameFile,
+        new_id: int = None,
+        new_name: str = None,
+        new_path: str | Path = None,
+        new_flags: int = None,
+    ) -> bool:
+        """Create or replace `BinderEntry` specified by `entry_spec` using data from packed `game_file`.
+
+        If an entry is not found, the `new_` arguments are passed to `create_default_entry()` along with the file data
+        to create a new entry, which is added to the Binder automatically. Otherwise, these arguments are ignored -
+        their values will NOT be set to the existing entry's values.
+        
+        Returns `True` if a new entry was created, and `False` if an existing one was modified.
+
+        Will always raise a `MultipleEntriesFoundError` if multiple existing entries are found.
+        """
+        try:
+            # NOTE: Will raise an unhandled `MultipleEntriesFoundError` if multiple entries are found.
+            existing_entry = self[entry_spec]
+        except EntryNotFoundError:
+            # Create new entry. Value of `entry_spec` is redirected to the appropriate creation argument.
+
+            if isinstance(entry_spec, int):
+                if new_id is not None:
+                    raise ValueError("`new_id` should not be given when `entry_spec` is already an entry ID.")
+                new_id = entry_spec
+            elif self.looks_like_entry_path(entry_spec):
+                new_path = str(entry_spec)
+            elif isinstance(entry_spec, str):
+                new_name = entry_spec
+            entry = self.create_default_entry(bytes(game_file), new_id, new_name, new_path, new_flags)
+            self.add_entry(entry)
+            return True
+
+        # Just modify existing entry's data.
+        existing_entry.set_from_binary_file(game_file)
+        return False
 
     # endregion
 
-    @property
-    def entries_by_id(self) -> dict[int, BinderEntry]:
-        """Dictionary mapping entry IDs to entries.
+    # region Entry Lookup
+
+    def get_entries_by_id(self) -> dict[int, BinderEntry]:
+        """Get a dictionary mapping entry IDs to entries.
 
         If there are multiple entries with the same ID in the BND, this will raise a `BinderError`. This should never
         happen; if it does, fix it by accessing the culprit entries with `.entries` and changing one or more IDs.
@@ -1008,33 +1101,155 @@ class Binder(BaseBinaryFile):
             entries[entry.entry_id] = entry
         return entries
 
-    @property
-    def entries_by_path(self) -> dict[str, BinderEntry]:
-        """Dictionary mapping entry paths to (classed) entries.
+    def get_entries_by_path(self) -> dict[str, BinderEntry]:
+        """Get a dictionary mapping entry paths to entries.
 
         The same path and/or basename may appear in multiple paths in a BND (e.g. vanilla 'item.msgbnd' in Dark Souls
-        Remastered). If it does, this property will raise a `BinderError`.
+        Remastered). If it does, this method will raise a `MultipleEntriesFoundError`.
         """
         entries = {}
         for entry in self.entries:
             if entry.path in entries:
-                raise BinderError(f"Path '{entry.path}' appears in multiple `BNDEntry` paths.")
+                raise MultipleEntriesFoundError(f"Multiple entries have path '{entry.path}'.")
             entries[entry.path] = entry
         return entries
 
-    @property
-    def entries_by_name(self) -> dict[str, BinderEntry]:
-        """Dictionary mapping entry basenames to (classed) entries.
+    def get_entries_by_name(self) -> dict[str, BinderEntry]:
+        """Get a dictionary mapping entry basenames to entries.
 
         The same path and/or basename may appear in multiple paths in a BND (e.g. vanilla 'item.msgbnd' in Dark Souls
-        Remastered). If it does, this property will raise an exception.
+        Remastered). If it does, this method will raise a `MultipleEntriesFoundError`.
         """
         entries = {}
         for entry in self.entries:
             if entry.name in entries:
-                raise ValueError(f"Basename '{entry.name}' appears in multiple BND entry paths.")
+                raise MultipleEntriesFoundError(f"Multiple entry paths have base name '{entry.name}'.")
             entries[entry.name] = entry
         return entries
+
+    def _find_entry_by_attr(self, attr: str, value: int | str, assert_unique=False):
+        """Shared code for finding an entry with `getattr(entry, attr) == value`.
+
+        If `assert_unique` is True, will check all entries and raise a `BinderError` if multiple hits are found.
+        """
+        found = None
+        for entry in self.entries:
+            if getattr(entry, attr) == value:
+                if not assert_unique:
+                    return entry
+                if found:
+                    raise MultipleEntriesFoundError(f"Multiple entries found with `{attr} == {value}`.")
+                found = entry
+        if found:
+            return found
+        raise MultipleEntriesFoundError(f"No entry found with `{attr} == {value}`.")
+
+    def find_entry_id(self, entry_id: int, assert_unique=False):
+        """Return the first entry with the given `entry_id`.
+
+        If `assert_unique` is True, will check all entries and raise a `BinderError` if multiple have the same ID.
+        """
+        return self._find_entry_by_attr("entry_id", entry_id, assert_unique)
+
+    def find_entry_name(self, entry_name: str, assert_unique=False):
+        """Return the first entry with the given `entry_name`."""
+        return self._find_entry_by_attr("name", entry_name, assert_unique)
+
+    def find_entry_path(self, entry_path: str | Path, assert_unique=False):
+        """Return the first entry with the given `entry_path`."""
+        return self._find_entry_by_attr("path", str(entry_path), assert_unique)
+
+    def _find_entries_matching_attr(
+        self,
+        pattern: str | re.Pattern,
+        attr: str,
+        return_multiple: bool,
+        assert_unique: bool,
+        flags=0,
+        escape=False,
+    ) -> BinderEntry | list[BinderEntry]:
+        """Shared code to match single/multiple entry names or paths."""
+        if escape:
+            pattern = re.escape(pattern)
+        matches = [entry for entry in self.entries if re.match(pattern, getattr(entry, attr), flags=flags)]
+        if return_multiple:
+            return matches
+        if not matches:
+            raise EntryNotFoundError(f"No Binder entries found with {attr} matching '{pattern}'.")
+        if len(matches) > 1 and assert_unique:
+            raise ValueError(
+                f"Found multiple Binder entries with {attr} matching '{pattern}':\n  {[m.path for m in matches]}"
+            )        
+        return matches[0]
+
+    def find_entry_matching_path(
+        self, pattern: str | re.Pattern, flags=0, escape=False, assert_unique=False,
+    ) -> BinderEntry:
+        """Returns a single entry whose full path matches the given regex `pattern`.
+
+        Only one match must exist. Use `find_entries_matching_path()` if you want to find multiple matches.
+        """
+        return self._find_entries_matching_attr(pattern, "path", False, assert_unique, flags=flags, escape=escape)
+
+    def find_entries_matching_path(self, pattern: str | re.Pattern, flags=0, escape=False) -> list[BinderEntry]:
+        """Returns a list of entries whose paths match the given `regex` pattern."""
+        return self._find_entries_matching_attr(pattern, "path", True, False, flags=flags, escape=escape)
+
+    def find_entry_matching_name(
+        self, pattern: str | re.Pattern, flags=0, escape=False, assert_unique=False
+    ) -> BinderEntry:
+        """Returns a single entry whose name matches the given regex `pattern`.
+
+        Only one match must exist. Use `find_entries_matching_name()` if you want to find multiple matches.
+        """
+        return self._find_entries_matching_attr(pattern, "name", False, assert_unique, flags=flags, escape=escape)
+
+    def find_entries_matching_name(self, pattern: str | re.Pattern, flags=0, escape=False) -> list[BinderEntry]:
+        """Returns a list of entries whose names match the given `regex` pattern."""
+        return self._find_entries_matching_attr(pattern, "name", True, False, flags=flags, escape=escape)
+
+    def __getitem__(self, entry_spec: int | Path | str | re.Pattern) -> BinderEntry:
+        """Convenient shortcut for finding an entry by ID (int), full path (Path), name only (str), or by matching
+        its name with regex (`re.Pattern`).
+
+        If `entry_spec` is a string that looks like a Path (contains a forward slash or backslash), it will be treated
+        as a full path. Obviously, these characters can never appear in a file name, so this is a safe assumption.
+
+        The only standard entry-finding method not supported here is matching the entry's full path with regex, which
+        can be done with `find_entry_matching_path()`.
+
+        Finding methods are called with `assert_unique=True`, which means a `BinderError` will be raised if multiple
+        entries are found. If you want to allow multiple hits and only return the first, or return all of those multiple
+        hits, use the appropriate method directly.
+        """
+        if isinstance(entry_spec, str) and "\\" in entry_spec or "/" in entry_spec:
+            entry_spec = Path(entry_spec)
+
+        if isinstance(entry_spec, int):
+            return self.find_entry_id(entry_spec, assert_unique=True)
+        if isinstance(entry_spec, Path):
+            return self.find_entry_path(entry_spec, assert_unique=True)
+        if isinstance(entry_spec, str):
+            return self.find_entry_name(entry_spec, assert_unique=True)
+        if isinstance(entry_spec, re.Pattern):
+            return self.find_entry_matching_name(entry_spec, assert_unique=True)
+
+        raise TypeError(
+            "Key for `binder[]` should be an entry ID (int), path (Path/str), name (str), or pattern (`re.Pattern`)."
+        )
+
+    # endregion
+
+    # region Binder Properties
+
+    def get_entry_ids(self) -> list[int]:
+        return [entry.entry_id for entry in self.entries]
+
+    def get_entry_paths(self) -> list[str]:
+        return [entry.path for entry in self.entries]
+
+    def get_entry_names(self) -> list[str]:
+        return [entry.name for entry in self.entries]
 
     @property
     def entry_count(self) -> int:
@@ -1059,120 +1274,32 @@ class Binder(BaseBinaryFile):
         """Get the first new entry ID available in the given half-open range."""
         if not self.entries:
             return min_id_inclusive
-        entries_by_id = self.entries_by_id
+        all_entry_ids = {entry.entry_id for entry in self.entries}
         for entry_id in range(min_id_inclusive, max_id_exclusive):
-            if entry_id not in entries_by_id:
+            if entry_id not in all_entry_ids:
                 return entry_id
-        raise BinderEntryNotFoundError(
+        raise EntryNotFoundError(
             f"No entry ID in the range [{min_id_inclusive}, {max_id_exclusive}) is available."
         )
 
-    def find_entries_matching_name(self, pattern: str | re.Pattern, flags=0, escape=False) -> list[BinderEntry]:
-        """Returns a list of entries whose names match the given `regex` pattern."""
-        if escape:
-            pattern = re.escape(pattern)
-        return [entry for entry in self.entries if re.match(pattern, entry.name, flags=flags)]
-
-    def find_entry_matching_name(self, pattern: str | re.Pattern, flags=0, escape=False) -> BinderEntry:
-        """Returns a single entry whose name matches the given `regex` pattern.
-
-        Only one match must exist.
-        """
-        if escape:
-            pattern = re.escape(pattern)
-        matches = [entry for entry in self.entries if re.match(pattern, entry.name, flags=flags)]
-        if len(matches) > 1:
-            raise ValueError(
-                f"Found multiple Binder entries with name matching '{pattern}':\n  {[m.path for m in matches]}"
-            )
-        if not matches:
-            raise BinderEntryNotFoundError(f"No Binder entries found with name matching '{pattern}'.")
-        return matches[0]
-
     @classmethod
-    def get_default_entry_path(cls, entry_name: str) -> str:
-        """Optional method that can be overridden (usually by a game subclass) to generate a full entry path."""
-        raise BinderError(f"`get_default_entry_path()` not defined on this `Binder` class/subclass: `{cls.__name__}`")
+    def get_default_new_entry_path(cls, entry_name: str) -> str:
+        """Optional method that can be overridden (usually by a game subclass) to generate a full entry path.
+        
+        NOTE: Some simple binders, like TPFBHD map texture binders, do not even need their entries to have full paths.
+        However, to avoid dangerous silent problems caused by binders doing this in general, this method does NOT do
+        that by default.
+        """
+        raise BinderError(
+            f"`get_default_new_entry_path()` not defined on this `Binder` class/subclass: `{cls.__name__}`"
+        )
 
-    def get_default_entry_id(self, entry_name: str) -> int:
-        """Method that can be overridden (usually by a game subclass) to generate a full entry path.
+    def get_default_new_entry_id(self, entry_name: str) -> int:
+        """Method that can be overridden (usually by a game subclass) to generate a default new entry ID.
         
         Default method simply returns the ID after the highest currently ID (which may leave gaps in earlier ranges).
         """
         return self.highest_entry_id + 1
-
-    def add_or_replace_entry_name(
-        self, entry_name: str, game_file: GameFile, new_entry_id: int = None, new_entry_flags: int = None
-    ):
-        """Create or replace `BinderEntry` with name `entry_name` using data from packed `binary_file`.
-        
-        If `entry_name` is already in the Binder (with any parent path), that entry's data will simply be replaced;
-        `new_entry_id` will not be used/generated and the existing entry's full path and flags will be kept.
-        
-        Otherwise, a new `BinderEntry` will be created. If `new_entry_id` is not given, `get_default_entry_id()` will
-        be called; `entry_name` will be passed through `get_default_entry_path()` unless it already contains a double
-        backslash (NOTE: subclass must define this method); and `flags` will be copied from `DEFAULT_ENTRY_FLAGS` on
-        this class (default `0x2`).
-        """
-        try:
-            existing_entry = self.entries_by_name[entry_name]
-        except (ValueError, KeyError):
-            # Create new entry.
-            entry_path = self.get_default_entry_path(entry_name) if "\\" not in entry_name else entry_name
-            if new_entry_id is None:
-                new_entry_id = self.get_default_entry_id(entry_name)
-            if new_entry_flags is None:
-                new_entry_flags = self.DEFAULT_ENTRY_FLAGS
-            entry = BinderEntry(bytes(game_file), new_entry_id, entry_path, new_entry_flags)
-            self.add_entry(entry)
-        else:
-            # Just modify existing entry's data.
-            existing_entry.set_from_binary_file(game_file)
-
-    def add_or_replace_entry_id(
-        self, entry_id: int, game_file: GameFile, new_entry_name: str = None, new_entry_flags: int = None
-    ):
-        """Create or replace `BinderEntry` with ID `entry_id` using data from packed `binary_file`.
-
-        If `entry_id` is already in the Binder, that entry's data will simply be replaced; `new_entry_name` will not be
-        used and the existing entry's full path and flags will be kept.
-
-        Otherwise, a new `BinderEntry` will be created. `new_entry_name` must be given in this case, and will be passed
-        through `get_default_entry_path()` if it does not contain a double backslash; `flags` will be copied from
-        `DEFAULT_ENTRY_FLAGS` on this class (default `0x2`).
-        """
-        try:
-            existing_entry = self.entries_by_id[entry_id]
-        except (ValueError, KeyError):
-            # Create new entry.
-            if new_entry_name is None:
-                raise ValueError(f"`new_entry_name` must be given for new entry ID {entry_id} to be created.")
-            entry_path = self.get_default_entry_path(new_entry_name) if "\\" not in new_entry_name else new_entry_name
-            if new_entry_flags is None:
-                new_entry_flags = self.DEFAULT_ENTRY_FLAGS
-            entry = BinderEntry(bytes(game_file), entry_id, entry_path, new_entry_flags)
-            self.add_entry(entry)
-        else:
-            # Just modify existing entry's data.
-            existing_entry.set_from_binary_file(game_file)
-
-    def __getitem__(self, id_or_path_or_name) -> BinderEntry:
-        """Shortcut for access by ID (int) or path (str) or basename (str).
-
-        If the path of one entry is the basename of another entry, the former will be given precedence here, but this
-        should never happen.
-        """
-        if isinstance(id_or_path_or_name, int):
-            return self.entries_by_id[id_or_path_or_name]
-        elif isinstance(id_or_path_or_name, str):
-            try:
-                return self.entries_by_path[id_or_path_or_name]
-            except KeyError:
-                try:
-                    return self.entries_by_name[id_or_path_or_name]
-                except KeyError:
-                    raise BinderEntryNotFoundError(f"No entry with this ID/path/name: {id_or_path_or_name}")
-        raise TypeError("`BND` key should be an entry ID (int) or path/basename (str).")
 
     def __iter__(self) -> tp.Iterator[BinderEntry]:
         return iter(self.entries)
@@ -1191,3 +1318,12 @@ class Binder(BaseBinaryFile):
         if entries:
             entries = f"\n    {entries},\n"
         return f"{self.__class__.__name__}({entries})"
+
+    @staticmethod
+    def looks_like_entry_path(entry_spec: ENTRY_SPEC):
+        """Test if `entry_spec` looks like a full entry path (i.e. contains a forward slash or backslash).
+        
+        Some simple binders do not even need parent paths for their entries (i.e. entry path == entry name). This
+        method will 'fail' for such cases, but that's safer behavior for the majority of binders.
+        """
+        return isinstance(entry_spec, Path) or (isinstance(entry_spec, str) and "\\" in entry_spec or "/" in entry_spec)

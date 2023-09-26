@@ -26,5 +26,5 @@ class TalkESDBND(_BaseTalkESDBND):
     is_split_bxf: bool = False
 
     @classmethod
-    def get_default_entry_path(cls, entry_name: str):
+    def get_default_new_entry_path(cls, entry_name: str):
         return f"N:\\FRPG\\data\\INTERROOT_x64\\script\\talk\\{entry_name}"

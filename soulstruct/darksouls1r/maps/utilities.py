@@ -85,9 +85,10 @@ def build_ffxbnd(
         raise FileNotFoundError(f"Could not find FFXBND file to modify: {ffxbnd_path}")
     open_ffxbnd_sources = {}  # type: dict[str, Binder]
     existing_file_names = {entry.name for entry in ffxbnd.entries}
-    existing_ffx_ids = [i for i in ffxbnd.entries_by_id if i < 100000]
-    existing_tpf_ids = [i for i in ffxbnd.entries_by_id if 100000 <= i < 200000]
-    existing_flver_ids = [i for i in ffxbnd.entries_by_id if 200000 <= i < 300000]
+    entry_ids = [entry.entry_id for entry in ffxbnd.entries]
+    existing_ffx_ids = [i for i in entry_ids if i < 100000]
+    existing_tpf_ids = [i for i in entry_ids if 100000 <= i < 200000]
+    existing_flver_ids = [i for i in entry_ids if 200000 <= i < 300000]
     next_ffx_id = max(existing_ffx_ids) + 1 if existing_ffx_ids else 0
     next_tpf_id = max(existing_tpf_ids) + 1 if existing_tpf_ids else 0
     next_flver_id = max(existing_flver_ids) + 1 if existing_flver_ids else 0
@@ -179,7 +180,7 @@ def build_ffxbnd(
             source_bnd = open_ffxbnd_sources.setdefault(extra_source_file_name, Binder.from_path(source_path))
             try:
                 # No need to make a copy of the source file.
-                source_entry = source_bnd.entries_by_name[file_name]
+                source_entry = source_bnd.find_entry_name(file_name)
             except KeyError:
                 _LOGGER.error(
                     f"Could not find extra {file_type} file '{file_name}' in given source FFXBND '{source_path}'."
@@ -291,7 +292,7 @@ def build_ffxbnd(
                 continue
             source_bnd = open_ffxbnd_sources.setdefault(source_file_name, Binder.from_path(source_path))
             try:
-                source_entry = source_bnd.entries_by_name[ffx_file_name]
+                source_entry = source_bnd.find_entry_name(ffx_file_name)
             except KeyError:
                 _LOGGER.error(
                     f"Could not find FFX file '{ffx_file_name}' in source BND '{source_path}' (character model "

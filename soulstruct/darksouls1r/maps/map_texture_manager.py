@@ -98,7 +98,7 @@ class MapAreaTextureManager:
         """Check if a texture is present in any of the binders or TPF 9999."""
         tpf_name = f"{texture_stem}.tpf.dcx"
         for binder in self.tpf_binders.values():
-            if tpf_name in binder.entries_by_name:
+            if tpf_name in binder.get_entry_names():
                 return True
         if self.tpf_9999:
             for texture in self.tpf_9999.textures:

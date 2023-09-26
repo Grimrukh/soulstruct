@@ -129,13 +129,13 @@ class WindowLinker(_BaseWindowLinker):
             if hkxbhd_path.is_file():
                 # NOTE: Brute-force check for name string in header file (for speed).
                 with hkxbhd_path.open("r") as f:
-                    if model_name + "A10.hkx" in f.read():
+                    if f"{model_name}{map_stem[1:3]}.hkx.dcx" in f.read():
                         return True
         elif model_game_type == NavmeshModel:
             nvmbnd_path = self.project.game_root / f"map/{map_stem}/{map_stem}.nvmbnd"
             if nvmbnd_path.is_file():
                 navmesh_bnd = Binder.from_path(nvmbnd_path)
-                if model_name + "A10.nvm" in navmesh_bnd.entries_by_name.keys():
+                if f"{model_name}{map_stem[1:3]}.nvm" in navmesh_bnd.get_entry_names():
                     return True
 
         return False

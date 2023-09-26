@@ -11,7 +11,7 @@ from itertools import product
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.containers import Binder, BinderEntryNotFoundError, DCXType
+from soulstruct.containers import Binder, EntryNotFoundError, DCXType
 from soulstruct.darksouls1r.maps.msb import MSB
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
@@ -328,14 +328,14 @@ class MCP(GameFile):
             model_name = navmesh.model.name + f"A{map_id[0]:02d}.nvm"
             try:
                 model_entry = nvmbnd.find_entry_matching_name(model_name)
-            except BinderEntryNotFoundError:
-                raise BinderEntryNotFoundError(f"Could not find NVM model '{model_name}' in NVM binder.")
+            except EntryNotFoundError:
+                raise EntryNotFoundError(f"Could not find NVM model '{model_name}' in NVM binder.")
             nvm = model_entry.to_binary_file(NVM)
 
             # AABBs are computed based on the final MSB position of the navmesh model.
             aabb_start, aabb_end = nvm.get_vertex_bounds(
                 rotation=navmesh.rotate,
-                offset=navmesh.translate,
+                translation=navmesh.translate,
                 padding=aabb_padding,
             )
             aabb = NavmeshAABB(

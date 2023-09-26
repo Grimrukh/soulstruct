@@ -20,5 +20,5 @@ class MSGBND(Binder, abc.ABC):
 
     @classmethod
     @abc.abstractmethod
-    def get_default_entry_path(cls, entry_name: str):
+    def get_default_new_entry_path(cls, entry_name: str):
         pass

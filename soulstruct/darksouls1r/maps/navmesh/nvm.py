@@ -12,6 +12,8 @@ from soulstruct.darksouls1r.events.emevd.enums import NavmeshType
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector2, Vector3, Matrix3
 
+import numpy as np
+
 try:
     Self = tp.Self
 except AttributeError:
@@ -212,7 +214,7 @@ class NVM(GameFile):
     BOX_TRIANGLE_TOLERANCE: tp.ClassVar[float] = 1E-9
 
     big_endian: bool = False
-    vertices: list[list[float]] = field(default_factory=list)  # stored as `list` rather than `Vector3` for performance
+    vertices: np.ndarray = field(default_factory=lambda: np.zeros((1, 3), dtype=np.float32))
     triangles: list[NVMTriangle] = field(default_factory=list)
     root_box: NVMBox = None
     event_entities: list[NVMEventEntity] = field(default_factory=list)
@@ -250,7 +252,8 @@ class NVM(GameFile):
                 f"Triangles offset for NVM should be {expected_triangles_offset}, not {header.triangles_offset}."
             )
 
-        vertices = [list(reader.unpack("3f")) for _ in range(header.vertices_count)]
+        vertices = np.frombuffer(reader.read(4 * header.vertices_count), dtype=np.float32)
+        vertices.shape = (header.vertices_count, 3)
         triangles = [NVMTriangle.from_nvm_reader(reader) for _ in range(header.triangles_count)]
 
         reader.seek(header.root_box_offset)
@@ -276,7 +279,7 @@ class NVM(GameFile):
         writer = BinaryWriter(ByteOrder.big_endian_bool(self.big_endian))
         self.NVMHeaderStruct(
             endianness=0x1000000 if self.big_endian else 1,
-            vertices_count=len(self.vertices),
+            vertices_count=self.vertices.shape[0],
             triangles_count=len(self.triangles),
             triangles_offset=RESERVED,
             root_box_offset=RESERVED,
@@ -284,8 +287,7 @@ class NVM(GameFile):
             entities_offset=RESERVED,
         ).to_writer(writer, reserve_obj=self)
 
-        for vertex in self.vertices:
-            writer.pack("3f", *vertex)
+        writer.append(self.vertices.tobytes())
 
         writer.fill_with_position("triangles_offset", obj=self)
         for triangle in self.triangles:
@@ -354,31 +356,30 @@ class NVM(GameFile):
     def get_vertex_bounds(
         self,
         rotation: Vector3 = None,
-        offset: Vector3 = None,
+        translation: Vector3 = None,
         padding: tp.Sequence[float, float, float] | float | int = None,
     ) -> tuple[Vector3, Vector3]:
-        """Get min/max bounds of all vertices, optionally with model rotation, offset, and/or padding."""
+        """Get min/max bounds of all vertices.
+
+        Supports optional pre-rotation and translation offset (e.g. for creating 'MSB-baked' MCP AABBs) and global or
+        per-coordinate padding.
+        """
         if rotation is not None:
             # Euler angles in radians given (e.g. from MSB). Use to rotate all vertices before computing AABB.
             rot_mat = Matrix3.from_euler_angles(rotation, radians=True)
-            aabb_vertices = [rot_mat @ Vector3(v) for v in self.vertices]
+            aabb_vertices = self.vertices @ rot_mat  # rotate each vertex (row)
         else:
             aabb_vertices = self.vertices  # won't be modified
-        if offset is None:
-            offset = Vector3.zero()
+        if translation is None:
+            translation = Vector3.zero()
         if padding is None:
             padding = Vector3.zero()
         elif isinstance(padding, (int, float)):
             padding = Vector3([padding, padding, padding])
-        x_min = min(v[0] for v in aabb_vertices)
-        y_min = min(v[1] for v in aabb_vertices)
-        z_min = min(v[2] for v in aabb_vertices)
-        bounds_min = Vector3([x_min, y_min, z_min]) - padding + offset
-        x_max = max(v[0] for v in aabb_vertices)
-        y_max = max(v[1] for v in aabb_vertices)
-        z_max = max(v[2] for v in aabb_vertices)
-        bounds_max = Vector3([x_max, y_max, z_max]) + padding + offset
-        return bounds_min, bounds_max
+
+        aabb_start = Vector3(np.min(aabb_vertices, axis=0)) - padding + translation
+        aabb_end = Vector3(np.max(aabb_vertices, axis=0)) + padding + translation
+        return aabb_start, aabb_end
 
     def generate_quadtree_boxes(self):
         """Use level count and bordering to automatically generate three layers of quadtree `NVMBox` instances.
@@ -450,7 +451,8 @@ class NVM(GameFile):
         ]
 
         for i, triangle in enumerate(self.triangles):
-            tri_vertices = [Vector2([self.vertices[i][0], self.vertices[i][2]]) for i in triangle.vertex_indices]
+            # TODO: NumPy operations to speed this up (including in utility functions).
+            tri_vertices = [Vector2([self.vertices[i, 0], self.vertices[i, 2]]) for i in triangle.vertex_indices]
             clockwise = line_point_cross(*tri_vertices) < 0
             if self.collides(quad_vertices, tri_vertices, clockwise):
                 triangle_indices.append(i)

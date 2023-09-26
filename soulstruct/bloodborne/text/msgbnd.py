@@ -23,5 +23,5 @@ class MSGBND(_BaseMSGBND):
     v4_info: BinderVersion4Info = field(default_factory=lambda: BinderVersion4Info(False, False, True, 0))
 
     @classmethod
-    def get_default_entry_path(cls, entry_name: str):
+    def get_default_new_entry_path(cls, entry_name: str):
         return f"N:\\SPRJ\\data\\INTERROOT_ps4\\msg\\engUS\\64bit\\{entry_name}"

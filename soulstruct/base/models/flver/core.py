@@ -80,6 +80,7 @@ class FLVER(GameFile):
     VertexBuffer: tp.ClassVar = VertexBuffer
 
     EXT: tp.ClassVar = ".flver"
+    PATTERN: tp.ClassVar = re.compile(r".*\.flver(\.dcx)?$")
 
     # Header information that can't be inferred, and must be stored from unpack or manually set. They default to DSR.
     # (These fields have no underscore prefix in `FLVERStruct` and will be passed here automatically.)
@@ -202,14 +203,30 @@ class FLVER(GameFile):
             _LOGGER.warning(f"FLVER '{Path(path).name}' has one or more submeshes with invalid vertex buffer sizes.")
         return flver
 
-    @classmethod
-    def from_chrbnd(cls, chrbnd: Binder) -> Self:
-        """Open CHRBND from given `chrbnd_source` and load its `.flver` file (with or without DCX extension).
 
-        Will raise an exception if no FLVER files or multiple FLVER files exist in the BND.
+
+    @classmethod
+    def from_binder_path(cls, binder_path: str | Path, entry_id_or_name: int | str = None, from_bak=False) -> Self:
+        """If not `entry_id_or_name` is given, will search for a lone '.flver{.dcx}' entry in the binder. In this case,
+        will raise an exception if no FLVER files or multiple FLVER files exist in the BND.
         """
-        flver_entry = chrbnd.find_entry_matching_name(r".*\.flver(\.dcx)?$")
-        return cls.from_bytes(flver_entry)
+        binder = Binder.from_bak(binder_path) if from_bak else Binder.from_path(binder_path)
+        if entry_id_or_name is None:
+            flver_entry = binder.find_entry_matching_name(r".*\.flver(\.dcx)?$")
+            return cls.from_bytes(flver_entry)
+        return cls.from_bytes(binder[entry_id_or_name])
+
+    @classmethod
+    def multiple_from_binder_path(
+        cls, binder_path: Path | str, entry_ids_or_names: tp.Sequence[int | str] = None, from_bak=False
+    ) -> list[Self]:
+        """If not `entry_ids_or_names` is given, will search for ALL '.flver{.dcx}' entries in the binder and return a
+        list of loaded FLVERs. Will raise an exception if no FLVER files are found."""
+        binder = Binder.from_bak(binder_path) if from_bak else Binder.from_path(binder_path)
+        if entry_ids_or_names is None:
+            flver_entries = binder.find_entries_matching_name(r".*\.flver(\.dcx)?$")
+            return [cls.from_bytes(entry) for entry in flver_entries]
+        return [cls.from_bytes(binder[entry_id_or_name]) for entry_id_or_name in entry_ids_or_names]
 
     def to_writer(self) -> BinaryWriter:
 
@@ -471,9 +488,11 @@ class FLVER(GameFile):
         return self.buffer_layouts[self.submeshes[submesh_index].vertex_buffers[vertex_array_index].layout_index]
 
     def scale_all_translations(self, scale_factor: float | Vector3 | Vector4):
-        """Modifies the FLVER in place by scaling all dummies, bones, and vertices by `factor`.
+        """Modifies the FLVER in place by scaling all dummies, bones, and vertex positions by `factor`.
 
-        Will NOT have full functionality in-game until Havok physics files are modified as well.
+        NOTE: As a reminder, FLVER files are for APPEARANCE ONLY (and dummies for TAE events). You will have to scale
+        the corresponding HKX files (map collision, character skeletons/ragdolls, etc.) before gameplay will really be
+        affected.
         """
         if isinstance(scale_factor, Vector4):
             scale_factor = Vector3((scale_factor.x, scale_factor.y, scale_factor.z))
@@ -482,12 +501,13 @@ class FLVER(GameFile):
         for bone in self.bones:
             bone.translate *= scale_factor
         for submesh in self.submeshes:
-            for vertex in submesh.vertices:
-                # Vertex positions are just lists, not Vectors, and we want to keep them that way.
-                if isinstance(scale_factor, Vector3):
-                    vertex.position = [scale_factor[i] * vertex.position[i] for i in range(3)]
-                else:
-                    vertex.position = [scale_factor * vertex.position[i] for i in range(3)]
+            for vertex_array in submesh.vertex_arrays:
+                # Scale all three position columns.
+                if isinstance(scale_factor, (int, float)):
+                    scale_factor = scale_factor * Vector3.one()
+                vertex_array["position_x"] *= scale_factor.x
+                vertex_array["position_y"] *= scale_factor.y
+                vertex_array["position_z"] *= scale_factor.z
 
     # region Materials/Textures
 

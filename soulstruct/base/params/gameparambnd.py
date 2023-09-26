@@ -115,17 +115,12 @@ class GameParamBND(Binder, abc.ABC):
                 self.remove_entry_name(entry_name)
 
         for param_name, param in zip(current_entry_names, self.params.values(), strict=True):
-            entry_path = self.get_default_entry_path(param_name)
-            if entry_path in self.entries_by_path:
-                # Just update data.
-                self.entries_by_path[entry_path].set_from_binary_file(param)
-            else:
-                # Add new entry.
-                # TODO: Does GameParamBND entry ID matter? Seems to just go from 0 to whatever.
-                new_id = self.get_first_new_entry_id_in_range(0, 1000000)
-                new_entry = BinderEntry(data=bytes(param), entry_id=new_id, path=entry_path)
-                self.add_entry(new_entry)
-                _LOGGER.debug(f"New Param entry added to GameParamBND (ID {new_id}): {param_name}")
+            entry_path = self.get_default_new_entry_path(param_name)
+            new_entry_created = self.add_or_replace_entry_data(
+                entry_path, param, new_id=self.get_first_new_entry_id_in_range(0, 1000000)
+            )
+            if new_entry_created:
+                _LOGGER.debug(f"New Param entry added to `GameParamBND`: {entry_path}")
 
     def write(
         self,

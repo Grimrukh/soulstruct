@@ -31,7 +31,7 @@ class DrawParamBND(DrawParamBND):
     dcx_type = DARK_SOULS_DSR.default_dcx_type
 
     @classmethod
-    def get_default_entry_path(cls, entry_name: str) -> str:
+    def get_default_new_entry_path(cls, entry_name: str) -> str:
         return f"N:\\FRPG\\data\\INTERROOT_x64\\param\\DrawParam\\{entry_name}"
 
     def assign_param_from_entry(
