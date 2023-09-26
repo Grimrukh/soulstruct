@@ -6,6 +6,7 @@ __all__ = [
 ]
 
 import logging
+import typing as tp
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -42,7 +43,7 @@ class MergedMesh:
     vertex_bone_weights: np.ndarray  # four columns for 'a', 'b', 'c', and 'd' (float32)
     vertex_bone_indices: np.ndarray  # four columns for 'a', 'b', 'c', and 'd' (uint16)
 
-    loop_vertex_indices: np.ndarray  # one column for 'vertex_index' (uint32)
+    loop_vertex_indices: np.ndarray  # 1D array for 'vertex_index' (uint32)
 
     loop_normals: np.ndarray  # three columns for 'x', 'y', and 'z' (float32)
     loop_normals_w: np.ndarray  # one column for 'w' (uint8)
@@ -339,10 +340,177 @@ class MergedMesh:
         """Reassign all face materials by using their current index to index into `new_indices`."""
         self.faces[:, 3] = new_indices[self.faces[:, 3]]
 
-    def split_mesh(self):
+    def split_mesh(
+        self,
+        material_vertex_array_dtypes: dict[int, np.dtype],
+        material_submesh_props: dict[int, dict[str, tp.Any]],
+        use_submesh_bone_indices=True,
+        max_bones_per_submesh=38,
+        remapped_material_indices: dict[int, int] = None,
+    ) -> list[Submesh]:
         """Splits merged mesh into FLVER submeshes.
 
-        TODO:
-            - Probably needs FLVER materials too (e.g. after merging variants in Blender).
-            -
+        Requires `material_vertex_array_dtypes`, which maps the material indices that appear in the merged `faces` to
+        dtypes for the vertex arrays their loops/vertices will be written into, and `material_submesh_props`, which
+        specifies field values on the submesh to be created for each face material index (e.g. read from Blender
+        materials). The latter MUST contain `is_bind_pose` at the very least, as it is needed to efficiently determine
+        how to check used bone indices.
+
+        If `remapped_material_indices` is given, split submeshes' material indices will be remapped to these (e.g. in
+        case Blender materials have been merged into fewer final FLVER materials).
         """
+
+        # Maps faces' material indices to lists of split submeshes (usually only one, but possibly more due to local
+        # bone max limitations) and under-construction vertex array (as a list of lists).
+        submeshes = {}  # type: dict[int, list[tuple[Submesh, dict[str, list[np.ndarray]]]]]
+
+        is_bind_pose = [props["is_bind_pose"] for props in material_submesh_props.values()]
+        submesh_bone_counts = [0] * len(material_submesh_props)
+
+        # Core loop: we iterate over every row in `faces` array. No way to avoid this due to the complex checks and
+        # splitting logic required within.
+        for face in self.faces:
+            loop_indices = face[:3]
+            material_index = face[3]
+
+            material_submeshes = submeshes.setdefault(material_index, [])
+
+            dtype = material_vertex_array_dtypes[material_index]
+            names = dtype.names
+
+            # Create an initial array (copied for each new submesh) now, to avoid a `setdefault()` call for every face.
+            empty_vertex_subarrays = {"position": []}
+            if "bone_weight_a" in names:
+                empty_vertex_subarrays["bone_weights"] = []
+            if "bone_index_a" in names:  # should always be true
+                empty_vertex_subarrays["bone_indices"] = []
+            if "normal_x" in names:  # should always be true
+                empty_vertex_subarrays["normals"] = []
+            if "normal_w" in names:
+                empty_vertex_subarrays["normals_w"] = []
+            if "tangent_x" in names:
+                empty_vertex_subarrays["tangents"] = []
+            if "bitangent_x" in names:
+                empty_vertex_subarrays["bitangents"] = []
+            for name in names:
+                if name.startswith("color_r_"):
+                    c_i = int(name[-1])
+                    empty_vertex_subarrays[f"color_{c_i}"] = []
+                elif name.startswith("uv_u_"):
+                    uv_i = int(name[-1])
+                    empty_vertex_subarrays[f"uv_{uv_i}"] = []
+
+            if not material_submeshes:
+                # First face with this material index. Create new submesh.
+                submesh = Submesh(**material_submesh_props[material_index])
+                if use_submesh_bone_indices:
+                    # Start with an array of all -1. Any -1 values left at the end will be removed.
+                    # TODO: Won't work if max bones is 0 (or <3 actually).
+                    submesh.bone_indices = -1 * np.ones(max_bones_per_submesh, dtype=int)
+                # Each value added to this (dtype-dependent) will be row-stacked, then the results column-stacked.
+                vertex_subarrays = empty_vertex_subarrays.copy()
+                material_submeshes.append((submesh, vertex_subarrays))
+            else:
+                # Use latest submesh.
+                submesh, vertex_subarrays = material_submeshes[-1]
+
+            vertex_indices = self.loop_vertex_indices[loop_indices]
+
+            position = self.vertex_positions[vertex_indices]  # three rows
+            bone_weights = self.vertex_bone_weights[vertex_indices]  # three rows
+            bone_indices = self.vertex_bone_indices[vertex_indices]  # three rows
+
+            if use_submesh_bone_indices:
+                if is_bind_pose[material_index]:
+                    # Used bone indices are wherever weight is non-zero.
+                    # TODO: What if an index is non-zero and weight is zero? Should we just fix that here?
+                    # TODO: Can (or should) assert that bone weights are present in dtype for this type of FLVER/mesh.
+                    used_bone_indices = bone_indices[bone_weights > 0.0].ravel()
+                else:
+                    # Single index per vertex. Can just take set of all 12 values.
+                    used_bone_indices = bone_indices.ravel()
+
+                submesh_bone_count = submesh_bone_counts[material_index]
+                if max_bones_per_submesh > 0 and submesh_bone_count >= max_bones_per_submesh - 2:
+                    # Only space for <=2 new bones left. Check if this face would exceed limit.
+                    if len(set(used_bone_indices) | set(submesh.bone_indices)) > max_bones_per_submesh:
+                        # Submesh capacity would be exceeded by this face. Time for a new submesh.
+                        # TODO: In theory, future faces could still be added to the current (or an earlier)
+                        #  submesh if their bones were a subset. However, this would involve checking all the
+                        #  bones used by every 'finished' submesh for every face. Not worth it. Not even sure
+                        #  FromSoft does it; could check (I know there is definitely bone overlap).
+                        submesh = Submesh(**material_submesh_props[material_index])
+                        vertex_subarrays = empty_vertex_subarrays.copy()
+                        material_submeshes.append((submesh, vertex_subarrays))
+                        submesh_bone_counts[material_index] = 0
+
+                # Add bone indices to submesh. All vertex bone indices will be make local to this submesh later so
+                # we can sort the submesh bone indices first.
+                for used_bone_index in used_bone_indices:
+                    if used_bone_index not in submesh.bone_indices:
+                        submesh.bone_indices[submesh_bone_count] = used_bone_index
+                        submesh_bone_count += 1
+
+                submesh_bone_counts[material_index] = submesh_bone_count
+
+            vertex_subarrays["position"].append(position)
+            if "bone_weight_a" in names:
+                vertex_subarrays["bone_weights"].append(bone_weights)
+            if "bone_index_a" in names:  # should always be true
+                vertex_subarrays["bone_indices"].append(bone_indices)
+
+            # Get loop data required by `dtype`.
+            if "normal_x" in names:  # should always be true
+                normals = self.loop_normals[loop_indices]
+                vertex_subarrays["normals"].append(normals)
+            if "normal_w" in names:
+                normals_w = self.loop_normals_w[loop_indices]
+                vertex_subarrays["normals_w"].append(normals_w)
+            if "tangent_x" in names:
+                tangents = self.loop_tangents[loop_indices]
+                vertex_subarrays["tangents"].append(tangents)
+            if "bitangent_x" in names:
+                bitangents = self.loop_bitangents[loop_indices]
+                vertex_subarrays["bitangents"].append(bitangents)
+            for name in names:
+                if name.startswith("color_r_"):
+                    c_i = int(name[-1])
+                    vertex_subarrays[f"color_{c_i}"].append(self.loop_vertex_colors[c_i][loop_indices])
+                elif name.startswith("uv_u_"):
+                    uv_i = int(name[-1])
+                    vertex_subarrays[f"uv_{uv_i}"].append(self.loop_uvs[uv_i][loop_indices])
+
+        # All submeshes complete. Time to combine the vertex fields into single arrays.
+        flver_submeshes = []
+        for material_index, material_submeshes in submeshes.items():
+            for submesh, vertex_subarrays in material_submeshes:
+                to_row_stack = []
+                for subarray_name, subarrays in vertex_subarrays.values():
+                    # Concatenate all face vertex triplet arrays vertically.
+                    full_subarray = np.concatenate(subarrays, axis=0)
+                    if subarray_name == "bone_indices" and use_submesh_bone_indices:
+                        # Make bone indices local to this submesh.
+                        full_subarray = self.make_bone_indices_local(full_subarray, submesh.bone_indices)
+                    to_row_stack.append(full_subarray)
+
+                # Stack all field subarrays horizontally.
+                dtype = material_vertex_array_dtypes[material_index]
+                vertex_array = np.concatenate(to_row_stack, axis=1, dtype=dtype)  # TODO: real type error?
+                submesh.vertex_arrays = [vertex_array]
+
+                if remapped_material_indices:
+                    submesh.material_index = remapped_material_indices[material_index]
+                else:
+                    submesh.material_index = material_index
+
+                flver_submeshes.append(submesh)
+
+        return flver_submeshes
+
+    @staticmethod
+    def make_bone_indices_local(bone_indices: np.ndarray, submesh_bone_indices: np.ndarray):
+        lo = min(bone_indices.min(), submesh_bone_indices.min())
+        hi = max(bone_indices.max(), submesh_bone_indices.max())
+        lut = np.zeros(hi - lo + 1, dtype=np.int64)
+        lut[submesh_bone_indices - lo] = np.arange(len(submesh_bone_indices))
+        return lut[bone_indices - lo]

@@ -92,6 +92,7 @@ class LayoutMember:
     @classmethod
     def from_flver_reader(cls, reader: BinaryReader, asserted_struct_offset: int):
         layout_member_struct = LayoutMemberStruct.from_bytes(reader)
+        # TODO: Do we really have to raise an exception here? SS re-export can easily fix this.
         if asserted_struct_offset != layout_member_struct.pop("_struct_offset"):
             raise ValueError("`LayoutMember` recorded binary struct offset does not match its actual struct offset.")
         return layout_member_struct.to_object(cls)
@@ -394,6 +395,10 @@ class BufferLayoutStruct(BinaryStruct):
 
 @dataclass(slots=True)
 class BufferLayout:
+    """Layout that describes the binary structure of a single vertex in a `VertexBuffer`.
+
+    In Python, corresponds to a structured `np.dtype` and optioanl compression/decompression methods for each field.
+    """
 
     members: list[LayoutMember] = field(default_factory=list)
 

@@ -241,8 +241,8 @@ class Submesh:
     invalid_layout_size: bool = False
 
     # Held temporarily while unpacking.
-    _face_set_indices: list[int] | None = None
-    _vertex_buffer_indices: list[int] | None = None
+    _face_set_indices: list[int] | None = field(default=None, init=False)
+    _vertex_buffer_indices: list[int] | None = field(default=None, init=False)
 
     @classmethod
     def from_flver_reader(cls, reader: BinaryReader, bounding_box_has_unknown: bool = None):
