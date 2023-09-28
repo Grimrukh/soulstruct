@@ -446,6 +446,42 @@ class BufferLayout:
         """Return total number of vertex color slots."""
         return sum(member.member_type == MemberType.VertexColor for member in self.members)
 
+    def get_dtype(self) -> np.dtype:
+        """Get decompressed NumPy dtype ONLY for this `BufferLayout`."""
+        decompressed_field_types = []
+        uv_count = 0
+        color_count = 0
+        for member in self.members:
+            if member.member_type == MemberType.Position and member.member_format == MemberFormat.EdgeCompressed:
+                # Explicitly not supported.
+                raise NotImplementedError("Cannot read FLVERs with edge-compressed vertex positions.")
+            if member.member_type not in DTYPE_PARSER:
+                raise ValueError(f"Invalid vertex buffer layout member type: {member.member_type}")
+
+            type_parser = DTYPE_PARSER[member.member_type]
+            if member.member_format not in type_parser:
+                raise NotImplementedError(f"Unsupported vertex buffer layout member type/format: {member}")
+
+            fields, decompressed_fields, codecs = type_parser[member.member_format]
+            if member.member_type == MemberType.UV:
+                # Add UV indices to field names.
+                if member.member_format in {MemberFormat.Float4, MemberFormat.UVPair}:
+                    # Member contains TWO UVs.
+                    decompressed_field_types += [(f"{f[0]}_{uv_count}", f[1]) for f in decompressed_fields[:2]]
+                    decompressed_field_types += [(f"{f[0]}_{uv_count + 1}", f[1]) for f in decompressed_fields[2:]]
+                    uv_count += 2
+                else:
+                    decompressed_field_types += [(f"{f[0]}_{uv_count}", f[1]) for f in decompressed_fields]
+                    uv_count += 1
+            elif member.member_type == MemberType.VertexColor:
+                # Add color indices to field names.
+                decompressed_field_types += [(f"{f[0]}_{color_count}", f[1]) for f in decompressed_fields]
+                color_count += 1
+            else:
+                decompressed_field_types += decompressed_fields
+
+        return np.dtype(decompressed_field_types)
+
     def get_numpy_dtype_and_codecs(
         self, uv_factor: int
     ) -> tuple[np.dtype, np.dtype, list[tp.Callable], list[tp.Callable]]:

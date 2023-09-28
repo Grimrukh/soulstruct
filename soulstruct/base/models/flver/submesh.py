@@ -267,13 +267,14 @@ class Submesh:
                 bounding_box = box_class.from_bytes(reader)
         else:
             bounding_box = None
-        return mesh_struct.to_object(
+        submesh = mesh_struct.to_object(
             cls,
             bone_indices=bone_indices,
-            _face_set_indices=_face_set_indices,
-            _vertex_buffer_indices=_vertex_buffer_indices,
             bounding_box=bounding_box,
         )
+        submesh._face_set_indices = _face_set_indices
+        submesh._vertex_buffer_indices = _vertex_buffer_indices
+        return submesh
 
     @property
     def vertices(self):
@@ -285,8 +286,8 @@ class Submesh:
         for i in self._face_set_indices:
             if i not in face_sets:
                 raise KeyError(
-                    f"Tried to assign `FaceSet` with index {i} to `Mesh`, but the `FaceSet` has "
-                    "already been assigned to another `Mesh` (or does not exist)."
+                    f"Tried to assign `FaceSet` with index {i} to `Submesh`, but the `FaceSet` has "
+                    "already been assigned to another `Submesh` (or does not exist)."
                 )
             self.face_sets.append(face_sets.pop(i))
         self._face_set_indices = None
@@ -296,18 +297,18 @@ class Submesh:
         for i in self._vertex_buffer_indices:
             if i not in vertex_buffers:
                 raise KeyError(
-                    f"Tried to assign `VertexBuffer` with index {i} to `Mesh`, but the `VertexBuffer` has "
-                    "already been assigned to another `Mesh` (or does not exist)."
+                    f"Tried to assign `VertexBuffer` with index {i} to `Submesh`, but the `VertexBuffer` has "
+                    "already been assigned to another `Submesh` (or does not exist)."
                 )
             self.vertex_buffers.append(vertex_buffers.pop(i))
         self._vertex_buffer_indices = None
 
-        # Check that all vertex buffers for this Mesh have the same length.
+        # Check that all vertex buffers for this submesh have the same length.
         if self.vertex_buffers:
             if len({buffer.get_vertex_count() for buffer in self.vertex_buffers}) != 1:
-                raise ValueError("Vertex buffers for Mesh do not all have the same size.")
+                raise ValueError("Vertex buffers for submesh do not all have the same size.")
         else:
-            _LOGGER.warning("Mesh has no vertex buffers.")
+            _LOGGER.warning("Submesh has no vertex buffers.")
 
         # Check that per-mesh unique `MemberType`s do not occur more than once among all members of all buffers.
         existing_types = set()
@@ -317,7 +318,7 @@ class Submesh:
                     if member.member_type in existing_types:
                         raise ValueError(
                             f"Unique `LayoutFormat` {member.member_type} found more than once in `BufferLayouts` "
-                            f"of `Mesh`."
+                            f"of `Submesh`."
                         )
                     existing_types.add(member.member_type)
 
@@ -418,7 +419,7 @@ class Submesh:
                 vertex_array[f"bone_index_{c}"] = self.bone_indices[local_bone_index]
         self.bone_indices = None
 
-    def to_obj(self, name="Mesh", vertex_offset=0, vertex_array=0) -> str:
+    def to_obj(self, name="Submesh", vertex_offset=0, vertex_array=0) -> str:
         """Convert mesh vertices, normals, UVs, and faces to an OBJ string.
 
         Use `vertex_offset` to offset all vertex indices in face definitions (e.g. if other meshes' vertices have
@@ -452,7 +453,7 @@ class Submesh:
     def get_material(self, flver: FLVER) -> Material:
         """Shortcut accessor."""
         if self.material_index < 0:
-            raise ValueError(f"Mesh has negative material index: {self.material_index}")
+            raise ValueError(f"Submesh has negative material index: {self.material_index}")
         return flver.materials[self.material_index]
 
     @property
@@ -460,9 +461,9 @@ class Submesh:
         """Shortcut for returning `vertex_buffers[0].layout_index`. Raises an error if there are 2+ vertex buffers."""
         # TODO: vertex buffers should not be 'kept' after reading a FLVER at all. Store layout index/indices on submesh.
         if not self.vertex_buffers:
-            raise ValueError("Mesh has no vertex buffers.")
+            raise ValueError("Submesh has no vertex buffers.")
         if len(self.vertex_buffers) > 1:
-            raise ValueError("Mesh has multiple vertex buffers. Cannot use `layout_index` shortcut property.")
+            raise ValueError("Submesh has multiple vertex buffers. Cannot use `layout_index` shortcut property.")
         return self.vertex_buffers[0].layout_index
 
     def get_buffer_layout(self, flver: FLVER, vertex_buffer_index=0) -> BufferLayout:
@@ -481,12 +482,12 @@ class Submesh:
     def cull_back_faces(self):
         """Get `cull_back_faces` from face set 0 and warn if other face sets have different values."""
         if not self.face_sets:
-            _LOGGER.warning("Mesh has no face sets.")
+            _LOGGER.warning("Submesh has no face sets.")
             return False
         cull = self.face_sets[0].cull_back_faces
         for face_set in self.face_sets[1:]:
             if face_set.cull_back_faces != cull:
-                _LOGGER.warning(f"Mesh has face sets with different `cull_back_faces` values. Using index 0: {cull}")
+                _LOGGER.warning(f"Submesh has face sets with different `cull_back_faces` values. Using index 0: {cull}")
                 return cull
         return cull
 
@@ -546,7 +547,7 @@ class Submesh:
     def __repr__(self):
         face_sets = ",\n".join(["    " + indent_lines(repr(f)) for f in self.face_sets])
         lines = [
-            "Mesh(",
+            "Submesh(",
             f"  material_index = {self.material_index}",
             f"  default_bone_index = {self.default_bone_index}",
             f"  bone_indices = {self.bone_indices}",

@@ -406,7 +406,7 @@ class FLVER(GameFile):
         for i, mesh in enumerate(self.submeshes):
             if submeshes and i not in submeshes:
                 continue  # skip this mesh
-            mesh_objs.append(mesh.to_obj(name=f"{name} Mesh {i}", vertex_offset=vertex_offset))
+            mesh_objs.append(mesh.to_obj(name=f"{name} Submesh {i}", vertex_offset=vertex_offset))
             vertex_offset += len(mesh.vertices)
         return "\n\n".join(mesh_objs)
 
