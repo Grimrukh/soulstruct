@@ -15,7 +15,6 @@ from soulstruct.utilities.binary import *
 
 from .bounding_box import BoundingBox, BoundingBoxWithUnknown
 from .vertex import BufferLayout, VertexBuffer
-from .vertex_array import *
 
 if tp.TYPE_CHECKING:
     from .core import FLVER
@@ -59,7 +58,7 @@ class FaceSet:
     triangle_strip: bool
     cull_back_faces: bool
     unk_x06: int
-    vertex_indices: list[int] = field(default_factory=list)
+    vertex_indices: list[int] = field(default_factory=list)  # TODO: any advantage to making this a NumPy array?
 
     @classmethod
     def from_flver_reader(cls, reader: BinaryReader, header_vertex_index_size: int, vertex_data_offset: int) -> FaceSet:
@@ -178,12 +177,18 @@ class FaceSet:
 
         TODO: Currently sets `flags=0` and `unk_x06=0`, which is correct so far in my usage.
         """
+
+        if isinstance(triangles, np.ndarray):
+            vertex_indices = triangles.ravel().tolist()
+        else:
+            vertex_indices = [i for tri in triangles for i in tri]
+
         return cls(
             flags=0,
             unk_x06=0,
             triangle_strip=False,
             cull_back_faces=cull_back_faces,
-            vertex_indices=[i for tri in triangles for i in tri],
+            vertex_indices=vertex_indices,
         )
 
     def __repr__(self):
@@ -358,51 +363,6 @@ class Submesh:
         writer.fill_with_position("_vertex_buffer_offset", obj=self)
         writer.pack(f"{len(vertex_buffer_indices)}i", *vertex_buffer_indices)
 
-    def get_vertex_positions(self, vertex_array_index=0) -> np.ndarray:
-        """Get a view into the 'position_{c}' columns of the given vertex array."""
-        return get_vertex_positions(self.vertex_arrays[vertex_array_index])
-
-    def get_vertex_bone_weights(self, vertex_array_index=0) -> np.ndarray:
-        """Get a view into the 'bone_weight_{c}' columns of the given vertex array."""
-        return get_vertex_bone_weights(self.vertex_arrays[vertex_array_index])
-
-    def get_vertex_bone_indices(self, vertex_array_index=0) -> np.ndarray:
-        """Get a view into the 'bone_index_{c}' columns of the given vertex array."""
-        return get_vertex_bone_indices(self.vertex_arrays[vertex_array_index])
-
-    def get_vertex_normals(self, vertex_array_index=0) -> np.ndarray:
-        """Get a view into the 'normal_{c}' columns of the given vertex array."""
-        return get_vertex_normals(self.vertex_arrays[vertex_array_index])
-
-    def get_vertex_tangents(self, vertex_array_index=0) -> np.ndarray:
-        """Get a view into the 'tangent_{c}' columns of the given vertex array."""
-        return get_vertex_tangents(self.vertex_arrays[vertex_array_index])
-
-    def get_vertex_bitangents(self, vertex_array_index=0) -> np.ndarray:
-        """Get a view into the 'bitangent_{c}' columns of the given vertex array."""
-        return get_vertex_bitangents(self.vertex_arrays[vertex_array_index])
-
-    def get_vertex_colors(self, color_index=0, vertex_array_index=0) -> np.ndarray:
-        """Get a view into the 'color_{c}_{color_index}' columns of the given vertex array."""
-        try:
-            return get_vertex_colors(self.vertex_arrays[vertex_array_index], color_index)
-        except KeyError:
-            raise KeyError(f"Vertex array {vertex_array_index} does not have color index {color_index}.")
-
-    def get_vertex_uvs(self, uv_index: int, include_w=False, vertex_array_index=0) -> np.ndarray:
-        """Get a view into the 'uv_{c}_{uv_index}' columns of the given vertex array."""
-        try:
-            return get_vertex_uvs(self.vertex_arrays[vertex_array_index], uv_index, include_w)
-        except KeyError:
-            raise KeyError(f"Vertex array {vertex_array_index} does not have UV index {uv_index}.")
-
-    def get_vertex_all_uvs(self, include_w=False, vertex_array_index=0) -> list[np.ndarray]:
-        """Get a view into ALL 'uv_{c}_{i}' columns of the given vertex array.
-
-        Returns a list of such views, one per UV index. Could be empty if no UVs are present.
-        """
-        return get_vertex_all_uvs(self.vertex_arrays[vertex_array_index], include_w)
-
     def local_to_global_bone_indices(self):
         """Transforms `vertex_array` in-place by replacing all `bone_index_{c}` indices with the global bone index in
         `mesh.bone_indices` that the vertex indexes, and remove local bone indices from the mesh (consistent with later
@@ -432,13 +392,13 @@ class Submesh:
         if "uv_u_1" in vertex:
             raise NotImplementedError("Cannot convert mesh to OBJ because one or more vertices has multiple UVs.")
 
-        for position in self.get_vertex_positions(vertex_array):
+        for position in self.vertex_arrays[0][[f"position_{c}" for c in "xyz"]]:
             pos_str = " ".join(str(x) for x in position)
             lines.append(f"v {pos_str}")
-        for normal in self.get_vertex_normals(vertex_array):
+        for normal in self.vertex_arrays[0][[f"normal_{c}" for c in "abcd"]]:
             normal_str = " ".join(str(x) for x in normal)
             lines.append(f"vn {normal_str}")
-        for uv in self.get_vertex_uvs(uv_index=0, vertex_array_index=vertex_array):
+        for uv in self.vertex_arrays[0][["uv_u_0", "uv_v_0"]]:
             uv_str = " ".join(str(x) for x in uv)
             lines.append(f"vt {uv_str}")
         for i, face_set in enumerate(self.face_sets):
@@ -514,10 +474,10 @@ class Submesh:
         import matplotlib.pyplot as plt
         if axes is None:
             axes = plt.figure().add_subplot(111, projection="3d")
-        positions = self.get_vertex_positions()
+        positions = self.vertex_arrays[0][["position_x", "position_z", "position_y"]]
         axes.scatter(*zip(*positions), c=vertex_color, s=1, alpha=0.1)  # note y/z swapped
         if show_normals:
-            normals = self.get_vertex_normals()
+            normals = self.vertex_arrays[0][["normal_x", "normal_z", "normal_y"]]
             for position, normal in zip(positions, normals):
                 axes.plot(*zip(position, position + normal), c="black", alpha=0.1)
         if show_origin:
