@@ -19,7 +19,7 @@ from .layout_repair import check_ds1_layouts
 from .material import GXList, Material, Texture
 from .submesh import FaceSet, Submesh
 from .version import Version
-from .vertex import BufferLayout, VertexBuffer, VertexBufferSizeError
+from .vertex_array import VertexBufferStruct, VertexDataLayout, VertexArray, VertexDataSizeError
 
 import numpy as np
 
@@ -76,8 +76,8 @@ class FLVER(GameFile):
     GXList: tp.ClassVar = GXList
     Material: tp.ClassVar = Material
     Submesh: tp.ClassVar = Submesh
-    BufferLayout: tp.ClassVar = BufferLayout
-    VertexBuffer: tp.ClassVar = VertexBuffer
+    VertexDataLayout: tp.ClassVar = VertexDataLayout
+    VertexArray: tp.ClassVar = VertexArray
 
     EXT: tp.ClassVar = ".flver"
     PATTERN: tp.ClassVar = re.compile(r".*\.flver(\.dcx)?$")
@@ -101,20 +101,21 @@ class FLVER(GameFile):
     materials: list[Material] = field(default_factory=list)
     bones: list[Bone] = field(default_factory=list)
     submeshes: list[Submesh] = field(default_factory=list)
-    buffer_layouts: list[BufferLayout] = field(default_factory=list)
+    layouts: list[VertexDataLayout] = field(default_factory=list)
 
     @classmethod
     def from_reader(cls, reader: BinaryReader) -> Self:
         byte_order = ByteOrder.from_reader_peek(reader, 2, 6, b"R\0", b"L\0")
         reader.default_byte_order = byte_order  # applies to all FLVER structs
         header = FLVERStruct.from_bytes(reader)
+        uv_factor = 2048 if header.version >= Version.DarkSouls2_NT else 1024
 
         encoding = "utf-16-le" if header.unicode else "shift_jis_2004"
 
         dummies = [Dummy.from_flver_reader(reader, header.version) for _ in range(header.dummy_count)]
 
         gx_list_indices = {}  # type: dict[int, int]  # maps `_gx_offset` in `Material` to `self.gx_lists` index
-        gx_lists = []
+        gx_lists = []  # filled by `Material` reader below
         materials = [
             Material.from_flver_reader(
                 reader,
@@ -142,13 +143,25 @@ class FLVER(GameFile):
             for i in range(header.face_set_count)
         }
 
-        vertex_buffers = {i: VertexBuffer.from_flver_reader(reader) for i in range(header.vertex_buffer_count)}
+        # Buffer structs come before layouts, so we load just the structs first.
+        vertex_buffer_structs = [VertexBufferStruct.from_bytes(reader) for _ in range(header.vertex_buffer_count)]
 
-        buffer_layouts = [BufferLayout.from_flver_reader(reader) for _ in range(header.buffer_layout_count)]
-
+        buffer_layouts = [VertexDataLayout.from_flver_reader(reader) for _ in range(header.buffer_layout_count)]
         if header.version == Version.DarkSouls_A:
             # Check for botched DS1R buffer layouts (thanks QLOC!).
-            check_ds1_layouts(buffer_layouts, vertex_buffers, submeshes, materials)
+            check_ds1_layouts(buffer_layouts, vertex_buffer_structs, submeshes, materials)
+
+        # Load NumPy array wrappers with attached layouts.
+        # Uses a dictionary so they can easily be dereferenced to Submeshes.
+        vertex_arrays = {}
+        for i, buffer_struct in enumerate(vertex_buffer_structs):
+            try:
+                vertex_array = VertexArray.from_flver_reader(
+                    reader, buffer_struct, buffer_layouts, header.vertex_data_offset, uv_factor
+                )
+            except VertexDataSizeError:
+                vertex_array = VertexArray(array=np.empty(0), layout=buffer_layouts[buffer_struct.layout_index])
+            vertex_arrays[i] = vertex_array
 
         textures = {i: Texture.from_flver_reader(reader, encoding=encoding) for i in range(header.texture_count)}
 
@@ -161,27 +174,24 @@ class FLVER(GameFile):
             raise ValueError(f"{len(textures)} textures were left over after assignment to materials.")
 
         for i, submesh in enumerate(submeshes):
+            # TODO: assign material to submesh (multiple may reference same material)
+            #  can also add 'get_material_users()' method here in FLVER
             submesh.assign_face_sets(face_sets)
-            submesh.assign_vertex_buffers(vertex_buffers, buffer_layouts)
-            uv_factor = 2048 if header.version >= Version.DarkSouls2_NT else 1024
-
-            try:
-                submesh.vertex_arrays = [
-                    vertex_buffer.read_buffer(reader, buffer_layouts, header.vertex_data_offset, uv_factor)
-                    for vertex_buffer in submesh.vertex_buffers
-                ]
-            except VertexBufferSizeError as ex:
+            submesh.assign_vertex_arrays(vertex_arrays)
+            submesh.validate_unique_data_types()
+            
+            if any(vertex_array.array.size == 0 for vertex_array in submesh.vertex_arrays):
                 mtd_name = materials[submesh.material_index].mtd_name
                 _LOGGER.warning(
-                    f"Submesh {i} in FLVER (MTD '{mtd_name}') has a vertex buffer size {ex.vertex_size}, but its "
-                    f"buffer layout has size {ex.layout_size}). Submesh marked with `invalid_layout_size = True`; "
-                    f"handle this as needed."
+                    f"Submesh {i} in FLVER (MTD '{mtd_name}') has an incorrect layout that could not be fixed. Submesh "
+                    f"marked with `invalid_layout = True`; handle this as needed."
                 )
-                submesh.invalid_layout_size = True
+                submesh.invalid_layout = True
+
         if face_sets:
             raise ValueError(f"{len(face_sets)} face sets were left over after assignment to submeshes.")
-        if vertex_buffers:
-            raise ValueError(f"{len(vertex_buffers)} vertex buffers were left over after assignment to submeshes.")
+        if vertex_arrays:
+            raise ValueError(f"{len(vertex_arrays)} vertex arrays were left over after assignment to submeshes.")
 
         return header.to_object(
             cls,
@@ -199,11 +209,9 @@ class FLVER(GameFile):
         """Reports invalid buffer layouts."""
         flver = super(FLVER, cls).from_path(path)
         assert isinstance(flver, FLVER)
-        if any(mesh.invalid_layout_size for mesh in flver.submeshes):
+        if any(mesh.invalid_layout for mesh in flver.submeshes):
             _LOGGER.warning(f"FLVER '{Path(path).name}' has one or more submeshes with invalid vertex buffer sizes.")
         return flver
-
-
 
     @classmethod
     def from_binder_path(cls, binder_path: str | Path, entry_id_or_name: int | str = None, from_bak=False) -> Self:
@@ -263,12 +271,12 @@ class FLVER(GameFile):
             material_count=len(self.materials),
             bone_count=len(self.bones),
             mesh_count=len(self.submeshes),
-            vertex_buffer_count=sum(len(mesh.vertex_buffers) for mesh in self.submeshes),
+            vertex_buffer_count=sum(len(mesh.vertex_arrays) for mesh in self.submeshes),
             true_face_count=true_face_count,
             total_face_count=total_face_count,
             vertex_indices_size=header_vertex_indices_size,
             face_set_count=sum(len(mesh.face_sets) for mesh in self.submeshes),
-            buffer_layout_count=len(self.buffer_layouts),
+            buffer_layout_count=len(self.layouts),
             texture_count=sum(len(material.textures) for material in self.materials),
         )
 
@@ -295,16 +303,16 @@ class FLVER(GameFile):
                 face_set.to_flver_writer(writer, face_set_vertex_index_size)
 
         for mesh in self.submeshes:
-            for i, vertex_buffer in enumerate(mesh.vertex_buffers):
-                vertex_buffer.to_flver_writer(
+            for i, vertex_array in enumerate(mesh.vertex_arrays):
+                vertex_array.to_flver_writer(
                     writer,
-                    self.version,
+                    write_buffer_length=self.version >= 0x20005,
                     mesh_vertex_buffer_index=i,
-                    buffer_layouts=self.buffer_layouts,
+                    buffer_layouts=self.layouts,
                     mesh_vertex_count=len(mesh.vertices),
                 )
 
-        for i, buffer_layout in enumerate(self.buffer_layouts):
+        for i, buffer_layout in enumerate(self.layouts):
             buffer_layout.to_flver_writer(writer)
 
         first_texture_index = 0
@@ -317,7 +325,7 @@ class FLVER(GameFile):
         # Indexed data only after this point, with 16 pad bytes between each data type.
 
         writer.pad_align(16)
-        for i, buffer_layout in enumerate(self.buffer_layouts):
+        for i, buffer_layout in enumerate(self.layouts):
             buffer_layout.pack_members(writer)
 
         writer.pad_align(16)
@@ -339,7 +347,7 @@ class FLVER(GameFile):
         first_vertex_buffer_index = 0
         for mesh in self.submeshes:
             mesh.pack_vertex_buffer_indices(writer, first_vertex_buffer_index)
-            first_vertex_buffer_index += len(mesh.vertex_buffers)
+            first_vertex_buffer_index += len(mesh.vertex_arrays)
 
         writer.pad_align(16)
         gx_offsets = []
@@ -380,13 +388,11 @@ class FLVER(GameFile):
                     vertex_indices_offset=writer.position - vertex_data_start,
                 )
 
-            for vertex_buffer, vertex_array in zip(mesh.vertex_buffers, mesh.vertex_arrays):
+            for vertex_array, vertex_array in zip(mesh.vertex_buffers, mesh.vertex_arrays):
                 writer.pad_align(16)
                 uv_factor = 2048 if self.version >= Version.DarkSouls2_NT else 1024
-                vertex_buffer.pack_buffer(
+                vertex_array.pack_buffer(
                     writer,
-                    buffer_layouts=self.buffer_layouts,
-                    vertex_array=vertex_array,
                     buffer_offset=writer.position - vertex_data_start,
                     uv_factor=uv_factor,
                 )
@@ -484,8 +490,8 @@ class FLVER(GameFile):
     def get_submesh_material(self, submesh_index: int) -> Material:
         return self.materials[self.submeshes[submesh_index].material_index]
 
-    def get_submesh_buffer_layout(self, submesh_index: int, vertex_array_index=0) -> BufferLayout:
-        return self.buffer_layouts[self.submeshes[submesh_index].vertex_buffers[vertex_array_index].layout_index]
+    def get_submesh_layout(self, submesh_index: int, vertex_array_index=0) -> VertexDataLayout:
+        return self.submeshes[submesh_index].vertex_arrays[vertex_array_index].layout
 
     def scale_all_translations(self, scale_factor: float | Vector3 | Vector4):
         """Modifies the FLVER in place by scaling all dummies, bones, and vertex positions by `factor`.

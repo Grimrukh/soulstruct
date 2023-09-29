@@ -14,7 +14,7 @@ from soulstruct.utilities.text import indent_lines
 from soulstruct.utilities.binary import *
 
 from .bounding_box import BoundingBox, BoundingBoxWithUnknown
-from .vertex import BufferLayout, VertexBuffer
+from .vertex_array import VertexArray
 
 if tp.TYPE_CHECKING:
     from .core import FLVER
@@ -240,14 +240,13 @@ class Submesh:
     bone_indices: np.ndarray | None = None
     bounding_box: tp.Optional[BoundingBox] = None
     face_sets: list[FaceSet] = field(default_factory=list)
-    vertex_buffers: list[VertexBuffer] = field(default_factory=list)
-    vertex_arrays: list[np.ndarray] = field(default_factory=list)
+    vertex_arrays: list[VertexArray] = field(default_factory=list)
 
-    invalid_layout_size: bool = False
+    invalid_layout: bool = False
 
     # Held temporarily while unpacking.
     _face_set_indices: list[int] | None = field(default=None, init=False)
-    _vertex_buffer_indices: list[int] | None = field(default=None, init=False)
+    _vertex_array_indices: list[int] | None = field(default=None, init=False)
 
     @classmethod
     def from_flver_reader(cls, reader: BinaryReader, bounding_box_has_unknown: bool = None):
@@ -297,37 +296,38 @@ class Submesh:
             self.face_sets.append(face_sets.pop(i))
         self._face_set_indices = None
 
-    def assign_vertex_buffers(self, vertex_buffers: dict[int, VertexBuffer], layouts: list[BufferLayout]):
-        self.vertex_buffers = []
-        for i in self._vertex_buffer_indices:
-            if i not in vertex_buffers:
+    def assign_vertex_arrays(self, vertex_arrays: dict[int, VertexArray]):
+        self.vertex_arrays = []
+        for i in self._vertex_array_indices:
+            if i not in vertex_arrays:
                 raise KeyError(
                     f"Tried to assign `VertexBuffer` with index {i} to `Submesh`, but the `VertexBuffer` has "
                     "already been assigned to another `Submesh` (or does not exist)."
                 )
-            self.vertex_buffers.append(vertex_buffers.pop(i))
-        self._vertex_buffer_indices = None
+            self.vertex_arrays.append(vertex_arrays.pop(i))
+        self._vertex_array_indices = None
 
         # Check that all vertex buffers for this submesh have the same length.
-        if self.vertex_buffers:
-            if len({buffer.get_vertex_count() for buffer in self.vertex_buffers}) != 1:
+        if self.vertex_arrays:
+            if len({len(vertex_array.array) for vertex_array in self.vertex_arrays}) != 1:
                 raise ValueError("Vertex buffers for submesh do not all have the same size.")
         else:
             _LOGGER.warning("Submesh has no vertex buffers.")
 
-        # Check that per-mesh unique `MemberType`s do not occur more than once among all members of all buffers.
-        existing_types = set()
-        for vertex_buffer in self.vertex_buffers:
-            for member in layouts[vertex_buffer.layout_index]:
-                if member.member_type.is_unique():
-                    if member.member_type in existing_types:
-                        raise ValueError(
-                            f"Unique `LayoutFormat` {member.member_type} found more than once in `BufferLayouts` "
-                            f"of `Submesh`."
-                        )
-                    existing_types.add(member.member_type)
-
         # TODO: SoulsFormats does an extra check here for edge-compressed vertex buffers, which are not supported here.
+
+    def validate_unique_data_types(self):
+        """Check that per-mesh unique `MemberType`s do not occur more than once among all members of all arrays."""
+        existing_types = set()
+        for vertex_array in self.vertex_arrays:
+            for data_type in vertex_array.layout:
+                if data_type.unique:
+                    name = data_type.__class__.__name__
+                    if name in existing_types:
+                        raise ValueError(
+                            f"Unique vertex data type `{name} found more than once across all vertex arrays of Submesh."
+                        )
+                    existing_types.add(name)
 
     def to_flver_writer(self, writer: BinaryWriter):
         SubmeshStruct.object_to_writer(
@@ -335,7 +335,7 @@ class Submesh:
             writer,
             _bone_count=len(self.bone_indices) if self.bone_indices is not None else 0,
             _face_set_count=len(self.face_sets),
-            _vertex_buffer_count=len(self.vertex_buffers),
+            _vertex_buffer_count=len(self.vertex_arrays),
         )
 
     def pack_bounding_box(self, writer: BinaryWriter):
@@ -359,7 +359,7 @@ class Submesh:
         writer.pack(f"{len(face_set_indices)}i", *face_set_indices)
 
     def pack_vertex_buffer_indices(self, writer: BinaryWriter, first_vertex_buffer_index: int):
-        vertex_buffer_indices = [first_vertex_buffer_index + i for i in range(len(self.vertex_buffers))]
+        vertex_buffer_indices = [first_vertex_buffer_index + i for i in range(len(self.vertex_arrays))]
         writer.fill_with_position("_vertex_buffer_offset", obj=self)
         writer.pack(f"{len(vertex_buffer_indices)}i", *vertex_buffer_indices)
 
@@ -403,7 +403,7 @@ class Submesh:
             lines.append(f"vt {uv_str}")
         for i, face_set in enumerate(self.face_sets):
             lines.append(f"# Face Set {i}")
-            triangles = face_set.triangulate(allow_primitive_restarts=len(self.vertex_arrays[vertex_array] > 0xFFFF))
+            triangles = face_set.triangulate(allow_primitive_restarts=len(self.vertex_arrays[vertex_array]) > 0xFFFF)
             for j in range(0, len(triangles), 3):
                 # TODO: Are these UV/normal assignments correct, given that each vertex has one?
                 face = " ".join("/".join([str(v + vertex_offset + 1)] * 3) for v in triangles[j:j + 3])
@@ -412,31 +412,10 @@ class Submesh:
 
     def get_material(self, flver: FLVER) -> Material:
         """Shortcut accessor."""
+        # TODO: Assign reference directly.
         if self.material_index < 0:
             raise ValueError(f"Submesh has negative material index: {self.material_index}")
         return flver.materials[self.material_index]
-
-    @property
-    def layout_index(self):
-        """Shortcut for returning `vertex_buffers[0].layout_index`. Raises an error if there are 2+ vertex buffers."""
-        # TODO: vertex buffers should not be 'kept' after reading a FLVER at all. Store layout index/indices on submesh.
-        if not self.vertex_buffers:
-            raise ValueError("Submesh has no vertex buffers.")
-        if len(self.vertex_buffers) > 1:
-            raise ValueError("Submesh has multiple vertex buffers. Cannot use `layout_index` shortcut property.")
-        return self.vertex_buffers[0].layout_index
-
-    def get_buffer_layout(self, flver: FLVER, vertex_buffer_index=0) -> BufferLayout:
-        """Shortcut for returning `flver.buffer_layouts[self.vertex_buffers[vertex_buffer_index].layout_index]`."""
-        return flver.buffer_layouts[self.vertex_buffers[vertex_buffer_index].layout_index]
-
-    def set_buffer_layout(self, flver: FLVER, layout: BufferLayout, vertex_buffer_index=0):
-        """Shortcut for setting `flver.buffer_layouts[self.vertex_buffers[vertex_buffer_index].layout_index]`.
-
-        Note, of course, that other meshes could be pointing to the same layout index! Make sure they are also both
-        using the same material in that case.
-        """
-        flver.buffer_layouts[self.vertex_buffers[vertex_buffer_index].layout_index] = layout
 
     @property
     def cull_back_faces(self):
