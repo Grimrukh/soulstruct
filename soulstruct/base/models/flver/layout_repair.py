@@ -8,7 +8,6 @@ from .vertex_array import *
 from ..mtd import MTDInfo
 
 if tp.TYPE_CHECKING:
-    from .material import Material
     from .submesh import Submesh
 
 _LOGGER = logging.getLogger(__name__)
@@ -103,28 +102,29 @@ def check_ds1_layouts(
     buffer_layouts: list[VertexDataLayout],
     buffer_structs: list[VertexBufferStruct],
     submeshes: list[Submesh],
-    materials: list[Material],
 ):
     """
     QLOC really botched some of the FLVERs in DS1R, so we need to know the layouts of the broken ones and manually use
     them instead of whatever is written in the FLVER file. Example map pieces:
         m2120B2A10.flver.dcx
         m8000B2A10.flver.dcx
+
+    Note that this should be called BEFORE submesh vertex buffers/arrays are dereferenced.
     """
 
-    for i, mesh in enumerate(submeshes):
-        material = materials[mesh.material_index]
-        buffers = [buffer_structs[i] for i in mesh._vertex_buffer_indices]
-        for buffer in buffers:
+    for i, submesh in enumerate(submeshes):
+        mtd_name = submesh.material.mtd_name
+        # noinspection PyProtectedMember
+        for buffer_index in submesh._vertex_buffer_indices:
+            buffer = buffer_structs[buffer_index]
             layout = buffer_layouts[buffer.layout_index]
-            if buffer.vertex_size != layout.get_total_data_size():
-                # BAD LAYOUT.
 
-                # Try to guess the layout from the MTD name.
+            if buffer.vertex_size != layout.get_total_data_size():
+                # BAD LAYOUT. Try to guess the layout from the MTD name.
                 member_unk_00 = layout[0].unk_x00
-                is_chr = mesh.is_bind_pose
-                guessed_layout = guess_mtd_layout(material.mtd_name, member_unk_00, is_chr)
+                is_chr = submesh.is_bind_pose
+                guessed_layout = guess_mtd_layout(mtd_name, member_unk_00, is_chr)
                 buffer.layout_index = len(buffer_layouts)
                 buffer_layouts.append(guessed_layout)  # new buffer layout (we don't want to replace original!)
-                _LOGGER.info(f"Fixing bad vertex buffer layout for mesh {i} (MTD {material.mtd_name}).")
+                _LOGGER.info(f"Attempting to fix bad vertex data layout for submesh {i} (MTD {mtd_name}).")
                 # Mesh should now be able to read vertex buffer correctly.

@@ -134,6 +134,9 @@ class FLVER(GameFile):
             for _ in range(header.mesh_count)
         ]
 
+        for submesh in submeshes:
+            submesh.dereference_material(materials)
+
         face_sets = {
             i: FaceSet.from_flver_reader(
                 reader,
@@ -143,13 +146,14 @@ class FLVER(GameFile):
             for i in range(header.face_set_count)
         }
 
-        # Buffer structs come before layouts, so we load just the structs first.
+        # Buffer structs come before layouts. We load just the structs first, then combine them with their indexed
+        # layout to unpack the vertex array data, which is assigned to submeshes below.
         vertex_buffer_structs = [VertexBufferStruct.from_bytes(reader) for _ in range(header.vertex_buffer_count)]
 
         buffer_layouts = [VertexDataLayout.from_flver_reader(reader) for _ in range(header.buffer_layout_count)]
         if header.version == Version.DarkSouls_A:
             # Check for botched DS1R buffer layouts (thanks QLOC!).
-            check_ds1_layouts(buffer_layouts, vertex_buffer_structs, submeshes, materials)
+            check_ds1_layouts(buffer_layouts, vertex_buffer_structs, submeshes)
 
         # Load NumPy array wrappers with attached layouts.
         # Uses a dictionary so they can easily be dereferenced to Submeshes.
@@ -174,19 +178,9 @@ class FLVER(GameFile):
             raise ValueError(f"{len(textures)} textures were left over after assignment to materials.")
 
         for i, submesh in enumerate(submeshes):
-            # TODO: assign material to submesh (multiple may reference same material)
-            #  can also add 'get_material_users()' method here in FLVER
-            submesh.assign_face_sets(face_sets)
-            submesh.assign_vertex_arrays(vertex_arrays)
+            submesh.dereference_face_sets(face_sets)
+            submesh.dereference_vertex_arrays(vertex_arrays)
             submesh.validate_unique_data_types()
-            
-            if any(vertex_array.array.size == 0 for vertex_array in submesh.vertex_arrays):
-                mtd_name = materials[submesh.material_index].mtd_name
-                _LOGGER.warning(
-                    f"Submesh {i} in FLVER (MTD '{mtd_name}') has an incorrect layout that could not be fixed. Submesh "
-                    f"marked with `invalid_layout = True`; handle this as needed."
-                )
-                submesh.invalid_layout = True
 
         if face_sets:
             raise ValueError(f"{len(face_sets)} face sets were left over after assignment to submeshes.")
@@ -243,9 +237,9 @@ class FLVER(GameFile):
 
         true_face_count = 0
         total_face_count = 0
-        for mesh in self.submeshes:
-            allow_primitive_restarts = len(mesh.vertices) < 0xFFFF  # max unsigned short value
-            for face_set in mesh.face_sets:
+        for submesh in self.submeshes:
+            allow_primitive_restarts = len(submesh.vertices) < 0xFFFF  # max unsigned short value
+            for face_set in submesh.face_sets:
                 face_set_true_count, face_set_total_count = face_set.get_face_counts(allow_primitive_restarts)
                 true_face_count += face_set_true_count
                 total_face_count += face_set_total_count
@@ -253,8 +247,8 @@ class FLVER(GameFile):
         if self.version < Version.Bloodborne_DS3_A:
             # Set header's `vertex_index_size` to the largest size detected across all `FaceSet`s (16 or 32).
             header_vertex_indices_size = 16
-            for mesh in self.submeshes:
-                for face_set in mesh.face_sets:
+            for submesh in self.submeshes:
+                for face_set in submesh.face_sets:
                     face_set_vertex_index_size = face_set.get_vertex_index_size()
                     header_vertex_indices_size = max(header_vertex_indices_size, face_set_vertex_index_size)
         else:
@@ -285,35 +279,71 @@ class FLVER(GameFile):
         for dummy in self.dummies:
             dummy.to_flver_writer(writer, self.version)
 
-        for material in self.materials:
+        materials_to_pack = []  # type: list[Material]  # unique materials to actually pack to FLVER
+        layouts_to_pack = []  # type: list[VertexDataLayout]  # unique layouts to actually pack to FLVER
+        hashed_material_indices = {}  # type: dict[int, int]  # maps material hashes to `materials_to_pack` indices
+        hashed_layout_indices = {}  # type: dict[int, int]  # maps layout hashes to `layouts_to_pack` indices
+        submesh_material_indices = []  # type: list[int]
+        submesh_layout_indices = []  # type: list[list[int]]  # has a list per submesh (may have multiple buffers)
+        for i, submesh in enumerate(self.submeshes):
+            material = submesh.material
+            material_hash = hash(material)
+            if material_hash in hashed_material_indices:
+                submesh_material_index = hashed_material_indices[material_hash]
+            else:
+                # New material.
+                submesh_material_index = hashed_material_indices[material_hash] = len(materials_to_pack)
+                materials_to_pack.append(material)
+            submesh_material_indices.append(submesh_material_index)
+
+            array_layout_indices = []
+            for j, vertex_array in submesh.vertex_arrays:
+                layout = vertex_array.layout
+                layout_hash = hash(layout)
+                if layout_hash in hashed_layout_indices:
+                    array_layout_index = hashed_layout_indices[layout_hash]
+                else:
+                    # New layout.
+                    array_layout_index = hashed_layout_indices[layout_hash] = len(layouts_to_pack)
+                    layouts_to_pack.append(layout)
+                array_layout_indices.append(array_layout_index)
+            submesh_layout_indices.append(array_layout_indices)
+
+        for material in materials_to_pack:
             material.to_flver_writer(writer)
 
+        # Pack bones.
         for bone in self.bones:
             bone.to_flver_writer(writer)
 
-        for mesh in self.submeshes:
-            mesh.to_flver_writer(writer)
+        # Pack submesh headers.
+        for submesh, material_index in zip(self.submeshes, submesh_material_indices):
+            submesh.to_flver_writer(writer, material_index)
 
-        for mesh in self.submeshes:
-            for face_set in mesh.face_sets:
+        # Pack submesh face sets.
+        for submesh in self.submeshes:
+            for face_set in submesh.face_sets:
                 if header_vertex_indices_size == 0:
                     face_set_vertex_index_size = face_set.get_vertex_index_size()
                 else:
                     face_set_vertex_index_size = header_vertex_indices_size
                 face_set.to_flver_writer(writer, face_set_vertex_index_size)
 
-        for mesh in self.submeshes:
-            for i, vertex_array in enumerate(mesh.vertex_arrays):
+        # Pack submesh vertex array (buffer) headers.
+        for submesh, layout_indices in zip(self.submeshes, submesh_layout_indices):
+            for i, (vertex_array, layout_index) in enumerate(zip(submesh.vertex_arrays, layout_indices)):
                 vertex_array.to_flver_writer(
                     writer,
                     write_buffer_length=self.version >= 0x20005,
-                    mesh_vertex_buffer_index=i,
+                    layout_index=layout_index,
+                    buffer_index=i,
                     buffer_layouts=self.layouts,
-                    mesh_vertex_count=len(mesh.vertices),
+                    mesh_vertex_count=len(submesh.vertices),
                 )
 
-        for i, buffer_layout in enumerate(self.layouts):
-            buffer_layout.to_flver_writer(writer)
+        # Pack buffer layouts.
+        for layout in layouts_to_pack:
+            layout.to_flver_writer(writer)
 
         first_texture_index = 0
         for i, material in enumerate(self.materials):
@@ -329,25 +359,25 @@ class FLVER(GameFile):
             buffer_layout.pack_members(writer)
 
         writer.pad_align(16)
-        for i, mesh in enumerate(self.submeshes):
-            mesh.pack_bounding_box(writer)
+        for i, submesh in enumerate(self.submeshes):
+            submesh.pack_bounding_box(writer)
 
         writer.pad_align(16)
         bone_indices_start = writer.position
-        for i, mesh in enumerate(self.submeshes):
-            mesh.pack_bone_indices(writer, bone_indices_start=bone_indices_start)
+        for i, submesh in enumerate(self.submeshes):
+            submesh.pack_bone_indices(writer, bone_indices_start=bone_indices_start)
 
         writer.pad_align(16)
         first_face_set_index = 0
-        for i, mesh in enumerate(self.submeshes):
-            mesh.pack_face_set_indices(writer, first_face_set_index)
-            first_face_set_index += len(mesh.face_sets)
+        for i, submesh in enumerate(self.submeshes):
+            submesh.pack_face_set_indices(writer, first_face_set_index)
+            first_face_set_index += len(submesh.face_sets)
 
         writer.pad_align(16)
         first_vertex_buffer_index = 0
-        for mesh in self.submeshes:
-            mesh.pack_vertex_buffer_indices(writer, first_vertex_buffer_index)
-            first_vertex_buffer_index += len(mesh.vertex_arrays)
+        for submesh in self.submeshes:
+            submesh.pack_vertex_buffer_indices(writer, first_vertex_buffer_index)
+            first_vertex_buffer_index += len(submesh.vertex_arrays)
 
         writer.pad_align(16)
         gx_offsets = []
@@ -375,8 +405,8 @@ class FLVER(GameFile):
         vertex_data_start = writer.position
         writer.fill("vertex_data_offset", vertex_data_start, obj=self)
 
-        for i, mesh in enumerate(self.submeshes):
-            for face_set in mesh.face_sets:
+        for submesh in self.submeshes:
+            for face_set in submesh.face_sets:
                 if header_vertex_indices_size == 0:
                     face_set_vertex_index_size = face_set.get_vertex_index_size()
                 else:
@@ -388,10 +418,10 @@ class FLVER(GameFile):
                     vertex_indices_offset=writer.position - vertex_data_start,
                 )
 
-            for vertex_array, vertex_array in zip(mesh.vertex_buffers, mesh.vertex_arrays):
+            for vertex_array in submesh.vertex_arrays:
                 writer.pad_align(16)
                 uv_factor = 2048 if self.version >= Version.DarkSouls2_NT else 1024
-                vertex_array.pack_buffer(
+                vertex_array.pack_array(
                     writer,
                     buffer_offset=writer.position - vertex_data_start,
                     uv_factor=uv_factor,
@@ -486,12 +516,6 @@ class FLVER(GameFile):
             axes.scatter(*bone_position.to_xzy(), color="blue", s=10)
         if auto_show:
             plt.show()
-
-    def get_submesh_material(self, submesh_index: int) -> Material:
-        return self.materials[self.submeshes[submesh_index].material_index]
-
-    def get_submesh_layout(self, submesh_index: int, vertex_array_index=0) -> VertexDataLayout:
-        return self.submeshes[submesh_index].vertex_arrays[vertex_array_index].layout
 
     def scale_all_translations(self, scale_factor: float | Vector3 | Vector4):
         """Modifies the FLVER in place by scaling all dummies, bones, and vertex positions by `factor`.

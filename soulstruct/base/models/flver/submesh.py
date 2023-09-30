@@ -17,7 +17,6 @@ from .bounding_box import BoundingBox, BoundingBoxWithUnknown
 from .vertex_array import VertexArray
 
 if tp.TYPE_CHECKING:
-    from .core import FLVER
     from .material import Material
 
 _LOGGER = logging.getLogger(__name__)
@@ -211,7 +210,7 @@ class SubmeshStruct(BinaryStruct):
 
     is_bind_pose: bool
     _pad1: bytes = field(init=False, **BinaryPad(3))
-    material_index: int
+    _material_index: int
     _pad2: bytes = field(init=False, **BinaryPad(8))
     default_bone_index: int
     _bone_count: int
@@ -230,12 +229,13 @@ class Submesh:
     FLVER files are exported 3D model files optimized for rendering, not editing. Model faces with different materials
     are thus already split up into multiple submeshes, and may even be split further to handle large bone counts (older
     games like DS1 cannot support more than 38 bones per submesh).
+
+    Soulstruct assigns FLVER `Material` instances directly to submeshes. When packing the `FLVER`, identical materials
+    used by multiple submeshes will be merged.
     """
 
-    FaceSet: tp.ClassVar[tp.Type[FaceSet]] = FaceSet
-
+    material: Material
     is_bind_pose: bool = False
-    material_index: int = 0
     default_bone_index: int = -1
     bone_indices: np.ndarray | None = None
     bounding_box: tp.Optional[BoundingBox] = None
@@ -245,6 +245,7 @@ class Submesh:
     invalid_layout: bool = False
 
     # Held temporarily while unpacking.
+    _material_index: int | None = field(default=None, init=False)
     _face_set_indices: list[int] | None = field(default=None, init=False)
     _vertex_array_indices: list[int] | None = field(default=None, init=False)
 
@@ -252,6 +253,7 @@ class Submesh:
     def from_flver_reader(cls, reader: BinaryReader, bounding_box_has_unknown: bool = None):
         mesh_struct = SubmeshStruct.from_bytes(reader)
 
+        _material_index = mesh_struct.pop("_material_index")
         _bone_count = mesh_struct.pop("_bone_count")
         _bounding_box_offset = mesh_struct.pop("_bounding_box_offset")
         _bone_offset = mesh_struct.pop("_bone_offset")
@@ -276,16 +278,22 @@ class Submesh:
             bone_indices=bone_indices,
             bounding_box=bounding_box,
         )
+        submesh._material_index = _material_index
         submesh._face_set_indices = _face_set_indices
         submesh._vertex_buffer_indices = _vertex_buffer_indices
         return submesh
 
     @property
-    def vertices(self):
-        """Shortcut for accessing the first vertex array (generally the only array)."""
-        return self.vertex_arrays[0]
+    def vertices(self) -> np.ndarray:
+        """Shortcut for accessing the data of the first vertex array (generally the only array)."""
+        return self.vertex_arrays[0].array
 
-    def assign_face_sets(self, face_sets: dict[int, FaceSet]):
+    def dereference_material(self, materials: list[Material]):
+        """Multiple submeshes can use the same material, unlike face sets and vertex arrays."""
+        self.material = materials[self._material_index]
+        self._material_index = None
+
+    def dereference_face_sets(self, face_sets: dict[int, FaceSet]):
         self.face_sets = []
         for i in self._face_set_indices:
             if i not in face_sets:
@@ -296,7 +304,7 @@ class Submesh:
             self.face_sets.append(face_sets.pop(i))
         self._face_set_indices = None
 
-    def assign_vertex_arrays(self, vertex_arrays: dict[int, VertexArray]):
+    def dereference_vertex_arrays(self, vertex_arrays: dict[int, VertexArray]):
         self.vertex_arrays = []
         for i in self._vertex_array_indices:
             if i not in vertex_arrays:
@@ -314,6 +322,14 @@ class Submesh:
         else:
             _LOGGER.warning("Submesh has no vertex buffers.")
 
+        if any(vertex_array.array.size == 0 for vertex_array in self.vertex_arrays):
+            mtd_name = self.material.mtd_name if self.material else '<unknown>'
+            _LOGGER.warning(
+                f"Submesh in FLVER (MTD '{mtd_name}') has an incorrect layout that could not be fixed. Submesh "
+                f"marked with `invalid_layout = True`; handle this as needed."
+            )
+            self.invalid_layout = True
+
         # TODO: SoulsFormats does an extra check here for edge-compressed vertex buffers, which are not supported here.
 
     def validate_unique_data_types(self):
@@ -329,10 +345,12 @@ class Submesh:
                         )
                     existing_types.add(name)
 
-    def to_flver_writer(self, writer: BinaryWriter):
+    def to_flver_writer(self, writer: BinaryWriter, material_index: int):
+        """Material index is the index into shared FLVER materials, so multiple submeshes can point to the same one."""
         SubmeshStruct.object_to_writer(
             self,
             writer,
+            _material_index=material_index,
             _bone_count=len(self.bone_indices) if self.bone_indices is not None else 0,
             _face_set_count=len(self.face_sets),
             _vertex_buffer_count=len(self.vertex_arrays),
@@ -410,13 +428,6 @@ class Submesh:
                 lines.append(f"f {face}")
         return "\n".join(lines)
 
-    def get_material(self, flver: FLVER) -> Material:
-        """Shortcut accessor."""
-        # TODO: Assign reference directly.
-        if self.material_index < 0:
-            raise ValueError(f"Submesh has negative material index: {self.material_index}")
-        return flver.materials[self.material_index]
-
     @property
     def cull_back_faces(self):
         """Get `cull_back_faces` from face set 0 and warn if other face sets have different values."""
@@ -487,11 +498,10 @@ class Submesh:
         face_sets = ",\n".join(["    " + indent_lines(repr(f)) for f in self.face_sets])
         lines = [
             "Submesh(",
-            f"  material_index = {self.material_index}",
+            f"  material = <\"{self.material.name}\" ({self.material.mtd_name})>",
             f"  default_bone_index = {self.default_bone_index}",
             f"  bone_indices = {self.bone_indices}",
-            f"  vertices = {len(self.vertices)} vertices",
-
+            f"  vertices = <{len(self.vertices)} vertices>",
         ]
         if not self.is_bind_pose:
             lines.append("  is_bind_pose = False")

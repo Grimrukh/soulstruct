@@ -12,7 +12,9 @@ from dataclasses import dataclass, field
 import numpy as np
 
 from .core import FLVER
+from .material import Material
 from .submesh import Submesh, FaceSet
+from .vertex_array import *
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -56,7 +58,7 @@ class MergedMesh:
     # appear in the same array as another submesh's lightmap UV or wind UV).
     loop_uvs: list[np.ndarray]  # two columns per array for 'u' and 'v' (float32)  # TODO: currently ignoring `uv_w`
 
-    faces: np.ndarray  # integer array of `[loop0, loop1, loop2, material_index, layout_index]` rows (uint32)
+    faces: np.ndarray  # integer array of `[loop0, loop1, loop2, material_index]` rows (uint32)
 
     # Stored for posterity and convenient access to materials and layouts.
     flver: FLVER | None = None
@@ -86,7 +88,12 @@ class MergedMesh:
             material_uv_layers = [None] * len(flver.materials)
             uv_layers = None
 
-        all_vertices, loop_data_dict = cls.build_stacked_loops(flver.submeshes, material_uv_layers, uv_layers)
+        material_indices = [flver.materials.index(submesh.material) for submesh in flver.submeshes]
+
+        all_vertices, loop_data_dict = cls.build_stacked_loops(
+            flver.submeshes, material_indices, material_uv_layers, uv_layers
+        )
+
         unique_vertices, loop_vertex_indices = np.unique(all_vertices, return_inverse=True, axis=0)
         vertex_positions = np.column_stack([unique_vertices[c] for c in "xyz"])
         vertex_bone_weights = np.column_stack([unique_vertices[f"bw_{c}"] for c in "abcd"])
@@ -97,11 +104,11 @@ class MergedMesh:
 
         submesh_face_info = []
         loop_offset = 0
-        for submesh in flver.submeshes:
+        for submesh, material_index in zip(flver.submeshes, material_indices):
             triangles = submesh.face_sets[0].get_triangles(
                 allow_primitive_restarts=False, vertex_index_offset=loop_offset
             )
-            submesh_face_info.append((triangles, submesh.material_index, submesh.vertex_buffers[0].layout_index))
+            submesh_face_info.append((triangles, material_index))
             loop_offset += len(submesh.vertex_arrays[0])
 
         # Minor optimization: can fill face array of known length directly if no faces are being discarded.
@@ -150,6 +157,7 @@ class MergedMesh:
     def build_stacked_loops(
         cls,
         submeshes: list[Submesh],
+        material_indices: list[int],
         material_uv_layers: list[list[str]],
         all_uv_layers: list[str] | None,
     ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
@@ -174,13 +182,13 @@ class MergedMesh:
         loops_uvs_dict = {}  # new arrays added as new UV indices are encountered
 
         offset = 0
-        for submesh in submeshes:
-            vertices = submesh.vertex_arrays[0]
+        for submesh, material_index in zip(submeshes, material_indices):
+            vertices = submesh.vertex_arrays[0].array
             field_names = vertices.dtype.names
             i = offset
             offset += len(vertices)
             j = offset
-            uv_layers = material_uv_layers[submesh.material_index]
+            uv_layers = material_uv_layers[material_index]
 
             if "position_x" in field_names:
                 for c in "xyz":
@@ -342,94 +350,73 @@ class MergedMesh:
 
     def split_mesh(
         self,
-        material_vertex_array_dtypes: dict[int, np.dtype],
-        material_submesh_props: dict[int, dict[str, tp.Any]],
+        materials: list[Material],
+        material_layouts: list[VertexDataLayout],
+        material_submesh_kwargs: list[dict[str, tp.Any]],
         use_submesh_bone_indices=True,
         max_bones_per_submesh=38,
-        remapped_material_indices: dict[int, int] = None,
         unused_bone_indices_are_minus_one=False,
     ) -> list[Submesh]:
         """Splits merged mesh into FLVER submeshes.
 
-        Requires `material_vertex_array_dtypes`, which maps the material indices that appear in the merged `faces` to
-        dtypes for the vertex arrays their loops/vertices will be written into, and `material_submesh_props`, which
-        specifies field values on the submesh to be created for each face material index (e.g. read from Blender
-        materials). The latter MUST contain `is_bind_pose` at the very least, as it is needed to efficiently determine
-        how to check used bone indices.
+        At this stage, `materials` should be a list of FLVER materials that the merged face material indices (column 3)
+        directly index. Any identical materials will be merged upon FLVER export; this is not something the user should
+        not need to manage. `material_layouts` and `material_submesh_kwargs` should be lists of the same length,
+        describing the vertex data layout (needed only to determine which vertex fields to include) and `Submesh` kwargs
+        for each material (e.g. `is_bind_pose`, `default_bone_index`), respectively.
 
-        If `remapped_material_indices` is given, split submeshes' material indices will be remapped to these (e.g. in
-        case Blender materials have been merged into fewer final FLVER materials).
+        `is_bind_pose` must appear in each submesh kwargs dictionary, as it is used to determine bone index style.
 
         If `unused_bone_indices_are_minus_one` is True, it will be assumed that the bone indices in
-        `vertex_bone_indices` have been set to -1 when unused, rather than the FLVER standard of zero (which can be
+        `self.vertex_bone_indices` have been set to -1 when unused, rather than the FLVER standard of zero (which can be
         confused with actual use of bone 0 and requires weight inspection to confirm). This makes mesh splitting easier
         when submesh bone indices are used (with maximums); all the -1 indices will be replaced with zeroes in the final
         split submesh arrays.
         """
         if use_submesh_bone_indices and max_bones_per_submesh < 3:
-            raise ValueError("`max_bones_per_submesh` must be >= 3 (and realistically, much higher!).")
+            raise ValueError("`max_bones_per_submesh` must be >= 3 (and realistically, should be much higher!).")
 
-        # Maps faces' material indices to lists of split submeshes (usually only one, but possibly more due to local
-        # bone max limitations) and under-construction vertex array (as a list of lists).
-        submeshes = {}  # type: dict[int, list[Submesh]]
+        material_dtypes = [
+            layout.get_dtypes()[1] for layout in material_layouts
+        ]  # decompressed dtypes
 
-        is_bind_pose = [props["is_bind_pose"] for props in material_submesh_props.values()]
-        submesh_bone_counts = [0] * len(material_submesh_props)
-
+        # We construct a `dtype` that includes all fields from every material.
         # Order doesn't matter here, as materials will take the columns they need.
         combined_dtype_dict = {}
-        for dtype in material_vertex_array_dtypes.values():
+        for dtype in material_dtypes:
             combined_dtype_dict.update(dtype.fields)
         combined_dtype = np.dtype(list(combined_dtype_dict.items()))
 
         merged_loops = self.get_combined_loop_data(combined_dtype)
 
-        # TODO: Trying a different approach that is more straightforward.
-        #  - `faces` is an array of face data rows. The first three columns are loop indices, which are still valid for
-        #  our `merged_loops` array above.
-        #  - First, we split `faces` by material index. By resetting the first loop index of all faces to zero (by
-        #  subtracting the total length of all prior split face arrays), we essentially get every `FaceSet` immediately.
-        #  - The only thing not handled at this point is bone maximums per submesh. But it's easier to grok now:
-        #       - For each submesh, make a copy of the `bone_index` columns to work with (they're global, remember).
-        #       - If we're in 'bind pose' mode (characters):
-        #           - Set all bone indices where weight is zero to -1, to distinguish them from true use of bone 0.
-        #           - We can then iterate over the rows in this 'used_bone_indices' array (our one 'array row iter').
-        #           - We collect the bones used by the submesh, as currently. When this exceeds the max, we start a new
-        #           submesh for that face material index, starting with that row. (We do NOT return to finished meshes.)
-
         # Split `faces` and indexed `merged_loops` by material index (column 3).
         split_material_indices = []
         split_faces = []
         split_loops = []  # theoretically could be re-used by different materials, but `MergedMesh` will never do that
+        split_bone_indices = []  # type: list[np.ndarray | None]
         loop_offset = 0
-        merged_loop_views = {}
-        for material_index, material_dtype in material_vertex_array_dtypes.items():
+        merged_loop_views = {}  # minor optimization (construct each dtype-dependent view only once)
+        for material_index, material_dtype in enumerate(material_dtypes):
             submesh_faces = self.faces[self.faces[:, 3] == material_index]
             submesh_loop_indices = submesh_faces[:, :3].ravel()  # all loop indices used by faces in this submesh
-            # Minor optimization: cached views of the merged loops for identical dtypes (common).
             submesh_loops = merged_loop_views.setdefault(
                 material_dtype.names, merged_loops[material_dtype.names]
-            )[submesh_loop_indices]  # every three rows corresponds to a single face
+            )[submesh_loop_indices]  # every three rows corresponds to a single face (will have duplicates)
 
             submesh_faces[:, :3] -= loop_offset  # loop indices will refer to this split submesh
 
-            split_material_indices.append(material_index)
-            split_faces.append(submesh_faces)
-            split_loops.append(submesh_loops)
-            loop_offset += len(submesh_loops)
+            if use_submesh_bone_indices:
+                # The actual difficult part: splitting submeshes by bone maximums. This is done differently depending on
+                # `is_bind_pose=True` for this material index and whether unused bone indices are already set to -1.
 
-        final_material_indices = []
-        final_split_faces = []
-        final_split_loops = []
-        if use_submesh_bone_indices:
-            # The actual difficult part: splitting submeshes by bone maximums. This is done differently depending on
-            # `is_bind_pose=True` for this material index and whether unused bone indices are already set to -1.
-            for material_index, submesh_faces, submesh_loops in zip(split_material_indices, split_faces, split_loops):
+                subsplit_face_indices = [0]
+                subsplit_bone_indices = []
+                is_bind_pose = material_submesh_kwargs[material_index]["is_bind_pose"]
 
-                new_subsplit_rows = []  # will contain row indices where new submeshes need to start (may be empty)
-                if is_bind_pose[material_index]:
+                bone_indices = np.array(submesh_loops[[f"bone_index_{c}" for c in "abcd"]], dtype=np.int16)
+
+                if is_bind_pose:
                     # Up to four unique bones per vertex, so we need to more carefully collect as we go.
-                    bone_indices = np.array(submesh_loops[[f"bone_index_{c}" for c in "abcd"]], dtype=np.int16)
                     if not unused_bone_indices_are_minus_one:
                         # Set all unused bone indices to -1, to distinguish them from true use of bone 0. Ideally, the
                         # user can do this themselves while they are constructing their merged mesh (e.g. from Blender)
@@ -437,84 +424,84 @@ class MergedMesh:
                         bone_weights = np.array(submesh_loops[[f"bone_weight_{c}" for c in "abcd"]], dtype=np.float32)
                         bone_indices[bone_weights == 0.0] = -1
 
-                    # Loops are still genuine loops, i.e. every three represent one triangle with 12 total bone indices.
-                    bone_indices = bone_indices.reshape((-1, 12))
+                # Loops are still genuine loops, i.e. every three represent one triangle with 12 total bone indices.
+                all_face_bone_indices = bone_indices.reshape((-1, 12))
 
-                    # Rather than filtering out values of -1, we make sure it's always in the set, and offset the check.
-                    max_bones = max_bones_per_submesh + 1
-                    unique_indices = {-1}
-                    for i, row in enumerate(bone_indices):
-                        unique_indices |= set(row)
-                        if len(unique_indices) > max_bones:
-                            # This row would exceed the limit. Start a new submesh.
-                            new_subsplit_rows.append(i)
-                            unique_indices = {-1} | set(row)
-                else:
-                    # Only one (and exactly one) index per vertex, so we only need to check the first bone index.
-                    # -1 should not appear anywhere in here.
-                    unique_indices = set()
-                    for i, index in enumerate(submesh_loops["bone_index_a"]):
-                        unique_indices.add(index)
-                        if len(unique_indices) > max_bones_per_submesh:
-                            # This row would exceed the limit. Start a new submesh.
-                            new_subsplit_rows.append(i)
-                            unique_indices = {index}
+                # Rather than filtering out values of -1, we make sure it's always in the set, and offset the check.
+                # Slightly suboptimal for `is_bind_pose = False`, as every face should only have up to 3 bones, but
+                # worth the complexity trade-off.
+                max_bones = max_bones_per_submesh + 1
+                unique_indices = {-1}
+                for face_index, face_bone_indices in enumerate(all_face_bone_indices):
+                    unique_indices |= set(face_bone_indices)
+                    if len(unique_indices) > max_bones:
+                        # This row would exceed the limit. Start a new submesh.
+                        subsplit_face_indices.append(face_index)
+                        subsplit_bone_indices.append(np.ndarray(sorted(unique_indices)))
+                        unique_indices = {-1} | set(face_bone_indices)
 
-                if new_subsplit_rows:
-                    # Multiple submeshes required to support all the bones in this single face material index.
-                    new_subsplit_rows = [0] + new_subsplit_rows
-                    for i in new_subsplit_rows[:-1]:
-                        j = new_subsplit_rows[i + 1]
-                        subsplit_faces = submesh_faces[i:j, :]
-                        loops_start, loops_end = i * 3, j * 3
-                        subsplit_loops = submesh_loops[loops_start:loops_end]
+                # Finish final subsplit. Face indices for submeshes that don't need sub-splitting will just be `[0, n]`.
+                subsplit_face_indices = subsplit_face_indices + [len(submesh_faces)]
+                subsplit_bone_indices.append(np.ndarray(sorted(unique_indices)))
 
-                        final_split_faces.append(subsplit_faces)
-                        final_split_loops.append(subsplit_loops)
-                    # Final split mesh: from last subsplit row to end.
-                    subsplit_faces = submesh_faces[new_subsplit_rows[-1]:, :]
-                    loops_start = new_subsplit_rows[-1] * 3
-                    subsplit_loops = submesh_loops[loops_start:]
-                    # TODO: Collect subsplit mesh bone indices!
-                    final_material_indices.append(material_index)  # same for all bone splits
-                    final_split_faces.append(subsplit_faces)
-                    final_split_loops.append(subsplit_loops)
-                else:
-                    # No subsplits needed for this material index.
-                    # TODO: Still need to set `mesh.bone_indices` though.
-                    final_material_indices.append(material_index)
-                    final_split_faces.append(submesh_faces)
-                    final_split_loops.append(submesh_loops)
-        else:
-            # No subsplits needed.
-            final_material_indices = split_material_indices
-            final_split_faces = split_faces
-            final_split_loops = split_loops
+                subsplit_loop_offset = 0
+                for i, face_start in enumerate(subsplit_face_indices[:-1]):
+                    face_end = subsplit_face_indices[i + 1]
+                    subsplit_faces = submesh_faces[face_start:face_end, :]
+                    subsplit_faces[:, :3] -= subsplit_loop_offset  # reset loop indices to this submesh
+                    loops_start, loops_end = face_start * 3, face_end * 3
+                    subsplit_loops = submesh_loops[loops_start:loops_end]
 
-        for material_index, submesh_faces, submesh_loops in zip(
-            final_material_indices, final_split_faces, final_split_loops
+                    subsplit_global_bone_indices = bone_indices[loops_start:loops_end, :]
+                    # Make vertex (loop) bone indices local.
+                    self.make_bone_indices_local(subsplit_global_bone_indices, subsplit_bone_indices[i])
+                    subsplit_loops["bone_index_a"] = subsplit_global_bone_indices[:, 0]
+                    subsplit_loops["bone_index_b"] = subsplit_global_bone_indices[:, 1]
+                    subsplit_loops["bone_index_c"] = subsplit_global_bone_indices[:, 2]
+                    subsplit_loops["bone_index_d"] = subsplit_global_bone_indices[:, 3]
+
+                    split_material_indices.append(material_index)
+                    split_faces.append(subsplit_faces)
+                    split_loops.append(subsplit_loops)
+                    split_bone_indices.append(subsplit_bone_indices[i])
+                    subsplit_loop_offset += len(subsplit_loops)
+            else:
+                # Vertex bone indices are global and have no maximum count.
+                split_material_indices.append(material_index)
+                split_faces.append(submesh_faces)
+                split_loops.append(submesh_loops)
+                split_bone_indices.append(None)
+
+            # Required whether or not submesh bone indices are used.
+            loop_offset += len(submesh_loops)
+
+        split_submeshes = []
+
+        for material_index, submesh_faces, submesh_loops, submesh_bone_indices in zip(
+            split_material_indices, split_faces, split_loops, split_bone_indices
         ):
-            submesh_loops, reduced_indices = np.unique(submesh_loops, return_inverse=True, axis=0)
+            submesh_kwargs = material_submesh_kwargs[material_index]
+            submesh_vertices, reduced_indices = np.unique(submesh_loops, return_inverse=True, axis=0)
             submesh_faces[:, :3] = reduced_indices[submesh_faces[:, :3]]  # replace loop indices with reduced indices
-            # TODO: Set `cull_back_faces` properly.
-            face_set = FaceSet.from_triangles(submesh_faces[:, :3])
-            # TODO: **material_submesh_props[material_index]?
-            #  also need to create VertexBuffer or (preferably) make it an artifact of packing/unpacking Submesh (only
-            #  the layout index remains relevant for each Submesh vertex array).
-            # TODO: expanding on that cleanup: rather than saving a `BufferLayout`, FLVER could just store the dtype and
-            #  the names of the codecs used for each one. Field name + codec name allows full regen of layout members.
-            #  Then each Submesh vertex array contains EVERYTHING needed in its dtype + codec names, which could be in
-            #  a handy `FLVERVertexArray` wrapper class (can redirect `submesh.vertices` to the actual wrapped array).
-            material_index = remapped_material_indices.get(material_index, material_index)
-            submesh = Submesh(face_sets=[face_set], material_index=material_index)
 
-            if use_submesh_bone_indices:
-                # Truncate all -1 values from end of submesh bone indices.
-                submesh.bone_indices = submesh.bone_indices[submesh.bone_indices != -1]
+            vertex_array = VertexArray(array=submesh_vertices, layout=material_layouts[material_index])
 
-                flver_submeshes.append(submesh)
+            face_set = FaceSet.from_triangles(submesh_faces[:, :3], cull_back_faces=submesh_kwargs["cull_back_faces"])
+            material = materials[material_index]
+            submesh = Submesh(
+                face_sets=[face_set],
+                material=material,
+                vertex_arrays=[vertex_array],
+                is_bind_pose=submesh_kwargs["is_bind_pose"],
+                default_bone_index=submesh_kwargs["default_bone_index"],
+                bone_indices=submesh_bone_indices,
+            )
 
-        return flver_submeshes
+            # TODO: compute bounding box? or save for export?
+
+            split_submeshes.append(submesh)
+
+        return split_submeshes
 
     def get_combined_loop_data(self, combined_dtype: np.dtype):
         """Combine the appropriate loop data, in the given order, into a single structured array for indexing by loop

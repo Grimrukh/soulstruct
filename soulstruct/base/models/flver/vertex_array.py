@@ -493,7 +493,7 @@ class VertexDataLayout(list[VertexDataType]):
 
         return cls(data_types)
 
-    def write_buffer_layout(self, writer: BinaryWriter) -> LayoutStruct:
+    def to_flver_writer(self, writer: BinaryWriter) -> LayoutStruct:
         """Write a FLVER vertex buffer layout from a list of `VertexDataType` instances.
 
         Packs the header struct and reserves its `layout_types_offset` field for later when actual types are packed.
@@ -503,13 +503,13 @@ class VertexDataLayout(list[VertexDataType]):
         layout_struct.to_writer(writer)
         return layout_struct
 
-    def write_buffer_layout_types(self, writer: BinaryWriter, layout_struct: LayoutStruct):
+    def pack_layout_types(self, writer: BinaryWriter, layout_struct: LayoutStruct):
         """Write actual layout data type information and fill header offset field."""
         writer.fill_with_position("layout_types_offset", layout_struct)
         for data_type in self:
             VertexDataTypeStruct.object_to_writer(data_type, writer)  # will write `data_type` class variable too
 
-    def unpack_vertex_buffer(self, data: bytes, uv_factor: int) -> np.ndarray:
+    def unpack_vertex_array(self, data: bytes, uv_factor: int) -> np.ndarray:
         """Use this layout to read a structured array of vertex data from the given raw FLVER buffer data."""
         compressed_dtype, decompressed_dtype = self.get_dtypes()
         decompression_funcs = self.get_decompression_funcs(uv_factor=uv_factor)
@@ -682,7 +682,7 @@ class VertexArray:
 
         with flver_reader.temp_offset(vertex_data_offset + buffer_struct.buffer_offset):
             buffer_data = flver_reader.read(buffer_struct.buffer_length)
-            array = layout.unpack_vertex_buffer(buffer_data, uv_factor)
+            array = layout.unpack_vertex_array(buffer_data, uv_factor)
 
         return cls(array, layout)
 
@@ -690,9 +690,10 @@ class VertexArray:
         self,
         writer: BinaryWriter,
         write_buffer_length: bool,
-        layout_index: int,  # TODO: index into merged list of all array layouts
+        layout_index: int,
         buffer_index: int,
     ):
+        """Note that `layout_index` will be into a merged FLVER-wide list."""
         layout_size = self.layout.get_total_data_size()
         vertex_count = len(self.array)
         VertexBufferStruct.object_to_writer(
@@ -706,7 +707,7 @@ class VertexArray:
             buffer_offset=RESERVED,
         )
 
-    def pack_buffer(
+    def pack_array(
         self,
         writer: BinaryWriter,
         buffer_offset: int,

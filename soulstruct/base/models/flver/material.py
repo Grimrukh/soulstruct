@@ -12,6 +12,10 @@ from soulstruct.utilities.maths import Vector2
 
 from .version import Version
 
+if tp.TYPE_CHECKING:
+    from .core import FLVER
+    from .submesh import Submesh
+
 
 @dataclass(slots=True)
 class GXItem(BinaryStruct):
@@ -298,6 +302,10 @@ class Material:
                 tex_name = tex_path.name.replace(old_string, new_string)
                 tex.path = str(tex_path.with_name(tex_name))
 
+    def get_submesh_users(self, flver: FLVER) -> list[Submesh]:
+        """Get all submeshes that use this material (by equality, not exact instance)."""
+        return [submesh for submesh in flver.submeshes if submesh.material == self]
+
     def __repr__(self):
         textures = ",\n".join(["    " + indent_lines(repr(texture)) for texture in self.textures])
         if textures:
@@ -317,9 +325,12 @@ class Material:
         return "\n".join(lines)
 
     def __hash__(self) -> int:
-        """Game FLVERs reuse identical `Material` instances across multiple meshes.
-
-        You can hash each material to check if any two materials are identical.
-        """
+        """Straightforward hashing of fields and textures."""
         texture_hashes = tuple(hash(tex) for tex in self.textures)
         return hash((self.name, self.mtd_path, self.flags, self.gx_index, self.unk_x18, texture_hashes))
+
+    def __eq__(self, other: Material):
+        """Check for equality by hash."""
+        if not isinstance(other, Material):
+            return False
+        return hash(self) == hash(other)
