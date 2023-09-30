@@ -6,4 +6,4 @@ from .dummy import Dummy
 from .submesh import Submesh
 from .bone import FLVERBone
 from .material import Material
-from .vertex_array import VertexDataLayout, VertexArray
+from .vertex_array import VertexArrayLayout, VertexArray

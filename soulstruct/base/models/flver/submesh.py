@@ -57,7 +57,10 @@ class FaceSet:
     triangle_strip: bool
     cull_back_faces: bool
     unk_x06: int
-    vertex_indices: list[int] = field(default_factory=list)  # TODO: any advantage to making this a NumPy array?
+
+    # Vertex indices could be in triangle strip format (1D) or simply rows of triangles (2D). Number of dimensions must
+    # match setting of `triangle_strip` upon export.
+    vertex_indices: np.ndarray = field(default_factory=lambda: np.empty(0))
 
     @classmethod
     def from_flver_reader(cls, reader: BinaryReader, header_vertex_index_size: int, vertex_data_offset: int) -> FaceSet:
@@ -74,17 +77,32 @@ class FaceSet:
             vertex_indices_offset = face_set_struct.pop("_vertex_indices_offset")
             with reader.temp_offset(vertex_data_offset + vertex_indices_offset):
                 fmt = f"<{vertex_indices_count}{'H' if vertex_index_size == 16 else 'I'}"
-                vertex_indices = list(reader.unpack(fmt))
+                vertex_indices = np.array(reader.unpack(fmt))
+                if not face_set_struct.triangle_strip:
+                    # Reshape indices into 2D array (every row is a triangle).
+                    vertex_indices = vertex_indices.reshape((-1, 3))
         else:
             raise ValueError(f"Unsupported face set index size: {vertex_index_size}")
         return face_set_struct.to_object(cls, vertex_indices=vertex_indices)
 
     def to_flver_writer(self, writer: BinaryWriter, vertex_index_size: int):
+        if self.triangle_strip and self.vertex_indices.ndim != 1:
+            raise ValueError(
+                f"Cannot write triangle strip FaceSet with {self.vertex_indices.ndim}-dimensional vertex indices. "
+                f"Must be 1D."
+            )
+        elif not self.triangle_strip and self.vertex_indices.ndim != 2:
+            raise ValueError(
+                f"Cannot write non-strip triangles FaceSet {self.vertex_indices.ndim}-dimensional vertex indices. "
+                f"Must be 2D."
+            )
+
+        vertex_indices_count = self.vertex_indices.size
         face_set_struct = FaceSetStruct.from_object(
             self,
-            _vertex_indices_count=len(self.vertex_indices),
+            _vertex_indices_count=vertex_indices_count,
             _vertex_indices_offset=None,  # reserved
-            _vertex_indices_length=len(self.vertex_indices) * vertex_index_size // 8,
+            _vertex_indices_length=vertex_indices_count * vertex_index_size // 8,
             _vertex_index_size=vertex_index_size,
         )
         face_set_struct.to_writer(writer, reserve_obj=self)
@@ -97,9 +115,14 @@ class FaceSet:
             fmt = f"{len(self.vertex_indices)}i"
         else:
             raise NotImplementedError(f"Unsupported vertex index size for `pack()`: {vertex_index_size}")
-        writer.pack(fmt, *self.vertex_indices)
+        writer.pack(fmt, *self.vertex_indices)  # TODO: faster than `np.array.tobytes()`?
 
     def get_face_counts(self, allow_primitive_restarts: bool) -> tuple[int, int]:
+        """Returns two counts of faces: 'true' and 'total'.
+
+        Both counts are always the same for non-strip vertex indices. For strips, the 'true' count is zero if this
+        face set has the `MotionBlur` flag set and otherwise excludes degenerate (point/line) faces.
+        """
         if self.triangle_strip:
             true_face_count = 0
             total_face_count = 0
@@ -111,11 +134,12 @@ class FaceSet:
                         # Vertices are not MotionBlur and not degenerate.
                         true_face_count += 1
             return true_face_count, total_face_count
-        else:
-            return len(self.vertex_indices) // 3, len(self.vertex_indices) // 3
+
+        # True and total face counts are the same.
+        return len(self.vertex_indices), len(self.vertex_indices)
 
     def get_vertex_index_size(self) -> int:
-        for vertex_index in self.vertex_indices:
+        for vertex_index in self.vertex_indices.ravel():
             if vertex_index > 2 ** 16:  # unsigned short max value (+1)
                 return 32
         return 16
@@ -123,64 +147,72 @@ class FaceSet:
     def has_flag(self, flag: FaceSetFlags):
         return flag.has_flag(self.flags)
 
-    def triangulate(self, allow_primitive_restarts: bool, include_degenerate_faces=False) -> list[int]:
-        """Convert triangle strip to triangle list (i.e. every triangle is a separate vertex index triplet).
+    def triangulate(self, allow_primitive_restarts: bool, include_degenerate_faces=False) -> np.ndarray:
+        """Convert triangle strip to 2D triangle array (i.e. every row/triangle is a separate vertex index triplet).
 
-        Returns a copy of `self.vertex_indices` if `self.triangle_strip=False` already.
+        Simply copies `self.vertex_indices` if `self.triangle_strip=False` already. Otherwise, processes the triangle
+        strip. In this case, if `allow_primitive_restarts=True`, a vertex index of 0xFFFF will reset `flip` to False.
+        Only use this if the number of vertices in the mesh is less than 0xFFFF (otherwise the primitive command is
+        ambiguous). TODO: Surely can automate that detection.
 
-        If `allow_primitive_restarts=True`, a vertex index of 0xFFFF will reset `flip` to False. Only use this if the
-        number of vertices in the mesh is less than 0xFFFF (otherwise the primitive command is ambiguous).
-
-        Also excludes degenerate faces (where two or more vertex indices are identical) by default.
+        When unwinding a triangle strip, also excludes degenerate faces (where two or more vertex indices are identical)
+        by default. Otherwise, they may be included.
         """
         if not self.triangle_strip:
+            if self.vertex_indices.ndim != 2:
+                raise ValueError("Non-triangle-strip vertex indices must be 2D.")
             return self.vertex_indices.copy()
 
-        triangle_list = []
+        if self.vertex_indices.ndim != 1:
+            raise ValueError("Triangle-strip vertex indices must be 1D.")
+
+        triangle_list = []  # can't predict length due to primitive restarts
         flip = False
         for i in range(len(self.vertex_indices) - 2):
             triplet = self.vertex_indices[i:i + 3]
             if allow_primitive_restarts and 0xFFFF in triplet:
-                flip = False  # restart the strip
+                flip = False  # restart the strip and ignore this triplet
                 continue
             if len(set(triplet)) == 3 or include_degenerate_faces:
-                triangle_list.extend(reversed(triplet) if flip else triplet)
+                triangle_list.append([triplet[2], triplet[1], triplet[0]] if flip else triplet)
             flip = not flip
-        return triangle_list
-
-    def get_triangles(
-        self, allow_primitive_restarts: bool, include_degenerate_faces=False, vertex_index_offset=0
-    ) -> list[tuple[int, int, int]]:
-        """Get triangle list and return the triplets as tuples inside a list."""
-        tri = self.triangulate(allow_primitive_restarts, include_degenerate_faces)
-        return [
-            (
-                vertex_index_offset + tri[i],
-                vertex_index_offset + tri[i + 1],
-                vertex_index_offset + tri[i + 2]
-            ) for i in range(0, len(tri), 3)
-        ]
+        return np.array(triangle_list)
 
     def get_connected_vertex_indices(self, vertex_index: int) -> set[int]:
         """Find all vertices connected to the given `vertex_index`, including `vertex_index` itself."""
-        triangles = self.get_triangles(allow_primitive_restarts=False, include_degenerate_faces=False)
-        connected = {vertex_index}
-        for tri in (set(t) for t in triangles):
-            if connected.intersection(tri):
-                connected |= tri
-        return connected
+        triangles = self.triangulate(allow_primitive_restarts=False, include_degenerate_faces=False)
+        connected_vertices = {vertex_index}
+
+        # Iterate over `triangles`, 3 at a time, and add any triangle that shares a vertex with `connected`.
+        # Keeps repeating this until the number of connected vertices stops increasing.
+        previous_connection_count = len(connected_vertices)
+        while True:
+            for i in range(0, len(triangles), 3):
+                if any(v in connected_vertices for v in triangles[i:i + 3]):
+                    connected_vertices.update(triangles[i:i + 3])
+            new_connection_count = len(connected_vertices)
+            if new_connection_count == previous_connection_count:
+                break
+            previous_connection_count = new_connection_count
+        return connected_vertices
 
     @classmethod
-    def from_triangles(cls, triangles: list[tuple[int, int, int], ...], cull_back_faces=True):
+    def from_triangles(cls, triangles: np.ndarray | list[tuple[int, int, int], ...], cull_back_faces=True):
         """Create a `FaceSet` with `triangle_strip=False` from a list of three-index triangle tuples.
 
         TODO: Currently sets `flags=0` and `unk_x06=0`, which is correct so far in my usage.
         """
 
         if isinstance(triangles, np.ndarray):
-            vertex_indices = triangles.ravel().tolist()
+            if triangles.ndim == 2:
+                vertex_indices = triangles.ravel()
+            elif triangles.ndim == 1:
+                vertex_indices = triangles  # does NOT copy
+            else:
+                raise ValueError("Triangle array must be 1D or 2D.")
         else:
-            vertex_indices = [i for tri in triangles for i in tri]
+            # Flatten and combine into 1D array.
+            vertex_indices = np.array([i for tri in triangles for i in tri])
 
         return cls(
             flags=0,
@@ -191,16 +223,19 @@ class FaceSet:
         )
 
     def __repr__(self):
-        if self.flags == 0 and self.unk_x06 == 0 and self.triangle_strip:
-            # Simple repr.
-            return f"FaceSet({len(self.vertex_indices)} vertices, cull_back_faces = {self.cull_back_faces})"
+        if self.triangle_strip:
+            vertex_indices_str = f"<{self.vertex_indices.size}-index strip>"
+        else:
+            vertex_indices_str = f"<{self.vertex_indices.shape[0]} triangles>"
+        if self.flags == 0 and self.unk_x06 == 0:
+            return f"FaceSet({vertex_indices_str}, cull_back_faces = {self.cull_back_faces})"
         return (
             f"FaceSet(\n"
             f"  flags = {self.flags}\n"
             f"  triangle_strip = {self.triangle_strip}\n"
             f"  cull_back_faces = {self.cull_back_faces}\n"
             f"  unk_x06 = {self.unk_x06}\n"
-            f"  vertex_indices = <{len(self.vertex_indices)} indices>\n"
+            f"  vertex_indices = {vertex_indices_str}\n"
             f")"
         )
 
@@ -218,8 +253,8 @@ class SubmeshStruct(BinaryStruct):
     _bone_offset: int
     _face_set_count: int
     _face_set_offset: int
-    _vertex_buffer_count: int = field(**Binary(asserted=[1, 2, 3]))
-    _vertex_buffer_offset: int
+    _vertex_array_count: int = field(**Binary(asserted=[1, 2, 3]))
+    _vertex_array_offset: int
 
 
 @dataclass(slots=True)
@@ -245,12 +280,16 @@ class Submesh:
     invalid_layout: bool = False
 
     # Held temporarily while unpacking.
-    _material_index: int | None = field(default=None, init=False)
     _face_set_indices: list[int] | None = field(default=None, init=False)
     _vertex_array_indices: list[int] | None = field(default=None, init=False)
 
     @classmethod
-    def from_flver_reader(cls, reader: BinaryReader, bounding_box_has_unknown: bool = None):
+    def from_flver_reader(
+        cls,
+        reader: BinaryReader,
+        materials: list[Material],
+        bounding_box_has_unknown: bool = None,
+    ):
         mesh_struct = SubmeshStruct.from_bytes(reader)
 
         _material_index = mesh_struct.pop("_material_index")
@@ -259,13 +298,13 @@ class Submesh:
         _bone_offset = mesh_struct.pop("_bone_offset")
         _face_set_count = mesh_struct.pop("_face_set_count")
         _face_set_offset = mesh_struct.pop("_face_set_offset")
-        _vertex_buffer_count = mesh_struct.pop("_vertex_buffer_count")
-        _vertex_buffer_offset = mesh_struct.pop("_vertex_buffer_offset")
+        _vertex_array_count = mesh_struct.pop("_vertex_array_count")
+        _vertex_array_offset = mesh_struct.pop("_vertex_array_offset")
 
         bone_indices = np.array(reader.unpack(f"{_bone_count}i", offset=_bone_offset)) if _bone_count > 0 else None
 
         _face_set_indices = list(reader.unpack(f"{_face_set_count}i", offset=_face_set_offset))
-        _vertex_buffer_indices = list(reader.unpack(f"{_vertex_buffer_count}i", offset=_vertex_buffer_offset))
+        _vertex_array_indices = list(reader.unpack(f"{_vertex_array_count}i", offset=_vertex_array_offset))
 
         if _bounding_box_offset != 0:
             with reader.temp_offset(_bounding_box_offset):
@@ -275,23 +314,18 @@ class Submesh:
             bounding_box = None
         submesh = mesh_struct.to_object(
             cls,
+            material=materials[_material_index],
             bone_indices=bone_indices,
             bounding_box=bounding_box,
         )
-        submesh._material_index = _material_index
         submesh._face_set_indices = _face_set_indices
-        submesh._vertex_buffer_indices = _vertex_buffer_indices
+        submesh._vertex_array_indices = _vertex_array_indices
         return submesh
 
     @property
     def vertices(self) -> np.ndarray:
         """Shortcut for accessing the data of the first vertex array (generally the only array)."""
         return self.vertex_arrays[0].array
-
-    def dereference_material(self, materials: list[Material]):
-        """Multiple submeshes can use the same material, unlike face sets and vertex arrays."""
-        self.material = materials[self._material_index]
-        self._material_index = None
 
     def dereference_face_sets(self, face_sets: dict[int, FaceSet]):
         self.face_sets = []
@@ -315,12 +349,12 @@ class Submesh:
             self.vertex_arrays.append(vertex_arrays.pop(i))
         self._vertex_array_indices = None
 
-        # Check that all vertex buffers for this submesh have the same length.
+        # Check that all vertex arrays for this submesh have the same length.
         if self.vertex_arrays:
             if len({len(vertex_array.array) for vertex_array in self.vertex_arrays}) != 1:
-                raise ValueError("Vertex buffers for submesh do not all have the same size.")
+                raise ValueError("Vertex arrays for submesh do not all have the same size.")
         else:
-            _LOGGER.warning("Submesh has no vertex buffers.")
+            _LOGGER.warning("Submesh has no vertex arrays.")
 
         if any(vertex_array.array.size == 0 for vertex_array in self.vertex_arrays):
             mtd_name = self.material.mtd_name if self.material else '<unknown>'
@@ -330,7 +364,7 @@ class Submesh:
             )
             self.invalid_layout = True
 
-        # TODO: SoulsFormats does an extra check here for edge-compressed vertex buffers, which are not supported here.
+        # TODO: SoulsFormats does an extra check here for edge-compressed vertex arrays, which are not supported here.
 
     def validate_unique_data_types(self):
         """Check that per-mesh unique `MemberType`s do not occur more than once among all members of all arrays."""
@@ -353,7 +387,7 @@ class Submesh:
             _material_index=material_index,
             _bone_count=len(self.bone_indices) if self.bone_indices is not None else 0,
             _face_set_count=len(self.face_sets),
-            _vertex_buffer_count=len(self.vertex_arrays),
+            _vertex_array_count=len(self.vertex_arrays),
         )
 
     def pack_bounding_box(self, writer: BinaryWriter):
@@ -376,10 +410,10 @@ class Submesh:
         writer.fill_with_position("_face_set_offset", obj=self)
         writer.pack(f"{len(face_set_indices)}i", *face_set_indices)
 
-    def pack_vertex_buffer_indices(self, writer: BinaryWriter, first_vertex_buffer_index: int):
-        vertex_buffer_indices = [first_vertex_buffer_index + i for i in range(len(self.vertex_arrays))]
-        writer.fill_with_position("_vertex_buffer_offset", obj=self)
-        writer.pack(f"{len(vertex_buffer_indices)}i", *vertex_buffer_indices)
+    def pack_vertex_array_indices(self, writer: BinaryWriter, first_vertex_array_index: int):
+        vertex_array_indices = [first_vertex_array_index + i for i in range(len(self.vertex_arrays))]
+        writer.fill_with_position("_vertex_array_offset", obj=self)
+        writer.pack(f"{len(vertex_array_indices)}i", *vertex_array_indices)
 
     def local_to_global_bone_indices(self):
         """Transforms `vertex_array` in-place by replacing all `bone_index_{c}` indices with the global bone index in

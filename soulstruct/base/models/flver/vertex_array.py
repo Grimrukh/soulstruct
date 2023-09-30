@@ -11,8 +11,8 @@ __all__ = [
     "VertexTangent",
     "VertexBitangent",
     "VertexColor",
-    "VertexBufferStruct",
-    "VertexDataLayout",
+    "VertexArrayHeaderStruct",
+    "VertexArrayLayout",
     "VertexArray",
     "VertexDataSizeError",
 ]
@@ -33,8 +33,15 @@ _LOGGER = logging.getLogger(__name__)
 
 class VertexDataCodec(tp.NamedTuple):
     """Holds format-dependent decompression and compression functions for a vertex data field."""
-    decompress_func: tp.Callable
-    compress_func: tp.Callable
+    decompress: tp.Callable
+    compress: tp.Callable
+
+    @classmethod
+    def from_uv_factor(cls, uv_factor):
+        return cls(
+            decompress=lambda x: x / uv_factor,
+            compress=lambda x: x * uv_factor,
+        )
 
 
 # All the different codecs (decompression/compression functions) for vertex data.
@@ -107,7 +114,12 @@ VERTEX_FORMAT_ENUM_SIZES = {
 }
 
 
-class VertexDataFormat(tp.NamedTuple):
+@dataclass(slots=True, frozen=True)
+class VertexDataFormat:
+    """Represents the format of a single vertex data field, including its compression/decompression codec.
+
+    Each vertex data field is generally multi-dimensional, but the exact dimensions may also vary with format.
+    """
 
     names: tuple[str, ...]
     compressed_format: str
@@ -116,6 +128,16 @@ class VertexDataFormat(tp.NamedTuple):
     # Codec can be a single pair of functions (for both compression and decompression) or a tuple of codecs matching
     # the number of `names` (for different codecs for each name). Defaults to no codec (data is not compressed).
     codec: VertexDataCodec | tuple[VertexDataCodec, ...] = NULL_CODEC
+
+    def __post_init__(self):
+        if self.decompressed_format is None:
+            object.__setattr__(self, "decompressed_format", self.compressed_format)
+        if isinstance(self.codec, VertexDataCodec):
+            object.__setattr__(self, "codec", (self.codec,) * len(self.names))
+        elif len(self.codec) != len(self.names):
+            raise ValueError(
+                f"Number of codecs ({len(self.codec)}) does not match number of field names ({len(self.names)})."
+            )
 
     def get_dtype_fields(self, compressed: bool, index: int = None, second_index: int = None) -> list[tuple[str, str]]:
         """Get NumPy dtype for this format, as it appears in the compressed FLVER buffer data.
@@ -182,29 +204,32 @@ class VertexDataType(abc.ABC):
             # TODO: Could post-modify classes to expand these keys, but this won't run very often anyway.
             if self.format_enum.value in enum_keys:
                 return vertex_data_format
-        raise ValueError(f"Vertex data format '{self.format_enum}' unsupported for type '{self.__class__.__name__}'.")
+        raise ValueError(
+            f"Vertex data format '{self.format_enum.name}' ({self.format_enum.value}) "
+            f"unsupported for type '{self.__class__.__name__}'."
+        )
 
     @property
     def size(self) -> int:
         return VERTEX_FORMAT_ENUM_SIZES[self.format_enum]
 
 
-@dataclass(slots=True, init=False)
+@dataclass(slots=True, init=False, repr=False)
 class VertexPosition(VertexDataType):
     data_type = 0
     formats = {
-        (0x03,): VertexDataFormat(
+        (0x02,): VertexDataFormat(
             names=("position_x", "position_y", "position_z"),
             compressed_format="fff",
         ),
-        (0x04,): VertexDataFormat(
+        (0x03,): VertexDataFormat(
             names=("position_x", "position_y", "position_z", "position_w"),
             compressed_format="ffff",
         ),
     }
 
 
-@dataclass(slots=True, init=False)
+@dataclass(slots=True, init=False, repr=False)
 class VertexBoneWeights(VertexDataType):
     data_type = 1
     formats = {
@@ -230,7 +255,7 @@ class VertexBoneWeights(VertexDataType):
     unique = True
 
 
-@dataclass(slots=True, init=False)
+@dataclass(slots=True, init=False, repr=False)
 class VertexBoneIndices(VertexDataType):
     """Bones to which the vertex is attached.
 
@@ -252,6 +277,7 @@ class VertexBoneIndices(VertexDataType):
         (0x11, 0x2F): VertexDataFormat(
             names=("bone_index_a", "bone_index_b", "bone_index_c", "bone_index_d"),
             compressed_format="BBBB",
+            decompressed_format="hhhh",
         ),
         (0x18,): VertexDataFormat(
             names=("bone_index_a", "bone_index_b", "bone_index_c", "bone_index_d"),
@@ -261,7 +287,7 @@ class VertexBoneIndices(VertexDataType):
     unique = True
 
 
-@dataclass(slots=True, init=False)
+@dataclass(slots=True, init=False, repr=False)
 class VertexNormal(VertexDataType):
     """Vertex normal.
 
@@ -305,7 +331,7 @@ class VertexNormal(VertexDataType):
     }
 
 
-@dataclass(slots=True, init=False)
+@dataclass(slots=True, init=False, repr=False)
 class VertexUV(VertexDataType):
     """Texture coordinates.
 
@@ -349,7 +375,7 @@ class VertexUV(VertexDataType):
     }
 
 
-@dataclass(slots=True, init=False)
+@dataclass(slots=True, init=False, repr=False)
 class VertexTangent(VertexDataType):
     """Perpendicular to normal."""
 
@@ -368,7 +394,7 @@ class VertexTangent(VertexDataType):
     }
 
 
-@dataclass(slots=True, init=False)
+@dataclass(slots=True, init=False, repr=False)
 class VertexBitangent(VertexDataType):
     """Pendicular to both normal and tangent."""
 
@@ -384,7 +410,7 @@ class VertexBitangent(VertexDataType):
     unique = True
 
 
-@dataclass(slots=True, init=False)
+@dataclass(slots=True, init=False, repr=False)
 class VertexColor(VertexDataType):
     """Used to blend between two textures slots for '[M]' MTD materials, and for alpha for '_Alpha' and '_Edge'.
 
@@ -430,15 +456,15 @@ class VertexDataTypeStruct(BinaryStruct):
 
 
 @dataclass(slots=True)
-class VertexBufferStruct(BinaryStruct):
+class VertexArrayHeaderStruct(BinaryStruct):
     """Header information about a packed FLVER vertex data buffer, which we read into a NumPy structured array."""
-    buffer_index: int
+    array_index: int
     layout_index: int
     vertex_size: int
     vertex_count: int
     _pad1: bytes = field(init=False, **BinaryPad(8))
-    buffer_length: int
-    buffer_offset: int
+    array_length: int
+    array_offset: int
 
 
 class VertexDataSizeError(SoulstructError):
@@ -448,7 +474,7 @@ class VertexDataSizeError(SoulstructError):
         self.vertex_size = vertex_size
         self.layout_size = layout_size
         super().__init__(
-            f"Vertex buffer vertex size {vertex_size} not equal to size calculated from layout: {layout_size}."
+            f"Vertex array vertex size {vertex_size} not equal to size calculated from layout: {layout_size}."
         )
 
 
@@ -459,25 +485,25 @@ class LayoutStruct(BinaryStruct):
     layout_types_offset: int
 
 
-class VertexDataLayout(list[VertexDataType]):
-    """List of `VertexDataType` instances that describes a vertex buffer layout.
+class VertexArrayLayout(list[VertexDataType]):
+    """List of `VertexDataType` instances that describes a vertex array layout.
 
-    Functions as a standard list, with extra methods for constructing combined `np.dtype` and reading/packing buffers.
+    Functions as a standard list, with extra methods for constructing combined `np.dtype` and reading/packing arrays.
     """
 
     @classmethod
-    def from_flver_reader(cls, reader: BinaryReader) -> VertexDataLayout:
-        """Read a FLVER vertex buffer layout into a list of `VertexDataType` instances.
+    def from_flver_reader(cls, reader: BinaryReader) -> VertexArrayLayout:
+        """Read a FLVER vertex array layout into a list of `VertexDataType` instances.
 
         Each instance's subclass indicates its data type, and its `format_enum` value indicates its exact fields and
         which codec to use for compression/decompression.
         """
-        buffer_layout_struct = LayoutStruct.from_bytes(reader)
+        array_layout_struct = LayoutStruct.from_bytes(reader)
 
-        with reader.temp_offset(buffer_layout_struct.layout_types_offset):
+        with reader.temp_offset(array_layout_struct.layout_types_offset):
             tight_data_offset = 0
             data_types = []
-            for _ in range(buffer_layout_struct.layout_types_count):
+            for _ in range(array_layout_struct.layout_types_count):
                 data_type_struct = VertexDataTypeStruct.from_bytes(reader)
 
                 if data_type_struct.data_offset != tight_data_offset:
@@ -493,43 +519,36 @@ class VertexDataLayout(list[VertexDataType]):
 
         return cls(data_types)
 
-    def to_flver_writer(self, writer: BinaryWriter) -> LayoutStruct:
-        """Write a FLVER vertex buffer layout from a list of `VertexDataType` instances.
-
-        Packs the header struct and reserves its `layout_types_offset` field for later when actual types are packed.
-        Returns the struct (as the owner of the reserved field).
-        """
+    def to_flver_writer(self, writer: BinaryWriter):
         layout_struct = LayoutStruct(layout_types_count=len(self), layout_types_offset=RESERVED)
-        layout_struct.to_writer(writer)
+        layout_struct.to_writer(writer, reserve_obj=self)
         return layout_struct
 
-    def pack_layout_types(self, writer: BinaryWriter, layout_struct: LayoutStruct):
+    def pack_layout_types(self, writer: BinaryWriter):
         """Write actual layout data type information and fill header offset field."""
-        writer.fill_with_position("layout_types_offset", layout_struct)
+        writer.fill_with_position("layout_types_offset", obj=self)
         for data_type in self:
             VertexDataTypeStruct.object_to_writer(data_type, writer)  # will write `data_type` class variable too
 
     def unpack_vertex_array(self, data: bytes, uv_factor: int) -> np.ndarray:
         """Use this layout to read a structured array of vertex data from the given raw FLVER buffer data."""
         compressed_dtype, decompressed_dtype = self.get_dtypes()
-        decompression_funcs = self.get_decompression_funcs(uv_factor=uv_factor)
+        codecs = self.get_codecs(uv_factor=uv_factor)
 
         compressed_array = np.frombuffer(data, dtype=compressed_dtype)
         decompressed_array = np.empty(len(compressed_array), dtype=decompressed_dtype)
-        # Iterate over decompressed dtype and func.
-        for decompress, (name, dtype) in zip(decompression_funcs, decompressed_dtype.fields.items()):
-            decompressed_array[name] = decompress(compressed_array[name].astype(dtype[0]))
+        for codec, (name, dtype) in zip(codecs, decompressed_dtype.fields.items()):
+            decompressed_array[name] = codec.decompress(compressed_array[name].astype(dtype[0]))
         return decompressed_array
 
     def pack_vertex_array(self, array: np.ndarray, uv_factor: int) -> bytes:
         """Use this layout to pack a structured array of vertex data into raw FLVER buffer data."""
         compressed_dtype, decompressed_dtype = self.get_dtypes()
-        compression_funcs = self.get_compression_funcs(uv_factor=uv_factor)
+        codecs = self.get_codecs(uv_factor=uv_factor)
 
         compressed_array = np.empty(len(array), dtype=compressed_dtype)
-        # Iterate over compressed dtype and func.
-        for compress, (name, dtype) in zip(compression_funcs, compressed_dtype.fields.items()):
-            compressed_array[name] = compress(array[name].astype(dtype[0]))
+        for codec, (name, dtype) in zip(codecs, compressed_dtype.fields.items()):
+            compressed_array[name] = codec.compress(array[name].astype(dtype[0]))
         return compressed_array.tobytes()
 
     def get_dtypes(self) -> tuple[np.dtype, np.dtype]:
@@ -571,15 +590,10 @@ class VertexDataLayout(list[VertexDataType]):
 
         return np.dtype(compressed_fields), np.dtype(decompressed_fields)
 
-    def get_decompression_funcs(self, uv_factor: int = None) -> list[tp.Callable]:
-        """Get list of decompression functions for every field (not just broad data type) in this layout."""
-        funcs = []
-
-        if uv_factor:
-            def uv_decompress_func(x):
-                return x / uv_factor
-        else:
-            uv_decompress_func = None
+    def get_codecs(self, uv_factor: int = None) -> list[VertexDataCodec]:
+        """Get list of codecs with compression/decompression functions for every field (not just broad data type) in
+        this layout."""
+        codecs = []
 
         for data_type in self:
             if isinstance(data_type, VertexPosition) and data_type.format_enum == VertexDataFormatEnum.EdgeCompressed:
@@ -592,61 +606,20 @@ class VertexDataLayout(list[VertexDataType]):
 
             if isinstance(data_type, VertexUV) and vertex_data_format.decompressed_format:
                 # Bake `uv_factor` into decompression.
-                funcs += [uv_decompress_func] * field_count
-                continue
-
-            codec = vertex_data_format.codec
-            if isinstance(codec, tuple):
-                # Separate codecs for separate fields.
-                funcs += list(codec)
+                codecs += [VertexDataCodec.from_uv_factor(uv_factor)] * field_count
             else:
-                # Single codec for all fields.
-                funcs += [codec] * field_count
+                codecs += list(vertex_data_format.codec)
 
-        return funcs
-
-    def get_compression_funcs(self, uv_factor: int = None) -> list[tp.Callable]:
-        """Get list of compression functions for every field (not just broad data type) in this layout."""
-        funcs = []
-
-        if uv_factor:
-            def uv_compress_func(x):
-                return x * uv_factor
-        else:
-            uv_compress_func = None
-
-        for data_type in self:
-            if isinstance(data_type, VertexPosition) and data_type.format_enum == VertexDataFormatEnum.EdgeCompressed:
-                # Explicitly not implemented yet.
-                raise NotImplementedError("Cannot yet read FLVERs with edge-compressed vertex positions. Sorry!")
-
-            # Find format. Will raise a `ValueError` here if not supported.
-            vertex_data_format = data_type.get_format()
-            field_count = len(vertex_data_format.names)
-
-            if isinstance(data_type, VertexUV) and vertex_data_format.decompressed_format:
-                # Bake `uv_factor` into decompression.
-                funcs += [uv_compress_func] * field_count
-                continue
-
-            codec = vertex_data_format.codec
-            if isinstance(codec, tuple):
-                # Separate codecs for separate fields.
-                funcs += list(codec)
-            else:
-                # Single codec for all fields.
-                funcs += [codec] * field_count
-
-        return funcs
+        return codecs
 
     def get_total_data_size(self) -> int:
         return sum(data_type.size for data_type in self)
 
     def __repr__(self):
-        data_types = "\n    ".join(repr(data_type) for data_type in self)
+        data_types = ",\n    ".join(repr(data_type) for data_type in self)
         return (
-            f"VertexDataLayout(\n"
-            f"    {data_types}\n"
+            f"VertexArrayLayout(\n"
+            f"    {data_types},\n"
             f") <size={self.get_total_data_size()}>"
         )
 
@@ -656,33 +629,33 @@ class VertexArray:
     """Wraps a structured NumPy array containing vertex data for a particular FLVER submesh."""
 
     array: np.ndarray
-    layout: VertexDataLayout
+    layout: VertexArrayLayout
 
     @classmethod
     def from_flver_reader(
         cls,
         flver_reader: BinaryReader,
-        buffer_struct: VertexBufferStruct,
-        layouts: list[VertexDataLayout],
+        array_header: VertexArrayHeaderStruct,
+        layouts: list[VertexArrayLayout],
         vertex_data_offset: int,
         uv_factor: int,
     ):
-        if buffer_struct.vertex_size != buffer_struct.buffer_length / buffer_struct.vertex_count:
+        if array_header.vertex_size != array_header.array_length / array_header.vertex_count:
             _LOGGER.warning(
-                f"FLVER vertex buffer has vertex size {buffer_struct.vertex_size}, but has total buffer length "
-                f"{buffer_struct.buffer_length} and vertex count {buffer_struct.vertex_count}. Buffer length ignored."
+                f"FLVER vertex array has vertex size {array_header.vertex_size}, but has total array length "
+                f"{array_header.array_length} and vertex count {array_header.vertex_count}. Buffer length ignored."
             )
 
-        layout = layouts[buffer_struct.layout_index]
+        layout = layouts[array_header.layout_index]
         layout_size = layout.get_total_data_size()
-        if layout_size != buffer_struct.vertex_size:
+        if layout_size != array_header.vertex_size:
             # TODO: This happens in vanilla DSR FLVERs. I try to fix it ahead of time by studying material MTD names,
             #  but if we reach here, that hasn't worked. Causes seem to be missing or unexpected tangents/bitangents.
-            raise VertexDataSizeError(buffer_struct.vertex_size, layout_size)
+            raise VertexDataSizeError(array_header.vertex_size, layout_size)
 
-        with flver_reader.temp_offset(vertex_data_offset + buffer_struct.buffer_offset):
-            buffer_data = flver_reader.read(buffer_struct.buffer_length)
-            array = layout.unpack_vertex_array(buffer_data, uv_factor)
+        with flver_reader.temp_offset(vertex_data_offset + array_header.array_offset):
+            array_data = flver_reader.read(array_header.array_length)
+            array = layout.unpack_vertex_array(array_data, uv_factor)
 
         return cls(array, layout)
 
@@ -696,7 +669,7 @@ class VertexArray:
         """Note that `layout_index` will be into a merged FLVER-wide list."""
         layout_size = self.layout.get_total_data_size()
         vertex_count = len(self.array)
-        VertexBufferStruct.object_to_writer(
+        VertexArrayHeaderStruct.object_to_writer(
             self,
             writer,
             buffer_index=buffer_index,
@@ -710,10 +683,10 @@ class VertexArray:
     def pack_array(
         self,
         writer: BinaryWriter,
-        buffer_offset: int,
+        array_offset: int,
         uv_factor: int,
     ):
-        writer.fill("buffer_offset", buffer_offset, obj=self)
+        writer.fill("array_offset", array_offset, obj=self)
         writer.append(self.layout.pack_vertex_array(self.array, uv_factor))
 
     def __getitem__(self, key):
@@ -727,11 +700,3 @@ class VertexArray:
     def __len__(self):
         """Wraps NumPy array length."""
         return len(self.array)
-
-# TODO:
-#  - make dtype from list of `VertexDataType`
-#  - convert dtype to list of `VertexDataType` if format enums are given for each field (FLVER subclass game defaults?)
-#  - read vertex buffers into `VertexArray` from an offset, given its `buffer_layout` and `dtype`
-#  - don't keep 'buffer objects' around
-#  - don't keep buffer layouts around; when packing FLVER, non-unique layouts are merged
-#  - attach `Material` instances to Submeshes; when packing FLVER, non-unique materials are merged

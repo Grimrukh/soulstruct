@@ -13,14 +13,14 @@ if tp.TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class VertexDataLayoutFactory:
+class VertexArrayLayoutFactory:
 
     type_unk_x00: int
 
     def __init__(self, unk_x00: int):
         self.type_unk_x00 = unk_x00
 
-    def get_ds1_map_buffer_layout(self, mtd_info: MTDInfo) -> VertexDataLayout:
+    def get_ds1_map_array_layout(self, mtd_info: MTDInfo) -> VertexArrayLayout:
         data_types = [  # always present
             VertexPosition(VertexDataFormatEnum.Float3, 0),
             VertexBoneIndices(VertexDataFormatEnum.FourBytesB, 0),
@@ -47,7 +47,7 @@ class VertexDataLayoutFactory:
 
         if uv_count > 4:
             # TODO: Might be an unnecessary assertion. True for DS1, for sure.
-            raise ValueError(f"Cannot have more than 4 UV maps in a vertex buffer (got {uv_count}).")
+            raise ValueError(f"Cannot have more than 4 UV maps in a vertex array (got {uv_count}).")
 
         uv_member_index = 0
         while uv_count > 0:  # extra UVs
@@ -65,10 +65,10 @@ class VertexDataLayoutFactory:
         for data_type in data_types:
             data_type.unk_x00 = self.type_unk_x00
 
-        return VertexDataLayout(data_types)
+        return VertexArrayLayout(data_types)
 
-    def get_ds1_chr_buffer_layout(self, mtd_info: MTDInfo) -> VertexDataLayout:
-        """Default buffer layout for character (and probably object) materials in DS1R."""
+    def get_ds1_chr_array_layout(self, mtd_info: MTDInfo) -> VertexArrayLayout:
+        """Default array layout for character (and probably object) materials in DS1R."""
         data_types = [
             VertexPosition(VertexDataFormatEnum.Float3, 0),
             VertexBoneIndices(VertexDataFormatEnum.FourBytesB, 0),
@@ -86,21 +86,21 @@ class VertexDataLayoutFactory:
         for data_type in data_types:
             data_type.unk_x00 = self.type_unk_x00
 
-        return VertexDataLayout(data_types)
+        return VertexArrayLayout(data_types)
 
 
-def guess_mtd_layout(mtd_name: str, member_unk_00: int, is_chr: bool) -> VertexDataLayout:
-    """Guesses the vertex buffer layout for a given MTD name. Returns `None` if no guess is possible."""
+def guess_mtd_layout(mtd_name: str, member_unk_00: int, is_chr: bool) -> VertexArrayLayout:
+    """Guesses the vertex array layout for a given MTD name. Returns `None` if no guess is possible."""
     mtd_info = MTDInfo.from_mtd_name(mtd_name)
-    layout_factory = VertexDataLayoutFactory(member_unk_00)
+    layout_factory = VertexArrayLayoutFactory(member_unk_00)
     if is_chr:
-        return layout_factory.get_ds1_chr_buffer_layout(mtd_info)
-    return layout_factory.get_ds1_map_buffer_layout(mtd_info)
+        return layout_factory.get_ds1_chr_array_layout(mtd_info)
+    return layout_factory.get_ds1_map_array_layout(mtd_info)
 
 
 def check_ds1_layouts(
-    buffer_layouts: list[VertexDataLayout],
-    buffer_structs: list[VertexBufferStruct],
+    array_layouts: list[VertexArrayLayout],
+    array_headers: list[VertexArrayHeaderStruct],
     submeshes: list[Submesh],
 ):
     """
@@ -109,22 +109,23 @@ def check_ds1_layouts(
         m2120B2A10.flver.dcx
         m8000B2A10.flver.dcx
 
-    Note that this should be called BEFORE submesh vertex buffers/arrays are dereferenced.
+    Note that this should be called BEFORE submesh vertex arrays/arrays are dereferenced.
     """
 
     for i, submesh in enumerate(submeshes):
         mtd_name = submesh.material.mtd_name
         # noinspection PyProtectedMember
-        for buffer_index in submesh._vertex_buffer_indices:
-            buffer = buffer_structs[buffer_index]
-            layout = buffer_layouts[buffer.layout_index]
+        for array_index in submesh._vertex_array_indices:
+            header = array_headers[array_index]
+            layout = array_layouts[header.layout_index]
 
-            if buffer.vertex_size != layout.get_total_data_size():
+            if header.vertex_size != layout.get_total_data_size():
                 # BAD LAYOUT. Try to guess the layout from the MTD name.
                 member_unk_00 = layout[0].unk_x00
                 is_chr = submesh.is_bind_pose
                 guessed_layout = guess_mtd_layout(mtd_name, member_unk_00, is_chr)
-                buffer.layout_index = len(buffer_layouts)
-                buffer_layouts.append(guessed_layout)  # new buffer layout (we don't want to replace original!)
+                header.layout_index = len(array_layouts)
+                # New layout. We do NOT replace the original, as it may be used correctly by other submeshes!
+                array_layouts.append(guessed_layout)
                 _LOGGER.info(f"Attempting to fix bad vertex data layout for submesh {i} (MTD {mtd_name}).")
-                # Mesh should now be able to read vertex buffer correctly.
+                # Mesh should now be able to read vertex array correctly.
