@@ -82,10 +82,11 @@ class MergedMesh:
         """Construct merged mesh data from all `flver` submeshes.
 
         The merged `faces` array contains a fourth column (`faces[:, 3]`) that records the 'material index' of each
-        face. However, the definition of 'material' in this merged mesh may need to be different from a simple reference
-        to a FLVER material, as the caller will likely need to create material 'variants' that store rendering-relevant
-        submesh properties like `face_sets[0].cull_back_faces` or `is_bind_pose` (or other unknowns). The caller can
-        then pass a list of indices into this new material list that matches the number of FLVER submeshes.
+        face, which is sourced directly from argument `submesh_material_indices` (which should have the same length as
+        `flver.submeshes`) rather than using the original FLVER material index. This allows the definition of 'material'
+        to be set to match the caller's purposes for the merged mesh, usually to preserve distinct submesh or face set
+        properties (e.g. `is_bind_pose` or `cull_back_faces`) that may be different for submeshes that share the same
+        FLVER material index.
         """
         if material_uv_layers:
             material_uv_layers = material_uv_layers
@@ -332,10 +333,6 @@ class MergedMesh:
         normalized vectors for its normal data, so this method is provided to normalize them in-place.
         """
         self.loop_normals /= np.linalg.norm(self.loop_normals, axis=1, keepdims=True)
-
-    def reassign_face_materials(self, new_indices: np.ndarray):
-        """Reassign all face materials by using their current index to index into `new_indices`."""
-        self.faces[:, 3] = new_indices[self.faces[:, 3]]
 
     def split_mesh(
         self,

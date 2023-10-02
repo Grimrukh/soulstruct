@@ -401,7 +401,7 @@ class Submesh:
             self.bounding_box.to_writer(writer)
 
     def pack_bone_indices(self, writer: BinaryWriter, bone_indices_start: int):
-        if not self.bone_indices:
+        if self.bone_indices is None:
             # Weird case for byte-perfect writing.
             writer.fill("_bone_offset", bone_indices_start, obj=self)
         else:

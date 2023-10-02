@@ -55,32 +55,17 @@ def test_merge_and_split():
     for og_submesh, split_submesh in zip(flver.submeshes, split_submeshes):
         og_faces = og_submesh.face_sets[0].triangulate(False)
         print(f"\nOriginal submesh: {len(og_submesh.vertices)} vertices, {len(og_faces)} faces")
-        sorted_vertices = sorted(og_submesh.vertices, key=lambda v: v["position_x"])
         for i in range(5):
             print(f"    Vertex {i}: {og_submesh.vertices[i]}")
         for i in range(5):
-            print(f"    Sorted vertex {i}: {sorted_vertices[i]}")
-        sorted_faces = sorted(og_faces, key=lambda f: max(f))
-        for i in range(5):
             print(f"    Face {i}: {og_faces[i]}")
-        for i in range(5):
-            print(f"    Sorted face {i}: {sorted_faces[i]}")
-
-        # TODO: Splitting seems to work, but the faces are not sensibly ordered and the vertices not sensibly ordered
-        #  by face. Is it because `np.unique()` is sorting the unique vertices returned?
 
         split_faces = split_submesh.face_sets[0].triangulate(False)
         print(f"Split submesh: {len(split_submesh.vertices)} vertices, {len(split_faces)} faces")
-        sorted_vertices = sorted(split_submesh.vertices, key=lambda v: v["position_x"])
         for i in range(5):
             print(f"    Vertex {i}: {split_submesh.vertices[i]}")
         for i in range(5):
-            print(f"    Sorted vertex {i}: {sorted_vertices[i]}")
-        sorted_faces = sorted(split_faces, key=lambda f: max(f))
-        for i in range(5):
             print(f"    Face {i}: {split_faces[i]}")
-        for i in range(5):
-            print(f"    Sorted face {i}: {sorted_faces[i]}")
 
     # for submesh in flver.submeshes:
     #     print(f"Original submesh:")
@@ -88,4 +73,4 @@ def test_merge_and_split():
 
 
 if __name__ == '__main__':
-    main()
+    test_merge_and_split()
