@@ -140,7 +140,7 @@ class VertexDataFormat:
             )
 
     def get_dtype_fields(self, compressed: bool, index: int = None, second_index: int = None) -> list[tuple[str, str]]:
-        """Get NumPy dtype for this format, as it appears in the compressed FLVER buffer data.
+        """Get NumPy dtype for this format, as it appears in the compressed FLVER array data.
 
         If `index` is given, the field names will be suffixed with the index (e.g. `uv_u_0`). If `second_index` is also
         given and there are four fields, the second two fields will be suffixed with the second index instead of the
@@ -171,7 +171,7 @@ class VertexDataType(abc.ABC):
     """Information about a vertex data type."""
 
     # Subtype class variables.
-    data_type: tp.ClassVar[int]  # value of the `data_type` field in `VertexDataTypeStruct`
+    type_int: tp.ClassVar[int]  # value of the `_data_type` field in `VertexDataTypeStruct`
     formats: tp.ClassVar[dict[tuple[int, ...], VertexDataFormat]]  # maps `data_type` IDs to their `dtype` fields/codec
     unique: tp.ClassVar[bool] = False
 
@@ -181,7 +181,7 @@ class VertexDataType(abc.ABC):
     instance_index: int = 0
     # Unknown field that seems to always be zero.
     unk_x00: int = 0
-    # Offset of this type's data in the vertex buffer it describes. Optional, as data is tightly packed anyway.
+    # Offset of this type's data in the vertex array it describes. Optional, as data is tightly packed anyway.
     data_offset: int | None = None
 
     def __init__(self, format_enum: VertexDataFormatEnum, instance_index=0, unk_x00=0, data_offset=0):
@@ -216,7 +216,7 @@ class VertexDataType(abc.ABC):
 
 @dataclass(slots=True, init=False, repr=False)
 class VertexPosition(VertexDataType):
-    data_type = 0
+    type_int = 0
     formats = {
         (0x02,): VertexDataFormat(
             names=("position_x", "position_y", "position_z"),
@@ -231,7 +231,7 @@ class VertexPosition(VertexDataType):
 
 @dataclass(slots=True, init=False, repr=False)
 class VertexBoneWeights(VertexDataType):
-    data_type = 1
+    type_int = 1
     formats = {
         (0x13,): VertexDataFormat(
             names=("bone_weight_a", "bone_weight_b", "bone_weight_c", "bone_weight_d"),
@@ -272,7 +272,7 @@ class VertexBoneIndices(VertexDataType):
     Note that unused bone indices are typically 0, not -1. Actual use of bone index 0 is therefore dependent on non-zero
     bone weights for character models.
     """
-    data_type = 2
+    type_int = 2
     formats = {
         (0x11, 0x2F): VertexDataFormat(
             names=("bone_index_a", "bone_index_b", "bone_index_c", "bone_index_d"),
@@ -294,7 +294,7 @@ class VertexNormal(VertexDataType):
     When 4D, the fourth `normal_w` component is sometimes used as a bone index, I believe. Otherwise, it seems to be
     always 127; it is never converted to a float here, regardless of its integer format.
     """
-    data_type = 3
+    type_int = 3
     formats = {
         (0x03,): VertexDataFormat(
             names=("normal_x", "normal_y", "normal_z"),
@@ -340,7 +340,7 @@ class VertexUV(VertexDataType):
     All non-float UV formats will also be de-quantized using `uv_factor` from the FLVER header.
     """
 
-    data_type = 5
+    type_int = 5
     formats = {
         (0x01,): VertexDataFormat(
             names=("uv_u", "uv_v"),
@@ -379,7 +379,7 @@ class VertexUV(VertexDataType):
 class VertexTangent(VertexDataType):
     """Perpendicular to normal."""
 
-    data_type = 6
+    type_int = 6
     formats = {
         (0x03,): VertexDataFormat(
             names=("tangent_x", "tangent_y", "tangent_z"),
@@ -398,7 +398,7 @@ class VertexTangent(VertexDataType):
 class VertexBitangent(VertexDataType):
     """Pendicular to both normal and tangent."""
 
-    data_type = 7
+    type_int = 7
     formats = {
         (0x10, 0x11, 0x13, 0x2F): VertexDataFormat(
             names=("bitangent_x", "bitangent_y", "bitangent_z", "bitangent_w"),
@@ -417,7 +417,7 @@ class VertexColor(VertexDataType):
     Have not yet encountered multiple colors, but it is supported and probably used in later games.
     """
 
-    data_type = 10
+    type_int = 10
     formats = {
         (0x03,): VertexDataFormat(
             names=("color_r", "color_g", "color_b", "color_a"),
@@ -434,14 +434,14 @@ class VertexColor(VertexDataType):
 
 # Data type subclass lookup.
 VERTEX_DATA_TYPES = {
-    VertexPosition.data_type: VertexPosition,
-    VertexBoneWeights.data_type: VertexBoneWeights,
-    VertexBoneIndices.data_type: VertexBoneIndices,
-    VertexNormal.data_type: VertexNormal,
-    VertexUV.data_type: VertexUV,
-    VertexTangent.data_type: VertexTangent,
-    VertexBitangent.data_type: VertexBitangent,
-    VertexColor.data_type: VertexColor,
+    VertexPosition.type_int: VertexPosition,
+    VertexBoneWeights.type_int: VertexBoneWeights,
+    VertexBoneIndices.type_int: VertexBoneIndices,
+    VertexNormal.type_int: VertexNormal,
+    VertexUV.type_int: VertexUV,
+    VertexTangent.type_int: VertexTangent,
+    VertexBitangent.type_int: VertexBitangent,
+    VertexColor.type_int: VertexColor,
 }  # type: dict[int, tp.Type[VertexDataType]]
 
 
@@ -449,15 +449,15 @@ VERTEX_DATA_TYPES = {
 class VertexDataTypeStruct(BinaryStruct):
 
     unk_x00: int
-    data_offset: int  # offset of data type's data in described buffer
+    data_offset: int  # offset of data type's data in described array
     format_enum: VertexDataFormatEnum = field(**Binary(int))
-    _data_type: int
+    _type_int: int
     instance_index: int  # instance index of this data type in its layout
 
 
 @dataclass(slots=True)
 class VertexArrayHeaderStruct(BinaryStruct):
-    """Header information about a packed FLVER vertex data buffer, which we read into a NumPy structured array."""
+    """Header information about a packed FLVER vertex data array, which we read into a NumPy structured array."""
     array_index: int
     layout_index: int
     vertex_size: int
@@ -512,7 +512,7 @@ class VertexArrayLayout(list[VertexDataType]):
                         f"{tight_data_offset}."
                     )
 
-                data_type_cls = VERTEX_DATA_TYPES[data_type_struct.pop("_data_type")]
+                data_type_cls = VERTEX_DATA_TYPES[data_type_struct.pop("_type_int")]
                 data_type = data_type_struct.to_object(data_type_cls)
                 data_types.append(data_type)
                 tight_data_offset += VERTEX_FORMAT_ENUM_SIZES[data_type.format_enum]
@@ -528,27 +528,33 @@ class VertexArrayLayout(list[VertexDataType]):
         """Write actual layout data type information and fill header offset field."""
         writer.fill_with_position("layout_types_offset", obj=self)
         for data_type in self:
-            VertexDataTypeStruct.object_to_writer(data_type, writer)  # will write `data_type` class variable too
+            VertexDataTypeStruct.object_to_writer(
+                data_type,
+                writer,
+                _type_int=data_type.type_int,
+            )
 
     def unpack_vertex_array(self, data: bytes, uv_factor: int) -> np.ndarray:
-        """Use this layout to read a structured array of vertex data from the given raw FLVER buffer data."""
+        """Use this layout to read a structured array of vertex data from the given raw FLVER array data."""
         compressed_dtype, decompressed_dtype = self.get_dtypes()
         codecs = self.get_codecs(uv_factor=uv_factor)
 
         compressed_array = np.frombuffer(data, dtype=compressed_dtype)
         decompressed_array = np.empty(len(compressed_array), dtype=decompressed_dtype)
         for codec, (name, dtype) in zip(codecs, decompressed_dtype.fields.items()):
+            # NOTE: Very important to cast array to decompressed dtype FIRST, before decompressing.
             decompressed_array[name] = codec.decompress(compressed_array[name].astype(dtype[0]))
         return decompressed_array
 
     def pack_vertex_array(self, array: np.ndarray, uv_factor: int) -> bytes:
-        """Use this layout to pack a structured array of vertex data into raw FLVER buffer data."""
+        """Use this layout to pack a structured array of vertex data into raw FLVER array data."""
         compressed_dtype, decompressed_dtype = self.get_dtypes()
         codecs = self.get_codecs(uv_factor=uv_factor)
 
         compressed_array = np.empty(len(array), dtype=compressed_dtype)
         for codec, (name, dtype) in zip(codecs, compressed_dtype.fields.items()):
-            compressed_array[name] = codec.compress(array[name].astype(dtype[0]))
+            # NOTE: Very important to compress FIRST, before casting array to the compressed dtype.
+            compressed_array[name] = codec.compress(array[name]).astype(dtype[0])
         return compressed_array.tobytes()
 
     def get_dtypes(self) -> tuple[np.dtype, np.dtype]:
@@ -662,9 +668,9 @@ class VertexArray:
     def to_flver_writer(
         self,
         writer: BinaryWriter,
-        write_buffer_length: bool,
+        write_array_length: bool,
         layout_index: int,
-        buffer_index: int,
+        array_index: int,
     ):
         """Note that `layout_index` will be into a merged FLVER-wide list."""
         layout_size = self.layout.get_total_data_size()
@@ -672,12 +678,12 @@ class VertexArray:
         VertexArrayHeaderStruct.object_to_writer(
             self,
             writer,
-            buffer_index=buffer_index,
+            array_index=array_index,
             layout_index=layout_index,
             vertex_size=layout_size,
             vertex_count=vertex_count,
-            buffer_length=layout_size * vertex_count if write_buffer_length else 0,
-            buffer_offset=RESERVED,
+            array_length=layout_size * vertex_count if write_array_length else 0,
+            array_offset=RESERVED,
         )
 
     def pack_array(
@@ -688,6 +694,21 @@ class VertexArray:
     ):
         writer.fill("array_offset", array_offset, obj=self)
         writer.append(self.layout.pack_vertex_array(self.array, uv_factor))
+
+    def get_position(self, as_view=False) -> np.ndarray:
+        """Get position columns as a `(n, 3)` or `(n, 4)` array (if `as_view=False`) or a view of structured rows from
+        the full array."""
+        fields = [f"position_{c}" for c in "xyz"]
+        if "position_w" in self.array.dtype.names:
+            fields.append("position_w")
+        if as_view:
+            return self.array[fields]
+
+        # Construct new simple float array.
+        position_array = np.empty((len(self.array), len(fields)), dtype=np.float32)
+        for i, f in enumerate(fields):
+            position_array[:, i] = self.array[f]
+        return position_array
 
     def __getitem__(self, key):
         """Wraps NumPy array indexing."""

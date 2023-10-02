@@ -289,9 +289,9 @@ class FLVER(GameFile):
             submesh_material_indices.append(submesh_material_index)
 
             array_layout_indices = []
-            for j, vertex_array in submesh.vertex_arrays:
+            for vertex_array in submesh.vertex_arrays:
                 layout = vertex_array.layout
-                layout_hash = hash(layout)
+                layout_hash = hash(tuple((data_type.type_int, data_type.format_enum) for data_type in layout))
                 if layout_hash in hashed_layout_indices:
                     array_layout_index = hashed_layout_indices[layout_hash]
                 else:
@@ -329,8 +329,6 @@ class FLVER(GameFile):
                     write_array_length=self.version >= 0x20005,
                     layout_index=layout_index,
                     array_index=i,
-                    array_layouts=self.layouts,
-                    mesh_vertex_count=len(submesh.vertices),
                 )
 
         # Pack array layouts.

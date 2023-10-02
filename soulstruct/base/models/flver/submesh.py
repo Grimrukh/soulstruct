@@ -198,16 +198,19 @@ class FaceSet:
 
     @classmethod
     def from_triangles(cls, triangles: np.ndarray | list[tuple[int, int, int], ...], cull_back_faces=True):
-        """Create a `FaceSet` with `triangle_strip=False` from a list of three-index triangle tuples.
+        """Create a `FaceSet` with `triangle_strip=False` from a list of vertex indices triplets.
+
+        Given `triangles` can be a 1D or 2D array or a list of triplets. If 1D, it will be reshaped to 2D. If 2D, it
+        will NOT be copied, so be wary modifying the same array elsewhere.
 
         TODO: Currently sets `flags=0` and `unk_x06=0`, which is correct so far in my usage.
         """
 
         if isinstance(triangles, np.ndarray):
             if triangles.ndim == 2:
-                vertex_indices = triangles.ravel()
+                vertex_indices = triangles
             elif triangles.ndim == 1:
-                vertex_indices = triangles  # does NOT copy
+                vertex_indices = triangles.reshape((-1, 3))
             else:
                 raise ValueError("Triangle array must be 1D or 2D.")
         else:

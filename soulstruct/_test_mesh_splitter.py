@@ -1,14 +1,22 @@
-import numpy as np
-
 from soulstruct import FLVER, DSR_PATH
 from soulstruct.base.models.flver.mesh_tools import MergedMesh
 
 
-def main():
-    flver = FLVER.from_path(DSR_PATH + "/map/m10_02_00_00/m2000B2A10.flver.dcx")
-    # flver = FLVER.from_path(DSR_PATH + "/map/m10_02_00_00/m5060B2A10.flver.dcx")
+def test_flver_rewrite():
+    # flver = FLVER.from_path(DSR_PATH + "/map/m10_02_00_00/m2000B2A10.flver.dcx")
+    flver = FLVER.from_path(DSR_PATH + "/map/m10_02_00_00/m5060B2A10.flver.dcx")
 
-    # For testing, throwing away submesh info and just using their FLVER material.
+    flver.write("test.flver.dcx")
+    re_flver = FLVER.from_path("test.flver.dcx")
+    print("FLVER read, written, and re-read successfully? First five vertices of submesh 0 compared below.")
+    print(flver.submeshes[0].vertex_arrays[0].array[:5])
+    print(re_flver.submeshes[0].vertex_arrays[0].array[:5])
+
+
+def test_merge_and_split():
+    flver = FLVER.from_path(DSR_PATH + "/map/m10_02_00_00/m2000B2A10.flver.dcx")
+
+    # TODO: For testing here, throwing away submesh info and just using their FLVER material.
     # Will of course need to create new indices into 'material' representations that include critical submesh fields.
     default_submesh_materials = [flver.materials.index(submesh.material) for submesh in flver.submeshes]
 
@@ -31,17 +39,52 @@ def main():
 
     print("Layouts are valid (same for all usages of each material).")
 
-    submesh_layouts = list(submesh_layouts_dict.values())
-    submesh_kwargs = [
-        {
+    submesh_info = []
+    for submesh in flver.submeshes:
+        material_index = materials.index(submesh.material)
+        layout = submesh_layouts_dict[material_index]
+        submesh_kwargs = {
             "is_bind_pose": submesh.is_bind_pose,
             "default_bone_index": submesh.default_bone_index,
-            "cull_back_faces": submesh.face_sets[0].cull_back_faces,
+            "cull_back_faces": submesh.cull_back_faces,
         }
-        for submesh in flver.submeshes
-    ]
+        submesh_info.append((material_index, layout, submesh_kwargs))
 
-    merged.split_mesh(flver.materials, submesh_layouts, submesh_kwargs)
+    split_submeshes = merged.split_mesh(submesh_info)
+
+    for og_submesh, split_submesh in zip(flver.submeshes, split_submeshes):
+        og_faces = og_submesh.face_sets[0].triangulate(False)
+        print(f"\nOriginal submesh: {len(og_submesh.vertices)} vertices, {len(og_faces)} faces")
+        sorted_vertices = sorted(og_submesh.vertices, key=lambda v: v["position_x"])
+        for i in range(5):
+            print(f"    Vertex {i}: {og_submesh.vertices[i]}")
+        for i in range(5):
+            print(f"    Sorted vertex {i}: {sorted_vertices[i]}")
+        sorted_faces = sorted(og_faces, key=lambda f: max(f))
+        for i in range(5):
+            print(f"    Face {i}: {og_faces[i]}")
+        for i in range(5):
+            print(f"    Sorted face {i}: {sorted_faces[i]}")
+
+        # TODO: Splitting seems to work, but the faces are not sensibly ordered and the vertices not sensibly ordered
+        #  by face. Is it because `np.unique()` is sorting the unique vertices returned?
+
+        split_faces = split_submesh.face_sets[0].triangulate(False)
+        print(f"Split submesh: {len(split_submesh.vertices)} vertices, {len(split_faces)} faces")
+        sorted_vertices = sorted(split_submesh.vertices, key=lambda v: v["position_x"])
+        for i in range(5):
+            print(f"    Vertex {i}: {split_submesh.vertices[i]}")
+        for i in range(5):
+            print(f"    Sorted vertex {i}: {sorted_vertices[i]}")
+        sorted_faces = sorted(split_faces, key=lambda f: max(f))
+        for i in range(5):
+            print(f"    Face {i}: {split_faces[i]}")
+        for i in range(5):
+            print(f"    Sorted face {i}: {sorted_faces[i]}")
+
+    # for submesh in flver.submeshes:
+    #     print(f"Original submesh:")
+    #     print(f"    {len(submesh.vertex_arrays[0].array)}, {len(submesh.face_sets[0].triangulate(False))}")
 
 
 if __name__ == '__main__':
