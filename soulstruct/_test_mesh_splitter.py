@@ -14,7 +14,7 @@ def test_flver_rewrite():
 
 
 def test_merge_and_split():
-    flver = FLVER.from_path(DSR_PATH + "/map/m10_02_00_00/m2000B2A10.flver.dcx")
+    flver = FLVER.from_path(DSR_PATH + "/map/m10_01_00_00/m3210B1A10.flver.dcx")
 
     # TODO: For testing here, throwing away submesh info and just using their FLVER material.
     # Will of course need to create new indices into 'material' representations that include critical submesh fields.
@@ -55,16 +55,16 @@ def test_merge_and_split():
     for og_submesh, split_submesh in zip(flver.submeshes, split_submeshes):
         og_faces = og_submesh.face_sets[0].triangulate(False)
         print(f"\nOriginal submesh: {len(og_submesh.vertices)} vertices, {len(og_faces)} faces")
-        for i in range(5):
+        for i in range(min(len(og_submesh.vertices), 5)):
             print(f"    Vertex {i}: {og_submesh.vertices[i]}")
-        for i in range(5):
+        for i in range(min(len(og_faces), 5)):
             print(f"    Face {i}: {og_faces[i]}")
 
         split_faces = split_submesh.face_sets[0].triangulate(False)
         print(f"Split submesh: {len(split_submesh.vertices)} vertices, {len(split_faces)} faces")
-        for i in range(5):
+        for i in range(min(len(split_submesh.vertices), 5)):
             print(f"    Vertex {i}: {split_submesh.vertices[i]}")
-        for i in range(5):
+        for i in range(min(len(split_faces), 5)):
             print(f"    Face {i}: {split_faces[i]}")
 
     # for submesh in flver.submeshes:

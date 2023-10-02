@@ -260,14 +260,19 @@ class MergedMesh:
                     color_array[i:j, 2] = vertices[f"color_b_{c_i}"]
                     color_array[i:j, 3] = vertices[f"color_a_{c_i}"]
                 elif name.startswith("uv_u_"):
-                    # TODO: `uv_w` dropped for now.
                     uv_i = int(name[-1])
                     if all_uv_layers:
                         # Get FLVER-wide index of this UV from its known layer name in the material.
-                        uv_i = all_uv_layers.index(uv_layers[uv_i])
-                    uv_array = loops_uvs_dict.setdefault(uv_i, np.zeros((total_vertex_count, 2), dtype=np.float32))
+                        loop_uvs_i = all_uv_layers.index(uv_layers[uv_i])
+                    else:
+                        # Just use the vertex array's UV index. Usage of this index may clash with other submeshes!
+                        loop_uvs_i = uv_i
+                    uv_array = loops_uvs_dict.setdefault(
+                        loop_uvs_i, np.zeros((total_vertex_count, 2), dtype=np.float32)
+                    )
                     uv_array[i:j, 0] = vertices[f"uv_u_{uv_i}"]
                     uv_array[i:j, 1] = vertices[f"uv_v_{uv_i}"]
+                    # TODO: `uv_w` dropped for now.
 
         # Could be empty lists.
         loop_vertex_colors = [loop_vertex_colors_dict[i] for i in sorted(loop_vertex_colors_dict)]
