@@ -127,6 +127,14 @@ class BaseVector(abc.ABC):
     def one(cls) -> Self:
         return cls(np.ones(cls.LENGTH, dtype=float))
 
+    @classmethod
+    def single_min(cls) -> Self:
+        return cls(np.full(cls.LENGTH, SINGLE_MIN, dtype=float))
+
+    @classmethod
+    def single_max(cls) -> Self:
+        return cls(np.full(cls.LENGTH, SINGLE_MAX, dtype=float))
+
     @property
     def x(self) -> float:
         return self._data[0]

@@ -1,9 +1,8 @@
 from .core import FLVER
 from .version import Version
 
-from .bounding_box import BoundingBox, BoundingBoxWithUnknown
 from .dummy import Dummy
-from .submesh import Submesh
+from .submesh import Submesh, FaceSet
 from .bone import FLVERBone
-from .material import Material
+from .material import Material, Texture
 from .vertex_array import VertexArrayLayout, VertexArray

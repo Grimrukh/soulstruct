@@ -39,14 +39,8 @@ class GameFile(BaseBinaryFile, abc.ABC):
 
         Will raise an exception if no matching entries or multiple matching entries exist in the BND.
         """
-        match entry_spec:
-            case None:
-                if cls.PATTERN is None:
-                    raise ValueError(
-                        f"Cannot load {cls.__name__} from Binder with no entry specification, "
-                        f"as `PATTERN` is not defined for this class."
-                    )
-                flver_entry = binder.find_entry_matching_name(cls.PATTERN)
+        entry_spec = entry_spec or cls.PATTERN
+        flver_entry = binder[entry_spec]
         return cls.from_bytes(flver_entry)
 
     @classmethod

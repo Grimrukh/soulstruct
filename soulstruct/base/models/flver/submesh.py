@@ -10,10 +10,10 @@ from enum import IntEnum
 
 import numpy as np
 
-from soulstruct.utilities.text import indent_lines
 from soulstruct.utilities.binary import *
+from soulstruct.utilities.maths import Vector3
+from soulstruct.utilities.text import indent_lines
 
-from .bounding_box import BoundingBox, BoundingBoxWithUnknown
 from .vertex_array import VertexArray
 
 if tp.TYPE_CHECKING:
@@ -39,7 +39,7 @@ class FaceSetStruct(BinaryStruct):
     _pad1: bytes = field(init=False, **BinaryPad(3))
     flags: byte
     triangle_strip: bool
-    cull_back_faces: bool
+    backface_culling: bool
     unk_x06: short
     _vertex_indices_count: int
     _vertex_indices_offset: int
@@ -55,7 +55,7 @@ class FaceSet:
 
     flags: int
     triangle_strip: bool
-    cull_back_faces: bool
+    backface_culling: bool
     unk_x06: int
 
     # Vertex indices could be in triangle strip format (1D) or simply rows of triangles (2D). Number of dimensions must
@@ -197,7 +197,7 @@ class FaceSet:
         return connected_vertices
 
     @classmethod
-    def from_triangles(cls, triangles: np.ndarray | list[tuple[int, int, int], ...], cull_back_faces=True):
+    def from_triangles(cls, triangles: np.ndarray | list[tuple[int, int, int], ...], backface_culling=True):
         """Create a `FaceSet` with `triangle_strip=False` from a list of vertex indices triplets.
 
         Given `triangles` can be a 1D or 2D array or a list of triplets. If 1D, it will be reshaped to 2D. If 2D, it
@@ -221,7 +221,7 @@ class FaceSet:
             flags=0,
             unk_x06=0,
             triangle_strip=False,
-            cull_back_faces=cull_back_faces,
+            backface_culling=backface_culling,
             vertex_indices=vertex_indices,
         )
 
@@ -231,12 +231,12 @@ class FaceSet:
         else:
             vertex_indices_str = f"<{self.vertex_indices.shape[0]} triangles>"
         if self.flags == 0 and self.unk_x06 == 0:
-            return f"FaceSet({vertex_indices_str}, cull_back_faces = {self.cull_back_faces})"
+            return f"FaceSet({vertex_indices_str}, backface_culling = {self.backface_culling})"
         return (
             f"FaceSet(\n"
             f"  flags = {self.flags}\n"
             f"  triangle_strip = {self.triangle_strip}\n"
-            f"  cull_back_faces = {self.cull_back_faces}\n"
+            f"  backface_culling = {self.backface_culling}\n"
             f"  unk_x06 = {self.unk_x06}\n"
             f"  vertex_indices = {vertex_indices_str}\n"
             f")"
@@ -276,11 +276,15 @@ class Submesh:
     is_bind_pose: bool = False
     default_bone_index: int = -1
     bone_indices: np.ndarray | None = None
-    bounding_box: tp.Optional[BoundingBox] = None
+    uses_bounding_box: bool = True  # TODO: perfect candidate for a game-specific subclass ClassVar
+    bounding_box_min: Vector3 = field(default_factory=Vector3.single_max)
+    bounding_box_max: Vector3 = field(default_factory=Vector3.single_min)
+    bounding_box_unknown: Vector3 | None = None  # only used in Sekiro onward  # TODO: see above
     face_sets: list[FaceSet] = field(default_factory=list)
     vertex_arrays: list[VertexArray] = field(default_factory=list)
 
-    invalid_layout: bool = False
+    # Enabled by Soulstruct when trying to read a vertex array from a FLVCR (usually DS1R) with the wrong layout.
+    invalid_layout: bool = field(default=False, init=False)
 
     # Held temporarily while unpacking.
     _face_set_indices: list[int] | None = field(default=None, init=False)
@@ -309,17 +313,20 @@ class Submesh:
         _face_set_indices = list(reader.unpack(f"{_face_set_count}i", offset=_face_set_offset))
         _vertex_array_indices = list(reader.unpack(f"{_vertex_array_count}i", offset=_vertex_array_offset))
 
+        kwargs = {}
         if _bounding_box_offset != 0:
             with reader.temp_offset(_bounding_box_offset):
-                box_class = BoundingBoxWithUnknown if bounding_box_has_unknown else BoundingBox
-                bounding_box = box_class.from_bytes(reader)
+                kwargs["bounding_box_minimum"] = Vector3(reader.unpack("3f"))
+                kwargs["bounding_box_maximum"] = Vector3(reader.unpack("3f"))
+                kwargs["bounding_box_unknown"] = Vector3(reader.unpack("3f")) if bounding_box_has_unknown else None
         else:
-            bounding_box = None
+            kwargs["uses_bounding_box"] = False
+
         submesh = mesh_struct.to_object(
             cls,
             material=materials[_material_index],
             bone_indices=bone_indices,
-            bounding_box=bounding_box,
+            **kwargs,
         )
         submesh._face_set_indices = _face_set_indices
         submesh._vertex_array_indices = _vertex_array_indices
@@ -394,11 +401,14 @@ class Submesh:
         )
 
     def pack_bounding_box(self, writer: BinaryWriter):
-        if self.bounding_box is None:
+        if not self.uses_bounding_box:
             writer.fill("_bounding_box_offset", 0, obj=self)
         else:
             writer.fill_with_position("_bounding_box_offset", obj=self)
-            self.bounding_box.to_writer(writer)
+            writer.pack("3f", *self.bounding_box_min)
+            writer.pack("3f", *self.bounding_box_max)
+            if self.bounding_box_unknown is not None:
+                writer.pack("3f", *self.bounding_box_unknown)
 
     def pack_bone_indices(self, writer: BinaryWriter, bone_indices_start: int):
         if self.bone_indices is None:
@@ -417,6 +427,45 @@ class Submesh:
         vertex_array_indices = [first_vertex_array_index + i for i in range(len(self.vertex_arrays))]
         writer.fill_with_position("_vertex_array_offset", obj=self)
         writer.pack(f"{len(vertex_array_indices)}i", *vertex_array_indices)
+
+    def refresh_bounding_box(self):
+        if not self.uses_bounding_box:
+            return  # nothing to refresh
+        if not self.vertex_arrays:
+            _LOGGER.warning("Submesh has no vertex arrays. Cannot refresh bounding box.")
+            return
+        self.bounding_box_min = Vector3.single_max()
+        self.bounding_box_max = Vector3.single_min()
+        for vertex_array in self.vertex_arrays:
+            self.bounding_box_min = np.minimum(self.bounding_box_min, vertex_array.array["position"].min(axis=0))
+            self.bounding_box_max = np.maximum(self.bounding_box_max, vertex_array.array["position"].max(axis=0))
+        if self.bounding_box_unknown is not None:
+            _LOGGER.warning("Cannot refresh `bounding_box_unknown` for Submesh (unknown values).")
+
+    def sort_bone_indices(self):
+        """Sort `bone_indices` in-place, if defined, and re-index all vertex data to match."""
+
+        if self.bone_indices is None:
+            return  # this submesh has global vertex bone indices
+
+        sorted_indices = np.argsort(self.bone_indices)
+        # Sort now, and use `sorted_indices` to remap vertex data below.
+        self.bone_indices = self.bone_indices[sorted_indices]
+
+        for vertex_array in self.vertex_arrays:
+            # Check map piece 'pose' case, where weights are missing:
+            try:
+                bone_weights = vertex_array["bone_weights"]
+            except ValueError:  # no weights
+                # Map piece case: all four indices should be the same number (all used) and can be safely re-indexed.
+                vertex_array["bone_indices"] = sorted_indices[vertex_array["bone_indices"]]
+            else:
+                # Rigged case: at least one bone weight is non-zero, and we need to check which ones in order to
+                # distinguish use of bone 0 from an unused bone index, unfortunately.
+
+                # Get indices of all vertices with non-zero bone weights.
+                used_indices = np.nonzero(bone_weights)[0]  # (n, 4) mask array
+                vertex_array["bone_indices"][used_indices] = sorted_indices[vertex_array["bone_indices"][used_indices]]
 
     def local_to_global_bone_indices(self):
         """Transforms `vertex_array` in-place by replacing all `bone_index_{c}` indices with the global bone index in
@@ -466,23 +515,23 @@ class Submesh:
         return "\n".join(lines)
 
     @property
-    def cull_back_faces(self):
-        """Get `cull_back_faces` from face set 0 and warn if other face sets have different values."""
+    def backface_culling(self):
+        """Get `backface_culling` from face set 0 and warn if other face sets have different values."""
         if not self.face_sets:
             _LOGGER.warning("Submesh has no face sets.")
             return False
-        cull = self.face_sets[0].cull_back_faces
+        cull = self.face_sets[0].backface_culling
         for face_set in self.face_sets[1:]:
-            if face_set.cull_back_faces != cull:
-                _LOGGER.warning(f"Submesh has face sets with different `cull_back_faces` values. Using index 0: {cull}")
+            if face_set.backface_culling != cull:
+                _LOGGER.warning(f"Submesh face sets have different `backface_culling` values. Using index 0: {cull}")
                 return cull
         return cull
 
-    @cull_back_faces.setter
-    def cull_back_faces(self, value):
-        """Set `cull_back_faces` for all face sets."""
+    @backface_culling.setter
+    def backface_culling(self, value):
+        """Set `backface_culling` for all face sets."""
         for face_set in self.face_sets:
-            face_set.cull_back_faces = value
+            face_set.backface_culling = value
 
     def vertex_count_exceeds_ushort(self, vertex_array=0):
         return len(self.vertex_arrays[vertex_array]) < 0xFFFF
@@ -501,10 +550,10 @@ class Submesh:
         import matplotlib.pyplot as plt
         if axes is None:
             axes = plt.figure().add_subplot(111, projection="3d")
-        positions = self.vertex_arrays[0][["position_x", "position_z", "position_y"]]
+        positions = self.vertex_arrays[0]["position"]
         axes.scatter(*zip(*positions), c=vertex_color, s=1, alpha=0.1)  # note y/z swapped
         if show_normals:
-            normals = self.vertex_arrays[0][["normal_x", "normal_z", "normal_y"]]
+            normals = self.vertex_arrays[0]["normal"]
             for position, normal in zip(positions, normals):
                 axes.plot(*zip(position, position + normal), c="black", alpha=0.1)
         if show_origin:
@@ -542,8 +591,11 @@ class Submesh:
         ]
         if not self.is_bind_pose:
             lines.append("  is_bind_pose = False")
-        if self.bounding_box:
-            lines.append(f"  bounding_box = {self.bounding_box}")
+        if self.uses_bounding_box:
+            lines.append(f"  bounding_box_min = {self.bounding_box_min}")
+            lines.append(f"  bounding_box_max = {self.bounding_box_max}")
+            if self.bounding_box_unknown is not None:
+                lines.append(f"  bounding_box_unknown = {self.bounding_box_unknown}")
         lines.append(f"  face_sets = [\n{face_sets}\n  ]")
         lines.append(")")
 

@@ -95,6 +95,12 @@ class VertexDataFormatEnum(IntEnum):
     def get_size(self):
         return VERTEX_FORMAT_ENUM_SIZES[self]
 
+    def has_two_uvs(self):
+        return self in {VertexDataFormatEnum.Float4, VertexDataFormatEnum.UVPair}
+
+    def has_uncompressed_uvs(self):
+        return self in {VertexDataFormatEnum.Float2, VertexDataFormatEnum.Float3, VertexDataFormatEnum.Float4}
+
 
 VERTEX_FORMAT_ENUM_SIZES = {
     VertexDataFormatEnum.Float2: 8,
@@ -119,51 +125,36 @@ class VertexDataFormat:
     """Represents the format of a single vertex data field, including its compression/decompression codec.
 
     Each vertex data field is generally multi-dimensional, but the exact dimensions may also vary with format.
+
+    NOTE: Names in fields of `compressed_dtype` and `decompressed_type` may contain '{i}' and '{j}' templates to be
+    set by the caller when retrieved for array-wide dtype construction (to support multiple UV and color fields).
     """
 
-    names: tuple[str, ...]
-    compressed_format: str
-    decompressed_format: str = None  # defaults to same as `compressed_format`
+    compressed_dtype: list[tuple[str, str, tuple[int]]]  # NumPy dtype fields (usually just one)
+    decompressed_dtype: list[tuple[str, str, tuple[int]]] = None  # defaults to same as `compressed_dtype`
 
-    # Codec can be a single pair of functions (for both compression and decompression) or a tuple of codecs matching
-    # the number of `names` (for different codecs for each name). Defaults to no codec (data is not compressed).
+    # Codec can be a single pair of functions (for compression and decompression, respectively) or a tuple of codecs
+    # matching the number of fields in the dtypes. Defaults to no codec (data is not compressed).
     codec: VertexDataCodec | tuple[VertexDataCodec, ...] = NULL_CODEC
 
     def __post_init__(self):
-        if self.decompressed_format is None:
-            object.__setattr__(self, "decompressed_format", self.compressed_format)
+        if self.decompressed_dtype is None:
+            object.__setattr__(self, "decompressed_dtype", self.compressed_dtype)
         if isinstance(self.codec, VertexDataCodec):
-            object.__setattr__(self, "codec", (self.codec,) * len(self.names))
-        elif len(self.codec) != len(self.names):
+            object.__setattr__(self, "codec", (self.codec,) * len(self.compressed_dtype))
+        elif len(self.codec) != len(self.compressed_dtype):
             raise ValueError(
-                f"Number of codecs ({len(self.codec)}) does not match number of field names ({len(self.names)})."
+                f"Number of codecs ({len(self.codec)}) does not match number of "
+                f"dtype fields ({len(self.compressed_dtype)})."
             )
 
-    def get_dtype_fields(self, compressed: bool, index: int = None, second_index: int = None) -> list[tuple[str, str]]:
-        """Get NumPy dtype for this format, as it appears in the compressed FLVER array data.
+    def get_indexed_compressed_dtype(self, i: int = None, j: int = None) -> list[tuple[str, str, tuple[int]]]:
+        """Get the compressed dtype with '{i}' and/or '{j}' templates filled in."""
+        return [(name.format(i=i, j=j), dtype, size) for name, dtype, size in self.compressed_dtype]
 
-        If `index` is given, the field names will be suffixed with the index (e.g. `uv_u_0`). If `second_index` is also
-        given and there are four fields, the second two fields will be suffixed with the second index instead of the
-        first (e.g. for `Float4` or `UVPair` UV data).
-        """
-        if index is not None:
-            if second_index is not None and len(self.names) == 4:
-                field_names = [f"{name}_{index}" for name in self.names[:2]]
-                field_names += [f"{name}_{second_index}" for name in self.names[2:]]
-            else:
-                if second_index is not None:
-                    _LOGGER.warning(
-                        f"`second_index` was given for vertex data format with {len(self.names)} fields, rather than 4."
-                    )
-                field_names = [f"{name}_{index}" for name in self.names]
-        else:
-            if second_index is not None:
-                _LOGGER.warning("`second_index` was given for vertex data format without `index`.")
-            field_names = self.names
-
-        field_formats = self.compressed_format if compressed else self.decompressed_format
-
-        return [(field_name, field_format) for field_name, field_format in zip(field_names, field_formats)]
+    def get_indexed_decompressed_dtype(self, i: int = None, j: int = None) -> list[tuple[str, str, tuple[int]]]:
+        """Get the decompressed dtype with '{i}' and/or '{j}' templates filled in."""
+        return [(name.format(i=i, j=j), dtype, size) for name, dtype, size in self.decompressed_dtype]
 
 
 @dataclass(slots=True)
@@ -172,8 +163,8 @@ class VertexDataType(abc.ABC):
 
     # Subtype class variables.
     type_int: tp.ClassVar[int]  # value of the `_data_type` field in `VertexDataTypeStruct`
-    formats: tp.ClassVar[dict[tuple[int, ...], VertexDataFormat]]  # maps `data_type` IDs to their `dtype` fields/codec
     unique: tp.ClassVar[bool] = False
+    formats: tp.ClassVar[dict[tuple[int, ...], VertexDataFormat]]  # maps `data_type` IDs to their `dtype` fields/codec
 
     # Used to look up fields and codecs in class `FORMATS`.
     format_enum: VertexDataFormatEnum
@@ -219,12 +210,10 @@ class VertexPosition(VertexDataType):
     type_int = 0
     formats = {
         (0x02,): VertexDataFormat(
-            names=("position_x", "position_y", "position_z"),
-            compressed_format="fff",
+            compressed_dtype=[("position", "f", (3,))],
         ),
         (0x03,): VertexDataFormat(
-            names=("position_x", "position_y", "position_z", "position_w"),
-            compressed_format="ffff",
+            compressed_dtype=[("position", "f", (4,))],
         ),
     }
 
@@ -232,27 +221,24 @@ class VertexPosition(VertexDataType):
 @dataclass(slots=True, init=False, repr=False)
 class VertexBoneWeights(VertexDataType):
     type_int = 1
+    unique = True
     formats = {
         (0x13,): VertexDataFormat(
-            names=("bone_weight_a", "bone_weight_b", "bone_weight_c", "bone_weight_d"),
-            compressed_format="bbbb",
-            decompressed_format="ffff",
+            compressed_dtype=[("bone_weights", "b", (4,))],
+            decompressed_dtype=[("bone_weights", "f", (4,))],
             codec=INT_TO_FLOAT_127,
         ),
         (0x14,): VertexDataFormat(
-            names=("bone_weight_a", "bone_weight_b", "bone_weight_c", "bone_weight_d"),
-            compressed_format="BBBB",
-            decompressed_format="ffff",
+            compressed_dtype=[("bone_weights", "B", (4,))],
+            decompressed_dtype=[("bone_weights", "f", (4,))],
             codec=INT_TO_FLOAT_127,
         ),
         (0x16, 0x1A): VertexDataFormat(
-            names=("bone_weight_a", "bone_weight_b", "bone_weight_c", "bone_weight_d"),
-            compressed_format="hhhh",
-            decompressed_format="ffff",
+            compressed_dtype=[("bone_weights", "h", (4,))],
+            decompressed_dtype=[("bone_weights", "f", (4,))],
             codec=INT_TO_FLOAT_32767,
         ),
     }
-    unique = True
 
 
 @dataclass(slots=True, init=False, repr=False)
@@ -273,18 +259,19 @@ class VertexBoneIndices(VertexDataType):
     bone weights for character models.
     """
     type_int = 2
+    unique = True
     formats = {
         (0x11, 0x2F): VertexDataFormat(
-            names=("bone_index_a", "bone_index_b", "bone_index_c", "bone_index_d"),
-            compressed_format="BBBB",
-            decompressed_format="hhhh",
+            compressed_dtype=[("bone_indices", "B", (4,))],
+            decompressed_dtype=[("bone_indices", "i", (4,))],
+            # No codec needed; just an integer size change.
         ),
         (0x18,): VertexDataFormat(
-            names=("bone_index_a", "bone_index_b", "bone_index_c", "bone_index_d"),
-            compressed_format="hhhh",
+            compressed_dtype=[("bone_indices", "h", (4,))],
+            decompressed_dtype=[("bone_indices", "i", (4,))],
+            # No codec needed; just an integer size change.
         ),
     }
-    unique = True
 
 
 @dataclass(slots=True, init=False, repr=False)
@@ -297,36 +284,30 @@ class VertexNormal(VertexDataType):
     type_int = 3
     formats = {
         (0x03,): VertexDataFormat(
-            names=("normal_x", "normal_y", "normal_z"),
-            compressed_format="fff",
+            compressed_dtype=[("normal", "f", (3,))],  # only format with no `normal_w` field
         ),
         (0x04,): VertexDataFormat(
-            names=("normal_x", "normal_y", "normal_z", "normal_w"),
-            compressed_format="fffi",
+            compressed_dtype=[("normal", "f", (3,)), ("normal_w", "i", (1,))],
         ),
         (0x10, 0x11, 0x13, 0x2F): VertexDataFormat(
-            names=("normal_x", "normal_y", "normal_z", "normal_w"),
-            compressed_format="BBBB",
-            decompressed_format="fffB",
-            codec=(INT_TO_FLOAT_127_SIGNED,) * 3 + (NULL_CODEC,),
+            compressed_dtype=[("normal", "B", (3,)), ("normal_w", "B", (1,))],
+            decompressed_dtype=[("normal", "f", (3,)), ("normal_w", "B", (1,))],
+            codec=(INT_TO_FLOAT_127_SIGNED, NULL_CODEC),
         ),
         (0x12,): VertexDataFormat(
-            names=("normal_w", "normal_y", "normal_z", "normal_x"),  # W comes first
-            compressed_format="Bbbb",
-            decompressed_format="fffB",
-            codec=(NULL_CODEC,) + (INT_TO_FLOAT_127_SIGNED,) * 3,
+            compressed_dtype=[("normal_w", "B", (1,)), ("normal", "b", (3,))],
+            decompressed_dtype=[("normal_w", "B", (1,)), ("normal", "f", (3,))],
+            codec=(NULL_CODEC, INT_TO_FLOAT_127_SIGNED),
         ),
         (0x1A,): VertexDataFormat(
-            names=("normal_x", "normal_y", "normal_z", "normal_w"),
-            compressed_format="hhhh",
-            decompressed_format="fffh",
-            codec=(INT_TO_FLOAT_32767_SIGNED,) * 3 + (NULL_CODEC,),
+            compressed_dtype=[("normal", "h", (3,)), ("normal_w", "h", (1,))],
+            decompressed_dtype=[("normal", "f", (3,)), ("normal_w", "h", (1,))],
+            codec=(INT_TO_FLOAT_32767_SIGNED, NULL_CODEC),
         ),
         (0x2E,): VertexDataFormat(
-            names=("normal_x", "normal_y", "normal_z", "normal_w"),
-            compressed_format="HHHh",
-            decompressed_format="fffh",
-            codec=(INT_TO_FLOAT_32767_SIGNED,) * 3 + (NULL_CODEC,),
+            compressed_dtype=[("normal", "H", (3,)), ("normal_w", "h", (1,))],
+            decompressed_dtype=[("normal", "f", (3,)), ("normal_w", "h", (1,))],
+            codec=(INT_TO_FLOAT_32767_SIGNED, NULL_CODEC),
         ),
     }
 
@@ -343,33 +324,27 @@ class VertexUV(VertexDataType):
     type_int = 5
     formats = {
         (0x01,): VertexDataFormat(
-            names=("uv_u", "uv_v"),
-            compressed_format="ff",
+            compressed_dtype=[("uv_{i}", "f", (2,))],
         ),
         (0x02,): VertexDataFormat(
-            names=("uv_u", "uv_v", "uv_w"),  # TODO: no idea which games/models use `uv_w` or what it does
-            compressed_format="fff",
+            compressed_dtype=[("uv_{i}", "f", (3,))],  # NOTE: no idea which games/models use `uv[2]` or what it does
         ),
         (0x03,): VertexDataFormat(
-            names=("uv_u", "uv_v", "uv_u", "uv_v"),
-            compressed_format="ffff",
+            compressed_dtype=[("uv_{i}", "f", (2,)), ("uv_{j}", "f", (2,))],
         ),
         (0x10, 0x11, 0x12, 0x13, 0x15): VertexDataFormat(
-            names=("uv_u", "uv_v"),
-            compressed_format="hh",
-            decompressed_format="ff",
+            compressed_dtype=[("uv_{i}", "h", (2,))],
+            decompressed_dtype=[("uv_{i}", "f", (2,))],
             # Codec handled externally.
         ),
         (0x16,): VertexDataFormat(
-            names=("uv_u", "uv_v", "uv_u", "uv_v"),
-            compressed_format="hhhh",
-            decompressed_format="ffff",
+            compressed_dtype=[("uv_{i}", "h", (2,)), ("uv_{j}", "h", (2,))],
+            decompressed_dtype=[("uv_{i}", "f", (2,)), ("uv_{j}", "f", (2,))],
             # Codec handled externally.
         ),
         (0x1A,): VertexDataFormat(
-            names=("uv_u", "uv_v", "uv_w", "uv_zero"),  # fourth value is always zero
-            compressed_format="hhhh",
-            decompressed_format="ffff",
+            compressed_dtype=[("uv_{i}", "h", (4,))],  # NOTE: `uv[2]` for unknown use; `uv[3]` always zero
+            decompressed_dtype=[("uv_{i}", "f", (4,))],
             # Codec handled externally.
         ),
     }
@@ -382,13 +357,11 @@ class VertexTangent(VertexDataType):
     type_int = 6
     formats = {
         (0x03,): VertexDataFormat(
-            names=("tangent_x", "tangent_y", "tangent_z"),
-            compressed_format="fff",
+            compressed_dtype=[("tangent_x", "f", (3,))],
         ),
         (0x10, 0x11, 0x13, 0x1A, 0x2F): VertexDataFormat(
-            names=("tangent_x", "tangent_y", "tangent_z", "tangent_w"),
-            compressed_format="BBBB",
-            decompressed_format="ffff",
+            compressed_dtype=[("tangent", "B", (4,))],
+            decompressed_dtype=[("tangent", "f", (4,))],
             codec=INT_TO_FLOAT_127_SIGNED,
         ),
     }
@@ -396,18 +369,17 @@ class VertexTangent(VertexDataType):
 
 @dataclass(slots=True, init=False, repr=False)
 class VertexBitangent(VertexDataType):
-    """Pendicular to both normal and tangent."""
+    """Pendicular to both normal and tangent. Generally only used by multi-texture materials."""
 
     type_int = 7
+    unique = True
     formats = {
         (0x10, 0x11, 0x13, 0x2F): VertexDataFormat(
-            names=("bitangent_x", "bitangent_y", "bitangent_z", "bitangent_w"),
-            compressed_format="BBBB",
-            decompressed_format="ffff",
+            compressed_dtype=[("bitangent", "B", (4,))],
+            decompressed_dtype=[("bitangent", "f", (4,))],
             codec=INT_TO_FLOAT_127_SIGNED,
         ),
     }
-    unique = True
 
 
 @dataclass(slots=True, init=False, repr=False)
@@ -420,13 +392,11 @@ class VertexColor(VertexDataType):
     type_int = 10
     formats = {
         (0x03,): VertexDataFormat(
-            names=("color_r", "color_g", "color_b", "color_a"),
-            compressed_format="ffff",
+            compressed_dtype=[("color_{i}", "f", (4,))],
         ),
         (0x10, 0x13): VertexDataFormat(
-            names=("color_r", "color_g", "color_b", "color_a"),
-            compressed_format="BBBB",
-            decompressed_format="ffff",
+            compressed_dtype=[("color_{i}", "B", (4,))],
+            decompressed_dtype=[("color_{i}", "f", (4,))],
             codec=INT_TO_FLOAT_255,
         ),
     }
@@ -543,7 +513,8 @@ class VertexArrayLayout(list[VertexDataType]):
         decompressed_array = np.empty(len(compressed_array), dtype=decompressed_dtype)
         for codec, (name, dtype) in zip(codecs, decompressed_dtype.fields.items()):
             # NOTE: Very important to cast array to decompressed dtype FIRST, before decompressing.
-            decompressed_array[name] = codec.decompress(compressed_array[name].astype(dtype[0]))
+            compressed_subarray = compressed_array[name].astype(dtype[0].base)
+            decompressed_array[name] = codec.decompress(compressed_subarray)
         return decompressed_array
 
     def pack_vertex_array(self, array: np.ndarray, uv_factor: int) -> bytes:
@@ -554,47 +525,38 @@ class VertexArrayLayout(list[VertexDataType]):
         compressed_array = np.empty(len(array), dtype=compressed_dtype)
         for codec, (name, dtype) in zip(codecs, compressed_dtype.fields.items()):
             # NOTE: Very important to compress FIRST, before casting array to the compressed dtype.
-            compressed_array[name] = codec.compress(array[name]).astype(dtype[0])
+            compressed_subarray = codec.compress(array[name])
+            compressed_array[name] = compressed_subarray.astype(dtype[0].base)
         return compressed_array.tobytes()
 
     def get_dtypes(self) -> tuple[np.dtype, np.dtype]:
         """Get compressed and decompressed NumPy dtypes for this layout."""
-        compressed_fields = []
-        decompressed_fields = []
+        compressed_dtype = []  # type: list[tuple[str, str, int]]
+        decompressed_dtype = []  # type: list[tuple[str, str, int]]
         uv_index = 0
         color_index = 0
 
         for data_type in self:
-            if isinstance(data_type, VertexPosition) and data_type.format_enum == VertexDataFormatEnum.EdgeCompressed:
+            if data_type.format_enum == VertexDataFormatEnum.EdgeCompressed:
                 # Explicitly not implemented yet.
-                raise NotImplementedError("Cannot yet read FLVERs with edge-compressed vertex positions. Sorry!")
+                raise NotImplementedError("Cannot yet read FLVERs with edge-compressed vertex data. Sorry!")
 
             # Find format. Will raise a `ValueError` here if not supported.
             vertex_data_format = data_type.get_format()
 
             if isinstance(data_type, VertexUV):
-                if data_type.format_enum in {VertexDataFormatEnum.Float4, VertexDataFormatEnum.UVPair}:
-                    # Data field contains TWO UVs.
-                    compressed_fields += vertex_data_format.get_dtype_fields(
-                        compressed=True, index=uv_index, second_index=uv_index + 1
-                    )
-                    decompressed_fields += vertex_data_format.get_dtype_fields(
-                        compressed=False, index=uv_index, second_index=uv_index + 1
-                    )
-                    uv_index += 2
-                else:
-                    compressed_fields += vertex_data_format.get_dtype_fields(compressed=True, index=uv_index)
-                    decompressed_fields += vertex_data_format.get_dtype_fields(compressed=False, index=uv_index)
-                    uv_index += 1
+                compressed_dtype += vertex_data_format.get_indexed_compressed_dtype(i=uv_index, j=uv_index + 1)
+                decompressed_dtype += vertex_data_format.get_indexed_decompressed_dtype(i=uv_index, j=uv_index + 1)
+                uv_index += 2 if data_type.format_enum.has_two_uvs() else 1
             elif isinstance(data_type, VertexColor):
-                compressed_fields += vertex_data_format.get_dtype_fields(compressed=True, index=color_index)
-                decompressed_fields += vertex_data_format.get_dtype_fields(compressed=False, index=color_index)
+                compressed_dtype += vertex_data_format.get_indexed_compressed_dtype(i=color_index)
+                decompressed_dtype += vertex_data_format.get_indexed_decompressed_dtype(i=color_index)
                 color_index += 1
             else:
-                compressed_fields += vertex_data_format.get_dtype_fields(compressed=True)
-                decompressed_fields += vertex_data_format.get_dtype_fields(compressed=False)
+                compressed_dtype += vertex_data_format.get_indexed_compressed_dtype()
+                decompressed_dtype += vertex_data_format.get_indexed_decompressed_dtype()
 
-        return np.dtype(compressed_fields), np.dtype(decompressed_fields)
+        return np.dtype(compressed_dtype), np.dtype(decompressed_dtype)
 
     def get_codecs(self, uv_factor: int = None) -> list[VertexDataCodec]:
         """Get list of codecs with compression/decompression functions for every field (not just broad data type) in
@@ -602,15 +564,15 @@ class VertexArrayLayout(list[VertexDataType]):
         codecs = []
 
         for data_type in self:
-            if isinstance(data_type, VertexPosition) and data_type.format_enum == VertexDataFormatEnum.EdgeCompressed:
+            if data_type.format_enum == VertexDataFormatEnum.EdgeCompressed:
                 # Explicitly not implemented yet.
-                raise NotImplementedError("Cannot yet read FLVERs with edge-compressed vertex positions. Sorry!")
+                raise NotImplementedError("Cannot yet read FLVERs with edge-compressed vertex data. Sorry!")
 
             # Find format. Will raise a `ValueError` here if not supported.
             vertex_data_format = data_type.get_format()
-            field_count = len(vertex_data_format.names)
+            field_count = len(vertex_data_format.compressed_dtype)
 
-            if isinstance(data_type, VertexUV) and vertex_data_format.decompressed_format:
+            if isinstance(data_type, VertexUV) and not data_type.format_enum.has_uncompressed_uvs():
                 # Bake `uv_factor` into decompression.
                 codecs += [VertexDataCodec.from_uv_factor(uv_factor)] * field_count
             else:
@@ -694,21 +656,6 @@ class VertexArray:
     ):
         writer.fill("array_offset", array_offset, obj=self)
         writer.append(self.layout.pack_vertex_array(self.array, uv_factor))
-
-    def get_position(self, as_view=False) -> np.ndarray:
-        """Get position columns as a `(n, 3)` or `(n, 4)` array (if `as_view=False`) or a view of structured rows from
-        the full array."""
-        fields = [f"position_{c}" for c in "xyz"]
-        if "position_w" in self.array.dtype.names:
-            fields.append("position_w")
-        if as_view:
-            return self.array[fields]
-
-        # Construct new simple float array.
-        position_array = np.empty((len(self.array), len(fields)), dtype=np.float32)
-        for i, f in enumerate(fields):
-            position_array[:, i] = self.array[f]
-        return position_array
 
     def __getitem__(self, key):
         """Wraps NumPy array indexing."""

@@ -28,7 +28,7 @@ class FLVERBoneStruct(BinaryStruct):
 
 @dataclass(slots=True)
 class FLVERBone:
-    """Bone in a FLVER model. Named to distinguish it from Havok bones in my `soulstruct-havok` package."""
+    """Bone in a FLVER model. Named to distinguish it from Havok `Bone` in my `soulstruct-havok` package."""
 
     name: str
     translate: Vector3 = field(default_factory=Vector3.zero)

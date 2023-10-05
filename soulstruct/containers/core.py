@@ -1222,7 +1222,7 @@ class Binder(BaseBinaryFile):
         entries are found. If you want to allow multiple hits and only return the first, or return all of those multiple
         hits, use the appropriate method directly.
         """
-        if isinstance(entry_spec, str) and "\\" in entry_spec or "/" in entry_spec:
+        if isinstance(entry_spec, str) and ("\\" in entry_spec or "/" in entry_spec):
             entry_spec = Path(entry_spec)
 
         if isinstance(entry_spec, int):
@@ -1326,4 +1326,7 @@ class Binder(BaseBinaryFile):
         Some simple binders do not even need parent paths for their entries (i.e. entry path == entry name). This
         method will 'fail' for such cases, but that's safer behavior for the majority of binders.
         """
-        return isinstance(entry_spec, Path) or (isinstance(entry_spec, str) and "\\" in entry_spec or "/" in entry_spec)
+        return (
+            isinstance(entry_spec, Path)
+            or (isinstance(entry_spec, str) and ("\\" in entry_spec or "/" in entry_spec))
+        )
