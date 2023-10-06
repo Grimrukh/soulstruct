@@ -308,8 +308,6 @@ class FLVER(GameFile):
         writer.fill("material_count", len(materials_to_pack), obj=self)
         writer.fill("array_layout_count", len(layouts_to_pack), obj=self)
 
-        print(f"Submesh layout indices: {submesh_layout_indices}")
-
         for material in materials_to_pack:
             material.to_flver_writer(writer)
 
