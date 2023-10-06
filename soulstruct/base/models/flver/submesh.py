@@ -39,7 +39,7 @@ class FaceSetStruct(BinaryStruct):
     _pad1: bytes = field(init=False, **BinaryPad(3))
     flags: byte
     triangle_strip: bool
-    backface_culling: bool
+    use_backface_culling: bool
     unk_x06: short
     _vertex_indices_count: int
     _vertex_indices_offset: int
@@ -55,12 +55,13 @@ class FaceSet:
 
     flags: int
     triangle_strip: bool
-    backface_culling: bool
+    use_backface_culling: bool
     unk_x06: int
 
     # Vertex indices could be in triangle strip format (1D) or simply rows of triangles (2D). Number of dimensions must
     # match setting of `triangle_strip` upon export.
-    vertex_indices: np.ndarray = field(default_factory=lambda: np.empty(0))
+    # Note that the `dtype` is always `uint32`, even if FLVER read/written vertex size is 16, for simplicity.
+    vertex_indices: np.ndarray = field(default_factory=lambda: np.empty(0, dtype=np.uint32))
 
     @classmethod
     def from_flver_reader(cls, reader: BinaryReader, header_vertex_index_size: int, vertex_data_offset: int) -> FaceSet:
@@ -68,19 +69,30 @@ class FaceSet:
 
         vertex_index_size = face_set_struct.pop("_vertex_index_size")
         if vertex_index_size == 0:
+            # Use global FLVER size.
             vertex_index_size = header_vertex_index_size
 
         if vertex_index_size == 8:
-            raise NotImplementedError("Soulstruct cannot support edge-compressed FLVER face sets.")
+            raise NotImplementedError("Soulstruct cannot read edge-compressed FLVER face sets.")
         elif vertex_index_size in {16, 32}:
             vertex_indices_count = face_set_struct.pop("_vertex_indices_count")
             vertex_indices_offset = face_set_struct.pop("_vertex_indices_offset")
-            with reader.temp_offset(vertex_data_offset + vertex_indices_offset):
-                fmt = f"<{vertex_indices_count}{'H' if vertex_index_size == 16 else 'I'}"
-                vertex_indices = np.array(reader.unpack(fmt))
-                if not face_set_struct.triangle_strip:
-                    # Reshape indices into 2D array (every row is a triangle).
-                    vertex_indices = vertex_indices.reshape((-1, 3))
+
+            vertex_indices_data = reader.read(
+                vertex_indices_count * vertex_index_size // 8,
+                offset=vertex_data_offset + vertex_indices_offset,
+            )
+            vertex_indices = np.frombuffer(
+                vertex_indices_data, dtype=np.uint16 if vertex_index_size == 16 else np.uint32
+            )
+
+            # We always store indices as 32-bit.
+            if vertex_index_size == 16:
+                vertex_indices = vertex_indices.astype(np.uint32)
+
+            if not face_set_struct.triangle_strip:
+                # Reshape indices into 2D array (every row of three indices is a separate triangle).
+                vertex_indices = vertex_indices.reshape((-1, 3))
         else:
             raise ValueError(f"Unsupported face set index size: {vertex_index_size}")
         return face_set_struct.to_object(cls, vertex_indices=vertex_indices)
@@ -110,12 +122,12 @@ class FaceSet:
     def pack_vertex_indices(self, writer: BinaryWriter, vertex_index_size: int, vertex_indices_offset: int):
         writer.fill("_vertex_indices_offset", vertex_indices_offset, obj=self)
         if vertex_index_size == 16:
-            fmt = f"{len(self.vertex_indices)}H"
+            vertex_indices = self.vertex_indices.astype(np.uint16)
         elif vertex_index_size == 32:
-            fmt = f"{len(self.vertex_indices)}i"
+            vertex_indices = self.vertex_indices
         else:
             raise NotImplementedError(f"Unsupported vertex index size for `pack()`: {vertex_index_size}")
-        writer.pack(fmt, *self.vertex_indices)  # TODO: faster than `np.array.tobytes()`?
+        writer.append(vertex_indices.tobytes())
 
     def get_face_counts(self, allow_primitive_restarts: bool) -> tuple[int, int]:
         """Returns two counts of faces: 'true' and 'total'.
@@ -138,11 +150,17 @@ class FaceSet:
         # True and total face counts are the same.
         return len(self.vertex_indices), len(self.vertex_indices)
 
-    def get_vertex_index_size(self) -> int:
-        for vertex_index in self.vertex_indices.ravel():
-            if vertex_index > 2 ** 16:  # unsigned short max value (+1)
-                return 32
-        return 16
+    def needs_32bit_indices(self) -> bool:
+        """Check if vertices can be written as unsigned shorts (16-bit), which is only possible if they are all less
+        than or equal to 2 ** 16. Returns `False` if so.
+
+        We need to check this when writing both the FaceSet headers and the vertices themselves, hence this method.
+        """
+        if (self.vertex_indices > 2 ** 16).any():
+            # Indices go too high to use an unsigned short.
+            return True
+        # Can use unsigned shorts.
+        return False
 
     def has_flag(self, flag: FaceSetFlags):
         return flag.has_flag(self.flags)
@@ -197,7 +215,7 @@ class FaceSet:
         return connected_vertices
 
     @classmethod
-    def from_triangles(cls, triangles: np.ndarray | list[tuple[int, int, int], ...], backface_culling=True):
+    def from_triangles(cls, triangles: np.ndarray | list[tuple[int, int, int], ...], use_backface_culling=True):
         """Create a `FaceSet` with `triangle_strip=False` from a list of vertex indices triplets.
 
         Given `triangles` can be a 1D or 2D array or a list of triplets. If 1D, it will be reshaped to 2D. If 2D, it
@@ -221,7 +239,7 @@ class FaceSet:
             flags=0,
             unk_x06=0,
             triangle_strip=False,
-            backface_culling=backface_culling,
+            use_backface_culling=use_backface_culling,
             vertex_indices=vertex_indices,
         )
 
@@ -231,12 +249,12 @@ class FaceSet:
         else:
             vertex_indices_str = f"<{self.vertex_indices.shape[0]} triangles>"
         if self.flags == 0 and self.unk_x06 == 0:
-            return f"FaceSet({vertex_indices_str}, backface_culling = {self.backface_culling})"
+            return f"FaceSet({vertex_indices_str}, use_backface_culling = {self.use_backface_culling})"
         return (
             f"FaceSet(\n"
             f"  flags = {self.flags}\n"
             f"  triangle_strip = {self.triangle_strip}\n"
-            f"  backface_culling = {self.backface_culling}\n"
+            f"  use_backface_culling = {self.use_backface_culling}\n"
             f"  unk_x06 = {self.unk_x06}\n"
             f"  vertex_indices = {vertex_indices_str}\n"
             f")"
@@ -316,8 +334,8 @@ class Submesh:
         kwargs = {}
         if _bounding_box_offset != 0:
             with reader.temp_offset(_bounding_box_offset):
-                kwargs["bounding_box_minimum"] = Vector3(reader.unpack("3f"))
-                kwargs["bounding_box_maximum"] = Vector3(reader.unpack("3f"))
+                kwargs["bounding_box_min"] = Vector3(reader.unpack("3f"))
+                kwargs["bounding_box_max"] = Vector3(reader.unpack("3f"))
                 kwargs["bounding_box_unknown"] = Vector3(reader.unpack("3f")) if bounding_box_has_unknown else None
         else:
             kwargs["uses_bounding_box"] = False
@@ -515,23 +533,23 @@ class Submesh:
         return "\n".join(lines)
 
     @property
-    def backface_culling(self):
-        """Get `backface_culling` from face set 0 and warn if other face sets have different values."""
+    def use_backface_culling(self):
+        """Get `use_backface_culling` from face set 0 and warn if other face sets have different values."""
         if not self.face_sets:
-            _LOGGER.warning("Submesh has no face sets.")
+            _LOGGER.warning("Submesh has no FaceSets.")
             return False
-        cull = self.face_sets[0].backface_culling
+        cull = self.face_sets[0].use_backface_culling
         for face_set in self.face_sets[1:]:
-            if face_set.backface_culling != cull:
-                _LOGGER.warning(f"Submesh face sets have different `backface_culling` values. Using index 0: {cull}")
+            if face_set.use_backface_culling != cull:
+                _LOGGER.warning(f"Submesh FaceSets have different `use_backface_culling` values. Using index 0: {cull}")
                 return cull
         return cull
 
-    @backface_culling.setter
-    def backface_culling(self, value):
-        """Set `backface_culling` for all face sets."""
+    @use_backface_culling.setter
+    def use_backface_culling(self, value):
+        """Set `use_backface_culling` for all face sets."""
         for face_set in self.face_sets:
-            face_set.backface_culling = value
+            face_set.use_backface_culling = value
 
     def vertex_count_exceeds_ushort(self, vertex_array=0):
         return len(self.vertex_arrays[vertex_array]) < 0xFFFF

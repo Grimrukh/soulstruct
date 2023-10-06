@@ -7,7 +7,7 @@ import typing as tp
 from dataclasses import dataclass
 
 from soulstruct.base.ezstate.esd import ESD as _BaseESD, ESDType
-from soulstruct.containers import DCXType
+from soulstruct.dcx import DCXType
 
 
 @dataclass(slots=True)

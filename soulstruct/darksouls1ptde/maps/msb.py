@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 from enum import IntEnum
 
 from soulstruct.darksouls1ptde.game_types.map_types import *
+from soulstruct.dcx import DCXType
 from soulstruct.base.maps.msb import MSB as _BaseMSB, MSBSupertype, MSBEntryList
 from soulstruct.base.maps.msb.utils import MSBSubtypeInfo
 from soulstruct.utilities.maths import Vector3
@@ -18,7 +19,6 @@ from .models import *
 from .events import *
 from .regions import *
 from .parts import *
-from ...containers import DCXType
 
 
 @dataclass(slots=True)

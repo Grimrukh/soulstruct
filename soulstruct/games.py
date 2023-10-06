@@ -24,7 +24,7 @@ import typing as tp
 from pathlib import Path
 
 from soulstruct.config import *
-from soulstruct.containers.dcx import DCXType
+from soulstruct.dcx import DCXType
 from soulstruct.utilities.files import PACKAGE_PATH
 
 

@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.containers.dcx import DCXType
+from soulstruct.dcx import DCXType
 from soulstruct.utilities.binary import *
 
 from .event import Event as BaseEvent, EventSignature

@@ -24,10 +24,10 @@ from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.base.textures.dds import DDS, DDSCAPS2, texconv, convert_dds_file
+from soulstruct.dcx import DCXType, decompress
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.files import read_json, write_json
 
-from .dcx import DCXType, decompress
 
 try:
     Self = tp.Self

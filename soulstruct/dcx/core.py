@@ -18,9 +18,10 @@ from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 
-from soulstruct.containers import oodle
 from soulstruct.exceptions import SoulstructError
 from soulstruct.utilities.binary import *
+
+from . import oodle
 
 _LOGGER = logging.getLogger(__name__)
 

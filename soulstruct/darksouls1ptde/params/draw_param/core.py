@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 from soulstruct.base.params.param import Param
 from soulstruct.base.params.param_row import ParamRow
-from soulstruct.containers import DCXType
+from soulstruct.dcx import DCXType
 
 
 @dataclass(slots=True)

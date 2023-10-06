@@ -48,7 +48,7 @@ def test_merge_and_split():
         submesh_kwargs = {
             "is_bind_pose": submesh.is_bind_pose,
             "default_bone_index": submesh.default_bone_index,
-            "backface_culling": submesh.backface_culling,
+            "use_backface_culling": submesh.use_backface_culling,
         }
         submesh_info.append((material_index, layout, submesh_kwargs))
 
@@ -177,7 +177,7 @@ def inspect_c5280():
 
     flver = FLVER.from_binder_path(DSR_PATH + "/chr/c5280.chrbnd.dcx", 200)
     for i, submesh in enumerate(flver.submeshes):
-        print(i, submesh.face_sets[0].backface_culling, submesh.material.textures[0].stem)
+        print(i, submesh.face_sets[0].use_backface_culling, submesh.material.textures[0].stem)
 
 
 if __name__ == '__main__':

@@ -12,7 +12,7 @@ from pathlib import Path
 from types import ModuleType
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.containers import DCXType
+from soulstruct.dcx import DCXType
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.text import pad_chars
 from soulstruct.utilities.files import write_json

@@ -236,16 +236,20 @@ class FLVER(GameFile):
                 true_face_count += face_set_true_count
                 total_face_count += face_set_total_count
 
-        if self.version < Version.Bloodborne_DS3_A:
-            # Set header's `vertex_index_size` to the largest size detected across all `FaceSet`s (16 or 32).
+        if self.version >= Version.Bloodborne_DS3_A:
+            # Post-2015 FLVERs: Vertex size is stored per `FaceSet`.
+            header_vertex_indices_size = 0
+        else:
+            # All `FaceSet`s use the same vertex index size, specified in the FLVER header. We check if all face sets in
+            # this FLVER support 16-bit indices. If not, we use 32-bit indices for ALL of them.
             header_vertex_indices_size = 16
             for submesh in self.submeshes:
                 for face_set in submesh.face_sets:
-                    face_set_vertex_index_size = face_set.get_vertex_index_size()
-                    header_vertex_indices_size = max(header_vertex_indices_size, face_set_vertex_index_size)
-        else:
-            # Vertex size is stored per `VertexBuffer`.
-            header_vertex_indices_size = 0
+                    if face_set.needs_32bit_indices():
+                        header_vertex_indices_size = 32
+                        break
+                if header_vertex_indices_size == 32:
+                    break
 
         header = FLVERStruct.from_object(
             self,
@@ -260,7 +264,7 @@ class FLVER(GameFile):
             vertex_array_count=sum(len(mesh.vertex_arrays) for mesh in self.submeshes),
             true_face_count=true_face_count,
             total_face_count=total_face_count,
-            vertex_indices_size=header_vertex_indices_size,
+            vertex_indices_size=header_vertex_indices_size,  # 0, 16, or 32
             face_set_count=sum(len(mesh.face_sets) for mesh in self.submeshes),
             array_layout_count=len(self.layouts),
             texture_count=sum(len(material.textures) for material in self.materials),
@@ -313,13 +317,17 @@ class FLVER(GameFile):
             submesh.to_flver_writer(writer, material_index)
 
         # Pack submesh face sets.
+        face_set_index_sizes = []
         for submesh in self.submeshes:
             for face_set in submesh.face_sets:
-                if header_vertex_indices_size == 0:
-                    face_set_vertex_index_size = face_set.get_vertex_index_size()
-                else:
+                if header_vertex_indices_size != 0:
+                    # Vertex size set globally (older FLVERs).
                     face_set_vertex_index_size = header_vertex_indices_size
+                else:
+                    # Vertex size set per `FaceSet`. These sizes are stored for packing below.
+                    face_set_vertex_index_size = 32 if face_set.needs_32bit_indices() else 16
                 face_set.to_flver_writer(writer, face_set_vertex_index_size)
+                face_set_index_sizes.append(face_set_vertex_index_size)  # to save time below
 
         # Pack submesh vertex array (array) headers.
         for submesh, layout_indices in zip(self.submeshes, submesh_layout_indices):
@@ -345,21 +353,21 @@ class FLVER(GameFile):
         # Indexed data only after this point, with 16 pad bytes between each data type.
 
         writer.pad_align(16)
-        for i, layout in enumerate(self.layouts):
+        for layout in layouts_to_pack:
             layout.pack_layout_types(writer)
 
         writer.pad_align(16)
-        for i, submesh in enumerate(self.submeshes):
+        for submesh in self.submeshes:
             submesh.pack_bounding_box(writer)
 
         writer.pad_align(16)
         bone_indices_start = writer.position
-        for i, submesh in enumerate(self.submeshes):
+        for submesh in self.submeshes:
             submesh.pack_bone_indices(writer, bone_indices_start=bone_indices_start)
 
         writer.pad_align(16)
         first_face_set_index = 0
-        for i, submesh in enumerate(self.submeshes):
+        for submesh in self.submeshes:
             submesh.pack_face_set_indices(writer, first_face_set_index)
             first_face_set_index += len(submesh.face_sets)
 
@@ -395,18 +403,16 @@ class FLVER(GameFile):
         vertex_data_start = writer.position
         writer.fill("vertex_data_offset", vertex_data_start, obj=self)
 
+        face_set_index = 0
         for submesh in self.submeshes:
             for face_set in submesh.face_sets:
-                if header_vertex_indices_size == 0:
-                    face_set_vertex_index_size = face_set.get_vertex_index_size()
-                else:
-                    face_set_vertex_index_size = header_vertex_indices_size
                 writer.pad_align(16)
                 face_set.pack_vertex_indices(
                     writer,
-                    vertex_index_size=face_set_vertex_index_size,
+                    vertex_index_size=face_set_index_sizes[face_set_index],
                     vertex_indices_offset=writer.position - vertex_data_start,
                 )
+                face_set_index += 1
 
             for vertex_array in submesh.vertex_arrays:
                 writer.pad_align(16)
@@ -618,6 +624,8 @@ class FLVER(GameFile):
             # Unused.
             bone_arma_translate_inv_rotates = []
 
+        refresh_bone_indices = [i for i, bone in enumerate(self.bones) if not only_bones or i in only_bones]
+
         # 3D arrays that track min/max vertex positions for each bone and axis.
         bone_mins = SINGLE_MAX * np.ones((len(self.bones), 3))
         bone_maxs = SINGLE_MIN * np.ones((len(self.bones), 3))
@@ -627,7 +635,7 @@ class FLVER(GameFile):
 
             for vertex_array in submesh.vertex_arrays:
 
-                used_bone_vertex_indices = []  # type: list[np.ndarray]  # tracks vertex indices used by each bone
+                used_bone_vertex_indices = {}  # tracks vertex indices used by each bone
 
                 position = vertex_array["position"]
                 bone_indices = vertex_array["bone_indices"]
@@ -639,22 +647,21 @@ class FLVER(GameFile):
                     bone_weights = vertex_array["bone_weights"]
                 except ValueError:
                     # No bone weights (map piece 'pose' mode). We only need to look at first bone index (always used).
-                    for bone_index in range(len(self.bones)):
-                        used_bone_vertex_indices.append(bone_indices[:, 0] == bone_index)
+                    for bone_index in refresh_bone_indices:
+                        used_bone_vertex_indices[bone_index] = bone_indices[:, 0] == bone_index
                 else:
                     # Only check bone indices where weight is non-zero.
-                    for bone_index in range(len(self.bones)):
-                        used_bone_vertex_indices.append(
-                            (bone_indices == bone_index) & (bone_weights > 0.0)
-                        )
+                    for bone_index in refresh_bone_indices:
+                        used = ((bone_indices == bone_index) & (bone_weights > 0.0)).any(axis=1)
+                        used_bone_vertex_indices[bone_index] = used
 
-                for bone_index, vertex_indices in enumerate(used_bone_vertex_indices):
-                    if only_bones and bone_index not in only_bones:
-                        continue
+                for bone_index, vertex_indices in used_bone_vertex_indices.items():
                     if not np.any(vertex_indices):
                         continue  # bone unused by this submesh array
 
                     # Get vertex positions for this bone.
+                    # TODO: "IndexError: boolean index did not match indexed array along dimension 1; dimension is 3
+                    #  but corresponding boolean dimension is 4."
                     bone_vertex_positions = position[vertex_indices]
 
                     if in_local_space:
@@ -672,12 +679,11 @@ class FLVER(GameFile):
                     bone_maxs[bone_index] = np.max((bone_maxs[bone_index], bone_vertex_maxs), axis=0)
 
         # Update bone bounding boxes.
-        for bone_i, bone in enumerate(self.bones):
-            if only_bones and bone_i not in only_bones:
-                continue
+        for bone_index in refresh_bone_indices:
             # print(f"BEFORE: {bone.name}: {bone.bounding_box_min} -> {bone.bounding_box_max}")
-            bone.bounding_box_min = Vector3(bone_mins[bone_i])
-            bone.bounding_box_max = Vector3(bone_maxs[bone_i])
+            bone = self.bones[bone_index]
+            bone.bounding_box_min = Vector3(bone_mins[bone_index])
+            bone.bounding_box_max = Vector3(bone_maxs[bone_index])
             # print(f"    --> {bone.name}: {bone.bounding_box_min} -> {bone.bounding_box_max}")
 
     def refresh_bounding_boxes(self):

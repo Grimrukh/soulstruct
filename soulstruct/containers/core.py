@@ -20,11 +20,11 @@ from pathlib import Path
 from dataclasses import dataclass, field
 
 from soulstruct.base.base_binary_file import BaseBinaryFile
+from soulstruct.dcx import DCXType, compress, decompress, is_dcx
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.files import read_json, write_json
 
 from .binder_hash import BinderHashTable
-from .dcx import DCXType, compress, decompress, is_dcx
 from .entry import BinderEntry, BinderEntryHeader
 
 try:

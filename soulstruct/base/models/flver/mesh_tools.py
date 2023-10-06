@@ -82,8 +82,8 @@ class MergedMesh:
         face, which is sourced directly from argument `submesh_material_indices` (which should have the same length as
         `flver.submeshes`) rather than using the original FLVER material index. This allows the definition of 'material'
         to be set to match the caller's purposes for the merged mesh, usually to preserve distinct submesh or face set
-        properties (e.g. `is_bind_pose` or `backface_culling`) that may be different for submeshes that share the same
-        FLVER material index.
+        properties (e.g. `is_bind_pose` or `use_backface_culling`) that may be different for submeshes that share the
+        same FLVER material index.
         """
         if material_uv_layers:
             material_uv_layers = material_uv_layers
@@ -308,7 +308,7 @@ class MergedMesh:
             - combine all vertices in all submeshes but do NOT reduce them yet
             - instead, keep a dictionary mapping vertex (position, bone_weights, bone_indices) to full vertex row
                 - these represent the ordered, 'created' merged vertices
-            - also create a 'vertex variant' dictionary mapping the same hashes to inner dictionaries that map normals to
+            - also create a 'vertex variant' dictionary mapping the same hashes to inner dicts that map normals to
                 vertex rows
             - iterate over faces in submesh
             - for each vertex in face:
@@ -489,7 +489,8 @@ class MergedMesh:
 
         As with `MergedMesh.from_flver()`, the definition of 'material' here should comprise any reason that the mesh
         needs to be split, and `faces[3]` should be set accordingly. Two split submeshes may use the same FLVER material
-        in `submesh_info`, for example, yet have different `is_bind_pose` values or `face_sets[0].backface_culling` etc.
+        in `submesh_info`, for example, yet have different `is_bind_pose` values or `face_sets[0].use_backface_culling`
+        etc.
 
         `is_bind_pose` must appear in each submesh kwargs dictionary, as it is used to determine bone index style.
         TODO: Still not 100% sure if there are any FLVERs that use 'bind pose' for some submeshes but not others. From
@@ -559,7 +560,7 @@ class MergedMesh:
         split_submeshes = []
 
         for material_index, submesh_loops, submesh_bone_indices in split_submesh_info:
-            kwargs = submesh_kwargs[material_index]
+            kwargs = submesh_kwargs[material_index].copy()  # may be used by multiple subsplit meshes
 
             # Duplicate loop data is finally removed here, giving the true vertex data stored in the FLVER submesh.
             # However, since `np.unique()` automatically and unstoppably sorts the array, we need to use `return_index`
@@ -580,10 +581,17 @@ class MergedMesh:
             # Apply to `face_indices` to update them to index into the unsorted `submesh_vertices`:
             face_vertex_indices = inverse_sorting_indices[face_vertex_indices]
 
+            if unused_bone_indices_are_minus_one:
+                # Replace -1 unused bone indices with 0 for FLVER.
+                bone_indices = submesh_vertices["bone_indices"]
+                bone_indices[bone_indices == -1] = 0
+
             vertex_array = VertexArray(array=submesh_vertices, layout=submesh_layouts[material_index])
 
             face_set_count = kwargs.pop("face_set_count", 1)
-            face_set = FaceSet.from_triangles(face_vertex_indices, backface_culling=kwargs.pop("backface_culling"))
+            face_set = FaceSet.from_triangles(
+                face_vertex_indices, use_backface_culling=kwargs.pop("use_backface_culling")
+            )
             material = submesh_materials[material_index]
             submesh = Submesh(
                 face_sets=[face_set],
@@ -616,7 +624,7 @@ class MergedMesh:
         subsplit_face_indices = [0]
         subsplit_bone_indices = []
 
-        bone_indices = submesh_loops["bone_indices"]
+        bone_indices = submesh_loops["bone_indices"]  # copied below if modified
 
         if is_bind_pose:
             # Up to four unique bones per vertex, so we need to more carefully collect as we go.
@@ -624,9 +632,8 @@ class MergedMesh:
                 # Set all unused bone indices to -1, to distinguish them from true use of bone 0. Ideally, the
                 # user can do this themselves while they are constructing their merged mesh (e.g. from Blender)
                 # to save time here, as this requires two new array creations.
-                bone_weights = np.empty((len(submesh_loops), 4), dtype=np.float32)
-                for i, c in enumerate("abcd"):
-                    bone_weights[:, i] = submesh_loops[f"bone_weight_{c}"]
+                bone_weights = submesh_loops["bone_weights"]
+                bone_indices = bone_indices.copy()  # NOT modified in-place
                 bone_indices[bone_weights == 0.0] = -1
 
         # Loops are still genuine loops, i.e. every three represent one triangle with 12 total bone indices.
@@ -638,12 +645,15 @@ class MergedMesh:
         max_bones = max_bones_per_submesh + 1
         unique_indices = {-1}
         for face_index, face_bone_indices in enumerate(all_face_bone_indices):
-            unique_indices |= set(face_bone_indices)
-            if len(unique_indices) > max_bones:
+            new_indices = unique_indices | set(face_bone_indices)
+            if len(new_indices) > max_bones:
                 # This row would exceed the limit. Start a new submesh.
                 subsplit_face_indices.append(face_index)
                 subsplit_bone_indices.append(np.array(sorted(unique_indices - {-1})))
                 unique_indices = {-1} | set(face_bone_indices)
+            else:
+                # Can continue.
+                unique_indices = new_indices
 
         # Finish final subsplit. Face indices for submeshes that don't need sub-splitting will just be `[0, n]`.
         subsplit_face_indices += [len(submesh_loops) // 3]
@@ -656,8 +666,9 @@ class MergedMesh:
             subsplit_loops = submesh_loops[loops_start:loops_end]
 
             subsplit_global_bone_indices = bone_indices[loops_start:loops_end, :]
-            MergedMesh.make_bone_indices_local(subsplit_global_bone_indices, subsplit_bone_indices[i])
-            subsplit_loops["bone_indices"] = subsplit_global_bone_indices
+            subsplit_loops["bone_indices"] = MergedMesh.make_bone_indices_local(
+                subsplit_global_bone_indices, subsplit_bone_indices[i]
+            )
 
             all_subsplits.append((material_index, subsplit_loops, subsplit_bone_indices[i]))
 
@@ -707,12 +718,6 @@ class MergedMesh:
             combined_array[f"color_{c_i}"] = self.loop_vertex_colors[c_i]  # (loop_count, 4)
 
         return combined_array
-
-    @staticmethod
-    def get_empty_subarray_dict(names: tp.Sequence[str]) -> dict[str, list[np.ndarray]]:
-        """Create a dictionary with empty lists for each vertex array field name (combining sub-dimensions)."""
-        # TODO: pretty dumb.
-        return {name: [] for name in names}
 
     @staticmethod
     def make_bone_indices_local(bone_indices: np.ndarray, submesh_bone_indices: np.ndarray):
