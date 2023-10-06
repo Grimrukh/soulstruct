@@ -145,9 +145,6 @@ class FLVER(GameFile):
         layouts = [VertexArrayLayout.from_flver_reader(reader) for _ in range(header.array_layout_count)]
         if header.version == Version.DarkSouls_A:
             # Check for botched DS1R array layouts (thanks QLOC!).
-            print(layouts)
-            for ah in array_headers:
-                print(ah)
             check_ds1_layouts(layouts, array_headers, submeshes)
 
         # Load NumPy array wrappers with attached layouts.
