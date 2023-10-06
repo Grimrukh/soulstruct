@@ -6,7 +6,8 @@ import typing as tp
 from dataclasses import dataclass
 
 from soulstruct.base.text.msgbnd import MSGBND as _BaseMSGBND
-from soulstruct.containers import BinderVersion, BinderFlags, BinderVersion4Info, DCXType
+from soulstruct.containers import BinderVersion, BinderFlags, BinderVersion4Info
+from soulstruct.dcx import DCXType
 from soulstruct.games import DARK_SOULS_DSR
 
 try:

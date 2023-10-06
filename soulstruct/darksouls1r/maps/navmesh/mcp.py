@@ -11,7 +11,8 @@ from itertools import product
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.containers import Binder, EntryNotFoundError, DCXType
+from soulstruct.containers import Binder, EntryNotFoundError
+from soulstruct.dcx import DCXType
 from soulstruct.darksouls1r.maps.msb import MSB
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation

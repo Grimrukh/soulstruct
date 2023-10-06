@@ -6,7 +6,8 @@ import typing as tp
 from dataclasses import dataclass, field
 
 from soulstruct.base.ezstate.talkesdbnd import TalkESDBND as _BaseTalkESDBND
-from soulstruct.containers import BinderVersion, BinderVersion4Info, DCXType
+from soulstruct.containers import BinderVersion, BinderVersion4Info
+from soulstruct.dcx import DCXType
 from soulstruct.games import BLOODBORNE
 
 from .esd import TalkESD

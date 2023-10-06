@@ -6,7 +6,8 @@ import typing as tp
 from dataclasses import dataclass
 from pathlib import Path
 
-from soulstruct.containers import BinderVersion, BinderVersion4Info, DCXType
+from soulstruct.containers import BinderVersion, BinderVersion4Info
+from soulstruct.dcx import DCXType
 from soulstruct.base.game_types import *
 from soulstruct.base.params.gameparambnd import GameParamBND as _BaseGameParamBND
 from soulstruct.utilities.files import PACKAGE_PATH

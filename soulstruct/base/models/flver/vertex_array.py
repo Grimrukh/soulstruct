@@ -478,7 +478,7 @@ class VertexArrayLayout(list[VertexDataType]):
 
                 if data_type_struct.data_offset != tight_data_offset:
                     _LOGGER.warning(
-                        f"Layout member offset {data_type_struct.data_offset} does not match expected offset "
+                        f"Vertex data type offset {data_type_struct.data_offset} does not match expected offset "
                         f"{tight_data_offset}."
                     )
 
@@ -497,12 +497,15 @@ class VertexArrayLayout(list[VertexDataType]):
     def pack_layout_types(self, writer: BinaryWriter):
         """Write actual layout data type information and fill header offset field."""
         writer.fill_with_position("layout_types_offset", obj=self)
+        data_type_offset = 0
         for data_type in self:
             VertexDataTypeStruct.object_to_writer(
                 data_type,
                 writer,
+                data_offset=data_type_offset,
                 _type_int=data_type.type_int,
             )
+            data_type_offset += data_type.size
 
     def unpack_vertex_array(self, data: bytes, uv_factor: int) -> np.ndarray:
         """Use this layout to read a structured array of vertex data from the given raw FLVER array data."""

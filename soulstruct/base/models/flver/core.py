@@ -145,6 +145,9 @@ class FLVER(GameFile):
         layouts = [VertexArrayLayout.from_flver_reader(reader) for _ in range(header.array_layout_count)]
         if header.version == Version.DarkSouls_A:
             # Check for botched DS1R array layouts (thanks QLOC!).
+            print(layouts)
+            for ah in array_headers:
+                print(ah)
             check_ds1_layouts(layouts, array_headers, submeshes)
 
         # Load NumPy array wrappers with attached layouts.
@@ -258,7 +261,7 @@ class FLVER(GameFile):
             vertex_data_offset=RESERVED,
             vertex_data_size=RESERVED,
             dummy_count=len(self.dummies),
-            material_count=len(self.materials),
+            material_count=RESERVED,
             bone_count=len(self.bones),
             mesh_count=len(self.submeshes),
             vertex_array_count=sum(len(mesh.vertex_arrays) for mesh in self.submeshes),
@@ -266,7 +269,7 @@ class FLVER(GameFile):
             total_face_count=total_face_count,
             vertex_indices_size=header_vertex_indices_size,  # 0, 16, or 32
             face_set_count=sum(len(mesh.face_sets) for mesh in self.submeshes),
-            array_layout_count=len(self.layouts),
+            array_layout_count=RESERVED,
             texture_count=sum(len(material.textures) for material in self.materials),
         )
 
@@ -304,6 +307,11 @@ class FLVER(GameFile):
                     layouts_to_pack.append(layout)
                 array_layout_indices.append(array_layout_index)
             submesh_layout_indices.append(array_layout_indices)
+
+        writer.fill("material_count", len(materials_to_pack), obj=self)
+        writer.fill("array_layout_count", len(layouts_to_pack), obj=self)
+
+        print(f"Submesh layout indices: {submesh_layout_indices}")
 
         for material in materials_to_pack:
             material.to_flver_writer(writer)

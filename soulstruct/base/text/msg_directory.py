@@ -10,7 +10,8 @@ import typing as tp
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from soulstruct.containers import Binder, BinderEntry, DCXType
+from soulstruct.containers import Binder, BinderEntry
+from soulstruct.dcx import DCXType
 from soulstruct.base.game_file_directory import GameFileDirectory
 from soulstruct.utilities.files import read_json, write_json
 

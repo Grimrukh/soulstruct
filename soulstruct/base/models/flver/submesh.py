@@ -302,7 +302,7 @@ class Submesh:
     vertex_arrays: list[VertexArray] = field(default_factory=list)
 
     # Enabled by Soulstruct when trying to read a vertex array from a FLVCR (usually DS1R) with the wrong layout.
-    invalid_layout: bool = field(default=False, init=False)
+    invalid_layout: bool = False
 
     # Held temporarily while unpacking.
     _face_set_indices: list[int] | None = field(default=None, init=False)
