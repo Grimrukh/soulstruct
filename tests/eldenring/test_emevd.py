@@ -13,7 +13,7 @@ class EMEVDTest(unittest.TestCase):
 
     def test_emevd(self):
 
-        with Timer("EMEVD Binary Reade"):
+        with Timer("EMEVD Binary Read"):
             emevd = EMEVD.from_path("resources/m10_00_00_00.emevd.dcx")
 
         with Timer("EMEVD Binary Write"):

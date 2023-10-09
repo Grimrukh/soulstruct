@@ -228,13 +228,13 @@ class Timer:
         self._name = name
 
     def __enter__(self):
-        self._start = time.time()
+        self._start = time.perf_counter()
 
     def __exit__(self, *exc):
         if any(exc):
-            _LOGGER.error(f"{self._name} FAILED after {time.time() - self._start} s.")
+            _LOGGER.error(f"{self._name} FAILED after {time.perf_counter() - self._start} s.")
         else:
-            _LOGGER.info(f"{self._name} COMPLETED in {time.time() - self._start} s.")
+            _LOGGER.info(f"{self._name} COMPLETED in {time.perf_counter() - self._start} s.")
 
 
 @contextlib.contextmanager

@@ -559,7 +559,15 @@ class VertexArrayLayout(list[VertexDataType]):
                 compressed_dtype += vertex_data_format.get_indexed_compressed_dtype()
                 decompressed_dtype += vertex_data_format.get_indexed_decompressed_dtype()
 
-        return np.dtype(compressed_dtype), np.dtype(decompressed_dtype)
+        try:
+            return np.dtype(compressed_dtype), np.dtype(decompressed_dtype)
+        except ValueError as ex:
+            raise ValueError(
+                f"Could not create NumPy dtypes from compressed and decompressed dtypes:\n"
+                f"    compressed: {compressed_dtype}\n"
+                f"    decompressed: {decompressed_dtype}\n"
+                f"Error: {ex}"
+            )
 
     def get_codecs(self, uv_factor: int = None) -> list[VertexDataCodec]:
         """Get list of codecs with compression/decompression functions for every field (not just broad data type) in
