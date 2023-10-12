@@ -252,7 +252,8 @@ class NVM(GameFile):
                 f"Triangles offset for NVM should be {expected_triangles_offset}, not {header.triangles_offset}."
             )
 
-        vertices = np.frombuffer(reader.read(4 * header.vertices_count), dtype=np.float32)
+        # Read flat array of [x0, y0, z0, x1, y1, z1, ...] single-precision vertices.
+        vertices = np.frombuffer(reader.read(4 * 3 * header.vertices_count), dtype=np.float32)
         vertices.shape = (header.vertices_count, 3)
         triangles = [NVMTriangle.from_nvm_reader(reader) for _ in range(header.triangles_count)]
 
