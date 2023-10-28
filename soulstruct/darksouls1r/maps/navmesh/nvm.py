@@ -27,6 +27,8 @@ class NVMTriangle:
     """A single triangle face in a `NVM` mesh.
 
     Has flags that indicate whether the triangle is walkable, has any breakable obstacles on it, etc.
+
+    TODO: Should probably just hold these in an 8-column NumPy array.
     """
 
     vertex_indices: tuple[int, int, int]

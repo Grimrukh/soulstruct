@@ -1,6 +1,5 @@
 __all__ = [
     "PACKAGE_PATH",
-    "find_dcx",
     "create_bak",
     "find_steam_common_paths",
     "import_arbitrary_file",
@@ -32,23 +31,6 @@ def PACKAGE_PATH(*relative_parts) -> Path:
     if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
         return Path(getattr(sys, "_MEIPASS"), *relative_parts)
     return Path(__file__).parent.parent.resolve().joinpath(*relative_parts)
-
-
-def find_dcx(file_path):
-    """Returns DCX (preferred) or non-DCX version of the given file path.
-
-    It doesn't matter if the file path already ends with '.dcx'. If neither file exists, FileNotFoundError is raised.
-    """
-    file_path = Path(file_path)
-    if file_path.suffix == ".dcx":
-        no_dcx, dcx = (file_path.parent / file_path.stem, file_path)
-    else:
-        no_dcx, dcx = (file_path, file_path.with_suffix(file_path.suffix + ".dcx"))
-    if Path(dcx).is_file():
-        return dcx
-    elif Path(no_dcx).is_file():
-        return no_dcx
-    raise FileNotFoundError(f"Could not find DCX or non-DCX version of {file_path}.")
 
 
 def create_bak(file_path, bak_suffix=".bak"):
