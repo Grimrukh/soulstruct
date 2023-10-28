@@ -170,18 +170,19 @@ class MCGNode:
         self.translate = (rotation @ (self.translate - pivot_point)) + pivot_point
 
     def __repr__(self) -> str:
-        if self.dead_end_navmesh:
+        if self.dead_end_navmesh is not MISSING_REF:
             return (
                 f"MCGNode({self.translate}, "
                 f"connected_nodes=<{len(self.connected_nodes)}>, "
                 f"connected_edges=<{len(self.connected_edges)}>, "
-                f"dead_end_navmesh=<{self.dead_end_navmesh.name}>"
+                f"dead_end_navmesh=<{self.dead_end_navmesh.name if self.dead_end_navmesh else 'None'}>"
                 f")"
             )
         return (
             f"MCGNode({self.translate}, "
             f"connected_nodes=<{len(self.connected_nodes)}>, "
-            f"connected_edges=<{len(self.connected_edges)}>"
+            f"connected_edges=<{len(self.connected_edges)}>, "
+            f"dead_end_navmesh_index={self.dead_end_navmesh_index}"
             f")"
         )
 
