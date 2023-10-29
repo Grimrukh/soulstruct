@@ -1142,7 +1142,7 @@ class Binder(BaseBinaryFile):
                 found = entry
         if found:
             return found
-        raise MultipleEntriesFoundError(f"No entry found with `{attr} == {value}`.")
+        raise EntryNotFoundError(f"No entry found with `{attr} == {value}`.")
 
     def find_entry_id(self, entry_id: int, assert_unique=False):
         """Return the first entry with the given `entry_id`.
