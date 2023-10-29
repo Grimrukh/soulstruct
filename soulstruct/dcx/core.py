@@ -63,7 +63,8 @@ class DCXType(Enum):
         Returns `Path` or `str` (depending on input type).
         """
         is_path = isinstance(path, Path)
-        new_path = Path(path).with_name(path.name.removesuffix(".dcx"))
+        path = Path(path)
+        new_path = path.with_name(path.name.removesuffix(".dcx"))
         if self.has_dcx_extension():
             new_path = path.with_name(path.name + ".dcx")
         return new_path if is_path else str(new_path)
