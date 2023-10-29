@@ -54,6 +54,9 @@ class DCXType(Enum):
     def get_version_info(self) -> tuple[bytes, int, int, int, int, int]:
         return DCX_VERSION_INFO[self]
 
+    def has_dcx_extension(self):
+        return self.value >= 2
+
     def process_path(self, path: Path | str) -> Path | str:
         """Add or remove '.dcx' extension to/from `path` as appropriate.
 
@@ -61,7 +64,7 @@ class DCXType(Enum):
         """
         is_path = isinstance(path, Path)
         new_path = Path(path).with_name(path.name.removesuffix(".dcx"))
-        if self.value >= 2:
+        if self.has_dcx_extension():
             new_path = path.with_name(path.name + ".dcx")
         return new_path if is_path else str(new_path)
 
