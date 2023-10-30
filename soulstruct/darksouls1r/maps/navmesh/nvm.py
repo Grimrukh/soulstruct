@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from soulstruct.base.game_file import GameFile
 from soulstruct.darksouls1r.events.emevd.enums import NavmeshType
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.maths import Vector2, Vector3, Matrix3
+from soulstruct.utilities.maths import Vector3, Matrix3
 
 import numpy as np
 
@@ -66,10 +66,6 @@ class NVMTriangle:
     @staticmethod
     def reverse_flags_bits(n):
         return int(f"{{0:016b}}".format(n)[::-1], 2)
-
-    def is_clockwise(self, vertices: list[Vector3]):
-        v1, v2, v3 = (vertices[i] for i in self.vertex_indices)
-        return line_point_cross(v1, v2, v3) < 0
 
     @property
     def flag(self) -> NavmeshType:
@@ -395,11 +391,24 @@ class NVM(GameFile):
         """
         bounds_min, bounds_max = self.get_vertex_bounds(padding=self.BOX_PADDING)
 
+        # Every three rows in this array will be one triangle. (We don't care about the Y coordinate but keep it.)
+        all_triangle_vertices = self.vertices[[i for t in self.triangles for i in t.vertex_indices]]
+        # Reshape to 3D array so that each row is one triangle (3 vertices of 3 floats).
+        all_triangle_vertices = all_triangle_vertices.reshape((len(self.triangles), 3, 3))
+
+        # Compute `is_clockwise` for each triangle from the sign of the cross product of line (a, b) and point c in XZ.
+        b_from_a = all_triangle_vertices[:, 1] - all_triangle_vertices[:, 0]
+        point_from_a = all_triangle_vertices[:, 2] - all_triangle_vertices[:, 0]
+        all_triangle_abc_cross = b_from_a[:, 0] * point_from_a[:, 2] - b_from_a[:, 2] * point_from_a[:, 0]
+        is_clockwise = all_triangle_abc_cross < 0  # boolean array
+
         def create_box(start_corner: Vector3, end_corner: Vector3, level: int) -> NVMBox:
             # Box will either start or end at these halfway points, depending on its index.
 
             if level == self.BOX_LEVELS:  # leaf boxes have indices
-                triangle_indices = self.get_triangle_indices_in_box(start_corner, end_corner)
+                triangle_indices = self.get_triangle_indices_in_box(
+                    all_triangle_vertices, is_clockwise, start_corner, end_corner
+                )
                 return NVMBox(
                     start_corner,
                     end_corner,
@@ -429,15 +438,20 @@ class NVM(GameFile):
             return NVMBox(
                 start_corner,
                 end_corner,
-                triangle_indices=[],
+                triangle_indices=[],  # non-leaf boxes do NOT have indices
                 child_boxes=child_boxes,
             )
 
         # Start recursive box construction.
         self.root_box = create_box(bounds_min, bounds_max, level=0)
 
-    def get_triangle_indices_in_box(self, start_corner: Vector3, end_corner: Vector3) -> list[int]:
-        """For automatic AABB quad-tree box generation. Any triangle with a vertex in the box will count.
+    def get_triangle_indices_in_box(
+        self, triangle_vertices: np.ndarray, is_clockwise: np.ndarray, start_corner: Vector3, end_corner: Vector3
+    ) -> list[int]:
+        """For automatic AABB quad-tree box generation.
+
+        Any triangle with a vertex in the box will count; the trickier problem is detecting when a triangle edge passes
+        through the box without any vertices in it.
 
         Triangles can be part of multiple leaf boxes.
 
@@ -446,57 +460,56 @@ class NVM(GameFile):
         """
         triangle_indices = []
 
-        quad_vertices = [
-            Vector2([start_corner.x, start_corner.z]),
-            Vector2([end_corner.x, start_corner.z]),
-            Vector2([end_corner.x, end_corner.z]),
-            Vector2([start_corner.x, end_corner.z]),
-        ]
+        quad_vertices = np.array([
+            [start_corner.x, 0.0, start_corner.z],
+            [end_corner.x, 0.0, start_corner.z],
+            [end_corner.x, 0.0, end_corner.z],
+            [start_corner.x, 0.0, end_corner.z],
+        ])
 
-        for i, triangle in enumerate(self.triangles):
-            # TODO: NumPy operations to speed this up (including in utility functions).
-            tri_vertices = [Vector2([self.vertices[i, 0], self.vertices[i, 2]]) for i in triangle.vertex_indices]
-            clockwise = line_point_cross(*tri_vertices) < 0
-            if self.collides(quad_vertices, tri_vertices, clockwise):
+        for i, (triangle, clockwise) in enumerate(zip(triangle_vertices, is_clockwise)):
+            if self.collides(quad_vertices, triangle, clockwise):
                 triangle_indices.append(i)
 
         return triangle_indices
 
     @classmethod
-    def collides(cls, aabb_vertices: list[Vector2], tri_vertices: list[Vector2], clockwise: bool) -> bool:
-        """2D collision test for an AABB quad and a triangle."""
-        tolerance = cls.BOX_TRIANGLE_TOLERANCE
+    def collides(cls, aabb_vertices: np.ndarray, triangle: np.ndarray, clockwise: bool) -> bool:
+        """2D collision test for an AABB quad and a triangle (2D array)."""
 
+        # If triangle is fully outside ANY of the four sides of the AABB, there is no collision.
+        # We do this check first because it's faster.
+        if (triangle[:, 0] < aabb_vertices[0, 0]).all():
+            return False
+        if (triangle[:, 0] > aabb_vertices[2, 0]).all():
+            return False
+        if (triangle[:, 2] < aabb_vertices[0, 2]).all():
+            return False
+        if (triangle[:, 2] > aabb_vertices[2, 2]).all():
+            return False
+
+        # We need to check if (a) any triangle vertex lies in the box (easy) or (b) any triangle edge passes through
+        # the box (harder). We do this by checking if all box vertices are outside each triangle edge; we need to know
+        # whether the triangle vertices are clockwise to know which side of the edge line is 'outside'.
+        tolerance = cls.BOX_TRIANGLE_TOLERANCE
         for a, b in ((0, 1), (1, 2), (2, 0)):
-            if all(is_outside(tri_vertices[a], tri_vertices[b], q, clockwise, tolerance) for q in aabb_vertices):
+            if all(is_outside(triangle[a], triangle[b], v, clockwise, tolerance) for v in aabb_vertices):
                 # All quad vertices are outside this triangle edge. No collision.
                 return False
-
-        # If triangle is fully outside any line of AABB, no collision.
-        start_x = aabb_vertices[0].x
-        start_y = aabb_vertices[0].y
-        end_x = aabb_vertices[2].x
-        end_y = aabb_vertices[2].y
-        if all(v.x < start_x for v in tri_vertices):
-            return False
-        if all(v.x > end_x for v in tri_vertices):
-            return False
-        if all(v.y < start_y for v in tri_vertices):
-            return False
-        if all(v.y > end_y for v in tri_vertices):
-            return False
 
         # Triangle collides with AABB.
         return True
 
 
-def line_point_cross(a: Vector2, b: Vector2, point: Vector2) -> float:
+def line_point_cross_xz(a: np.ndarray, b: np.ndarray, point: np.ndarray) -> float:
     b_from_a = b - a
     point_from_a = point - a
-    return b_from_a.x * point_from_a.y - b_from_a.y * point_from_a.x
+    return b_from_a[0] * point_from_a[2] - b_from_a[2] * point_from_a[0]
 
 
-def is_outside(tri_a: Vector2, tri_b: Vector2, point: Vector2, tri_clockwise: bool, tolerance: float = 0.0) -> bool:
+def is_outside(
+    tri_a: np.ndarray, tri_b: np.ndarray, point: np.ndarray, tri_clockwise: bool, tolerance: float = 0.0
+) -> bool:
     """Uses line/point 'cross product' (determinant) to determine if `point` is outside the triangle edge
     `(tri_a, tri_b)` (using `clockwise` to determine which side of the line is outside).
 
@@ -504,7 +517,7 @@ def is_outside(tri_a: Vector2, tri_b: Vector2, point: Vector2, tri_clockwise: bo
 
     Values less than `tolerance` in the expected 'outside' direction will still return False.
     """
-    cross = line_point_cross(tri_a, tri_b, point)
+    cross = line_point_cross_xz(tri_a, tri_b, point)
     if tri_clockwise:
         return cross > tolerance  # outside == left
     return cross < -tolerance  # outside == right
