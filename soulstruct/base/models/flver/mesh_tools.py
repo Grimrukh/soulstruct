@@ -49,7 +49,7 @@ class MergedMesh:
     loop_normals_w: np.ndarray  # one column for 'w' (uint8)
     loop_tangents: np.ndarray  # four columns for 'x', 'y', 'z', and `w` (float32)
     loop_bitangents: np.ndarray  # four columns for 'x', 'y', and 'z' (float32)
-    loop_vertex_colors: list[np.ndarray]  # four columns per array for 'r', 'g', 'b', and 'a' (uint8)
+    loop_vertex_colors: list[np.ndarray]  # four columns per array for 'r', 'g', 'b', and 'a' (float32)
     # If `uv_layer_names` is given, this list will have the same length as `uv_layer_names` and each UV array will
     # correspond to the UV layer with the same index. Otherwise, this list will have the same length as the maximum
     # number of UV layers used by any submesh, which may cause layer clashes (e.g. one submesh's second texture UV may
@@ -212,7 +212,7 @@ class MergedMesh:
                 if name.startswith("color_"):
                     c_i = int(name[-1])
                     color_array = loop_vertex_colors_dict.setdefault(
-                        c_i, np.zeros((total_vertex_count, 4), dtype=np.uint8)
+                        c_i, np.zeros((total_vertex_count, 4), dtype=np.float32)
                     )
                     color_array[i:j] = vertices[f"color_{c_i}"]
                 elif name.startswith("uv_"):
