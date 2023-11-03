@@ -65,15 +65,13 @@ class MergedMesh:
     material_uv_layers: list[list[str]] | list[None] = field(default_factory=list)
 
     # All unique, sorted UV layer names used by any material (or None if material UVs not given).
-    uv_layers: list[str] | None = None
+    all_uv_layers: list[str] | None = None
 
     @classmethod
     def from_flver(
         cls,
         flver: FLVER,
         submesh_material_indices: list[int],
-        discard_degenerate_faces=False,
-        discard_duplicate_faces=False,
         material_uv_layers: list[list[str]] = None,
     ):
         """Construct merged mesh data from all `flver` submeshes.
@@ -84,32 +82,35 @@ class MergedMesh:
         to be set to match the caller's purposes for the merged mesh, usually to preserve distinct submesh or face set
         properties (e.g. `is_bind_pose` or `use_backface_culling`) that may be different for submeshes that share the
         same FLVER material index.
+
+        If `material_uv_layers` is given, it should be a list of lists of UV layer names indexed by the material indices
+        in `submesh_material_indices` (NOT by submesh index). Each sub-list should contain the UV layer names used by
+        the corresponding 'material' (which, again, may not be the same as the original FLVER material index). These
+        layer names are combined into `all_uv_layers` on the `MergedMesh` and are used to ensure that each submesh's UV
+        data are assigned to the correct UV index in the merged loop array (as the presence or absence of, say, a second
+        texture slot may affect the usage of a given submesh UV index). If not given, each submesh's UV data will simply
+        occupy the first `n` UV data columns in the merged loops, which may, say, cause lightmap UV data and real
+        texture UV data to share a column!
         """
         if material_uv_layers:
             material_uv_layers = material_uv_layers
             all_uv_layer_names_set = set()
             for uv_layers in material_uv_layers:
                 all_uv_layer_names_set |= set(uv_layers)
-            uv_layers = sorted(all_uv_layer_names_set)
+            all_uv_layers = sorted(all_uv_layer_names_set)
         else:
-            material_uv_layers = [None] * len(flver.materials)
-            uv_layers = None
+            material_uv_layers = [None] * len(submesh_material_indices)
+            all_uv_layers = None
 
         all_vertices, loop_data_dict = cls.build_stacked_loops(
-            flver.submeshes, submesh_material_indices, material_uv_layers, uv_layers
+            flver.submeshes, submesh_material_indices, material_uv_layers, all_uv_layers
         )
-
-        # vertex_data, loop_vertex_indices, faces = cls.merge_vertices_by_unique(
-        #     flver, all_vertices, submesh_material_indices, discard_degenerate_faces, discard_duplicate_faces
-        # )
 
         vertex_data, loop_vertex_indices, faces = cls.merge_vertices(
             flver,
             all_vertices,
             submesh_material_indices,
             loop_data_dict["loop_normals"],
-            discard_degenerate_faces,
-            discard_duplicate_faces,
         )
 
         return cls(
@@ -119,7 +120,7 @@ class MergedMesh:
             faces=faces,
             flver=flver,
             material_uv_layers=material_uv_layers,
-            uv_layers=uv_layers,
+            all_uv_layers=all_uv_layers,
         )
 
     @classmethod
@@ -127,7 +128,7 @@ class MergedMesh:
         cls,
         submeshes: list[Submesh],
         material_indices: list[int],
-        material_uv_layers: list[list[str]],
+        material_uv_layers: list[list[str] | None],
         all_uv_layers: list[str] | None,
     ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
         """Row-stack all submesh vertices' position and bone data in a single structured array for reduction."""
@@ -219,7 +220,15 @@ class MergedMesh:
                     uv_i = int(name[-1])
                     if all_uv_layers:
                         # Get FLVER-wide index of this UV from its known layer name in the material.
-                        loop_uvs_i = all_uv_layers.index(uv_layers[uv_i])
+                        try:
+                            loop_uvs_i = all_uv_layers.index(uv_layers[uv_i])
+                        except IndexError:
+                            material_mtd_name = submesh.material.mtd_name
+                            raise ValueError(
+                                f"FLVER submesh (MTD '{material_mtd_name}') UV layer index {uv_i} is out of range of "
+                                f"its detected UV layer list: {uv_layers}. This is probably due to incorrect MTD "
+                                f"parsing. Please report this bug on GitHub with the name of the FLVER model!"
+                            )
                     else:
                         # Just use the vertex array's UV index. Usage of this index may clash with other submeshes!
                         loop_uvs_i = uv_i
@@ -242,57 +251,12 @@ class MergedMesh:
         )
 
     @classmethod
-    def merge_vertices_by_unique(
-        cls,
-        flver: FLVER,
-        all_vertices: np.ndarray,
-        submesh_material_indices: list[int],
-        discard_degenerate_faces=False,
-        discard_duplicate_faces=False,
-    ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-        """Old, simple method: just merge all vertices by unique position, bone weights, and bone indices.
-
-        Likely too destructive, as some software (e.g. Blender) does not support multiple mesh faces using the exact
-        same vertices. This will cause the loss of some FLVER faces, e.g., inverted faces used as distinct, custom
-        'back' faces for a mesh segment (whether they have the same or different material).
-        """
-        vertex_data, loop_vertex_indices = np.unique(all_vertices, return_inverse=True, axis=0)
-
-        triangles_to_row_stack = []  # type: list[np.ndarray]
-        loop_offset = 0
-        for submesh, material_index in zip(flver.submeshes, submesh_material_indices):
-            triangles = submesh.face_sets[0].triangulate(allow_primitive_restarts=False)  # `(n, 3)` array
-            triangles += loop_offset
-            # Add material index column (uniform for submesh, obviously).
-            triangles = np.column_stack([triangles, np.full(len(triangles), material_index, dtype=np.uint32)])
-            triangles_to_row_stack.append(triangles)
-            loop_offset += len(submesh.vertex_arrays[0])
-
-        # Initialize `faces` array with combined rows. If no faces are being discarded, this is final.
-        faces = np.row_stack(triangles_to_row_stack)
-
-        if discard_degenerate_faces or discard_duplicate_faces:
-            existing_face_set = set()  # for duplicate face detection
-
-            def include_row(triangle_row):
-                """Boolean condition for each triangle's inclusion."""
-                return cls.is_triangle_degenerate(
-                    triangle_row, discard_degenerate_faces, discard_duplicate_faces, existing_face_set
-                )
-
-            faces = faces[include_row(faces)]
-
-        return vertex_data, loop_vertex_indices, faces
-
-    @classmethod
     def merge_vertices(
         cls,
         flver: FLVER,
         all_vertices: np.ndarray,
         submesh_material_indices: list[int],
         loop_normals: np.ndarray,
-        discard_degenerate_faces=False,
-        discard_duplicate_faces=False,
     ):
         """
         Problem: blindly merging vertices does NOT always work, because sometimes FLVER models have two faces with
