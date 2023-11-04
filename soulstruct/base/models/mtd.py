@@ -673,7 +673,8 @@ class MTDInfo:
 
         # TODO: A few [D] shaders also don't use tangents...
         if mtd_stem in cls.NO_TANGENT_STEMS:
-            mtd_info.no_tangents = True
+            mtd_info.has_tangent = False
+            mtd_info.has_bitangent = False
 
         if cls.MTD_M_RE.match(mtd_stem):
             for texture_type, _ in mtd_info.texture_types:
