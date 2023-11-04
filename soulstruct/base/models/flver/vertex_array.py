@@ -31,6 +31,12 @@ from soulstruct.utilities.binary import *
 _LOGGER = logging.getLogger(__name__)
 
 
+KNOWN_CORRUPTED_DS1R_ARRAYS = {
+    "m0302B0A14": b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+                  b'\xde\xd1?\xc3\x7f1\x1a\xff\x7f1\x1a\xff\x00\x00\x00\x00'
+}
+
+
 class VertexDataCodec(tp.NamedTuple):
     """Holds format-dependent decompression and compression functions for a vertex data field."""
     decompress: tp.Callable
@@ -634,6 +640,12 @@ class VertexArray:
 
         with flver_reader.temp_offset(vertex_data_offset + array_header.array_offset):
             array_data = flver_reader.read(array_header.array_length)
+            for corrupted_key, corrupted_start in KNOWN_CORRUPTED_DS1R_ARRAYS.items():
+                if array_data[:32] == corrupted_start:
+                    _LOGGER.warning(
+                        f"FLVER vertex array data appears to be a known corrupted case from DS1R (Map Piece "
+                        f"{corrupted_key}). You may want to replace its vertex data from the same model in PTDE!"
+                    )
             array = layout.unpack_vertex_array(array_data, uv_factor)
 
         return cls(array, layout)

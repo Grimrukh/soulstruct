@@ -92,6 +92,18 @@ class MergedMesh:
         occupy the first `n` UV data columns in the merged loops, which may, say, cause lightmap UV data and real
         texture UV data to share a column!
         """
+        valid_submeshes = []
+        valid_submesh_material_indices = []
+        for i, submesh in enumerate(flver.submeshes):
+            if not any(np.isnan(vertex_array.array["position"]).any() for vertex_array in submesh.vertex_arrays):
+                valid_submeshes.append(submesh)
+                valid_submesh_material_indices.append(submesh_material_indices[i])
+            else:
+                _LOGGER.warning(f"Submesh {i} has NaN vertex data and will be ignored by `MergedMesh`.")
+
+        if not flver.submeshes:
+            raise ValueError("FLVER has no submeshes. Cannot create `MergedMesh`.")
+
         if material_uv_layers:
             material_uv_layers = material_uv_layers
             all_uv_layer_names_set = set()
@@ -99,17 +111,17 @@ class MergedMesh:
                 all_uv_layer_names_set |= set(uv_layers)
             all_uv_layers = sorted(all_uv_layer_names_set)
         else:
-            material_uv_layers = [None] * len(submesh_material_indices)
+            material_uv_layers = [None] * len(valid_submesh_material_indices)
             all_uv_layers = None
 
         all_vertices, loop_data_dict = cls.build_stacked_loops(
-            flver.submeshes, submesh_material_indices, material_uv_layers, all_uv_layers
+            valid_submeshes, valid_submesh_material_indices, material_uv_layers, all_uv_layers
         )
 
         vertex_data, loop_vertex_indices, faces = cls.merge_vertices(
-            flver,
+            valid_submeshes,
             all_vertices,
-            submesh_material_indices,
+            valid_submesh_material_indices,
             loop_data_dict["loop_normals"],
         )
 
@@ -253,7 +265,7 @@ class MergedMesh:
     @classmethod
     def merge_vertices(
         cls,
-        flver: FLVER,
+        submeshes: list[Submesh],
         all_vertices: np.ndarray,
         submesh_material_indices: list[int],
         loop_normals: np.ndarray,
@@ -309,7 +321,7 @@ class MergedMesh:
         assigned_loop_indices = set()
 
         loop_offset = 0
-        for i, (submesh, material_index) in enumerate(zip(flver.submeshes, submesh_material_indices)):
+        for i, (submesh, material_index) in enumerate(zip(submeshes, submesh_material_indices)):
 
             triangles = submesh.face_sets[0].triangulate(allow_primitive_restarts=False)  # `(n, 3)` array
             triangles += loop_offset
@@ -456,6 +468,8 @@ class MergedMesh:
         in `submesh_info`, for example, yet have different `is_bind_pose` values or `face_sets[0].use_backface_culling`
         etc.
 
+        If a submesh material index has no faces, it will be ignored.
+
         `is_bind_pose` must appear in each submesh kwargs dictionary, as it is used to determine bone index style.
         TODO: Still not 100% sure if there are any FLVERs that use 'bind pose' for some submeshes but not others. From
          memory, I found a few cut content objects or something, but only checked the bool and not the indices.
@@ -498,6 +512,9 @@ class MergedMesh:
         for material_index, material_dtype in enumerate(material_dtypes):
             # Split `faces` and indexed `merged_loops` by material index (column 3).
             submesh_faces = self.faces[self.faces[:, 3] == material_index][:, :3]  # `(n, 3)` array
+            if len(submesh_faces) == 0:
+                # This is an unused material index. Do not create any submeshes.
+                continue
             submesh_loop_indices = submesh_faces.ravel()  # all loop indices used by faces in this submesh
 
             # Loop data access. This makes no assumptions about how 'loopy' the loop data in the `MergedMesh` is. If

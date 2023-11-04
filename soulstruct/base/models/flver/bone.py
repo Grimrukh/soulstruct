@@ -3,6 +3,7 @@ from __future__ import annotations
 __all__ = ["FLVERBone"]
 
 from dataclasses import dataclass, field
+from enum import IntEnum
 import typing as tp
 
 from soulstruct.utilities.binary import *
@@ -21,9 +22,19 @@ class FLVERBoneStruct(BinaryStruct):
     next_sibling_index: short
     previous_sibling_index: short
     bounding_box_min: Vector3
-    unk_x3c: int  # seems to be 1 for root bones?
+    usage_flags: int
     bounding_box_max: Vector3
     _pad1: bytes = field(init=False, **BinaryPad(52))
+
+
+class FLVERBoneUsageFlags(IntEnum):
+    """Bit flags used in `FLVERBone.usage_flags`, which indicate whether/how the bone is used in the FLVER."""
+
+    UNUSED = 0b0001  # 1
+    # TODO: Flags below only started being used at some point after DS1.
+    DUMMY = 0b0010  # 2
+    cXXXX = 0b0100  # 4  # TODO: references another skeleton...?
+    MESH = 0b1000  # 8
 
 
 @dataclass(slots=True)
@@ -36,12 +47,9 @@ class FLVERBone:
     scale: Vector3 = field(default_factory=Vector3.one)
     # Mesh vertices weighted to this bone will only be drawn if this bounding box is in the camera's current view.
     # NOTE: units are in local bone space for character
-    bounding_box_min: Vector3 = field(default_factory=Vector3.zero)
-    bounding_box_max: Vector3 = field(default_factory=Vector3.zero)
-    # TODO: almost certainly flags. In DSR, seems to be 1 IFF bone is NOT in the main hierarchy. In Elden Ring, more
-    #  flag values are used: 1 still means 'not in main hierarchy', but Dmypoly bones use 2, 'cXXXX_whatever' bones
-    #  use 4, and main bones use either 8 (mostly) or 10 (unclear - combined with Dmypoly flag?). Definitely bitfield.
-    unk_x3c: int = 0
+    bounding_box_min: Vector3 = field(default_factory=Vector3.single_max)
+    bounding_box_max: Vector3 = field(default_factory=Vector3.single_min)
+    usage_flags: int = 0
     parent_index: int = -1
     child_index: int = -1  # NOTE: only indicates first child, but bone can have many children (can use siblings)
     next_sibling_index: int = -1
@@ -143,7 +151,10 @@ class FLVERBone:
             lines.append(f"  previous_sibling_index = {self.previous_sibling_index}")
         lines.append(f"  bounding_box_min = {self.bounding_box_min}")
         lines.append(f"  bounding_box_max = {self.bounding_box_max}")
-        if self.unk_x3c != 0:
-            lines.append(f"  unk_x3c = {self.unk_x3c}")
+        if self.usage_flags != 0:
+            flags = " | ".join(
+                [flag.name for flag in FLVERBoneUsageFlags if self.usage_flags & flag]
+            )
+            lines.append(f"  usage_flags = {self.usage_flags} ({flags})")
         lines.append(")")
         return "\n".join(lines)

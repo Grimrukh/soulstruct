@@ -77,8 +77,8 @@ class FLVER(GameFile):
     # (These fields have no underscore prefix in `FLVERStruct` and will be passed here automatically.)
     big_endian: bool = False
     version: Version = Version.DarkSouls_A
-    bounding_box_min: Vector3 = field(default_factory=Vector3.zero)
-    bounding_box_max: Vector3 = field(default_factory=Vector3.zero)
+    bounding_box_min: Vector3 = field(default_factory=Vector3.single_max)
+    bounding_box_max: Vector3 = field(default_factory=Vector3.single_min)
     vertex_indices_size: int = 16
     unicode: bool = True
     unk_x4a: bool = False
@@ -145,6 +145,10 @@ class FLVER(GameFile):
         layouts = [VertexArrayLayout.from_flver_reader(reader) for _ in range(header.array_layout_count)]
         if header.version == Version.DarkSouls_A:
             # Check for botched DS1R array layouts (thanks QLOC!).
+            # TODO: At least one DS1R map piece, m0302B0A14, has the correct layout but its data is messed up: there are
+            #  16 null bytes at the start of the array (causing the last 16 actual data bytes to be truncated at EOF)
+            #  and the Y and Z vertex coordinates are corrupted (appears lossy). Not sure how to handle this beyond a
+            #  hard-coded list of DS1R map pieces to fix/warn (currently done in `vertex_array.py` module).
             check_ds1_layouts(layouts, array_headers, submeshes)
 
         # Load NumPy array wrappers with attached layouts.
