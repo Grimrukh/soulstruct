@@ -118,7 +118,17 @@ class FLVER(GameFile):
             for _ in range(header.material_count)
         ]
 
-        bones = [FLVERBone.from_flver_reader(reader, encoding=encoding) for _ in range(header.bone_count)]
+        bones = []
+        bone_indices = []
+        for _ in range(header.bone_count):
+            bone, indices = FLVERBone.from_flver_reader(reader, encoding=encoding)
+            bones.append(bone)
+            bone_indices.append(indices)
+        for bone, indices in zip(bones, bone_indices):
+            bone.parent_bone = bones[indices[0]] if indices[0] >= 0 else None
+            bone.child_bone = bones[indices[1]] if indices[1] >= 0 else None
+            bone.next_sibling_bone = bones[indices[2]] if indices[2] >= 0 else None
+            bone.previous_sibling_bone = bones[indices[3]] if indices[3] >= 0 else None
 
         submeshes = [
             Submesh.from_flver_reader(
@@ -317,7 +327,7 @@ class FLVER(GameFile):
 
         # Pack bones.
         for bone in self.bones:
-            bone.to_flver_writer(writer)
+            bone.to_flver_writer(writer, self.bones)
 
         # Pack submesh headers.
         for submesh, material_index in zip(self.submeshes, submesh_material_indices):
@@ -515,7 +525,7 @@ class FLVER(GameFile):
                 **kwargs,
             )
         for bone in self.bones:
-            bone_position = bone.get_armature_space_transform(self.bones)[0]
+            bone_position, _, _ = bone.get_armature_space_transform()
             axes.scatter(*bone_position.to_xzy(), color="blue", s=10)
         if auto_show:
             plt.show()
@@ -725,7 +735,29 @@ class FLVER(GameFile):
 
     def get_root_bones(self) -> list[FLVERBone]:
         """Return all bones with no parent."""
-        return [bone for bone in self.bones if bone.parent_index == -1]
+        return [bone for bone in self.bones if bone.parent_bone is None]
+
+    def set_bone_children_siblings(self):
+        """Iterate through the `bones` hierarchy and use set `parent_bone` (the most important reference) to set
+        `child_bone` (first bone using this bone as parent) and sibling bones (ordered bones with the same parent).
+        """
+        for bone in self.bones:
+            # Clear old references.
+            bone.child_bone = None
+            bone.previous_sibling_bone = None
+            bone.next_sibling_bone = None
+
+            children = []
+            for other_bone in self.bones:
+                if other_bone.parent_bone is bone:
+                    if not children:
+                        # First child found.
+                        bone.child_bone = other_bone
+                    else:
+                        # Next sibling.
+                        children[-1].next_sibling_bone = other_bone
+                        other_bone.previous_sibling_bone = children[-1]
+                    children.append(other_bone)
 
     def get_bone_armature_space_transforms(self) -> list[tuple[Vector3, Matrix3, Vector3]]:
         """Compute the FLVER armature space transforms of all bones at once by moving downward through the hierarchy.
@@ -741,6 +773,7 @@ class FLVER(GameFile):
 
         def local_to_parent_space(bone: FLVERBone, parent_transform: tuple[Vector3, Matrix3, Vector3]):
             index = bone.get_bone_index(self.bones)
+            print(f"Bone {bone.name} has index {index}")
             if index in done_indices:
                 raise ValueError(f"Bone '{bone.name}' is a child of multiple bones.")
             done_indices.add(index)
@@ -752,10 +785,12 @@ class FLVER(GameFile):
                 local_scale,  # scale not inherited
             )
             armature_space_transforms[index] = bone_armature_transform
-            for child_bone in bone.get_all_immediate_children(self.bones):
+            for child_bone in bone.get_all_immediate_children():
+                print(f"   Iterating on child bone {child_bone.name}...")
                 local_to_parent_space(child_bone, bone_armature_transform)
 
         for root_bone in root_bones:
+            print(f"Calling on root bone {root_bone.name}...")
             local_to_parent_space(root_bone, (Vector3.zero(), Matrix3.identity(), Vector3.one()))
 
         return armature_space_transforms
@@ -775,11 +810,13 @@ class FLVER(GameFile):
 
         for bone_index, bone in enumerate(self.bones):
             arma_transform = armature_space_transforms[bone_index]
-            parent_index = bone.parent_index
-            if parent_index == -1:
+            parent_bone = bone.parent_bone
+            if parent_bone is None:
                 # Root bone: armature space transform is local transform.
                 bone.set_local_transform(arma_transform)
                 continue
+
+            parent_index = parent_bone.get_bone_index(self.bones)
 
             # Get parent transform and apply inverse to this bone's armature space transform.
             arma_translate, arma_rotate_matrix, arma_scale = arma_transform

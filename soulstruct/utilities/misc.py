@@ -25,6 +25,9 @@ class MissingReference:
             cls._instance = super(MissingReference, cls).__new__(cls)
         return cls._instance
 
+    def __eq__(self, other):
+        raise TypeError("Cannot test MissingReference for equality.")
+
     def __repr__(self):
         return "<Missing Reference>"
 
