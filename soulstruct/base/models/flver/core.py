@@ -741,11 +741,20 @@ class FLVER(GameFile):
         """Iterate through the `bones` hierarchy and use set `parent_bone` (the most important reference) to set
         `child_bone` (first bone using this bone as parent) and sibling bones (ordered bones with the same parent).
         """
+        root_bones = []
         for bone in self.bones:
             # Clear old references.
             bone.child_bone = None
             bone.previous_sibling_bone = None
             bone.next_sibling_bone = None
+
+            if bone.parent_bone is None:
+                # Root bone. Assign siblings.
+                if root_bones:
+                    # Next sibling.
+                    root_bones[-1].next_sibling_bone = bone
+                    bone.previous_sibling_bone = root_bones[-1]
+                root_bones.append(bone)
 
             children = []
             for other_bone in self.bones:
@@ -773,7 +782,6 @@ class FLVER(GameFile):
 
         def local_to_parent_space(bone: FLVERBone, parent_transform: tuple[Vector3, Matrix3, Vector3]):
             index = bone.get_bone_index(self.bones)
-            print(f"Bone {bone.name} has index {index}")
             if index in done_indices:
                 raise ValueError(f"Bone '{bone.name}' is a child of multiple bones.")
             done_indices.add(index)
@@ -786,11 +794,9 @@ class FLVER(GameFile):
             )
             armature_space_transforms[index] = bone_armature_transform
             for child_bone in bone.get_all_immediate_children():
-                print(f"   Iterating on child bone {child_bone.name}...")
                 local_to_parent_space(child_bone, bone_armature_transform)
 
         for root_bone in root_bones:
-            print(f"Calling on root bone {root_bone.name}...")
             local_to_parent_space(root_bone, (Vector3.zero(), Matrix3.identity(), Vector3.one()))
 
         return armature_space_transforms
