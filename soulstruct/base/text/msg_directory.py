@@ -222,7 +222,9 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
                     f"Class `{self.__class__.__name__}` does not have a default entry name for ID {entry_id} "
                     f"in '{msgbnd_name}' MSGBND."
                 )
-            msgbnd.add_or_replace_entry_data(entry_id, fmg, self.DEFAULT_ENTRY_STEMS[msgbnd_name, entry_id] + ".fmg")
+            msgbnd.set_default_entry(
+                entry_id, new_name=self.DEFAULT_ENTRY_STEMS[msgbnd_name, entry_id] + ".fmg", new_data=bytes(fmg)
+            )
 
     def merge_base_and_patch(self, use_patch_if_conflict=True):
         """Merge all base and patch FMGs together (as per class `BASE_PATCH_FMGS`) and write merged FMG to both.

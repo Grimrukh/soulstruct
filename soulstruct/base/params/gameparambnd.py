@@ -116,11 +116,12 @@ class GameParamBND(Binder, abc.ABC):
 
         for param_name, param in zip(current_entry_names, self.params.values(), strict=True):
             entry_path = self.get_default_new_entry_path(param_name)
-            new_entry_created = self.add_or_replace_entry_data(
-                entry_path, param, new_id=self.get_first_new_entry_id_in_range(0, 1000000)
+            entry = self.set_default_entry(
+                entry_path, new_id=self.get_first_new_entry_id_in_range(0, 1000000)
             )
-            if new_entry_created:
+            if not entry.data:
                 _LOGGER.debug(f"New Param entry added to `GameParamBND`: {entry_path}")
+            entry.set_from_binary_file(param)
 
     def write(
         self,

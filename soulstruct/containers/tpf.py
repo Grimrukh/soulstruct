@@ -252,17 +252,17 @@ class TPFTexture:
         with tempfile.TemporaryDirectory() as dds_dir:
             temp_image_path = Path(dds_dir, f"temp{image_path.suffix}")
             shutil.copy2(image_path, temp_image_path)
-            result = texconv("-f", dds_format, "-o", dds_dir, "-y", temp_image_path)
+            result = texconv("-f", dds_format, "-o", dds_dir, "-nologo", "-y", temp_image_path)
             if result.returncode == 0:
                 try:
                     self.data = Path(dds_dir, "temp.dds").read_bytes()
                 except FileNotFoundError:
-                    stdout = "\n    ".join(result.stdout.decode().split("\r\n")[3:])  # drop copyright lines
+                    stdout = result.stdout.decode()
                     raise ValueError(
                         f"Could not convert image {image_path} to DDS with format {dds_format}:\n    {stdout}"
                     )
             else:
-                stdout = result.stdout.decode().split("\r\n")[0]  # drop copyright lines
+                stdout = result.stdout.decode()
                 raise ValueError(
                     f"Could not convert texture source bytes.\n"
                     f"   stdout: {stdout}\n"
@@ -273,11 +273,11 @@ class TPFTexture:
         with tempfile.TemporaryDirectory() as png_dir:
             temp_dds_path = Path(png_dir, "temp.dds")
             temp_dds_path.write_bytes(self.data)
-            texconv_result = texconv("-o", png_dir, "-ft", "png", "-f", fmt, temp_dds_path)
+            texconv_result = texconv("-o", png_dir, "-ft", "png", "-f", fmt, "-nologo", temp_dds_path)
             try:
                 return Path(png_dir, "temp.png").read_bytes()
             except FileNotFoundError:
-                stdout = "\n    ".join(texconv_result.stdout.decode().split("\r\n")[3:])  # drop copyright lines
+                stdout = texconv_result.stdout.decode()
                 raise ValueError(f"Could not convert texture DDS to PNG:\n    {stdout}")
 
     def export_png(self, png_path: str | Path, fmt="rgba"):

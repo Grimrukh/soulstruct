@@ -279,6 +279,7 @@ class DDS(GameFile):
 
     @property
     def dxgi_format(self) -> DXGI_FORMAT | None:
+        """Returns DXGI format if present (DX10 format), or `None` otherwise."""
         return self.dxt10_header.dxgi_format if self.dxt10_header else None
 
     @property

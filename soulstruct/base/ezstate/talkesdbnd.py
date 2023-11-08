@@ -103,9 +103,10 @@ class TalkESDBND(Binder, abc.ABC):
 
         for talk_entry_name, talk_esd in zip(current_entry_names, self.talk.values(), strict=True):
             entry_path = self.get_default_new_entry_path(talk_entry_name)
-            new_entry_created = self.add_or_replace_entry_data(entry_path, talk_esd)
-            if new_entry_created:
+            entry = self.set_default_entry(entry_path)
+            if not entry.data:
                 _LOGGER.debug(f"New ESD entry added to `TalkESDBND`: {talk_entry_name}")
+            entry.set_from_binary_file(talk_esd)
 
         # Sort entries by name.
         self.entries.sort(key=lambda entry: entry.name)

@@ -32,9 +32,6 @@ try:
 except ImportError:  # < Python 3.11
     Self = "Binder"
 
-if tp.TYPE_CHECKING:
-    from soulstruct.base.game_file import GameFile
-
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -560,6 +557,16 @@ class Binder(BaseBinaryFile):
 
         return binder_kwargs
 
+    @classmethod
+    def empty_bnd3(cls):
+        """Create an empty Binder V3 (BND3)."""
+        return cls(version=BinderVersion.V3, v4_info=None)
+
+    @classmethod
+    def empty_bxf3(cls):
+        """Create an empty split Binder V3 (BXF3)."""
+        return cls(version=BinderVersion.V3, v4_info=None, is_split_bxf=True)
+
     # endregion
 
     # region Write Methods
@@ -1043,28 +1050,28 @@ class Binder(BaseBinaryFile):
             entry_flags = self.DEFAULT_ENTRY_FLAGS
         return BinderEntry(entry_data, entry_id, entry_path, entry_flags)
 
-    def add_or_replace_entry_data(
+    def set_default_entry(
         self,
         entry_spec: ENTRY_SPEC,
-        game_file: GameFile,
         new_id: int = None,
         new_name: str = None,
         new_path: str | Path = None,
         new_flags: int = None,
-    ) -> bool:
-        """Create or replace `BinderEntry` specified by `entry_spec` using data from packed `game_file`.
+        new_data: bytes = b"",
+    ) -> BinderEntry:
+        """Retrieve or create `BinderEntry` specified by `entry_spec`, a la `dict.setdefault()`.
 
-        If an entry is not found, the `new_` arguments are passed to `create_default_entry()` along with the file data
-        to create a new entry, which is added to the Binder automatically. Otherwise, these arguments are ignored -
-        their values will NOT be set to the existing entry's values.
-        
-        Returns `True` if a new entry was created, and `False` if an existing one was modified.
+        If an entry is not found, the `new_` arguments are passed to `create_default_entry()`, which is added to the
+        Binder automatically. Otherwise, these arguments are ignored - their values will NOT be set to the existing
+        entry's values.
+
+        Returns the found or created `BinderEntry`.
 
         Will always raise a `MultipleEntriesFoundError` if multiple existing entries are found.
         """
         try:
             # NOTE: Will raise an unhandled `MultipleEntriesFoundError` if multiple entries are found.
-            existing_entry = self[entry_spec]
+            return self[entry_spec]
         except EntryNotFoundError:
             # Create new entry. Value of `entry_spec` is redirected to the appropriate creation argument.
 
@@ -1076,13 +1083,9 @@ class Binder(BaseBinaryFile):
                 new_path = str(entry_spec)
             elif isinstance(entry_spec, str):
                 new_name = entry_spec
-            entry = self.create_default_entry(bytes(game_file), new_id, new_name, new_path, new_flags)
+            entry = self.create_default_entry(new_data, new_id, new_name, new_path, new_flags)
             self.add_entry(entry)
-            return True
-
-        # Just modify existing entry's data.
-        existing_entry.set_from_binary_file(game_file)
-        return False
+            return entry
 
     # endregion
 
