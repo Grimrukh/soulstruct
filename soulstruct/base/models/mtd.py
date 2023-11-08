@@ -4,8 +4,11 @@ __all__ = [
     "MTD",
     "MTDParam",
     "MTDInfo",
+    "MTDShaderCategory",
+    "MTDBND",
 ]
 
+import logging
 import re
 import typing as tp
 from pathlib import Path
@@ -14,13 +17,16 @@ from dataclasses import dataclass, field
 from enum import IntEnum
 
 from soulstruct.base.game_file import GameFile
+from soulstruct.containers import Binder
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.future import StrEnum
 
 try:
     Self = tp.Self
 except AttributeError:
-    Self = "MTD"
+    Self = "MTDBND"
+
+_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)
@@ -32,7 +38,7 @@ class MTD(GameFile):
     textures: list[MTDTexture] = field(default_factory=list)
 
     @classmethod
-    def from_reader(cls, reader: BinaryReader) -> Self:
+    def from_reader(cls, reader: BinaryReader) -> MTD:
         reader.default_byte_order = ByteOrder.LittleEndian
 
         assert_block(reader, 0, 3, 0x01)  # file
@@ -148,6 +154,14 @@ class MTD(GameFile):
     @property
     def shader_name(self):
         return Path(self.shader_path).name
+
+    @property
+    def shader_category(self) -> MTDShaderCategory | None:
+        for category in MTDShaderCategory:
+            if self.shader_name.startswith(category):
+                # noinspection PyTypeChecker
+                return category
+        return None
 
     @property
     def shader_stem(self):
@@ -518,18 +532,34 @@ def write_marked_string(writer: BinaryWriter, marker: int, string: str):
     write_marker(writer, marker)
 
 
+class MTDShaderCategory(StrEnum):
+
+    PHN = "FRPG_Phn"
+    SFX = "FRPG_Sfx"
+    NORMAL_TO_ALPHA = "FRPG_NormalToAlpha"  # used by mist, light shafts, and special 'M_Tree[D]_Edge.mtd'
+    WATER = "FRPG_Water"
+    SNOW = "FRPG_Snow"  # has 'g_SnowColor', 'g_SnowHeight', and other 'g_Snow*' params
+    FOLIAGE = "FRPG_Foliage"  # has 'g_Wind*' params and two extra UV slots for wind animation control
+    IVY = "FRPG_Ivy"  # has 'g_Wind*' params and two extra UV slots for wind animation control
+
+
 @dataclass(slots=True)
 class MTDInfo:
-    """Various booleans that indicate required textures for a specific MTD shader."""
+    """Various summarized properties that mostly serve to tell Soulstruct which textures and vertex data fields to
+    expect for FLVER materials using a specific MTD."""
 
     MTD_DSBH_RE: tp.ClassVar[re.Pattern] = re.compile(r".*\[(D)?(S)?(B)?(H)?\].*")  # TODO: support 'T' (translucency)
-    MTD_M_RE: tp.ClassVar[re.Pattern] = re.compile(r".*\[(M|ML|LM)\].*")
-    MTD_L_RE: tp.ClassVar[re.Pattern] = re.compile(r".*\[(L|ML|LM)\].*")
+    MTD_M_RE: tp.ClassVar[re.Pattern] = re.compile(r".*\[(M|ML|LM)\].*")  # two texture slots (Multiple)
+    MTD_L_RE: tp.ClassVar[re.Pattern] = re.compile(r".*\[(L|ML|LM)\].*")  # lightmap texture slot
+    MTD_N_RE: tp.ClassVar[re.Pattern] = re.compile(r".*\[(N|NL|LN)\].*")  # unshaded
+    MTD_Dn_RE: tp.ClassVar[re.Pattern] = re.compile(r".*\[Dn\].*")  # unshaded
     # Checked separately: [Dn] (g_Diffuse only), [We] (g_Bumpmap only)
 
     # TODO: Hardcoding a set of 'foliage' shader prefixes I've encountered in DSR.
     MTD_FOLIAGE_PREFIXES: tp.ClassVar[set[str]] = {
         "M_2Foliage",
+    }
+    MTD_IVY_PREFIXES: tp.ClassVar[set[str]] = {
         "M_3Ivy",
     }
 
@@ -582,12 +612,9 @@ class MTDInfo:
         "A19_Snow[L]",  # FRPG_Snow_Lit
     }
 
-    NO_TANGENT_STEMS: tp.ClassVar[set[str]] = {
+    # Non-[Dn] MTD names that use `FRPG_NormalToAlpha` shader. Only one case in DS1R.
+    NORMAL_TO_ALPHA_STEMS: tp.ClassVar[set[str]] = {
         "M_Tree[D]_Edge",
-    }
-
-    HAS_BITANGENT_STEMS: tp.ClassVar[set[str]] = {
-        "A10_02_m9000_M[D]",
     }
 
     # Ordered dict mapping texture type names like 'g_Diffuse' to their FLVER vertex UV index/Blender layer (1-indexed).
@@ -599,15 +626,21 @@ class MTDInfo:
     edge: bool = False
     spec: bool = False
     detb: bool = False  # I don't think these shaders are used in DS1. Also `g_EnvSpcSlotNo = 2`...
-    is_water: bool = False
-    is_foliage: bool = False  # has 'g_Wind*' params and two extra UV slots for wind animation control
-    is_snow: bool = False  # has 'g_SnowColor', 'g_SnowHeight', and other 'g_Snow*' params
-    has_snow_roughness: bool = False  # has 'g_Bumpmap_3' texture and 'g_Snow[Roughness/MetalMask/DiffuseF0]' params
-    has_tangent: bool = True  # False for unshaded FLVERs like skybox textures and some trees
-    has_bitangent: bool | None = None  # if `None`, bitangents
+    shader_category: MTDShaderCategory = MTDShaderCategory.PHN
+
+    # Has one or two extra 'g_Bumpmap' textures and 'g_Snow[Roughness/MetalMask/DiffuseF0]' params.
+    # Differs in PTDE vs. DS1R.
+    has_snow_roughness: bool = False
 
     @classmethod
     def from_mtd(cls, mtd: MTD):
+        """Extract critical MTD information (mainly for generating FLVER vertex array layouts) directly from MTD.
+
+        NOTES:
+            - There are only a couple dozen different shaders (SPX) used by all MTDs.
+            - All FLVER vertex arrays have normals, at least one vertex color.
+        """
+
         mtd_info = cls()
 
         for texture in mtd.textures:
@@ -630,14 +663,9 @@ class MTDInfo:
         if detail_bump_power > 0.0:
             mtd_info.detb = True
 
-        lighting_type = mtd.get_param("g_LightingType", default=1)
-        if lighting_type == 0:  # e.g. unshaded skybox
-            mtd_info.has_tangent = False
-            mtd_info.has_bitangent = False
+        mtd_info.shader_category = mtd.shader_category
 
-        mtd_info.is_water = mtd.shader_stem.startswith("FRPG_Water")
-        mtd_info.is_foliage = mtd.has_param("g_IsFoliage")
-        mtd_info.is_snow = mtd.shader_stem.startswith("FRPG_Snow")
+        # TODO: PTDE and DS1R differ here. Only the latter uses 'g_Bumpmap_3'.
         mtd_info.has_snow_roughness = mtd.has_param("g_SnowRoughness")  # only present in some Snow shaders
 
         return mtd_info
@@ -649,6 +677,7 @@ class MTDInfo:
         Obviously, getting the texture names right is the most important part, but we can also guess whether the shader
         uses a lightmap (L), two texture slots (M), or has extra features like alpha (Alp/Edge).
         """
+        # TODO: Bundle vanilla MTDBND with Soulstruct and use it BEFORE falling back on this.
         mtd_info = cls()
         mtd_stem = Path(mtd_name).stem
 
@@ -661,33 +690,42 @@ class MTDInfo:
                 mtd_info.texture_types["g_Bumpmap"] = 1
             if dsbh_match.group(4):
                 mtd_info.texture_types["g_Height"] = 1
-        elif "[Dn]" in mtd_stem:  # e.g. unshaded skybox
+        elif "[Dn]" in mtd_stem or cls.MTD_N_RE.match(mtd_stem) or mtd_stem in cls.NORMAL_TO_ALPHA_STEMS:
+            # Unshaded skyboxes, mist, some trees, etc.
             mtd_info.texture_types["g_Diffuse"] = 1
-            mtd_info.has_tangent = False
-            mtd_info.has_bitangent = False
         elif "[We]" in mtd_stem or mtd_stem in cls.WATER_STEMS:
+            # Water has a Bumpmap.
             mtd_info.texture_types["g_Bumpmap"] = 1
-            mtd_info.is_water = True
         else:
-            print(f"# ERROR: Shader name '{mtd_name}' could not be parsed for its textures.")
-
-        # TODO: A few [D] shaders also don't use tangents...
-        if mtd_stem in cls.NO_TANGENT_STEMS:
-            mtd_info.has_tangent = False
-            mtd_info.has_bitangent = False
+            _LOGGER.warning(
+                f"Unusual MTD name '{mtd_name}' could not be parsed for its textures. You may need to define it in "
+                f"your own custom MTD/MTDBND."
+            )
 
         if cls.MTD_M_RE.match(mtd_stem):
             for texture_type, _ in mtd_info.texture_types:
+                # Second slot for each texture type.
                 mtd_info.texture_types[texture_type + "_2"] = 2
 
         if cls.MTD_L_RE.match(mtd_stem):
-            mtd_info.texture_types["g_Lightmap"] = 3  # even if there is no second texture slot
+            # Lightmap is present. Slot is 3 even if there's no second texture slot.
+            mtd_info.texture_types["g_Lightmap"] = 3
 
-        # Has two extra UV slots.
-        mtd_info.is_foliage = any(mtd_name.startswith(prefix) for prefix in cls.MTD_FOLIAGE_PREFIXES)
-        mtd_info.is_snow = mtd_stem in cls.SNOW_STEMS
-        # Has an extra 'g_Bumpmap_3' texture type.
-        mtd_info.has_snow_roughness = mtd_stem in cls.SNOW_METAL_MASK_STEMS
+        if "[We]" in mtd_stem or mtd_stem in cls.WATER_STEMS:
+            mtd_info.shader_category = MTDShaderCategory.WATER
+        elif any(mtd_name.startswith(prefix) for prefix in cls.MTD_FOLIAGE_PREFIXES):
+            # Has two extra UV slots.
+            mtd_info.shader_category = MTDShaderCategory.FOLIAGE
+        elif any(mtd_name.startswith(prefix) for prefix in cls.MTD_IVY_PREFIXES):
+            # Has two extra UV slots.
+            mtd_info.shader_category = MTDShaderCategory.IVY
+        elif mtd_stem in cls.SNOW_STEMS:
+            mtd_info.shader_category = MTDShaderCategory.SNOW
+            # Could have an extra 'g_Bumpmap_3' texture type.
+            mtd_info.has_snow_roughness = mtd_stem in cls.SNOW_METAL_MASK_STEMS
+        else:
+            # TODO: Can't distinguish between `Phn` and `Sfx` based on name?
+            mtd_info.shader_category = MTDShaderCategory.PHN
 
         mtd_info.alpha = "_Alp" in mtd_name
         mtd_info.edge = "_Edge" in mtd_name
@@ -710,18 +748,25 @@ class MTDInfo:
             name = f"UVMap{uv_index}"
             if name not in uv_layer_names:
                 uv_layer_names.append(name)
-        if self.is_foliage:
+
+        if self.shader_category in {MTDShaderCategory.FOLIAGE, MTDShaderCategory.IVY}:
             uv_layer_names.extend(["UVMapWindA", "UVMapWindB"])
+
         return uv_layer_names
 
     @property
     def has_two_slots(self):
-        return any(texture_type.endswith("_2") for texture_type in self.texture_types)
+        return "g_Diffuse_2" in self.texture_types
 
     @property
-    def has_bumpmap_3(self):
-        """Snow shaders with roughness have this (and no other shaders in DSR at least)."""
-        return "g_Bumpmap_3" in self.texture_types
+    def has_tangent(self):
+        """Present IFF bumpmaps are present."""
+        return any(texture_type.startswith("g_Bumpmap") for texture_type in self.texture_types)
+
+    @property
+    def has_bitangent(self):
+        """Present IFF multiple bumpmaps are present (excluding extra bumpmaps for Snow shader roughness)."""
+        return self.has_tangent and self.has_two_slots
 
     @property
     def has_lightmap(self):
@@ -730,3 +775,22 @@ class MTDInfo:
     @property
     def has_detail_bumpmap(self):
         return "g_DetailBumpmap" in self.texture_types
+
+
+@dataclass(slots=True)
+class MTDBND(Binder):
+
+    mtds: dict[str, MTD] = field(default_factory=dict)
+
+    def __post_init__(self):
+        """Loads FIRST instance of each entry name as an MTD."""
+        super(MTDBND, self).__post_init__()
+
+        if self.mtds:
+            return  # already passed in
+
+        self.mtds = {}
+        for entry in self.entries:
+            if entry.name in self.mtds:
+                continue  # ignore repeated names silently
+            self.mtds[entry.name] = entry.to_binary_file(MTD)

@@ -363,7 +363,7 @@ class VertexTangent(VertexDataType):
     type_int = 6
     formats = {
         (0x03,): VertexDataFormat(
-            compressed_dtype=[("tangent_x", "f", (3,))],
+            compressed_dtype=[("tangent", "f", (3,))],
         ),
         (0x10, 0x11, 0x13, 0x1A, 0x2F): VertexDataFormat(
             compressed_dtype=[("tangent", "B", (4,))],

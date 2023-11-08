@@ -239,6 +239,9 @@ class Binder(BaseBinaryFile):
     This class is subclassed by numerous Python classes that handle particular binders, such as `GameParamBND`.
     """
 
+    # For convenience.
+    EntryNotFoundError: tp.ClassVar = EntryNotFoundError
+
     # Enforced name of manifest file.
     MANIFEST_NAME: tp.ClassVar[str] = "binder_manifest.json"
 

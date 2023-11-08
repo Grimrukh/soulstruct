@@ -301,6 +301,8 @@ class Submesh:
     face_sets: list[FaceSet] = field(default_factory=list)
     vertex_arrays: list[VertexArray] = field(default_factory=list)
 
+    # Enabled by Soulstruct when a bad layout was (attempted to be) fixed.
+    layout_fixed: bool = False
     # Enabled by Soulstruct when trying to read a vertex array from a FLVCR (usually DS1R) with the wrong layout.
     invalid_layout: bool = False
 

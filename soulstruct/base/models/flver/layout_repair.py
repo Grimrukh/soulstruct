@@ -5,12 +5,64 @@ import logging
 import typing as tp
 
 from .vertex_array import *
-from ..mtd import MTDInfo
+from ..mtd import MTDInfo, MTDShaderCategory
 
 if tp.TYPE_CHECKING:
     from .submesh import Submesh
 
 _LOGGER = logging.getLogger(__name__)
+
+
+# List of MTD names for which QLOC incorrectly listed tangents in the exported in DS1R.
+CORRECTED_UNSHADED_QLOC_LAYOUTS = {
+    "A10_lightshaft[Dn]_Add.mtd",
+    "A10_BG_shaft[Dn]_Add_LS.mtd",
+    "A10_mist_02[Dn]_Alp.mtd",
+    "M_Sky[Dn].mtd",
+    "M_Tree[D]_Edge.mtd",
+    "S[NL].mtd",
+}
+
+
+# Hard-coded MTD layouts in DS1R that are known to have array-incompatible layouts in FLVER data.
+OTHER_CORRECTED_QLOC_LAYOUTS = {
+
+    # QLOC probably saw that `g_LightingType == 3` and so included vertex tangents, even though the MTD has no bumpmap.
+    # The layout has no tangents, but the vertex data does.
+    "M[D].mtd": lambda: VertexArrayLayout([
+        VertexPosition(VertexDataFormatEnum.Float3, 0),
+        VertexBoneIndices(VertexDataFormatEnum.FourBytesB, 0),
+        VertexNormal(VertexDataFormatEnum.FourBytesC, 0),
+        VertexTangent(VertexDataFormatEnum.FourBytesC, 0),  # not actually used by shader, I believe
+        VertexColor(VertexDataFormatEnum.FourBytesC, 0),
+        VertexUV(VertexDataFormatEnum.UV, 0),
+    ]),
+    # Ditto.
+    "M[D]_Edge.mtd": lambda: VertexArrayLayout([
+        VertexPosition(VertexDataFormatEnum.Float3, 0),
+        VertexBoneIndices(VertexDataFormatEnum.FourBytesB, 0),
+        VertexNormal(VertexDataFormatEnum.FourBytesC, 0),
+        VertexTangent(VertexDataFormatEnum.FourBytesC, 0),  # not actually used by shader, I believe
+        VertexColor(VertexDataFormatEnum.FourBytesC, 0),
+        VertexUV(VertexDataFormatEnum.UV, 0),
+    ]),
+
+    # QLOC exported tangent AND bitangent data for this MTD, even though it has no bumpmap and only one texture, but
+    # used the old (correct) layout.
+    "A10_02_m9000_M[D].mtd": lambda: VertexArrayLayout([
+        VertexPosition(VertexDataFormatEnum.Float3, 0),
+        VertexBoneIndices(VertexDataFormatEnum.FourBytesB, 0),
+        VertexNormal(VertexDataFormatEnum.FourBytesC, 0),
+        VertexTangent(VertexDataFormatEnum.FourBytesC, 0),  # not actually used by shader, I believe
+        VertexBitangent(VertexDataFormatEnum.FourBytesC, 0),  # not actually used by shader, I believe
+        VertexColor(VertexDataFormatEnum.FourBytesC, 0),
+        VertexUV(VertexDataFormatEnum.UV, 0),
+    ]),
+
+    # TODO: 'A19_Division[D]_Alp.mtd' in m0001B1A18 has 60-byte vertices but a 32-byte header?
+    # TODO: 'A19_Fly[DSB]_edge.mtd' in m0001B1A18 has 60-byte vertices but a 32-byte header?
+
+}
 
 
 class VertexArrayLayoutFactory:
@@ -41,7 +93,7 @@ class VertexArrayLayoutFactory:
         # Calculate total UV map count and use a combination of UVPair and UV format members below.
         uv_count = 1 + int(mtd_info.has_two_slots) + int(mtd_info.has_lightmap)
 
-        if mtd_info.is_foliage:
+        if mtd_info.shader_category in {MTDShaderCategory.FOLIAGE, MTDShaderCategory.IVY}:
             # Foliage shaders have two extra UV slots for wind animation control.
             uv_count += 2
 
@@ -119,13 +171,43 @@ def check_ds1_layouts(
             header = array_headers[array_index]
             layout = array_layouts[header.layout_index]
 
-            if header.vertex_size != layout.get_total_data_size():
+            if header.vertex_size != (layout_size := layout.get_total_data_size()):
                 # BAD LAYOUT. Try to guess the layout from the MTD name.
-                member_unk_00 = layout[0].unk_x00
-                is_chr = submesh.is_bind_pose
-                guessed_layout = guess_mtd_layout(mtd_name, member_unk_00, is_chr)
-                header.layout_index = len(array_layouts)
-                # New layout. We do NOT replace the original, as it may be used correctly by other submeshes!
-                array_layouts.append(guessed_layout)
-                _LOGGER.info(f"Attempting to fix bad vertex data layout for submesh {i} (MTD {mtd_name}).")
-                # Mesh should now be able to read vertex array correctly.
+                _LOGGER.info(
+                    f"Attempting to fix bad vertex data layout for submesh {i}.\n"
+                    f"    MTD: {mtd_name})\n"
+                    f"    Layout size {layout_size} vs. header vertex size {header.vertex_size}"
+                )
+
+                if mtd_name in OTHER_CORRECTED_QLOC_LAYOUTS:
+                    guessed_layout = OTHER_CORRECTED_QLOC_LAYOUTS[mtd_name]()
+                    _LOGGER.info(f"Known layout: {guessed_layout}")
+                elif mtd_name in CORRECTED_UNSHADED_QLOC_LAYOUTS:
+                    guessed_layout = VertexArrayLayout([
+                        VertexPosition(VertexDataFormatEnum.Float3, 0),
+                        VertexBoneIndices(VertexDataFormatEnum.FourBytesB, 0),
+                        VertexNormal(VertexDataFormatEnum.FourBytesC, 0),
+                        VertexColor(VertexDataFormatEnum.FourBytesC, 0),
+                        VertexUV(VertexDataFormatEnum.UV, 0),
+                    ])
+                else:
+                    member_unk_00 = layout[0].unk_x00
+                    is_chr = submesh.is_bind_pose
+                    guessed_layout = guess_mtd_layout(mtd_name, member_unk_00, is_chr)
+                    _LOGGER.info(f"Guessed layout: {guessed_layout}")
+
+                guessed_layout_size = guessed_layout.get_total_data_size()
+                if guessed_layout_size != header.vertex_size:
+                    _LOGGER.error(
+                        f"Attempted to repair FLVER layout, but predicted layout size {guessed_layout_size} still does "
+                        f"not match header vertex size {header.vertex_size}."
+                    )
+                else:
+                    # New layout works. We do NOT replace the original, as it may be used correctly by other submeshes.
+                    header.layout_index = len(array_layouts)
+                    array_layouts.append(guessed_layout)
+
+                    # Mesh should now be able to read vertex array correctly...?
+                    submesh.layout_fixed = True
+
+    return True
