@@ -134,7 +134,7 @@ class FLVER(GameFile):
             Submesh.from_flver_reader(
                 reader,
                 materials,
-                bounding_box_has_unknown=header.version == Version.Sekiro,
+                bounding_box_has_unknown=header.version == Version.Sekiro_EldenRing,
             )
             for _ in range(header.mesh_count)
         ]

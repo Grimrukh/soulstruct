@@ -3,6 +3,7 @@ from __future__ import annotations
 __all__ = ["MTDBND"]
 
 import logging
+import typing as tp
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -17,7 +18,7 @@ _LOGGER = logging.getLogger(__name__)
 class MTDBND(BaseMTDBND):
     """Holds MTD material definitions."""
 
-    _BUNDLED: MTDBND = None
+    _BUNDLED: tp.ClassVar[MTDBND] = None
 
     dcx_type = DARK_SOULS_PTDE.default_dcx_type
     version: BinderVersion = BinderVersion.V3

@@ -14,8 +14,7 @@ class Version(IntEnum):
     Bloodborne_DS3_A = 0x20013
     Bloodborne_DS3_B = 0x20014
     Sekiro_TestChr = 0x20016
-    Sekiro = 0x2001A
-    # TODO: Elden Ring?
+    Sekiro_EldenRing = 0x2001A
     # TODO: AC6?
 
     @classmethod
