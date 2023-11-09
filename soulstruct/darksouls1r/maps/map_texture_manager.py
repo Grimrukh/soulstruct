@@ -45,8 +45,10 @@ class MapAreaTextureManager:
     tpf_9999: TPF | None = None
 
     def __post_init__(self):
-        self._load_tpf_binders()
-        self._load_tpf_9999()
+        if not self.tpf_binders:
+            self._load_tpf_binders()
+        if not self.tpf_9999:
+            self._load_tpf_9999()
 
     def check_msb_map_piece_textures(self):
         """Check all Map Pieces in all MSBs in this area to make sure their textures are present in the binders."""
@@ -170,7 +172,7 @@ class MapAreaTextureManager:
         binder.add_entry(tpf_entry)
 
     def _load_tpf_binders(self):
-        for binder_path in self.area_directory.glob(f"m{self.area_id:02}*.tpfbhd"):
+        for binder_path in self.area_directory.glob(f"m{self.area_id:02}_*.tpfbhd"):
             binder = Binder.from_path(binder_path)
             self.tpf_binders[binder_path.name] = binder
 
