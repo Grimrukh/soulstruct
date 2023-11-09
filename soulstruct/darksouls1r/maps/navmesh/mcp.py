@@ -17,7 +17,7 @@ from soulstruct.darksouls1r.maps.msb import MSB
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
 
-from .mcg import MCG, MCGNode
+from .mcg import MCG
 from .nvm import NVM
 from .utilities import import_matplotlib_plt
 

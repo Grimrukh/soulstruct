@@ -61,12 +61,21 @@ class Matrix3:
         """Return the inverse of this matrix."""
         return Matrix3(np.linalg.inv(self._data))
 
-    def __matmul__(self, other: Matrix3 | Vector3):
+    def __matmul__(self, other: Matrix3 | Vector3 | np.ndarray):
         if isinstance(other, Matrix3):
             return Matrix3(np.matmul(self._data, other._data))
         elif isinstance(other, Vector3):
-            return Vector3(np.inner(self._data, other))
-        raise TypeError(f"Can only multiply `Matrix3` with another `Matrix3` or a `Vector3`, not `{type(other)}`.")
+            return Vector3(np.inner(self._data, other._data))
+        # Assume array-like.
+        return Matrix3(np.matmul(self._data, other))
+
+    def __rmatmul__(self, other: Matrix3 | Vector3 | np.ndarray):
+        if isinstance(other, Matrix3):
+            return Matrix3(np.matmul(other._data, self._data))
+        elif isinstance(other, Vector3):
+            return Vector3(np.inner(other._data, self._data))
+        # Assume array-like.
+        return Matrix3(np.matmul(other, self._data))
 
     def __neg__(self):
         return self.__class__(-self._data)
@@ -215,16 +224,25 @@ class Matrix4:
         """Return the inverse of this matrix."""
         return Matrix4(np.linalg.inv(self._data))
 
-    def __matmul__(self, other: Matrix4 | Vector4 | Vector3):
+    def __matmul__(self, other: Matrix4 | Vector4 | Vector3 | np.ndarray):
         if isinstance(other, Matrix4):
-            return Matrix4(self._data * other._data)
+            return Matrix4(np.matmul(self._data, other._data))
         elif isinstance(other, Vector3):
             return Vector3(np.inner(self._data, (other.x, other.y, other.z, 1.0))[:3])
         elif isinstance(other, Vector4):
-            return Vector4(np.inner(self._data, other))
-        raise TypeError(
-            f"Can only multiply `Matrix4` with another `Matrix4` or a `Vector3` or `Vector4`, not `{type(other)}`."
-        )
+            return Vector4(np.inner(self._data, other._data))
+        # Assume array-like.
+        return Matrix4(np.matmul(self._data, other))
+
+    def __rmatmul__(self, other: Matrix4 | Vector4 | Vector3 | np.ndarray):
+        if isinstance(other, Matrix4):
+            return Matrix4(np.matmul(other._data, self._data))
+        elif isinstance(other, Vector3):
+            return Vector3(np.inner((other.x, other.y, other.z, 1.0), self._data)[:3])
+        elif isinstance(other, Vector4):
+            return Vector4(np.inner(other._data, self._data))
+        # Assume array-like.
+        return Matrix4(np.matmul(other, self._data))
 
     def __neg__(self):
         return self.__class__(-self._data)

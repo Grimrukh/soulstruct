@@ -366,7 +366,7 @@ class NVM(GameFile):
         if rotation is not None:
             # Euler angles in radians given (e.g. from MSB). Use to rotate all vertices before computing AABB.
             rot_mat = Matrix3.from_euler_angles(rotation, radians=True)
-            aabb_vertices = self.vertices @ rot_mat  # rotate each vertex (row)
+            aabb_vertices = self.vertices @ rot_mat.data  # rotate each vertex (row)
         else:
             aabb_vertices = self.vertices  # won't be modified
         if translation is None:
