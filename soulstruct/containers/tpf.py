@@ -523,6 +523,12 @@ class TPF(GameFile):
             except ValueError as ex:
                 _LOGGER.warning(str(ex))
 
+    def __iter__(self) -> tp.Iterator[TPFTexture]:
+        return iter(self.textures)
+
+    def __len__(self) -> int:
+        return len(self.textures)
+
     def __repr__(self) -> str:
         return (
             f"TPF(\n"

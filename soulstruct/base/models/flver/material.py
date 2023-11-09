@@ -173,8 +173,6 @@ class MaterialStruct(BinaryStruct):
 @dataclass(slots=True)
 class Material:
 
-    Texture: tp.ClassVar[tp.Type[Texture]] = Texture
-
     name: str = ""
     mtd_path: str = ""
     flags: int = 0

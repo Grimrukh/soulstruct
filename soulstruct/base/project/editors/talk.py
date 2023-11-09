@@ -182,9 +182,8 @@ class TalkEditor(BaseEditor):
             try:
                 game_map = self.talk_class.GET_MAP(map_directory.name)
             except ValueError:
-                _LOGGER.warning(
-                    f"Unexpected folder found in project '/talk' directory and ignored: " f"{map_directory.name}"
-                )
+                if map_directory.name != "__pycache__":  # common enough to ignore
+                    _LOGGER.warning(f"Unexpected folder in project '/talk' directory was ignored: {map_directory.name}")
                 continue
             for esp_path in map_directory.glob("*.esp.py"):
                 talk_match = _TALK_ESP_MATCH.match(esp_path.name)

@@ -39,7 +39,8 @@ class MCGNode:
     translate: Vector3 = field(default_factory=Vector3.zero)
     # TODO: Large offset that increases (usually) by varying multiples of 16. No clue currently what it is.
     unknown_offset: int = 0
-    dead_end_navmesh: MSBNavmesh | None = MISSING_REF  # indicates this is the only node connecting to this navmesh
+    # If set, this indicates that this is the ONLY node connecting to this navmesh.
+    dead_end_navmesh: MSBNavmesh | None = field(default_factory=lambda: MISSING_REF)
     connected_nodes: list[MCGNode] = field(default_factory=list)
     connected_edges: list[MCGEdge] = field(default_factory=list)
 
@@ -214,9 +215,9 @@ class MCGEdge:
     map_id: tuple[int, int, int, int] = (-1, -1, -1, -1)  # NOTE: -1 cannot be packed to this `byte` field (must be set)
     cost: float = 0.0
 
-    node_a: MCGNode = MISSING_REF
-    node_b: MCGNode = MISSING_REF
-    navmesh: MSBNavmesh = MISSING_REF
+    node_a: MCGNode = field(default_factory=lambda: MISSING_REF)
+    node_b: MCGNode = field(default_factory=lambda: MISSING_REF)
+    navmesh: MSBNavmesh = field(default_factory=lambda: MISSING_REF)
 
     _node_a_index: int | None = None
     _node_b_index: int | None = None
