@@ -35,7 +35,7 @@ class MTD(GameFile):
     shader_path: str
     description: str
     params: list[MTDParam] = field(default_factory=list)
-    textures: list[MTDTexture] = field(default_factory=list)
+    samplers: list[MTDSampler] = field(default_factory=list)
 
     @classmethod
     def from_reader(cls, reader: BinaryReader) -> MTD:
@@ -65,8 +65,8 @@ class MTD(GameFile):
         mtd_params = [MTDParam.from_mtd_reader(reader) for _ in range(param_count)]
         assert_marker(reader, 0x03)
 
-        texture_count = reader["i"]
-        mtd_textures = [MTDTexture.from_mtd_reader(reader) for _ in range(texture_count)]
+        sampler_count = reader["i"]
+        mtd_samplers = [MTDSampler.from_mtd_reader(reader) for _ in range(sampler_count)]
 
         assert_marker(reader, 0x04)
         reader.assert_pad(4)  # end of lists
@@ -81,7 +81,7 @@ class MTD(GameFile):
             shader_path,
             description,
             mtd_params,
-            mtd_textures,
+            mtd_samplers,
         )
 
     def to_writer(self) -> BinaryWriter:
@@ -107,9 +107,9 @@ class MTD(GameFile):
         for param in self.params:
             param.to_mtd_writer(writer)
         write_marker(writer, 0x03)
-        writer.pack("i", len(self.textures))
-        for texture in self.textures:
-            texture.to_mtd_writer(writer)
+        writer.pack("i", len(self.samplers))
+        for sampler in self.samplers:
+            sampler.to_mtd_writer(writer)
         write_marker(writer, 0x04)
         writer.pad(4)
 
@@ -139,17 +139,17 @@ class MTD(GameFile):
             return default
         raise KeyError(f"MTD param '{mtd_param_name}' not found in MTD from path '{self.path}' and no default given.")
 
-    def has_texture_type(self, mtd_texture_type: str) -> bool:
-        for texture in self.textures:
-            if texture.texture_type == mtd_texture_type:
+    def has_sampler_type(self, sampler_type: str) -> bool:
+        for sampler in self.samplers:
+            if sampler.sampler_type == sampler_type:
                 return True
         return False
 
-    def get_texture_type_uv_index(self, mtd_texture_type: str) -> int:
-        for texture in self.textures:
-            if texture.texture_type == mtd_texture_type:
-                return texture.uv_index
-        raise KeyError(f"MTD texture type '{mtd_texture_type}' not found in MTD from path '{self.path}'.")
+    def get_sampler_type_uv_index(self, sampler_type: str) -> int:
+        for sampler in self.samplers:
+            if sampler.sampler_type == sampler_type:
+                return sampler.uv_index
+        raise KeyError(f"`MTDSampler` type '{sampler_type}' not found in MTD from path '{self.path}'.")
 
     @property
     def shader_name(self):
@@ -174,11 +174,11 @@ class MTD(GameFile):
         else:
             params = "[]"
 
-        textures = "\n        ".join(str(p) for p in self.textures)
-        if textures:
-            textures = f"[\n        {textures}\n    ]"
+        samplers = "\n        ".join(str(p) for p in self.samplers)
+        if samplers:
+            samplers = f"[\n        {samplers}\n    ]"
         else:
-            textures = "[]"
+            samplers = "[]"
 
         return (
             f"MTD(\n"
@@ -187,7 +187,7 @@ class MTD(GameFile):
             f"    shader_path={self.shader_path},\n"
             f"    description={self.description},\n"
             f"    params = {params},\n"
-            f"    textures = {textures},\n"
+            f"    samplers = {samplers},\n"
             f")"
         )
 
@@ -365,79 +365,79 @@ class MTDParam:
 
 
 @dataclass(slots=True)
-class MTDTexture:
+class MTDSampler:
 
-    texture_type: str  # e.g. 'g_Diffuse' or 'g_Specular'
+    sampler_type: str  # e.g. 'g_Diffuse' or 'g_Specular'
     extended: bool = False  # Sekiro only
     uv_index: int = 0  # FLVER vertex UV index used by shader
     shader_data_index: int = 0
-    texture_path: str = ""  # Sekiro only
+    sampler_path: str = ""  # Sekiro only
     unk_floats: list[float] = field(default_factory=list)  # Sekiro only
 
     @classmethod
     def from_mtd_reader(cls, reader: BinaryReader):
 
-        texture_block = assert_block(reader, data_type=0x2000, marker=0xA3)
-        if texture_block.version == 3:
+        sampler_block = assert_block(reader, data_type=0x2000, marker=0xA3)
+        if sampler_block.version == 3:
             extended = False
-        elif texture_block.version == 5:
+        elif sampler_block.version == 5:
             extended = True
         else:
-            raise ValueError(f"MTD Texture block version should be 3 or 5, not {texture_block.version}.")
+            raise ValueError(f"`MTDSampler` block version should be 3 or 5, not {sampler_block.version}.")
 
-        texture_type = read_marked_string(reader, 0x35)
+        sampler_type = read_marked_string(reader, 0x35)
         uv_index = reader["i"]
         assert_marker(reader, 0x35)
         shader_data_index = reader["i"]
 
         if extended:
             if (m := reader["i"]) != 0xA3:
-                raise ValueError(f"Expected integer 0xA3 in MTD texture extended data, not {m}.")
-            texture_path = read_marked_string(reader, 0xBA)
+                raise ValueError(f"Expected integer 0xA3 in `MTDSampler` extended data, not {m}.")
+            sampler_path = read_marked_string(reader, 0xBA)
             float_count = reader["i"]
             unk_floats = list(reader.unpack(f"{float_count}f"))
         else:
-            texture_path = ""
+            sampler_path = ""
             unk_floats = []
 
         return cls(
-            texture_type,
+            sampler_type,
             extended,
             uv_index,
             shader_data_index,
-            texture_path,
+            sampler_path,
             unk_floats,
         )
 
     def to_mtd_writer(self, mtd_writer: BinaryWriter):
-        texture_block, texture_block_offset = write_block(mtd_writer, 0x2000, 5 if self.extended else 3, 0xA3)
+        sampler_block, sampler_block_offset = write_block(mtd_writer, 0x2000, 5 if self.extended else 3, 0xA3)
 
-        write_marked_string(mtd_writer, 0x35, self.texture_type)
+        write_marked_string(mtd_writer, 0x35, self.sampler_type)
         mtd_writer.pack("i", self.uv_index)
         write_marker(mtd_writer, 0x35)
         mtd_writer.pack("i", self.shader_data_index)
 
         if self.extended:
             mtd_writer.pack("i", 0xA3)
-            write_marked_string(mtd_writer, 0xBA, self.texture_path)
+            write_marked_string(mtd_writer, 0xBA, self.sampler_path)
             float_count = len(self.unk_floats)
             mtd_writer.pack("i", float_count)
             mtd_writer.pack(f"{float_count}f", *self.unk_floats)
         # Otherwise, no more to write.
 
-        texture_block.fill(mtd_writer, "length", mtd_writer.position - texture_block_offset)
+        sampler_block.fill(mtd_writer, "length", mtd_writer.position - sampler_block_offset)
 
     def __repr__(self):
         if self.extended:
             return (
-                f"MTDTexture(\"{self.texture_type}\", "
+                f"MTDSampler(\"{self.sampler_type}\", "
                 f"uv_index={self.uv_index}, "
                 f"shader_data_index={self.shader_data_index}, "
-                f"texture_path=\"{self.texture_path}\", "
+                f"sampler_path=\"{self.sampler_path}\", "
                 f"unk_floats={self.unk_floats})"
             )
         return (
-            f"MTDTexture(\"{self.texture_type}\", "
+            f"MTDSampler(\"{self.sampler_type}\", "
             f"uv_index={self.uv_index}, "
             f"shader_data_index={self.shader_data_index})"
         )
@@ -643,11 +643,11 @@ class MTDInfo:
 
         mtd_info = cls()
 
-        for texture in mtd.textures:
+        for sampler in mtd.samplers:
             # NOTE: Each MTD may not use certain UV indices -- e.g. 'g_Lightmap' always uses 3, even if there is no
             # second texture slot to use UV index 2. This is obviously desirable to keep the same UV layouts together
             # and we do the same in Blender.
-            mtd_info.texture_types[texture.texture_type] = texture.uv_index  # 1-indexed!
+            mtd_info.texture_types[sampler.sampler_type] = sampler.uv_index  # 1-indexed!
 
         blend_mode = mtd.get_param("g_BlendMode", default=0)
         if blend_mode == 1:

@@ -273,10 +273,15 @@ class BaseBinaryFile:
 
     def __repr__(self) -> str:
         lines = [f"{self.cls_name}("]
-        for field_name, field_value in fields(self):
-            lines.append(f"    {field_name}={repr(field_value)}")
+        for f in fields(self):
+            if f.name != "_dcx_type":
+                lines.append(f"    {f.name}={repr(getattr(self, f.name))},")
         lines.append(")")
         return "\n".join(lines)
+
+    # Subclass dataclasses will automatically 'restore' the default dataclass `__repr__`. This is a workaround to avoid
+    # having to set `repr=False` in every dataclass decorator.
+    base_repr = __repr__
 
 
 BaseBinaryFile.dcx_type = property(

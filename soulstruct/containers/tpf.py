@@ -84,7 +84,7 @@ class TPFTextureStruct(BinaryStruct, abc.ABC):
     format: byte
     texture_type: TextureType = field(**Binary(byte))
     mipmap_count: byte
-    texture_flags: byte = field(**Binary(asserted=[0, 1, 2, 3]))
+    texture_flags: byte
 
 
 @dataclass(slots=True)
@@ -94,7 +94,7 @@ class TPFTexture:
     format: int = 1
     texture_type: TextureType = TextureType.Texture
     mipmap_count: int = 0
-    texture_flags: int = 0  # {2, 3} -> DCX-compressed; unknown otherwise
+    texture_flags: int = 0  # {2, 3} -> DCX-compressed (i.e. bit 1); unknown otherwise
     data: bytes = b""
 
     header: TextureHeader | None = None
