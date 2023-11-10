@@ -71,7 +71,7 @@ class MergedMesh:
     def from_flver(
         cls,
         flver: FLVER,
-        submesh_material_indices: list[int],
+        submesh_material_indices: list[int] = None,
         material_uv_layers: list[list[str]] = None,
     ):
         """Construct merged mesh data from all `flver` submeshes.
@@ -92,22 +92,30 @@ class MergedMesh:
         occupy the first `n` UV data columns in the merged loops, which may, say, cause lightmap UV data and real
         texture UV data to share a column!
         """
-        valid_submeshes = []
-        valid_submesh_material_indices = []
-        for i, submesh in enumerate(flver.submeshes):
-            if not any(np.isnan(vertex_array.array["position"]).any() for vertex_array in submesh.vertex_arrays):
-                valid_submeshes.append(submesh)
-                valid_submesh_material_indices.append(submesh_material_indices[i])
-            else:
-                _LOGGER.warning(f"Submesh {i} has NaN vertex data and will be ignored by `MergedMesh`.")
-
         if not flver.submeshes:
             raise ValueError("FLVER has no submeshes. Cannot create `MergedMesh`.")
 
+        if not submesh_material_indices:
+            # By default, every submesh will be considered a separate 'material' in the `MergedMesh`.
+            submesh_material_indices = list(range(len(flver.submeshes)))
+
+        valid_submeshes = []
+        valid_submesh_material_indices = []
+        for i, submesh in enumerate(flver.submeshes):
+            if any(np.isnan(vertex_array.array["position"]).any() for vertex_array in submesh.vertex_arrays):
+                _LOGGER.warning(f"Submesh {i} has NaN vertex position data and will be ignored by `MergedMesh`.")
+                continue
+
+            valid_submeshes.append(submesh)
+            valid_submesh_material_indices.append(submesh_material_indices[i])
+
         if material_uv_layers:
-            material_uv_layers = material_uv_layers
+
             all_uv_layer_names_set = set()
-            for uv_layers in material_uv_layers:
+            for i, uv_layers in enumerate(material_uv_layers):
+                if i not in valid_submesh_material_indices:
+                    # No valid submeshes use this material index.
+                    continue
                 all_uv_layer_names_set |= set(uv_layers)
             all_uv_layers = sorted(all_uv_layer_names_set)
         else:

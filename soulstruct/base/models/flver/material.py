@@ -32,6 +32,10 @@ class GXItem(BinaryStruct):
     def __hash__(self):
         return hash((self.category, self.index, self.size, self.data))
 
+    @property
+    def is_dummy(self):
+        return self.category in {b'\xff\xff\xff\x7f', b'\xff\xff\xff\xff'}
+
 
 def read_gx_item_list(flver_reader: BinaryReader, flver_version: Version) -> list[GXItem]:
     """Read a list of `GXItem` instances from FLVER, including the final dummy `GXItem` (which no `Material` should

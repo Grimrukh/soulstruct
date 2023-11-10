@@ -18,6 +18,7 @@ from .vertex_array import VertexArray
 
 if tp.TYPE_CHECKING:
     from .material import Material
+    from .vertex_array import VertexArrayLayout
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -362,6 +363,11 @@ class Submesh:
     def vertices(self) -> np.ndarray:
         """Shortcut for accessing the data of the first vertex array (generally the only array)."""
         return self.vertex_arrays[0].array
+
+    @property
+    def layout(self) -> VertexArrayLayout:
+        """Shortcut for accessing the layout of the first vertex array (generally the only array)."""
+        return self.vertex_arrays[0].layout
 
     def dereference_face_sets(self, face_sets: dict[int, FaceSet]):
         self.face_sets = []
