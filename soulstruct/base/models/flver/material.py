@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-__all__ = ["GXItem", "GXList", "Material", "Texture"]
+__all__ = ["GXItem", "read_gx_item_list", "write_gx_item_list", "Material", "Texture"]
 
+import logging
 import typing as tp
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -16,59 +17,55 @@ if tp.TYPE_CHECKING:
     from .core import FLVER
     from .submesh import Submesh
 
+_LOGGER = logging.getLogger(__name__)
+
 
 @dataclass(slots=True)
 class GXItem(BinaryStruct):
     """Item that sets various material rendering properties."""
 
-    gx_id: bytes = field(**BinaryString(4))
-    unk_x04: int
-    size: int
+    category: bytes = field(**BinaryString(4))
+    index: int
+    size: int  # total size of struct (12) and `data`
     data: bytes = field(init=False, metadata={"NOT_BINARY": True})  # `size - 12` bytes
 
+    def __hash__(self):
+        return hash((self.category, self.index, self.size, self.data))
 
-@dataclass(slots=True)
-class GXList:
-    """List of `GXItem` instances, which set various material rendering properties.
 
-    Literally just a sequence of packed `GXItem` structs jammed together, with a fairly useless terminator struct. The
-    only reason this class exists is to track the exact form of the terminator struct for byte-perfect writes.
+def read_gx_item_list(flver_reader: BinaryReader, flver_version: Version) -> list[GXItem]:
+    """Read a list of `GXItem` instances from FLVER, including the final dummy `GXItem` (which no `Material` should
+    ever use).
 
-    Prior to Dark Souls 2 (version 0x20010), these lists only ever contained exactly one `GXItem`.
+    The `FLVER` instance will maintain the final dummy item for byte-perfect rewrites.
     """
-    gx_items: list[GXItem]
-    terminator_id: int = 2 ** 31 - 1
-    terminator_null_count: int = 0
+    if flver_version <= Version.DarkSouls2:
+        # Only one `GXItem` with no dummy item.
+        gx_item = GXItem.from_bytes(flver_reader)
+        gx_item.data = flver_reader.read(gx_item.size - 12)
+        # TODO: Definitely no dummy item?
+        return [gx_item]
 
-    @classmethod
-    def from_flver_reader(cls, reader: BinaryReader, flver_version: Version):
-        if flver_version <= Version.DarkSouls2:
-            # Only one `GXItem`.
-            gx_item = GXItem.from_bytes(reader)
-            gx_item.data = reader.read(gx_item.size - 12)
-            return cls([gx_item])
-        gx_items = []
-        while reader["i", reader.position] not in {2 ** 31 - 1, -1}:
-            gx_item = GXItem.from_bytes(reader)
-            gx_item.data = reader.read(gx_item.size - 12)
-            gx_items.append(gx_item)
-        terminator_id = reader["i"]  # either 2 ** 31 - 1 or -1
-        reader.unpack_value("i", asserted=100)
-        terminator_null_count = reader["i"] - 12
-        terminator_nulls = reader.read(terminator_null_count)
-        if terminator_nulls.strip(b"\0"):
-            raise ValueError(f"Found non-null reader in `GXList` terminator: {terminator_nulls}")
-        return cls(gx_items, terminator_id, terminator_null_count)
+    # Keep unpacking `GXItem`s until we unpack one with a dummy ID.
+    gx_items = []
+    while True:
+        gx_item = GXItem.from_bytes(flver_reader)
+        gx_item.data = flver_reader.read(gx_item.size - 12)
+        gx_items.append(gx_item)
+        if gx_item.category in {b'\xff\xff\xff\x7f', b'\xff\xff\xff\xff'}:
+            if gx_item.index != 100:
+                _LOGGER.warning(f"Dummy `GXItem` at end of list has non-100 `unk_x04`: {gx_item.index}")
+            if gx_item.data.strip(b"\0"):
+                _LOGGER.warning(f"Dummy `GXItem` at end of list has non-null `data`: {gx_item.data}")
+            break  # final dummy item found
+    return gx_items  # including dummy item
 
-    def to_flver_writer(self, writer: BinaryWriter):
-        for gx_item in self.gx_items:
-            GXItem.object_to_writer(gx_item, writer, size=len(gx_item.data) + 12)
-            writer.append(gx_item.data)
-        writer.pack("iii", self.terminator_id, 100, self.terminator_null_count + 12)
-        writer.pad(self.terminator_null_count)
 
-    def __repr__(self):
-        return f"GXList{repr(self.gx_items)}"
+def write_gx_item_list(flver_writer: BinaryWriter, gx_items: list[GXItem]):
+    """Write all `GXItem`s to FLVER. It is up to the caller to pass in a dummy item if suitable."""
+    for gx_item in gx_items:
+        GXItem.object_to_writer(gx_item, flver_writer, size=len(gx_item.data) + 12)
+        flver_writer.append(gx_item.data)
 
 
 @dataclass(slots=True)
@@ -177,7 +174,7 @@ class Material:
     mtd_path: str = ""
     flags: int = 0
     unk_x18: int = 0
-    gx_index: int = -1
+    gx_items: list[GXItem] = field(default_factory=list)
     textures: list[Texture] = field(default_factory=list)
 
     # Held temporarily before FLVER textures are assigned.
@@ -190,27 +187,36 @@ class Material:
         reader: BinaryReader,
         encoding: str,
         version: Version,
-        gx_lists: list[GXList],
-        gx_list_indices: dict[int, int],
+        gx_item_lists: dict[int, list[GXItem]],
     ):
+        """Unpack a `Material`.
+
+        Each packed material may contain an offset to a list of `GXItem`s, but these can also be shared between
+        materials. The `gx_item_lists` dictionary maps these offsets to `GXItem` lists that have already been unpacked
+        due to usage by a previous `Material`. If the offset is new, the list is unpacked and added to this dictionary
+        for future materials.
+        """
         material_struct = MaterialStruct.from_bytes(reader)
         name = reader.unpack_string(offset=material_struct.pop("_name_offset"), encoding=encoding)
         mtd_path = reader.unpack_string(offset=material_struct.pop("_mtd_path_offset"), encoding=encoding)
         gx_offset = material_struct.pop("_gx_offset")
         if gx_offset == 0:
-            gx_index = -1
-        elif gx_offset in gx_list_indices:
-            # Reuses a `GXList` first used by a prior `Material`.
-            gx_index = gx_list_indices[gx_offset]
+            gx_item_list = []  # no `GXItem`s (older games)
+        elif gx_offset in gx_item_lists:
+            # Reuses a `GXItem` list first used by a prior `Material`.
+            # NOTE: The exact same `list` Python object is used, and any changes to it will affect all other materials.
+            gx_item_list = gx_item_lists[gx_offset]
         else:
-            gx_index = gx_list_indices[gx_offset] = len(gx_lists)
+            # Unpack first-time use of `GXItem` list.
             with reader.temp_offset(gx_offset):
-                gx_lists.append(GXList.from_flver_reader(reader, version))
+                gx_item_list = read_gx_item_list(reader, version)
+                gx_item_lists[gx_offset] = gx_item_list
+
         material = material_struct.to_object(
             cls,
             name=name,
             mtd_path=mtd_path,
-            gx_index=gx_index,
+            gx_items=gx_item_list,
             _texture_count=material_struct.pop("_texture_count"),
             _first_texture_index=material_struct.pop("_first_texture_index"),
         )
@@ -231,7 +237,12 @@ class Material:
         self._first_texture_index = None
 
     def to_flver_writer(self, writer: BinaryWriter):
-        MaterialStruct.object_to_writer(self, writer, _texture_count=len(self.textures))
+        MaterialStruct.object_to_writer(
+            self,
+            writer,
+            _texture_count=len(self.textures),
+            _gx_offset=RESERVED if self.gx_items else -1,
+        )
 
     def pack_textures(self, flver_writer: BinaryWriter, first_texture_index: int):
         """Pack material's textures at this position."""
@@ -239,8 +250,8 @@ class Material:
         for texture in self.textures:
             texture.to_flver_writer(flver_writer)
 
-    def fill_gx_offset(self, flver_writer: BinaryWriter, gx_offsets: list[int]):
-        gx_offset = 0 if self.gx_index == -1 else gx_offsets[self.gx_index]
+    def fill_gx_offset(self, flver_writer: BinaryWriter, gx_offset: int):
+        """NOTE: Material only reserves this field if it has any GX items. Otherwise, it already wrote offset -1."""
         flver_writer.fill("_gx_offset", gx_offset, obj=self)
 
     def pack_strings(self, flver_writer: BinaryWriter, encoding: str):
@@ -314,8 +325,9 @@ class Material:
             f"  mtd_path = {repr(self.mtd_path)},",
             f"  flags = 0b{self.flags:032b},  # {self.flags}",
         ]
-        if self.gx_index != -1:
-            lines.append(f"  gx_index = {self.gx_index},")
+        if self.gx_items:
+            items = ",\n".join(["    " + indent_lines(repr(item)) for item in self.gx_items if item.category])
+            lines.append(f"  gx_items = [\n{items}\n  ],")
         if self.unk_x18 != 0:
             lines.append(f"  unk_x18 = {self.unk_x18},")
         lines.append(f"  textures = [{textures}],")
@@ -325,7 +337,8 @@ class Material:
     def __hash__(self) -> int:
         """Straightforward hashing of fields and textures."""
         texture_hashes = tuple(hash(tex) for tex in self.textures)
-        return hash((self.name, self.mtd_path, self.flags, self.gx_index, self.unk_x18, texture_hashes))
+        gx_item_hashes = tuple(hash(item) for item in self.gx_items)
+        return hash((self.name, self.mtd_path, self.flags, gx_item_hashes, self.unk_x18, texture_hashes))
 
     def __eq__(self, other: Material):
         """Check for equality by hash."""

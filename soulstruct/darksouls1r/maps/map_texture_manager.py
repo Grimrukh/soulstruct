@@ -90,8 +90,8 @@ class MapAreaTextureManager:
     def check_map_piece_textures(self, map_piece_flver: FLVER) -> list[str]:
         """Returns a list of textures in this Map Piece FLVER model that are currently missing from area textures."""
         missing = []
-        for material in map_piece_flver.materials:
-            for texture in material.textures:
+        for submesh in map_piece_flver.submeshes:
+            for texture in submesh.material.textures:
                 if not self.has_texture(texture.stem):
                     missing.append(texture.stem)
         return missing

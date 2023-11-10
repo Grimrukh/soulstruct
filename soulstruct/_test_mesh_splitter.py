@@ -20,19 +20,23 @@ def test_merge_and_split():
 
     # TODO: For testing here, throwing away submesh info and just using their FLVER material.
     # Will of course need to create new indices into 'material' representations that include critical submesh fields.
-    default_submesh_materials = [flver.materials.index(submesh.material) for submesh in flver.submeshes]
+    all_materials = []
+    submesh_mat_indices = []
+    for submesh in flver.submeshes:
+        try:
+            material_index = all_materials.index(submesh.material)
+        except IndexError:
+            material_index = len(all_materials)
+            all_materials.append(submesh.material)
+        submesh_mat_indices.append(material_index)
 
-    merged = MergedMesh.from_flver(flver, default_submesh_materials)
+    merged = MergedMesh.from_flver(flver, submesh_mat_indices)
     print(f"Merged submeshes of FLVER '{flver.path.name}' successfully ({len(merged.vertex_data)} vertices).")
-
-    # Test splitter. We need to get data per-submesh. Again, would normally use 'extended material' definitions here.
-    materials = flver.materials
 
     # TODO: This seems general-purpose: getting layouts PER MATERIAL. We can detect if two different submesh arrays use
     #  different layouts for the same material, too.
     submesh_layouts_dict = {}
-    for submesh in flver.submeshes:
-        material_index = materials.index(submesh.material)
+    for submesh, material_index in zip(flver.submeshes, submesh_mat_indices):
         layout = submesh.vertex_arrays[0].layout
         if material_index not in submesh_layouts_dict:
             submesh_layouts_dict[material_index] = layout
@@ -42,8 +46,7 @@ def test_merge_and_split():
     print("Layouts are valid (same for all usages of each material).")
 
     submesh_info = []
-    for submesh in flver.submeshes:
-        material_index = materials.index(submesh.material)
+    for submesh, material_index in zip(flver.submeshes, submesh_mat_indices):
         layout = submesh_layouts_dict[material_index]
         submesh_kwargs = {
             "is_bind_pose": submesh.is_bind_pose,

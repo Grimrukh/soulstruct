@@ -16,7 +16,7 @@ from soulstruct.utilities.binary import *
 from .bone import FLVERBone
 from .dummy import Dummy
 from .layout_repair import check_ds1_layouts
-from .material import GXList, Material, Texture
+from .material import GXItem, write_gx_item_list, Material, Texture
 from .submesh import FaceSet, Submesh
 from .version import Version
 from .vertex_array import VertexArrayHeaderStruct, VertexArrayLayout, VertexArray, VertexDataSizeError
@@ -88,11 +88,16 @@ class FLVER(GameFile):
     unk_x68: int = 0
 
     dummies: list[Dummy] = field(default_factory=list)
-    gx_lists: list[GXList] = field(default_factory=list)
-    materials: list[Material] = field(default_factory=list)
     bones: list[FLVERBone] = field(default_factory=list)
     submeshes: list[Submesh] = field(default_factory=list)
     layouts: list[VertexArrayLayout] = field(default_factory=list)
+
+    # NOTE: `Material` instances are assigned to their submeshes and are not stored separately in the FLVER.
+    # On export, all unique materials are packed to the FLVER, and each submesh is assigned an index to one of them.
+    
+    # NOTE: `GXItem` lists are assigned to the `Material` instances that use them. They are not stored separately in the
+    # FLVER. On export, all unique `GXItem` lists are packed to the FLVER, and each `Material` is assigned the offset
+    # of its `GXItem` list in the FLVER.
 
     @classmethod
     def from_reader(cls, reader: BinaryReader) -> Self:
@@ -105,15 +110,13 @@ class FLVER(GameFile):
 
         dummies = [Dummy.from_flver_reader(reader, header.version) for _ in range(header.dummy_count)]
 
-        gx_list_indices = {}  # type: dict[int, int]  # maps `_gx_offset` in `Material` to `self.gx_lists` index
-        gx_lists = []  # filled by `Material` reader below
+        gx_item_lists = {}  # type: dict[int, list[GXItem]]  # unpacked by each `Material` as encountered
         materials = [
             Material.from_flver_reader(
                 reader,
                 encoding=encoding,
                 version=header.version,
-                gx_lists=gx_lists,
-                gx_list_indices=gx_list_indices,
+                gx_item_lists=gx_item_lists,
             )
             for _ in range(header.material_count)
         ]
@@ -197,8 +200,6 @@ class FLVER(GameFile):
             cls,
             big_endian=header.endian == b"B\0",
             dummies=dummies,
-            gx_lists=gx_lists,
-            materials=materials,
             bones=bones,
             submeshes=submeshes,
             layouts=layouts,
@@ -281,7 +282,7 @@ class FLVER(GameFile):
             vertex_indices_size=header_vertex_indices_size,  # 0, 16, or 32
             face_set_count=sum(len(mesh.face_sets) for mesh in self.submeshes),
             array_layout_count=RESERVED,
-            texture_count=sum(len(material.textures) for material in self.materials),
+            texture_count=RESERVED,
         )
 
         writer = header.to_writer(reserve_obj=self)
@@ -291,11 +292,14 @@ class FLVER(GameFile):
 
         materials_to_pack = []  # type: list[Material]  # unique materials to actually pack to FLVER
         layouts_to_pack = []  # type: list[VertexArrayLayout]  # unique layouts to actually pack to FLVER
+        gx_lists_to_pack = []  # type: list[list[GXItem]]  # unique GX item lists to actually pack to FLVER
         hashed_material_indices = {}  # type: dict[int, int]  # maps material hashes to `materials_to_pack` indices
         hashed_layout_indices = {}  # type: dict[int, int]  # maps layout hashes to `layouts_to_pack` indices
+        hashed_gx_list_indices = {}  # type: dict[int, int]  # maps GX list hashes to `gx_lists_to_pack` indices
         submesh_material_indices = []  # type: list[int]
         submesh_layout_indices = []  # type: list[list[int]]  # has a list per submesh (may have multiple arrays)
-        for i, submesh in enumerate(self.submeshes):
+        gx_list_material_users = []  # type: list[list[Material]]  # maps `gx_lists_to_pack` element to `Material` list
+        for submesh in self.submeshes:
             material = submesh.material
             material_hash = hash(material)
             if material_hash in hashed_material_indices:
@@ -304,6 +308,19 @@ class FLVER(GameFile):
                 # New material.
                 submesh_material_index = hashed_material_indices[material_hash] = len(materials_to_pack)
                 materials_to_pack.append(material)
+                # Check GX item list.
+                if material.gx_items:
+                    gx_items_hash = hash(tuple(material.gx_items))
+                    if gx_items_hash in hashed_gx_list_indices:
+                        # GX item list already registered for packing.
+                        material_gx_list_index = hashed_gx_list_indices[gx_items_hash]
+                        gx_list_material_users[material_gx_list_index].append(material)
+                    else:
+                        # New GX item list.
+                        material_gx_list_index = len(gx_lists_to_pack)
+                        hashed_gx_list_indices[gx_items_hash] = material_gx_list_index
+                        gx_lists_to_pack.append(material.gx_items)
+                        gx_list_material_users.append([material])
             submesh_material_indices.append(submesh_material_index)
 
             array_layout_indices = []
@@ -321,6 +338,7 @@ class FLVER(GameFile):
 
         writer.fill("material_count", len(materials_to_pack), obj=self)
         writer.fill("array_layout_count", len(layouts_to_pack), obj=self)
+        writer.fill("texture_count", sum(len(material.textures) for material in materials_to_pack), obj=self)
 
         for material in materials_to_pack:
             material.to_flver_writer(writer)
@@ -360,8 +378,9 @@ class FLVER(GameFile):
         for layout in layouts_to_pack:
             layout.to_flver_writer(writer)
 
+        # Pack material textures.
         first_texture_index = 0
-        for i, material in enumerate(self.materials):
+        for material in materials_to_pack:
             material.pack_textures(writer, first_texture_index=first_texture_index)
             first_texture_index += len(material.textures)
 
@@ -394,16 +413,18 @@ class FLVER(GameFile):
             submesh.pack_vertex_array_indices(writer, first_vertex_array_index)
             first_vertex_array_index += len(submesh.vertex_arrays)
 
+        # Pack GX lists.
         writer.pad_align(16)
-        gx_offsets = []
-        for gx_list in self.gx_lists:
-            gx_offsets.append(writer.position)
-            gx_list.to_flver_writer(writer)
-        for material in self.materials:
-            material.fill_gx_offset(writer, gx_offsets)
+        for gx_list, material_users in zip(gx_lists_to_pack, gx_list_material_users):
+            gx_list_offset = writer.position
+            write_gx_item_list(writer, gx_list)
+            for material in material_users:
+                # NOTE: Material only reserves this field if it has any GX items. Otherwise, already wrote offset -1.
+                material.fill_gx_offset(writer, gx_list_offset)
 
+        # Pack material and texture strings.
         writer.pad_align(16)
-        for material in self.materials:
+        for material in materials_to_pack:
             material.pack_strings(writer, encoding)
             for texture in material.textures:
                 texture.pack_strings(writer, encoding=encoding)
@@ -488,14 +509,6 @@ class FLVER(GameFile):
             dummies = "[\n    " + "\n    ".join(repr(self.dummies)[1:-1].split("\n")) + "\n  ]"
         else:
             dummies = "[]"
-        if self.materials:
-            materials = "[\n    " + "\n    ".join(repr(self.materials)[1:-1].split("\n")) + "\n  ]"
-        else:
-            materials = "[]"
-        if self.gx_lists:
-            gx_lists = "[\n    " + "\n    ".join(repr(self.gx_lists)[1:-1].split("\n")) + "\n  ]"
-        else:
-            gx_lists = "[]"
         if self.submeshes:
             submeshes = "[\n    " + "\n    ".join(repr(self.submeshes)[1:-1].split("\n")) + "\n  ]"
         else:
@@ -504,8 +517,6 @@ class FLVER(GameFile):
             f"FLVER(\n"
             f"  bones = {bones}\n"
             f"  dummies = {dummies}\n"
-            f"  materials = {materials}\n"
-            f"  gx_lists = {gx_lists}\n"
             f"  submeshes = {submeshes}\n"
             ")"
         )
@@ -558,8 +569,8 @@ class FLVER(GameFile):
 
     def replace_tpf_name(self, old_name: str, new_name: str):
         """Iterate over all `Material` textures and replace all '{old_name}.tga' names with '{new_name}.tga'."""
-        for material in self.materials:
-            for texture in material.textures:
+        for submesh in self.submeshes:
+            for texture in submesh.material.textures:
                 # TODO: To be safe, probably make sure we're only replacing the file name of the path.
                 texture.path = texture.path.replace(old_name, new_name)
 
@@ -570,8 +581,8 @@ class FLVER(GameFile):
         """
         return {
             Path(texture.path)
-            for material in self.materials
-            for texture in material.textures if texture.path
+            for submesh in self.submeshes
+            for texture in submesh.material.textures if texture.path
         }
 
     def get_tpfbhd_directory_path(self) -> Path:

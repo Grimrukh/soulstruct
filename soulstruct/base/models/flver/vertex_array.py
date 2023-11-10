@@ -94,7 +94,7 @@ class VertexDataFormatEnum(IntEnum):
     UVPair = 0x16
     ShortBoneIndices = 0x18  # only used for bone indices
     FourShortsToFloats = 0x1A
-    FourShortsToFloatsB = 0x2E  # unused thus far
+    FourShortsToFloatsB = 0x2E
     FourBytesD = 0x2F
     EdgeCompressed = 0xF0  # not supported by Soulstruct
 
@@ -348,7 +348,7 @@ class VertexUV(VertexDataType):
             decompressed_dtype=[("uv_{i}", "f", (2,)), ("uv_{j}", "f", (2,))],
             # Codec handled externally.
         ),
-        (0x1A,): VertexDataFormat(
+        (0x1A, 0x2E): VertexDataFormat(
             compressed_dtype=[("uv_{i}", "h", (4,))],  # NOTE: `uv[2]` for unknown use; `uv[3]` always zero
             decompressed_dtype=[("uv_{i}", "f", (4,))],
             # Codec handled externally.

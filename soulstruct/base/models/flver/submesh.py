@@ -295,8 +295,14 @@ class Submesh:
     default_bone_index: int = -1
     bone_indices: np.ndarray | None = None
     uses_bounding_box: bool = True  # TODO: perfect candidate for a game-specific subclass ClassVar
+    # TODO: These are clearly NOT min/max in later games that use the third vector below.
+    #  'min' seems to be roughly half the extent of the bounding box, but it's quite rough.
+    #   - center in 'local box coordinates'?
+    #  'max' is quite smaller and sometimes even negative. Not quite contained to [-1, 1] range though.
+    #   - center in 'FLVER bounding box normalized coordinates'?
     bounding_box_min: Vector3 = field(default_factory=Vector3.single_max)
     bounding_box_max: Vector3 = field(default_factory=Vector3.single_min)
+    # TODO: Seems to be VERY close to the center of the mesh bounding box in FLVER space.
     bounding_box_unknown: Vector3 | None = None  # only used in Sekiro onward  # TODO: see above
     face_sets: list[FaceSet] = field(default_factory=list)
     vertex_arrays: list[VertexArray] = field(default_factory=list)
@@ -602,9 +608,10 @@ class Submesh:
 
     def __repr__(self):
         face_sets = ",\n".join(["    " + indent_lines(repr(f)) for f in self.face_sets])
+        material = indent_lines(repr(self.material))
         lines = [
             "Submesh(",
-            f"  material = <\"{self.material.name}\" ({self.material.mtd_name})>",
+            f"  material = {material}",
             f"  default_bone_index = {self.default_bone_index}",
             f"  bone_indices = {self.bone_indices}",
             f"  vertices = <{len(self.vertices)} vertices>",
