@@ -173,10 +173,10 @@ class FLVERBone:
             lines.append(f"  parent_bone = '{self.parent_bone.name}'")
         if self.child_bone:
             lines.append(f"  child_bone = '{self.child_bone.name}'")
-        if self.next_sibling_bone:
-            lines.append(f"  next_sibling_bone = '{self.next_sibling_bone.name}'")
         if self.previous_sibling_bone:
             lines.append(f"  previous_sibling_bone = '{self.previous_sibling_bone.name}'")
+        if self.next_sibling_bone:
+            lines.append(f"  next_sibling_bone = '{self.next_sibling_bone.name}'")
 
         lines.append(f"  bounding_box_min = {self.bounding_box_min}")
         lines.append(f"  bounding_box_max = {self.bounding_box_max}")
