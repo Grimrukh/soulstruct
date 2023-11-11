@@ -209,7 +209,7 @@ class BinderVersion4Info:
     unknown1: bool = False
     unknown2: bool = False
     unicode: bool = True
-    hash_table_type: int = 0
+    hash_table_type: int = 0  # 4 is also very common
 
     most_recent_hash_table: bytes = field(init=False, repr=False, default=b"")
     most_recent_entry_count: int = field(init=False, repr=False, default=0)

@@ -175,7 +175,7 @@ class MaterialStruct(BinaryStruct):
 class Material:
 
     name: str = ""
-    mtd_path: str = ""
+    mtd_path: str = ""  # TODO: Could be a `.matxml` (MATBIN) path in later games. May want to rename `mat_def_path`.
     flags: int = 0
     unk_x18: int = 0
     gx_items: list[GXItem] = field(default_factory=list)
@@ -204,7 +204,7 @@ class Material:
         name = reader.unpack_string(offset=material_struct.pop("_name_offset"), encoding=encoding)
         mtd_path = reader.unpack_string(offset=material_struct.pop("_mtd_path_offset"), encoding=encoding)
         gx_offset = material_struct.pop("_gx_offset")
-        if gx_offset == 0:
+        if gx_offset <= 0:
             gx_item_list = []  # no `GXItem`s (older games)
         elif gx_offset in gx_item_lists:
             # Reuses a `GXItem` list first used by a prior `Material`.
@@ -245,7 +245,7 @@ class Material:
             self,
             writer,
             _texture_count=len(self.textures),
-            _gx_offset=RESERVED if self.gx_items else -1,
+            _gx_offset=RESERVED if self.gx_items else 0,
         )
 
     def pack_textures(self, flver_writer: BinaryWriter, first_texture_index: int):
@@ -255,7 +255,7 @@ class Material:
             texture.to_flver_writer(flver_writer)
 
     def fill_gx_offset(self, flver_writer: BinaryWriter, gx_offset: int):
-        """NOTE: Material only reserves this field if it has any GX items. Otherwise, it already wrote offset -1."""
+        """NOTE: Material only reserves this field if it has any GX items. Otherwise, it already wrote offset 0."""
         flver_writer.fill("_gx_offset", gx_offset, obj=self)
 
     def pack_strings(self, flver_writer: BinaryWriter, encoding: str):
@@ -299,11 +299,13 @@ class Material:
 
     @property
     def mtd_name(self):
+        # TODO: Could also be a MATBIN ('.matxml') name.
         return Path(self.mtd_path).name
 
     @mtd_name.setter
     def mtd_name(self, name: str):
         """Set '.mtd' name of `mtd_path`."""
+        # TODO: Could also be a MATBIN ('.matxml') name.
         name = name.removesuffix(".mtd") + ".mtd"
         self.mtd_path = str(Path(self.mtd_path).with_name(name))
 

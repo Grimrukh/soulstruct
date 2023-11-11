@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+__all__ = ["MTD", "MTDBND"]
+
 import logging
 import typing as tp
 from dataclasses import dataclass
 from pathlib import Path
 
 from soulstruct.containers import BinderVersion, EntryNotFoundError
-from soulstruct.base.models.mtd import MTDBND as BaseMTDBND
+from soulstruct.base.models.mtd import MTD, MTDBND as BaseMTDBND
 from soulstruct.games import DARK_SOULS_DSR
 
 _LOGGER = logging.getLogger(__name__)

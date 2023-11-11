@@ -9,14 +9,19 @@ from __future__ import annotations
 
 __all__ = ["MATBIN", "MATBINBND"]
 
+import logging
+import typing as tp
 from dataclasses import dataclass, field
 from enum import IntEnum
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.containers import Binder
+from soulstruct.containers import Binder, BinderVersion, BinderVersion4Info, EntryNotFoundError
+from soulstruct.games import ELDEN_RING
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector2
+
+_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)
@@ -142,7 +147,7 @@ class MATBIN(GameFile):
             f"MATBIN(\n"
             f"  shader_path=\"{self.shader_path}\",\n"
             f"  source_path=\"{self.source_path}\",\n"
-            f"  params=[\n{params},\n  ],\n"
+            f"  params={{\n{params},\n  }},\n"
             f"  samplers=[\n{samplers},\n  ],\n"
             f")"
         )
@@ -291,17 +296,51 @@ class MATBINSampler:
 @dataclass(slots=True)
 class MATBINBND(Binder):
 
+    _BUNDLED: tp.ClassVar[MATBINBND] = None
+
+    use_lazy_load: bool = True  # if True, entries will only be loaded into `MATBIN` instances when requested
     matbins: dict[str, MATBIN] = field(default_factory=dict)
+
+    dcx_type = ELDEN_RING.default_dcx_type
+    version: BinderVersion = BinderVersion.V4
+    v4_info: BinderVersion4Info = field(default_factory=lambda: BinderVersion4Info(hash_table_type=4))
 
     def __post_init__(self):
         """Loads FIRST instance of each entry name as an MATBIN."""
         super(MATBINBND, self).__post_init__()
 
-        if self.matbins:
-            return  # already passed in
+        if self.matbins or self.use_lazy_load:
+            return  # already passed in, or lazy loading enabled
 
         self.matbins = {}
         for entry in self.entries:
             if entry.name in self.matbins:
                 continue  # ignore repeated names silently
             self.matbins[entry.name] = entry.to_binary_file(MATBIN)
+
+    def get_matbin(self, matbin_name: str) -> MATBIN:
+        try:
+            return self.matbins[matbin_name]
+        except KeyError:
+            try:
+                matbin_entry = self.find_entry_name(matbin_name)
+            except EntryNotFoundError:
+                raise KeyError(f"MATBIN '{matbin_name}' not found in {self.__class__.__name__}.")
+            matbin = matbin_entry.to_binary_file(MATBIN)
+            self.matbins[matbin_name] = matbin
+            return matbin
+
+    @classmethod
+    def from_bundled(cls):
+        """TODO: Does not include 'devpatch' file (1 KB)."""
+        if cls._BUNDLED is None:
+            _LOGGER.info(f"Loading bundled `MTDBND` for {ELDEN_RING.name}.")
+            bundled_matbinbnd_path = Path(__file__).parent / "resources/allmaterial.matbinbnd.dcx"
+            cls._BUNDLED = cls.from_path(bundled_matbinbnd_path)
+        return cls._BUNDLED
+
+    @classmethod
+    def from_path_or_bundled(cls, mtdbnd_path: Path):
+        if mtdbnd_path.is_file():
+            return cls.from_path(mtdbnd_path)
+        return cls.from_bundled()

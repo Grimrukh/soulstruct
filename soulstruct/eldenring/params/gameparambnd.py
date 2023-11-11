@@ -3,7 +3,7 @@ from __future__ import annotations
 __all__ = ["GameParamBND"]
 
 import typing as tp
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from soulstruct.containers import BinderVersion, BinderVersion4Info
@@ -32,7 +32,7 @@ class GameParamBND(_BaseGameParamBND):
     signature: str = "10811000"
     dcx_type: DCXType = DCXType.DCX_DFLT_11000_44_9_15  # NOTE: This is NOT the standard `KRAK` Elden Ring compression.
     version: BinderVersion = BinderVersion.V4
-    v4_info = BinderVersion4Info(hash_table_type=4)
+    v4_info: BinderVersion4Info = field(default_factory=lambda: BinderVersion4Info(hash_table_type=4))
 
     @classmethod
     def from_encrypted_path(cls, encrypted_path: Path | str) -> Self:
