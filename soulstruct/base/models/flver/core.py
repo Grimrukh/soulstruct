@@ -752,12 +752,15 @@ class FLVER(GameFile):
         """Iterate through the `bones` hierarchy and use set `parent_bone` (the most important reference) to set
         `child_bone` (first bone using this bone as parent) and sibling bones (ordered bones with the same parent).
         """
-        root_bones = []
+
+        # Clear old references.
         for bone in self.bones:
-            # Clear old references.
             bone.child_bone = None
             bone.previous_sibling_bone = None
             bone.next_sibling_bone = None
+
+        root_bones = []
+        for bone in self.bones:
 
             if bone.parent_bone is None:
                 # Root bone. Assign siblings.
