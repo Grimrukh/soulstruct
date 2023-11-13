@@ -24,6 +24,7 @@ from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.base.textures.dds import *
+from soulstruct.base.textures.texconv import TexconvError, texconv
 from soulstruct.dcx import DCXType, decompress
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.files import read_json, write_json
@@ -65,6 +66,47 @@ class TextureHeader:
     unk1: int = 0  # unknown, PS3 only
     unk2: int = 0  # unknown, 0x0 or 0xAAE4 in DeS, 0xD in BB/DS3 (console)
     dxgi_format: DXGI_FORMAT = DXGI_FORMAT.UNKNOWN
+
+    def to_dds_headers(self) -> tuple[DDSHeader, DXT10Header]:
+        """Generate automatic DDS headers for headerless console textures.
+
+        Always uses extended DX10 header (and 'DX10' fourcc).
+        """
+
+        # TODO: Close. I can convert textures, but the pixels are clearly scrambled.
+        #  Need a better test setup than Blender import.
+        print(f"Generating DDS headers from TPF TextureHeader: {self}")
+
+        flags = DDSD.get_required_flags() | DDSD.PITCH | DDSD.LINEARSIZE
+        if self.texture_count > 0:
+            flags |= DDSD.MIPMAPCOUNT
+
+        dx10_header = DXT10Header.get_default(self.dxgi_format)
+
+        dds_header = DDSHeader(
+            flags=flags,
+            height=self.height,
+            width=self.width,
+            pitch_or_linear_size=65536,  # TODO: ? 65536 observed in DSR... size-dependent?
+            depth=0,
+            mipmap_count=self.texture_count,  # TODO: assuming
+            reserved_1=[0] * 11,  # unused; you often find authorship strings here ('UVER', 'NVTT', etc.)
+            pixelformat_flags=DDPF.FOURCC,  # always
+            fourcc=b"DX10",
+            rgb_bit_count=0,  # don't seem used
+            r_bitmask=0,  # don't seem used
+            g_bitmask=0,  # don't seem used
+            b_bitmask=0,  # don't seem used
+            a_bitmask=0,  # don't seem used
+            caps1=DDSCAPS.TEXTURE | DDSCAPS.COMPLEX | DDSCAPS.MIPMAP,  # all three always seem enabled
+            caps2=0,  # not trying to handle cubemaps here!
+            caps3=0,
+            caps4=0,
+            reserved_2=0,
+        )
+        dds_header.byte_order = ByteOrder.LittleEndian
+
+        return dds_header, dx10_header
 
 
 @dataclass(slots=True)
@@ -269,31 +311,20 @@ class TPFTexture:
                     f"   stderr: {result.stderr}"
                 )
 
-    def get_data_with_header(self):
-        """Attempt to construct a DDS header for headerless console textures so that `texconv` can convert them."""
-        if self.header is None:
-            # Assume DDS data already has header.
-            return self.data
-
-        # TODO: Need to set `fourcc` and decide if DX10 header will be present, etc.
-
-        dds_header = DDSHeader(
-            # TODO: Need to detect flags properly. Might not matter for `texconv` though?
-            flags=DDSD.CAPS | DDSD.HEIGHT | DDSD.WIDTH | DDSD.PIXELFORMAT | DDSD.MIPMAPCOUNT,
-            height=self.header.height,
-            width=self.header.width,
-            pitch_or_linear_size=0,  # TODO: ? 65536 observed in DSR
-            depth=0,
-            mipmap_count=self.mipmap_count,
-            reserved_1=[0] * 11,  # authorship stuff goes here
-            pixelformat_flags=DDPF.FOURCC,
-            fourcc="",  # TODO
-        )
-
     def get_png_data(self, fmt="rgba") -> bytes:
         with tempfile.TemporaryDirectory() as png_dir:
             temp_dds_path = Path(png_dir, "temp.dds")
-            temp_dds_path.write_bytes(self.data)
+
+            if not self.data[:4] == b"DDS\0":
+                if not self.header:
+                    raise TexconvError("Cannot convert headerless DDS texture to PNG without a `TPFTexture` header.")
+                dds_header, dx10_header = self.header.to_dds_headers()
+                dds_data = bytes(dds_header) + bytes(dx10_header) + self.data
+            else:
+                dds_data = self.data  # already has header
+
+            temp_dds_path.write_bytes(dds_data)
+            Path("~/Documents/temp.dds").expanduser().write_bytes(dds_data)
             texconv_result = texconv("-o", png_dir, "-ft", "png", "-f", fmt, "-nologo", temp_dds_path)
             try:
                 return Path(png_dir, "temp.png").read_bytes()
