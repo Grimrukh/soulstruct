@@ -18,12 +18,12 @@ import shutil
 import tempfile
 import typing as tp
 import zlib
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from enum import IntEnum
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.base.textures.dds import DDS, DDSCAPS2, texconv, convert_dds_file
+from soulstruct.base.textures.dds import *
 from soulstruct.dcx import DCXType, decompress
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.files import read_json, write_json
@@ -63,8 +63,8 @@ class TextureHeader:
     height: int
     texture_count: int = 0
     unk1: int = 0  # unknown, PS3 only
-    unk2: int = 0  # unknown, 0x0 or 0xAAE4 in DeS, 0xD in DS3 (console)
-    dxgi_format: int = 0  # Microsoft DXGI_FORMAT
+    unk2: int = 0  # unknown, 0x0 or 0xAAE4 in DeS, 0xD in BB/DS3 (console)
+    dxgi_format: DXGI_FORMAT = DXGI_FORMAT.UNKNOWN
 
 
 @dataclass(slots=True)
@@ -97,8 +97,8 @@ class TPFTexture:
     texture_flags: int = 0  # {2, 3} -> DCX-compressed (i.e. bit 1); unknown otherwise
     data: bytes = b""
 
-    header: TextureHeader | None = None
-    unknown_floats: tuple[int, list[float]] | None = None
+    header: TextureHeader | None = None  # only used for console textures to supplement headerless DDS
+    unknown_float_struct: tuple[int, list[float]] | None = None
 
     @classmethod
     def from_tpf_reader(
@@ -136,14 +136,14 @@ class TPFTexture:
             header = None
 
         name_offset = reader["I"]
-        has_unknown_floats = reader["i"] == 1
+        has_unknown_float_struct = reader["i"] == 1
         if platform in {TPFPlatform.PS4, TPFPlatform.XboxOne}:
-            header.dxgi_format = reader["i"]
-        if has_unknown_floats:
+            header.dxgi_format = DXGI_FORMAT(reader["i"])
+        if has_unknown_float_struct:
             float_struct = TextureFloatStruct.from_bytes(reader)
-            unknown_floats = (float_struct.unk0, float_struct.unpack_data(reader))
+            unknown_float_struct = (float_struct.unk0, float_struct.unpack_data(reader))
         else:
-            unknown_floats = None
+            unknown_float_struct = None
 
         with reader.temp_offset(texture_struct.pop("data_offset")):
             data = reader.read(texture_struct.pop("data_size"))
@@ -159,7 +159,7 @@ class TPFTexture:
             name=name,
             data=data,
             header=header,
-            unknown_floats=unknown_floats,
+            unknown_float_struct=unknown_float_struct,
         )
 
         return texture
@@ -201,13 +201,13 @@ class TPFTexture:
                 writer.pack("i", self.header.unk2)
 
         writer.reserve("name_offset", "I", obj=self)
-        writer.pack("i", 0 if self.unknown_floats is None else 1)
+        writer.pack("i", 0 if self.unknown_float_struct is None else 1)
 
         if platform in {TPFPlatform.PS4, TPFPlatform.XboxOne}:
             writer.pack("i", self.header.dxgi_format)
 
-        if self.unknown_floats is not None:
-            unk0, floats = self.unknown_floats
+        if self.unknown_float_struct is not None:
+            unk0, floats = self.unknown_float_struct
             TextureFloatStruct(unk0, len(floats) * 4).to_writer(writer)
             writer.pack(f"{len(floats) * 4}f", *floats)
 
@@ -258,16 +258,37 @@ class TPFTexture:
                     self.data = Path(dds_dir, "temp.dds").read_bytes()
                 except FileNotFoundError:
                     stdout = result.stdout.decode()
-                    raise ValueError(
+                    raise TexconvError(
                         f"Could not convert image {image_path} to DDS with format {dds_format}:\n    {stdout}"
                     )
             else:
                 stdout = result.stdout.decode()
-                raise ValueError(
+                raise TexconvError(
                     f"Could not convert texture source bytes.\n"
                     f"   stdout: {stdout}\n"
                     f"   stderr: {result.stderr}"
                 )
+
+    def get_data_with_header(self):
+        """Attempt to construct a DDS header for headerless console textures so that `texconv` can convert them."""
+        if self.header is None:
+            # Assume DDS data already has header.
+            return self.data
+
+        # TODO: Need to set `fourcc` and decide if DX10 header will be present, etc.
+
+        dds_header = DDSHeader(
+            # TODO: Need to detect flags properly. Might not matter for `texconv` though?
+            flags=DDSD.CAPS | DDSD.HEIGHT | DDSD.WIDTH | DDSD.PIXELFORMAT | DDSD.MIPMAPCOUNT,
+            height=self.header.height,
+            width=self.header.width,
+            pitch_or_linear_size=0,  # TODO: ? 65536 observed in DSR
+            depth=0,
+            mipmap_count=self.mipmap_count,
+            reserved_1=[0] * 11,  # authorship stuff goes here
+            pixelformat_flags=DDPF.FOURCC,
+            fourcc="",  # TODO
+        )
 
     def get_png_data(self, fmt="rgba") -> bytes:
         with tempfile.TemporaryDirectory() as png_dir:
@@ -278,7 +299,7 @@ class TPFTexture:
                 return Path(png_dir, "temp.png").read_bytes()
             except FileNotFoundError:
                 stdout = texconv_result.stdout.decode()
-                raise ValueError(f"Could not convert texture DDS to PNG:\n    {stdout}")
+                raise TexconvError(f"Could not convert texture DDS to PNG:\n    {stdout}")
 
     def export_png(self, png_path: str | Path, fmt="rgba"):
         png_data = self.get_png_data(fmt)
@@ -325,7 +346,7 @@ class TPFTexture:
             f"    texture_flags = {self.texture_flags}\n"
             f"    data = <{len(self.data)} bytes>\n"
             f"    has_header = {self.header is not None}\n"
-            f"    has_unknown_floats = {self.unknown_floats is not None}\n"
+            f"    has_unknown_float_struct = {self.unknown_float_struct is not None}\n"
             f")"
         )
 
@@ -399,7 +420,7 @@ class TPF(GameFile):
                 texture_flags=entry["texture_flags"],
                 data=dds_path.read_bytes(),
                 header=TextureHeader(**entry["header"]) if entry.get("header", None) is not None else None,
-                unknown_floats=entry.get("unknown_floats", None),
+                unknown_float_struct=entry.get("unknown_float_struct", None),
             ))
 
         tpf = cls(
@@ -450,9 +471,16 @@ class TPF(GameFile):
         texture_entries = []
         for texture in self.textures:
             if texture.header is not None:
-                raise ValueError("Cannot write unpacked TPF directory for console TPFs.")
-            if texture.unknown_floats is not None:
-                raise ValueError("Cannot write unpacked TPF directory for TPFs with unknown floats.")
+                header_dict = {
+                    "width": texture.header.width,
+                    "height": texture.header.height,
+                    "texture_count": texture.header.texture_count,
+                    "unk1": texture.header.unk1,
+                    "unk2": texture.header.unk2,
+                    "dxgi_format": texture.header.dxgi_format.name,
+                }
+            else:
+                header_dict = None
 
             texture_dict = {
                 "name": texture.name,
@@ -460,8 +488,8 @@ class TPF(GameFile):
                 "texture_type": texture.texture_type.name,
                 "mipmap_count": texture.mipmap_count,
                 "texture_flags": texture.texture_flags,
-                "header": asdict(texture.header) if texture.header is not None else None,
-                "unknown_floats": texture.unknown_floats,  # likely `None`
+                "header": header_dict,
+                "unknown_float_struct": texture.unknown_float_struct,
             }
             texture_entries.append(texture_dict)
             texture.write_dds(directory / f"{texture.name}.dds")
@@ -569,10 +597,16 @@ class TPF(GameFile):
 
 
 def get_png_data(tex: TPFTexture, fmt: str):
-    return tex.get_png_data(fmt=fmt)
+    try:
+        return tex.get_png_data(fmt=fmt)
+    except TexconvError as ex:
+        _LOGGER.error(f"Failed to get TPF texture as PNG: {str(ex)}")
+        return None
 
 
-def batch_get_tpf_texture_png_data(tpf_textures: list[TPFTexture], fmt="rgba", processes: int = None) -> list[bytes]:
+def batch_get_tpf_texture_png_data(
+    tpf_textures: list[TPFTexture], fmt="rgba", processes: int = None
+) -> list[bytes | None]:
     """Use multiprocessing to retrieve PNG data (converted from DDS) for a collection of `TPFTexture`s."""
 
     mp_args = [(tpf_texture, fmt) for tpf_texture in tpf_textures]
