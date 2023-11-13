@@ -47,7 +47,7 @@ class MergedMesh:
 
     loop_normals: np.ndarray  # three columns for 'x', 'y', and 'z' (float32)
     loop_normals_w: np.ndarray  # one column for 'w' (uint8)
-    loop_tangents: np.ndarray  # four columns for 'x', 'y', 'z', and `w` (float32)
+    loop_tangents: list[np.ndarray]  # four columns per array for 'x', 'y', 'z', and `w` (float32)
     loop_bitangents: np.ndarray  # four columns for 'x', 'y', and 'z' (float32)
     loop_vertex_colors: list[np.ndarray]  # four columns per array for 'r', 'g', 'b', and 'a' (float32)
     # If `uv_layer_names` is given, this list will have the same length as `uv_layer_names` and each UV array will
@@ -165,9 +165,9 @@ class MergedMesh:
         # These four arrays will be fully initialized.
         loop_normals = np.empty((total_vertex_count, 3), dtype=np.float32)
         loop_normals_w = np.empty((total_vertex_count, 1), dtype=np.uint8)  # still 2D!
-        loop_tangents = np.empty((total_vertex_count, 4), dtype=np.float32)
         loop_bitangents = np.empty((total_vertex_count, 4), dtype=np.float32)
 
+        loop_tangents_dict = {}  # new arrays added as new tangent indices are encountered
         loop_vertex_colors_dict = {}  # new arrays added as new color indices are encountered
         loops_uvs_dict = {}  # new arrays added as new UV indices are encountered
 
@@ -200,7 +200,7 @@ class MergedMesh:
                     bone_indices = submesh.bone_indices[bone_indices]
                 submesh_vertices["bone_indices"] = bone_indices
             else:
-                _LOGGER.warning("Submesh vertices have no 'bone_indices' data. This is very unusual. Using zeroes.")
+                # This is unusual in DS1, but not beyond that.
                 submesh_vertices["bone_indices"] = 0
 
             if "normal" in field_names:
@@ -215,22 +215,23 @@ class MergedMesh:
                 # Default to 127.
                 loop_normals_w[i:j] = 127
 
-            if "tangent" in field_names:
-                loop_tangents[i:j] = vertices["tangent"]
-            else:
-                # Default to rightward (X) vector.
-                loop_tangents[i:j] = [1.0, 0.0, 0.0, 1.0]
-
             if "bitangent" in field_names:
                 loop_bitangents[i:j] = vertices["bitangent"]
             else:
                 # Default to forward (Z) vector.
                 loop_bitangents[i:j] = [0.0, 0.0, 1.0, 1.0]
 
-            # Color and UV arrays are only created as used. They are created with `np.zeros()` so any vertices that
-            # don't use a given color or UV index will be zeroes.
+            # Tangent, color, and UV arrays are only created as used. They are created with `np.zeros()` so any vertices
+            # that don't use a given tangent, color or UV index will be zeroes.
             for name in field_names:
-                if name.startswith("color_"):
+                if name.startswith("tangent_"):
+                    # TODO: Might want to default to, say, a rightward unit vector rather than zeroes.
+                    t_i = int(name[-1])
+                    tangent_array = loop_tangents_dict.setdefault(
+                        t_i, np.zeros((total_vertex_count, 4), dtype=np.float32)
+                    )
+                    tangent_array[i:j] = vertices[f"tangent_{t_i}"]
+                elif name.startswith("color_"):
                     c_i = int(name[-1])
                     color_array = loop_vertex_colors_dict.setdefault(
                         c_i, np.zeros((total_vertex_count, 4), dtype=np.float32)
@@ -258,6 +259,7 @@ class MergedMesh:
                     uv_array[i:j] = vertices[f"uv_{uv_i}"]
 
         # Could be empty lists.
+        loop_tangents = [loop_tangents_dict[i] for i in sorted(loop_tangents_dict)]
         loop_vertex_colors = [loop_vertex_colors_dict[i] for i in sorted(loop_vertex_colors_dict)]
         loop_uvs = [loops_uvs_dict[i] for i in sorted(loops_uvs_dict)]
 
@@ -427,13 +429,13 @@ class MergedMesh:
 
         As a minor optimization for Blender import, has the option to ignore tangents or bitangents.
         """
-        position = self.vertex_data["position"]
-        position[:, [1, 2]] = position[:, [2, 1]]
-        self.loop_normals[:, [1, 2]] = self.loop_normals[:, [2, 1]]
+        self.vertex_data["position"] = self.vertex_data["position"][:, [0, 2, 1]]
+        self.loop_normals = self.loop_normals[:, [0, 2, 1]]
         if tangents:
-            self.loop_tangents[:, [1, 2]] = self.loop_tangents[:, [2, 1]]
+            for i, tangent_array in enumerate(self.loop_tangents):
+                self.loop_tangents[i] = tangent_array[:, [0, 2, 1, 3]]
         if bitangents:
-            self.loop_bitangents[:, [1, 2]] = self.loop_bitangents[:, [2, 1]]
+            self.loop_bitangents = self.loop_bitangents[:, [0, 2, 1, 3]]
 
     def invert_vertex_uv(self, invert_u=False, invert_v=True):
         """Transform loop UV data in place by subtracting UV coordinates from 1.
@@ -691,10 +693,13 @@ class MergedMesh:
             combined_array["normal"] = self.loop_normals
         if "normal_w" in names:
             combined_array["normal_w"] = self.loop_normals_w
-        if "tangent" in names:
-            combined_array["tangent"] = self.loop_tangents
         if "bitangent" in names:
             combined_array["bitangent"] = self.loop_bitangents
+
+        tangent_names = [n for n in names if n.startswith("tangent_")]
+        for tangent_name in tangent_names:
+            t_i = int(tangent_name[-1])
+            combined_array[f"tangent_{t_i}"] = self.loop_tangents[t_i]  # (loop_count, 4)
 
         uv_names = [n for n in names if n.startswith("uv_")]
         for uv_name in uv_names:

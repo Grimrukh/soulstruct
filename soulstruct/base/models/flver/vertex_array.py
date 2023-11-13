@@ -360,16 +360,20 @@ class VertexUV(VertexDataType):
 
 @dataclass(slots=True, init=False, repr=False)
 class VertexTangent(VertexDataType):
-    """Perpendicular to normal."""
+    """Perpendicular to normal.
+
+    Multiple tangent arrays are used for multi-texture materials in later games (DS1 uses `bitangent` for a second
+    texture group instead).
+    """
 
     type_int = 6
     formats = {
         (0x03,): VertexDataFormat(
-            compressed_dtype=[("tangent", "f", (3,))],
+            compressed_dtype=[("tangent_{i}", "f", (3,))],
         ),
         (0x10, 0x11, 0x13, 0x1A, 0x2F): VertexDataFormat(
-            compressed_dtype=[("tangent", "B", (4,))],
-            decompressed_dtype=[("tangent", "f", (4,))],
+            compressed_dtype=[("tangent_{i}", "B", (4,))],
+            decompressed_dtype=[("tangent_{i}", "f", (4,))],
             codec=INT_TO_FLOAT_127_SIGNED,
         ),
     }
@@ -377,7 +381,7 @@ class VertexTangent(VertexDataType):
 
 @dataclass(slots=True, init=False, repr=False)
 class VertexBitangent(VertexDataType):
-    """Pendicular to both normal and tangent. Generally only used by multi-texture materials."""
+    """Pendicular to both normal and tangent. Generally only used by multi-texture materials in DS1."""
 
     type_int = 7
     unique = True
@@ -544,6 +548,7 @@ class VertexArrayLayout(list[VertexDataType]):
         """Get compressed and decompressed NumPy dtypes for this layout."""
         compressed_dtype = []  # type: list[tuple[str, str, int]]
         decompressed_dtype = []  # type: list[tuple[str, str, int]]
+        tangent_index = 0
         uv_index = 0
         color_index = 0
 
@@ -555,7 +560,11 @@ class VertexArrayLayout(list[VertexDataType]):
             # Find format. Will raise a `ValueError` here if not supported.
             vertex_data_format = data_type.get_format()
 
-            if isinstance(data_type, VertexUV):
+            if isinstance(data_type, VertexTangent):
+                compressed_dtype += vertex_data_format.get_indexed_compressed_dtype(i=tangent_index)
+                decompressed_dtype += vertex_data_format.get_indexed_decompressed_dtype(i=tangent_index)
+                tangent_index += 1
+            elif isinstance(data_type, VertexUV):
                 compressed_dtype += vertex_data_format.get_indexed_compressed_dtype(i=uv_index, j=uv_index + 1)
                 decompressed_dtype += vertex_data_format.get_indexed_decompressed_dtype(i=uv_index, j=uv_index + 1)
                 uv_index += 2 if data_type.format_enum.has_two_uvs() else 1
