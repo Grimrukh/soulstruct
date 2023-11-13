@@ -399,7 +399,7 @@ class Binder(BaseBinaryFile):
             raise ValueError(f"Could not detect BND version from first four bytes: {version_bytes}:")
 
         entries = [BinderEntry.from_header(entry_reader, entry_header) for entry_header in entry_headers]
-        if v4_info := header_kwargs.get("binder.v4_info", None):
+        if v4_info := header_kwargs.get("v4_info", None):
             # Set existing V4 hash properties.
             v4_info.most_recent_entry_count = len(entries)
             v4_info.most_recent_paths = [entry.path for entry in entries]
@@ -465,8 +465,9 @@ class Binder(BaseBinaryFile):
 
         if v4_info.hash_table_type == 4:
             # Save the initial hash table (found in header).
+            hash_table_size = _data_offset - _hash_table_offset if _data_offset > 0 else _hash_table_offset
             reader.seek(_hash_table_offset)
-            v4_info.most_recent_hash_table = reader.read(_data_offset - _hash_table_offset)
+            v4_info.most_recent_hash_table = reader.read(hash_table_size)
 
         header_kwargs = dict(
             signature=header_struct.signature,
