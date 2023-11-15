@@ -744,7 +744,7 @@ class BinaryMetadata(tp.Generic[FIELD_T]):
             func += "    if value not in metadata.asserted:\n"
             func += f"        raise BinaryFieldValueError(\"{error_msg}\".format(value=value))\n"
         if self.pack_func:
-            func += "    value = metadata.pack_func(value)"
+            func += "    value = metadata.pack_func(value)\n"
         func += "    struct_input.append(value)"
         exec(func)
         return locals()["pack"]
@@ -1056,6 +1056,13 @@ class BinaryStruct:
                     metadata = BinaryArrayMetadata(3, "3f", unpack_func=Vector3)
                 elif field_type == Vector4:
                     metadata = BinaryArrayMetadata(4, "4f", unpack_func=Vector4)
+                elif issubclass(field_type, BinaryStruct):
+                    # Sub-struct.
+                    metadata = BinaryMetadata(
+                        fmt=f"{field_type.get_size()}s",
+                        unpack_func=field_type.from_bytes,
+                        pack_func=lambda struct_value: struct_value.to_bytes(),
+                    )
                 else:
                     try:
                         fmt = _PRIMITIVE_FIELD_FMTS[field_type]
@@ -1099,7 +1106,8 @@ class BinaryStruct:
                         raise BinaryFieldTypeError(
                             field,
                             cls_name,
-                            f"Field with non-primitive type `{field_type.__name__}` must have `fmt` metadata.",
+                            f"Field with non-primitive, non-BinaryStruct type `{field_type.__name__}` must have `fmt` "
+                            f"metadata.",
                         )
 
             if field_type not in _PRIMITIVE_FIELD_FMTS:
