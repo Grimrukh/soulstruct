@@ -8,4 +8,4 @@ from soulstruct.base.models.flver import FLVER as BaseFLVER, Version
 @dataclass(slots=True)
 class FLVER(BaseFLVER):
 
-    version: Version = Version.DarkSouls_A
+    version: Version = Version.Bloodborne_DS3_A

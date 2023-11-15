@@ -90,7 +90,6 @@ class FLVER(GameFile):
     dummies: list[Dummy] = field(default_factory=list)
     bones: list[FLVERBone] = field(default_factory=list)
     submeshes: list[Submesh] = field(default_factory=list)
-    layouts: list[VertexArrayLayout] = field(default_factory=list)
 
     # NOTE: `Material` instances are assigned to their submeshes and are not stored separately in the FLVER.
     # On export, all unique materials are packed to the FLVER, and each submesh is assigned an index to one of them.
@@ -202,7 +201,6 @@ class FLVER(GameFile):
             dummies=dummies,
             bones=bones,
             submeshes=submeshes,
-            layouts=layouts,
         )
 
     @classmethod

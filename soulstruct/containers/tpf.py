@@ -12,6 +12,7 @@ __all__ = [
 
 import abc
 import logging
+import math
 import multiprocessing
 import re
 import shutil
@@ -65,48 +66,7 @@ class TextureHeader:
     texture_count: int = 0
     unk1: int = 0  # unknown, PS3 only
     unk2: int = 0  # unknown, 0x0 or 0xAAE4 in DeS, 0xD in BB/DS3 (console)
-    dxgi_format: DXGI_FORMAT = DXGI_FORMAT.UNKNOWN
-
-    def to_dds_headers(self) -> tuple[DDSHeader, DXT10Header]:
-        """Generate automatic DDS headers for headerless console textures.
-
-        Always uses extended DX10 header (and 'DX10' fourcc).
-        """
-
-        # TODO: Close. I can convert textures, but the pixels are clearly scrambled.
-        #  Need a better test setup than Blender import.
-        print(f"Generating DDS headers from TPF TextureHeader: {self}")
-
-        flags = DDSD.get_required_flags() | DDSD.PITCH | DDSD.LINEARSIZE
-        if self.texture_count > 0:
-            flags |= DDSD.MIPMAPCOUNT
-
-        dx10_header = DXT10Header.get_default(self.dxgi_format)
-
-        dds_header = DDSHeader(
-            flags=flags,
-            height=self.height,
-            width=self.width,
-            pitch_or_linear_size=65536,  # TODO: ? 65536 observed in DSR... size-dependent?
-            depth=0,
-            mipmap_count=self.texture_count,  # TODO: assuming
-            reserved_1=[0] * 11,  # unused; you often find authorship strings here ('UVER', 'NVTT', etc.)
-            pixelformat_flags=DDPF.FOURCC,  # always
-            fourcc=b"DX10",
-            rgb_bit_count=0,  # don't seem used
-            r_bitmask=0,  # don't seem used
-            g_bitmask=0,  # don't seem used
-            b_bitmask=0,  # don't seem used
-            a_bitmask=0,  # don't seem used
-            caps1=DDSCAPS.TEXTURE | DDSCAPS.COMPLEX | DDSCAPS.MIPMAP,  # all three always seem enabled
-            caps2=0,  # not trying to handle cubemaps here!
-            caps3=0,
-            caps4=0,
-            reserved_2=0,
-        )
-        dds_header.byte_order = ByteOrder.LittleEndian
-
-        return dds_header, dx10_header
+    dxgi_format: DXGI_FORMAT = DXGI_FORMAT.UNKNOWN  # must be supplied for certain `TPFTexture.format` values (DX10)
 
 
 @dataclass(slots=True)
@@ -276,8 +236,9 @@ class TPFTexture:
     def get_dds(self) -> DDS:
         return DDS.from_bytes(self.data)
 
-    def get_dds_format(self) -> str:
-        return DDS.from_bytes(self.data).header.fourcc.decode()
+    def get_dds_fourcc(self) -> bytes:
+        dds_header = DDSHeader.from_bytes(self.data)  # only need the header
+        return dds_header.pixelformat.fourcc
 
     def write_dds(self, dds_path: str | Path):
         Path(dds_path).write_bytes(self.data)
@@ -311,15 +272,14 @@ class TPFTexture:
                     f"   stderr: {result.stderr}"
                 )
 
-    def get_png_data(self, fmt="rgba") -> bytes:
+    def get_png_data(self, fmt="rgba", platform=TPFPlatform.PC) -> bytes:
         with tempfile.TemporaryDirectory() as png_dir:
             temp_dds_path = Path(png_dir, "temp.dds")
 
             if not self.data[:4] == b"DDS\0":
                 if not self.header:
                     raise TexconvError("Cannot convert headerless DDS texture to PNG without a `TPFTexture` header.")
-                dds_header, dx10_header = self.header.to_dds_headers()
-                dds_data = bytes(dds_header) + bytes(dx10_header) + self.data
+                dds_data = bytes(self.get_headerized_dds(platform))
             else:
                 dds_data = self.data  # already has header
 
@@ -332,15 +292,15 @@ class TPFTexture:
                 stdout = texconv_result.stdout.decode()
                 raise TexconvError(f"Could not convert texture DDS to PNG:\n    {stdout}")
 
-    def export_png(self, png_path: str | Path, fmt="rgba"):
-        png_data = self.get_png_data(fmt)
+    def export_png(self, png_path: str | Path, fmt="rgba", platform=TPFPlatform.PC):
+        png_data = self.get_png_data(fmt, platform)
         png_path.write_bytes(png_data)
 
     def convert_dds_format(self, output_format: str, assert_input_format: str = None) -> bool:
         """Convert `data` DDS format in place. Returns `True` if conversion succeeds."""
         dds = self.get_dds()
-        current_format = dds.header.fourcc.decode()
-        current_dxgi_format = dds.dxt10_header.dxgi_format if dds.dxt10_header else None
+        current_format = dds.header.pixelformat.fourcc.decode()
+        current_dxgi_format = dds.dx10_header.dxgi_format if dds.dx10_header else None
         if assert_input_format is not None and current_format != assert_input_format.encode():
             raise ValueError(
                 f"TPF texture DDS format {current_format} does not match "
@@ -366,6 +326,183 @@ class TPFTexture:
                 f"   stderr: {result.stderr}"
             )
             return False
+
+    def get_texture_format_info(
+        self, platform=TPFPlatform.PC
+    ) -> tuple[bytes, int, bool]:
+        """Get `fourcc` code (four nulls if unused), bytes per block, and `is_compressed` for this `TPFTexture.format`.
+
+        `dxgi_format` for DX10 headers is supplied by `TextureHeader.dxgi_format`.
+
+        At least one format value (10) is known to be different between PC and console (R8G8B8 vs A8G8B8R8).
+        """
+        null = b"\0\0\0\0"
+        match self.format:
+            case 0 | 1 | 24 | 25 | 108 | 109:
+                return b"DXT1", 8, True
+            case 3:
+                return b"DXT3", 16, True
+            case 5 | 23 | 33 | 110:
+                return b"DXT5", 16, True
+            case 6:
+                return b"DX10", 2, False  # expected format: B5G5R5A1_UNORM
+            case 9:
+                return null, 4, False
+            case 10:
+                if platform == TPFPlatform.PS3:
+                    return null, 4, False  # expected format: A8G8B8R8
+                return null, 4, False  # PC; expected format: R8G8B8
+            case 16:
+                return null, 1, False
+            case 22:
+                return b"q\0\0\0", 8, False  # fourcc is number 0x71
+            case 100:
+                return b"DX10", 16, True  # expected format: BC6H_UF16
+            case 102 | 106 | 107:
+                return b"DX10", 16, True  # expected format: BC7_UNORM
+            case 103:
+                return b"ATI1", 8, True
+            case 104:
+                return b"ATI2", 16, True
+            case 105:
+                return null, 4, False
+            case 112:
+                return b"DX10", 16, True  # expected format: BC7_UNORM_SRGB
+            case 113:
+                return b"DX10", 16, True  # expected format: BC6H_UF16
+            case _:
+                raise ValueError(f"Unknown TPF texture format value: {self.format}")
+
+    def get_headerized_dds(self, platform=TPFPlatform.PC) -> DDS:
+        """Generate automatic DDS headers for headerless console textures and pack them together.
+
+        Requires `TPFTexture.header` to specify texture width, height, and (for DX10) `DXGI_FORMAT`.
+        """
+        width = self.header.width
+        height = self.header.height
+
+        print(f"Generating DDS headers from TPF TextureHeader: {self}")
+        fourcc, block_size, is_compressed = self.get_texture_format_info(platform)
+
+        flags = DDSD.get_required_flags() | DDSD.MIPMAPCOUNT  # always enables `MIPMAPCOUNT`
+        if is_compressed:
+            flags |= DDSD.LINEARSIZE
+            pitch_or_linear_size = max(1, (width + 3) // 4) * block_size  # linear size
+        else:
+            flags |= DDSD.PITCH
+            pitch_or_linear_size = (width * block_size + 7) // 8  # pitch
+
+        if self.mipmap_count == 0:
+            mipmap_count = int(math.ceil(math.log(max(width, height), 2))) + 1
+        else:
+            mipmap_count = self.mipmap_count
+
+        pixelformat = DDSPixelFormat.from_fourcc_tpf_format(fourcc, self.format)
+
+        caps1 = DDSCAPS.TEXTURE
+        if self.texture_type == TextureType.Cubemap:
+            caps1 |= DDSCAPS.COMPLEX
+        if mipmap_count > 1:
+            caps1 |= DDSCAPS.COMPLEX | DDSCAPS.MIPMAP
+
+        if self.texture_type == TextureType.Cubemap:
+            caps2 = DDSCAPS2.get_cubemap_all_faces()
+        elif self.texture_type == TextureType.Volume:
+            caps2 = DDSCAPS2.VOLUME
+        else:
+            caps2 = 0
+
+        dds_header = DDSHeader(
+            flags=flags,
+            height=height,
+            width=width,
+            pitch_or_linear_size=pitch_or_linear_size,
+            depth=0,
+            mipmap_count=mipmap_count,
+            reserved_1=[0] * 11,  # unused; you often find authorship strings here ('UVER', 'NVTT', etc.)
+            pixelformat=pixelformat,
+            caps1=caps1,
+            caps2=caps2,
+            caps3=0,
+            caps4=0,
+            reserved_2=0,
+        )
+        dds_header.byte_order = ByteOrder.LittleEndian
+
+        if fourcc == b"DX10":
+            dx10_header = DX10Header.get_default(self.header.dxgi_format)
+            if self.texture_type == TextureType.Cubemap:
+                dx10_header.misc_flag |= RESOURCE_MISC.TEXTURECUBE
+        else:
+            dx10_header = None
+
+        # Deswizzle.
+        dds_deswizzler = DDSDeswizzler(block_size, self.header.dxgi_format, pitch_or_linear_size, self.data)
+        try:
+            # TODO: I'm not certain if this algorithm deswizzles mipmaps as well. My suspicion is yes?
+            data = dds_deswizzler.deswizzle_dds_bytes_ps4(width, height)
+        except DDSDeswizzlerError as ex:
+            raise DDSDeswizzlerError(
+                f"Failed to deswizzle DDS texture {self.name} with TPF format {self.format}, width {width}, height "
+                f"{height}, and DXGI_FORMAT {self.header.dxgi_format}. Internal error: {ex}"
+            )
+
+        return DDS(header=dds_header, dx10_header=dx10_header, data=data)
+
+    def get_images(self, mipmap_count: int) -> list[DDSImage]:
+        """TODO: Currently no use for this. Potentially useful to skip `texconv` altogether."""
+        if not self.header:
+            raise ValueError("Cannot only rebuild texture data for headerless DDS textures (with `TPFTexture` header).")
+        width = self.header.width
+        height = self.header.height
+        texture_count = 6 if self.texture_type == TextureType.Cubemap else 1
+        if texture_count != self.header.texture_count:
+            raise ValueError(
+                f"Texture type {self.texture_type.name} does not match `TextureHeader.texture_count` "
+                f"{self.header.texture_count}. Cubemap DDS should contain 6 textures, and all others should contain 1."
+            )
+        pad_dimensions = 32 if self.format == 102 else 1
+
+        _, block_size, is_compressed = self.get_texture_format_info()
+        reader = BinaryReader(self.data)
+        if is_compressed is not None:
+            images = DDSImage.read_compressed_images(
+                reader, width, height, pad_dimensions, texture_count, mipmap_count, 0x80, block_size
+            )
+        else:
+            images = DDSImage.read_uncompressed_images(
+                reader, width, height, pad_dimensions, texture_count, mipmap_count, 0x80, block_size
+            )
+
+        if self.format in {10, 102}:
+            texel_size = 4 if self.format == 10 else 16
+            for image in images:
+                for i, mipmap_level in enumerate(image.mipmap_levels):
+                    scale = 2 ** i
+                    image.mipmap_levels[i] = self.deswizzle_mipmap_level(
+                        mipmap_level, texel_size, width // scale, height // scale, pad_dimensions
+                    )
+
+        return images
+
+    def _sf_deswizzle(self, images: list[DDSImage], width: int, height: int):
+        """Deswizzle DDS `images` in-place."""
+
+        padded_width = padded_height = padded_size = copy_offset = 0
+        _, compressed_bpp, uncompressed_bpp = self.get_texture_format_info()
+        block_size = compressed_bpp or uncompressed_bpp
+        for image in images:
+            current_width = width
+            current_height = height
+            for mipmap_level in image.mipmap_levels:
+                if self.format == 105:
+                    padded_width = current_width
+                    padded_height = current_height
+                    padded_size = padded_width * padded_height * block_size
+                else:
+                    padded_width = DDSImage.pad_to(current_width, 32)
+                    padded_height = DDSImage.pad_to(current_height, 32)
+                    padded_size = DDSImage.pad_to(padded_width, 4) * DDSImage.pad_to(padded_height, 4) * block_size
 
     def __repr__(self) -> str:
         return (
@@ -505,7 +642,7 @@ class TPF(GameFile):
                 header_dict = {
                     "width": texture.header.width,
                     "height": texture.header.height,
-                    "texture_count": texture.header.texture_count,
+                    "mipmaps": texture.header.texture_count,
                     "unk1": texture.header.unk1,
                     "unk2": texture.header.unk2,
                     "dxgi_format": texture.header.dxgi_format.name,
@@ -547,7 +684,7 @@ class TPF(GameFile):
         total_count = 0
         for texture in self.textures:
             dds = texture.get_dds()
-            if dds.header.fourcc.decode() == input_format:
+            if dds.fourcc == input_format:
                 success = texture.convert_dds_format(output_format)
                 total_count += 1
                 if not success:
@@ -578,7 +715,7 @@ class TPF(GameFile):
         for tex in self.textures:
             png_name = Path(tex.name).with_suffix(".png")
             try:
-                tex.export_png(png_dir_path / png_name, fmt=fmt)
+                tex.export_png(png_dir_path / png_name, fmt=fmt, platform=self.platform)
             except ValueError as ex:
                 _LOGGER.warning(str(ex))
 
@@ -630,7 +767,7 @@ class TPF(GameFile):
 def get_png_data(tex: TPFTexture, fmt: str):
     try:
         return tex.get_png_data(fmt=fmt)
-    except TexconvError as ex:
+    except (TexconvError, DDSDeswizzlerError) as ex:
         _LOGGER.error(f"Failed to get TPF texture as PNG: {str(ex)}")
         return None
 
