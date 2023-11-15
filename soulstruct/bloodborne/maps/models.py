@@ -48,6 +48,9 @@ class MSBMapPieceModel(MSBModel):
     def set_auto_sib_path(self, map_stem: str):
         self.sib_path = self.SIB_PATH_TEMPLATE.format(map_stem=map_stem, name=self.name)
 
+    def get_model_file_stem(self, map_stem: str):
+        return f"{map_stem}_{self.name[1:]}"  # drop 'm' prefix from model name
+
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBObjectModel(MSBModel):

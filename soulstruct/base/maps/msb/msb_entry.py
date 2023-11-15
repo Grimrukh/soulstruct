@@ -614,6 +614,7 @@ class MSBEntry(abc.ABC):
 
     @classmethod
     def get_field_display_info(cls, field_name: str, game_types_module: ModuleType) -> tuple[str, str, tp.Type[tp.Any]]:
+        # TODO: Make a NamedTuple for return type here. Add info about nested structs (e.g. GPARAM).
         if cls._FIELD_DISPLAY_INFO is not None:
             try:
                 return cls._FIELD_DISPLAY_INFO[field_name]
@@ -621,6 +622,8 @@ class MSBEntry(abc.ABC):
                 raise KeyError(f"Invalid MSB entry field (no metadata): `{cls.__name__}.{field_name}`")
 
         # Create and cache all fields' metadata.
+        # TODO: Handle MSB GPARAM/SceneGPARAM (and nested structs more generally).
+        #  - Can display fields as `GPARAM[Light Set ID]`, etc.
         field_types = cls.get_field_types()
         field_metadata = {}  # type: dict[str, tuple[str, str, tp.Type[tp.Any]]]
         for f in fields(cls):

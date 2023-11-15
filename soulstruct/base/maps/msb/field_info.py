@@ -26,7 +26,7 @@ class MapFieldMetadata:
 def MapFieldInfo(
     nickname="", tooltip="", game_type: GAME_TYPE | tp.Type[IntEnum] = None
 ) -> dict[str, dict[str, MapFieldMetadata]]:
-    """Convenience generator for use with ** in `field()`."""
+    """Convenience 'metadata' dictionary generator for use with ** in `field()`."""
     return {"metadata": {"msb": MapFieldMetadata(nickname, tooltip, game_type)}}
 
 

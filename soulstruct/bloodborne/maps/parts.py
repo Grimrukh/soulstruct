@@ -40,6 +40,65 @@ if tp.TYPE_CHECKING:
     from .events import MSBEnvironmentEvent
 
 
+@dataclass(slots=True)
+class MSBPartGPARAM:
+    """Holds a few GPARAM (lighting) fields. Only present in certain `MSBPart` subtypes."""
+
+    @dataclass(slots=True)
+    class STRUCT(BinaryStruct):
+        light_set_id: int
+        fog_id: int
+        light_scattering_id: int
+        environment_map_id: int
+        _pad1: bytes = field(init=False, **BinaryPad(16))
+
+    light_set_id: int = field(default=0, **MapFieldInfo("Light Set ID", "Light set GParam ID."))
+    fog_id: int = field(default=0, **MapFieldInfo("Fog Param ID", "Fog GParam ID."))
+    light_scattering_id: int = field(default=0, **MapFieldInfo("Light Scattering ID", "Light scattering GParam ID."))
+    environment_map_id: int = field(default=0, **MapFieldInfo("Environment Map ID", "Environment map GParam ID."))
+
+    @classmethod
+    def from_msb_reader(cls, reader: BinaryReader) -> MSBPartGPARAM:
+        return cls.STRUCT.reader_to_object(reader, cls)
+
+    def to_msb_writer(self, writer: BinaryWriter):
+        self.STRUCT.object_to_writer(self, writer)
+
+
+@dataclass(slots=True)
+class MSBPartSceneGPARAM:
+    """Holds a few SceneGPARAM (lighting) fields. Only present in `MSBCollision` part subtype."""
+
+    @dataclass(slots=True)
+    class STRUCT(BinaryStruct):
+        sg_unk_x00_x04: int
+        sg_unk_x04_x08: int
+        sg_unk_x08_x0c: int
+        sg_unk_x0c_x10: int
+        sg_unk_x10_x14: int
+        sg_unk_x14_x18: int
+        _pad1: bytes = field(init=False, **BinaryPad(36))
+        event_ids: list[byte] = field(**BinaryArray(4))
+        sg_unk_x40_x44: float
+        _pad2: bytes = field(init=False, **BinaryPad(12))
+
+    sg_unk_x00_x04: int = field(default=0, **MapFieldInfo("Unk SceneG [x00-x04]", "Unknown SceneGparam integer."))
+    sg_unk_x04_x08: int = field(default=0, **MapFieldInfo("Unk SceneG [x04-x08]", "Unknown SceneGparam integer."))
+    sg_unk_x08_x0c: int = field(default=0, **MapFieldInfo("Unk SceneG [x08-x0c]", "Unknown SceneGparam integer."))
+    sg_unk_x0c_x10: int = field(default=0, **MapFieldInfo("Unk SceneG [x0c-x10]", "Unknown SceneGparam integer."))
+    sg_unk_x10_x14: int = field(default=0, **MapFieldInfo("Unk SceneG [x10-x14]", "Unknown SceneGparam integer."))
+    sg_unk_x14_x18: int = field(default=0, **MapFieldInfo("Unk SceneG [x14-x18]", "Unknown SceneGparam integer."))
+    event_ids: list[int] = field(default_factory=lambda: [-1] * 4, **MapFieldInfo("Event IDs", "Gparam Event IDs."))
+    sg_unk_x40_x44: float = field(default=0.0, **MapFieldInfo("Unk SceneG [x40-x44]", "Unknown SceneGparam float."))
+
+    @classmethod
+    def from_msb_reader(cls, reader: BinaryReader) -> MSBPartSceneGPARAM:
+        return cls.STRUCT.reader_to_object(reader, cls)
+
+    def to_msb_writer(self, writer: BinaryWriter):
+        self.STRUCT.object_to_writer(self, writer)
+
+
 @dataclass(slots=True, eq=False, repr=False)
 class MSBPart(BaseMSBPart, abc.ABC):
 
@@ -79,12 +138,12 @@ class MSBPart(BaseMSBPart, abc.ABC):
         part_unk_x0e_x0f: byte
         part_unk_x0f_x10: byte
 
-    # Set by further abstract subclasses.
-    GPARAM_STRUCT: tp.ClassVar[BinaryStruct] = None
-    SCENE_GPARAM_STRUCT: tp.ClassVar[BinaryStruct] = None
-
     NAME_ENCODING: tp.ClassVar[str] = "utf-16-le"
     GROUP_BIT_COUNT: tp.ClassVar[int] = 256
+
+    # Sub-structs used by some parts. TODO: GUI should display these in field list if present.
+    gparam: MSBPartGPARAM | None = None
+    scene_gparam: MSBPartSceneGPARAM | None = None
 
     # NOTE: `model` defined by subclasses.
     backread_groups: GroupBitSet256 = field(default_factory=GroupBitSet256.all_off)
@@ -117,17 +176,15 @@ class MSBPart(BaseMSBPart, abc.ABC):
 
         relative_gparam_data_offset = kwargs.pop("gparam_data_offset")
         if relative_gparam_data_offset > 0:
-            if cls.GPARAM_STRUCT is None:
-                raise ValueError(f"Found invalid non-zero Gparam offset in `{cls.__name__}` '{kwargs['name']}.")
+            # TODO: Check if this subtype actually uses GPARAM.
             reader.seek(entry_offset + relative_gparam_data_offset)
-            kwargs |= cls.GPARAM_STRUCT.from_bytes(reader).to_dict(ignore_underscore_prefix=False)
+            kwargs["gparam"] = MSBPartGPARAM.from_msb_reader(reader)
 
         relative_scene_gparam_data_offset = kwargs.pop("scene_gparam_data_offset")
         if relative_scene_gparam_data_offset > 0:
-            if cls.SCENE_GPARAM_STRUCT is None:
-                raise ValueError(f"Found invalid non-zero SceneGparam offset in `{cls.__name__}` '{kwargs['name']}.")
-            reader.seek(entry_offset + relative_scene_gparam_data_offset)
-            kwargs |= cls.SCENE_GPARAM_STRUCT.from_bytes(reader).to_dict(ignore_underscore_prefix=False)
+            # TODO: Check if this subtype actually uses SceneGPARAM.
+            reader.seek(entry_offset + relative_gparam_data_offset)
+            kwargs["scene_gparam"] = MSBPartSceneGPARAM.from_msb_reader(reader)
 
         cls.SETATTR_CHECKS_DISABLED = True  # will be re-enabled in `__post_init__`
         return cls(**kwargs)
@@ -165,16 +222,18 @@ class MSBPart(BaseMSBPart, abc.ABC):
         writer.fill("subtype_data_offset", subtype_data_offset, obj=self)
         self.pack_subtype_data(writer, entry_lists)
 
-        if self.GPARAM_STRUCT is not None:
+        if self.gparam is not None:
+            # TODO: Check if this subtype actually uses GPARAM.
             writer.fill("gparam_data_offset", writer.position - entry_offset, obj=self)
-            self.GPARAM_STRUCT.object_to_writer(self, writer)
-        else:
+            self.gparam.to_msb_writer(writer)
+        else:  # no GPARAM
             writer.fill("gparam_data_offset", 0, obj=self)
 
-        if self.SCENE_GPARAM_STRUCT is not None:
+        if self.scene_gparam is not None:
+            # TODO: Check if this subtype actually uses SceneGPARAM.
             writer.fill("scene_gparam_data_offset", writer.position - entry_offset, obj=self)
-            self.SCENE_GPARAM_STRUCT.object_to_writer(self, writer)
-        else:
+            self.scene_gparam.to_msb_writer(writer)
+        else:  # no SceneGPARAM
             writer.fill("scene_gparam_data_offset", 0, obj=self)
 
     def pack_header(
@@ -219,52 +278,7 @@ class MSBPart(BaseMSBPart, abc.ABC):
 
 
 @dataclass(slots=True, eq=False, repr=False)
-class MSBPartWithGParam(MSBPart, abc.ABC):
-    """Subclass of `MSBPart` that includes GParam fields."""
-
-    @dataclass(slots=True)
-    class GPARAM_STRUCT(BinaryStruct):
-        light_set_id: int
-        fog_id: int
-        light_scattering_id: int
-        environment_map_id: int
-        _pad1: bytes = field(init=False, **BinaryPad(16))
-
-    light_set_id: int = field(default=0, **MapFieldInfo("Light Set ID", "Light set GParam ID."))
-    fog_id: int = field(default=0, **MapFieldInfo("Fog Param ID", "Fog GParam ID."))
-    light_scattering_id: int = field(default=0, **MapFieldInfo("Light Scattering ID", "Light scattering GParam ID."))
-    environment_map_id: int = field(default=0, **MapFieldInfo("Environment Map ID", "Environment map GParam ID."))
-
-
-@dataclass(slots=True, eq=False, repr=False)
-class MSBPartWithSceneGParam(MSBPartWithGParam, abc.ABC):
-    """Subclass of `MSBPart` that includes SceneGParam (and GParam) fields."""
-
-    @dataclass(slots=True)
-    class SCENE_GPARAM_STRUCT(BinaryStruct):
-        sg_unk_x00_x04: int
-        sg_unk_x04_x08: int
-        sg_unk_x08_x0c: int
-        sg_unk_x0c_x10: int
-        sg_unk_x10_x14: int
-        sg_unk_x14_x18: int
-        _pad1: bytes = field(init=False, **BinaryPad(36))
-        event_ids: list[byte] = field(**BinaryArray(4))
-        sg_unk_x40_x44: float
-        _pad2: bytes = field(init=False, **BinaryPad(12))
-
-    sg_unk_x00_x04: int = field(default=0, **MapFieldInfo("Unk SceneG [x00-x04]", "Unknown SceneGparam integer."))
-    sg_unk_x04_x08: int = field(default=0, **MapFieldInfo("Unk SceneG [x04-x08]", "Unknown SceneGparam integer."))
-    sg_unk_x08_x0c: int = field(default=0, **MapFieldInfo("Unk SceneG [x08-x0c]", "Unknown SceneGparam integer."))
-    sg_unk_x0c_x10: int = field(default=0, **MapFieldInfo("Unk SceneG [x0c-x10]", "Unknown SceneGparam integer."))
-    sg_unk_x10_x14: int = field(default=0, **MapFieldInfo("Unk SceneG [x10-x14]", "Unknown SceneGparam integer."))
-    sg_unk_x14_x18: int = field(default=0, **MapFieldInfo("Unk SceneG [x14-x18]", "Unknown SceneGparam integer."))
-    event_ids: list[int] = field(default_factory=lambda: [-1] * 4, **MapFieldInfo("Event IDs", "Gparam Event IDs."))
-    sg_unk_x40_x44: float = field(default=0.0, **MapFieldInfo("Unk SceneG [x40-x44]", "Unknown SceneGparam float."))
-
-
-@dataclass(slots=True, eq=False, repr=False)
-class MSBMapPiece(MSBPartWithGParam):
+class MSBMapPiece(MSBPart):
     """No further fields beyond GParam."""
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.MapPiece
 
@@ -273,10 +287,12 @@ class MSBMapPiece(MSBPartWithGParam):
         _pad1: bytes = field(**BinaryPad(8))
 
     model: MSBMapPieceModel = None
+    gparam: MSBPartGPARAM = field(default_factory=MSBPartGPARAM)
+    scene_gparam: None = None
 
 
 @dataclass(slots=True, eq=False, repr=False)
-class MSBObject(MSBPartWithGParam):
+class MSBObject(MSBPart):
     """Interactable object. Note that Bloodborne has six-digit model IDs for Objects."""
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Object
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model", "draw_parent"]
@@ -299,6 +315,9 @@ class MSBObject(MSBPartWithGParam):
     )
 
     model: MSBObjectModel = None
+    gparam: MSBPartGPARAM = field(default_factory=MSBPartGPARAM)
+    scene_gparam: None = None
+
     draw_parent: MSBPart = None
     break_term: int = -1
     net_sync_type: int = -1
@@ -322,7 +341,7 @@ class MSBObject(MSBPartWithGParam):
 
 
 @dataclass(slots=True, eq=False, repr=False)
-class MSBCharacter(MSBPartWithGParam):
+class MSBCharacter(MSBPart):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Character
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model", "draw_parent", "patrol_regions"]
@@ -343,6 +362,9 @@ class MSBCharacter(MSBPartWithGParam):
         damage_animation: int
 
     model: MSBCharacterModel = None
+    gparam: MSBPartGPARAM = field(default_factory=MSBPartGPARAM)
+    scene_gparam: None = None
+
     ai_id: int = field(default=-1, **MapFieldInfo(game_type=AIParam))
     character_id: int = field(default=-1, **MapFieldInfo(game_type=CharacterParam))
     talk_id: int = field(default=0, **MapFieldInfo(game_type=TalkScript))
@@ -398,8 +420,8 @@ class MSBPlayerStart(MSBPart):
     model: MSBCharacterModel | MSBPlayerModel = None
 
 
-@dataclass(slots=True, eq=False, repr=False, init=False)
-class MSBCollision(MSBPartWithSceneGParam):
+@dataclass(slots=True, eq=False, repr=False)
+class MSBCollision(MSBPart):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Collision
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\SPRJ\\data\\Model\\map\\{map_stem}\\sib\\h_layout.SIB"
@@ -426,6 +448,8 @@ class MSBCollision(MSBPartWithSceneGParam):
 
     # Field type overrides.
     model: MSBCollisionModel = None
+    gparam: MSBPartGPARAM = field(default_factory=MSBPartGPARAM)
+    scene_gparam: MSBPartSceneGPARAM = field(default_factory=MSBPartSceneGPARAM)
     display_groups: GroupBitSet256 = field(default_factory=GroupBitSet256.all_on)
 
     hit_filter_id: int = field(default=CollisionHitFilter.Normal.value, **MapFieldInfo(game_type=CollisionHitFilter))

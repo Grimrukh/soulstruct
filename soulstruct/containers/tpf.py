@@ -381,7 +381,6 @@ class TPFTexture:
         width = self.header.width
         height = self.header.height
 
-        print(f"Generating DDS headers from TPF TextureHeader: {self}")
         fourcc, block_size, is_compressed = self.get_texture_format_info(platform)
 
         flags = DDSD.get_required_flags() | DDSD.MIPMAPCOUNT  # always enables `MIPMAPCOUNT`
@@ -439,7 +438,8 @@ class TPFTexture:
         # Deswizzle.
         dds_deswizzler = DDSDeswizzler(block_size, self.header.dxgi_format, pitch_or_linear_size, self.data)
         try:
-            # TODO: I'm not certain if this algorithm deswizzles mipmaps as well. My suspicion is yes?
+            # TODO: I'm not certain if this algorithm deswizzles mipmaps as well. My suspicion is no, hence why BC7
+            #  (format 102) doesn't work right now.
             data = dds_deswizzler.deswizzle_dds_bytes_ps4(width, height)
         except DDSDeswizzlerError as ex:
             raise DDSDeswizzlerError(
