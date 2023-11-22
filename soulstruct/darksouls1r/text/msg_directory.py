@@ -8,7 +8,7 @@ from .msgbnd import MSGBND
 
 class MSGDirectory(_BaseMSGDirectory):
 
-    FILE_CLASS: tp.ClassVar[tp.Type[MSGBND]] = MSGBND
+    FILE_CLASS: tp.ClassVar[type[MSGBND]] = MSGBND
 
     # NOTE: The 'patch' entries have the exact same Binder paths as non-patch entries, which is (a) one
     # of the VERY few times this has been seen in Binders, and (b) probably QLOC's oversight.

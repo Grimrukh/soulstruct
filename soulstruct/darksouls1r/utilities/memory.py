@@ -227,7 +227,7 @@ class DSRMemoryHook(MemoryHook):
 
     @memory_hook_validate
     def get_memory_draw_param(
-        self, draw_param_row_type: tp.Type[ParamRow], draw_param_stem: str, area_id: int, is_extra_slot=False
+        self, draw_param_row_type: type[ParamRow], draw_param_stem: str, area_id: int, is_extra_slot=False
     ) -> MemoryDrawParam:
         """Uses actual pointer table! No need to cache anymore, as no searching is required.
 
@@ -411,7 +411,7 @@ class MemoryDrawParam(tp.Generic[PARAM_ROW_DATA_T]):
     }
 
     hook: DSRMemoryHook
-    draw_param_row_type: tp.Type[PARAM_ROW_DATA_T]
+    draw_param_row_type: type[PARAM_ROW_DATA_T]
     area_id: int
     is_extra_slot: bool
 
@@ -423,7 +423,7 @@ class MemoryDrawParam(tp.Generic[PARAM_ROW_DATA_T]):
     def __init__(
         self,
         hook: DSRMemoryHook,
-        draw_param_row_type: tp.Type[PARAM_ROW_DATA_T],
+        draw_param_row_type: type[PARAM_ROW_DATA_T],
         draw_param_stem: str,
         area_id: int,
         is_extra_slot=False,

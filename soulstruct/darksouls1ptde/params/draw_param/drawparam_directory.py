@@ -28,7 +28,7 @@ def drawparambnd_property(area_name: str):
 class DrawParamDirectory(GameFileDirectory[DrawParamBND], abc.ABC):
 
     FILE_NAME_PATTERN: tp.ClassVar[str] = r"(a\d\d|default)_DrawParam\.parambnd"
-    FILE_CLASS: tp.ClassVar[tp.Type[DrawParamBND]] = DrawParamBND
+    FILE_CLASS: tp.ClassVar[type[DrawParamBND]] = DrawParamBND
     FILE_EXTENSION: tp.ClassVar[str] = ".parambnd"
 
     # Display descriptions of map areas. Prepended to '_DrawParam' suffix to get BND file stem.

@@ -35,7 +35,7 @@ class DrawParamBND(DrawParamBND):
         return f"N:\\FRPG\\data\\INTERROOT_x64\\param\\DrawParam\\{entry_name}"
 
     def assign_param_from_entry(
-        self, entry: BinderEntry, param_stem: str, slot: int, typed_draw_param_class: tp.Type[DrawParam]
+        self, entry: BinderEntry, param_stem: str, slot: int, typed_draw_param_class: type[DrawParam]
     ):
         """Handles outdated `TONE_MAP_BANK` and `TONE_CORRECT_BANK` from `default` and `m99` DrawParams."""
         try:

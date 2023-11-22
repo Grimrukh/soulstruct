@@ -38,8 +38,8 @@ class BaseBinaryFile:
     """
 
     # Utility class shortcuts.
-    Reader: tp.ClassVar[tp.Type[BinaryReader]] = BinaryReader
-    Writer: tp.ClassVar[tp.Type[BinaryWriter]] = BinaryWriter
+    Reader: tp.ClassVar[type[BinaryReader]] = BinaryReader
+    Writer: tp.ClassVar[type[BinaryWriter]] = BinaryWriter
 
     # If given, extension will be enforced (before DCX is checked) when calling `.write()`.
     EXT: tp.ClassVar[str] = ""
@@ -47,7 +47,7 @@ class BaseBinaryFile:
     # If given, this `re.Pattern` will be used to check file names. Usually just `EXT` plus optional DCX extension.
     PATTERN: tp.ClassVar[re.Pattern | None] = None
 
-    # Internal type wrapped by `dcx_type` property, which converts string values to `DCXType`.
+    # Internal type wrapped by `dcx_type` property, which converts string values to `DCXType`. TODO: attrs validator?
     _dcx_type: DCXType | None = field(init=False, repr=False)  # default will be handled by `dcx_type` property below
 
     # Default DCX compression type for file. If `None`, then `get_game().default_dcx_type` will be used.
@@ -258,6 +258,18 @@ class BaseBinaryFile:
     @property
     def cls_name(self) -> str:
         return self.__class__.__name__
+
+    @property
+    def path_name(self) -> str | None:
+        return self.path.name if self.path else None
+
+    @property
+    def path_stem(self) -> str | None:
+        return self.path.stem if self.path else None
+
+    @property
+    def path_minimal_stem(self) -> str | None:
+        return self.path.stem.split(".")[0] if self.path else None
 
     def get_dcx_type(self) -> DCXType:
         if not hasattr(self, "_dcx_type"):

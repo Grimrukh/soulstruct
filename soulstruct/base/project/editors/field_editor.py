@@ -24,7 +24,7 @@ if tp.TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-FieldTypeTyping = tp.Union[GAME_INT_TYPE, tp.Type[GameObjectIntSequence], type, tp.Iterable]
+FieldTypeTyping = tp.Union[GAME_INT_TYPE, type[GameObjectIntSequence], type, tp.Iterable]
 
 
 class FieldRow:

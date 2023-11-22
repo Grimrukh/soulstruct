@@ -28,7 +28,7 @@ class DrawParam(Param):
         }
 
 
-def TypedDrawParam(data_type: tp.Type[ParamRow]):
+def TypedDrawParam(data_type: type[ParamRow]):
     """Generate a `Param` subclass dynamically with the given row type (or retrieve correct existing subclass).
 
     TODO: Add game-appropriate DCX (probably `Null`).

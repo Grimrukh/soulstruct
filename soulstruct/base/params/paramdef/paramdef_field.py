@@ -59,7 +59,7 @@ class ParamDefField:
 
     internal_type_name: str  # e.g. `ITEMLOT_ITEMCATEGORY` or just same as `internal_type`
     display_name: str
-    display_type: tp.Type[field_types.base_type]  # raw format type, e.g. `f32` or `dummy8`
+    display_type: type[field_types.base_type]  # raw format type, e.g. `f32` or `dummy8`
     display_format: str  # C++ string format template, e.g. '%d'
 
     # These are always floats, even for integer fields, except `default` is "" for string fields.
@@ -81,7 +81,7 @@ class ParamDefField:
 
     # Python information.
     py_fmt: str = ""
-    py_type: tp.Type[bool] | tp.Type[int] | tp.Type[float] | tp.Type[str] | tp.Type[bytes] = None
+    py_type: type[bool | int | float | str | bytes] = None
     py_type_min: int | float = 0
     py_type_max: int | float = 0
     py_default: bool | int | float | str = 0
@@ -131,7 +131,7 @@ class ParamDefField:
         display_type_name = reader.unpack_string(length=8, encoding="shift_jis_2004")
         # print(display_type_str.rstrip().encode())
         try:
-            kwargs["display_type"] = getattr(field_types, display_type_name)  # type: tp.Type[field_types.base_type]
+            kwargs["display_type"] = getattr(field_types, display_type_name)  # type: type[field_types.base_type]
         except AttributeError:
             raise TypeError(f"Unknown `ParamDefField` display type: {display_type_name}")
         kwargs["display_format"] = reader.unpack_string(length=8, encoding="shift_jis_2004")  # %i, %u, %d, etc.
@@ -232,7 +232,7 @@ class ParamDefField:
 
         def_split = def_string.split(" ")
         type_str = def_split[0]
-        display_type = kwargs["display_type"] = getattr(field_types, type_str)  # type: tp.Type[field_types.base_type]
+        display_type = kwargs["display_type"] = getattr(field_types, type_str)  # type: type[field_types.base_type]
         name = kwargs["name"] = def_split[1]
 
         if match := cls._ARRAY_LENGTH_RE.match(name):

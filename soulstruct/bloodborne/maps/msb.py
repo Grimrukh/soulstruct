@@ -91,7 +91,7 @@ def empty_list(supertype_prefix: str, subtype_enum_name: str) -> tp.Callable[[],
 
 @dataclass(slots=True, kw_only=True)
 class MSB(_BaseMSB):
-    SUPERTYPE_LIST_HEADER: tp.ClassVar[tp.Type[BinaryStruct]] = MSBEntrySuperlistHeader
+    SUPERTYPE_LIST_HEADER: tp.ClassVar[type[BinaryStruct]] = MSBEntrySuperlistHeader
     MSB_ENTRY_SUBTYPES: tp.ClassVar[dict[str, dict[str, MSBSubtypeInfo]]] = MSB_ENTRY_SUBTYPES
     MSB_ENTRY_SUBTYPE_OFFSETS: tp.ClassVar[dict[str, int]] = {
         "MODEL_PARAM_ST": 8,

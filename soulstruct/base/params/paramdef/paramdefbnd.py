@@ -35,7 +35,7 @@ class ParamDefBND(Binder, abc.ABC):
     If you want to modify a `ParamDefBND`, you are far too powerful a modder for Soulstruct, and I cannot make that
     journey with you at this time.
     """
-    PARAMDEF_CLASS: tp.ClassVar[tp.Type[ParamDef]] = None
+    PARAMDEF_CLASS: tp.ClassVar[type[ParamDef]] = None
 
     paramdefs: dict[str, ParamDef] = field(default_factory=dict)
 

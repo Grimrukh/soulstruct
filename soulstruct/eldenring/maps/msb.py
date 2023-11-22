@@ -154,7 +154,7 @@ def empty_list(supertype_prefix: str, subtype_enum_name: str) -> tp.Callable[[],
 
 @dataclass(slots=True, kw_only=True)
 class MSB(_BaseMSB):
-    SUPERTYPE_LIST_HEADER: tp.ClassVar[tp.Type[BinaryStruct]] = MSBEntrySuperlistHeader
+    SUPERTYPE_LIST_HEADER: tp.ClassVar[type[BinaryStruct]] = MSBEntrySuperlistHeader
     MSB_SUPERTYPE_ENUM: tp.ClassVar = MSBSupertype
     MSB_ENTRY_SUPERTYPES: tp.ClassVar = {
         MSBSupertype.MODELS: MSBModel,

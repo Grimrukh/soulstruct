@@ -159,6 +159,7 @@ class BinaryReader(BinaryBase):
         pass
 
     buffer: tp.BinaryIO | io.BufferedIOBase | None
+    path: Path | None  # optional path to file source
 
     def __init__(
         self,
@@ -169,11 +170,13 @@ class BinaryReader(BinaryBase):
         super().__init__(default_byte_order, long_varints)
 
         self.buffer = None
+        self.path = None
 
         if isinstance(buffer, str):
             buffer = Path(buffer)
         if isinstance(buffer, Path):
             self.buffer = buffer.open("rb")
+            self.path = buffer
         elif isinstance(buffer, (bytes, bytearray)):
             self.buffer = io.BytesIO(buffer)
         elif isinstance(buffer, io.BufferedIOBase):
@@ -707,7 +710,7 @@ class BinaryMetadata(tp.Generic[FIELD_T]):
 
     # Assigned by `BinaryStruct` to allow better error logging below. (NOT used otherwise.)
     field_name: str = dataclasses.field(default=None, init=False)
-    field_type: tp.Type[FIELD_T] = dataclasses.field(default=None, init=False)
+    field_type: type[FIELD_T] = dataclasses.field(default=None, init=False)
 
     def __post_init__(self):
         if self.asserted and len(self.asserted) == 1:
@@ -751,7 +754,7 @@ class BinaryMetadata(tp.Generic[FIELD_T]):
 
 
 def Binary(
-    fmt: str | tp.Type[PRIMITIVE_FIELD_TYPING] = None,
+    fmt: str | type[PRIMITIVE_FIELD_TYPING] = None,
     asserted: tuple[FIELD_T, ...] | FIELD_T = None,
     unpack_func: tp.Callable[[PRIMITIVE_FIELD_TYPING], FIELD_T] = None,
     pack_func: tp.Callable[[FIELD_T], PRIMITIVE_FIELD_TYPING] = None,
@@ -924,7 +927,7 @@ class BinaryArrayMetadata(BinaryMetadata):
 
 def BinaryArray(
     length: int,
-    element_fmt: str | tp.Type[PRIMITIVE_FIELD_TYPING] = None,
+    element_fmt: str | type[PRIMITIVE_FIELD_TYPING] = None,
     asserted: list[FIELD_T] | tuple[list[FIELD_T], ...] = None,
     unpack_func: tp.Callable[[PRIMITIVE_FIELD_TYPING], FIELD_T] = None,
     pack_func: tp.Callable[[FIELD_T], PRIMITIVE_FIELD_TYPING] = None,
@@ -995,7 +998,7 @@ class BinaryStruct:
     # Caches for class binary information, each constructed on first use.
     _STRUCT_INITIALIZED: tp.ClassVar[bool] = False
     _FIELDS: tp.ClassVar[tuple[dataclasses.Field, ...] | None] = None
-    _FIELD_TYPES: tp.ClassVar[tuple[tp.Type[FIELD_T], ...] | None] = None
+    _FIELD_TYPES: tp.ClassVar[tuple[type[FIELD_T], ...] | None] = None
     _FIELD_METADATA: tp.ClassVar[tuple[BinaryMetadata, ...] | None] = None
     _FIELD_PACKERS: tp.ClassVar[tuple[tp.Callable, ...] | None] = None
     _FIELD_UNPACKERS: tp.ClassVar[tuple[tp.Callable, ...] | None] = None
@@ -1342,7 +1345,7 @@ class BinaryStruct:
         binary_struct = cls.from_object(obj, byte_order=byte_order, long_varints=long_varints, **field_values)
         return binary_struct.to_writer(writer, reserve_obj=obj)
 
-    def to_object(self, obj_type: tp.Type[OBJ_T], **init_kwargs) -> OBJ_T:
+    def to_object(self, obj_type: type[OBJ_T], **init_kwargs) -> OBJ_T:
         """Initialize `obj_type` instance by automatically adding field names to `init_kwargs`.
 
         If `obj_type` is a dataclass, any of this struct's fields that match the name of one of `obj_type`'s fields
@@ -1363,7 +1366,7 @@ class BinaryStruct:
         return obj_type(**init_kwargs)
 
     @classmethod
-    def reader_to_object(cls, reader: BinaryReader, obj_type: tp.Type[OBJ_T], **init_kwargs) -> OBJ_T:
+    def reader_to_object(cls, reader: BinaryReader, obj_type: type[OBJ_T], **init_kwargs) -> OBJ_T:
         """Convenience method for creating a struct instance with `from_bytes(reader)`, then immediately calling
         `to_object(obj_type, **init_kwargs)` with that struct.
         """
@@ -1612,7 +1615,7 @@ class BinaryStruct:
         return cls._FIELDS
 
     @classmethod
-    def get_binary_field_types(cls) -> tuple[tp.Type[FIELD_T], ...]:
+    def get_binary_field_types(cls) -> tuple[type[FIELD_T], ...]:
         if cls._FIELD_TYPES is not None:
             return cls._FIELD_TYPES
         all_type_hints = tp.get_type_hints(cls)

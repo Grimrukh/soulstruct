@@ -221,7 +221,7 @@ class EventsEditor(SmartFrame):
             )
 
     @property
-    def events_class(self) -> tp.Type[EventDirectory]:
+    def events_class(self) -> type[EventDirectory]:
         return self._project.get_data_class(ProjectDataType.Events)
 
     def scan_evs_files(self):

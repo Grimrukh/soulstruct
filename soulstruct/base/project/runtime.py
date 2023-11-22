@@ -30,7 +30,7 @@ class RuntimeManager(SmartFrame, abc.ABC):
     DATA_NAME = None
     _THREADED_HOOK = False
 
-    HOOK_CLASS = None  # type: tp.Type[MemoryHook]
+    HOOK_CLASS = None  # type: type[MemoryHook]
 
     def __init__(self, project: GameDirectoryProject, master=None, toplevel=False):
         super().__init__(master=master, toplevel=toplevel, window_title="Soulstruct Runtime Manager")

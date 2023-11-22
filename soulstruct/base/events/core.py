@@ -30,8 +30,8 @@ def convert_events(
     output_directory: str | Path,
     input_directory: str | Path,
     maps: tp.Iterable[Map],
-    emevd_class: tp.Type[EMEVD],
-    input_type: tp.Optional[str] = None,
+    emevd_class: type[EMEVD],
+    input_type: str | None = None,
     check_hash=False,
     merge_emevd_paths: tp.Sequence[str | Path] = (),
 ):

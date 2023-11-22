@@ -27,7 +27,7 @@ class TalkDirectory(GameFileMapDirectory, abc.ABC):
     """Directory containing `TalkESDBND` files."""
 
     FILE_NAME_PATTERN: tp.ClassVar[str] = r".*\.talkesdbnd"  # also manually checks for directories
-    FILE_CLASS: tp.ClassVar[tp.Type[TalkESDBND]] = None  # only attribute that subclass must define
+    FILE_CLASS: tp.ClassVar[type[TalkESDBND]] = None  # only attribute that subclass must define
     FILE_EXTENSION = ".talkesdbnd"
     MAP_STEM_ATTRIBUTE = "esd_file_stem"
 

@@ -83,9 +83,9 @@ class EMEVD(GameFile, abc.ABC):
     `script_directory` can be detected automatically.)
     """
 
-    EVENT_CLASS: tp.ClassVar[tp.Type[BaseEvent]]
-    ENTITY_ENUMS_MANAGER: tp.ClassVar[tp.Type[GameEnumsManager]]
-    EVS_PARSER: tp.ClassVar[tp.Type[EVSParser]]
+    EVENT_CLASS: tp.ClassVar[type[BaseEvent]]
+    ENTITY_ENUMS_MANAGER: tp.ClassVar[type[GameEnumsManager]]
+    EVS_PARSER: tp.ClassVar[type[EVSParser]]
     STRING_ENCODING: tp.ClassVar[str]
     HEADER_VERSION_INFO: tp.ClassVar[tuple[bool, int, int]] = (False, 0, 204)  # DS1 default
 

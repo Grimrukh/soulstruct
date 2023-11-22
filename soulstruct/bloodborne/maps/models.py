@@ -33,7 +33,7 @@ class ModelHeaderStruct(BinaryStruct):
 class MSBModel(BaseMSBModel):
     """MSB model entry in Bloodborne."""
 
-    SUPERTYPE_HEADER_STRUCT: tp.ClassVar[tp.Type[BinaryStruct]] = ModelHeaderStruct
+    SUPERTYPE_HEADER_STRUCT: tp.ClassVar[type[BinaryStruct]] = ModelHeaderStruct
     NAME_ENCODING: tp.ClassVar[str] = "utf-16-le"
     NULL: tp.ClassVar[bytes] = b"\0\0"
     # TODO: Empty sib path different? b"\0\0" * 6 maybe?
@@ -50,6 +50,9 @@ class MSBMapPieceModel(MSBModel):
 
     def get_model_file_stem(self, map_stem: str):
         return f"{map_stem}_{self.name[1:]}"  # drop 'm' prefix from model name
+
+    def set_name_from_model_file_stem(self, model_stem: str):
+        self.name = model_stem[13:]  # e.g. strip 'm10_00_00_00_' prefix
 
 
 @dataclass(slots=True, eq=False, repr=False)

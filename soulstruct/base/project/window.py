@@ -198,17 +198,17 @@ class ProjectCreatorWizard(SmartFrame):
 
 class ProjectWindow(SmartFrame, abc.ABC):
 
-    PROJECT_CLASS: tp.Type[GameDirectoryProject] = None
-    LINKER_CLASS: tp.Type[WindowLinker] = WindowLinker
-    MAPS_EDITOR_CLASS: tp.Type[MapsEditor] = MapsEditor
-    ENUMS_EDITOR_CLASS: tp.Type[EnumsEditor] = EnumsEditor
-    PARAMS_EDITOR_CLASS: tp.Type[ParamsEditor] = ParamsEditor
-    LIGHTING_EDITOR_CLASS: tp.Type[LightingEditor] = LightingEditor
-    TEXT_EDITOR_CLASS: tp.Type[TextEditor] = TextEditor
-    EVENT_EDITOR_CLASS: tp.Type[EventsEditor] = EventsEditor
-    AI_EDITOR_CLASS: tp.Type[AIEditor] = AIEditor
-    TALK_EDITOR_CLASS: tp.Type[TalkEditor] = TalkEditor
-    RUNTIME_MANAGER_CLASS: tp.Type[RuntimeManager] = None
+    PROJECT_CLASS: type[GameDirectoryProject] = None
+    LINKER_CLASS: type[WindowLinker] = WindowLinker
+    MAPS_EDITOR_CLASS: type[MapsEditor] = MapsEditor
+    ENUMS_EDITOR_CLASS: type[EnumsEditor] = EnumsEditor
+    PARAMS_EDITOR_CLASS: type[ParamsEditor] = ParamsEditor
+    LIGHTING_EDITOR_CLASS: type[LightingEditor] = LightingEditor
+    TEXT_EDITOR_CLASS: type[TextEditor] = TextEditor
+    EVENT_EDITOR_CLASS: type[EventsEditor] = EventsEditor
+    AI_EDITOR_CLASS: type[AIEditor] = AIEditor
+    TALK_EDITOR_CLASS: type[TalkEditor] = TalkEditor
+    RUNTIME_MANAGER_CLASS: type[RuntimeManager] = None
 
     EXTRA_TAB_CLASSES = {}  # maps tab names to classes (they should take `project` argument)
     # TODO: Random specific info to have here. Probably combine into a more general class (when more is actually here).

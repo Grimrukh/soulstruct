@@ -31,7 +31,7 @@ class ModelHeaderStruct(BinaryStruct):
 class MSBModel(BaseMSBModel):
     """MSB model entry in Bloodborne."""
 
-    SUPERTYPE_HEADER_STRUCT: tp.ClassVar[tp.Type[BinaryStruct]] = ModelHeaderStruct
+    SUPERTYPE_HEADER_STRUCT: tp.ClassVar[type[BinaryStruct]] = ModelHeaderStruct
     NAME_ENCODING = "shift-jis"
     NULL = b"\0"
     EMPTY_SIB_PATH = b"\0" * 6
@@ -49,6 +49,9 @@ class MSBMapPieceModel(MSBModel):
     def get_model_file_stem(self, map_stem: str):
         area = map_stem[1:3]
         return f"{self.name}A{area}"
+
+    def set_name_from_model_file_stem(self, model_stem: str):
+        self.name = model_stem[:7]
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -86,6 +89,13 @@ class MSBCollisionModel(MSBModel):
     def set_auto_sib_path(self, map_stem: str):
         self.sib_path = self.SIB_PATH_TEMPLATE.format(map_stem=map_stem, name=self.name)
 
+    def get_model_file_stem(self, map_stem: str):
+        area = map_stem[1:3]
+        return f"{self.name}A{area}"
+
+    def set_name_from_model_file_stem(self, model_stem: str):
+        self.name = model_stem[:7]
+
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBNavmeshModel(MSBModel):
@@ -95,3 +105,10 @@ class MSBNavmeshModel(MSBModel):
 
     def set_auto_sib_path(self, map_stem: str):
         self.sib_path = self.SIB_PATH_TEMPLATE.format(map_stem=map_stem, name=self.name)
+
+    def get_model_file_stem(self, map_stem: str):
+        area = map_stem[1:3]
+        return f"{self.name}A{area}"
+
+    def set_name_from_model_file_stem(self, model_stem: str):
+        self.name = model_stem[:7]

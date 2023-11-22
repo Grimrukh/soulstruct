@@ -198,7 +198,7 @@ class BinderEntry:
         """Update just the basename of `path`."""
         self.path = str(Path(self.path).parent.joinpath(new_name))
 
-    def to_binary_file(self, binary_file_cls: tp.Type[BASE_BINARY_FILE_T]) -> BASE_BINARY_FILE_T:
+    def to_binary_file(self, binary_file_cls: type[BASE_BINARY_FILE_T]) -> BASE_BINARY_FILE_T:
         binary_file = binary_file_cls.from_bytes(self.get_uncompressed_data())
         binary_file.path = Path(self.path)
         return binary_file

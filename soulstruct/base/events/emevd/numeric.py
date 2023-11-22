@@ -27,7 +27,7 @@ class MissingInstructionError(Exception):
         super().__init__(f"Instruction ({category}, {index}) is not present in EMEDF dictionary.")
 
 
-def build_numeric(numeric_string: str, event_class: tp.Type[Event]):
+def build_numeric(numeric_string: str, event_class: type[Event]):
     """Parses the text data from the given numeric-style string into a dictionary of events suitable for use as an
     `EMEVD` source, which can then be packed to binary.
 

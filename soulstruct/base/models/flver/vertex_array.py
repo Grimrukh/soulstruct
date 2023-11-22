@@ -424,7 +424,7 @@ VERTEX_DATA_TYPES = {
     VertexTangent.type_int: VertexTangent,
     VertexBitangent.type_int: VertexBitangent,
     VertexColor.type_int: VertexColor,
-}  # type: dict[int, tp.Type[VertexDataType]]
+}  # type: dict[int, type[VertexDataType]]
 
 
 @dataclass(slots=True)

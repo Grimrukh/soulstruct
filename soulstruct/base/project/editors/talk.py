@@ -169,7 +169,7 @@ class TalkEditor(BaseEditor):
         super().__init__(project, linker, master=master, toplevel=toplevel, window_title="Soulstruct Talk Editor")
 
     @property
-    def talk_class(self) -> tp.Type[TalkDirectory]:
+    def talk_class(self) -> type[TalkDirectory]:
         return self._project.get_data_class(ProjectDataType.Talk)
 
     def refresh(self):
@@ -437,7 +437,7 @@ class TalkEditor(BaseEditor):
         bnd_subpath = f"script/talk/{self.selected_map_id}.talkesdbnd"
         try:
             # Initialize `TalkESDBND` directly with `talk` dictionary.
-            talkesdbnd_class = self.talk_class.FILE_CLASS  # type: tp.Type[TalkESDBND]
+            talkesdbnd_class = self.talk_class.FILE_CLASS  # type: type[TalkESDBND]
             talk_class = talkesdbnd_class.TALK_ESD_CLASS
             talk_dict = {
                 talk_id: talk_class.from_auto_detect_source_type(esp_path)[0]
@@ -466,8 +466,8 @@ class TalkEditor(BaseEditor):
             talk_id = self.get_entry_id()
             try:
                 # Try to compile the script, but do nothing with it.
-                talkesdbnd_class = self.talk_class.FILE_CLASS  # type: tp.Type[TalkESDBND]
-                talkesd_class = talkesdbnd_class.TALK_ESD_CLASS  # type: tp.Type[ESD]
+                talkesdbnd_class = self.talk_class.FILE_CLASS  # type: type[TalkESDBND]
+                talkesd_class = talkesdbnd_class.TALK_ESD_CLASS  # type: type[ESD]
                 if self.esp_file_paths[self.selected_map_id][talk_id].is_dir():
                     # TODO: Not actually implemented yet (multiple scripts not supported by GUI editor).
                     talkesd_class.from_esp_directory(self.esp_file_paths[self.selected_map_id][talk_id])

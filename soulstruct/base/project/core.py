@@ -86,8 +86,8 @@ class GameDirectoryProject(abc.ABC):
         _DEFAULT_PROJECT_ROOT = Path(os.getcwd())
 
     # Maps `ProjectDataType` enums supported by this game to the classes that load them (`MapStudioDirectory`, etc.).
-    DATA_TYPES: tp.ClassVar[dict[ProjectDataType, tp.Type[DATA_CLASS_TYPING]]] = {}
-    DataType: tp.ClassVar[tp.Type[ProjectDataType]] = ProjectDataType
+    DATA_TYPES: tp.ClassVar[dict[ProjectDataType, type[DATA_CLASS_TYPING]]] = {}
+    DataType: tp.ClassVar[type[ProjectDataType]] = ProjectDataType
 
     game_root: Path
     project_root: Path
@@ -141,7 +141,7 @@ class GameDirectoryProject(abc.ABC):
             raise TypeError(f"This game's `GameDirectoryProject` does not support {data_type.name} data.")
         self._data[data_type] = data
 
-    def get_data_class(self, data_type: ProjectDataType) -> tp.Type[DATA_CLASS_TYPING]:
+    def get_data_class(self, data_type: ProjectDataType) -> type[DATA_CLASS_TYPING]:
         if data_type not in self.DATA_TYPES:
             raise TypeError(f"This game's project class does not support {data_type.name} data.")
         return self.DATA_TYPES[data_type]
@@ -276,7 +276,7 @@ class GameDirectoryProject(abc.ABC):
         use_enums_in_event_scripts=True,
         copy_python_events_submodule=False,
     ):
-        event_class = self.get_data_class(ProjectDataType.Events)  # type: tp.Type[EventDirectory]
+        event_class = self.get_data_class(ProjectDataType.Events)  # type: type[EventDirectory]
         import_directory = Path(import_directory)
         event_directory_path = self.get_data_game_path(ProjectDataType.Events, root=import_directory)
         event_directory = event_class.from_path(event_directory_path)
@@ -305,7 +305,7 @@ class GameDirectoryProject(abc.ABC):
 
     def import_Talk(self, import_directory: Path | str):
         # TODO: Automatically writes ESP scripts to project. Should be made clear.
-        talk_class = self.get_data_class(ProjectDataType.Talk)  # type: tp.Type[TalkDirectory]
+        talk_class = self.get_data_class(ProjectDataType.Talk)  # type: type[TalkDirectory]
         import_directory = Path(import_directory)
         talk_directory_path = self.get_data_game_path(ProjectDataType.Talk, root=import_directory)
         talk_directory = talk_class.from_path(talk_directory_path)
@@ -340,7 +340,7 @@ class GameDirectoryProject(abc.ABC):
     # TODO: Enums cannot be exported. However, may want to do a 'final sync' before exporting Maps/Events.
 
     def export_Events(self, export_directory: Path | str, specific_map=""):
-        event_class = self.get_data_class(ProjectDataType.Events)  # type: tp.Type[EventDirectory]
+        event_class = self.get_data_class(ProjectDataType.Events)  # type: type[EventDirectory]
         _, export_path = self._get_data_and_export_path(ProjectDataType.Events, export_directory)
         if specific_map:
             emevd = event_class.FILE_CLASS.from_evs_path(
@@ -376,7 +376,7 @@ class GameDirectoryProject(abc.ABC):
         if specific_param and export_path.is_file():
             # Open active Binder and modify precise entry. Probably still faster than writing all Params.
             param = params[specific_param]
-            params_class = self.get_data_class(ProjectDataType.Params)  # type: tp.Type[GameParamBND]
+            params_class = self.get_data_class(ProjectDataType.Params)  # type: type[GameParamBND]
             gameparambnd = GameParamBND.from_path(export_path)
             internal_name = params_class.PARAM_NICKNAMES[specific_param]
             entry = gameparambnd.find_entry_matching_name(rf"{internal_name}\.param")
@@ -397,7 +397,7 @@ class GameDirectoryProject(abc.ABC):
 
     def export_Talk(self, export_directory: Path | str, specific_map="", specific_talk_id=-1):
         """Export ESP scripts in 'talk' directory as binary game files."""
-        talk_class = self.get_data_class(ProjectDataType.Talk)  # type: tp.Type[TalkDirectory]
+        talk_class = self.get_data_class(ProjectDataType.Talk)  # type: type[TalkDirectory]
         _, export_path = self._get_data_and_export_path(ProjectDataType.Talk, export_directory)
         if specific_map:
             if (
@@ -507,7 +507,7 @@ class GameDirectoryProject(abc.ABC):
     # region Project Load Methods
 
     def load_AI(self) -> bool:
-        ai_class = self.get_data_class(ProjectDataType.AI)  # type: tp.Type[AIScriptDirectory]
+        ai_class = self.get_data_class(ProjectDataType.AI)  # type: type[AIScriptDirectory]
         ai_dir = self.project_root / "ai_scripts"
         if not ai_dir.is_dir():
             self._data[ProjectDataType.AI] = None  # no AI data (yet)
@@ -522,7 +522,7 @@ class GameDirectoryProject(abc.ABC):
             )
 
     def load_Lighting(self) -> bool:
-        lighting_class = self.get_data_class(ProjectDataType.Lighting)  # type: tp.Type[DrawParamDirectory]
+        lighting_class = self.get_data_class(ProjectDataType.Lighting)  # type: type[DrawParamDirectory]
         lighting_dir = self.project_root / "lighting"
         if not lighting_dir.is_dir():
             self._data[ProjectDataType.Lighting] = None  # no Lighting data (yet)
@@ -537,7 +537,7 @@ class GameDirectoryProject(abc.ABC):
             )
 
     def load_Enums(self) -> bool:
-        enums_class = self.get_data_class(ProjectDataType.Enums)  # type: tp.Type[GameEnumsManager]
+        enums_class = self.get_data_class(ProjectDataType.Enums)  # type: type[GameEnumsManager]
         enums_dir = self.enums_directory
         if not enums_dir.is_dir():
             self._data[ProjectDataType.Enums] = None  # no Enums data (yet)
@@ -559,7 +559,7 @@ class GameDirectoryProject(abc.ABC):
     # `Events` EVS scripts are loaded by `EventsEditor` for text display.
 
     def load_Params(self) -> bool:
-        params_class = self.get_data_class(ProjectDataType.Params)  # type: tp.Type[GameParamBND]
+        params_class = self.get_data_class(ProjectDataType.Params)  # type: type[GameParamBND]
         params_dir = self.project_root / "params"
         if not params_dir.is_dir():
             self._data[ProjectDataType.Params] = None  # no Params data (yet)
@@ -574,7 +574,7 @@ class GameDirectoryProject(abc.ABC):
             )
 
     def load_Maps(self) -> bool:
-        maps_class = self.get_data_class(ProjectDataType.Maps)  # type: tp.Type[MapStudioDirectory]
+        maps_class = self.get_data_class(ProjectDataType.Maps)  # type: type[MapStudioDirectory]
         maps_dir = self.project_root / "maps"
         if not maps_dir.is_dir():
             self._data[ProjectDataType.Maps] = None
@@ -589,7 +589,7 @@ class GameDirectoryProject(abc.ABC):
             )
 
     def load_Text(self) -> bool:
-        text_class = self.get_data_class(ProjectDataType.Text)  # type: tp.Type[MSGDirectory]
+        text_class = self.get_data_class(ProjectDataType.Text)  # type: type[MSGDirectory]
         text_dir = self.project_root / "text"
         if not text_dir.is_dir():
             self._data[ProjectDataType.Text] = None  # no Text data (yet)

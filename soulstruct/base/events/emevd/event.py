@@ -98,12 +98,12 @@ class SingleEventArg:
     arg_range: tuple[int, int]  # start and (exclusive) end offsets; corresponds to `(i, j)` in default argument names
     fmts: set[str] = field(default_factory=set)
     names: set[str] = field(default_factory=set)
-    py_types: set[tp.Type | GenericAlias] = field(default_factory=set)  # each could be from a `typing.Union`
+    py_types: set[type | GenericAlias] = field(default_factory=set)  # each could be from a `typing.Union`
 
     # Computed from above sets.
     combined_name: str = field(default="")
     combined_fmt: str = field(default="")
-    combined_py_types: tuple[tp.Type, ...] = ()
+    combined_py_types: tuple[type, ...] = ()
     # Subset of the above; ONLY contains game types (for enum lookups).
     combined_game_types: tuple[GAME_INT_TYPE, ...] = ()
 
@@ -247,13 +247,13 @@ class Event(abc.ABC):
     When an event ends (even if it restarts), the event flag that has the same ID as the event (plus the called `slot`
     of the event instance) will be enabled.
 
-    Events also have `EventArgRepl` instances attached to them, which represent where any packed event data passed to the
-    `Run{Common}Event` instruction is used inside the event. Soulstruct will attach each `EventArgRepl` to the `Instruction`
-    it affects, rather than keeping them in the `Event` instance.
+    Events also have `EventArgRepl` instances attached to them, which represent where any packed event data passed to
+    the `Run{Common}Event` instruction is used inside the event. Soulstruct will attach each `EventArgRepl` to the
+    `Instruction` it affects, rather than keeping them in the `Event` instance.
     """
     
     # Game-specific class attributes.
-    INSTRUCTION_CLASS: tp.ClassVar[tp.Type[Instruction]]
+    INSTRUCTION_CLASS: tp.ClassVar[type[Instruction]]
     EMEDF_TESTS: tp.ClassVar[dict[str, dict[str, str]]]
     EMEDF_COMPARISON_TESTS: tp.ClassVar[dict[str, dict[str, str]]]
     WRAP_LIMIT: tp.ClassVar[int] = 120  # PyCharm default line length

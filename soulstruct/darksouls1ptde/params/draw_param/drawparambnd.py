@@ -163,7 +163,7 @@ class DrawParamBND(Binder):
             self.assign_param_from_entry(entry, param_stem, slot, typed_draw_param_class)
 
     def assign_param_from_entry(
-        self, entry: BinderEntry, param_stem: str, slot: int, typed_draw_param_class: tp.Type[DrawParam]
+        self, entry: BinderEntry, param_stem: str, slot: int, typed_draw_param_class: type[DrawParam]
     ):
         try:
             self.draw_params[param_stem][slot] = entry.to_binary_file(typed_draw_param_class)

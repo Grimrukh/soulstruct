@@ -233,7 +233,7 @@ class ParamRow(BinaryStruct):
 class ParamFieldMetadata:
     """Not a `NamedTuple` as it may be modified with defaults."""
     internal_name: str
-    param_enum: tp.Type[base_type] = None
+    param_enum: type[base_type] = None
     game_type: GAME_INT_TYPE = None
     hide: bool = False
     dynamic_callback: DynamicParamField | tp.Callable[[ParamRow], tuple[GAME_INT_TYPE, str, str]] | None = None
@@ -242,9 +242,9 @@ class ParamFieldMetadata:
 
 
 def ParamField(
-    field_type: tp.Type[PRIMITIVE_FIELD_TYPING],
+    field_type: type[PRIMITIVE_FIELD_TYPING],
     internal_name: str,
-    param_enum: tp.Type[base_type] = None,
+    param_enum: type[base_type] = None,
     game_type: GAME_INT_TYPE = None,
     length: int | None = None,
     encoding: str = None,
@@ -296,7 +296,7 @@ def ParamPad(size: int, internal_name: str):
     return field(default=b"\0" * size, **metadata)
 
 
-def ParamBitPad(field_type: tp.Type[PRIMITIVE_FIELD_TYPING], internal_name: str, bit_count: int):
+def ParamBitPad(field_type: type[PRIMITIVE_FIELD_TYPING], internal_name: str, bit_count: int):
     """Shortcut for a Param bit-padding field (a field with type `dummy8` and `bit_count != -1` from colon in name)."""
     metadata = Binary(
         fmt=field_type,

@@ -276,7 +276,7 @@ class TPFTexture:
         with tempfile.TemporaryDirectory() as png_dir:
             temp_dds_path = Path(png_dir, "temp.dds")
 
-            if not self.data[:4] == b"DDS\0":
+            if not self.data[:4] == b"DDS ":
                 if not self.header:
                     raise TexconvError("Cannot convert headerless DDS texture to PNG without a `TPFTexture` header.")
                 dds_data = bytes(self.get_headerized_dds(platform))

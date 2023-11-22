@@ -31,7 +31,7 @@ class GameFileDirectory(tp.Generic[BASE_BINARY_FILE_T], abc.ABC):
     names should be loaded into which Python class, then use `__post_init__` to compute any other fields if needed.
     """
     FILE_NAME_PATTERN: tp.ClassVar[str]
-    FILE_CLASS: tp.ClassVar[tp.Type[BaseBinaryFile]]
+    FILE_CLASS: tp.ClassVar[type[BaseBinaryFile]]
     FILE_EXTENSION: tp.ClassVar[str] = ""  # NOTE: `.dcx` extension will be applied by `BinaryBaseFile.write()`
 
     # Tracks directory that instance was loaded from (if any) for argument-free write calls.

@@ -108,11 +108,11 @@ class RegionExtraData(BinaryStruct):
 @dataclass(slots=True, eq=False, repr=False)
 class MSBRegion(BaseMSBRegion, abc.ABC):
 
-    SUPERTYPE_HEADER_STRUCT: tp.ClassVar[tp.Type[BinaryStruct]] = RegionHeader
+    SUPERTYPE_HEADER_STRUCT: tp.ClassVar[type[BinaryStruct]] = RegionHeader
     NAME_ENCODING: tp.ClassVar[str] = "utf-16-le"
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part"]
-    SUPERTYPE_DATA_STRUCT: tp.ClassVar[tp.Type[BinaryStruct]] = RegionSupertypeData
-    SUBTYPE_DATA_STRUCT: tp.ClassVar[tp.Type[BinaryStruct]] = None  # none by default
+    SUPERTYPE_DATA_STRUCT: tp.ClassVar[type[BinaryStruct]] = RegionSupertypeData
+    SUBTYPE_DATA_STRUCT: tp.ClassVar[type[BinaryStruct]] = None  # none by default
 
     shape: BaseShape = None
     region_unkh_2c: int = 0

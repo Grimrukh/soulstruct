@@ -28,7 +28,7 @@ class MapStudioDirectory(GameFileMapDirectory[MSB_T], abc.ABC):
     """
 
     FILE_NAME_PATTERN: tp.ClassVar[str] = r".*\.msb"
-    FILE_CLASS: tp.ClassVar[tp.Type[MSB]]
+    FILE_CLASS: tp.ClassVar[type[MSB]]
     FILE_EXTENSION: tp.ClassVar[str] = ".msb"
     MAP_STEM_ATTRIBUTE: tp.ClassVar[str] = "msb_file_stem"
 

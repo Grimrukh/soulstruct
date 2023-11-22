@@ -2,12 +2,13 @@ __all__ = ["MSGDirectory"]
 
 import typing as tp
 
-from soulstruct.base.text.msg_directory import MSGDirectory as _BaseMSGDirectory, FMG, fmg_property
+from soulstruct.base.text.msg_directory import MSGDirectory as _BaseMSGDirectory, fmg_property
+from soulstruct.base.text.fmg import FMG
 from .msgbnd import MSGBND
 
 
 class MSGDirectory(_BaseMSGDirectory):
-    FILE_CLASS: tp.ClassVar[tp.Type[MSGBND]] = MSGBND
+    FILE_CLASS: tp.ClassVar[type[MSGBND]] = MSGBND
 
     DEFAULT_ENTRY_STEMS = {
         # ITEM

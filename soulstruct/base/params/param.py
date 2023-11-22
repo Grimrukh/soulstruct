@@ -214,7 +214,7 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
     the game engine ITSELF basically treats it as such -- that I am using the dictionary structure and not even
     bothering loading duplicate IDs.
     """
-    ROW_TYPE: tp.ClassVar[tp.Type[ParamRow]] = None
+    ROW_TYPE: tp.ClassVar[type[ParamRow]] = None
     PARAMDEF_MODULE: tp.ClassVar[ModuleType] = None
     GET_BUNDLED_PARAMDEFBND: tp.ClassVar[tp.Callable] = None
 
@@ -809,7 +809,7 @@ class ParamDict(Param):
         return writer
 
 
-def TypedParam(row_type: tp.Type[ParamRow]):
+def TypedParam(row_type: type[ParamRow]):
     """Generate a `Param` subclass dynamically with the given row type (or retrieve correct existing subclass)."""
     for param_subclass in Param.__subclasses__():
         if param_subclass.__name__ == "ParamDict":

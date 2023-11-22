@@ -1135,7 +1135,7 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
         """Uses entry index instad of entry ID."""
         return self.get_category_data(category)[entry_index]
 
-    def get_field_display_info(self, field_dict: MSBEntry, field_name: str) -> tuple[str, bool, tp.Type[tp.Any], str]:
+    def get_field_display_info(self, field_dict: MSBEntry, field_name: str) -> tuple[str, bool, type[tp.Any], str]:
         nickname, tooltip, display_type = field_dict.get_field_display_info(field_name, self.GAME_TYPES_MODULE)
         return nickname, field_name not in field_dict.HIDE_FIELDS, display_type, tooltip
 
@@ -1151,7 +1151,7 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
             field_type, field_value, valid_null_values=valid_null_values, map_override=None,
         )
 
-    def add_models(self, model_game_type: tp.Type[MapModel], model_name, auto_yes_if_valid=False):
+    def add_models(self, model_game_type: type[MapModel], model_name, auto_yes_if_valid=False):
         map_stem = self.map_choice_stem
         _, model_subtype_name = model_game_type.get_msb_entry_supertype_subtype()
         if self.linker.validate_model_subtype(model_game_type, model_name, map_stem=map_stem):

@@ -48,7 +48,7 @@ class EventArgRepl:
     arg_index: int = -1
     name: str = ""
     fmt: str = ""  # format characters such as 'i', 'B', 'H'
-    py_type_hint: tp.Type | GenericAlias = None  # EMEDF game types or `typing.Union` hints
+    py_type_hint: type | GenericAlias = None  # EMEDF game types or `typing.Union` hints
 
     @classmethod
     def from_emevd_reader(cls, reader: BinaryReader) -> EventArgRepl:

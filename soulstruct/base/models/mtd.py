@@ -543,6 +543,7 @@ class MTDShaderCategory(StrEnum):
 
 @dataclass(slots=True)
 class MTDBND(Binder):
+    """NOTE: This is NOT an abstract class. It can be used for any game (so far), but will lack `from_bundled()`."""
 
     mtds: dict[str, MTD] = field(default_factory=dict)
 

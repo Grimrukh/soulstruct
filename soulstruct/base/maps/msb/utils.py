@@ -54,7 +54,7 @@ class MSBBrokenEntryReference:
 
 class MSBSubtypeInfo(tp.NamedTuple):
     subtype_enum: BaseMSBSubtype
-    entry_class: tp.Type[MSBEntry]
+    entry_class: type[MSBEntry]
     subtype_list_name: str
 
     def matches_name(self, name: str) -> bool:

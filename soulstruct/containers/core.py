@@ -575,6 +575,11 @@ class Binder(BaseBinaryFile):
 
     # region Write Methods
 
+    def entry_autogen(self):
+        """Method that `Binder` subclasses (e.g. `CHRBND`, `GameParamBND`, etc.) can override to automatically create
+        entries from loaded `BaseBinaryFile` instances with known IDs and paths."""
+        pass
+
     def write(
         self,
         file_path: None | str | Path = None,
@@ -602,6 +607,8 @@ class Binder(BaseBinaryFile):
         Returns:
             Path | None: path of written BND or BHD (not BDT) file. `None` if nothing new is written.
         """
+        self.entry_autogen()
+
         file_path = self.get_file_path(file_path)
         if make_dirs:
             file_path.parent.mkdir(parents=True, exist_ok=True)
@@ -1025,7 +1032,7 @@ class Binder(BaseBinaryFile):
 
     def create_default_entry(
         self,
-        entry_data: bytes,
+        entry_data: bytes | BaseBinaryFile,
         entry_id: int = None,
         entry_name: str = None,
         entry_path: str | Path = None,
@@ -1052,6 +1059,10 @@ class Binder(BaseBinaryFile):
             entry_id = self.get_default_new_entry_id(entry_name)
         if entry_flags is None:
             entry_flags = self.DEFAULT_ENTRY_FLAGS
+
+        if not isinstance(entry_data, bytes):
+            entry_data = bytes(entry_data)
+
         return BinderEntry(entry_data, entry_id, entry_path, entry_flags)
 
     def set_default_entry(
@@ -1061,7 +1072,7 @@ class Binder(BaseBinaryFile):
         new_name: str = None,
         new_path: str | Path = None,
         new_flags: int = None,
-        new_data: bytes = b"",
+        new_data: bytes | BaseBinaryFile = b"",
     ) -> BinderEntry:
         """Retrieve or create `BinderEntry` specified by `entry_spec`, a la `dict.setdefault()`.
 

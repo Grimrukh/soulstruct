@@ -72,9 +72,9 @@ class MSBEntry(abc.ABC):
     # Cached when first accessed. Maps field names to their default values. Immutable.
     _FIELD_DEFAULTS: tp.ClassVar[MappingProxyType[str, tp.Any]] = None
     # Cached when first accessed. Maps field names to types for enforcement, or type names for `MSBEntry` subclasses.
-    _FIELD_TYPES: tp.ClassVar[MappingProxyType[str, str | tp.Type[tp.Any]]] = None
+    _FIELD_TYPES: tp.ClassVar[MappingProxyType[str, str | type[tp.Any]]] = None
     # Cached when first accessed. Maps field names to `(nickname, tooltip, display_type)` tuples.
-    _FIELD_DISPLAY_INFO: tp.ClassVar[MappingProxyType[str, tuple[str, str, tp.Type[tp.Any]]]] = None
+    _FIELD_DISPLAY_INFO: tp.ClassVar[MappingProxyType[str, tuple[str, str, type[tp.Any]]]] = None
     # Cached when first accessed. Maps field names to functions that convert JSON string values to that field's type.
     _CUSTOM_JSON_DECODERS: tp.ClassVar[MappingProxyType[str, tp.Callable[[str], tp.Any]]] = None
 
@@ -83,9 +83,9 @@ class MSBEntry(abc.ABC):
     SETATTR_CHECKS_DISABLED: tp.ClassVar[bool] = False
 
     # Structs for header, supertype data, and (optional but common) subtype data.
-    SUPERTYPE_HEADER_STRUCT: tp.ClassVar[tp.Type[BinaryStruct]]
-    SUPERTYPE_DATA_STRUCT: tp.ClassVar[tp.Type[BinaryStruct]]
-    SUBTYPE_DATA_STRUCT: tp.ClassVar[tp.Type[BinaryStruct]]
+    SUPERTYPE_HEADER_STRUCT: tp.ClassVar[type[BinaryStruct]]
+    SUPERTYPE_DATA_STRUCT: tp.ClassVar[type[BinaryStruct]]
+    SUBTYPE_DATA_STRUCT: tp.ClassVar[type[BinaryStruct]]
 
     # Basic data fields.
     name: str
@@ -613,7 +613,7 @@ class MSBEntry(abc.ABC):
         return False
 
     @classmethod
-    def get_field_display_info(cls, field_name: str, game_types_module: ModuleType) -> tuple[str, str, tp.Type[tp.Any]]:
+    def get_field_display_info(cls, field_name: str, game_types_module: ModuleType) -> tuple[str, str, type[tp.Any]]:
         # TODO: Make a NamedTuple for return type here. Add info about nested structs (e.g. GPARAM).
         if cls._FIELD_DISPLAY_INFO is not None:
             try:
@@ -625,7 +625,7 @@ class MSBEntry(abc.ABC):
         # TODO: Handle MSB GPARAM/SceneGPARAM (and nested structs more generally).
         #  - Can display fields as `GPARAM[Light Set ID]`, etc.
         field_types = cls.get_field_types()
-        field_metadata = {}  # type: dict[str, tuple[str, str, tp.Type[tp.Any]]]
+        field_metadata = {}  # type: dict[str, tuple[str, str, type[tp.Any]]]
         for f in fields(cls):
             if f.name in {"name", "description"}:
                 # Dummy metadata (not treated as regular fields for display).

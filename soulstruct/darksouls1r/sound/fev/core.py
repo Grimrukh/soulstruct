@@ -161,7 +161,7 @@ PROJECT_FOOTER_COMPOSITION = """
 @dataclass(slots=True)
 class XMLObject:
     """Implements a dictionary that maps attribute names to XML (name, func(text)) pairs for setting that attribute."""
-    STRUCT: tp.ClassVar[tp.Type[BinaryStruct]]
+    STRUCT: tp.ClassVar[type[BinaryStruct]]
     FROM_XML: tp.ClassVar[dict[str, tuple[str, tp.Callable[[ElementTree.Element], tp.Any]]]]
 
     @classmethod

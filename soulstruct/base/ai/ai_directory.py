@@ -42,7 +42,7 @@ class AIScriptDirectory(GameFileMapDirectory, abc.ABC):
     with text and parameter/lighting changes, *UNLESS* you need to reload a script in Common.
     """
     FILE_NAME_PATTERN: tp.ClassVar[str] = r".*\.luabnd"
-    FILE_CLASS: tp.ClassVar[tp.Type[LuaBND]] = LuaBND
+    FILE_CLASS: tp.ClassVar[type[LuaBND]] = LuaBND
     FILE_EXTENSION = ".luabnd"
     MAP_STEM_ATTRIBUTE = "ai_file_stem"
 

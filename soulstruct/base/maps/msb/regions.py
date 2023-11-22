@@ -29,7 +29,7 @@ class BaseMSBRegion(MSBEntry, abc.ABC):
 
     # Further specify subtype enum type.
     SUBTYPE_ENUM: tp.ClassVar[BaseMSBRegionSubtype]
-    SUPERTYPE_DATA_STRUCT: tp.ClassVar[tp.Type[BinaryStruct]] = None  # most games' region don't have any
+    SUPERTYPE_DATA_STRUCT: tp.ClassVar[type[BinaryStruct]] = None  # most games' region don't have any
     UNKNOWN_DATA_SIZE: tp.ClassVar[int]
 
     entity_id: int = -1

@@ -108,7 +108,7 @@ class EventArgumentData:
         self.offset_tuple = offset_tuple
         self.arg_class = arg_class
 
-    def get_coord_entity_type(self, coord_entity_type_enum: tp.Type[IntEnum]):
+    def get_coord_entity_type(self, coord_entity_type_enum: type[IntEnum]):
         """Forwards to `get_coord_entity_type` with `self.arg_class` as `arg_or_type`."""
         try:
             return get_coord_entity_type(coord_entity_type_enum, self.arg_class)
@@ -122,7 +122,7 @@ class EventArgumentData:
 
 
 def get_coord_entity_type(
-    coord_entity_type_enum: tp.Type[IntEnum],
+    coord_entity_type_enum: type[IntEnum],
     arg_or_type: EventArgumentData | GameObjectInt | GAME_INT_TYPE,
 ) -> IntEnum:
     """Automatically detect `CoordEntityType` from argument `arg_or_type`."""

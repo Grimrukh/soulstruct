@@ -74,9 +74,9 @@ class MSB(GameFile, abc.ABC):
     """
     EXT: tp.ClassVar[str] = ".msb"
 
-    SUPERTYPE_LIST_HEADER: tp.ClassVar[tp.Type[BinaryStruct]]
+    SUPERTYPE_LIST_HEADER: tp.ClassVar[type[BinaryStruct]]
     # Enum of MSB supertypes. Defaults to the one used by earlier games (models, events, regions, parts).
-    MSB_SUPERTYPE_ENUM: tp.ClassVar[tp.Type[MSBSupertype]] = MSBSupertype
+    MSB_SUPERTYPE_ENUM: tp.ClassVar[type[MSBSupertype]] = MSBSupertype
     # Dictionary mapping MSB supertype name enums to their base types. Expanded in later games.
     MSB_ENTRY_SUPERTYPES = {
         MSBSupertype.MODELS: BaseMSBModel,

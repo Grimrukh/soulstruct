@@ -83,7 +83,7 @@ class WindowLinker:
 
         return self.check_other_link_types(field_type, field_value, valid_null_values, map_override)
 
-    def map_entry_link(self, entry_game_type: tp.Type[MapEntry], entry: MSBEntry | None):
+    def map_entry_link(self, entry_game_type: type[MapEntry], entry: MSBEntry | None):
         if not entry:  # no link expected (reference is `None`)
             return [NullLink(self, name="None")]
         entry_supertype_name, entry_subtype_name = entry_game_type.get_msb_entry_supertype_subtype()
@@ -139,7 +139,7 @@ class WindowLinker:
         text = text_table[field_value]
         return [TextLink(self, text_type_name=text_category_name, text_id=field_value, name=text)]
 
-    def game_param_link(self, field_type: tp.Type[BaseGameParam], field_value: int):
+    def game_param_link(self, field_type: type[BaseGameParam], field_value: int):
         param_nickname = field_type.get_param_nickname()
         param = self.project.params.get_param(param_nickname)
         try:
@@ -243,7 +243,7 @@ class WindowLinker:
         return base_weapon
 
     @abc.abstractmethod
-    def validate_model_subtype(self, model_game_type: tp.Type[MapModel], model_name: str, map_stem: str):
+    def validate_model_subtype(self, model_game_type: type[MapModel], model_name: str, map_stem: str):
         """Check appropriate game model files to confirm the given model name is valid."""
         ...
 

@@ -120,7 +120,7 @@ def generate_instr_pyi(
     emedf_aliases: dict,
     emedf_tests: dict,
     emedf_comparison_tests: dict,
-    condition_group_enum: tp.Type[IntEnum],
+    condition_group_enum: type[IntEnum],
     pyi_path: Path | str,
     compiler_module,
     has_event_layers: bool = False,

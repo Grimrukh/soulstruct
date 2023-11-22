@@ -105,7 +105,7 @@ class GameParamBND(Binder, abc.ABC):
         else:
             _LOGGER.info(f"Unpacked data for `ParamDict`s: {', '.join(unpacked)}")
 
-    def regenerate_entries(self):
+    def entry_autogen(self):
         """Regenerate Binder entries from `params` dictionary."""
 
         # Remove BND talk entries that aren't still present in this `GameParamBND` instance.
@@ -138,7 +138,6 @@ class GameParamBND(Binder, abc.ABC):
             raise TypeError(
                 f"Cannot write `GameParamBND` to a split `BXF` file. (Invalid `bdt_file_path`: {bdt_file_path})"
             )
-        self.regenerate_entries()
         super(GameParamBND, self).write(file_path, make_dirs=make_dirs, check_hash=check_hash)
         _LOGGER.info("GameParamBND written successfully.")
         if not self._reload_warning_given:

@@ -82,7 +82,7 @@ class WindowLinker(_BaseWindowLinker):
         else:
             return [ParamsLink(self, param_name=param_nickname, param_entry_id=field_value, name=name)]
 
-    def validate_model_subtype(self, model_game_type: tp.Type[MapModel], model_name: str, map_stem: str):
+    def validate_model_subtype(self, model_game_type: type[MapModel], model_name: str, map_stem: str):
         """Check appropriate game model files to confirm the given model name is valid.
 
         Note that Character and Object models don't actually need `map_id` to validate them.

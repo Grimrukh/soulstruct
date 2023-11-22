@@ -37,7 +37,7 @@ class RegionHeader(BinaryStruct):
 @dataclass(slots=True, eq=False, repr=False)
 class MSBRegion(BaseMSBRegion, abc.ABC):
 
-    SUPERTYPE_HEADER_STRUCT: tp.ClassVar[tp.Type[BinaryStruct]] = RegionHeader
+    SUPERTYPE_HEADER_STRUCT: tp.ClassVar[type[BinaryStruct]] = RegionHeader
     NAME_ENCODING = "shift_jis_2004"
     UNKNOWN_DATA_SIZE = 4
 

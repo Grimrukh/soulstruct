@@ -30,7 +30,7 @@ class TalkESDBND(Binder, abc.ABC):
     mapping talk IDs to valid ESD instance sources."""
 
     EXT: tp.ClassVar[str] = ".talkesdbnd"
-    TALK_ESD_CLASS: tp.ClassVar[tp.Type[ESD]] = None
+    TALK_ESD_CLASS: tp.ClassVar[type[ESD]] = None
 
     talk: dict[int, ESD] = field(default_factory=dict)
 

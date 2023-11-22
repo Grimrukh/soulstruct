@@ -47,7 +47,7 @@ class BaseShape(abc.ABC):
     """Base class for all region shapes."""
 
     SHAPE_TYPE: tp.ClassVar[RegionShapeType] = RegionShapeType.Invalid
-    DATA_STRUCT: tp.ClassVar[tp.Type[BinaryStruct]] = None
+    DATA_STRUCT: tp.ClassVar[type[BinaryStruct]] = None
 
     @classmethod
     def from_msb_reader(cls, reader: BinaryReader):

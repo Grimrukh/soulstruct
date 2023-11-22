@@ -34,7 +34,7 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
     entries.
     """
     FILE_NAME_PATTERN: tp.ClassVar[str] = r".*\.msgbnd"
-    FILE_CLASS: tp.ClassVar[tp.Type[MSGBND]] = MSGBND
+    FILE_CLASS: tp.ClassVar[type[MSGBND]] = MSGBND
     FILE_EXTENSION: tp.ClassVar[str] = ".msgbnd"
 
     # These are text categories you are likely to want to change in mod projects (in display order).
