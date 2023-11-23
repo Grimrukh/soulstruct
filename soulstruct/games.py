@@ -55,7 +55,11 @@ class Game:
         return self.special_dcx_types.get(file_type, self.default_dcx_type)
 
     def process_dcx_path(self, path: str | Path) -> str | Path:
-        """Append or remove ".dcx" to/from given path according to `default_dcx_type` and/or `special_dcx_types`."""
+        """Append or remove ".dcx" to/from given path according to `default_dcx_type` and/or `special_dcx_types`.
+
+        Should NOT be called on directories; this method will not do any sort of validation, and the default DCX type
+        will end up being attached to that directory name.
+        """
         is_str = isinstance(path, str)  # preserve return type
         path = Path(path)
         if path.suffix == ".dcx":
@@ -146,7 +150,11 @@ DARK_SOULS_DSR = Game(
     aliases=("darksoulsremastered", "darksoulsdsr", "dsr", "ds1r", "darksouls1r"),
     default_dcx_type=DCXType.DCX_DFLT_10000_24_9,
     special_dcx_types={
-        "msb": DCXType.Null,
+        ".msb": DCXType.Null,
+        ".hkxbhd": DCXType.Null,
+        ".hkxbdt": DCXType.Null,
+        ".tpfbhd": DCXType.Null,
+        ".tpfbdt": DCXType.Null,
     },
     bundled_resource_paths={
         "paramdefbnd": PACKAGE_PATH("darksouls1r/params/resources/darksouls1r.paramdefbnd.dcx"),
