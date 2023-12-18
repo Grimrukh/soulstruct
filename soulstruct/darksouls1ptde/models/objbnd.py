@@ -15,6 +15,7 @@ from soulstruct.games import DARK_SOULS_PTDE
 class OBJBND(FLVERBinder):
 
     INTERROOT_STEM = f"{DARK_SOULS_PTDE.interroot_prefix}\\obj"
+    MAX_FLVER_COUNT = 99
 
     dcx_type: DCXType = DARK_SOULS_PTDE.default_dcx_type
     version: BinderVersion = BinderVersion.V3

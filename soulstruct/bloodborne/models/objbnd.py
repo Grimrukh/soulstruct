@@ -15,6 +15,7 @@ from soulstruct.games import BLOODBORNE
 class OBJBND(FLVERBinder):
 
     INTERROOT_STEM = f"{BLOODBORNE.interroot_prefix}\\obj"
+    MAX_FLVER_COUNT = 99
 
     dcx_type: DCXType = BLOODBORNE.default_dcx_type
     version: BinderVersion = BinderVersion.V4
