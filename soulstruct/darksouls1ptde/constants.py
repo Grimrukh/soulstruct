@@ -26,6 +26,7 @@ CHARACTER_MODELS = {
     2230: "Stray Demon",
     2231: "Demon Firesage",
     2232: "Asylum Demon",
+    2239: "Stray/Asylum Demon (textures)",  # has skin textures used by both c2230 and c2232
     2240: "Capra Demon",
     2250: "Taurus Demon",
     2260: "Batwing Demon",
