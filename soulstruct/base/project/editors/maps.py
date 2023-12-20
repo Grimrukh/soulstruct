@@ -319,7 +319,7 @@ class MapFieldRow(FieldRow):
             self.context_menu.add_command(
                 label="Select linked entries from list", command=self.choose_linked_map_entries
             )
-            if self.field_type.game_object_type is Region or self.field_type.game_object_type is RegionPoint:
+            if self.field_type.game_object_int_type is Region or self.field_type.game_object_int_type is RegionPoint:
                 # Option to add a point to a list of Points, based on current player translate/rotate.
                 # NOTE: Assumes that Points are sufficient for any `Region` sequence, which I think is true for all
                 # sequence fields I've seen.
@@ -486,7 +486,7 @@ class MapFieldRow(FieldRow):
         self.build_field_context_menu()
 
     def choose_linked_map_entries(self):
-        """NOTE: Currently assumes that `game_object_type` is specifically a `MapEntry` subclass."""
+        """NOTE: Currently assumes that `game_object_int_type` is specifically a `MapEntry` subclass."""
         if not issubclass(self.field_type, GameObjectIntSequence):
             return  # option shouldn't even appear
 
@@ -494,7 +494,7 @@ class MapFieldRow(FieldRow):
         current_sequence = msb_entry[self.field_name]
         current_names = [e.name if e else "" for e in current_sequence]
         valid_entries = [
-            entry for entry in self.master.linker.get_map_entry_subtype_list(self.field_type.game_object_type)
+            entry for entry in self.master.linker.get_map_entry_subtype_list(self.field_type.game_object_int_type)
             if not entry.name.startswith("_EnvironmentEvent")  # exclude all these (too many)
         ]
         valid_display_names = [e.name for e in valid_entries]
@@ -526,7 +526,7 @@ class MapFieldRow(FieldRow):
                 continue
 
             selected_entry = valid_entries[valid_display_names.index(name)]
-            self.field_links = self.master.linker.soulstruct_link(self.field_type.game_object_type, selected_entry)
+            self.field_links = self.master.linker.soulstruct_link(self.field_type.game_object_int_type, selected_entry)
             # noinspection PyTypeChecker
             entry_link = self.field_links[0]  # type: MapsLink
             if not entry_link.entry:
@@ -954,7 +954,7 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
             field_row.choose_linked_map_entry()
             return None
 
-        if issubclass(field_type, GameObjectIntSequence) and issubclass(field_type.game_object_type, MapEntry):
+        if issubclass(field_type, GameObjectIntSequence) and issubclass(field_type.game_object_int_type, MapEntry):
             # Pop-out editor to choose multiple map entries.
             field_row.choose_linked_map_entries()
             return None
@@ -1268,11 +1268,11 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
             field_dict["draw_parent"] = new_collision
         self.refresh_fields()
 
-    def popout_sequence_name_edit(self, field_name: str, field_nickname: str, game_object_type: GAME_TYPE):
-        """NOTE: Currently assumes that `game_object_type` is specifically a `MapEntry` subclass."""
+    def popout_sequence_name_edit(self, field_name: str, field_nickname: str, game_object_int_type: GAME_TYPE):
+        """NOTE: Currently assumes that `game_object_int_type` is specifically a `MapEntry` subclass."""
         msb_entry = self.get_selected_field_dict()
         valid_entries = [
-            entry for entry in self.linker.get_map_entry_subtype_list(game_object_type)
+            entry for entry in self.linker.get_map_entry_subtype_list(game_object_int_type)
             if not entry.name.startswith("_EnvironmentEvent")  # exclude all these (too many)
         ]
         popout_editor = SequenceNameEditBox(

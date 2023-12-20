@@ -288,8 +288,8 @@ class EMEVD(GameFile, abc.ABC):
 
     def to_evs(
         self,
-        enum_star_module_paths: tp.Sequence[str | Path, ...] = (),
-        enum_non_star_module_paths: tp.Sequence[str | Path, ...] = (),
+        enums_star_module_paths: list[str | Path] = (),
+        enums_non_star_module_paths: list[str | Path] = (),
         warn_missing_enums=True,
         enums_module_prefix=".",
         event_function_prefix="Event",
@@ -321,9 +321,9 @@ class EMEVD(GameFile, abc.ABC):
         of that line. Entity IDs that appear multiple times in the given modules will always raise a `ValueError`.
         """
         enums_manager = self.ENTITY_ENUMS_MANAGER(
-            list(enum_star_module_paths) + list(enum_non_star_module_paths), list(self.events)
+            list(enums_star_module_paths) + list(enums_non_star_module_paths), list(self.events)
         )
-        star_module_names = [Path(path).name.split(".")[0] for path in enum_star_module_paths]
+        star_module_names = [Path(path).name.split(".")[0] for path in enums_star_module_paths]
         enums_manager.star_module_names = star_module_names
 
         if common_func_emevd:
@@ -354,12 +354,20 @@ class EMEVD(GameFile, abc.ABC):
         # Create imports (if any modules were actually passed in here).
         if enums_manager and enums_manager.modules:
             if warn_missing_enums:
-                for missing_enum_ex in enums_manager.missing_enums:
-                    if "Flag" in missing_enum_ex.missing_enum_game_types:
-                        continue  # TODO: Too many missing Flags to print.
+                missing_flag_count = 0
+                missing_done = set()
+                for game_types, value in enums_manager.get_sorted_missing_items():
+                    if "Flag" in game_types:
+                        missing_flag_count += 1
+                        continue
+                    if (game_types, value) in missing_done:
+                        continue
                     _LOGGER.warning(
-                        f"Missing '{missing_enum_ex.missing_enum_game_types}' entity ID: {missing_enum_ex.enum_value}"
+                        f"{self.map_name}: Missing '{game_types}' entity ID: {value}"
                     )
+                    missing_done.add((game_types, value))
+                if missing_flag_count > 0:
+                    _LOGGER.warning(f"{self.map_name}: Missing {missing_flag_count} flag IDs.")
             imports += enums_manager.get_import_lines(star_module_names, enums_module_prefix)
 
         return docstring + "\n" + "\n\n\n".join([imports] + evs_events) + "\n"
@@ -392,7 +400,7 @@ class EMEVD(GameFile, abc.ABC):
             except KeyError:
                 pass  # event ID not defined in this script or in CommonFunc
             else:
-                args = match.group(4).replace(" ", "").replace("\n", "").split(",")
+                args = match.group(4).replace(" ", "").replace("\n", "").split(",")  # type: list[str]
                 if args[-1] == "":
                     args = args[:-1]
                 if len(args) != len(event_args) + 1:
@@ -413,11 +421,11 @@ class EMEVD(GameFile, abc.ABC):
                     except ValueError:
                         continue
                     game_types = event_args[j - 1].combined_game_types
-                    try:
-                        if game_types:
+                    if game_types:
+                        try:
                             args[j] = f"{enums_manager.check_out_enum_variable(int_value, *game_types)}"
-                    except enums_manager.EnumManagerError:
-                        pass
+                        except enums_manager.EnumManagerError:
+                            pass
                 kwargs = [f"{arg_name}={arg_value}" for arg_name, arg_value in zip(arg_names, args[1:], strict=True)]
                 one_line_event_call = f"{indent}{call_name}_{event_id}({slot}, {', '.join(kwargs)}){end}"
                 if len(one_line_event_call) > 121:  # last newline character doesn't count
@@ -466,24 +474,22 @@ class EMEVD(GameFile, abc.ABC):
         if not self.long_varints:
             writer.pad(4)
 
-        events = tuple(self.events.values())
-
         # Write event headers.
         writer.fill_with_position("events_offset", obj=self)
-        for event in events:
+        for event in self.events.values():
             event.to_emevd_writer(writer)
         # Count already written.
 
         # Write instruction headers.
         instructions_offset = writer.fill_with_position("instructions_offset", obj=self)
-        for event in events:
+        for event in self.events.values():
             event.pack_instructions(writer, instructions_offset)
         # Count already written.
 
         # Write event layers.
         event_layers_offset = writer.fill_with_position("event_layers_offset", obj=self)
         existing_event_layers = {}  # type: dict[EventLayers, int]
-        for event in events:
+        for event in self.events.values():
             event.pack_instruction_event_layers(writer, existing_event_layers, event_layers_offset)
         writer.fill("event_layers_count", len(existing_event_layers), obj=self)
 
@@ -496,7 +502,7 @@ class EMEVD(GameFile, abc.ABC):
         # Write instruction base arg data.
         base_args_start = writer.position
         writer.fill_with_position("base_arg_data_offset", obj=self)
-        for event in events:
+        for event in self.events.values():
             event.pack_instruction_base_args(writer, base_args_start)
         writer.pad_align(16)
         # Pad or alignment after base args, depending on `long_varints`.
@@ -505,7 +511,7 @@ class EMEVD(GameFile, abc.ABC):
         # Write event arg replacements.
         event_arg_replacements_offset = writer.fill_with_position("event_arg_replacements_offset", obj=self)
         event_arg_replacements_count = 0
-        for event in events:
+        for event in self.events.values():
             event_arg_replacements_count += event.pack_event_arg_replacements(writer, event_arg_replacements_offset)
         writer.fill("event_arg_replacements_count", event_arg_replacements_count, obj=self)
 
@@ -537,9 +543,9 @@ class EMEVD(GameFile, abc.ABC):
 
     def write_evs(
         self,
-        evs_path=None,
-        enums_star_module_paths: tp.Sequence[str | Path, ...] = (),
-        enums_non_star_module_paths: tp.Sequence[str | Path, ...] = (),
+        evs_path: str | Path = None,
+        enums_star_module_paths: list[str | Path] = (),
+        enums_non_star_module_paths: list[str | Path] = (),
         warn_missing_enums=True,
         enums_module_prefix=".",
         event_prefix="Event",

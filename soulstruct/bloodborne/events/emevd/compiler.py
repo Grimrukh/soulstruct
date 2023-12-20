@@ -62,7 +62,7 @@ def compile_instruction(instr_name: str, *args, **kwargs) -> list[str]:
 
 
 def compile_game_object_test(
-    game_object_type: GAME_INT_TYPE,
+    game_object_int_type: GAME_INT_TYPE,
     game_object: tp.Union[GameObjectInt, tuple],
     negate=False,
     condition: int = None,
@@ -72,22 +72,22 @@ def compile_game_object_test(
 ) -> list[str]:
     test = BooleanTestCompiler(compile_instruction)
 
-    if issubclass(game_object_type, Flag):
+    if issubclass(game_object_int_type, Flag):
         test.set_all("FlagEnabled", "FlagDisabled")
-    elif issubclass(game_object_type, RegionVolume):
+    elif issubclass(game_object_int_type, RegionVolume):
         test.if_true = "IfPlayerInsideRegion"
         test.if_false = "IfPlayerOutsideRegion"
-    elif issubclass(game_object_type, Region):
+    elif issubclass(game_object_int_type, Region):
         raise TypeError(f"Only `RegionVolume` subclasses can be used as direct booleans, not just `Region`.")
-    elif issubclass(game_object_type, Object):
+    elif issubclass(game_object_int_type, Object):
         test.set_all("ObjectNotDestroyed", "ObjectDestroyed")  # True == object NOT destroyed
-    elif issubclass(game_object_type, Character):
+    elif issubclass(game_object_int_type, Character):
         test.if_true = "IfCharacterAlive"
         test.if_false = "IfCharacterDead"
-    elif issubclass(game_object_type, ObjActEvent):
+    elif issubclass(game_object_int_type, ObjActEvent):
         test.if_true = "IfObjectActivated"
     else:
-        raise TypeError(f"Type `{game_object_type.__name__}` cannot be used as a boolean directly in EVS script.")
+        raise TypeError(f"Type `{game_object_int_type.__name__}` cannot be used as a boolean directly in EVS script.")
 
     return test.compile_object(
         game_object,

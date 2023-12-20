@@ -1278,8 +1278,8 @@ def IfCharacterOutsideRegion(
 def IfEntityDistanceState(
     condition: ConditionGroup | int,
     state: bool | int,
-    entity: Object | Region | Character | int,
-    other_entity: Object | Region | Character | int,
+    entity: Object | Character | Region | int,
+    other_entity: Object | Character | Region | int,
     radius: float,
     min_target_count: int = 1,
     event_layers=(),
@@ -1291,7 +1291,7 @@ def IfEntityDistanceState(
 
 def IfPlayerWithinDistance(
     condition: ConditionGroup | int,
-    other_entity: Object | Region | Character | int,
+    other_entity: Object | Character | Region | int,
     radius: float,
     min_target_count: int = 1,
     event_layers=(),
@@ -1303,7 +1303,7 @@ def IfPlayerWithinDistance(
 
 def IfPlayerBeyondDistance(
     condition: ConditionGroup | int,
-    other_entity: Object | Region | Character | int,
+    other_entity: Object | Character | Region | int,
     radius: float,
     min_target_count: int = 1,
     event_layers=(),
@@ -1315,8 +1315,8 @@ def IfPlayerBeyondDistance(
 
 def IfEntityWithinDistance(
     condition: ConditionGroup | int,
-    entity: Object | Region | Character | int,
-    other_entity: Object | Region | Character | int,
+    entity: Object | Character | Region | int,
+    other_entity: Object | Character | Region | int,
     radius: float,
     min_target_count: int = 1,
     event_layers=(),
@@ -1328,8 +1328,8 @@ def IfEntityWithinDistance(
 
 def IfEntityBeyondDistance(
     condition: ConditionGroup | int,
-    entity: Object | Region | Character | int,
-    other_entity: Object | Region | Character | int,
+    entity: Object | Character | Region | int,
+    other_entity: Object | Character | Region | int,
     radius: float,
     min_target_count: int = 1,
     event_layers=(),
@@ -1355,7 +1355,7 @@ def IfPlayerItemStateExcludingStorage(
 def IfActionButtonBasic(
     condition: ConditionGroup | int,
     prompt_text: EventText | int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Object | Character | Region | int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
     model_point: int = -1,
@@ -1675,7 +1675,7 @@ def IfEventValueLessThanOrEqual(
 def IfActionButtonBoss(
     condition: ConditionGroup | int,
     prompt_text: EventText | int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Object | Character | Region | int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
     model_point: int = -1,
@@ -1774,7 +1774,7 @@ def IfNewGameCycleLessThanOrEqual(condition: ConditionGroup | int, completion_co
 def IfActionButtonBasicLineIntersect(
     condition: ConditionGroup | int,
     prompt_text: EventText | int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Object | Character | Region | int,
     line_intersects: int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
@@ -1796,7 +1796,7 @@ def IfActionButtonBasicLineIntersect(
 def IfActionButtonBossLineIntersect(
     condition: ConditionGroup | int,
     prompt_text: EventText | int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Object | Character | Region | int,
     line_intersects: int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
@@ -3408,19 +3408,19 @@ def ToggleFlag(flag: Flag | int, event_layers=()):
     """
 
 
-def SetSpawnerState(entity: Object | Region | Character | int, state: bool | int, event_layers=()):
+def SetSpawnerState(entity: Object | Character | Region | int, state: bool | int, event_layers=()):
     """
     e.g. the baby skeletons in Tomb of the Giants.
     """
 
 
-def EnableSpawner(entity: Object | Region | Character | int, event_layers=()):
+def EnableSpawner(entity: Object | Character | Region | int, event_layers=()):
     """
     Calls `SetSpawnerState` with `state=True`.
     """
 
 
-def DisableSpawner(entity: Object | Region | Character | int, event_layers=()):
+def DisableSpawner(entity: Object | Character | Region | int, event_layers=()):
     """
     Calls `SetSpawnerState` with `state=False`.
     """
@@ -3433,8 +3433,8 @@ def AwardItemLotToAllPlayers(item_lot: int, event_layers=()):
 
 
 def ShootProjectile(
-    owner_entity: Object | Region | Character | int,
-    source_entity: Object | Region | Character | int,
+    owner_entity: Object | Character | Region | int,
+    source_entity: Object | Character | Region | int,
     model_point: int,
     behavior_id: int,
     launch_angle_x: int,
@@ -3877,7 +3877,7 @@ def SetTeamType(character: Character | int, new_team: TeamType | int, event_laye
 
 def MoveToEntity(
     character: Character | int,
-    destination: Object | Region | Character | int,
+    destination: Object | Character | Region | int,
     model_point: int = -1,
     destination_type: CoordEntityType | int = None,
     event_layers=(),
@@ -3918,7 +3918,7 @@ def EzstateAIRequest(character: Character | int, command_id: int, command_slot: 
     """
 
 
-def CreateProjectileOwner(entity: Object | Region | Character | int, event_layers=()):
+def CreateProjectileOwner(entity: Object | Character | Region | int, event_layers=()):
     """
     A 'bullet owner' that will spawn things according to the Spawner section of the MSB.
     """
@@ -3970,7 +3970,7 @@ def DisableGravity(character: Character | int, event_layers=()):
     """
 
 
-def SetCharacterEventTarget(character: Character | int, entity: Object | Region | Character | int, event_layers=()):
+def SetCharacterEventTarget(character: Character | int, entity: Object | Character | Region | int, event_layers=()):
     """
     Likely refers to patrolling behavior.
     """
@@ -4002,7 +4002,7 @@ def SetNest(character: Character | int, region: Region | int, event_layers=()):
 
 def RotateToFaceEntity(
     character: Character | int,
-    target_entity: Object | Region | Character | int,
+    target_entity: Object | Character | Region | int,
     animation: int = -1,
     wait_for_completion: bool | int = False,
     event_layers=(),
@@ -4286,7 +4286,7 @@ def DisableAnimations(entity: Character | Object | int, event_layers=()):
 
 def MoveAndSetDrawParent(
     character: Character | int,
-    destination: Object | Region | Character | int,
+    destination: Object | Character | Region | int,
     set_draw_parent: MapPart | int,
     model_point: int = -1,
     destination_type: CoordEntityType | int = None,
@@ -4300,7 +4300,7 @@ def MoveAndSetDrawParent(
 
 def ShortMove(
     character: Character | int,
-    destination: Object | Region | Character | int,
+    destination: Object | Character | Region | int,
     model_point: int = -1,
     destination_type: CoordEntityType | int = None,
     event_layers=(),
@@ -4313,7 +4313,7 @@ def ShortMove(
 
 def MoveAndCopyDrawParent(
     character: Character | int,
-    destination: Object | Region | Character | int,
+    destination: Object | Character | Region | int,
     copy_draw_parent: Character | Object | int,
     model_point: int = -1,
     destination_type: CoordEntityType | int = None,
@@ -4540,7 +4540,7 @@ def CreateVFX(vfx_id: VFXEvent | int, event_layers=()):
 
 def CreateTemporaryVFX(
     vfx_id: int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Object | Character | Region | int,
     model_point: int = -1,
     anchor_type: CoordEntityType | int = None,
     event_layers=(),
@@ -4567,7 +4567,7 @@ def DeleteObjectVFX(obj: Object | int, erase_root: bool = True, event_layers=())
 
 def DisplayDialog(
     text: EventText | int,
-    anchor_entity: Object | Region | Character | int = -1,
+    anchor_entity: Object | Character | Region | int = -1,
     display_distance: float = 3.0,
     button_type: ButtonType | int = ButtonType.OK_or_Cancel,
     number_buttons: NumberButtons | int = NumberButtons.NoButton,
@@ -4642,7 +4642,7 @@ def ChangeCamera(normal_camera_id: int, locked_camera_id: int, event_layers=()):
 
 def SetCameraVibration(
     vibration_id: int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Object | Character | Region | int,
     model_point: int = -1,
     decay_start_distance: float = 999.0,
     decay_end_distance: float = 999.0,
@@ -4682,7 +4682,7 @@ def InitializeWanderingDemon(
 def RegisterWanderingDemon(
     flag: Flag | int,
     demon_entity: Character | int,
-    unknown_entity: Object | Region | Character | int,
+    unknown_entity: Object | Character | Region | int,
     event_layers=(),
 ):
     """
@@ -4745,7 +4745,7 @@ def NotifyBossBattleStart(dummy: int = 0, event_layers=()):
 def SetBackgroundMusic(
     state: bool | int,
     music_slot: int,
-    entity: Object | Region | Character | int,
+    entity: Object | Character | Region | int,
     sound_type: SoundType | int,
     sound_id: int,
     event_layers=(),
@@ -4756,7 +4756,7 @@ def SetBackgroundMusic(
 
 
 def PlaySoundEffect(
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Object | Character | Region | int,
     sound_id: int,
     sound_type: SoundType | int = None,
     event_layers=(),
@@ -4855,7 +4855,7 @@ def IfAttackedWithDamageType(
 def IfActionButtonParamActivated(
     condition: ConditionGroup | int,
     action_button_id: int,
-    entity: Object | Region | Character | int,
+    entity: Object | Character | Region | int,
     event_layers=(),
 ):
     """
@@ -6732,7 +6732,7 @@ def DisplayDialogAndSetFlags(
     message: EventText | int,
     button_type: ButtonType | int,
     number_buttons: NumberButtons | int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Object | Character | Region | int,
     display_distance: float,
     left_flag: Flag | int,
     right_flag: Flag | int,
@@ -7020,8 +7020,8 @@ def CharacterOutsideRegion(
 
 def EntityDistanceState(
     state: bool | int,
-    entity: Object | Region | Character | int,
-    other_entity: Object | Region | Character | int,
+    entity: Object | Character | Region | int,
+    other_entity: Object | Character | Region | int,
     radius: float,
     min_target_count: int = 1,
     event_layers=(),
@@ -7030,7 +7030,7 @@ def EntityDistanceState(
 
 
 def PlayerWithinDistance(
-    other_entity: Object | Region | Character | int,
+    other_entity: Object | Character | Region | int,
     radius: float,
     min_target_count: int = 1,
     event_layers=(),
@@ -7039,7 +7039,7 @@ def PlayerWithinDistance(
 
 
 def PlayerBeyondDistance(
-    other_entity: Object | Region | Character | int,
+    other_entity: Object | Character | Region | int,
     radius: float,
     min_target_count: int = 1,
     event_layers=(),
@@ -7048,8 +7048,8 @@ def PlayerBeyondDistance(
 
 
 def EntityWithinDistance(
-    entity: Object | Region | Character | int,
-    other_entity: Object | Region | Character | int,
+    entity: Object | Character | Region | int,
+    other_entity: Object | Character | Region | int,
     radius: float,
     min_target_count: int = 1,
     event_layers=(),
@@ -7058,8 +7058,8 @@ def EntityWithinDistance(
 
 
 def EntityBeyondDistance(
-    entity: Object | Region | Character | int,
-    other_entity: Object | Region | Character | int,
+    entity: Object | Character | Region | int,
+    other_entity: Object | Character | Region | int,
     radius: float,
     min_target_count: int = 1,
     event_layers=(),
@@ -7078,7 +7078,7 @@ def PlayerItemStateExcludingStorage(
 
 def ActionButtonBasic(
     prompt_text: EventText | int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Object | Character | Region | int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
     model_point: int = -1,
@@ -7271,7 +7271,7 @@ def EventValueLessThanOrEqual(flag: Flag | int, bit_count: int, value: int, even
 
 def ActionButtonBoss(
     prompt_text: EventText | int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Object | Character | Region | int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
     model_point: int = -1,
@@ -7330,7 +7330,7 @@ def NewGameCycleLessThanOrEqual(completion_count: int, event_layers=()) -> bool:
 
 def ActionButtonBasicLineIntersect(
     prompt_text: EventText | int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Object | Character | Region | int,
     line_intersects: int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
@@ -7345,7 +7345,7 @@ def ActionButtonBasicLineIntersect(
 
 def ActionButtonBossLineIntersect(
     prompt_text: EventText | int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Object | Character | Region | int,
     line_intersects: int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
@@ -7867,7 +7867,7 @@ def AttackedWithDamageType(
     ...
 
 
-def ActionButtonParamActivated(action_button_id: int, entity: Object | Region | Character | int, event_layers=()) -> bool:
+def ActionButtonParamActivated(action_button_id: int, entity: Object | Character | Region | int, event_layers=()) -> bool:
     ...
 
 
@@ -8038,7 +8038,7 @@ def ObjectBackreadState_Alternate(
 
 def ActionButton(
     prompt_text: EventText | int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Object | Character | Region | int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
     max_distance: float = None,
@@ -8046,7 +8046,7 @@ def ActionButton(
     trigger_attribute: TriggerAttribute | int = 48,
     button: int = 0,
     boss_version: bool = False,
-    line_intersects: Object | Region | Character | int = None,
+    line_intersects: Object | Character | Region | int = None,
     event_layers=(),
 ) -> bool:
     """

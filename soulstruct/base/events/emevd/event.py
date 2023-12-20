@@ -206,12 +206,12 @@ class EventSignature:
         arg_strings = []
         arg_names = self.get_evs_arg_names()
         for event_arg, name in zip(self.event_args, arg_names, strict=True):
-            game_object_types = {
+            game_object_int_types = {
                 py_type for py_type in event_arg.combined_py_types
                 if issubclass(py_type, GameObjectInt)
             }
-            if len(game_object_types) == 1:
-                py_type_name = next(iter(game_object_types)).__name__ + " | int"
+            if len(game_object_int_types) == 1:
+                py_type_name = next(iter(game_object_int_types)).__name__ + " | int"
             else:  # missing or ambiguous game type
                 py_type_name = EVS_ARG_TYPES[event_arg.combined_fmt]
             arg_strings.append(f"{name}: {py_type_name}")

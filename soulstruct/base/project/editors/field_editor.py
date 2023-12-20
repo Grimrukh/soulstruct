@@ -181,7 +181,7 @@ class FieldRow:
         self.field_links = []
         for value_i in value:
             if value_i is not None:
-                self.field_links += self.master.get_field_links(self.field_type.game_object_type, value_i)
+                self.field_links += self.master.get_field_links(self.field_type.game_object_int_type, value_i)
         valid_count = sum(v is not None for v in value)
         self._set_linked_value_label(f"<{valid_count} entries>", multiple_hint="{MULTIPLE}")
 
@@ -314,12 +314,12 @@ class FieldRow:
                 raise SyntaxError
         except SyntaxError:
             raise ValueError(f"Value of field {self.field_nickname} should be a list of strings or numbers.")
-        game_object_type = self.field_type.game_object_type
+        game_object_int_type = self.field_type.game_object_int_type
         for new_value_i in new_value:
             if new_value_i is None:
                 continue  # None is valid for any type.
-            if issubclass(game_object_type, BaseParam) and not isinstance(new_value_i, int):
-                raise ValueError(f"Found non-integer {game_object_type} value in sequence: {new_value_i}")
+            if issubclass(game_object_int_type, BaseParam) and not isinstance(new_value_i, int):
+                raise ValueError(f"Found non-integer {game_object_int_type} value in sequence: {new_value_i}")
         return new_value
 
     def _string_to_GameObjectInt(self, string):

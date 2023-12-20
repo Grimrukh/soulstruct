@@ -113,7 +113,7 @@ class GameObjectInt(GameObject, IntEnum, metaclass=GameObjectIntMeta):
             Object100 = enum.auto()  # ERROR!
         ```
 
-    NOTE: This is an ABC in practice, but I can't actually (easily) mix `abc.ABC` with `IntEnum`.
+    NOTE: This is an ABC in practice, but I can't actually (easily) mix `abc.ABC` with `enum.IntEnum`.
     """
 
 
@@ -129,19 +129,19 @@ class GameObjectIntSequence(type):
 
         `GameObjectIntSequence((Region, 8))`
     """
-    game_object_type: GAME_INT_TYPE
+    game_object_int_type: GAME_INT_TYPE
     count: int
 
     def __new__(mcs, game_object_and_count):
         if not game_object_and_count or len(game_object_and_count) != 2:
-            raise TypeError("`GameObjectIntSequence` argument must be `(game_object_type, count)`.")
+            raise TypeError("`GameObjectIntSequence` argument must be `(game_object_int_type, count)`.")
         if not issubclass(game_object_and_count[0], GameObjectInt):
             raise TypeError(
                 f"`GameObjectIntSequence` takes one sequence of `GameObjectInt` subclasses, with the last element "
                 f"optionally being an integer. Invalid sequence element: {type(game_object_and_count[0])}."
             )
         cls = super().__new__(mcs, "GameObjectIntSequence", (GameObjectIntSequence,), {})
-        cls.game_object_type, cls.count = game_object_and_count
+        cls.game_object_int_type, cls.count = game_object_and_count
         return cls
 
 

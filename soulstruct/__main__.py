@@ -12,6 +12,7 @@ python -m soulstruct [source]
     [--binderunpack]
     [--tpfpack]
     [--tpfunpack]
+    [--game]
     [--ai]
     [--restorebak]
     [--consoleLogLevel]
@@ -88,6 +89,11 @@ parser.add_argument(
 )
 parser.add_argument(
     "--text", action="store_true", help=word_wrap("Open Soulstruct Text Editor with given source.")
+)
+parser.add_argument(
+    "--game",
+    choices=["ptde", "dsr", "bb", "er"],
+    help=word_wrap("Specify game for creating a new Soulstruct project."),
 )
 parser.add_argument(
     "-m",
@@ -233,7 +239,23 @@ def soulstruct_main(ss_args) -> bool:
     # No specific type. Open entire Soulstruct Project.
     game = get_existing_project_game(source) if source else None
     if game is None:
-        game = GameSelector("darksouls1ptde", "darksouls1r", "bloodborne", "eldenring").go()
+        if ss_args.game:
+            match ss_args.game:
+                case "ptde" | "darksouls1ptde" | "ds1ptde":
+                    game = get_game("darksouls1ptde")
+                case "dsr" | "darksouls1r" | "ds1r":
+                    game = get_game("darksouls1r")
+                case "bb" | "bloodborne":
+                    game = get_game("bloodborne")
+                # case "ds3" | "darksouls3" | "dsiii" | "darksoulsiii":
+                #     game = get_game("darksouls3")
+                case "er" | "eldenring":
+                    game = get_game("eldenring")
+                case _:
+                    raise ValueError(f"Invalid game name: {ss_args.game}")
+        else:
+            game = GameSelector("darksouls1ptde", "darksouls1r", "bloodborne", "eldenring").go()
+
     if ss_args.console:
         # Console only.
         global Project
@@ -259,6 +281,7 @@ def soulstruct_main(ss_args) -> bool:
                 f"to save your changes first, if desired!\n",
             )
         return True
+
     # Window.
     window = game.import_game_submodule("project").ProjectWindow(source)
     window.wait_window()  # MAIN LOOP

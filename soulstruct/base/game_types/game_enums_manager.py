@@ -121,7 +121,7 @@ class GameEnumsManager(abc.ABC):
         # self.used_non_star_imports = {name: set() for name in self.non_star_modules}  # `modules: {EnumInfo, ...}`
 
         # For inspection/warning.
-        self.missing_enums = set()  # type: set[GameEnumsManager.MissingEnumValueError]
+        self.missing_enums = set()  # type: set[tuple[str, int]]
 
         # Maps `int` enum values to `(entry_type, enum_class)` pairs, to track ID sources and warn about non-fatal
         # overlaps. (Fatal overlaps will raise an exception immediately.)
@@ -141,6 +141,30 @@ class GameEnumsManager(abc.ABC):
         # Iterate over all module members and find those inheriting from a type in `VALID_GAME_TYPES`.
         for module_name, module in self.modules.items():
             self._load_module(module_name, module)
+
+    def get_sorted_missing_items(self) -> list[tuple[str, int]]:
+        """Sort `missing_items` and remove all occurrences of each entity ID except the most strictly typed one."""
+        strictest_items = {}  # type: dict[int, list[str]]
+        disjoint_items = []
+        for item in self.missing_enums:
+            split_types = item[0].split(" | ")
+            existing_types = strictest_items.get(item[1], None)
+            if existing_types is None or existing_types == ["Any"]:
+                strictest_items[item[1]] = split_types  # first occurrence, or current type is least-strict 'Any'
+                continue
+            if split_types == ["Any"]:
+                continue  # ignore
+            # Check if new types are a subset of existing types.
+            split_types_set = set(split_types)
+            existing_types_set = set(existing_types)
+            if split_types_set.issubset(existing_types_set):
+                strictest_items[item[1]] = split_types  # stricter types encountered
+                continue
+            elif not existing_types_set.issubset(split_types_set):
+                # New types encountered that aren't a subset OR superset of existing types. Add manually.
+                disjoint_items.append(item)
+
+        return sorted([(" | ".join(types), value) for value, types in strictest_items.items()] + disjoint_items)
 
     @staticmethod
     def _get_module_members(module_name: str, module: ModuleType):
@@ -179,7 +203,7 @@ class GameEnumsManager(abc.ABC):
         else:
             _LOGGER.warning(
                 f"Enum value {enum_member.value} of type `{enum_member.__class__.__name__}` (for argument type "
-                f"`{game_type.__name__}`) in module '{module_name} was already defined with type "
+                f"`{game_type.__name__}`) in module '{module_name}' was already defined with type "
                 f"`{existing_enum_type.__name__}` (for argument type `{existing_game_type.__name__}`) in module "
                 f"'{existing_module_name}'. This shouldn't cause a game issue, but it may cause you headaches."
             )
@@ -203,7 +227,12 @@ class GameEnumsManager(abc.ABC):
         enum_dict[enum_member.value] = GameEnumInfo(enum_member, module_name)
 
     def _load_module(self, module_name: str, module: ModuleType):
-        """Iterate over all `GameObjectInt`-inheriting classes in `module` and register their IDs and values."""
+        """Iterate over all `GameObjectInt`-inheriting classes in `module` and register their IDs and values.
+
+        Note that the same enum members may appear under multiple keys, as each class in each game type's hierarchy can
+        appear as a dictionary key (e.g. `RegionVolume` members will also appear under the `Region` key if both are in
+        `VALID_GAME_TYPES`).
+        """
         self.enums[module_name] = {}  # reset
         for game_enum_name, game_enum_class in self._get_module_members(module_name, module):
             game_enum_class: GAME_INT_TYPE | tp.Iterable
@@ -252,9 +281,13 @@ class GameEnumsManager(abc.ABC):
             star_module_names = self.star_module_names
 
         if not game_types:
+            # Check ALL valid game types.
+            is_any = True
             game_types = []
             for module_enums in self.enums.values():
-                game_types.extend(module_enums.keys())  # all keys in all modules (star modules still checked first)
+                game_types.extend(module_enums.keys())  # all enums in all modules (star modules still checked first)
+        else:
+            is_any = False
 
         # Search all managed modules for given `enum_value`, starting with `star_module_names`.
         # NOTE: To ensure maximum validity, we do NOT simply stop at the first hit (see docstring above for details).
@@ -269,7 +302,8 @@ class GameEnumsManager(abc.ABC):
                 for game_type in game_types:
                     if game_type not in module_enums:
                         continue
-                    type_found = True  # type has been found
+                    type_found = True
+                    # Type has been found. Look for matching value within.
                     try:
                         enum_info = module_enums[game_type][enum_value]
                         star_hits.append(enum_info)
@@ -295,7 +329,8 @@ class GameEnumsManager(abc.ABC):
             for game_type in game_types:
                 if game_type not in module_enums:
                     continue
-                type_found = True  # type has been found
+                type_found = True
+                # Type has been found. Look for matching value within.
                 try:
                     enum_info = module_enums[game_type][enum_value]
                     non_star_hits.append(enum_info)
@@ -320,9 +355,12 @@ class GameEnumsManager(abc.ABC):
                 f"No enums available for any of the given game types: `{[gt.__name__ for gt in game_types]}`."
             )
 
-        # Enum value not found under any of the given classes.
+        # Types were found, but enum value not found under any of them.
         ex = self.MissingEnumValueError(game_types, enum_value)
-        self.missing_enums.add(ex)
+        if is_any:
+            self.missing_enums.add(("Any", ex.enum_value))
+        else:
+            self.missing_enums.add((ex.missing_enum_game_types, ex.enum_value))
         raise ex
 
     def check_out_enum_variable(
@@ -332,11 +370,17 @@ class GameEnumsManager(abc.ABC):
         star_module_names: tp.Sequence[str] = None,
     ) -> str:
         """Calls `check_out_enum()` but only returns `enum_info.get_variable_string()`."""
+
+        # First, we check for protected PLAYER values.
+        if enum_value == 10000:
+            return "PLAYER"
+        if 10001 <= enum_value <= 10009:
+            return f"CLIENT_PLAYER_{enum_value - 10000}"
+
         if not star_module_names:
             star_module_names = self.star_module_names
-        return self.check_out_enum(
-            enum_value, *game_types, star_module_names=star_module_names
-        ).get_variable_string(star_module_names)
+        game_enum_info = self.check_out_enum(enum_value, *game_types, star_module_names=star_module_names)
+        return game_enum_info.get_variable_string(star_module_names)
 
     def get_import_lines(self, star_module_names: tp.Collection[str], module_prefix: str) -> str:
         if not self.used_enums:

@@ -1,6 +1,7 @@
 __all__ = [
     "PACKAGE_PATH",
     "create_bak",
+    "restore_bak",
     "find_steam_common_paths",
     "import_arbitrary_file",
     "read_json",

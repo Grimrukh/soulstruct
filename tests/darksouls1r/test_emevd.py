@@ -1,4 +1,3 @@
-import os
 import unittest
 from pathlib import Path
 
@@ -45,13 +44,13 @@ class EMEVDTest(unittest.TestCase):
         with Timer("EMEVD EVS Write"):
             emevd.write_evs(
                 "_test_emevd.evs.py",
-                enums_star_module_paths=(Path("resources/m10_00_00_00_enums.py"),),
+                enums_star_module_paths=[Path("resources/m10_00_00_00_enums.py")],
                 warn_missing_enums=True,
                 enums_module_prefix="resources.",
             )
             # re_emevd.write_evs(
             #     "_test_re_emevd.evs.py",
-            #     enum_star_module_paths=(Path("resources/m10_00_00_00_enums.py"),),
+            #     enums_star_module_paths=(Path("resources/m10_00_00_00_enums.py"),),
             #     warn_missing_enums=True,
             #     enums_module_prefix="resources.",
             # )

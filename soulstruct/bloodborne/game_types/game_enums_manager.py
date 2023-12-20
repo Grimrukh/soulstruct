@@ -19,6 +19,7 @@ class GameEnumsManager(_BaseGameEnumsManager):
         MessageEvent,
         SpawnPointEvent,
         NavigationEvent,
+        Region,
         RegionVolume,
         RegionPoint,
         Text,

@@ -6,6 +6,7 @@ __all__ = [
     "assemble_arg_string",
     "base_decompile_run_event",
     "base_decompile_run_common_event",
+    "Variable",
 ]
 
 import logging
@@ -60,7 +61,7 @@ class EnumValue:
 
 
 class Variable(str):
-    """String subclass for event arguments whose `repr` does not include quotes."""
+    """String subclass for event/instruction arguments whose `repr` does not include quotes."""
 
     def __repr__(self) -> str:
         return f"{self}"
@@ -301,6 +302,7 @@ def base_decompile_run_event(
         for i, arg in enumerate(event_args):
             if looks_like_entity_id(arg, event_id):
                 try:
+                    # No game types are enforced.
                     new_args[i] = Variable(enums_manager.check_out_enum_variable(arg))
                 except GameEnumsManager.EnumManagerError:
                     pass  # do nothing

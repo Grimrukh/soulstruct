@@ -12,6 +12,7 @@ from enum import Enum
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
+from soulstruct.base.game_types import GAME_INT_TYPE
 from soulstruct.base.game_types.map_types import MapEntity
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.files import write_json
@@ -89,9 +90,12 @@ class MSB(GameFile, abc.ABC):
     # Maps MSB entry supertype names (parts, etc.) to the relative offsets of their subtype enums.
     MSB_ENTRY_SUBTYPE_OFFSETS: tp.ClassVar[dict[MSBSupertype, int]]
     # Maps entry subtype names ("characters", "sounds", etc.) to their corresponding `BaseGameType`, if applicable.
-    ENTITY_GAME_TYPES: tp.ClassVar[dict[str, MapEntity]]
+    ENTITY_GAME_TYPES: tp.ClassVar[dict[str, type[MapEntity]]]
     # Cached when first accessed. Maps subtype list names, e.g. 'map_pieces', to the list. Immutable.
-    _SUBTYPE_LIST_NAMES: tp.ClassVar[tuple[str]] = None
+    _SUBTYPE_LIST_NAMES: tp.ClassVar[tuple[str, ...]] = None
+
+    # Per-type callables that map a `map_base_id` entity ID to a dictionary of `first_value` and `last_value` kwargs.
+    ID_RANGES = {}  # type: dict[GAME_INT_TYPE, tp.Callable[[int], dict[str, int]]]
 
     # Version info.
     HAS_HEADER: tp.ClassVar[bool]
@@ -564,7 +568,7 @@ class MSB(GameFile, abc.ABC):
         }
 
     @classmethod
-    def get_subtype_list_names(cls) -> tuple[str]:
+    def get_subtype_list_names(cls) -> tuple[str, ...]:
         if cls._SUBTYPE_LIST_NAMES is not None:
             return cls._SUBTYPE_LIST_NAMES
         cls._SUBTYPE_LIST_NAMES = tuple(f.name for f in fields(cls) if f.name not in {"path", "_dcx_type", "dcx_type"})
@@ -709,16 +713,18 @@ class MSB(GameFile, abc.ABC):
             if self.path is None:
                 raise ValueError("Cannot auto-detect MSB entities `module_path` (MSB path not known).")
             module_path = self.path.parent / f"{self.path.name.split('.')[0]}_enums.py"
+        else:
+            module_path = Path(module_path)
 
         module_path.parent.mkdir(parents=True, exist_ok=True)
 
-        auto_map_range_start = None
+        auto_map_base_id = None
         if area_id is None and block_id is None:
             if self.path:
                 map_name_match = MAP_NAME_RE.match(self.path.name)
                 if map_name_match:
                     area_id, block_id = map(int, map_name_match.group(1, 2))
-                    auto_map_range_start = area_id * 100000 + block_id * 10000
+                    auto_map_base_id = area_id * 100000 + block_id * 10000
                 else:
                     _LOGGER.warning(
                         f"Could not auto-detect map area and block (cannot parse from MSB path: {self.path}). "
@@ -732,7 +738,7 @@ class MSB(GameFile, abc.ABC):
                 )
         elif area_id is not None and block_id is not None:
             # TODO: Is this still right for Elden Ring? For legacy dungeons, at least.
-            auto_map_range_start = area_id * 100000 + block_id * 10000
+            auto_map_base_id = area_id * 100000 + block_id * 10000
         else:
             raise ValueError("Both `area_id` and `block_id` must be given, or neither for automatic detection.")
 
@@ -783,18 +789,22 @@ class MSB(GameFile, abc.ABC):
                     class_text += f"  # {entry.description}"
                 class_text += "\n"
             if class_text:
-                class_def = f"\n\nclass {class_name}({subtype_game_type.__name__}):\n"
-                class_def += f"    \"\"\"`{subtype_game_type.__name__}` entity IDs for MSB and EVS use.\"\"\"\n\n"
-                auto_lines = [
-                    "    # noinspection PyMethodParameters",
-                    "    def _generate_next_value_(name, _, count, __):",
-                    f"        return {subtype_game_type.__name__}.auto_generate(ID_RANGES, count, {{MAP_RANGE_START}})",
-                ]
-                if auto_map_range_start is None:
-                    auto_lines = ["    # " + line[4:] for line in auto_lines]
+                game_type_name = subtype_game_type.__name__
+                if auto_map_base_id is not None and subtype_game_type in self.ID_RANGES:
+                    range_kwargs = self.ID_RANGES[subtype_game_type](auto_map_base_id)
+                    try:
+                        first_value = range_kwargs["first_value"]
+                        last_value = range_kwargs["last_value"]
+                    except KeyError:
+                        _LOGGER.warning(
+                            f"`ID_RANGES` callback for {game_type_name} did not return `first_value` and `last_value`."
+                        )
+                        class_def = f"\n\nclass {class_name}({game_type_name}):\n"
+                    else:
+                        class_def = f"\n\nclass {class_name}({game_type_name}, {first_value=}, {last_value=}):\n"
                 else:
-                    auto_lines[-1] = auto_lines[-1].format(MAP_RANGE_START=auto_map_range_start)
-                class_def += "\n".join(auto_lines) + "\n\n"
+                    class_def = f"\n\nclass {class_name}({game_type_name}):\n"
+                class_def += f"    \"\"\"`{game_type_name}` entity IDs for MSB and EVS use.\"\"\"\n\n"
                 class_text = class_def + class_text
                 module_text += class_text
 
@@ -856,9 +866,9 @@ class MSB(GameFile, abc.ABC):
         return True
 
     @classmethod
-    def get_display_type_dict(cls) -> dict[str, tuple[BaseMSBSubtype]]:
+    def get_display_type_dict(cls) -> dict[str, tuple[BaseMSBSubtype, ...]]:
         """Return a nested dictionary mapping MSB type names (in typical display order) to tuples of subtype enums."""
-        display_dict = {}  # type: dict[str, tuple[BaseMSBSubtype]]
+        display_dict = {}  # type: dict[str, tuple[BaseMSBSubtype, ...]]
         for supertype_name, subtypes_info in cls.MSB_ENTRY_SUBTYPES.items():
             display_dict[supertype_name] = tuple(info.subtype_enum for info in subtypes_info.values())
         return {

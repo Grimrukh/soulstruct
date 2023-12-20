@@ -64,8 +64,6 @@ __all__ = [
     "NavigationEventTyping",
     "VFXEventTyping",
     "NPCInvasionEventTyping",
-
-    "ID_RANGES",  # same as PTDE
 ]
 
 from soulstruct.darksouls1ptde.game_types.map_types import *

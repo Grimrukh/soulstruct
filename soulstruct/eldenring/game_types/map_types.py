@@ -92,8 +92,6 @@ __all__ = [
     "SoundEventTyping",
     "NavigationEventTyping",
     "VFXEventTyping",
-
-    "ID_RANGES",
 ]
 
 import typing as tp
@@ -172,22 +170,6 @@ class MapTile(Map):
 
 # Add `MapTile` to allowed types for `game_map` EMEVD arguments.
 MapTyping = tp.Union[Map, MapTile, tuple[int, int, int, int], list[int, int, int, int]]
-
-# TODO
-ID_RANGES = {}
-#     RegionVolume: (2000, 2499),
-#     RegionPoint: (2500, 2899),
-#     MapPiece: (3000, 3199),
-#     Object: (1000, 1899),
-#     Character: (0, 899),
-#     PlayerStart: (990, 999),
-#     Collision: (3200, 3399),
-#     SoundEvent: (3800, 3899),
-#     VFXEvent: (3400, 3599),
-#     SpawnerEvent: (3600, 3699),
-#     MessageEvent: (3700, 3799),
-#     SpawnPointEvent: (3900, 3949),
-# }
 
 
 class InvasionPointRegion(Region):

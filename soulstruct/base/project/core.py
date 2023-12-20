@@ -282,7 +282,6 @@ class GameDirectoryProject(abc.ABC):
         event_directory = event_class.from_path(event_directory_path)
         # TODO: Enums must be written first to make use of them (obviously).
         #  Can just pass our GameEnumsManager itself, in that case.
-        event_directory.write_evs()
         if use_enums_in_event_scripts:
             enums_directory = self.enums_directory
         else:
@@ -290,7 +289,7 @@ class GameDirectoryProject(abc.ABC):
         event_directory.write_evs(
             self.events_directory,
             enums_directory=enums_directory,
-            warn_missing_enums=True,  # TODO: project setting
+            warn_missing_enums=True,  # TODO: project/import setting
             enums_module_prefix="." if self.enums_in_events_folder else "..enums.",
         )
         if copy_python_events_submodule:
