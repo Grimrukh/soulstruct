@@ -712,11 +712,14 @@ class ProjectWindow(SmartFrame, abc.ABC):
         return tools_menu
 
     def _build_scripts_menu(self, scripts_menu):
+        use_separator = False
         for script in self.project.python_script_directory.rglob("*.py"):
             if script.name.startswith("_"):
                 continue  # skipped
             scripts_menu.add_command(label=script.stem, foreground="#FFF", command=lambda s=script: self._run_script(s))
-        scripts_menu.add_separator()
+            use_separator = True
+        if use_separator:
+            scripts_menu.add_separator()
         scripts_menu.add_command(label="Open Console", foreground="#FFF", command=self._open_console)
 
     def _run_script(self, script_path: Path):
@@ -1279,7 +1282,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         return output.get()
 
     @property
-    def data_types(self) -> tuple[ProjectDataType]:
+    def data_types(self) -> tuple[ProjectDataType, ...]:
         return tuple(self.PROJECT_CLASS.DATA_TYPES)
 
     @property

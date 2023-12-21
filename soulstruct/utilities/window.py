@@ -209,6 +209,12 @@ class SmartFrame(tk.Frame):
         "readonlybackground": "#444",
     }
 
+    # Menu background is a little lighter so the stupid immutable Windows black cascade arrows are visible.
+    MENU_STYLE_DEFAULTS = {
+        "bg": "#444",
+        "fg": "#FFF",
+    }
+
     DEFAULT_BUTTON_KWARGS = {
         "OK": {"fg": "#FFFFFF", "bg": "#222222", "width": 20},
         "YES": {"fg": "#FFFFFF", "bg": "#442222", "width": 20},
@@ -243,7 +249,7 @@ class SmartFrame(tk.Frame):
             super().__init__(master, **frame_kwargs)
 
         self.style = ttk.Style()
-        self.set_notebook_style()
+        self.set_ttk_style()
         self.grid_defaults = {}
         self.current_row = None
         self.current_column = None
@@ -370,7 +376,7 @@ class SmartFrame(tk.Frame):
         self.toplevel.geometry(f"{w_width:d}x{w_height:d}+{w_x:d}+{w_y:d}")
         self.toplevel.deiconify()  # become visible at the desired location
 
-    def set_notebook_style(self):
+    def set_ttk_style(self):
         self.style.theme_use("clam")
         self.style.configure(
             "TNotebook", background=self.STYLE_DEFAULTS["bg"], tabmargins=[2, 10, 2, 0], tabposition="nw"
@@ -588,9 +594,8 @@ class SmartFrame(tk.Frame):
     def Menu(self, frame=None, tearoff=0, **kwargs):
         if frame is None:
             frame = self.current_frame
-        self.set_style_defaults(kwargs)
-        if "command_text_fg" not in kwargs and "fg" in self.STYLE_DEFAULTS:
-            kwargs["command_text_fg"] = self.STYLE_DEFAULTS["fg"]
+        for key in self.MENU_STYLE_DEFAULTS:
+            kwargs.setdefault(key, self.MENU_STYLE_DEFAULTS[key])
         menu = SmartMenu(frame, tearoff=tearoff, **kwargs)
         return menu
 
@@ -942,14 +947,33 @@ class SmartFrame(tk.Frame):
 
 class SmartMenu(tk.Menu):
     """Menu subclass that automatically applies style defaults to `.add_command()`."""
+
+    style: dict[str, str]
+
     def __init__(self, *args, **kwargs):
-        self._command_text_fg = kwargs.pop("command_text_fg", None)
+        self.style = {}
+        for style_key in ("fg", "bg"):
+            if style_key in kwargs:
+                self.style[style_key] = kwargs[style_key]
         super().__init__(*args, **kwargs)
 
     def add_command(self, *args, **kwargs):
-        if "foreground" not in kwargs and self._command_text_fg is not None:
-            kwargs["foreground"] = self._command_text_fg
+        self._apply_style_kwargs(**kwargs)
         super().add_command(*args, **kwargs)
+
+    def add_cascade(self, *args, **kwargs):
+        self._apply_style_kwargs(**kwargs)
+        super().add_cascade(*args, **kwargs)
+
+    def add_separator(self, *args, **kwargs):
+        self._apply_style_kwargs(("bg",), **kwargs)
+        super().add_separator(*args, **kwargs)
+
+    def _apply_style_kwargs(self, only_keys=(), **kwargs):
+        for key, value in self.style.items():
+            if only_keys and key not in only_keys:
+                continue
+            kwargs.setdefault(key, value)
 
 
 class LoadingDialog(SmartFrame):

@@ -62,7 +62,7 @@ class GameDirectoryProject(_BaseGameDirectoryProject):
         elif data_type == ProjectDataType.Enums:
             base_dict |= dict(
                 use_bundled_vanilla_enums=(
-                    "Use Vanilla Entities from Soulstruct", True,
+                    "Use Vanilla Entities from Soulstruct", False,  # TODO: disabling by default for now
                     "Use the renamed (vanilla) game IDs included with Soulstruct for this game.",
                 ),
             )
@@ -71,6 +71,9 @@ class GameDirectoryProject(_BaseGameDirectoryProject):
 
     def write_enums_modules_with_bundled_vanilla(self, map_studio_directory: MapStudioDirectory):
         """Write vanilla enums packaged with Soulstruct for DSR (adding any new entries in MSB).
+
+        TODO: These need to be MERGED with newly written enums from an MSB, but it's not clear how to handle precedence,
+         since we want to overwrite crappy vanilla names BUT keep any custom names the user has added.
 
         TODO: Uses vanilla enums from PTDE, which are currently only those shared in both versions.
         """
