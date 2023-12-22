@@ -559,15 +559,12 @@ class MergedMesh:
             submesh_vertices, first_indices, face_vertex_indices = np.unique(
                 submesh_loops, return_index=True, return_inverse=True, axis=0
             )
-
-            # TODO: Given all the extra sorting calls here, it's almost certainly worth using a custom `unique` function
-            #  that doesn't sort to begin with?
-
-            # Get the sorting indices for `first_indices`:
+            # Get the sorting indices for `first_indices`. The elements in this are the indices of elements that would
+            # produce a sorted version of `first_indices`:
             sorting_indices = np.argsort(first_indices)
-            # Apply those to `submesh_vertices` to unsort it:
+            # Apply those to `submesh_vertices` (sorted output of `np.unique` above) to unsort it:
             submesh_vertices = submesh_vertices[sorting_indices]
-            # Get the inverse sorting indices:
+            # Get the inverse sorting indices, i.e. the indices of elements in `first_indices`:
             inverse_sorting_indices = np.argsort(sorting_indices)
             # Apply to `face_indices` to update them to index into the unsorted `submesh_vertices`:
             face_vertex_indices = inverse_sorting_indices[face_vertex_indices]

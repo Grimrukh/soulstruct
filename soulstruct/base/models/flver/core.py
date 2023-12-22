@@ -47,7 +47,7 @@ class FLVERStruct(BinaryStruct):
     bounding_box_max: Vector3
     true_face_count: int
     total_face_count: int
-    vertex_indices_size: byte = field(**Binary(asserted=[0, 8, 16, 32]))
+    face_set_vertex_indices_size: byte = field(**Binary(asserted=[0, 8, 16, 32]))
     unicode: bool
     unk_x4a: bool
     _pad1: bytes = field(init=False, **BinaryPad(1))
@@ -79,7 +79,6 @@ class FLVER(GameFile):
     version: Version = Version.DarkSouls_A
     bounding_box_min: Vector3 = field(default_factory=Vector3.single_max)
     bounding_box_max: Vector3 = field(default_factory=Vector3.single_min)
-    vertex_indices_size: int = 16
     unicode: bool = True
     unk_x4a: bool = False
     unk_x4c: int = 0
@@ -144,7 +143,7 @@ class FLVER(GameFile):
         face_sets = {
             i: FaceSet.from_flver_reader(
                 reader,
-                header_vertex_index_size=header.vertex_indices_size,
+                header_vertex_index_size=header.face_set_vertex_indices_size,
                 vertex_data_offset=header.vertex_data_offset,
             )
             for i in range(header.face_set_count)
@@ -250,18 +249,19 @@ class FLVER(GameFile):
                 total_face_count += face_set_total_count
 
         if self.version >= Version.Bloodborne_DS3_A:
-            # Post-2015 FLVERs: Vertex size is stored per `FaceSet`.
-            header_vertex_indices_size = 0
+            # FLVERs from Bloodborne onward: vertex index size is stored per `FaceSet`.
+            header_face_set_vertex_indices_size = 0
         else:
             # All `FaceSet`s use the same vertex index size, specified in the FLVER header. We check if all face sets in
             # this FLVER support 16-bit indices. If not, we use 32-bit indices for ALL of them.
-            header_vertex_indices_size = 16
+            header_face_set_vertex_indices_size = 16
             for submesh in self.submeshes:
                 for face_set in submesh.face_sets:
                     if face_set.needs_32bit_indices():
-                        header_vertex_indices_size = 32
+                        _LOGGER.info(f"FLVER '{self.path}' has a face set that requires global 32-bit vertex indices.")
+                        header_face_set_vertex_indices_size = 32
                         break
-                if header_vertex_indices_size == 32:
+                if header_face_set_vertex_indices_size == 32:
                     break
 
         header = FLVERStruct.from_object(
@@ -277,7 +277,7 @@ class FLVER(GameFile):
             vertex_array_count=sum(len(mesh.vertex_arrays) for mesh in self.submeshes),
             true_face_count=true_face_count,
             total_face_count=total_face_count,
-            vertex_indices_size=header_vertex_indices_size,  # 0, 16, or 32
+            face_set_vertex_indices_size=header_face_set_vertex_indices_size,  # 0, 16, or 32
             face_set_count=sum(len(mesh.face_sets) for mesh in self.submeshes),
             array_layout_count=RESERVED,
             texture_count=RESERVED,
@@ -353,14 +353,16 @@ class FLVER(GameFile):
         face_set_index_sizes = []
         for submesh in self.submeshes:
             for face_set in submesh.face_sets:
-                if header_vertex_indices_size != 0:
-                    # Vertex size set globally (older FLVERs).
-                    face_set_vertex_index_size = header_vertex_indices_size
+                if header_face_set_vertex_indices_size != 0:
+                    # Vertex size set globally in FLVER header, depending on largest face set (older FLVERs).
+                    # No value is written to each Face Set.
+                    face_set_vertex_index_size = 0
+                    face_set_index_sizes.append(header_face_set_vertex_indices_size)
                 else:
                     # Vertex size set per `FaceSet`. These sizes are stored for packing below.
                     face_set_vertex_index_size = 32 if face_set.needs_32bit_indices() else 16
+                    face_set_index_sizes.append(face_set_vertex_index_size)  # to save time below
                 face_set.to_flver_writer(writer, face_set_vertex_index_size)
-                face_set_index_sizes.append(face_set_vertex_index_size)  # to save time below
 
         # Pack submesh vertex array (array) headers.
         for submesh, layout_indices in zip(self.submeshes, submesh_layout_indices):

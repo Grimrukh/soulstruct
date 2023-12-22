@@ -75,27 +75,28 @@ class FaceSet:
 
         if vertex_index_size == 8:
             raise NotImplementedError("Soulstruct cannot read edge-compressed FLVER face sets.")
-        elif vertex_index_size in {16, 32}:
-            vertex_indices_count = face_set_struct.pop("_vertex_indices_count")
-            vertex_indices_offset = face_set_struct.pop("_vertex_indices_offset")
-
-            vertex_indices_data = reader.read(
-                vertex_indices_count * vertex_index_size // 8,
-                offset=vertex_data_offset + vertex_indices_offset,
-            )
-            vertex_indices = np.frombuffer(
-                vertex_indices_data, dtype=np.uint16 if vertex_index_size == 16 else np.uint32
-            )
-
-            # We always store indices as 32-bit.
-            if vertex_index_size == 16:
-                vertex_indices = vertex_indices.astype(np.uint32)
-
-            if not face_set_struct.triangle_strip:
-                # Reshape indices into 2D array (every row of three indices is a separate triangle).
-                vertex_indices = vertex_indices.reshape((-1, 3))
-        else:
+        elif vertex_index_size not in {16, 32}:
             raise ValueError(f"Unsupported face set index size: {vertex_index_size}")
+
+        vertex_indices_count = face_set_struct.pop("_vertex_indices_count")
+        vertex_indices_offset = face_set_struct.pop("_vertex_indices_offset")
+
+        vertex_indices_data = reader.read(
+            vertex_indices_count * vertex_index_size // 8,
+            offset=vertex_data_offset + vertex_indices_offset,
+        )
+        vertex_indices = np.frombuffer(
+            vertex_indices_data, dtype=np.uint16 if vertex_index_size == 16 else np.uint32
+        )
+
+        # We always store indices as 32-bit.
+        if vertex_index_size == 16:
+            vertex_indices = vertex_indices.astype(np.uint32)
+
+        if not face_set_struct.triangle_strip:
+            # Reshape indices into 2D array (every row of three indices is a separate triangle).
+            vertex_indices = vertex_indices.reshape((-1, 3))
+
         return face_set_struct.to_object(cls, vertex_indices=vertex_indices)
 
     def to_flver_writer(self, writer: BinaryWriter, vertex_index_size: int):
@@ -125,10 +126,14 @@ class FaceSet:
         if vertex_index_size == 16:
             vertex_indices = self.vertex_indices.astype(np.uint16)
         elif vertex_index_size == 32:
-            vertex_indices = self.vertex_indices
+            if self.vertex_indices.dtype != np.uint32:
+                vertex_indices = self.vertex_indices.astype(np.uint32)
+            else:
+                vertex_indices = self.vertex_indices
         else:
             raise NotImplementedError(f"Unsupported vertex index size for `pack()`: {vertex_index_size}")
-        writer.append(vertex_indices.tobytes())
+        packed_vertex_indices = vertex_indices.tobytes()
+        writer.append(packed_vertex_indices)
 
     def get_face_counts(self, allow_primitive_restarts: bool) -> tuple[int, int]:
         """Returns two counts of faces: 'true' and 'total'.
@@ -219,22 +224,22 @@ class FaceSet:
     def from_triangles(cls, triangles: np.ndarray | list[tuple[int, int, int], ...], use_backface_culling=True):
         """Create a `FaceSet` with `triangle_strip=False` from a list of vertex indices triplets.
 
-        Given `triangles` can be a 1D or 2D array or a list of triplets. If 1D, it will be reshaped to 2D. If 2D, it
-        will NOT be copied, so be wary modifying the same array elsewhere.
+        Given `triangles` can be a 1D or 2D array or a list of triplets. If 1D, it will be reshaped to 2D.
+
+        A new array will be created in all cases to ensure it has `uint32` type.
 
         TODO: Currently sets `flags=0` and `unk_x06=0`, which is correct so far in my usage.
         """
-
         if isinstance(triangles, np.ndarray):
             if triangles.ndim == 2:
-                vertex_indices = triangles
+                vertex_indices = triangles.astype(np.uint32)
             elif triangles.ndim == 1:
-                vertex_indices = triangles.reshape((-1, 3))
+                vertex_indices = triangles.reshape((-1, 3)).astype(np.uint32)
             else:
                 raise ValueError("Triangle array must be 1D or 2D.")
         else:
-            # Flatten and combine into 1D array.
-            vertex_indices = np.array([i for tri in triangles for i in tri])
+            # Flatten and combine into 1D `uint32` array.
+            vertex_indices = np.array([i for tri in triangles for i in tri], dtype=np.uint32)
 
         return cls(
             flags=0,
@@ -597,7 +602,7 @@ class Submesh:
             faces = []
             for i, face_set in enumerate(self.face_sets):
                 if i in show_face_sets:
-                    faces += [tri for tri in face_set.get_triangles(False)]
+                    faces += [tri for tri in face_set.triangulate(False)]
             faces = np.array(faces)
             face_colors = list(range(len(faces)))
             if random_face_colors:
