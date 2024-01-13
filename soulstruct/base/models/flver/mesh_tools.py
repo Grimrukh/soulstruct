@@ -102,7 +102,11 @@ class MergedMesh:
         valid_submeshes = []
         valid_submesh_material_indices = []
         for i, submesh in enumerate(flver.submeshes):
-            if any(np.isnan(vertex_array.array["position"]).any() for vertex_array in submesh.vertex_arrays):
+            if any(
+                "position" in vertex_array.array.dtype.names
+                and np.isnan(vertex_array.array["position"]).any()
+                for vertex_array in submesh.vertex_arrays
+            ):
                 _LOGGER.warning(f"Submesh {i} has NaN vertex position data and will be ignored by `MergedMesh`.")
                 continue
 
@@ -152,6 +156,7 @@ class MergedMesh:
         all_uv_layers: list[str] | None,
     ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
         """Row-stack all submesh vertices' position and bone data in a single structured array for reduction."""
+        # TODO: None of these fields are guaranteed in later games.
         dtype = [
             ("position", "f", 3),  # TODO: support 4D position
             ("bone_weights", "f", 4),
