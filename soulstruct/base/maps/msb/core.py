@@ -266,7 +266,9 @@ class MSB(GameFile, abc.ABC):
                     entry: BaseMSBModel
                     instance_count = model_instance_counts.get(entry.name, 0)
                     if instance_count == 0 and entry.name not in {"c0000", "c1000"}:
-                        _LOGGER.warning(f"Model '{entry.name}' is not used by any parts in this MSB.")
+                        _LOGGER.warning(
+                            f"Model '{entry.name}' is not used by any parts in this MSB (path {self.path})."
+                        )
                     try:
                         entry.to_msb_writer(writer, supertype_index, subtype_index, entry_lists, instance_count)
                     except Exception as ex:
