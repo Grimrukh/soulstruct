@@ -588,7 +588,7 @@ class BaseFieldEditor(BaseEditor, abc.ABC):
         if last_selected_entry_id is not None:
             try:
                 self.select_entry_id(last_selected_entry_id, edit_if_already_selected=False)
-            except ValueError:
+            except (IndexError, ValueError):
                 self.remembered_ids.pop(self.active_category)  # entry ID is invalid
                 self.entry_canvas.yview_moveto(0)
         else:
