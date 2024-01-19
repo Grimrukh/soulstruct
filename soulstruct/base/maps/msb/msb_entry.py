@@ -375,7 +375,12 @@ class MSBEntry(abc.ABC):
                 continue  # don't add default values to dictionary
             if isinstance(value, MSBEntry):
                 # Construct a reference dictionary. (There are no real dictionary fields in `MSBEntry` subclasses.)
-                subtype_list = msb.get_list_of_entry(value)
+                try:
+                    subtype_list = msb.get_list_of_entry(value)
+                except ValueError as ex:
+                    raise ValueError(
+                        f"Invalid MSB entry `{value.name}` referenced by `{self.name}`."
+                    ) from ex
                 data[name] = {
                     "subtype_list_name": subtype_list.subtype_info.subtype_list_name,
                     "subtype_index": subtype_list.index(value)
