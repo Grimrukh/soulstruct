@@ -20,7 +20,7 @@ if tp.TYPE_CHECKING:
     from soulstruct.base.maps.map_studio_directory import MapStudioDirectory
     from soulstruct.base.maps.msb import MSB, MSBEntry, MSBEntryList
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 ENTRY_LIST_FG_COLORS = {
     "Parts": "#DDF",

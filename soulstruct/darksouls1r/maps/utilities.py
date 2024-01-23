@@ -18,7 +18,7 @@ from ..constants import CHARACTER_FFX_SOURCES
 if tp.TYPE_CHECKING:
     from . import MSB
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 _BLOCK_FFXBND_RE = re.compile(r"FRPG_SfxBnd_m(\d\d)_(\d\d)\.ffxbnd(\.dcx)?$")
 _MAP_PIECE_RE = re.compile(r"^m(\d\d\d\d)B(\d)A(\d\d)\.flver\.dcx$")

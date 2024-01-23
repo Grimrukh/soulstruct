@@ -17,7 +17,7 @@ from .regions import MSBRegion
 from .parts import MSBPart
 from .utilities import import_map_piece_flver
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 # TODO: Move to base and use in other game MSBs.

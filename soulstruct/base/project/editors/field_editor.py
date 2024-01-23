@@ -21,7 +21,7 @@ from soulstruct.utilities.window import ToolTip
 if tp.TYPE_CHECKING:
     from soulstruct.base.project.core import GameDirectoryProject
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 FieldTypeTyping = tp.Union[GAME_INT_TYPE, type[GameObjectIntSequence], type, tp.Iterable]

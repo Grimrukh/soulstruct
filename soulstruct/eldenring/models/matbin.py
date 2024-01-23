@@ -21,7 +21,7 @@ from soulstruct.games import ELDEN_RING
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector2
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 @dataclass(slots=True)

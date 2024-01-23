@@ -19,7 +19,7 @@ try:
 except AttributeError:
     Self = "ParamDefBND"
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 _PARAMDEF_RE = re.compile(r".*\.paramdef")
 

@@ -21,7 +21,7 @@ if tp.TYPE_CHECKING:
     from soulstruct.darksouls1r.maps.parts import MSBNavmesh
     from .mcp import NavmeshAABB
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 @dataclass(slots=True)
@@ -52,6 +52,14 @@ class MCGNode:
     @property
     def is_navmesh_deferenced(self):
         return self.dead_end_navmesh is not MISSING_REF
+
+    @property
+    def has_dead_end_navmesh(self):
+        """Works even if `dead_end_navmesh` is not yet deferenced."""
+        return (
+            self.dead_end_navmesh_index is not None and self.dead_end_navmesh_index >= 0
+            or self.dead_end_navmesh is not MISSING_REF and self.dead_end_navmesh is not None
+        )
 
     @classmethod
     def from_mcg_reader(cls, reader: BinaryReader) -> MCGNode:
@@ -686,7 +694,7 @@ class MCG(GameFile):
             fig = plt.figure()
             axes = fig.add_subplot(111, projection="3d")
         for i, node in enumerate(self.nodes):
-            color = "red" if node.connected_aabb is None else "green"
+            color = "red" if node.dead_end_navmesh_index is None else "green"
             axes.scatter(node.translate.x, node.translate.z, node.translate.y, s=20, c=color, alpha=0.5)
             if node_labels is not None:
                 axes.text(node.translate.x, node.translate.z, node.translate.y, node_labels[i], c=color)

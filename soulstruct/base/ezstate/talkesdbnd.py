@@ -17,7 +17,7 @@ try:
 except AttributeError:
     Self = "TalkESDBND"
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 _TALK_RE = re.compile(r"t(\d+)")
 _TALK_ESD_RE = re.compile(r"t(\d+)\.esd$")

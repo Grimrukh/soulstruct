@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+__all__ = ["GameSelector"]
+
 import typing as tp
 
 from soulstruct.games import get_game, Game

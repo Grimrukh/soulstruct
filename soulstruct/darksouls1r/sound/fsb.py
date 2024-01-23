@@ -22,7 +22,7 @@ from soulstruct.utilities.files import PACKAGE_PATH
 
 __all__ = ["FSB", "FSBSample", "FSBSampleHeader", "FSBHeaderVersion", "FSBHeaderMode", "FSBSampleMode", "fsbext"]
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 def fsbext(fsb_path: Path | str, options=""):

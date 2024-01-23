@@ -36,7 +36,7 @@ if tp.TYPE_CHECKING:
     from soulstruct.base.maps.msb import MSB, MSBEntryList, MSBEntry
     from ..links import MapsLink
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 # TODO: Models are handled automatically. Model entries are auto-generated from all used model names.
 #  - Validation is done by checking the model files for that map (only need to inspect the names inside the BND).

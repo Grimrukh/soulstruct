@@ -19,7 +19,7 @@ except AttributeError:
 if tp.TYPE_CHECKING:
     from .talkesdbnd import TalkESDBND
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 @dataclass(slots=True)

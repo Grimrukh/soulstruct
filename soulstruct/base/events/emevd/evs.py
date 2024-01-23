@@ -24,7 +24,7 @@ from .utils import (
     get_write_offset,
 )
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 # TODO: Set up unit tests on vanilla scripts, and some examples that make use of high-level functionality.

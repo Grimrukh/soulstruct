@@ -13,7 +13,7 @@ from pathlib import Path
 from soulstruct.base.game_file_directory import GameFileMapDirectory
 from .msb import MSB
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 MSB_T = tp.TypeVar("MSB_T", bound=MSB)
 

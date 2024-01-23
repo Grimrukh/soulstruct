@@ -12,14 +12,14 @@ from pathlib import Path
 from .base_binary_file import BaseBinaryFile
 
 try:
-    from typing import Self
-except ImportError:  # < Python 3.11
+    Self = tp.Self
+except AttributeError:  # < Python 3.11
     Self = "GameFile"
 
 if tp.TYPE_CHECKING:
     from soulstruct.containers import Binder
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 GAME_FILE_T = tp.TypeVar("GAME_FILE_T", bound="GameFile")
 

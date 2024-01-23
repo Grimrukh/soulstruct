@@ -36,7 +36,7 @@ except ImportError:
     YELLOW = RESET = ""
 
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 __DLL_NAME = "oo2core_6_win64.dll"

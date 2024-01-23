@@ -23,7 +23,7 @@ try:
 except AttributeError:
     Self = "GameParamBND"
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 class TypedParamError(SoulstructError):

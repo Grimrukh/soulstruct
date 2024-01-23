@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = [
     "PACKAGE_PATH",
     "create_bak",
@@ -22,7 +24,7 @@ from pathlib import Path
 
 from soulstruct.exceptions import RestoreBackupError
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 LOG_BACKUP_CREATION = True
 
 

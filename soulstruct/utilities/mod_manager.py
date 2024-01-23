@@ -8,7 +8,7 @@ from soulstruct.darksouls1r.utilities.file_list import DSR_FILE_LIST
 from soulstruct.utilities.files import read_json, write_json
 from soulstruct.utilities.window import SmartFrame
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("visionaut.mod_manager")
 
 
 class ModManagerWindow(SmartFrame):

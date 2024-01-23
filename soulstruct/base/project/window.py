@@ -40,7 +40,7 @@ from .links import WindowLinker  # TODO: Move to base, with game subclasses
 if tp.TYPE_CHECKING:
     from .runtime import RuntimeManager
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 # Maps tab name to editor window class. Also determines tab order.

@@ -11,7 +11,7 @@ from soulstruct.base.params.paramdef import (
     ParamDefBND as _BaseParamDefBND,
 )
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 _BUNDLED = None
 
 

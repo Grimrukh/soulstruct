@@ -16,7 +16,7 @@ from .material import Material
 from .submesh import Submesh, FaceSet
 from .vertex_array import *
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 @dataclass(slots=True)

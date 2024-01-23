@@ -25,7 +25,7 @@ from soulstruct.base.game_types import GAME_INT_TYPE
 from soulstruct.base.params.paramdef.field_types import base_type
 from soulstruct.utilities.binary import *
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 class ParamEnum(IntEnum):

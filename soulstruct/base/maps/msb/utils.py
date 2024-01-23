@@ -34,7 +34,7 @@ try:
 except AttributeError:
     Self = "GroupBitSet"
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 class MSB_JSONEncoder(json.JSONEncoder):

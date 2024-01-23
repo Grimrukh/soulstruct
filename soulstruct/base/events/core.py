@@ -12,7 +12,7 @@ if tp.TYPE_CHECKING:
     from soulstruct.darksouls1ptde.game_types.map_types import Map
     from .emevd import EMEVD
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 EVENT_EXTENSIONS = {
     "evs": {".evs", ".evs.py", ".py", ".emevd.py"},

@@ -14,7 +14,7 @@ import logging
 import subprocess
 import typing as tp
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 class MissingReference:

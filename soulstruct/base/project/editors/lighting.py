@@ -10,7 +10,7 @@ if tp.TYPE_CHECKING:
     from soulstruct.base.params import Param, ParamRow, ParamFieldMetadata
     from soulstruct.darksouls1ptde.params.draw_param import DrawParamBND, DrawParamDirectory
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 class LightingEntryRow(EntryRow):

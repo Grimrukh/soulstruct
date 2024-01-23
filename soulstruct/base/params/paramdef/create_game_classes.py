@@ -7,7 +7,7 @@ from soulstruct.base.params.param_row import *
 from soulstruct.base.params.paramdef.paramdefbnd import ParamDefBND
 from soulstruct.utilities.files import PACKAGE_PATH, read_json, write_json
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 GET_BUNDLED_PARAMDEFBND: tp.Callable
 

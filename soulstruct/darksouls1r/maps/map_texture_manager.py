@@ -11,7 +11,7 @@ from soulstruct.containers import Binder, BinderEntry
 from soulstruct.containers.tpf import TPF, TPFPlatform, TPFTexture, TextureType
 from .msb import MSB
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 @dataclass(slots=True)

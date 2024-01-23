@@ -107,7 +107,7 @@ from .mcp import MCP, NavmeshAABB
 from .mcg import MCG, MCGNode, MCGEdge
 from .utilities import ExistingConnectionError, MissingConnectionError, import_matplotlib_plt
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 NavmeshTyping = tp.Union[MSBNavmesh, str, int]
 

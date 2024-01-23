@@ -24,7 +24,7 @@ import sys
 import typing as tp
 from pathlib import Path
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 _DEFAULT_STEAM_PATH = r"C:\Program Files (x86)\Steam\steamapps\common"
 _CONFIG_DEFAULTS = {

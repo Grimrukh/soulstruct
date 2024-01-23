@@ -12,7 +12,7 @@ from soulstruct.bloodborne.maps.constants import *
 if tp.TYPE_CHECKING:
     from soulstruct.base.ai.luabnd import LuaBND
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 class AIScriptDirectory(_BaseScriptDirectory):

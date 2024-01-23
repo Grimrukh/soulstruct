@@ -12,7 +12,7 @@ from soulstruct.base.params.paramdef import ParamDef, ParamDefBND as _BaseParamD
 from soulstruct.config import PARAMDEX_PATH
 from soulstruct.utilities.files import PACKAGE_PATH
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 _BUNDLED = None
 
 

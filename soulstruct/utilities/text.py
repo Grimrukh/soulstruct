@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = ["PY_NAME_RE", "word_wrap", "camel_case_to_spaces", "string_to_identifier", "pad_chars", "indent_lines"]
 
 import re

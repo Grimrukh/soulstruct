@@ -24,7 +24,7 @@ try:
 except AttributeError:  # < Python 3.11
     Self = "BaseBinaryFile"
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 _GAME_MODULE_RE = re.compile(r"^soulstruct\.(\w+)\..*$")
@@ -296,6 +296,7 @@ class BaseBinaryFile:
     base_repr = __repr__
 
 
+# noinspection PyTypeChecker
 BaseBinaryFile.dcx_type = property(
     BaseBinaryFile.get_dcx_type, BaseBinaryFile.set_dcx_type
 )

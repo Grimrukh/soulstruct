@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+__all__ = ["TalkEditor"]
+
 import logging
 import os
 import re
@@ -15,8 +17,8 @@ from soulstruct.base.project.utilities import bind_events, TagData, TkTextEditor
 if tp.TYPE_CHECKING:
     from soulstruct.base.ezstate import TalkDirectory, TalkESDBND, ESD
 
-__all__ = ["TalkEditor"]
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
+
 _TALK_ESP_MATCH = re.compile(r"^t(\d+)\.esp\.py$")
 
 
@@ -183,12 +185,12 @@ class TalkEditor(BaseEditor):
                 game_map = self.talk_class.GET_MAP(map_directory.name)
             except ValueError:
                 if map_directory.name != "__pycache__":  # common enough to ignore
-                    _LOGGER.warning(f"Unexpected folder in project '/talk' directory was ignored: {map_directory.name}")
+                    _LOGGER.warning(f"Ignored unknown folder in project 'talk' directory: '{map_directory.name}'")
                 continue
             for esp_path in map_directory.glob("*.esp.py"):
                 talk_match = _TALK_ESP_MATCH.match(esp_path.name)
                 if not talk_match:
-                    _LOGGER.warning(f"Invalid ESP file found and ignored: {str(esp_path)}")
+                    _LOGGER.warning(f"Ignored ESP file without 't###...' file stem template: {str(esp_path)}")
                     continue
                 talk_id = int(talk_match.group(1))
                 self.esp_file_paths.setdefault(game_map.esd_file_stem, {})[talk_id] = esp_path

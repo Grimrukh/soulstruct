@@ -19,7 +19,7 @@ try:
 except AttributeError:
     Self = "BaseMSBRegion"
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 @dataclass(slots=True, eq=False, repr=False)

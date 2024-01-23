@@ -21,7 +21,7 @@ except AttributeError:
 if tp.TYPE_CHECKING:
     from .core import MSB
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 # Generic type to use when type-hinting list attributes on `MSB` subclasses.
 MSBEntryType = tp.TypeVar("MSBEntryType", bound=MSBEntry)

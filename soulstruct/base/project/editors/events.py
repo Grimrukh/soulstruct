@@ -22,7 +22,7 @@ from .. import editor_config
 if tp.TYPE_CHECKING:
     from soulstruct.base.events.event_directory import EventDirectory
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 class EVSTkTextEditor(TkTextEditor):

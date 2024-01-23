@@ -26,7 +26,7 @@ try:
 except AttributeError:
     Self = "Param"
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 PARAM_ROW_DATA_T = tp.TypeVar("PARAM_ROW_DATA_T", bound=ParamRow)

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+__all__ = ["SmartFrame", "CustomDialog", "ToolTip", "bind_to_all_children", "embed_component"]
+
 import logging
 import tkinter as tk
 import typing as tp
@@ -10,8 +12,7 @@ from typing import Optional
 from tkinter.constants import *
 from tkinter import filedialog, messagebox, ttk
 
-__all__ = ["SmartFrame", "CustomDialog", "ToolTip", "bind_to_all_children", "embed_component"]
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 _GRID_KEYWORDS = {"column", "columnspan", "in", "ipadx", "ipady", "padx", "pady", "row", "rowspan", "sticky"}
 
@@ -1096,6 +1097,8 @@ class CustomDialog(SmartFrame):
 
 
 class ToolTip:
+    """Class that creates a tooltip for a given widget."""
+
     def __init__(
         self,
         main_widget,

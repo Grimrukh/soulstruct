@@ -17,7 +17,7 @@ from soulstruct.base.game_types.game_enums_manager import GameEnumsManager
 from soulstruct.base.events.emevd.enums import BaseEMEVDFlags
 from soulstruct.base.game_types import GameObjectInt
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 def reprocess_opt_args(integer_args, arg_type_string):

@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 __all__ = ["int_group_to_bit_set", "bit_set_to_int_group", "floatify"]
 
 import logging
 import struct
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 def int_group_to_bit_set(flag_group, assert_size=None):

@@ -14,7 +14,7 @@ except ImportError:
 if tp.TYPE_CHECKING:
     from .fsb import FSBSample
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 _PYDUB_WARNING_DONE = False
 

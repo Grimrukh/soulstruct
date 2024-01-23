@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import BinaryReader
 
 from .functions import TEST_FUNCTIONS
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 _REGISTERS = [""] * 8
 _SHOW_INTERNAL_SYMBOLS = False

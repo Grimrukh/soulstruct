@@ -18,7 +18,7 @@ try:
 except AttributeError:
     Self = "ParamDef"
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 @dataclass(slots=True)

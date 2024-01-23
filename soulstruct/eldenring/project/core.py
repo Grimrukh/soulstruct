@@ -16,7 +16,7 @@ from soulstruct.eldenring.text import MSGDirectory
 if tp.TYPE_CHECKING:
     from .window import ProjectWindow
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 class GameDirectoryProject(_BaseGameDirectoryProject):

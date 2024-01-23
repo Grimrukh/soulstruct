@@ -58,12 +58,12 @@ if tp.TYPE_CHECKING:
     from soulstruct.containers.entry import BinderEntry
 
 try:
-    from typing import Self
-except ImportError:  # < Python 3.11
+    Self = tp.Self
+except AttributeError:  # < Python 3.11
     Self = "BinaryStruct"
 
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 PAD_RE = re.compile(r"(\d*)x")

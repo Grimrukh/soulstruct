@@ -1,3 +1,4 @@
+from __future__ import annotations
 
 __all__ = ["SINGLE_MIN", "SINGLE_MAX"]
 

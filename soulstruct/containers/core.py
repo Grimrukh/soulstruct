@@ -28,11 +28,11 @@ from .binder_hash import BinderHashTable
 from .entry import BinderEntry, BinderEntryHeader
 
 try:
-    from typing import Self
-except ImportError:  # < Python 3.11
+    Self = tp.Self
+except AttributeError:  # < Python 3.11
     Self = "Binder"
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 # Flexible entry-finding typing that can be passed to `Binder.__getitem__` and a few other methods.
@@ -901,7 +901,7 @@ class Binder(BaseBinaryFile):
             directory = Path(directory)
         directory.mkdir(parents=True, exist_ok=True)
 
-        entry_tree_dict = {}  # type: dict[str, list[dict[str, int | str]]]
+        entry_tree_dict = {}  # type: dict[str, list[str | dict[str, int | str]]]
         use_index_prefix = self.has_repeated_entry_names
 
         # Although the unpacked folder reader supports a mixture of entry names and entry dictionaries, this writer only

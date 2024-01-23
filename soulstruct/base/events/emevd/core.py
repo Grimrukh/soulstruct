@@ -27,7 +27,7 @@ try:
 except AttributeError:  # < Python 3.11
     Self = "EMEVD"
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 _EVENT_CALL_RE = re.compile(r"( *)(Event|CommonFunc)_(\d+)\(([\d\-,. \n]+)\) *(\n|$)?")
 

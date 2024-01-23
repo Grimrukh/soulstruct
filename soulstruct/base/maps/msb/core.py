@@ -36,7 +36,7 @@ except AttributeError:
 if tp.TYPE_CHECKING:
     from .enums import BaseMSBSubtype
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 MAP_NAME_RE = re.compile(r"m(\d\d)_(\d\d)_.*")

@@ -28,7 +28,7 @@ except AttributeError:
 if tp.TYPE_CHECKING:
     from .core import MSB
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 # Maps valid `MSBEntry` field type annotation strings to their actual types.

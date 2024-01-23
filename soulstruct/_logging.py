@@ -10,7 +10,20 @@ else:
     colorama.init()
 
 
-class _ColoredFormatter(logging.Formatter):
+class _ModuleFormatter(logging.Formatter):
+
+    def format(self, record):
+        """Modify record with color information before formatting it to a message."""
+        if "\\soulstruct\\" in record.pathname:
+            record.modulepath = (
+                "soulstruct." + record.pathname.split("\\soulstruct\\", 1)[-1].replace("\\", ".").removesuffix(".py")
+            )
+        else:
+            record.modulepath = record.pathname
+        return super().format(record)
+
+
+class _ColoredModuleFormatter(_ModuleFormatter):
     BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 
     COLORS = {"DEBUG": BLUE, "INFO": CYAN, "WARNING": YELLOW, "CRITICAL": YELLOW, "ERROR": RED}
@@ -44,8 +57,8 @@ class _ColoredFormatter(logging.Formatter):
         return s
 
 
-CONSOLE_FORMATTER = _ColoredFormatter(
-    fmt="$COLOR{levelname:>7} :: {name:<40} :: {lineno:>4d} :: {message}$RESET",
+CONSOLE_FORMATTER = _ColoredModuleFormatter(
+    fmt="$COLOR{levelname:>7} :: {modulepath:<40} :: {lineno:>4d} :: {message}$RESET",
     style="{",
     use_color=bool(colorama),
 )
@@ -54,8 +67,8 @@ CONSOLE_HANDLER = logging.StreamHandler()
 CONSOLE_HANDLER.setFormatter(CONSOLE_FORMATTER)
 CONSOLE_HANDLER.setLevel(logging.INFO)  # default
 LOG_PATH = str(Path(_path_source).parent / "soulstruct.log")
-FILE_FORMATTER = logging.Formatter(
-    fmt="{levelname:>7} :: {asctime} :: {name:<35} :: Line {lineno:>4d} :: {message}", style="{"
+FILE_FORMATTER = _ModuleFormatter(
+    fmt="{levelname:>7} :: {asctime} :: {pathname:<35} :: Line {lineno:>4d} :: {message}", style="{"
 )
 FILE_HANDLER = logging.FileHandler(LOG_PATH, mode="w", encoding="shift_jis_2004")
 FILE_HANDLER.setFormatter(FILE_FORMATTER)

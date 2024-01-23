@@ -18,7 +18,7 @@ try:
 except AttributeError:
     Self = "FMG"
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 class FMGVersion(IntEnum):

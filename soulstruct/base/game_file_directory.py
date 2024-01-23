@@ -16,11 +16,11 @@ if tp.TYPE_CHECKING:
     from .maps.utilities import GET_MAP_TYPING
 
 try:
-    from typing import Self
-except ImportError:  # < Python 3.11
+    Self = tp.Self
+except AttributeError:  # < Python 3.11
     Self = "GameFileDirectory"
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 @dataclass(slots=True)

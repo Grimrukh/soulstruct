@@ -22,7 +22,7 @@ try:
 except AttributeError:
     Self = "Event"
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 # TODO: Merge with `binary` module types.

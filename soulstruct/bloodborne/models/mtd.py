@@ -11,7 +11,7 @@ from soulstruct.containers import BinderVersion, BinderVersion4Info
 from soulstruct.base.models.mtd import MTD, MTDBND as BaseMTDBND
 from soulstruct.games import BLOODBORNE
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 @dataclass(slots=True)

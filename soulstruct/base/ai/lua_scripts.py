@@ -14,7 +14,7 @@ from soulstruct.utilities.binary import *
 
 from .lua import LuaError, LuaCompileError, LuaDecompileError, compile_lua, decompile_lua
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 _SNAKE_CASE_RE = re.compile(r"(?<!^)(?=[A-Z])")
 

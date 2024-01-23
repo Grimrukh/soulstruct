@@ -23,7 +23,7 @@ except AttributeError:
 if tp.TYPE_CHECKING:
     from soulstruct.base.params.param_row import ParamRow
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 class ParamDefEditFlags(int):

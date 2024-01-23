@@ -16,7 +16,7 @@ from types import ModuleType
 from soulstruct.utilities.files import import_arbitrary_file
 from soulstruct.base.game_types import *
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 class GameEnumInfo:

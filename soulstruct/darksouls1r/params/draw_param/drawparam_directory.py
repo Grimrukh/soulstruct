@@ -14,8 +14,8 @@ from soulstruct.base.game_file_directory import GameFileDirectory
 from .drawparambnd import DrawParamBND
 
 try:
-    from typing import Self
-except ImportError:  # < Python 3.11
+    Self = tp.Self
+except AttributeError:  # < Python 3.11
     Self = "DrawParamDirectory"
 
 _LOGGER = logging.getLogger(__name__)

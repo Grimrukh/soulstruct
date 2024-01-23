@@ -8,7 +8,7 @@ from dataclasses import dataclass
 
 from soulstruct.base.params.paramdef import ParamDef as _BaseParamDef, ParamDefBND as _BaseParamDefBND
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 _BUNDLED = None
 
 

@@ -27,7 +27,7 @@ if tp.TYPE_CHECKING:
     from soulstruct.base.project.core import GameDirectoryProject
     from soulstruct.base.project.links import WindowLinker
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 class EntryRow:

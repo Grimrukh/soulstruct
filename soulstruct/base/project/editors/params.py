@@ -21,7 +21,7 @@ from soulstruct.utilities.window import SmartFrame
 if tp.TYPE_CHECKING:
     from soulstruct.base.params.gameparambnd import GameParamBND
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 class ParamFieldRow(FieldRow):

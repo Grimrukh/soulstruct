@@ -24,7 +24,7 @@ try:
 except AttributeError:
     Self = "MTDBND"
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 @dataclass(slots=True)

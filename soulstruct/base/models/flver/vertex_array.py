@@ -28,7 +28,7 @@ import numpy as np
 from soulstruct.exceptions import SoulstructError
 from soulstruct.utilities.binary import *
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 KNOWN_CORRUPTED_DS1R_ARRAYS = {

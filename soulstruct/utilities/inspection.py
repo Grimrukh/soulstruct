@@ -24,7 +24,7 @@ from pathlib import Path
 
 from colorama import init as colorama_init, Fore
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 colorama_init()
 GREEN = Fore.GREEN

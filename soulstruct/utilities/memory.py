@@ -39,7 +39,7 @@ try:
 except ImportError:
     psutil = None
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 class UnhookedError(SoulstructError):

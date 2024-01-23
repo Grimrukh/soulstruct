@@ -20,7 +20,7 @@ if tp.TYPE_CHECKING:
     from .material import Material
     from .vertex_array import VertexArrayLayout
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 class FaceSetFlags(IntEnum):

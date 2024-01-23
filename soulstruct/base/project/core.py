@@ -66,7 +66,7 @@ try:
 except ImportError:
     psutil = None
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 _GAME_MODULE_RE = re.compile(r"^soulstruct\.(\w+)\..*$")
 
