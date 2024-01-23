@@ -45,6 +45,7 @@ class NVMTriangle:
             raise ValueError(f"Lowest two bits of NVMTriangle obstacle/flag int != 0: {obstacles_and_flags:010b}")
         obstacle_count = (obstacles_and_flags >> 2) & 0x3FFF
         all_flags = cls.reverse_flags_bits(obstacles_and_flags >> 16)
+        # noinspection PyTypeChecker
         return NVMTriangle(vertex_indices, connected_indices, obstacle_count, all_flags)
 
     def to_nvm_writer(self, writer: BinaryWriter):
@@ -246,12 +247,21 @@ class NVM(GameFile):
         header = cls.NVMHeaderStruct.from_bytes(reader)
         expected_triangles_offset = 0x80 + header.vertices_count * 0xC
         if header.triangles_offset != expected_triangles_offset:
-            raise ValueError(
-                f"Triangles offset for NVM should be {expected_triangles_offset}, not {header.triangles_offset}."
-            )
+            # Check for error case of 64-bit vertices (offset from end of header will be exactly double expected).
+            double_triangles_offset = 0x80 + header.vertices_count * 0x18
+            if header.triangles_offset == double_triangles_offset:
+                _LOGGER.warning("`NVM` file appears to have 64-bit vertices. Will truncate to 32-bit vertices.")
+                vertices = np.frombuffer(reader.read(8 * 3 * header.vertices_count), dtype=np.float64)
+                vertices = vertices.astype(np.float32)
+            else:
+                raise ValueError(
+                    f"Expected an NVM triangles offset of {hex(expected_triangles_offset)}, not header value "
+                    f"{hex(header.triangles_offset)} (and not due to incorrectly 64-bit vertices)."
+                )
+        else:
+            # Read flat array of [x0, y0, z0, x1, y1, z1, ...] single-precision vertices.
+            vertices = np.frombuffer(reader.read(4 * 3 * header.vertices_count), dtype=np.float32)
 
-        # Read flat array of [x0, y0, z0, x1, y1, z1, ...] single-precision vertices.
-        vertices = np.frombuffer(reader.read(4 * 3 * header.vertices_count), dtype=np.float32)
         vertices.shape = (header.vertices_count, 3)
         triangles = [NVMTriangle.from_nvm_reader(reader) for _ in range(header.triangles_count)]
 
@@ -274,6 +284,12 @@ class NVM(GameFile):
         )
 
     def to_writer(self) -> BinaryWriter:
+
+        # Validate dtype and shape of vertices array.
+        if self.vertices.dtype != np.float32:
+            raise ValueError(f"`NVM.vertices` array must contain 32-bit floats, not {self.vertices.dtype}.")
+        if self.vertices.shape[1] != 3:
+            raise ValueError(f"`NVM.vertices` array must have shape (N, 3), not {self.vertices.shape}.")
 
         writer = BinaryWriter(ByteOrder.big_endian_bool(self.big_endian))
         self.NVMHeaderStruct(
@@ -334,7 +350,7 @@ class NVM(GameFile):
         """
 
         all_boxes = [root_box]  # type: list[NVMBox]
-        all_indices = [tuple()]  # type: list[tuple[int]]
+        all_indices = [tuple()]  # type: list[tuple[int, ...]]
         current_index = []  # type: list[int]
 
         def add_children(box: NVMBox):

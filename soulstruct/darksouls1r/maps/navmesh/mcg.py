@@ -456,7 +456,7 @@ class MCG(GameFile):
                     f"Node {node} has edges in two navmesh indices ({navmesh_info['a'][0]}, {navmesh_info['b'][0]}) "
                     f"AND a dead-end navmesh index: {node.dead_end_navmesh_index}"
                 )
-            elif navmesh_info["b"] is None and node.dead_end_navmesh == -1:
+            elif navmesh_info["b"] is None and node.dead_end_navmesh_index == -1:
                 _LOGGER.warning(f"Node {node} has edges in only one navmesh, but no dead-end navmesh.")
 
             all_node_navmesh_triangles.append(navmesh_info)

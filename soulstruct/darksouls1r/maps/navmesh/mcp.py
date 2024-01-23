@@ -250,12 +250,13 @@ class MCP(GameFile):
         MCP, MSB, and NVMBND file paths will be inferred from standard DSR folder structure, relative to `mcp_path`, if
         they are not given. `aabb_padding` defaults to class padding, which is correct for DS1.
 
-        TODO: Have not confirmed whether m12_00 in DS1 uses _00 or _01 folder for NVMBND binder. If it uses _00 (like
-         collision and FLVER files), then `nvmbnd_path` will need to be given explicitly to check the right meshes.
+        NOTE: In DS1, updated navmesh models are used from m12_00_00_01 (DLC-enabled Darkroot), so all relevant files
+        used by this function use the DLC '_01' version.
 
         NOTE: See vanilla DS1 exceptions to automatic AABB connectivity detection in class docstring. These exceptions
         are NOT automatically handled here, which means that regenerating vanilla DS1 MCP files from other DS1 vanilla
-        files will result in slightly more conservative MCP AABB connectivity for those three maps.
+        files will result in slightly more conservative MCP AABB connectivity for those three maps. You can pass the
+        noted pairs of AABB-connected navmeshes to `custom_connected_navmeshes` to replicate the vanilla behavior.
         """
         if aabb_padding is None:
             aabb_padding = cls.AABB_PADDING

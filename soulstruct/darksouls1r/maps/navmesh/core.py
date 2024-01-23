@@ -117,11 +117,12 @@ class NavmeshGraph:
     """Wrapper that handles `MCP` and `MCG` instances/files for the navmesh parts in a given `MSB`.
 
     Designed to be a friendlier and less painful interface for navmesh graph editing than those classes themselves, as
-    both files need to be kept in tight correspondence to the MSB navmesh parts and face indices in their models.
+    both files need to be kept in tight correspondence to the MSB navmesh parts and face indices in their NVM models.
 
     Methods with arguments that require navmeshes support `MSBNavmesh` instances or names/indices thereof in the MSB.
 
-    Never edits or writes the MSB, only uses it to retrieve `MSBNavmesh` part instances.
+    Never edits or writes the MSB, but only uses it to retrieve `MSBNavmesh` part instances. Similarly, never edits
+    NVM model files, but only uses them to calculate MCP axis-aligned bounds.
 
     Args:
         map_path (str or Path): Folder containing MCP and MCG files (e.g. '{game_root}/map/m10_01_00_00').

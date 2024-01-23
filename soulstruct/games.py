@@ -151,6 +151,8 @@ DARK_SOULS_DSR = Game(
     default_dcx_type=DCXType.DCX_DFLT_10000_24_9,
     special_dcx_types={
         ".msb": DCXType.Null,
+        ".mcg": DCXType.Null,
+        ".mcp": DCXType.Null,
         ".hkxbhd": DCXType.Null,
         ".hkxbdt": DCXType.Null,
         ".tpfbhd": DCXType.Null,
