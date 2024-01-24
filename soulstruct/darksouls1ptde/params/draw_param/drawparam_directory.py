@@ -17,7 +17,7 @@ try:
 except AttributeError:  # < Python 3.11
     Self = "DrawParamDirectory"
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 def drawparambnd_property(area_name: str):

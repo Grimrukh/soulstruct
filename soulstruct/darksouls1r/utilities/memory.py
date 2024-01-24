@@ -22,7 +22,7 @@ from soulstruct.utilities.files import PACKAGE_PATH
 if tp.TYPE_CHECKING:
     from soulstruct.darksouls1r.params.draw_param import DrawParam
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 _PLAYER_TRANSFORM_PTRS = (0x68, 0x68, 0x28)  # WORLD_CHR_BASE

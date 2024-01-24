@@ -13,7 +13,7 @@ from pathlib import Path
 
 from soulstruct.containers import Binder
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 def add_draw_slot_1_to_all_map_areas(game_root_path):

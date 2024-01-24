@@ -43,7 +43,7 @@ from soulstruct.darksouls1ptde.game_types import *
 from .enums import *
 from .emedf import EMEDF_ALIASES
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 # This dictionary maps EVS instruction function names to functions that produce actual numeric output. These functions

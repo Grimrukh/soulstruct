@@ -4,7 +4,7 @@ import struct
 
 from .core import get_ds1_executable_and_version
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 # These offsets may be wrong if you do not have the latest version of the game.

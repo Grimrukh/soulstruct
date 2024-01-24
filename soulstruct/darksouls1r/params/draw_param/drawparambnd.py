@@ -18,7 +18,7 @@ from soulstruct.darksouls1ptde.params.paramdef import (
 from .. import paramdef
 from ..paramdef import *
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("soulstruct")
 
 
 @dataclass(slots=True)
