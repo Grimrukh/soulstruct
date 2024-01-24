@@ -19,12 +19,6 @@ class NVMBND(Binder):
         """Loads FIRST instance of each entry name as an MTD."""
         super(NVMBND, self).__post_init__()
 
-        if not self.name:
-            if self.path:
-                self.name = self.path.name.split(".")[0]
-            else:
-                raise ValueError("NVMBND must have a `name` (or `path` whose stem can be used).")
-
         if self.nvms:
             return  # already passed in
 
@@ -44,4 +38,13 @@ class NVMBND(Binder):
             )
 
     def get_nvm_entry_path(self, nvm_stem: str) -> str:
-        return f"{self.name}\\{nvm_stem}.nvm"  # no DCX
+
+        if not self.name:
+            if self.path:
+                name = self.path.name.split(".")[0]
+            else:
+                raise ValueError("NVMBND must have a `name` (or `path` whose stem can be used) for NVM entry paths.")
+        else:
+            name = self.name
+
+        return f"{name}\\{nvm_stem}.nvm"  # no DCX
