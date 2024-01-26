@@ -67,6 +67,8 @@ class Matrix3:
         elif isinstance(other, Vector3):
             return Vector3(np.inner(self._data, other._data))
         # Assume array-like.
+        if other.ndim == 1:
+            return Vector3(np.matmul(self._data, other))
         return Matrix3(np.matmul(self._data, other))
 
     def __rmatmul__(self, other: Matrix3 | Vector3 | np.ndarray):

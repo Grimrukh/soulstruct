@@ -1102,6 +1102,13 @@ class Binder(BaseBinaryFile):
             self.add_entry(entry)
             return entry
 
+    def auto_enumerate_entries(self, sort_key=None):
+        """Auto-set entry IDs to their index in the `entries` list, optionally sorting first by `sort_key`."""
+        if sort_key is not None:
+            self.entries.sort(key=sort_key)
+        for i, entry in enumerate(self.entries):
+            entry.entry_id = i
+
     # endregion
 
     # region Entry Lookup

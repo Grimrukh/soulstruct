@@ -297,7 +297,7 @@ class Submesh:
     """
 
     material: Material
-    is_bind_pose: bool = False
+    is_bind_pose: bool = False  # determines weighted bone behavior; typically `False` only for Map Pieces
     default_bone_index: int = -1
     bone_indices: np.ndarray | None = None
     uses_bounding_box: bool = True  # TODO: perfect candidate for a game-specific subclass ClassVar

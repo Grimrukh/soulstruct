@@ -12,7 +12,7 @@ from .nvm import NVM
 class NVMBND(Binder):
     """Manage `NVM` entries in a Binder."""
 
-    name: str = ""
+    map_stem: str = ""
     nvms: dict[str, NVM] = field(default_factory=dict)
 
     def __post_init__(self):
@@ -39,12 +39,14 @@ class NVMBND(Binder):
 
     def get_nvm_entry_path(self, nvm_stem: str) -> str:
 
-        if not self.name:
+        if not self.map_stem:
             if self.path:
-                name = self.path.name.split(".")[0]
+                map_stem = self.path.name.split(".")[0]
             else:
-                raise ValueError("NVMBND must have a `name` (or `path` whose stem can be used) for NVM entry paths.")
+                raise ValueError(
+                    "NVMBND must have a `map_stem` (or `path` whose stem can be used) for NVM entry paths."
+                )
         else:
-            name = self.name
+            map_stem = self.map_stem
 
-        return f"{name}\\{nvm_stem}.nvm"  # no DCX
+        return f"{map_stem}\\{nvm_stem}.nvm"  # no DCX

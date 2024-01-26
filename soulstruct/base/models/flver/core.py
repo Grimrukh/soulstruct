@@ -863,4 +863,82 @@ class FLVER(GameFile):
                     return False
         return True
 
+    def debone_map_piece(self, default_bone_name="", refresh_bone_bounding_boxes=True):
+        """Remove all bones from a Map Piece FLVER by baking the bones into the vertices that use them and setting all
+        submeshes and vertices to use only the default bone (index 0).
+
+        Some of From's older map pieces, like Sunlight Altar and Andre's building in DS1 m10_01_00_00, use bones even
+        just to place certain walls of buildings, which is extremly weird and annoying for editing. This function bakes
+        all bone transforms into the vertices that use them, then removes all bones except the default bone (0), which
+        is moved to the origin and named after the FLVER model (standard practice).
+
+        If `default_bone_name` is not given, we will try to get it from the minimal stem of `self.path`. If that fails,
+        we will use 'FLVER' and issue a warning.
+
+        NOTE: Not intended for use with map pieces that use bones to place individual trees and shrubs whose mesh data
+        is centered at the origin, which is an actual good way to use bones in a Map Piece!
+        """
+        if any(submesh.is_bind_pose for submesh in self.submeshes):
+            raise ValueError("Cannot debone FLVER models with any `is_bind_pose` submeshes (i.e. must be Map Piece).")
+
+        if not default_bone_name:
+            if self.path:
+                default_bone_name = self.path.name.split(".")[0][:7]  # drops 'AXX' suffix
+            else:
+                default_bone_name = "FLVER"
+                _LOGGER.warning(f"Could not get default bone name from FLVER path. Using bone name 'FLVER'.")
+
+        if len(self.bones) == 1:
+            if (
+                self.bones[0].translate == Vector3.zero()
+                and self.bones[0].rotate == Vector3.zero()
+                and self.bones[0].scale == Vector3.one()
+            ):
+                print(f"FLVER {self.path.name} is already deboned.")
+                return
+
+        bone_transforms = {}
+        for i, bone in enumerate(self.bones):
+            bone_transforms[i] = (bone.translate, Matrix3.from_euler_angles(bone.rotate, radians=True), bone.scale)
+
+        for submesh in self.submeshes:
+            for vertex_array in submesh.vertex_arrays:
+                array = vertex_array.array
+                local_bone_indices = array["bone_indices"][:, 0]  # only first index needed
+                if submesh.bone_indices is not None:
+                    global_bone_indices = submesh.bone_indices[local_bone_indices].tolist()
+                else:
+                    global_bone_indices = local_bone_indices.tolist()
+                if len(np.unique(global_bone_indices)) == 1:
+                    # All vertices use the same bone. No need to iterate over rows; just transform all positions.
+                    t, r, s = bone_transforms[global_bone_indices[0]]
+                    # Scale, then rotate, then translate.
+                    array["position"] = (s.data * array["position"]) @ r.data.T + t.data
+                    for array_field in ("normal", "tangent", "bitangent"):
+                        if array_field in array.dtype.names:
+                            # Just rotate unit vector. Don't bother normalizing; FLVER compression will dwarf errors.
+                            array[array_field][:, :3] = array[array_field][:, :3] @ r.data.T
+                else:
+                    # Multiple bones used. Iterate over rows. TODO: Probably a faster way to do this.
+                    for i in range(len(array)):
+                        t, r, s = bone_transforms[global_bone_indices[i]]
+                        # Scale, then rotate, then translate.
+                        array["position"][i] = r.data @ (s.data * array["position"][i]) + t.data
+                        for array_field in ("normal", "tangent", "bitangent"):
+                            if array_field in array.dtype.names:
+                                array[array_field][i][:3] = r.data @ array[array_field][i][:3]
+
+                # Now set all bone indices to zero.
+                array["bone_indices"][:, :] = 0
+
+            if submesh.bone_indices is not None:
+                # Set submesh local bones to [0].
+                submesh.bone_indices = np.array([0])
+
+        # All bones baked into all submeshes. Remove all but the default bone (0).
+        self.bones = [FLVERBone(name=default_bone_name)]
+
+        if refresh_bone_bounding_boxes:
+            self.refresh_bone_bounding_boxes(in_local_space=False)
+
     # endregion
