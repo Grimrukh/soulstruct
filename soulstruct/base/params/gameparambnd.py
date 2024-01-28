@@ -251,15 +251,14 @@ class GameParamBND(Binder, abc.ABC):
         write_json(directory / "GameParamBND_manifest.json", manifest)
 
     def get_param(self, param_name: str) -> Param:
-        param_stem = param_name.removesuffix(".param")
+        """Try to convert `param_name` to just the stem of the standard Binder entry path, which are the keys to the
+        loaded `params` dictionary (e.g. "EquipParamWeapon")."""
+        param_stem = Path(param_name).name.removesuffix(".param")
         if param_stem in self.params:  # easy case
             return self.params[param_stem]
         if param_stem in self.PARAM_NICKNAMES.values():  # values are Soulstruct nicknames
             return self.params[self.PARAM_NICKNAMES[param_stem]]  # `BiDict` value-to-key lookup
         raise KeyError(f"Cannot find `Param` named '{param_stem}' (from '{param_name}').")
-
-    # Overrides `Binder.__getitem__`.
-    __getitem__ = get_param
 
     # TODO: Inherit from some abstract `ProjectData` class that provides this interface.
     def get_range(self, param_name: str, start: int, count: int):
