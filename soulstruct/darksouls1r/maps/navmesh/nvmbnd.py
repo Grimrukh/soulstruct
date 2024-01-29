@@ -4,13 +4,19 @@ __all__ = ["NVMBND"]
 
 from dataclasses import dataclass, field
 
-from soulstruct.containers import Binder, BinderEntry
+from soulstruct.containers import Binder, BinderEntry, BinderVersion, BinderVersion4Info
+from soulstruct.dcx import DCXType
 from .nvm import NVM
 
 
 @dataclass(slots=True)
 class NVMBND(Binder):
     """Manage `NVM` entries in a Binder."""
+
+    # Override defaults.
+    version: BinderVersion = BinderVersion.V3
+    v4_info: BinderVersion4Info | None = None
+    dcx_type: DCXType = DCXType.DCX_DFLT_10000_24_9
 
     map_stem: str = ""
     nvms: dict[str, NVM] = field(default_factory=dict)

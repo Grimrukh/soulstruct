@@ -567,9 +567,22 @@ class Binder(BaseBinaryFile):
         return cls(version=BinderVersion.V3, v4_info=None)
 
     @classmethod
+    def empty_bnd4(cls, **info_kwargs):
+        """Create an empty Binder V4 (BND4).
+
+        NOTE: `Binder` already defaults to this, but this is more explicit.
+        """
+        return cls(version=BinderVersion.V4, v4_info=BinderVersion4Info(**info_kwargs))
+
+    @classmethod
     def empty_bxf3(cls):
         """Create an empty split Binder V3 (BXF3)."""
         return cls(version=BinderVersion.V3, v4_info=None, is_split_bxf=True)
+
+    @classmethod
+    def empty_bxf4(cls, **info_kwargs):
+        """Create an empty split Binder V4 (BXF4)."""
+        return cls(version=BinderVersion.V4, v4_info=BinderVersion4Info(**info_kwargs), is_split_bxf=True)
 
     # endregion
 
@@ -1041,20 +1054,24 @@ class Binder(BaseBinaryFile):
         """Create a new `BinderEntry`, attempting to replace whichever fields are NOT given with defaults provided by
         this `Binder` subclass.
 
-        Exactly ONE of `entry_name` and `entry_path` should be given.
+        At least one of `entry_name` and `entry_path` should be given. If both are given (e.g. because the name was
+        given as a spec to `set_default_entry()` but a "preferred" path was also given for a new entry), only
+        `entry_path` will be used. If only `entry_name` is given, `entry_path` will be created from it using the
+        subclass's `get_default_new_entry_path()` method. A `Binder` subclass must explicitly define this method for
+        this to work; we don't assume that rooted entry paths are acceptable in general.
 
         Does NOT add the created entry to this Binder automatically.
         """
         if entry_path is None:
+            # Path not given. Create from name.
             if entry_name is not None:
                 entry_path = self.get_default_new_entry_path(entry_name)
             else:
-                raise ValueError("Either `entry_name` or `entry_path` must be given.")
-        elif entry_name is not None:
-            raise ValueError("Only one of `entry_name` or `entry_path` may be given.")
-        else:
-            # May be needed to get default ID below.
+                raise ValueError("At least one of `entry_name` or `entry_path` must be given.")
+        elif entry_name is None:
+            # Extract name from path. May be needed to get default ID below.
             entry_name = Path(entry_path).name
+
         if entry_id is None:
             entry_id = self.get_default_new_entry_id(entry_name)
         if entry_flags is None:
