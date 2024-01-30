@@ -146,5 +146,5 @@ def write_json(
 ):
     """Write given `data` list or dictionary to JSON file with given `encoding`."""
     json_str = json.dumps(data, indent=indent, ensure_ascii=ensure_ascii, cls=encoder)
-    json_bytes = json_str.encode(encoding)
-    Path(json_path).write_bytes(json_bytes)
+    with Path(json_path).open("w", encoding=encoding) as f:
+        f.write(json_str)

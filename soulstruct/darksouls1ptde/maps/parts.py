@@ -572,7 +572,6 @@ class MSBNavmesh(MSBPart):
 
     # Type/default overrides.
     model: MSBNavmeshModel = None
-    is_shadow_source: bool = True
 
     navmesh_groups: GroupBitSet128 = field(default_factory=GroupBitSet128.all_off)  # all OFF by default
 
