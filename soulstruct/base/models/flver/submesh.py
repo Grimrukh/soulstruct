@@ -99,7 +99,7 @@ class FaceSet:
 
         return face_set_struct.to_object(cls, vertex_indices=vertex_indices)
 
-    def to_flver_writer(self, writer: BinaryWriter, vertex_index_size: int):
+    def to_flver_writer(self, writer: BinaryWriter, vertex_index_size: int, write_index_size: bool):
         if self.triangle_strip and self.vertex_indices.ndim != 1:
             raise ValueError(
                 f"Cannot write triangle strip FaceSet with {self.vertex_indices.ndim}-dimensional vertex indices. "
@@ -117,7 +117,7 @@ class FaceSet:
             _vertex_indices_count=vertex_indices_count,
             _vertex_indices_offset=None,  # reserved
             _vertex_indices_length=vertex_indices_count * vertex_index_size // 8,
-            _vertex_index_size=vertex_index_size,
+            _vertex_index_size=vertex_index_size if write_index_size else 0,
         )
         face_set_struct.to_writer(writer, reserve_obj=self)
 

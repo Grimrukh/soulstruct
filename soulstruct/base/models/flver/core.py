@@ -68,6 +68,24 @@ class FLVER(GameFile):
     """Model format used since Dark Souls PTDE.
 
     Technically, this format is FLVER2. Demon's Souls used an older version, `FLVER0`, which is not supported here.
+
+    Order of packed FLVER information, for reference:
+        - FLVER header
+        - Material headers
+        - Bone headers
+        - Submesh headers
+        - Submesh face set headers
+        - Submesh vertex array headers
+        - Vertex array layout headers
+        - Array layout types
+        - Submesh bounding boxes
+        - Submesh bone indices
+        - Submesh face set indices
+        - Submesh vertex array indices
+        - GX item lists
+        - Material and texture strings
+        - Bone names
+        - Vertex data
     """
 
     EXT: tp.ClassVar = ".flver"
@@ -338,6 +356,7 @@ class FLVER(GameFile):
         writer.fill("array_layout_count", len(layouts_to_pack), obj=self)
         writer.fill("texture_count", sum(len(material.textures) for material in materials_to_pack), obj=self)
 
+        # Pack materials.
         for material in materials_to_pack:
             material.to_flver_writer(writer)
 
@@ -356,15 +375,14 @@ class FLVER(GameFile):
                 if header_face_set_vertex_indices_size != 0:
                     # Vertex size set globally in FLVER header, depending on largest face set (older FLVERs).
                     # No value is written to each Face Set.
-                    face_set_vertex_index_size = 0
-                    face_set_index_sizes.append(header_face_set_vertex_indices_size)
+                    face_set_vertex_index_size = header_face_set_vertex_indices_size
                 else:
                     # Vertex size set per `FaceSet`. These sizes are stored for packing below.
                     face_set_vertex_index_size = 32 if face_set.needs_32bit_indices() else 16
-                    face_set_index_sizes.append(face_set_vertex_index_size)  # to save time below
-                face_set.to_flver_writer(writer, face_set_vertex_index_size)
+                face_set_index_sizes.append(face_set_vertex_index_size)  # to save time below
+                face_set.to_flver_writer(writer, face_set_vertex_index_size, header_face_set_vertex_indices_size == 0)
 
-        # Pack submesh vertex array (array) headers.
+        # Pack submesh vertex array headers.
         for submesh, layout_indices in zip(self.submeshes, submesh_layout_indices):
             for i, (vertex_array, layout_index) in enumerate(zip(submesh.vertex_arrays, layout_indices)):
                 vertex_array.to_flver_writer(
