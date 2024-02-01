@@ -68,6 +68,9 @@ class FaceSet:
     def from_flver_reader(cls, reader: BinaryReader, header_vertex_index_size: int, vertex_data_offset: int) -> FaceSet:
         face_set_struct = FaceSetStruct.from_bytes(reader)
 
+        # NOTE: We don't use the `_vertex_indices_length` field, since length is computable from size * count, but the
+        # game DOES use it and WILL crash if it's not set correctly.
+
         vertex_index_size = face_set_struct.pop("_vertex_index_size")
         if vertex_index_size == 0:
             # Use global FLVER size.

@@ -129,7 +129,7 @@ class GameParamBND(Binder, abc.ABC):
         bdt_file_path: None | str | Path = None,
         make_dirs=True,
         check_hash=False,
-    ):
+    ) -> list[Path]:
         """Write the `GameParamBND` file after updating the binary BND entries from the loaded `Param` instances.
 
         See `GameFile.write()` for more.
@@ -138,11 +138,12 @@ class GameParamBND(Binder, abc.ABC):
             raise TypeError(
                 f"Cannot write `GameParamBND` to a split `BXF` file. (Invalid `bdt_file_path`: {bdt_file_path})"
             )
-        super(GameParamBND, self).write(file_path, make_dirs=make_dirs, check_hash=check_hash)
+        written = super(GameParamBND, self).write(file_path, make_dirs=make_dirs, check_hash=check_hash)
         _LOGGER.info("GameParamBND written successfully.")
         if not self._reload_warning_given:
             _LOGGER.info("Remember to reload your game to see changes.")
             self._reload_warning_given = True
+        return written
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:

@@ -126,13 +126,13 @@ class TalkESDBND(Binder, abc.ABC):
         bdt_file_path: None | str | Path = None,
         make_dirs=True,
         check_hash=False,
-    ):
+    ) -> list[Path]:
         if bdt_file_path is not None:
             raise TypeError(
                 f"Cannot write `TalkESDBND` to a split `BXF` file. (Invalid `bdt_file_path`: {bdt_file_path})"
             )
         self.regenerate_entries()
-        super(TalkESDBND, self).write(file_path, make_dirs=make_dirs, check_hash=check_hash)
+        return super(TalkESDBND, self).write(file_path, make_dirs=make_dirs, check_hash=check_hash)
 
     @classmethod
     def write_from_dict(cls, talk_dict, talkesdbnd_path, make_dirs=True):

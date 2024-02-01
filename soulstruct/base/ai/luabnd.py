@@ -46,6 +46,7 @@ class LuaBND(Binder):
         if bdt_reader is not None:
             raise TypeError("Cannot read `LuaBND` from a split `BXF` file.")
 
+        # TODO: This seems dodgy, type-wise. Will `luabnd` be a `Binder` object?
         luabnd = super(LuaBND, cls).from_reader(reader)  # type: Self
 
         # Load goals and unknown scripts.
@@ -380,13 +381,13 @@ class LuaBND(Binder):
         check_hash=False,
         use_decompiled_goals=True,
         use_decompiled_unknown_scripts=False,
-    ):
+    ) -> list[Path]:
         if bdt_file_path is not None:
             raise TypeError(f"Cannot write `LuaBND` to a split `BXF` file. (Invalid `bdt_file_path`: {bdt_file_path})")
         self.regenerate_entries(
             use_decompiled_goals=use_decompiled_goals, use_decompiled_unknown_scripts=use_decompiled_unknown_scripts
         )
-        super().write(file_path, make_dirs=make_dirs, check_hash=check_hash)
+        return super().write(file_path, make_dirs=make_dirs, check_hash=check_hash)
 
     def get_goal(self, goal_id, goal_type=GoalType.Battle) -> LuaGoalScript:
         goals = [g for g in self.goals if g.goal_id == goal_id and g.goal_type == goal_type]

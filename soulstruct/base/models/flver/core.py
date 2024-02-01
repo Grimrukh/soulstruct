@@ -932,8 +932,8 @@ class FLVER(GameFile):
                     t, r, s = bone_transforms[global_bone_indices[0]]
                     # Scale, then rotate, then translate.
                     array["position"] = (s.data * array["position"]) @ r.data.T + t.data
-                    for array_field in ("normal", "tangent", "bitangent"):
-                        if array_field in array.dtype.names:
+                    for array_field in array.dtype.names:
+                        if array_field in ("normal", "bitangent") or array_field.startswith("tangent"):
                             # Just rotate unit vector. Don't bother normalizing; FLVER compression will dwarf errors.
                             array[array_field][:, :3] = array[array_field][:, :3] @ r.data.T
                 else:
@@ -942,9 +942,9 @@ class FLVER(GameFile):
                         t, r, s = bone_transforms[global_bone_indices[i]]
                         # Scale, then rotate, then translate.
                         array["position"][i] = r.data @ (s.data * array["position"][i]) + t.data
-                        for array_field in ("normal", "tangent", "bitangent"):
-                            if array_field in array.dtype.names:
-                                array[array_field][i][:3] = r.data @ array[array_field][i][:3]
+                        for array_field in array.dtype.names:
+                            if array_field in ("normal", "bitangent") or array_field.startswith("tangent"):
+                                array[array_field][i][:3] = r.data @ array[array_field][i][:3]  # rotating a single row
 
                 # Now set all bone indices to zero.
                 array["bone_indices"][:, :] = 0
@@ -958,5 +958,6 @@ class FLVER(GameFile):
 
         if refresh_bone_bounding_boxes:
             self.refresh_bone_bounding_boxes(in_local_space=False)
+        self.refresh_bounding_boxes()
 
     # endregion

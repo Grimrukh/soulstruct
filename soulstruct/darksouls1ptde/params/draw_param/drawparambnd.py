@@ -271,13 +271,13 @@ class DrawParamBND(Binder):
         bdt_file_path: None | str | Path = None,
         make_dirs=True,
         check_hash=False,
-    ):
+    ) -> list[Path]:
         if bdt_file_path is not None:
             raise TypeError(
                 f"Cannot write `DrawParamBND` to a split `BXF` file. (Invalid `bdt_file_path`: {bdt_file_path})"
             )
         self.regenerate_entries()
-        super(DrawParamBND, self).write(file_path, make_dirs=make_dirs, check_hash=check_hash)
+        return super(DrawParamBND, self).write(file_path, make_dirs=make_dirs, check_hash=check_hash)
 
     @classmethod
     def from_json_directory(cls, directory: Path | str) -> Self:

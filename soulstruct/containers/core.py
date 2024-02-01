@@ -599,7 +599,7 @@ class Binder(BaseBinaryFile):
         bdt_file_path: None | str | Path = None,
         make_dirs=True,
         check_hash=False,
-    ) -> Path | None:
+    ) -> list[Path]:
         """Writes the `BND` file, or writes both the `BHD` and `BDT` files at once for split binders.
 
         Missing directories in given path will be created automatically if `make_dirs` is True. Otherwise, they must
@@ -611,14 +611,14 @@ class Binder(BaseBinaryFile):
         Args:
             file_path (None, str, Path): file path to write `BHD` to. Defaults to `self.path`, which is automatically
                 set at instance creation if a file path is used as a source.
-            bdt_file_path (None, str, Path): file path to write `BDT` to. Defaults to `self.path` with "bdt"
-                replacing "bhd", if a file path is used as a source.
+            bdt_file_path (None, str, Path): file path to write `BDT` to. Defaults to `file_path` with "bdt"
+                replacing "bhd" in any and all file suffixes.
             make_dirs (bool): if True, any absent directories in both `file_path` and `bdt_file_path` will be created.
             check_hash (bool): if True, files will not be written if both BHD and BDT files with same hashes already
                 exist. (Default: False)
 
         Returns:
-            Path | None: path of written BND or BHD (not BDT) file. `None` if nothing new is written.
+            list[Path]: path of written BND file or BHD and BDT files. Empty if nothing new is written.
         """
         self.entry_autogen()
 
@@ -641,18 +641,20 @@ class Binder(BaseBinaryFile):
                 bhd_match = get_blake2b_hash(file_path) == get_blake2b_hash(packed_bhd)
                 bdt_match = get_blake2b_hash(bdt_file_path) == get_blake2b_hash(packed_bdt)
                 if bhd_match and bdt_match:
-                    return None  # don't write files (both match)
+                    return []  # don't write files (both match)
             self.create_bak(file_path, make_dirs=make_dirs)
             self.create_bak(bdt_file_path, make_dirs=make_dirs)
             with file_path.open("wb") as f:
                 f.write(packed_bhd)
             with bdt_file_path.open("wb") as f:
                 f.write(packed_bdt)
-        else:
-            if bdt_file_path is not None:
-                raise ValueError("Cannot pass in `bdt_file_path` when `Binder.is_split_bxf == False`.")
-            super(Binder, self).write(file_path, make_dirs=make_dirs, check_hash=check_hash)
-        return file_path
+            return [file_path, bdt_file_path]
+
+        if bdt_file_path is not None:
+            raise ValueError("Cannot pass in `bdt_file_path` when `Binder.is_split_bxf == False`.")
+        super(Binder, self).write(file_path, make_dirs=make_dirs, check_hash=check_hash)
+
+        return [file_path]
 
     def write_split(
         self,
