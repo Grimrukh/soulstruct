@@ -130,20 +130,18 @@ class MSB(_PTDE_MSB):
         new_model = self.map_piece_models.new(name=f"m{dest_model_id}")
         new_model.set_auto_sib_path(dest_map.msb_file_stem)
 
-    def write_nvmdump(self, nvmdump_path: Path | str, map_stem: str = None):
-        """Write a text dump of the MSB's navmesh parts to the given file path (typically `.nvmdump`).
+    def get_nvmdump(self, map_stem: str = None) -> str:
+        """Get a text dump of the MSB's navmesh parts, typically to write to `.nvmdump` file.
 
         `map_stem` of this MSB is required. Will try to auto-detect from `path` if not given.
+
+        Not sure if the game actually requires this, or requires it to be in sync with the MSB and/or NVMBND.
         """
         if map_stem is None:
             try:
                 map_stem = self.get_map_stem()
             except ValueError as ex:
                 raise ValueError(f"`map_stem` must be given. Could not detect automatically: {ex}")
-
-        nvmdump_path = Path(nvmdump_path)
-        if nvmdump_path.suffix != ".nvmdump":
-            _LOGGER.warning(f"`nvmdump_path` usually ends with '.nvmdump', not: {nvmdump_path.suffix}")
 
         nvmdump_lines = []
         file_path = f"N:\\FRPG\\data\\Model\\map\\{map_stem}\\navimesh"
@@ -165,6 +163,4 @@ class MSB(_PTDE_MSB):
             offset = map_offset.translate  # note name 'Offset' here instead of 'Position
             nvmdump_lines.append(f"MapOffset[{i}].Offset: {offset.x:.6f}, {offset.y:.6f}, {offset.z:.6f}")
 
-        nvmdump = "\n".join(nvmdump_lines) + "\n"
-        create_bak(nvmdump_path)
-        nvmdump_path.write_text(nvmdump)
+        return "\n".join(nvmdump_lines) + "\n"  # vanilla files do have trailing newline
