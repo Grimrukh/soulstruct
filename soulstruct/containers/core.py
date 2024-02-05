@@ -1091,13 +1091,14 @@ class Binder(BaseBinaryFile):
         new_name: str = None,
         new_path: str | Path = None,
         new_flags: int = None,
-        new_data: bytes | BaseBinaryFile = b"",
     ) -> BinderEntry:
         """Retrieve or create `BinderEntry` specified by `entry_spec`, a la `dict.setdefault()`.
 
         If an entry is not found, the `new_` arguments are passed to `create_default_entry()`, which is added to the
         Binder automatically. Otherwise, these arguments are ignored - their values will NOT be set to the existing
-        entry's values.
+        entry's values, as per standard Python `setdefault()` behavior. For this reason, there is no `new_data`
+        argument; any newly-created entries will have null data (`b""`) to ensure the user is aware that the data will
+        not be changed if the entry already exists. Simply set any data to the returned entry.
 
         Returns the found or created `BinderEntry`.
 
@@ -1117,7 +1118,7 @@ class Binder(BaseBinaryFile):
                 new_path = str(entry_spec)
             elif isinstance(entry_spec, str):
                 new_name = entry_spec
-            entry = self.create_default_entry(new_data, new_id, new_name, new_path, new_flags)
+            entry = self.create_default_entry(b"", new_id, new_name, new_path, new_flags)
             self.add_entry(entry)
             return entry
 

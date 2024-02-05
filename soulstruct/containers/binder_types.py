@@ -64,8 +64,7 @@ class FLVERBinder(InterrootBinder, abc.ABC):
                 entry_spec=self.TPF_ENTRY_ID,
                 new_path=self.get_tpf_entry_path(main_model_stem),
                 new_flags=0x2,
-                new_data=self.tpf,
-            )
+            ).set_from_binary_file(self.tpf)
 
         if self.flvers:
             if len(self.flvers) > self.MAX_FLVER_COUNT:
@@ -77,8 +76,7 @@ class FLVERBinder(InterrootBinder, abc.ABC):
                     entry_spec=self.FLVER_FIRST_ENTRY_ID + i,
                     new_path=self.get_flver_entry_path(name),
                     new_flags=0x2,
-                    new_data=flver,
-                )
+                ).set_from_binary_file(flver)
 
     @property
     def flver(self) -> FLVER | None:

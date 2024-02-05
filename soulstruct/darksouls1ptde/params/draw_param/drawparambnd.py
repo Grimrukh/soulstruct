@@ -239,9 +239,7 @@ class DrawParamBND(Binder):
                     continue  # slot missing
                 entry_path = self.get_draw_param_entry_path(draw_param_stem, slot)
                 regenerated_entry_paths.add(entry_path)
-                entry = self.set_default_entry(
-                    entry_path, new_id=self.get_first_new_entry_id_in_range(0, 1000000)
-                )
+                entry = self.set_default_entry(entry_path, new_id=self.get_first_new_entry_id_in_range(0, 1000000))
                 if not entry.data:
                     _LOGGER.debug(f"New `Param` entry added to `DrawParamBND`: {entry_path}")
                 entry.set_from_binary_file(draw_param)
