@@ -249,7 +249,7 @@ class MSBEntry(abc.ABC):
         return self.from_dict(copied_dict)
 
     @classmethod
-    def get_field_names(cls, visible_only=False) -> tuple[str]:
+    def get_field_names(cls, visible_only=False) -> tuple[str, ...]:
         return tuple(
             f.name for f in fields(cls)
             if f.name not in {"name", "description"}
