@@ -412,8 +412,8 @@ class MCG(GameFile):
 
         return writer
 
-    def get_navmesh_triangles_by_node(self, ignore_clashes=False) -> list[dict[str, None | tuple[int, list[int]]]]:
-        """Get a list of `((navmesh_a_index, navmesh_a_triangles), (navmesh_b_index, navmesh_b_triangles)` tuples.
+    def get_navmesh_triangles_by_node(self, allow_clashes=False) -> list[dict[str, None | tuple[int, list[int]]]]:
+        """Get a list of `((navmesh_a_index, navmesh_a_triangles), (navmesh_b_index, navmesh_b_triangles))` tuples.
 
         Tuple elements may be `None` if only one or zero connected navmeshes are detected.
 
@@ -449,11 +449,12 @@ class MCG(GameFile):
                         if triangles != navmesh_info[key][1]:
                             msg = (
                                  f"Node {node} has inconsistent navmesh triangle indices across edges through navmesh "
-                                 f"index {navmesh_index}: {triangles} vs. {navmesh_info[key][1]}"
+                                 f"index {navmesh_index}: {navmesh_info[key][1]} vs. {triangles}"
                             )
-                            if ignore_clashes:
-                                _LOGGER.warning(msg)
-                            raise ValueError(msg)
+                            if allow_clashes:
+                                _LOGGER.warning(msg + f". Using first indices: {navmesh_info[key][1]}")
+                            else:
+                                raise ValueError(msg)
                         found = True
 
             # Warn or raise errors about various connection problems.
