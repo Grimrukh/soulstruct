@@ -10,6 +10,7 @@ from __future__ import annotations
 __all__ = ["MATBIN", "MATBINBND"]
 
 import logging
+import re
 import typing as tp
 from dataclasses import dataclass, field
 from enum import IntEnum
@@ -319,11 +320,15 @@ class MATBINBND(Binder):
             self.matbins[entry.name] = entry.to_binary_file(MATBIN)
 
     def get_matbin(self, matbin_name: str) -> MATBIN:
+        """Look up MATBIN name in Binder. Changes '.matxml' to '.matbin' if necessary."""
+        if matbin_name.endswith(".matxml"):
+            matbin_name = matbin_name.removesuffix(".matxml") + ".matbin"
         try:
             return self.matbins[matbin_name]
         except KeyError:
             try:
-                matbin_entry = self.find_entry_name(matbin_name)
+                # Need to ignore case.
+                matbin_entry = self.find_entry_matching_name(re.escape(matbin_name), re.IGNORECASE)
             except EntryNotFoundError:
                 raise KeyError(f"MATBIN '{matbin_name}' not found in {self.__class__.__name__}.")
             matbin = matbin_entry.to_binary_file(MATBIN)

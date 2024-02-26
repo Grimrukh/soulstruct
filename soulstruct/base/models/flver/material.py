@@ -162,7 +162,7 @@ class Texture:
 class MaterialStruct(BinaryStruct):
 
     _name_offset: int
-    _mtd_path_offset: int
+    _mat_def_path_offset: int
     _texture_count: int
     _first_texture_index: int
     flags: int
@@ -175,7 +175,7 @@ class MaterialStruct(BinaryStruct):
 class Material:
 
     name: str = ""
-    mtd_path: str = ""  # TODO: Could be a `.matxml` (MATBIN) path in later games. May want to rename `mat_def_path`.
+    mat_def_path: str = ""  # could be a '.mtd' (MTD) file name or '.matxml' (MATBIN) file name
     flags: int = 0
     unk_x18: int = 0
     gx_items: list[GXItem] = field(default_factory=list)
@@ -202,7 +202,7 @@ class Material:
         """
         material_struct = MaterialStruct.from_bytes(reader)
         name = reader.unpack_string(offset=material_struct.pop("_name_offset"), encoding=encoding)
-        mtd_path = reader.unpack_string(offset=material_struct.pop("_mtd_path_offset"), encoding=encoding)
+        mat_def_path = reader.unpack_string(offset=material_struct.pop("_mat_def_path_offset"), encoding=encoding)
         gx_offset = material_struct.pop("_gx_offset")
         if gx_offset <= 0:
             gx_item_list = []  # no `GXItem`s (older games)
@@ -219,7 +219,7 @@ class Material:
         material = material_struct.to_object(
             cls,
             name=name,
-            mtd_path=mtd_path,
+            mat_def_path=mat_def_path,
             gx_items=gx_item_list,
             _texture_count=material_struct.pop("_texture_count"),
             _first_texture_index=material_struct.pop("_first_texture_index"),
@@ -261,8 +261,8 @@ class Material:
     def pack_strings(self, flver_writer: BinaryWriter, encoding: str):
         flver_writer.fill_with_position("_name_offset", obj=self)
         flver_writer.pack_z_string(self.name, encoding=encoding)
-        flver_writer.fill_with_position("_mtd_path_offset", obj=self)
-        flver_writer.pack_z_string(self.mtd_path, encoding=encoding)
+        flver_writer.fill_with_position("_mat_def_path_offset", obj=self)
+        flver_writer.pack_z_string(self.mat_def_path, encoding=encoding)
 
     def get_texture_dict(self) -> dict[str, Texture]:
         """Get a dictionary mapping texture types to like 'g_Diffuse' to `Texture` instances.
@@ -298,16 +298,23 @@ class Material:
         return shared_texture_prefix
 
     @property
-    def mtd_name(self):
-        # TODO: Could also be a MATBIN ('.matxml') name.
-        return Path(self.mtd_path).name
+    def mat_def_name(self) -> str:
+        """Extension can vary: '.mtd' or '.matxml'."""
+        return Path(self.mat_def_path).name
 
-    @mtd_name.setter
-    def mtd_name(self, name: str):
-        """Set '.mtd' name of `mtd_path`."""
-        # TODO: Could also be a MATBIN ('.matxml') name.
-        name = name.removesuffix(".mtd") + ".mtd"
-        self.mtd_path = str(Path(self.mtd_path).with_name(name))
+    @mat_def_name.setter
+    def mat_def_name(self, name: str):
+        """Replaces name component of current `mat_def_path`. If extension is missing, current suffix will be used."""
+        if name.endswith(".mtd") or name.endswith(".matxml"):
+            # Use name as-is.
+            pass
+        elif "." in name:
+            raise ValueError(f"Material definition name {name} should have no suffix, or '.mtd' or '.matxml'.")
+        else:
+            # Keep current suffix.
+            new_suffix = Path(self.mat_def_path).suffix
+            name += new_suffix
+        self.mat_def_path = str(Path(self.mat_def_path).with_name(name))
 
     def replace_in_all_texture_names(self, old_string: str, new_string: str):
         """Replace all occurrences of `old_string` in all texture names (at end of paths) with `new_string`."""
@@ -328,7 +335,7 @@ class Material:
         lines = [
             f"Material(",
             f"  name = {repr(self.name)},",
-            f"  mtd_path = {repr(self.mtd_path)},",
+            f"  mat_def_path = {repr(self.mat_def_path)},",
             f"  flags = 0b{self.flags:032b},  # {self.flags}",
         ]
         if self.gx_items:
@@ -344,7 +351,7 @@ class Material:
         """Straightforward hashing of fields and textures."""
         texture_hashes = tuple(hash(tex) for tex in self.textures)
         gx_item_hashes = tuple(hash(item) for item in self.gx_items)
-        return hash((self.name, self.mtd_path, self.flags, gx_item_hashes, self.unk_x18, texture_hashes))
+        return hash((self.name, self.mat_def_path, self.flags, gx_item_hashes, self.unk_x18, texture_hashes))
 
     def __eq__(self, other: Material):
         """Check for equality by hash."""
