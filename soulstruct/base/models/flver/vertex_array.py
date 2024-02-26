@@ -231,18 +231,18 @@ class VertexBoneWeights(VertexDataType):
     type_int = 1
     unique = True
     formats = {
-        (0x13,): VertexDataFormat(
-            compressed_dtype=[("bone_weights", "b", (4,))],
+        (0x10,): VertexDataFormat(
+            compressed_dtype=[("bone_weights", "b", (4,))],  # not sure how negative values ever work here!
             decompressed_dtype=[("bone_weights", "f", (4,))],
             codec=INT_TO_FLOAT_127,
         ),
-        (0x14,): VertexDataFormat(
+        (0x13,): VertexDataFormat(
             compressed_dtype=[("bone_weights", "B", (4,))],
             decompressed_dtype=[("bone_weights", "f", (4,))],
-            codec=INT_TO_FLOAT_127,
+            codec=INT_TO_FLOAT_255,
         ),
         (0x16, 0x1A): VertexDataFormat(
-            compressed_dtype=[("bone_weights", "h", (4,))],
+            compressed_dtype=[("bone_weights", "h", (4,))],  # not sure how negative values ever work here!
             decompressed_dtype=[("bone_weights", "f", (4,))],
             codec=INT_TO_FLOAT_32767,
         ),
