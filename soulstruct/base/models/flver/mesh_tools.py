@@ -50,11 +50,7 @@ class MergedMesh:
     loop_tangents: list[np.ndarray]  # four columns per array for 'x', 'y', 'z', and `w` (float32)
     loop_bitangents: np.ndarray  # four columns for 'x', 'y', and 'z' (float32)
     loop_vertex_colors: list[np.ndarray]  # four columns per array for 'r', 'g', 'b', and 'a' (float32)
-    # If `uv_layer_names` is given, this list will have the same length as `uv_layer_names` and each UV array will
-    # correspond to the UV layer with the same index. Otherwise, this list will have the same length as the maximum
-    # number of UV layers used by any submesh, which may cause layer clashes (e.g. one submesh's second texture UV may
-    # appear in the same array as another submesh's lightmap UV or wind UV).
-    loop_uvs: list[np.ndarray]  # two columns per array for 'u' and 'v' (float32)  # TODO: currently ignoring `uv_w`
+    loop_uvs: list[np.ndarray]  # two columns per array for 'u' and 'v' (float32)  # TODO: ignoring `uv_w`
 
     faces: np.ndarray  # integer array of `[loop0, loop1, loop2, material_index]` rows (uint32)
 
@@ -64,15 +60,12 @@ class MergedMesh:
     # UV layer names used by each material to assign UV data index.
     material_uv_layers: list[list[str]] | list[None] = field(default_factory=list)
 
-    # All unique, sorted UV layer names used by any material (or None if material UVs not given).
-    all_uv_layers: list[str] | None = None
-
     @classmethod
     def from_flver(
         cls,
         flver: FLVER,
         submesh_material_indices: list[int] = None,
-        material_uv_layers: list[list[str]] = None,
+        material_uv_indices: list[list[int]] = None,
     ):
         """Construct merged mesh data from all `flver` submeshes.
 
@@ -83,14 +76,10 @@ class MergedMesh:
         properties (e.g. `is_bind_pose` or `use_backface_culling`) that may be different for submeshes that share the
         same FLVER material index.
 
-        If `material_uv_layers` is given, it should be a list of lists of UV layer names indexed by the material indices
-        in `submesh_material_indices` (NOT by submesh index). Each sub-list should contain the UV layer names used by
-        the corresponding 'material' (which, again, may not be the same as the original FLVER material index). These
-        layer names are combined into `all_uv_layers` on the `MergedMesh` and are used to ensure that each submesh's UV
-        data are assigned to the correct UV index in the merged loop array (as the presence or absence of, say, a second
-        texture slot may affect the usage of a given submesh UV index). If not given, each submesh's UV data will simply
-        occupy the first `n` UV data columns in the merged loops, which may, say, cause lightmap UV data and real
-        texture UV data to share a column!
+        If `material_uv_indices` is given, it should be a list of list of UV index integers that correspond to the UV
+        subarrays in the submesh's vertex buffer. This ensures that the UV maps across the entire merged FLVER are as
+        compatible as possible, e.g. lightmap UVs go into one map, second textures UVs go into one map, etc. If not
+        given, UV data will be put into the first available indices.
         """
         if not flver.submeshes:
             raise ValueError("FLVER has no submeshes. Cannot create `MergedMesh`.")
@@ -113,21 +102,8 @@ class MergedMesh:
             valid_submeshes.append(submesh)
             valid_submesh_material_indices.append(submesh_material_indices[i])
 
-        if material_uv_layers:
-
-            all_uv_layer_names_set = set()
-            for i, uv_layers in enumerate(material_uv_layers):
-                if i not in valid_submesh_material_indices:
-                    # No valid submeshes use this material index.
-                    continue
-                all_uv_layer_names_set |= set(uv_layers)
-            all_uv_layers = sorted(all_uv_layer_names_set)
-        else:
-            material_uv_layers = [None] * len(valid_submesh_material_indices)
-            all_uv_layers = None
-
         all_vertices, loop_data_dict = cls.build_stacked_loops(
-            valid_submeshes, valid_submesh_material_indices, material_uv_layers, all_uv_layers
+            valid_submeshes, valid_submesh_material_indices, material_uv_indices
         )
 
         vertex_data, loop_vertex_indices, faces = cls.merge_vertices(
@@ -143,8 +119,6 @@ class MergedMesh:
             **loop_data_dict,
             faces=faces,
             flver=flver,
-            material_uv_layers=material_uv_layers,
-            all_uv_layers=all_uv_layers,
         )
 
     @classmethod
@@ -152,8 +126,7 @@ class MergedMesh:
         cls,
         submeshes: list[Submesh],
         material_indices: list[int],
-        material_uv_layers: list[list[str] | None],
-        all_uv_layers: list[str] | None,
+        material_uv_indices: list[list[int]] | None,
     ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
         """Row-stack all submesh vertices' position and bone data in a single structured array for reduction."""
         # TODO: None of these fields are guaranteed in later games.
@@ -174,7 +147,7 @@ class MergedMesh:
 
         loop_tangents_dict = {}  # new arrays added as new tangent indices are encountered
         loop_vertex_colors_dict = {}  # new arrays added as new color indices are encountered
-        loops_uvs_dict = {}  # new arrays added as new UV indices are encountered
+        loops_uvs_dict = {}  # new arrays added as new global UV layer indices are encountered
 
         offset = 0
         for submesh, material_index in zip(submeshes, material_indices):
@@ -183,7 +156,6 @@ class MergedMesh:
             i = offset
             offset += len(vertices)
             j = offset
-            uv_layers = material_uv_layers[material_index]
 
             submesh_vertices = all_vertices[i:j]
 
@@ -243,29 +215,21 @@ class MergedMesh:
                     )
                     color_array[i:j] = vertices[f"color_{c_i}"]
                 elif name.startswith("uv_"):
-                    uv_i = int(name[-1])
-                    if all_uv_layers:
-                        # Get FLVER-wide index of this UV from its known layer name in the material.
+                    global_uv_i = uv_i = int(name.removeprefix("uv_"))
+                    if material_uv_indices:
                         try:
-                            loop_uvs_i = all_uv_layers.index(uv_layers[uv_i])
+                            global_uv_i = material_uv_indices[material_index][uv_i]
                         except IndexError:
-                            material_mtd_name = submesh.material.mtd_name
-                            raise ValueError(
-                                f"FLVER submesh (MTD '{material_mtd_name}') UV layer index {uv_i} is out of range of "
-                                f"its detected UV layer list: {uv_layers}. This is probably due to incorrect MTD "
-                                f"parsing. Please report this bug on GitHub with the name of the FLVER model!"
-                            )
-                    else:
-                        # Just use the vertex array's UV index. Usage of this index may clash with other submeshes!
-                        loop_uvs_i = uv_i
+                            _LOGGER.warning(f"No global UV index for material index {material_index} (UV {uv_i}).")
                     uv_array = loops_uvs_dict.setdefault(
-                        loop_uvs_i, np.zeros((total_vertex_count, 2), dtype=np.float32)  # TODO: support `uv[2]`
+                        global_uv_i, np.zeros((total_vertex_count, 2), dtype=np.float32)  # TODO: support `uv[2]`
                     )
-                    uv_array[i:j] = vertices[f"uv_{uv_i}"]
+                    uv_array[i:j] = vertices[name]
 
         # Could be empty lists.
         loop_tangents = [loop_tangents_dict[i] for i in sorted(loop_tangents_dict)]
         loop_vertex_colors = [loop_vertex_colors_dict[i] for i in sorted(loop_vertex_colors_dict)]
+        # Sort UV layer keys alphabetically.
         loop_uvs = [loops_uvs_dict[i] for i in sorted(loops_uvs_dict)]
 
         return all_vertices, dict(

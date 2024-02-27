@@ -109,6 +109,15 @@ class MATBIN(GameFile):
                 return True
         return False
 
+    def get_all_sampler_paths(self) -> dict[str, Path | None]:
+        return {sampler.sampler_type: Path(sampler.path) if sampler.path else None for sampler in self.samplers}
+
+    def get_all_sampler_names(self) -> dict[str, str]:
+        return {sampler.sampler_type: Path(sampler.path).name if sampler.path else "" for sampler in self.samplers}
+
+    def get_all_sampler_stems(self) -> dict[str, str]:
+        return {sampler.sampler_type: Path(sampler.path).stem if sampler.path else "" for sampler in self.samplers}
+
     def get_sampler_path(self, matbin_sampler_type: str) -> Path:
         for sampler in self.samplers:
             if sampler.sampler_type == matbin_sampler_type:
@@ -143,13 +152,13 @@ class MATBIN(GameFile):
 
     def __repr__(self):
         params = "\n".join(f"    {param.name} = {param.value}" for param in self.params)
-        samplers = "\n".join(f"    {sampler.sampler_type} = \"{sampler.path}\"" for sampler in self.samplers)
+        samplers = "\n".join(f"    {sampler.sampler_type} = \"{sampler.path}\"," for sampler in self.samplers)
         return (
             f"MATBIN(\n"
             f"  shader_path=\"{self.shader_path}\",\n"
             f"  source_path=\"{self.source_path}\",\n"
             f"  params={{\n{params},\n  }},\n"
-            f"  samplers=[\n{samplers},\n  ],\n"
+            f"  samplers={{\n{samplers}\n  }},\n"
             f")"
         )
 

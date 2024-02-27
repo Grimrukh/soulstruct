@@ -593,7 +593,7 @@ class FLVER(GameFile):
                 texture.path = texture.path.replace(old_name, new_name)
 
     def get_all_texture_paths(self) -> set[Path]:
-        """Get set of all texture paths from all materials, which typically end in '.tga'.
+        """Get set of all texture paths from all materials, which typically end in '.tga' or '.tif'.
 
         Ignores textures with empty `path`.
         """

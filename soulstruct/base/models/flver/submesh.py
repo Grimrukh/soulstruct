@@ -407,9 +407,9 @@ class Submesh:
             _LOGGER.warning("Submesh has no vertex arrays.")
 
         if any(vertex_array.array.size == 0 for vertex_array in self.vertex_arrays):
-            mtd_name = self.material.mtd_name if self.material else '<unknown>'
+            mat_def_name = self.material.mat_def_name if self.material else '<unknown>'
             _LOGGER.warning(
-                f"Submesh in FLVER (MTD '{mtd_name}') has an incorrect layout that could not be fixed. Submesh "
+                f"Submesh in FLVER (mat def '{mat_def_name}') has an incorrect layout that could not be fixed. Submesh "
                 f"marked with `invalid_layout = True`; handle this as needed."
             )
             self.invalid_layout = True

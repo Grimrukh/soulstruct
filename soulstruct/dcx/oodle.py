@@ -27,8 +27,7 @@ from soulstruct.utilities.files import PACKAGE_PATH
 
 try:
     # noinspection PyPackageRequirements
-    import colorama
-    colorama.init()
+    import colorama  # already initialized
     YELLOW = colorama.Fore.YELLOW
     RESET = colorama.Fore.RESET
 except ImportError:
@@ -283,6 +282,7 @@ def compress(
 ) -> bytes:
     """Compress data with Oodle. Default parameters are appropriate for Sekiro and Elden Ring (DCX_KRAK)."""
     raw_buf_size = len(raw_buf)
+    # noinspection PyCallingNonCallable,PyTypeChecker
     raw_buf_array = (c.c_char * raw_buf_size)(*raw_buf)
     max_comp_buf_size = __DLL_GetCompressedBufferSizeNeeded(raw_buf_size)
     comp_buf_array = (c.c_char * max_comp_buf_size)()
@@ -314,6 +314,7 @@ def decompress(comp_buf: bytes, decompressed_size: int):
     Note that `decompressed_size` is required, and can be found in the `DCX` header.
     """
     comp_buf_size = len(comp_buf)
+    # noinspection PyCallingNonCallable,PyTypeChecker
     comp_buf_array = (c.c_char * comp_buf_size)(*comp_buf)
     max_raw_buf_size = __DLL_GetDecodeBufferSize(decompressed_size, True)
     raw_buf_array = (c.c_char * max_raw_buf_size)()

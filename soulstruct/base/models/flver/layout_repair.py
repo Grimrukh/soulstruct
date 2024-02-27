@@ -79,7 +79,9 @@ def check_ds1_layouts(
     """
 
     for i, submesh in enumerate(submeshes):
-        mtd_name = submesh.material.mtd_name
+        mtd_name = submesh.material.mat_def_name
+        if not mtd_name.endswith(".mtd"):
+            return  # definitely not DS1
         # noinspection PyProtectedMember
         for array_index in submesh._vertex_array_indices:
             header = array_headers[array_index]

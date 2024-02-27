@@ -21,7 +21,7 @@ setup(
     extras_require={
         "Interactive": ["IPython"],
         "Runtime": ["psutil"],
-        "ConsoleColor": ["colorama"],
+        "ConsoleColor": ["colorama>=0.4.6"],
         "Graphs": ["numpy", "matplotlib"],
         "Translate": ["googletrans>=3.1.0a0"],
         "Regulation": ["aes"],

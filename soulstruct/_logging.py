@@ -7,7 +7,8 @@ try:
 except ImportError:
     colorama = None
 else:
-    colorama.init()
+    from colorama import just_fix_windows_console
+    just_fix_windows_console()
 
 
 class _ModuleFormatter(logging.Formatter):
@@ -98,6 +99,6 @@ sys.excepthook = handle_unhandled_exception
 # )
 if not colorama:
     _LOGGER.info(
-        f"Install `colorama` in your Python environment with `python -m pip install colorama` to enable colorful "
-        f"console output."
+        "Install `colorama` in your Python environment with `python -m pip install colorama` to enable colorful "
+        "console output."
     )

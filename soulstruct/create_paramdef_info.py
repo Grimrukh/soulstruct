@@ -5,6 +5,13 @@ from soulstruct.bloodborne.params import paramdef as paramdef_module, ParamDefBN
 from soulstruct.base.params.param_row import *
 from soulstruct.utilities.files import read_json, write_json
 
+import colorama
+from colorama import just_fix_windows_console
+just_fix_windows_console()
+RED = colorama.Fore.RED
+YELLOW = colorama.Fore.YELLOW
+RESET = colorama.Fore.RESET
+
 
 # def make_nickname_json():
 #
@@ -44,13 +51,6 @@ from soulstruct.utilities.files import read_json, write_json
 #                     paramdef_dict[metadata.internal_name]["default"] = default
 #
 #     write_json("bloodborne/params/paramdef/paramdef_info.json", game_dict)
-
-
-import colorama
-colorama.init()
-RED = colorama.Fore.RED
-YELLOW = colorama.Fore.YELLOW
-RESET = colorama.Fore.RESET
 
 
 def add_game_types():

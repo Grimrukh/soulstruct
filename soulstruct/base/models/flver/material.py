@@ -129,9 +129,13 @@ class Texture:
         return str(Path(self.path).parent).rstrip("\\") + "\\"
 
     @property
+    def name(self) -> str:
+        return Path(self.path).name if self.path else ""
+
+    @property
     def stem(self) -> str:
         """Typically just removes '.tga' extension from FLVER texture path."""
-        return Path(self.path).stem
+        return Path(self.path).stem if self.path else ""
 
     def __hash__(self) -> int:
         """Used mostly by `Material` hash."""
