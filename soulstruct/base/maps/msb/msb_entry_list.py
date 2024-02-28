@@ -165,13 +165,17 @@ class MSBEntryList(IDList[MSBEntryType]):
             entry_or_index_or_name = entry_or_index_or_name.name
         if isinstance(entry_or_index_or_name, int):
             entry = self[entry_or_index_or_name]
-            index = entry_or_index_or_name
+            index = entry_or_index_or_name + 1
         elif isinstance(entry_or_index_or_name, str):
             entry = self.find_entry_name(entry_or_index_or_name)
             index = self.index(entry)  # -1 if not found
+            if index >= 0:
+                index += 1
         elif isinstance(entry_or_index_or_name, MSBEntry):
             entry = entry_or_index_or_name
             index = self.index(entry)  # -1 if not found
+            if index >= 0:
+                index += 1
         else:
             raise TypeError("`entry_or_index_or_name` must be an `MSBEntry` or index of one in this list.")
         
