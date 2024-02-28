@@ -11,6 +11,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from soulstruct.base.game_file_directory import GameFileMapDirectory
+from soulstruct.base.maps.msb.utils import MSB_JSONEncoder
+from soulstruct.utilities.files import write_json
 from .msb import MSB
 
 _LOGGER = logging.getLogger("soulstruct")
@@ -77,11 +79,36 @@ class MapStudioDirectory(GameFileMapDirectory[MSB_T], abc.ABC):
         with Path(json_path).open("w") as f:
             json.dump(data, f)
 
-    def write_json_directory(self, directory_path: str | Path = None, ignore_defaults=True):
-        """Write each MSB to a separate JSON file, named by MSB stem, inside `dir_path`."""
+    def write_json_directory(
+        self,
+        directory_path: str | Path = None,
+        ignore_defaults=True,
+        no_partial_write=True,
+    ) -> list[Path]:
+        """Write each MSB to a separate JSON file, named by MSB stem, inside `dir_path`.
+
+        If `no_partial_write` is True, an exception will be raised if any MSB fails to write, and no files will be
+        written. Otherwise, JSON files may be written up until that exception (likely not wanted!).
+        """
         if directory_path is None:
             directory_path = self.directory
         directory_path = Path(directory_path)
         directory_path.mkdir(exist_ok=True, parents=True)
+        written_paths = []
+        json_dicts = {}
         for msb_file_stem, msb in self.files.items():
-            msb.write_json(directory_path / f"{msb_file_stem}.json", ignore_defaults=ignore_defaults)
+            json_path = directory_path / f"{msb_file_stem}.json"
+            if not no_partial_write:
+                msb.write_json(json_path, ignore_defaults=ignore_defaults)
+                written_paths.append(json_path)
+            else:
+                # Get dict, and only write below if all succeed.
+                json_dicts[json_path] = msb.to_dict(ignore_defaults=ignore_defaults)
+
+        if no_partial_write:
+            # All MSBs converted to dictionaries without error. Now write them all.
+            for json_path, json_dict in json_dicts.items():
+                write_json(json_path, json_dict, indent=4, encoding="utf-8", encoder=MSB_JSONEncoder)
+                written_paths.append(json_path)
+
+        return written_paths

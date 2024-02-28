@@ -88,13 +88,15 @@ class DrawParamDirectory(GameFileDirectory[DrawParamBND], abc.ABC):
 
         all_bnd_stems = cls.get_all_file_stems()
 
-        files = {}
+        # noinspection PyTypeChecker
+        files = {}  # type: dict[str, DrawParamBND]
         file_name_re = re.compile(cls.FILE_NAME_PATTERN + r"(\.dcx)?$")
         for file_path in directory_path.glob("*"):
             if file_name_re.match(file_path.name):
                 file_stem = file_path.name.split(".")[0]  # `.stem` not good enough with possible double DCX extension
                 if file_stem in all_bnd_stems:
-                    files[file_stem] = cls.FILE_CLASS.from_path(file_path)
+                    # noinspection PyTypeChecker
+                    files[file_stem] = cls.FILE_CLASS.from_path(file_path)  # type: DrawParamDirectory
                     all_bnd_stems.remove(file_stem)
                 else:
                     _LOGGER.warning(
@@ -110,31 +112,33 @@ class DrawParamDirectory(GameFileDirectory[DrawParamBND], abc.ABC):
 
         return cls(directory=directory_path, files=files)
 
-    def write(self, directory_path: Path | str | None = None, check_file_hashes: bool = False):
-        """Same as `GameFileDirectory`, but reports unknown files and if any maps are missing."""
+    def write(
+        self, directory_path: Path | str | None = None, check_file_hashes=False, no_partial_write=True
+    ) -> list[Path]:
+        """Same as `GameFileDirectory`, but reports unknown files and if any DrawParamBNDs are missing."""
         if directory_path is None:
             if self.directory is None:
                 raise ValueError("Cannot autodetect directory name (`directory` not set).")
             directory_path = self.directory
         directory_path = Path(directory_path)
-        directory_path.mkdir(parents=True, exist_ok=True)
 
         all_bnd_stems = self.get_all_file_stems()
-
+        file_paths = {}
         for file_stem, draw_param_bnd in self.files.items():
             if file_stem in all_bnd_stems:
                 all_bnd_stems.remove(file_stem)
             else:
                 _LOGGER.warning(f"Writing unknown area file found in `{self.__class__.__name__}`: {file_stem}")
-            draw_param_bnd.write(directory_path / f"{file_stem}{self.FILE_EXTENSION}", check_hash=check_file_hashes)
+            file_paths[directory_path / f"{file_stem}{self.FILE_EXTENSION}"] = draw_param_bnd
         if all_bnd_stems:
             _LOGGER.warning(
                 f"Could not find some files while writing `{self.__class__.__name__}` directory: "
                 f"{', '.join(all_bnd_stems)}"
             )
-        _LOGGER.info(
-            f"`{self.__class__.__name__}` written to `{directory_path}` successfully ({len(self.files)} files)."
-        )
+
+        written_paths = self._write(file_paths, check_file_hashes, no_partial_write)
+        self._log_directory_write(directory_path, len(written_paths))
+        return written_paths
 
     @classmethod
     def from_json_directory(cls, directory: Path | str) -> Self:

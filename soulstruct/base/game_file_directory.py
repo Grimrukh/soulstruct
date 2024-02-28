@@ -10,6 +10,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from .base_binary_file import BaseBinaryFile, BASE_BINARY_FILE_T
+from ..utilities.binary import get_blake2b_hash
+from ..utilities.files import create_bak
 
 if tp.TYPE_CHECKING:
     from .game_types.map_types import Map
@@ -59,18 +61,66 @@ class GameFileDirectory(tp.Generic[BASE_BINARY_FILE_T], abc.ABC):
 
         return cls(directory=directory_path, files=files)
 
-    def write(self, directory_path: Path | str | None = None, check_file_hashes: bool = False):
+    @staticmethod
+    def _write(
+        paths_instances: dict[Path, BaseBinaryFile], check_file_hashes=False, no_partial_write=True
+    ) -> list[Path]:
+        """Internal write method. Subclasses may determine file paths differently, then call this."""
+        packed_files = {}  # type: dict[Path, bytes]
+        for file_path, instance in paths_instances.items():
+            try:
+                packed_dcx = bytes(instance)
+            except Exception as ex:
+                if no_partial_write:
+                    _LOGGER.error(f"Failed to pack {file_path.name} (see traceback). No files written.")
+                    raise
+                _LOGGER.error(f"Failed to pack {file_path.name}: {ex}. Continuing with other files...")
+                continue
+            if check_file_hashes and file_path.is_file():
+                if get_blake2b_hash(file_path) == get_blake2b_hash(packed_dcx):
+                    continue  # don't write file
+            packed_files[file_path] = packed_dcx
+
+        # All files packed successfully (or partial write permitted).
+        written_paths = []
+        for file_path, packed_dcx in packed_files.items():
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            create_bak(file_path)
+            with file_path.open("wb") as f:
+                f.write(packed_dcx)
+            written_paths.append(file_path)
+
+        return written_paths
+
+    def _log_directory_write(self, directory_path: Path, file_count: int):
+        if file_count > 0:
+            _LOGGER.info(
+                f"`{self.__class__.__name__}` written to `{directory_path}` successfully "
+                f"({file_count} / {len(self.files)} files)."
+            )
+        else:
+            _LOGGER.info(f"No files (out of {len(self.files)}) written for `{self.__class__.__name__}`.")
+
+    def write(
+        self,
+        directory_path: Path | str | None = None,
+        check_file_hashes: bool = False,
+        no_partial_write=True,
+    ) -> list[Path]:
         if directory_path is None:
             if self.directory is None:
                 raise ValueError("Cannot autodetect directory name (`directory` not set).")
             directory_path = self.directory
         directory_path = Path(directory_path)
-        directory_path.mkdir(parents=True, exist_ok=True)
-        for file_stem, instance in self.files.items():
-            instance.write(directory_path / f"{file_stem}{self.FILE_EXTENSION}", check_hash=check_file_hashes)
-        _LOGGER.info(
-            f"`{self.__class__.__name__}` written to `{directory_path}` successfully ({len(self.files)} files)."
-        )
+
+        file_paths = {
+            (directory_path / f"{file_stem}{self.FILE_EXTENSION}"): instance
+            for file_stem, instance in self.files.items()
+        }
+
+        written_paths = self._write(file_paths, check_file_hashes, no_partial_write)
+        self._log_directory_write(directory_path, len(written_paths))
+        return written_paths
 
     def keys(self):
         return self.files.keys()
@@ -142,29 +192,39 @@ class GameFileMapDirectory(GameFileDirectory[BASE_BINARY_FILE_T], abc.ABC):
 
         return cls(directory=directory_path, files=files)
 
-    def write(self, directory_path: Path | str | None = None, check_file_hashes: bool = False):
+    def write(
+        self, directory_path: Path | str | None = None, check_file_hashes=False, no_partial_write=True
+    ) -> list[Path]:
         """Same as `GameFileDirectory`, but reports unknown files and if any maps are missing."""
         if directory_path is None:
             if self.directory is None:
                 raise ValueError("Cannot autodetect directory name (`directory` not set).")
             directory_path = self.directory
         directory_path = Path(directory_path)
+
         all_map_stems = [getattr(game_map, self.MAP_STEM_ATTRIBUTE) for game_map in self.ALL_MAPS]
-        directory_path.mkdir(parents=True, exist_ok=True)
+        file_paths = {}
         for file_stem, instance in self.files.items():
             if file_stem in all_map_stems:
                 all_map_stems.remove(file_stem)
             else:
                 _LOGGER.warning(f"Writing unknown map file found in `{self.__class__.__name__}`: {file_stem}")
-            instance.write(directory_path / f"{file_stem}{self.FILE_EXTENSION}", check_hash=check_file_hashes)
+            file_paths[directory_path / f"{file_stem}{self.FILE_EXTENSION}"] = instance
         if all_map_stems:
             _LOGGER.warning(
                 f"Could not find some file keys while writing `{self.__class__.__name__}` directory: "
                 f"{', '.join(all_map_stems)}"
             )
-        _LOGGER.info(
-            f"`{self.__class__.__name__}` written to `{directory_path}` successfully ({len(self.files)} files)."
-        )
+
+        written_paths = self._write(file_paths, check_file_hashes, no_partial_write)
+        if written_paths:
+            _LOGGER.info(
+                f"`{self.__class__.__name__}` written to `{directory_path}` successfully "
+                f"({len(written_paths)} / {len(self.files)} files)."
+            )
+        else:
+            _LOGGER.info(f"No files written for `{self.__class__.__name__}`.")
+        return written_paths
 
     def __getitem__(self, map_source: str | tuple) -> BASE_BINARY_FILE_T:
         game_map = self.GET_MAP(map_source)

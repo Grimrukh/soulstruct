@@ -294,21 +294,26 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
                 for string_id, string in fmg.entries
             }
 
-    def write(self, directory_path: Path | str | None = None, check_file_hashes: bool = False):
+    def write(
+        self, directory_path: Path | str | None = None, check_file_hashes=False, no_partial_write=True
+    ) -> list[Path]:
         """Regenerate and write `item` and `menu` MSGBNDs."""
         if directory_path is None:
             if self.directory is None:
                 raise ValueError("Cannot autodetect directory name (`directory` not set).")
             directory_path = self.directory
         directory_path = Path(directory_path)
-        directory_path.mkdir(parents=True, exist_ok=True)
 
         self.regenerate_binders()
-        self.files["item"].write(directory_path / f"item{self.FILE_EXTENSION}", check_hash=check_file_hashes)
-        self.files["menu"].write(directory_path / f"menu{self.FILE_EXTENSION}", check_hash=check_file_hashes)
-        _LOGGER.info(
-            f"`{self.__class__.__name__}` written to `{directory_path}` successfully ({len(self.files)} files)."
-        )
+
+        file_paths = {
+            directory_path / f"item{self.FILE_EXTENSION}": self.files["item"],
+            directory_path / f"menu{self.FILE_EXTENSION}": self.files["menu"],
+        }
+
+        written_paths = self._write(file_paths, check_file_hashes, no_partial_write)
+        self._log_directory_write(directory_path, len(written_paths))
+        return written_paths
 
     # region Utility Methods: Items
 
