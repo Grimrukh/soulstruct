@@ -3,6 +3,7 @@ from __future__ import annotations
 
 __all__ = [
     "MergedMesh",
+    "SplitSubmeshDef",
 ]
 
 import logging
@@ -17,6 +18,31 @@ from .submesh import Submesh, FaceSet
 from .vertex_array import *
 
 _LOGGER = logging.getLogger("soulstruct")
+
+
+class SplitSubmeshDef(tp.NamedTuple):
+    material: Material
+    layout: VertexArrayLayout
+    kwargs: dict[str, tp.Any]
+    uv_layer_names: list[str] | None = None
+
+    def get_validated_uv_layer_names(self, global_uv_layer_names: tp.Iterable[str], index: int) -> list[str]:
+        uv_count = self.layout.get_uv_count()
+        uv_layer_names = self.uv_layer_names
+        if not uv_layer_names:
+            # Default to 'UVMap{i}' for each UV layer.
+            uv_layer_names = [f"UVMap{i}" for i in range(uv_count)]
+        if len(self.uv_layer_names) != uv_count:
+            raise ValueError(
+                f"UV layer names for split submesh {index} do not match layout UV count: "
+                f"{self.uv_layer_names} does not have {uv_count} elements."
+            )
+        if any(layer_name not in global_uv_layer_names for layer_name in uv_layer_names):
+            raise ValueError(
+                f"Not all UV layer names given for split submesh {index} ({uv_layer_names}) appear in the `MergedMesh` "
+                f"global UV layer keys ({list(global_uv_layer_names)})."
+            )
+        return uv_layer_names
 
 
 @dataclass(slots=True)
@@ -50,7 +76,9 @@ class MergedMesh:
     loop_tangents: list[np.ndarray]  # four columns per array for 'x', 'y', 'z', and `w` (float32)
     loop_bitangents: np.ndarray  # four columns for 'x', 'y', and 'z' (float32)
     loop_vertex_colors: list[np.ndarray]  # four columns per array for 'r', 'g', 'b', and 'a' (float32)
-    loop_uvs: list[np.ndarray]  # two columns per array for 'u' and 'v' (float32)  # TODO: ignoring `uv_w`
+    # Maps UV layer names (which default to just 'UVMap{i}') to UV data arrays. UV layer names per merged mesh material
+    # need to be passed in.
+    loop_uvs: dict[str, np.ndarray]  # two columns per array for 'u' and 'v' (float32)  # TODO: ignoring `uv_w`
 
     faces: np.ndarray  # integer array of `[loop0, loop1, loop2, material_index]` rows (uint32)
 
@@ -65,7 +93,7 @@ class MergedMesh:
         cls,
         flver: FLVER,
         submesh_material_indices: list[int] = None,
-        material_uv_indices: list[list[int]] = None,
+        material_uv_layer_names: list[list[str]] = None,
     ):
         """Construct merged mesh data from all `flver` submeshes.
 
@@ -76,10 +104,11 @@ class MergedMesh:
         properties (e.g. `is_bind_pose` or `use_backface_culling`) that may be different for submeshes that share the
         same FLVER material index.
 
-        If `material_uv_indices` is given, it should be a list of list of UV index integers that correspond to the UV
+        If `material_uv_layer_names` is given, it should be a list of list of UV layer names that correspond to the UV
         subarrays in the submesh's vertex buffer. This ensures that the UV maps across the entire merged FLVER are as
-        compatible as possible, e.g. lightmap UVs go into one map, second textures UVs go into one map, etc. If not
-        given, UV data will be put into the first available indices.
+        compatible as possible, e.g. second textures UVs go into one map, lightmap UVs go into one map, etc. If not
+        given, UV data will be assigned to default 'UVMap{i}' names created directly from the vertex array indices,
+        which may lead to clashes and a more difficult 3D workflow (though no lost information, theoretically).
         """
         if not flver.submeshes:
             raise ValueError("FLVER has no submeshes. Cannot create `MergedMesh`.")
@@ -103,7 +132,7 @@ class MergedMesh:
             valid_submesh_material_indices.append(submesh_material_indices[i])
 
         all_vertices, loop_data_dict = cls.build_stacked_loops(
-            valid_submeshes, valid_submesh_material_indices, material_uv_indices
+            valid_submeshes, valid_submesh_material_indices, material_uv_layer_names
         )
 
         vertex_data, loop_vertex_indices, faces = cls.merge_vertices(
@@ -126,7 +155,7 @@ class MergedMesh:
         cls,
         submeshes: list[Submesh],
         material_indices: list[int],
-        material_uv_indices: list[list[int]] | None,
+        material_uv_layer_names: list[list[str]] | None,
     ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
         """Row-stack all submesh vertices' position and bone data in a single structured array for reduction."""
         # TODO: None of these fields are guaranteed in later games.
@@ -147,7 +176,7 @@ class MergedMesh:
 
         loop_tangents_dict = {}  # new arrays added as new tangent indices are encountered
         loop_vertex_colors_dict = {}  # new arrays added as new color indices are encountered
-        loops_uvs_dict = {}  # new arrays added as new global UV layer indices are encountered
+        loop_uvs = {}  # type: dict[str, np.ndarray]  # new arrays added as new global UV layer names used
 
         offset = 0
         for submesh, material_index in zip(submeshes, material_indices):
@@ -215,22 +244,22 @@ class MergedMesh:
                     )
                     color_array[i:j] = vertices[f"color_{c_i}"]
                 elif name.startswith("uv_"):
-                    global_uv_i = uv_i = int(name.removeprefix("uv_"))
-                    if material_uv_indices:
+                    uv_i = int(name.removeprefix("uv_"))
+                    uv_layer_name = f"UVMap{uv_i}"  # default
+                    if material_uv_layer_names:
                         try:
-                            global_uv_i = material_uv_indices[material_index][uv_i]
+                            uv_layer_name = material_uv_layer_names[material_index][uv_i]
                         except IndexError:
-                            _LOGGER.warning(f"No global UV index for material index {material_index} (UV {uv_i}).")
-                    uv_array = loops_uvs_dict.setdefault(
-                        global_uv_i, np.zeros((total_vertex_count, 2), dtype=np.float32)  # TODO: support `uv[2]`
+                            _LOGGER.warning(f"No UV layer name for material index {material_index} (UV {uv_i}).")
+                    uv_array = loop_uvs.setdefault(
+                        uv_layer_name, np.zeros((total_vertex_count, 2), dtype=np.float32)  # TODO: support `uv[2]`
                     )
                     uv_array[i:j] = vertices[name]
 
         # Could be empty lists.
         loop_tangents = [loop_tangents_dict[i] for i in sorted(loop_tangents_dict)]
         loop_vertex_colors = [loop_vertex_colors_dict[i] for i in sorted(loop_vertex_colors_dict)]
-        # Sort UV layer keys alphabetically.
-        loop_uvs = [loops_uvs_dict[i] for i in sorted(loops_uvs_dict)]
+        # NOTE: We don't sort `loop_uvs`. Their order shouldn't matter; the user can determine it, if needed.
 
         return all_vertices, dict(
             loop_normals=loop_normals,
@@ -413,7 +442,7 @@ class MergedMesh:
 
         TODO: `uv_w` support.
         """
-        for loop_uv_array in self.loop_uvs:
+        for loop_uv_array in self.loop_uvs.values():
             if invert_u:
                 loop_uv_array[:, 0] = 1.0 - loop_uv_array[:, 0]
             if invert_v:
@@ -430,22 +459,32 @@ class MergedMesh:
 
     def split_mesh(
         self,
-        submesh_info: list[tuple[Material, VertexArrayLayout, dict[str, tp.Any]]],
+        split_submesh_defs: list[SplitSubmeshDef],
         use_submesh_bone_indices=True,
         max_bones_per_submesh=38,
         unused_bone_indices_are_minus_one=False,
     ) -> list[Submesh]:
         """Splits merged mesh into FLVER submeshes.
 
-        `submesh_info` must be a list of FLVER `Material` instances, appropriate layouts, and combined `Submesh/FaceSet`
-        kwargs for each value that appears in `faces[:, 3]`. The merged mesh will be split based on these values (and
-        maybe further split by bone maximum if `use_submesh_bone_indices` is True) and the created `Submesh` and
-        `FaceSet` instances will take their materials, layouts, and kwargs from this list.
+        `split_submesh_defs` must be a list of FLVER `Material` instances, appropriate layouts, and combined
+        `Submesh/FaceSet` kwargs for each value that appears in `faces[:, 3]`. The merged mesh will be split based on
+        these values (and maybe further split by bone maximum if `use_submesh_bone_indices == True`) and the created
+        `Submesh` and `FaceSet` instances will take their materials, layouts, and miscellaneous kwargs from this list.
+
+        If `uv_layer_names` is given for a `split_submesh_defs` element, it should be a list of list of UV layer
+        names that indicate which keys in `MergedMesh.loop_uvs` are used by each corresponding submesh. This will
+        ensure that each FLVER submesh vertex buffer can tightly pack only the global arrays that it uses: for
+        example, a lightmapped one-texture submesh material may have UV layer names `['UVTexture0', 'UVLightmap']`,
+        which will become its `uv_0` and `uv_1` vertex buffer fields, respectively. If `submesh_uv_layer_names` is
+        not given, each submesh will simply look up UV keys 'UVMap{i}' in `MergedMesh.loop_uvs` for `i < n`,
+        where `n` is the number of UVs it uses (determined by its given layout). This is fine, assuming that the
+        `MergedMesh` was also constructed this way, with no UV layer names given.
 
         As with `MergedMesh.from_flver()`, the definition of 'material' here should comprise any reason that the mesh
-        needs to be split, and `faces[3]` should be set accordingly. Two split submeshes may use the same FLVER material
-        in `submesh_info`, for example, yet have different `is_bind_pose` values or `face_sets[0].use_backface_culling`
-        etc.
+        needs to be split, and `faces[3]` should be set accordingly. Two split submeshes may use the same FLVER
+        material in `split_submesh_defs`, for example, yet have different `is_bind_pose` values or `face_sets[
+        0].use_backface_culling` etc. The `FLVER` class will efficiently remove any duplicate FLVER materials or
+        layouts when packed.
 
         If a submesh material index has no faces, it will be ignored.
 
@@ -460,22 +499,47 @@ class MergedMesh:
         split submesh arrays.
         """
         if use_submesh_bone_indices and max_bones_per_submesh < 3:
-            raise ValueError("`max_bones_per_submesh` must be >= 3 (and realistically, should be much higher!).")
+            raise ValueError("`max_bones_per_submesh` must be >= 3 (and realistically should be much higher).")
 
-        submesh_materials = [material for material, _, _ in submesh_info]
-        submesh_layouts = [layout for _, layout, _ in submesh_info]
-        material_dtypes = [layout.get_dtypes()[1] for layout in submesh_layouts]  # decompressed dtypes
-        submesh_kwargs = [kwargs for _, _, kwargs in submesh_info]
+        # Split each `SplitSubmeshDef` into its component information for efficiency.
+        submesh_materials = [submesh_def.material for submesh_def in split_submesh_defs]
+        submesh_layouts = [submesh_def.layout for submesh_def in split_submesh_defs]
+        submesh_kwargs = [submesh_def.kwargs for submesh_def in split_submesh_defs]
+        submesh_uv_layer_names = [
+            submesh_def.get_validated_uv_layer_names(self.loop_uvs, i)
+            for i, submesh_def in enumerate(split_submesh_defs)
+        ]
+
+        # We construct two material dtypes: one that uses global UV layer names, and the true one that uses tightly
+        # packed 'uv_{i}' UV names. These names are the only difference, so we can just reassign the dtype at the end.
+        global_uv_material_dtypes = []
+        true_material_dtypes = []
+        for layout, uv_layer_names in zip(submesh_layouts, submesh_uv_layer_names):
+            true_dtype = layout.get_dtypes()[1]  # decompressed fields
+            global_dtype_fields = []
+            for field_name, (field_fmt, field_index) in true_dtype.fields.items():
+                if field_name.startswith("uv_"):
+                    local_uv_index = int(field_name.removeprefix("uv_"))
+                    global_uv_layer_name = uv_layer_names[local_uv_index]
+                    global_dtype_fields.append((global_uv_layer_name, field_fmt))
+                else:
+                    global_dtype_fields.append((field_name, field_fmt))
+            global_dtype = np.dtype(global_dtype_fields)
+            global_uv_material_dtypes.append(global_dtype)
+            true_material_dtypes.append(true_dtype)
 
         # We construct a `dtype` that includes all fields from every material.
-        # Order doesn't matter here, as materials will take the columns they need.
+        # Order doesn't matter here, as materials will retrieve the combined columns they need by name, not index.
         combined_dtype_fields = []
-        for dtype in material_dtypes:
-            for field_name, field_info in dtype.fields.items():
-                if (field_name, field_info[0]) not in combined_dtype_fields:
-                    combined_dtype_fields.append((field_name, field_info[0]))
+        for dtype in global_uv_material_dtypes:
+            for field_name, (field_fmt, field_index) in dtype.fields.items():
+                if (field_name, field_fmt) not in combined_dtype_fields:
+                    combined_dtype_fields.append((field_name, field_fmt))
         combined_dtype = np.dtype(combined_dtype_fields)
 
+        # First, construct a big merged array of all FLVER-style loops (i.e. containing vertex AND loop data per row
+        # rather than being true face corners). Vertex data (position and bones) will repeat in every loop that uses it.
+        # Note that UV layers still have their global names; final split submeshes will rename them `uv_0`, `uv_1`, etc.
         merged_loops = self.get_combined_loop_data(combined_dtype)
 
         # Stores tuples of `(material_index, loop_array, submesh_bone_indices)` for each submesh. Every three rows in
@@ -488,7 +552,8 @@ class MergedMesh:
         split_submesh_info = []  # type: list[tuple[int, np.ndarray, tp.Optional[np.ndarray]]]
 
         merged_loop_views = {}  # minor optimization (construct each dtype-dependent view only once)
-        for material_index, material_dtype in enumerate(material_dtypes):
+        for material_index, global_uv_material_dtype in enumerate(global_uv_material_dtypes):
+
             # Split `faces` and indexed `merged_loops` by material index (column 3).
             submesh_faces = self.faces[self.faces[:, 3] == material_index][:, :3]  # `(n, 3)` array
             if len(submesh_faces) == 0:
@@ -501,9 +566,11 @@ class MergedMesh:
             # custom data (like true loops from a Blender mesh). This array will always have length `(3 * n, 3)`, where
             # `n` is the face count; faces with overlapping loop indices will just have duplicate rows, all of which
             # will be reduced to unique rows below. The face indices at this stage are also implicit: [0, 1, 2, 3, ...]
-            submesh_loops = merged_loop_views.setdefault(
-                material_dtype.names, merged_loops[list(material_dtype.names)]
-            )[submesh_loop_indices]  # every three rows corresponds to a single face (will have duplicates)
+            dtype_view = merged_loop_views.setdefault(
+                global_uv_material_dtype.names, merged_loops[list(global_uv_material_dtype.names)]
+            )
+            # Every three rows corresponds to a single face (will have many duplicates that are removed below).
+            submesh_loops = dtype_view[submesh_loop_indices]
 
             if use_submesh_bone_indices:
                 split_submesh_info += self.subsplit_faces(
@@ -542,6 +609,9 @@ class MergedMesh:
                 # Replace -1 unused bone indices with 0 for FLVER.
                 bone_indices = submesh_vertices["bone_indices"]
                 bone_indices[bone_indices == -1] = 0
+
+            # Reassign true dtype to vertex array (with local 'uv_{i}' names instead of merged global UV layer names).
+            submesh_vertices = submesh_vertices.astype(true_material_dtypes[material_index], copy=False)
 
             vertex_array = VertexArray(array=submesh_vertices, layout=submesh_layouts[material_index])
 
@@ -633,10 +703,13 @@ class MergedMesh:
 
     def get_combined_loop_data(self, combined_dtype: np.dtype):
         """Combine the appropriate loop data, in the given order, into a single structured array for indexing by loop
-        row ('FLVER vertex row') or field name (so materials can use their subset dtypes).
+        row ('FLVER vertex row') or field name (so submesh materials can retrieve only the fields they need).
 
-        The returned array, therefore, is essentially a merged version of the complete `submesh.vertices` arrays for
-        all submeshes using a 'maximal' dtype (including whichever colors happen to be present).
+        The returned array, therefore, is essentially a merged version of the complete FLVER `submesh.vertices` arrays
+        for all submeshes using a 'maximal' dtype.
+
+        The only exception is the UV data arrays, whose fields still have their global names (e.g. 'UVTexture0' or
+        'UVMap1'). The final split submeshes will simply rename the fields they actually use and discard the remainder.
 
         Note that the order of fields in `combined_dtype` likely won't matter if materials are using their own subset
         dtypes anyway.
@@ -667,10 +740,9 @@ class MergedMesh:
             t_i = int(tangent_name[-1])
             combined_array[f"tangent_{t_i}"] = self.loop_tangents[t_i]  # (loop_count, 4)
 
-        uv_names = [n for n in names if n.startswith("uv_")]
-        for uv_name in uv_names:
-            uv_i = int(uv_name[-1])
-            combined_array[f"uv_{uv_i}"] = self.loop_uvs[uv_i]  # (loop_count, 2 or 3)
+        # Combined array still uses global UV layer names.
+        for uv_layer_name in self.loop_uvs:
+            combined_array[uv_layer_name] = self.loop_uvs[uv_layer_name]
 
         color_names = [n for n in names if n.startswith("color_")]
         for color_name in color_names:

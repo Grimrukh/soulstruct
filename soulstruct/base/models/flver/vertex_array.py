@@ -611,6 +611,14 @@ class VertexArrayLayout(list[VertexDataType]):
     def get_total_data_size(self) -> int:
         return sum(data_type.size for data_type in self)
 
+    def get_uv_count(self) -> int:
+        """Count total number of UV coordinate layers in layout (could be one or two per UV data type)"""
+        uv_count = 0
+        for data_type in self:
+            if isinstance(data_type, VertexUV):
+                uv_count += 2 if data_type.format_enum.has_two_uvs() else 1
+        return uv_count
+
     def __repr__(self):
         data_types = ",\n    ".join(repr(data_type) for data_type in self)
         return (
