@@ -302,6 +302,10 @@ class Material:
         return shared_texture_prefix
 
     @property
+    def mat_def_stem(self) -> str:
+        return Path(self.mat_def_path).stem
+
+    @property
     def mat_def_name(self) -> str:
         """Extension can vary: '.mtd' or '.matxml'."""
         return Path(self.mat_def_path).name
