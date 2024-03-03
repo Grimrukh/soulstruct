@@ -376,82 +376,99 @@ class MSB(GameFile, abc.ABC):
         # noinspection PyTypeChecker
         return self.find_entry_name(name, supertypes=[self.MSB_SUPERTYPE_ENUM.PARTS], subtypes=subtypes)
 
-    def reattach_entry_references(self, warn_reattachments=False, backup_converter: tp.Callable[[str], str] = None):
+    def reattach_all_entry_references(self, warn_reattachments=False, backup_converter: tp.Callable[[str], str] = None):
         """Iterate over all Parts and Events, and reattach same-named references to other entries in this MSB.
-
-        For example, if an `MSBCharacter.draw_parent` is set to a collision that is no longer in this MSB, this method
-        will search for a collision with the same name and reattach that reference. If no name match is found, an error
-        is raised.
 
         Must be called manually so you know what you're doing.
         """
-        for subtype_name, entry_list in zip(("part", "event"), (self.get_parts(), self.get_events())):
-            for entry in entry_list:
-                for field_name in entry.MSB_ENTRY_REFERENCES:
-                    field_value = getattr(entry, field_name)
-                    if field_value is None:
-                        if subtype_name == "part" and field_name == "model":  # cannot be None
-                            raise ValueError(f"Part {entry} has no model.")
-                        continue  # can be None  # TODO: but there are some fields that should almost never be None!
-                    if isinstance(field_value, list):
-                        for i, item in enumerate(tuple(field_value)):
-                            if item is None:
-                                continue
-                            if not isinstance(item, MSBEntry):
-                                raise ValueError(
-                                    f"Index {i} of sequence field `{field_name}` of {subtype_name} '{entry.name}' "
-                                    f"is not an MSBEntry: {item}"
-                                )
-                            try:
-                                referenced_entry = self.find_entry_name(item.name)
-                            except KeyError:
-                                if backup_converter:
-                                    try:
-                                        referenced_entry = self.find_entry_name(backup_converter(item.name))
-                                    except KeyError:
-                                        raise KeyError(
-                                            f"Could not find entry with name '{item.name}' referenced by index {i} of "
-                                            f"sequence field `{field_name}` in {subtype_name} '{entry.name}'."
-                                        )
-                                else:
-                                    raise KeyError(
-                                        f"Could not find entry with name '{item.name}' referenced by index {i} of "
-                                        f"sequence field `{field_name}` in {subtype_name} '{entry.name}'."
-                                    )
-                            if item is referenced_entry:
-                                continue  # already attached
-                            field_value[i] = referenced_entry  # attach to same-named entity
+        for supertype_entry_list in (self.get_parts(), self.get_events()):
+            for entry in supertype_entry_list:
+                self.reattach_entry_references(entry, warn_reattachments, backup_converter)
+
+    def reattach_entry_references(
+        self, entry: BaseMSBPart | BaseMSBEvent,
+        warn_reattachments=False,
+        backup_converter: tp.Callable[[str], str] = None,
+    ):
+        """Reattach same-named references to other entries in this MSB.
+
+        For example, if an `MSBCharacter.draw_parent` is set to a collision that is not in this MSB (e.g. because the
+        character was brought in from another `MSB` instance), this method will search for a collision with the same
+        name and reattach that reference. If no name match is found, an error is raised.
+
+        If a name is not found, the `backup_converter` function (if given) will be called with the name, and the result
+        will be used to search for a match. If no match is found, an error is raised.
+
+        Must be called manually so you know what you're doing.
+        """
+        supertype_name = entry.SUPERTYPE_ENUM.capitalize()[:-1]  # 'Part' or 'Event'
+        for field_name in entry.MSB_ENTRY_REFERENCES:
+            field_value = getattr(entry, field_name)
+            if field_value is None:
+                if supertype_name == "Part" and field_name == "model":  # cannot be None
+                    raise ValueError(f"Part {entry} has no model.")
+                continue  # can be None  # TODO: but there are some fields that should almost never be None!
+            if isinstance(field_value, list):
+                # Sequence of referenced entries.
+                for i, item in enumerate(tuple(field_value)):
+                    if item is None:
                         continue
-
-                    if not isinstance(field_value, MSBEntry):
+                    if not isinstance(item, MSBEntry):
                         raise ValueError(
-                            f"Field `{field_name}` of {subtype_name} '{entry.name}' is not an MSBEntry: {field_value}"
+                            f"Index {i} of sequence field `{field_name}` of {supertype_name} '{entry.name}' "
+                            f"is not an `MSBEntry`: {item}"
                         )
-
                     try:
-                        referenced_entry = self.find_entry_name(field_value.name)
+                        referenced_entry = self.find_entry_name(item.name)
                     except KeyError:
                         if backup_converter:
                             try:
-                                referenced_entry = self.find_entry_name(backup_converter(field_value.name))
+                                referenced_entry = self.find_entry_name(backup_converter(item.name))
                             except KeyError:
                                 raise KeyError(
-                                    f"Could not find entry with name '{field_value.name}' referenced by "
-                                    f"field `{field_name}` in {subtype_name} '{entry.name}'."
+                                    f"Could not find entry with name '{item.name}' referenced by index {i} of "
+                                    f"sequence field `{field_name}` in {supertype_name} '{entry.name}'."
                                 )
                         else:
                             raise KeyError(
-                                f"Could not find entry with name '{field_value.name}' referenced by "
-                                f"field `{field_name}` in {subtype_name} '{entry.name}'."
+                                f"Could not find entry with name '{item.name}' referenced by index {i} of "
+                                f"sequence field `{field_name}` in {supertype_name} '{entry.name}'."
                             )
-                    if field_value is referenced_entry:
+                    if item is referenced_entry:
                         continue  # already attached
-                    setattr(entry, field_name, referenced_entry)  # attach to same-named entity
-                    if warn_reattachments:
-                        _LOGGER.warning(
-                            f"Reattached dangling reference to '{field_value.name}' in "
-                            f"field `{field_name}` of {subtype_name} '{entry.name}'."
+                    field_value[i] = referenced_entry  # attach to same-named entity
+                continue
+
+            if not isinstance(field_value, MSBEntry):
+                raise ValueError(
+                    f"Field `{field_name}` of {supertype_name} '{entry.name}' is not an `MSBEntry`: {field_value}"
+                )
+
+            # Single referenced entry.
+            try:
+                referenced_entry = self.find_entry_name(field_value.name)
+            except KeyError:
+                if backup_converter:
+                    try:
+                        referenced_entry = self.find_entry_name(backup_converter(field_value.name))
+                    except KeyError:
+                        raise KeyError(
+                            f"Could not find entry with name '{field_value.name}' referenced by "
+                            f"field `{field_name}` in {supertype_name} '{entry.name}'."
                         )
+                else:
+                    raise KeyError(
+                        f"Could not find entry with name '{field_value.name}' referenced by "
+                        f"field `{field_name}` in {supertype_name} '{entry.name}'."
+                    )
+            if field_value is referenced_entry:
+                continue  # already attached
+            setattr(entry, field_name, referenced_entry)  # attach to same-named entity
+            if warn_reattachments:
+                _LOGGER.warning(
+                    f"Reattached dangling reference to '{field_value.name}' in "
+                    f"field `{field_name}` of {supertype_name} '{entry.name}'."
+                )
 
     def to_dict(self, ignore_defaults=True) -> dict[str, tp.Any]:
         """Return a dictionary form of the MSB.
