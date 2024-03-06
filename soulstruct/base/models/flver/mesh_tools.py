@@ -200,7 +200,10 @@ class MergedMesh:
                 submesh_vertices["bone_weights"] = 0.0
 
             if "bone_indices" in field_names:
-                bone_indices = vertices["bone_indices"]
+                bone_indices = np.array(vertices["bone_indices"])  # copy to avoid modifying FLVER
+                # Some FLVER files may use 255 to mark unused bone indices, rather than the standard game value of 0
+                # (with zero bone weight indicating it is unused). For ease of remapping indices, we remap 255 to 0.
+                bone_indices[bone_indices == 255] = 0
                 if submesh.bone_indices is not None:
                     # Remap local to global bone indices (without modifying FLVER).
                     bone_indices = submesh.bone_indices[bone_indices]
