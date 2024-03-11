@@ -25,7 +25,7 @@ def camel_case_to_spaces(camel_string: str) -> str:
 def string_to_identifier(spaces_string: str, remove_prefixes=(), preserve_models=True) -> str:
     """Attempts to convert a string to the most appropriate valid Python identifier (for entity ID enums).
 
-    - Removes useless prefixes, like "SFX ".
+    - Removes prefixes given in `remove_prefixes`, like "SFX ".
     - Removes spaces and capitalizes any letters that appear after them.
     - Replaces some spaces with underscores, like spaces before "mXXXX".
     - Removes invalid characters.

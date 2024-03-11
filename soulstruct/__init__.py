@@ -4,7 +4,7 @@ from pathlib import Path
 import soulstruct._logging
 
 from soulstruct.config import *
-from soulstruct.containers import Binder
+from soulstruct.containers import Binder, EntryNotFoundError
 
 # Convenience imports (must be done after the above to avoid `GameFile` import circularity).
 from soulstruct.base.models.flver.core import FLVER
