@@ -376,11 +376,13 @@ class FLVER(GameFile):
                     # Vertex size set globally in FLVER header, depending on largest face set (older FLVERs).
                     # No value is written to each Face Set.
                     face_set_vertex_index_size = header_face_set_vertex_indices_size
+                    write_index_size = False
                 else:
                     # Vertex size set per `FaceSet`. These sizes are stored for packing below.
                     face_set_vertex_index_size = 32 if face_set.needs_32bit_indices() else 16
+                    write_index_size = True
                 face_set_index_sizes.append(face_set_vertex_index_size)  # to save time below
-                face_set.to_flver_writer(writer, face_set_vertex_index_size, header_face_set_vertex_indices_size == 0)
+                face_set.to_flver_writer(writer, face_set_vertex_index_size, write_index_size)
 
         # Pack submesh vertex array headers.
         for submesh, layout_indices in zip(self.submeshes, submesh_layout_indices):
@@ -404,7 +406,7 @@ class FLVER(GameFile):
 
         # TODO: Write unknown Sekiro struct here.
 
-        # Indexed data only after this point, with 16 pad bytes between each data type.
+        # Indexed data only after this point, aligning to 16 bytes between each data type.
 
         writer.pad_align(16)
         for layout in layouts_to_pack:

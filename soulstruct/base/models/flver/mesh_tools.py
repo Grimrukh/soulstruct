@@ -32,7 +32,7 @@ class SplitSubmeshDef(tp.NamedTuple):
         if not uv_layer_names:
             # Default to 'UVMap{i}' for each UV layer.
             uv_layer_names = [f"UVMap{i}" for i in range(uv_count)]
-        if len(self.uv_layer_names) != uv_count:
+        if len(uv_layer_names) != uv_count:
             raise ValueError(
                 f"UV layer names for split submesh {index} do not match layout UV count: "
                 f"{self.uv_layer_names} does not have {uv_count} elements."
@@ -43,6 +43,25 @@ class SplitSubmeshDef(tp.NamedTuple):
                 f"global UV layer keys ({list(global_uv_layer_names)})."
             )
         return uv_layer_names
+
+    @classmethod
+    def get_defs_from_flver(cls, flver: FLVER) -> list[SplitSubmeshDef]:
+        """Get a list of `SplitSubmeshDef` instances from a FLVER's submeshes.
+
+        Makes it easy to test merging and splitting `MergedMesh` from the same FLVER.
+        """
+        split_submesh_defs = []
+        for submesh in flver.submeshes:
+            kwargs = {
+                "is_bind_pose": submesh.is_bind_pose,
+                "default_bone_index": submesh.default_bone_index,
+                "use_backface_culling": submesh.use_backface_culling,  # from FaceSet 0
+                "uses_bounding_box": submesh.uses_bounding_box,
+            }
+            split_submesh_defs.append(
+                cls(material=submesh.material, layout=submesh.vertex_arrays[0].layout, kwargs=kwargs)
+            )
+        return split_submesh_defs
 
 
 @dataclass(slots=True)
@@ -455,10 +474,40 @@ class MergedMesh:
         """Transform loop normal data in place by normalizing them.
 
         As normals are typically compressed in FLVER vertex buffers, the decompressed normals are not normalized by
-        default. They are not normalized automatically by Soulstruct because this is lossy. However, Blender expects
-        normalized vectors for its normal data, so this method is provided to normalize them in-place.
+        Soulstruct automatically, because this is lossy. However, Blender expects normalized vectors for its normal
+        data, so this method is provided to normalize them in-place.
         """
         self.loop_normals /= np.linalg.norm(self.loop_normals, axis=1, keepdims=True)
+
+    def normalize_tangents(self):
+        """Ditto for tangents. See above."""
+        for i in range(len(self.loop_tangents)):
+            self.loop_tangents[i] /= np.linalg.norm(self.loop_tangents[i], axis=1, keepdims=True)
+
+    def round_normals(self, decimals=3):
+        """Round loop normal data in place to a given number of decimal places.
+
+        Normal data exported from a program like Blender is probably much higher-resolution than the compressed normals
+        written to most FLVER files (e.g., only 255 values per coordinate). This will cause loops to be considered
+        "unique" too aggressively when splitting meshes and creating vertex arrays. Rounding the normals to a lower
+        resolution can help to mitigate this issue.
+        """
+        self.loop_normals = np.round(self.loop_normals, decimals=decimals)
+
+    def round_tangents(self, decimals=3):
+        """Ditto for tangents. See above."""
+        for i in range(len(self.loop_tangents)):
+            self.loop_tangents[i] = np.round(self.loop_tangents[i], decimals=decimals)
+
+    def round_uvs(self, decimals=5):
+        """UVs will likely need less rounding (and less often), but it may still cause issues if tiny differences in
+        UVs that will disappear under FLVER compression anyway were inflating the vertex counts of submeshes.
+
+        Note that the default value of `decimals` is higher here, as these are typically compressed to 16-bit, not
+        8-bit.
+        """
+        for key, loop_uv_array in self.loop_uvs.items():
+            self.loop_uvs[key] = np.round(loop_uv_array, decimals=decimals)
 
     def split_mesh(
         self,
@@ -466,6 +515,8 @@ class MergedMesh:
         use_submesh_bone_indices=True,
         max_bones_per_submesh=38,
         unused_bone_indices_are_minus_one=False,
+        normal_tangent_dot_threshold=1.0,
+        max_submesh_vertex_count=0,
     ) -> list[Submesh]:
         """Splits merged mesh into FLVER submeshes.
 
@@ -500,6 +551,15 @@ class MergedMesh:
         confused with actual use of bone 0 and requires weight inspection to confirm). This makes mesh splitting easier
         when submesh bone indices are used (with maximums); all the -1 indices will be replaced with zeroes in the final
         split submesh arrays.
+
+        If `normal_tangent_dot_threshold` is less than 1.0, submesh loops will be considered equivalent if their
+        normal and tangent (and bitangent) vectors' respective dot products are greater than this value. Note that this
+        incurs a small performance penalty. Vertex POSITION must always be identical for two loops to be considered
+        equivalent.
+
+        If `max_submesh_vertex_count` is >0, an error will be raised if any submesh has more than this number of
+        vertices. This is useful for ensuring that submeshes are not too large for the game to handle, as earlier games
+        restrict face vertex indices to being 16-bit.
         """
         if use_submesh_bone_indices and max_bones_per_submesh < 3:
             raise ValueError("`max_bones_per_submesh` must be >= 3 (and realistically should be much higher).")
@@ -576,6 +636,7 @@ class MergedMesh:
             submesh_loops = dtype_view[submesh_loop_indices]
 
             if use_submesh_bone_indices:
+                # We may need to split this submesh due to max bone count.
                 split_submesh_info += self.subsplit_faces(
                     material_index,
                     submesh_loops,
@@ -593,20 +654,24 @@ class MergedMesh:
             kwargs = submesh_kwargs[material_index].copy()  # may be used by multiple subsplit meshes
 
             # Duplicate loop data is finally removed here, giving the true vertex data stored in the FLVER submesh.
-            # However, since `np.unique()` automatically and unstoppably sorts the array, we need to use `return_index`
-            # to UNSORT it, then `return_inverse` (after also unsorting) to get the final face vertex indices.
-            submesh_vertices, first_indices, face_vertex_indices = np.unique(
-                submesh_loops, return_index=True, return_inverse=True, axis=0
-            )
-            # Get the sorting indices for `first_indices`. The elements in this are the indices of elements that would
-            # produce a sorted version of `first_indices`:
-            sorting_indices = np.argsort(first_indices)
-            # Apply those to `submesh_vertices` (sorted output of `np.unique` above) to unsort it:
-            submesh_vertices = submesh_vertices[sorting_indices]
-            # Get the inverse sorting indices, i.e. the indices of elements in `first_indices`:
-            inverse_sorting_indices = np.argsort(sorting_indices)
-            # Apply to `face_indices` to update them to index into the unsorted `submesh_vertices`:
-            face_vertex_indices = inverse_sorting_indices[face_vertex_indices]
+
+            if normal_tangent_dot_threshold >= 1.0:
+                # Use `np.unique` to remove EXACT duplicate vertices only.
+                submesh_vertices, face_vertex_indices = self.loops_to_flver_vertices_exact(submesh_loops)
+            else:
+                # Iterate over all loops and compare their normals and tangents to determine if they are 'unique'.
+                submesh_vertices, face_vertex_indices = self.loops_to_flver_vertices_approx(
+                    submesh_loops, normal_tangent_dot_threshold
+                )
+
+            if 0 < max_submesh_vertex_count < len(submesh_vertices):
+                raise ValueError(
+                    f"Submesh {material_index} has {len(submesh_vertices)} vertices, which is greater than the "
+                    f"maximum of {max_submesh_vertex_count}. You need to simplify this submesh (material name "
+                    f"{submesh_materials[material_index].name}) or try lowering `normal_tangent_dot_max` to merge "
+                    f"vertices with similar normals/tangents more aggressively (current value = "
+                    f"{normal_tangent_dot_threshold})."
+                )
 
             if unused_bone_indices_are_minus_one:
                 # Replace -1 unused bone indices with 0 for FLVER.
@@ -639,6 +704,90 @@ class MergedMesh:
             split_submeshes.append(submesh)
 
         return split_submeshes
+
+    @staticmethod
+    def loops_to_flver_vertices_exact(submesh_loops: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+        """Get unique loops (to become FLVER 'vertices') and face vertex indices (to become FLVER 'faces').
+
+        `submesh_loops` input must be true loops, in the sense that every three rows defines one face.
+
+        Requires exact uniqueness, which can inflate FLVER vertex counts due to tiny differences in normal/tangent
+        vectors or any other data, especially when that data is compressed to 8 or 16 bits in the FLVER anyway.
+
+        Note that `np.unique` automatically sorts the array, so we need to use `return_index` to de-sort it, then use
+        `return_inverse` (after also de-sorting it) to get the final face vertex indices.
+        """
+
+        # Since `np.unique()` automatically and unstoppably sorts the array, we need to use `return_index`
+        # to UNSORT it, then `return_inverse` (after also unsorting) to get the final face vertex indices.
+        submesh_vertices, first_indices, face_vertex_indices = np.unique(
+            submesh_loops, return_index=True, return_inverse=True, axis=0
+        )
+        # Get the sorting indices for `first_indices`. The elements in this are the indices of elements that would
+        # produce a sorted version of `first_indices`:
+        sorting_indices = np.argsort(first_indices)
+        # Apply those to `submesh_vertices` (sorted output of `np.unique` above) to unsort it:
+        submesh_vertices = submesh_vertices[sorting_indices]
+        # Get the inverse sorting indices, i.e. the indices of elements in `first_indices`:
+        inverse_sorting_indices = np.argsort(sorting_indices)
+        # Apply to `face_vertex_indices` to update them to index into the unsorted `submesh_vertices`:
+        face_vertex_indices = inverse_sorting_indices[face_vertex_indices]
+
+        return submesh_vertices, face_vertex_indices
+
+    @staticmethod
+    def loops_to_flver_vertices_approx(
+        submesh_loops: np.ndarray, max_dot_product=0.9999
+    ) -> tuple[np.ndarray, np.ndarray]:
+        """Get unique loops (to become FLVER 'vertices') and face vertex indices (to become FLVER 'faces'), but consider
+        any normal or tangent vectors (NOT vertex position) to be identical if their dot product is greater than
+        `max_dot_product`.
+        """
+        submesh_vertices = []
+        submesh_vertices_dict = {}  # type: dict[int, int]  # maps vertex hashes to indices
+        submesh_vertices_by_position = {}  # type: dict[tuple, list[tuple[tp.Any, int]]]
+        face_vertex_indices = []
+
+        vector_fields = [f for f in submesh_loops.dtype.names if f.startswith(("normal", "tangent_", "bitangent"))]
+        non_vector_fields = [f for f in submesh_loops.dtype.names if f not in vector_fields and f != "position"]
+
+        for loop in submesh_loops:
+
+            vertex_hash = loop.tobytes()
+            if vertex_hash in submesh_vertices_dict:
+                # Exact vertex already exists. Reuse it.
+                face_vertex_indices.append(submesh_vertices_dict[vertex_hash])
+                continue
+
+            # Check if a similar vertex (in normal and tangents) already exists.
+            pos = tuple(loop["position"])
+            found_similar = False
+            if pos in submesh_vertices_by_position:
+                for existing_vertex, existing_vertex_i in submesh_vertices_by_position[pos]:
+                    if not np.all(loop[non_vector_fields] == existing_vertex[non_vector_fields]):
+                        # Not an exact match.
+                        break
+                    if not all(np.dot(loop[f], existing_vertex[f]) > max_dot_product for f in vector_fields):
+                        # Not an approximate match.
+                        break
+                    # All vectors are similar enough and other fields match. Re-use this vertex.
+                    submesh_vertices_dict[vertex_hash] = existing_vertex_i
+                    face_vertex_indices.append(existing_vertex_i)
+                    found_similar = True
+                    break
+                if found_similar:
+                    continue
+
+            # New vertex found. Not similar to any previous vertices.
+            vertex_index = len(submesh_vertices)
+            submesh_vertices.append(loop)
+            submesh_vertices_dict[vertex_hash] = vertex_index
+            submesh_vertices_by_position.setdefault(pos, []).append((loop, vertex_index))
+            face_vertex_indices.append(vertex_index)
+
+        submesh_vertices_array = np.array(submesh_vertices, dtype=submesh_loops.dtype)
+        face_vertex_indices_array = np.array(face_vertex_indices, dtype=np.uint32)
+        return submesh_vertices_array, face_vertex_indices_array
 
     @staticmethod
     def subsplit_faces(
