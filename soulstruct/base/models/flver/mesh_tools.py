@@ -573,6 +573,12 @@ class MergedMesh:
             for i, submesh_def in enumerate(split_submesh_defs)
         ]
 
+        # Check `face_set_count` is within range for all submesh kwargs.
+        for i, kwargs in enumerate(submesh_kwargs):
+            if "face_set_count" in kwargs:
+                if not 1 <= kwargs["face_set_count"] <= 3:
+                    raise ValueError(f"Submesh {i} `face_set_count` must be between 1 and 3 (inclusive) for splitting.")
+
         # We construct two material dtypes: one that uses global UV layer names, and the true one that uses tightly
         # packed 'uv_{i}' UV names. These names are the only difference, so we can just reassign the dtype at the end.
         global_uv_material_dtypes = []
@@ -697,9 +703,18 @@ class MergedMesh:
             )
             submesh.refresh_bounding_box()
 
-            if face_set_count > 1:
-                # Duplicate default face set (0) to all later ones (same instance!).
-                submesh.face_sets += [submesh.face_sets[0] for _ in range(face_set_count - 1)]
+            if face_set_count > 1:  # already validated as 2 or 3 only
+                # Duplicate default face set (0) to LOD levels 1 and/or 2, setting `FaceSet.flags` appropriately.
+                base_face_set = submesh.face_sets[0]
+                for i in range(1, face_set_count):
+                    face_set = FaceSet(
+                        flags=i,  # 1 or 2
+                        triangle_strip=base_face_set.triangle_strip,  # False
+                        use_backface_culling=base_face_set.use_backface_culling,
+                        unk_x06=base_face_set.unk_x06,
+                        vertex_indices=base_face_set.vertex_indices,  # don't bother copying array
+                    )
+                    submesh.face_sets.append(face_set)
 
             split_submeshes.append(submesh)
 

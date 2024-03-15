@@ -317,7 +317,7 @@ class FLVER(GameFile):
         gx_list_material_users = []  # type: list[list[Material]]  # maps `gx_lists_to_pack` element to `Material` list
         for submesh in self.submeshes:
             material = submesh.material
-            material_hash = hash(material)
+            material_hash = hash(material)  # includes name!
             if material_hash in hashed_material_indices:
                 submesh_material_index = hashed_material_indices[material_hash]
             else:

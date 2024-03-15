@@ -3,6 +3,7 @@ from __future__ import annotations
 __all__ = ["GXItem", "read_gx_item_list", "write_gx_item_list", "Material", "Texture"]
 
 import logging
+import re
 import typing as tp
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -177,6 +178,17 @@ class MaterialStruct(BinaryStruct):
 
 @dataclass(slots=True)
 class Material:
+    """Information about a FLVER material used by any number of submeshes.
+
+    NOTE: The `name` of the material is usually junk, but if it is formatted as a number between two hashes, e.g.
+    '#01#', then any submesh using the materia will ONLY be rendered if the corresponding 'Model Display Mask' bit flag
+    in `NPC_PARAM` is enabled. We carefully preserve these names and have properties that wrap name getting/setting
+    based on a desired mask value. Multiple `Material` instances may use the same display mask value, but typically only
+    one of them will.
+    """
+
+    # Tested in DS1: exactly one or two digits required between hashes, and any suffix allowed.
+    DISPLAY_MASK_RE = re.compile(r"#(\d|\d\d)#(.*)")
 
     name: str = ""
     mat_def_path: str = ""  # could be a '.mtd' (MTD) file name or '.matxml' (MATBIN) file name
@@ -324,6 +336,33 @@ class Material:
             name += new_suffix
         self.mat_def_path = str(Path(self.mat_def_path).with_name(name))
 
+    @property
+    def model_display_mask(self) -> int | None:
+        """Parse `name` of material to check if it is a display mask material, and return the mask value if so.
+
+        Returns `None` if the material is not a display mask material, which means it will always be rendered.
+        """
+        if match := self.DISPLAY_MASK_RE.match(self.name):
+            return int(match.group(1))
+        return None
+
+    @model_display_mask.setter
+    def model_display_mask(self, value: int):
+        """Sets `name` to the appropriate formatted, hash-enclosed string: `#{value:02d}#`.
+
+        Since suffixes in mask names are supported, any existing suffix will be copied. If the name is not currently a
+        mask name, the existing name will be moved to a suffix.
+        """
+        if value is None:
+            raise ValueError("Model display mask value cannot be `None`. Just change the name to a non-mask name.")
+        if not 0 <= value < 32:
+            # TODO: Earlier games only allow 16 masks, not 32.
+            raise ValueError(f"Model display mask value must be between 0 and 31, not {value}.")
+        if match := self.DISPLAY_MASK_RE.match(self.name):
+            self.name = f"#{value:02d}#{match.group(2)}"  # keep existing mask name suffix
+        else:
+            self.name = f"#{value:02d}# {self.name}"  # no existing mask name suffix
+
     def replace_in_all_texture_names(self, old_string: str, new_string: str):
         """Replace all occurrences of `old_string` in all texture names (at end of paths) with `new_string`."""
         for tex in self.textures:
@@ -356,7 +395,11 @@ class Material:
         return "\n".join(lines)
 
     def __hash__(self) -> int:
-        """Straightforward hashing of fields and textures."""
+        """Straightforward hashing of fields and textures.
+
+        Note that `name` is included in the hash, despite only being functional in some (known!) cases, so users can
+        use material names as a way to keep them separate.
+        """
         texture_hashes = tuple(hash(tex) for tex in self.textures)
         gx_item_hashes = tuple(hash(item) for item in self.gx_items)
         return hash((self.name, self.mat_def_path, self.flags, gx_item_hashes, self.unk_x18, texture_hashes))
