@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 __all__ = [
+    "PARAM_GAME_TYPE",
     "DynamicParamField",
     "pad_field",
     "bit_pad_field",
@@ -18,7 +19,6 @@ import ast
 import logging
 import typing as tp
 from dataclasses import dataclass, field
-from enum import IntEnum
 from types import MappingProxyType
 
 from soulstruct.base.game_types import GAME_INT_TYPE
@@ -28,9 +28,8 @@ from soulstruct.utilities.binary import *
 _LOGGER = logging.getLogger("soulstruct")
 
 
-class ParamEnum(IntEnum):
-    """Base class for all internal enums used by Param fields, e.g. `ITEMLOT_ITEMCATEGORY`."""
-    pass
+# Param `game_type` (or display type) could be a `GameObjectInt` subclass or just a Python primitive type.
+PARAM_GAME_TYPE = tp.Union[GAME_INT_TYPE, tp.Type[bool], tp.Type[int], tp.Type[float], tp.Type[str]]
 
 
 class DynamicParamField(abc.ABC):
@@ -43,8 +42,16 @@ class DynamicParamField(abc.ABC):
     POSSIBLE_TYPES = set()
 
     @abc.abstractmethod
-    def __call__(self, data: ParamRow) -> tuple[GAME_INT_TYPE, str, str]:
+    def __call__(self, data: ParamRow) -> tuple[PARAM_GAME_TYPE, str, str]:
+        """Returns `(game_type, suffix, tooltip)` tuple based on the given `ParamRow` instance."""
         ...
+
+    def as_display_type(self, data: ParamRow) -> tuple[PARAM_GAME_TYPE, str, str]:
+        """Converts dynamically returned `game_type` to a display type, which right now, is just BOOL redirect."""
+        game_type, suffix, tooltip = self(data)
+        if "BOOL" in game_type.__name__:
+            return bool, suffix, tooltip
+        return game_type, suffix, tooltip
 
 
 def pad_field(n):
@@ -125,13 +132,18 @@ class ParamRow(BinaryStruct):
 
     @classmethod
     def get_all_field_metadata(cls) -> MappingProxyType[str, ParamFieldMetadata]:
-        """Returns a mapping of all binary field names to their `ParamFieldMetadata` instances."""
+        """Returns a mapping of all binary field names to their `ParamFieldMetadata` instances, constructed once on
+        first call.
+
+        Uses annotated type hints to update `game_type` of metadata if not set explicitly in `ParamRow` subclass.
+        """
         if cls._FIELD_PARAM_METADATA is None:
             field_types = tp.get_type_hints(cls)
             field_metadata = {}
             for f in cls.get_binary_fields():
                 metadata = f.metadata.get("param")  # type: ParamFieldMetadata  # must always exist
                 if not metadata.game_type:
+                    # Set `game_type` from type hint if not set explicitly in `ParamRow` subclass.
                     metadata.game_type = field_types[f.name]
                 field_metadata[f.name] = metadata
             cls._FIELD_PARAM_METADATA = MappingProxyType(field_metadata)
@@ -234,18 +246,28 @@ class ParamFieldMetadata:
     """Not a `NamedTuple` as it may be modified with defaults."""
     internal_name: str
     param_enum: type[base_type] = None
-    game_type: GAME_INT_TYPE = None
+    game_type: PARAM_GAME_TYPE = None  # NOTE: may be set by `ParamRow.get_all_field_metadata()` from type hint
     hide: bool = False
-    dynamic_callback: DynamicParamField | tp.Callable[[ParamRow], tuple[GAME_INT_TYPE, str, str]] | None = None
+    dynamic_callback: DynamicParamField | None = None
     tooltip: str = "TOOLTIP-TODO"
     is_pad: bool = False
+
+    def get_display_type(self) -> type:
+        """Prefers `param_enum` to `game_type`, but redirects basic BOOL enums to Python `bool`."""
+        if self.param_enum:
+            if "BOOL" in self.param_enum.__name__:
+                return bool
+            return self.param_enum
+        if self.game_type:
+            return self.game_type
+        raise ValueError(f"Param field {self.internal_name} has no `param_enum` or `game_type`.")
 
 
 def ParamField(
     field_type: type[PRIMITIVE_FIELD_TYPING],
     internal_name: str,
     param_enum: type[base_type] = None,
-    game_type: GAME_INT_TYPE = None,
+    game_type: PARAM_GAME_TYPE = None,
     length: int | None = None,
     encoding: str = None,
     bit_count: int = -1,
@@ -254,11 +276,12 @@ def ParamField(
     dynamic_callback: DynamicParamField | None = None,
     tooltip: str = "TOOLTIP-TODO",
 ):
-    """For use with double asterisk in `BinaryStruct` `field()` definition.
+    """`dataclasses.field()` wrapper for defining `ParamRow` binary fields.
 
-    `dynamic_callback`, if given, should be a function that takes the `ParamRow` instance (usually to check the
-    value of one specific field) and returns a tuple of `(py_type, name_suffix, tooltip)`. The `name_suffix` will be
-    appended to this field nickname in the GUI to indicate the category of the dynamic reference type.
+    `dynamic_callback`, if given, should be a `DynamicParamField` callable that takes the `ParamRow` instance (usually
+    to check the value of one specific field) and returns a tuple of `(py_type, name_suffix, tooltip)`. The
+    `name_suffix` will be appended to this field nickname in the GUI to indicate the category of the dynamic reference
+    type.
     """
     if field_type is str:
         metadata = BinaryString(fmt_or_byte_size=length, encoding=encoding)

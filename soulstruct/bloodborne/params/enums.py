@@ -609,6 +609,8 @@ class MENU_VALUE_TABLE_CMP_TYPE(s8):
 
 
 class NPC_BOOL(u8):
+    """Boolean used in NPC_PARAM_ST."""
+
     Off = 0
     On = 1
 

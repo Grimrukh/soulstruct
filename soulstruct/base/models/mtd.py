@@ -531,6 +531,7 @@ def write_marked_string(writer: BinaryWriter, marker: int, string: str):
 
 
 class MTDShaderCategory(StrEnum):
+    """TODO: Should probably be game-specific."""
 
     PHN = "FRPG_Phn"
     SFX = "FRPG_Sfx"

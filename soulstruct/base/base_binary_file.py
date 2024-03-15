@@ -86,7 +86,11 @@ class BaseBinaryFile:
         except Exception:
             _LOGGER.error(f"Error occurred while reading `{cls.__name__}` with path '{path}'. See traceback.")
             raise
-        binary_file.path = path
+        if path.suffix == ".bak":
+            # Automatically removes '.bak' from `path`, for safety/convnience. User can change `path` manually.
+            binary_file.path = path.with_suffix("")
+        else:
+            binary_file.path = path
         return binary_file
 
     @classmethod
@@ -192,20 +196,24 @@ class BaseBinaryFile:
     def copy(self):
         return copy.deepcopy(self)
 
-    def get_file_path(self, file_path: None | str | Path) -> Path:
-        """Get default path of binary file, based on `EXT` and `dcx_type`."""
+    def get_file_path(self, file_path: None | str | Path, add_auto_ext=False) -> Path:
+        """Get default path of binary file, based on `EXT` (only if requested) and `dcx_type`."""
         if file_path is None:
             if self.path is None:
                 raise ValueError("You must specify `file_path` because file default `path` has not been set.")
             file_path = self.path
         file_path = Path(file_path)
 
+        # 0. If file path ends in '.bak', never change anything.
+        if file_path.suffix == ".bak":
+            return file_path
+
         # 1. Remove any existing ".dcx" extension.
         while file_path.suffix == ".dcx":
-            file_path = file_path.with_name(file_path.stem)  # remove '.dcx' (may add back below)
+            file_path = file_path.with_suffix("")  # remove '.dcx' (may add back below)
 
         # 2. If `EXT` is defined, add that extension to the path.
-        if self.EXT and file_path.suffix != self.EXT:
+        if add_auto_ext and self.EXT and file_path.suffix != self.EXT:
             file_path = file_path.with_suffix(file_path.suffix + self.EXT)
 
         # 3. If `dcx_type` is not `Null`, add ".dcx" extension to the path.
@@ -252,24 +260,29 @@ class BaseBinaryFile:
 
     @classmethod
     def get_game(cls) -> Game:
+        """Use `__module__` of this class to detect the `Game` it belongs to."""
         if match := re.match(_GAME_MODULE_RE, cls.__module__):
             return get_game(match.group(1))
         raise ValueError(f"Could not detect game name from module of class `{cls.__name__}`: {cls.__module__}")
 
     @property
     def cls_name(self) -> str:
+        """Convenient property to get the name of the class without needing to use `self.__class__.__name__`."""
         return self.__class__.__name__
 
     @property
     def path_name(self) -> str | None:
+        """Get name of `path`."""
         return self.path.name if self.path else None
 
     @property
     def path_stem(self) -> str | None:
+        """NOTE: Like `path.stem`, this only removes the LAST suffix, e.g. 'c1000.chrbnd.dcx' -> 'c1000.chrbnd'."""
         return self.path.stem if self.path else None
 
     @property
     def path_minimal_stem(self) -> str | None:
+        """Removes ALL suffixes from `path` name, e.g. 'c1000.chrbnd.dcx' -> 'c1000'."""
         return self.path.stem.split(".")[0] if self.path else None
 
     def get_dcx_type(self) -> DCXType:

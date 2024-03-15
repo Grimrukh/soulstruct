@@ -4,7 +4,6 @@ __all__ = ["MapFieldMetadata", "MapFieldInfo", "FIELD_INFO"]
 
 from dataclasses import dataclass
 from enum import IntEnum
-import typing as tp
 
 from soulstruct.base.game_types import GAME_TYPE
 

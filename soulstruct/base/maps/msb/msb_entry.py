@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["MSBEntry"]
+__all__ = ["MSBEntry", "MSBFieldDisplayInfo"]
 
 import abc
 import copy
@@ -53,6 +53,12 @@ _BASIC_ENTRY_TYPES = {
 }
 
 
+class MSBFieldDisplayInfo(tp.NamedTuple):
+    nickname: str
+    tooltip: str
+    display_type: type[tp.Any]
+
+
 @dataclass(slots=True, eq=False, repr=False)
 class MSBEntry(abc.ABC):
     """Base class for entries of any type and subtype that appear in an `MSB` (under one of four entry superlists)."""
@@ -73,8 +79,8 @@ class MSBEntry(abc.ABC):
     _FIELD_DEFAULTS: tp.ClassVar[MappingProxyType[str, tp.Any]] = None
     # Cached when first accessed. Maps field names to types for enforcement, or type names for `MSBEntry` subclasses.
     _FIELD_TYPES: tp.ClassVar[MappingProxyType[str, str | type[tp.Any]]] = None
-    # Cached when first accessed. Maps field names to `(nickname, tooltip, display_type)` tuples.
-    _FIELD_DISPLAY_INFO: tp.ClassVar[MappingProxyType[str, tuple[str, str, type[tp.Any]]]] = None
+    # Cached when first accessed. Maps field names to `MSBFieldDisplayInfo` triplets of nickname, tooltip, display type.
+    _FIELD_DISPLAY_INFO: tp.ClassVar[MappingProxyType[str, MSBFieldDisplayInfo]] = None
     # Cached when first accessed. Maps field names to functions that convert JSON string values to that field's type.
     _CUSTOM_JSON_DECODERS: tp.ClassVar[MappingProxyType[str, tp.Callable[[str], tp.Any]]] = None
 
@@ -618,8 +624,10 @@ class MSBEntry(abc.ABC):
         return False
 
     @classmethod
-    def get_field_display_info(cls, field_name: str, game_types_module: ModuleType) -> tuple[str, str, type[tp.Any]]:
-        # TODO: Make a NamedTuple for return type here. Add info about nested structs (e.g. GPARAM).
+    def get_field_display_info(cls, field_name: str, game_types_module: ModuleType) -> MSBFieldDisplayInfo:
+        """Retrieve display info for field `field_name` in this `MSBEntry` subclass."""
+
+        # TODO: Add info about nested structs (e.g. GPARAM).
         if cls._FIELD_DISPLAY_INFO is not None:
             try:
                 return cls._FIELD_DISPLAY_INFO[field_name]
@@ -630,11 +638,11 @@ class MSBEntry(abc.ABC):
         # TODO: Handle MSB GPARAM/SceneGPARAM (and nested structs more generally).
         #  - Can display fields as `GPARAM[Light Set ID]`, etc.
         field_types = cls.get_field_types()
-        field_metadata = {}  # type: dict[str, tuple[str, str, type[tp.Any]]]
+        field_metadata = {}  # type: dict[str, MSBFieldDisplayInfo]
         for f in fields(cls):
             if f.name in {"name", "description"}:
                 # Dummy metadata (not treated as regular fields for display).
-                field_metadata[f.name] = (f.name.capitalize(), f.name.capitalize(), str)
+                field_metadata[f.name] = MSBFieldDisplayInfo(f.name.capitalize(), f.name.capitalize(), str)
                 continue
 
             if f.name.startswith("_"):
@@ -642,10 +650,12 @@ class MSBEntry(abc.ABC):
 
             metadata = f.metadata.get("msb", None)  # type: MapFieldMetadata
             if metadata is not None:
+                # Some or all of these may be empty, and still need to be generated automatically below
                 nickname = metadata.nickname
                 tooltip = metadata.tooltip
                 display_type = metadata.game_type
             else:
+                # MSB field metadata is optional, unlike `ParamRow` metadata.
                 nickname = ""
                 tooltip = ""
                 display_type = None
@@ -715,7 +725,7 @@ class MSBEntry(abc.ABC):
                                 f"Cannot get display type of MSB entry field `{f.name}` type: {field_type_str}"
                             )
 
-            field_metadata[f.name] = (nickname, tooltip, display_type)
+            field_metadata[f.name] = MSBFieldDisplayInfo(nickname, tooltip, display_type)
 
         cls._FIELD_DISPLAY_INFO = MappingProxyType(field_metadata)
         try:
@@ -725,8 +735,8 @@ class MSBEntry(abc.ABC):
 
     @classmethod
     def all_annotations(cls) -> ChainMap:
-        """Returns a dictionary-like ChainMap that includes annotations for all
-           attributes defined in cls or inherited from superclasses."""
+        """Returns a dictionary-like ChainMap that includes annotations for all attributes defined in `cls` or
+        inherited from superclasses."""
         return ChainMap(*(c.__annotations__ for c in cls.__mro__ if '__annotations__' in c.__dict__))
 
     @classmethod
