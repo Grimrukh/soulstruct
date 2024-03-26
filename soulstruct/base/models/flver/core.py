@@ -740,6 +740,12 @@ class FLVER(GameFile):
 
         TODO: Should probably call this automatically on FLVER write.
         """
+        if not self.submeshes:
+            # Empty FLVER.
+            _LOGGER.warning(f"FLVER '{self.path}' has no submeshes. Setting maximal bounding box.")
+            self.bounding_box_min = Vector3((SINGLE_MAX, SINGLE_MAX, SINGLE_MAX))
+            self.bounding_box_max = Vector3((SINGLE_MIN, SINGLE_MIN, SINGLE_MIN))
+            return
 
         submesh_mins = np.empty((len(self.submeshes), 3))
         submesh_maxs = np.empty((len(self.submeshes), 3))
