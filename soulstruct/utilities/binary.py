@@ -793,11 +793,11 @@ class BinaryStringMetadata(BinaryMetadata):
             else:
                 func += "    value = value.decode(metadata.encoding)\n"
             if self.rstrip_null:
-                func += "    value = value.rstrip(\"\\0\")\n"
+                func += "    value = value.rstrip(\"/0\")\n"
         else:
             # Presumably safe to rstrip (no UTF-16 bytes to damage).
             if self.rstrip_null:
-                func += "    value = value.rstrip(b\"\\0\")\n"
+                func += "    value = value.rstrip(b\"/0\")\n"
         if self.unpack_func:  # called on decoded `str` if applicable
             func += "    value = metadata.unpack_func(value)\n"
         if self.asserted:
@@ -813,9 +813,9 @@ class BinaryStringMetadata(BinaryMetadata):
         func = "def pack(struct_input: list[tp.Any], value: FIELD_T, metadata=self):\n"
         if self.rstrip_null:  # asserted values are stripped, so value should be too
             if self.encoding is None:  # bytes
-                func += "    value = value.rstrip(b\"\\0\")\n"
+                func += "    value = value.rstrip(b\"/0\")\n"
             else:  # str
-                func += "    value = value.rstrip(\"\\0\")\n"
+                func += "    value = value.rstrip(\"/0\")\n"
         if self.asserted:
             error_msg = f"Field '{self.field_name}' value {{value}} is not an asserted value: {self.asserted}"
             func += "    if value not in metadata.asserted:\n"

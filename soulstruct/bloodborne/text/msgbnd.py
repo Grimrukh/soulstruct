@@ -24,4 +24,4 @@ class MSGBND(_BaseMSGBND):
 
     @classmethod
     def get_default_new_entry_path(cls, entry_name: str):
-        return f"N:\\SPRJ\\data\\INTERROOT_ps4\\msg\\engUS\\64bit\\{entry_name}"
+        return f"N:/SPRJ/data/INTERROOT_ps4/msg/engUS/64bit/{entry_name}"

@@ -245,7 +245,10 @@ class GameParamBND(Binder, abc.ABC):
         manifest["entries"] = []
 
         for param_stem, param in self.params.items():
-            json_stem = self.PARAM_NICKNAMES[param_stem]
+            try:
+                json_stem = self.PARAM_NICKNAMES[param_stem.split("\\")[-1]]
+            except:
+                raise KeyError
             param.write_json(directory / f"{json_stem}.json", ignore_pads=ignore_pads, ignore_defaults=ignore_defaults)
             manifest["entries"].append(json_stem)
 

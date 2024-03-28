@@ -28,7 +28,7 @@ class DivBinder(Binder):
     NOTE: These Binders can sometimes have clashing entry IDs across the different sub-Binders (that end up being unique
     when those sub-Binders are written). Example: the HKX compendium files in Elden Ring's divided ANIBNDs (7000000).
     """
-    PATH_ROOT: tp.ClassVar[str] = "N:\\GR\\data"  # BLF regex is relative to this path (but includes leading backslash)
+    PATH_ROOT: tp.ClassVar[str] = "N:/GR/data"  # BLF regex is relative to this path (but includes leading backslash)
 
     # Override default. `True` not supported if `write_blf_division` is True.
     is_split_bxf: bool = False

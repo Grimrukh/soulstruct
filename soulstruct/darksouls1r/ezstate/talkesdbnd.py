@@ -28,4 +28,4 @@ class TalkESDBND(_BaseTalkESDBND):
 
     @classmethod
     def get_default_new_entry_path(cls, entry_name: str):
-        return f"N:\\FRPG\\data\\INTERROOT_x64\\script\\talk\\{entry_name}"
+        return f"N:/FRPG/data/INTERROOT_x64/script/talk/{entry_name}"

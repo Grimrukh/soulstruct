@@ -142,7 +142,7 @@ class MSBPart(BaseMSBPart, abc.ABC):
 
     NAME_ENCODING: tp.ClassVar[str] = "utf-16-le"
     GROUP_BIT_COUNT: tp.ClassVar[int] = 256
-    SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\GR\\data\\Model\\map\\{map_stem}\\sib\\layout.SIB"
+    SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:/GR/data/Model/map/{map_stem}/sib/layout.SIB"
 
     @dataclass(slots=True)
     class SUPERTYPE_HEADER_STRUCT(BinaryStruct):
@@ -908,7 +908,7 @@ class MSBCollision(MSBPart):
     """
 
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Collision
-    SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\GR\\data\\Model\\map\\{map_stem}\\sib\\h_layout.SIB"
+    SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:/GR/data/Model/map/{map_stem}/sib/h_layout.SIB"
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model"]
 
     HAS_UNK1_STRUCT: tp.ClassVar[bool] = True
