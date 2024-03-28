@@ -31,4 +31,4 @@ class MSGBND(_BaseMSGBND):
 
     @classmethod
     def get_default_new_entry_path(cls, entry_name: str):
-        return f"N:\\FRPG\\data\\Msg\\Data_ENGLISH\\{entry_name}"
+        return f"N:/FRPG/data/Msg/Data_ENGLISH/{entry_name}"

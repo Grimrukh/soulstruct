@@ -55,7 +55,7 @@ class MSBModelSubtype(BaseMSBModelSubtype):
 
     @classmethod
     def get_sib_path_stem(cls):
-        return "N:\\GR\\data\\Model\\"
+        return "N:/GR/data/Model/"
 
     @classmethod
     def get_plural_supertype_name(cls):
