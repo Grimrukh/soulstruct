@@ -248,10 +248,10 @@ def LOAD_DLL(dll_path: str):
 
 # Try to load DLL automatically from Soulstruct, Sekiro, or Elden Ring path.
 _auto_oodle_locations = (
-    PACKAGE_PATH(__DLL_NAME),
-    PACKAGE_PATH("..", __DLL_NAME),
-    Path(SEKIRO_PATH, __DLL_NAME),
-    Path(ELDEN_RING_PATH, __DLL_NAME),
+    # PACKAGE_PATH(__DLL_NAME),
+    # PACKAGE_PATH("..", __DLL_NAME),
+    # Path(SEKIRO_PATH, __DLL_NAME),
+    # Path(ELDEN_RING_PATH, __DLL_NAME),
 )
 for _location in _auto_oodle_locations:
     if os.name != 'nt':
