@@ -2,22 +2,24 @@ from __future__ import annotations
 
 __all__ = ["GameParamBND"]
 
+import logging
 import typing as tp
 from dataclasses import dataclass, field
 from pathlib import Path
 
 from soulstruct.containers import BinderVersion, BinderVersion4Info
 from soulstruct.dcx import DCXType
-from soulstruct.base.game_types import *
 from soulstruct.base.params.gameparambnd import GameParamBND as _BaseGameParamBND
 from soulstruct.utilities.files import PACKAGE_PATH
 from soulstruct.utilities.ParamCrypt import ParamCrypt
 
 from . import paramdef
 
+_LOGGER = logging.getLogger("soulstruct")
+
 try:
     Self = tp.Self
-except Animation:
+except AttributeError:
     Self = "GameParamBND"
 
 # if tp.TYPE_CHECKING:
@@ -39,6 +41,7 @@ class GameParamBND(_BaseGameParamBND):
         """Load `GameParamBND` from encrypted DCX-compressed Binder, generally `regulation.bin`."""
         encrypted_path = Path(encrypted_path)
         temp_decrypted = PACKAGE_PATH("__ParamCrypt__.parambnd.dcx")
+        _LOGGER.info(f"Decrypting Elden Ring `GameParamBND` from regulation: {encrypted_path}")
         ParamCrypt(encrypted_path, "decrypt", "er", temp_decrypted)
         data = Path(temp_decrypted).read_bytes()  # DCX-compressed `Binder` (BND4)
         temp_decrypted.unlink()

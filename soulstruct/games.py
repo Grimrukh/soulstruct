@@ -255,6 +255,9 @@ ELDEN_RING = Game(
     submodule_name="eldenring",
     aliases=("eldenring", "er"),
     default_dcx_type=DCXType.DCX_KRAK,
+    special_dcx_types={
+        ".bin": DCXType.Null,
+    },
     default_game_path=ELDEN_RING_PATH,
     executable_name="ELDENRING.exe",
     interroot_prefix="N:\\GR\\data\\INTERROOT_win64",

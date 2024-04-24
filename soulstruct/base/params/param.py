@@ -241,7 +241,7 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
     paramdef_data_version: int = 0
     paramdef_format_version: int = 0
 
-    rows: dict[int, ParamRow] = field(default_factory=dict)
+    rows: dict[int, PARAM_ROW_DATA_T] = field(default_factory=dict)
 
     def __getitem__(self, row_id) -> PARAM_ROW_DATA_T:
         if row_id in self.rows:
@@ -322,7 +322,9 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
 
         # Load row pointer data.
         row_pointer_struct_type = cls.RowPointerStruct64 if flags1.LongDataOffset else cls.RowPointerStruct32
-        row_pointer_structs = [row_pointer_struct_type.from_bytes(reader) for _ in range(row_count)]
+        row_pointer_structs = [
+            row_pointer_struct_type.from_bytes(reader) for _ in range(row_count)
+        ]  # type: list[cls.RowPointerStruct64] | list[cls.RowPointerStruct32]
 
         # Reliable row data offset (unlike header one).
         row_data_offset = reader.position
@@ -625,7 +627,9 @@ class ParamDict(Param):
 
         # Load row pointer data.
         row_pointer_struct_type = cls.RowPointerStruct64 if flags1.LongDataOffset else cls.RowPointerStruct32
-        row_pointer_structs = [row_pointer_struct_type.from_bytes(reader) for _ in range(row_count)]
+        row_pointer_structs = [
+            row_pointer_struct_type.from_bytes(reader) for _ in range(row_count)
+        ]  # type: list[cls.RowPointerStruct64] | list[cls.RowPointerStruct32]
 
         # Reliable row data offset (unlike header one).
         row_data_offset = reader.position  # Reliable row data offset.

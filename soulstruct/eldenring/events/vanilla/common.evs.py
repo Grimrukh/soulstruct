@@ -23,7 +23,7 @@ def Constructor():
     Event_1040()
     Event_1030()
     Event_1050()
-    Event_930(
+    ActivateGrandLift(
         0,
         cutscene_id=60380000,
         cutscene_id_1=60380001,
@@ -36,7 +36,7 @@ def Constructor():
         move_to_region_1=0,
         unk_20_24=62001,
     )
-    Event_930(
+    ActivateGrandLift(
         1,
         cutscene_id=60380010,
         cutscene_id_1=60380011,
@@ -49,7 +49,7 @@ def Constructor():
         move_to_region_1=0,
         unk_20_24=63000,
     )
-    Event_930(
+    ActivateGrandLift(
         3,
         cutscene_id=60490010,
         cutscene_id_1=60490011,
@@ -62,7 +62,7 @@ def Constructor():
         move_to_region_1=0,
         unk_20_24=65000,
     )
-    Event_930(
+    ActivateGrandLift(
         5,
         cutscene_id=60490030,
         cutscene_id_1=60490031,
@@ -1748,7 +1748,7 @@ def Event_922():
 
 
 @ContinueOnRest(930)
-def Event_930(
+def ActivateGrandLift(
     _,
     cutscene_id: int,
     cutscene_id_1: int,

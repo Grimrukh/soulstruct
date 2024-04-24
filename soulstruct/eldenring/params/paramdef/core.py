@@ -1,7 +1,7 @@
 """Elden Ring Paramdefs can only be loaded from Paramdex XML files."""
 from __future__ import annotations
 
-__all__ = ["ParamDefBND", "GET_BUNDLED_PARAMDEFBND"]
+__all__ = ["ParamDef", "ParamDefBND", "GET_BUNDLED_PARAMDEFBND"]
 
 import logging
 import typing as tp
