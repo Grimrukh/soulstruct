@@ -187,8 +187,8 @@ class Material:
     one of them will.
     """
 
-    # Tested in DS1: exactly one or two digits required between hashes, and any suffix allowed.
-    DISPLAY_MASK_RE = re.compile(r"#(\d|\d\d)#(.*)")
+    # Exactly one or two digits required between hashes (two usually used), with optional trimmable spaces. Any suffix.
+    DISPLAY_MASK_RE: tp.ClassVar[re.Pattern] = re.compile(r"^# *(\d|\d\d) *# *(.*)$")
 
     name: str = ""
     mat_def_path: str = ""  # could be a '.mtd' (MTD) file name or '.matxml' (MATBIN) file name
@@ -337,7 +337,7 @@ class Material:
         self.mat_def_path = str(Path(self.mat_def_path).with_name(name))
 
     @property
-    def model_display_mask(self) -> int | None:
+    def display_mask(self) -> int | None:
         """Parse `name` of material to check if it is a display mask material, and return the mask value if so.
 
         Returns `None` if the material is not a display mask material, which means it will always be rendered.
@@ -346,8 +346,8 @@ class Material:
             return int(match.group(1))
         return None
 
-    @model_display_mask.setter
-    def model_display_mask(self, value: int):
+    @display_mask.setter
+    def display_mask(self, value: int):
         """Sets `name` to the appropriate formatted, hash-enclosed string: `#{value:02d}#`.
 
         Since suffixes in mask names are supported, any existing suffix will be copied. If the name is not currently a
@@ -359,9 +359,19 @@ class Material:
             # TODO: Earlier games only allow 16 masks, not 32.
             raise ValueError(f"Model display mask value must be between 0 and 31, not {value}.")
         if match := self.DISPLAY_MASK_RE.match(self.name):
-            self.name = f"#{value:02d}#{match.group(2)}"  # keep existing mask name suffix
+            self.name = f"#{value:02d}# {match.group(2)}"  # keep existing mask name suffix
         else:
             self.name = f"#{value:02d}# {self.name}"  # no existing mask name suffix
+
+    @property
+    def name_without_display_mask(self) -> str:
+        """Return material name after display mask prefix, if present.
+
+        May be empty if there's nothing after the mask.
+        """
+        if match := self.DISPLAY_MASK_RE.match(self.name):
+            return match.group(2)
+        return self.name
 
     def replace_in_all_texture_names(self, old_string: str, new_string: str):
         """Replace all occurrences of `old_string` in all texture names (at end of paths) with `new_string`."""
