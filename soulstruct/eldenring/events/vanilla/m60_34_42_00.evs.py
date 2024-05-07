@@ -25,7 +25,7 @@ from .enums.m60_34_42_00_enums import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1034420000, asset=Assets.AEG099_060_9000)
-    CommonFunc_90005870(0, character=Characters.GlintstoneDragon0, name=904502602, npc_threat_level=25)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.GlintstoneDragon0, name=904502602, npc_threat_level=25)
     CommonFunc_90005860(
         0,
         flag=1034420800,
@@ -57,7 +57,7 @@ def Constructor():
         character=Characters.GlintstoneDragon1,
         item_lot=1034420400,
         seconds=0.0,
-        left=0,
+        item_is_dropped=0,
     )
     Event_1034422600(0, asset=1034421600, flag=1034422600, owner_entity=Characters.Dummy)
     Event_1034422600(1, asset=1034421601, flag=1034422601, owner_entity=Characters.Dummy)
@@ -95,11 +95,11 @@ def Preconstructor():
     DisableBackread(Characters.Commoner)
     Event_1034422230()
     CommonFunc_90005251(0, character=Characters.AlbinauricLookout0, radius=10.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.AlbinauricLookout2, region=1034422203, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AlbinauricLookout2, region=1034422203, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.AlbinauricLookout3, radius=8.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.AlbinauricLookout4, region=1034422208, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.AlbinauricLookout5, region=1034422208, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.AlbinauricLookout6, region=1034422208, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AlbinauricLookout4, region=1034422208, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AlbinauricLookout5, region=1034422208, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AlbinauricLookout6, region=1034422208, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=1034420222, radius=20.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=1034420228, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
@@ -173,7 +173,7 @@ def Event_1034422600(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402200,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -183,7 +183,7 @@ def Event_1034422600(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402210,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -193,7 +193,7 @@ def Event_1034422600(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402220,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -203,7 +203,7 @@ def Event_1034422600(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402230,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -213,7 +213,7 @@ def Event_1034422600(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402240,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -223,7 +223,7 @@ def Event_1034422600(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402250,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -233,7 +233,7 @@ def Event_1034422600(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402260,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -243,7 +243,7 @@ def Event_1034422600(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402270,
             launch_angle_x=0,
             launch_angle_y=0,

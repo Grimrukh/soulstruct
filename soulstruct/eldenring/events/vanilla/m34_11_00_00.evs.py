@@ -69,9 +69,9 @@ def Constructor():
     )
     Event_34112510()
     Event_34112580()
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, vfx_id=100, model_point=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9004, vfx_id=100, model_point=800, right=0)
-    CommonFunc_90005300(0, flag=34110280, character=Characters.GodskinNoble, item_lot=34110400, seconds=0.0, left=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9004, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_90005300(0, flag=34110280, character=Characters.GodskinNoble, item_lot=34110400, seconds=0.0, item_is_dropped=0)
     Event_34112400()
     Event_34112410()
     Event_34112420()
@@ -87,10 +87,10 @@ def Constructor():
     Event_34112448()
     Event_34112449()
     Event_34112459()
-    CommonFunc_90005300(0, flag=34110710, character=Characters.PreceptorMiriam0, item_lot=34110700, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=34110710, character=Characters.PreceptorMiriam0, item_lot=34110700, seconds=0.0, item_is_dropped=0)
     Event_34112460()
     Event_34112465()
-    CommonFunc_90005300(0, flag=34110711, character=Characters.PreceptorMiriam1, item_lot=34110710, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=34110711, character=Characters.PreceptorMiriam1, item_lot=34110710, seconds=0.0, item_is_dropped=0)
     Event_34112475(0, flag=34112485, character=Characters.PreceptorMiriam0, region=34112411)
     Event_34112475(1, flag=34112486, character=Characters.PreceptorMiriam0, region=34112421)
     Event_34112475(2, flag=34112487, character=Characters.PreceptorMiriam0, region=34112431)
@@ -116,17 +116,17 @@ def Preconstructor():
     CommonFunc_90005271(0, character=Characters.LesserFingercreeper8, seconds=0.0, animation_id=-1)
     CommonFunc_90005271(0, character=Characters.LesserFingercreeper9, seconds=0.0, animation_id=-1)
     CommonFunc_90005271(0, character=Characters.LesserFingercreeper10, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.LesserFingercreeper11, region=34112230, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.LesserFingercreeper12, region=34112230, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.LesserFingercreeper13, region=34112230, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.LesserFingercreeper14, region=34112235, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.LesserFingercreeper15, region=34112235, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.LesserFingercreeper16, region=34112235, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.LesserFingercreeper17, region=34112465, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.LesserFingercreeper18, region=34112465, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.LesserFingercreeper19, region=34112245, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.LesserFingercreeper20, region=34112245, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.LesserFingercreeper21, region=34112245, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LesserFingercreeper11, region=34112230, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LesserFingercreeper12, region=34112230, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LesserFingercreeper13, region=34112230, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LesserFingercreeper14, region=34112235, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LesserFingercreeper15, region=34112235, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LesserFingercreeper16, region=34112235, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LesserFingercreeper17, region=34112465, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LesserFingercreeper18, region=34112465, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LesserFingercreeper19, region=34112245, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LesserFingercreeper20, region=34112245, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LesserFingercreeper21, region=34112245, seconds=0.0, animation_id=-1)
     CommonFunc_90005210(
         0,
         character=Characters.WanderingNoble0,
@@ -1546,55 +1546,55 @@ def Event_34112400():
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=150,
+        dummy_id=150,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=151,
+        dummy_id=151,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=152,
+        dummy_id=152,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=153,
+        dummy_id=153,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=154,
+        dummy_id=154,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=155,
+        dummy_id=155,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=156,
+        dummy_id=156,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=157,
+        dummy_id=157,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600921,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=151,
+        dummy_id=151,
         anchor_type=CoordEntityType.Character,
     )
     Wait(0.5)
@@ -1625,66 +1625,66 @@ def Event_34112410():
     
     MAIN.Await(AND_1)
     
-    SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_dummy_id=220, state=False)
     Wait(1.0)
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=150,
+        dummy_id=150,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=151,
+        dummy_id=151,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=152,
+        dummy_id=152,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=153,
+        dummy_id=153,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=154,
+        dummy_id=154,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=155,
+        dummy_id=155,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=156,
+        dummy_id=156,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=157,
+        dummy_id=157,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600921,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=151,
+        dummy_id=151,
         anchor_type=CoordEntityType.Character,
     )
     AddSpecialEffect(Characters.PreceptorMiriam0, 4240)
     Wait(0.5)
     if CharacterHasSpecialEffect(character=Characters.PreceptorMiriam0, special_effect=19385):
-        SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_model_point=220, state=True)
+        SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_dummy_id=220, state=True)
         EnableNetworkFlag(34112485)
         End()
     Move(
@@ -1694,7 +1694,7 @@ def Event_34112410():
         copy_draw_parent=Characters.PreceptorMiriam0,
     )
     SetNest(Characters.PreceptorMiriam0, region=34112411)
-    SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_model_point=220, state=True)
+    SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_dummy_id=220, state=True)
     EnableThisNetworkSlotFlag()
     AddSpecialEffect(Characters.PreceptorMiriam0, 4241)
     End()
@@ -1722,66 +1722,66 @@ def Event_34112420():
     
     MAIN.Await(AND_1)
     
-    SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_dummy_id=220, state=False)
     Wait(1.0)
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=150,
+        dummy_id=150,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=151,
+        dummy_id=151,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=152,
+        dummy_id=152,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=153,
+        dummy_id=153,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=154,
+        dummy_id=154,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=155,
+        dummy_id=155,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=156,
+        dummy_id=156,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=157,
+        dummy_id=157,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600921,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=151,
+        dummy_id=151,
         anchor_type=CoordEntityType.Character,
     )
     AddSpecialEffect(Characters.PreceptorMiriam0, 4240)
     Wait(0.5)
     if CharacterHasSpecialEffect(character=Characters.PreceptorMiriam0, special_effect=19385):
-        SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_model_point=220, state=True)
+        SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_dummy_id=220, state=True)
         EnableNetworkFlag(34112486)
         End()
     Move(
@@ -1791,7 +1791,7 @@ def Event_34112420():
         copy_draw_parent=Characters.PreceptorMiriam0,
     )
     SetNest(Characters.PreceptorMiriam0, region=34112421)
-    SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_model_point=220, state=True)
+    SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_dummy_id=220, state=True)
     EnableThisNetworkSlotFlag()
     AddSpecialEffect(Characters.PreceptorMiriam0, 4241)
     End()
@@ -1819,66 +1819,66 @@ def Event_34112430():
     
     MAIN.Await(AND_1)
     
-    SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_dummy_id=220, state=False)
     Wait(1.0)
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=150,
+        dummy_id=150,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=151,
+        dummy_id=151,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=152,
+        dummy_id=152,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=153,
+        dummy_id=153,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=154,
+        dummy_id=154,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=155,
+        dummy_id=155,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=156,
+        dummy_id=156,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=157,
+        dummy_id=157,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600921,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=151,
+        dummy_id=151,
         anchor_type=CoordEntityType.Character,
     )
     AddSpecialEffect(Characters.PreceptorMiriam0, 4240)
     Wait(0.5)
     if CharacterHasSpecialEffect(character=Characters.PreceptorMiriam0, special_effect=19385):
-        SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_model_point=220, state=True)
+        SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_dummy_id=220, state=True)
         EnableNetworkFlag(34112487)
         End()
     Move(
@@ -1940,55 +1940,55 @@ def Event_34112440(_, region: uint, region_1: uint):
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=150,
+        dummy_id=150,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=151,
+        dummy_id=151,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=152,
+        dummy_id=152,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=153,
+        dummy_id=153,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=154,
+        dummy_id=154,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=155,
+        dummy_id=155,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=156,
+        dummy_id=156,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=157,
+        dummy_id=157,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600921,
         anchor_entity=Characters.PreceptorMiriam0,
-        model_point=151,
+        dummy_id=151,
         anchor_type=CoordEntityType.Character,
     )
     Wait(0.5)
@@ -2051,7 +2051,7 @@ def Event_34112449():
     
     MAIN.Await(AND_1)
     
-    SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_model_point=220, state=True)
+    SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_dummy_id=220, state=True)
     EnableAI(Characters.PreceptorMiriam0)
     SetAIParamID(Characters.PreceptorMiriam0, ai_param_id=523520200)
     EnableThisSlotFlag()
@@ -2103,55 +2103,55 @@ def Event_34112460():
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam1,
-        model_point=150,
+        dummy_id=150,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam1,
-        model_point=151,
+        dummy_id=151,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam1,
-        model_point=152,
+        dummy_id=152,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam1,
-        model_point=153,
+        dummy_id=153,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam1,
-        model_point=154,
+        dummy_id=154,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam1,
-        model_point=155,
+        dummy_id=155,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam1,
-        model_point=156,
+        dummy_id=156,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam1,
-        model_point=157,
+        dummy_id=157,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600921,
         anchor_entity=Characters.PreceptorMiriam1,
-        model_point=151,
+        dummy_id=151,
         anchor_type=CoordEntityType.Character,
     )
     Wait(0.5)
@@ -2186,66 +2186,66 @@ def Event_34112465():
     OR_15.Add(HealthValue(Characters.PreceptorMiriam1) == 0)
     if OR_15:
         return
-    SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_dummy_id=220, state=False)
     Wait(1.0)
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam1,
-        model_point=150,
+        dummy_id=150,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam1,
-        model_point=151,
+        dummy_id=151,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam1,
-        model_point=152,
+        dummy_id=152,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam1,
-        model_point=153,
+        dummy_id=153,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam1,
-        model_point=154,
+        dummy_id=154,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam1,
-        model_point=155,
+        dummy_id=155,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam1,
-        model_point=156,
+        dummy_id=156,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600920,
         anchor_entity=Characters.PreceptorMiriam1,
-        model_point=157,
+        dummy_id=157,
         anchor_type=CoordEntityType.Character,
     )
     CreateTemporaryVFX(
         vfx_id=600921,
         anchor_entity=Characters.PreceptorMiriam1,
-        model_point=151,
+        dummy_id=151,
         anchor_type=CoordEntityType.Character,
     )
     Wait(0.5)
     AddSpecialEffect(Characters.PreceptorMiriam0, 4240)
     if CharacterHasSpecialEffect(character=Characters.PreceptorMiriam1, special_effect=19385):
-        SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_model_point=220, state=True)
+        SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_dummy_id=220, state=True)
         EnableNetworkFlag(34112488)
         End()
     Move(
@@ -2255,7 +2255,7 @@ def Event_34112465():
         copy_draw_parent=Characters.PreceptorMiriam1,
     )
     SetNest(Characters.PreceptorMiriam1, region=34112466)
-    SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_model_point=220, state=True)
+    SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_dummy_id=220, state=True)
     EnableThisSlotFlag()
     AddSpecialEffect(Characters.PreceptorMiriam0, 4241)
 
@@ -2270,24 +2270,24 @@ def Event_34112475(_, flag: uint, character: uint, region: uint):
     
     MAIN.Await(AND_1)
     
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
     AddSpecialEffect(character, 4240)
-    CreateTemporaryVFX(vfx_id=600920, anchor_entity=character, model_point=150, anchor_type=CoordEntityType.Character)
-    CreateTemporaryVFX(vfx_id=600920, anchor_entity=character, model_point=151, anchor_type=CoordEntityType.Character)
-    CreateTemporaryVFX(vfx_id=600920, anchor_entity=character, model_point=152, anchor_type=CoordEntityType.Character)
-    CreateTemporaryVFX(vfx_id=600920, anchor_entity=character, model_point=153, anchor_type=CoordEntityType.Character)
-    CreateTemporaryVFX(vfx_id=600920, anchor_entity=character, model_point=154, anchor_type=CoordEntityType.Character)
-    CreateTemporaryVFX(vfx_id=600920, anchor_entity=character, model_point=155, anchor_type=CoordEntityType.Character)
-    CreateTemporaryVFX(vfx_id=600920, anchor_entity=character, model_point=156, anchor_type=CoordEntityType.Character)
-    CreateTemporaryVFX(vfx_id=600920, anchor_entity=character, model_point=157, anchor_type=CoordEntityType.Character)
-    CreateTemporaryVFX(vfx_id=600921, anchor_entity=character, model_point=151, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=600920, anchor_entity=character, dummy_id=150, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=600920, anchor_entity=character, dummy_id=151, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=600920, anchor_entity=character, dummy_id=152, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=600920, anchor_entity=character, dummy_id=153, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=600920, anchor_entity=character, dummy_id=154, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=600920, anchor_entity=character, dummy_id=155, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=600920, anchor_entity=character, dummy_id=156, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=600920, anchor_entity=character, dummy_id=157, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=600921, anchor_entity=character, dummy_id=151, anchor_type=CoordEntityType.Character)
     Wait(0.5)
     OR_15.Add(HealthValue(character) == 0)
     if OR_15:
         return
     Move(character, destination=region, destination_type=CoordEntityType.Region, copy_draw_parent=character)
     SetNest(character, region=region)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=True)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=True)
     EnableThisNetworkSlotFlag()
     AddSpecialEffect(character, 4241)
 
@@ -2304,12 +2304,12 @@ def Event_34112492():
     
     MAIN.Await(OR_1)
     
-    SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_dummy_id=220, state=False)
     Wait(1.0)
     CreateTemporaryVFX(
         vfx_id=806910,
         anchor_entity=Characters.PreceptorMiriam1,
-        model_point=220,
+        dummy_id=220,
         anchor_type=CoordEntityType.Character,
     )
     Move(
@@ -2318,7 +2318,7 @@ def Event_34112492():
         destination_type=CoordEntityType.Region,
         copy_draw_parent=Characters.PreceptorMiriam1,
     )
-    SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_model_point=220, state=True)
+    SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_dummy_id=220, state=True)
     EnableThisSlotFlag()
 
 
@@ -2332,12 +2332,12 @@ def Event_34112493():
     
     MAIN.Await(CharacterInsideRegion(character=PLAYER, region=34112490))
     
-    SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_dummy_id=220, state=False)
     Wait(1.0)
     CreateTemporaryVFX(
         vfx_id=806910,
         anchor_entity=Characters.PreceptorMiriam1,
-        model_point=220,
+        dummy_id=220,
         anchor_type=CoordEntityType.Character,
     )
     Move(
@@ -2346,7 +2346,7 @@ def Event_34112493():
         destination_type=CoordEntityType.Region,
         copy_draw_parent=Characters.PreceptorMiriam1,
     )
-    SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_model_point=220, state=True)
+    SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_dummy_id=220, state=True)
     EnableThisSlotFlag()
 
 
@@ -2370,12 +2370,12 @@ def Event_34112496():
     
     MAIN.Await(AND_1)
     
-    SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_dummy_id=220, state=False)
     Wait(1.0)
     CreateTemporaryVFX(
         vfx_id=806910,
         anchor_entity=Characters.PreceptorMiriam1,
-        model_point=220,
+        dummy_id=220,
         anchor_type=CoordEntityType.Character,
     )
     Move(
@@ -2384,7 +2384,7 @@ def Event_34112496():
         destination_type=CoordEntityType.Region,
         copy_draw_parent=Characters.PreceptorMiriam1,
     )
-    SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_model_point=220, state=True)
+    SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_dummy_id=220, state=True)
     EnableThisSlotFlag()
 
 
@@ -2491,7 +2491,7 @@ def Event_34112849():
         flag_2=34112806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=34110800, asset=34111800, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=34110800, asset=34111800, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=34110800,

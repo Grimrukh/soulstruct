@@ -26,7 +26,7 @@ from .enums.m60_34_43_00_enums import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1034430000, asset=Assets.AEG099_060_9000)
-    CommonFunc_90005300(0, flag=1034430310, character=Characters.Scarab, item_lot=40260, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1034430310, character=Characters.Scarab, item_lot=40260, seconds=0.0, item_is_dropped=0)
     Event_1034432580(0, flag=1034430580, entity=Assets.AEG110_500_2000)
     Event_1034432610()
     Event_1034432260(
@@ -103,10 +103,10 @@ def Constructor():
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
-    CommonFunc_90005250(0, character=1034430300, region=1034432300, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=1034430302, region=1034432302, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=1034430303, region=1034432300, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=1034430305, region=1034432305, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=1034430300, region=1034432300, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=1034430302, region=1034432302, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=1034430303, region=1034432300, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=1034430305, region=1034432305, seconds=0.0, animation_id=-1)
 
 
 @RestartOnRest(1034432260)
@@ -130,7 +130,7 @@ def Event_1034432260(
     if AND_1:
         return
     ForceAnimation(destination, 0)
-    Move(character, destination=destination, destination_type=CoordEntityType.Asset, model_point=220, short_move=True)
+    Move(character, destination=destination, destination_type=CoordEntityType.Asset, dummy_id=220, short_move=True)
     Wait(5.400000095367432)
     Restart()
     Wait(seconds)
@@ -179,7 +179,7 @@ def Event_1034432261(
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=200, model_point=803160)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=803160)
     AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)

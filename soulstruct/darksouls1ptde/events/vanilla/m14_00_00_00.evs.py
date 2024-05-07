@@ -235,7 +235,7 @@ def Event_11400090(_, obj: int, vfx_id: int, destination: int, destination_1: in
         prompt_text=10010403,
         anchor_entity=destination,
         anchor_type=CoordEntityType.Region,
-        model_point=0,
+        dummy_id=0,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         line_intersects=obj,
     ))
@@ -243,7 +243,7 @@ def Event_11400090(_, obj: int, vfx_id: int, destination: int, destination_1: in
         prompt_text=10010407,
         anchor_entity=destination_1,
         anchor_type=CoordEntityType.Region,
-        model_point=0,
+        dummy_id=0,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         line_intersects=obj,
     ))
@@ -689,16 +689,16 @@ def Event_11405300():
     Event_11405301(0, character=1400500, part_index=1, npc_part_id=3290, npc_part_id_1=3290, flag=11405301)
     Event_11405310(0, character=1400500, flag=11405301, bit_index=0, bit_index_1=1)
     Event_11405310(1, character=1400500, flag=11405301, bit_index=2, bit_index_1=3)
-    Event_11405320(0, character=1400500, flag=11405301, obj=1401500, obj_1=1401501, model_point=120, model_point_1=123)
-    Event_11405320(1, character=1400500, flag=11405301, obj=1401502, obj_1=1401503, model_point=126, model_point_1=129)
+    Event_11405320(0, character=1400500, flag=11405301, obj=1401500, obj_1=1401501, dummy_id=120, dummy_id_1=123)
+    Event_11405320(1, character=1400500, flag=11405301, obj=1401502, obj_1=1401503, dummy_id=126, dummy_id_1=129)
     Event_11405330(
         0,
         character=1400500,
         flag=11405301,
         character_1=1400600,
         character_2=1400601,
-        model_point=120,
-        model_point_1=123,
+        dummy_id=120,
+        dummy_id_1=123,
     )
     Event_11405330(
         1,
@@ -706,20 +706,20 @@ def Event_11405300():
         flag=11405301,
         character_1=1400602,
         character_2=1400603,
-        model_point=126,
-        model_point_1=129,
+        dummy_id=126,
+        dummy_id_1=129,
     )
     Event_11405301(1, character=1400500, part_index=2, npc_part_id=3291, npc_part_id_1=3291, flag=11405302)
     Event_11405310(2, character=1400500, flag=11405302, bit_index=5, bit_index_1=11)
-    Event_11405320(2, character=1400500, flag=11405302, obj=1401504, obj_1=1401505, model_point=135, model_point_1=137)
+    Event_11405320(2, character=1400500, flag=11405302, obj=1401504, obj_1=1401505, dummy_id=135, dummy_id_1=137)
     Event_11405330(
         2,
         character=1400500,
         flag=11405302,
         character_1=1400604,
         character_2=1400605,
-        model_point=135,
-        model_point_1=137,
+        dummy_id=135,
+        dummy_id_1=137,
     )
     Event_11405330(
         3,
@@ -727,22 +727,22 @@ def Event_11405300():
         flag=11405302,
         character_1=1400606,
         character_2=1400607,
-        model_point=153,
-        model_point_1=155,
+        dummy_id=153,
+        dummy_id_1=155,
     )
     Event_11405301(2, character=1400500, part_index=3, npc_part_id=3292, npc_part_id_1=3292, flag=11405303)
     Event_11405310(3, character=1400500, flag=11405303, bit_index=6, bit_index_1=7)
     Event_11405310(4, character=1400500, flag=11405303, bit_index=8, bit_index_1=10)
-    Event_11405320(3, character=1400500, flag=11405303, obj=1401506, obj_1=1401507, model_point=138, model_point_1=141)
-    Event_11405320(4, character=1400500, flag=11405303, obj=1401508, obj_1=1401509, model_point=144, model_point_1=150)
+    Event_11405320(3, character=1400500, flag=11405303, obj=1401506, obj_1=1401507, dummy_id=138, dummy_id_1=141)
+    Event_11405320(4, character=1400500, flag=11405303, obj=1401508, obj_1=1401509, dummy_id=144, dummy_id_1=150)
     Event_11405330(
         4,
         character=1400500,
         flag=11405303,
         character_1=1400608,
         character_2=1400609,
-        model_point=138,
-        model_point_1=141,
+        dummy_id=138,
+        dummy_id_1=141,
     )
     Event_11405330(
         5,
@@ -750,20 +750,20 @@ def Event_11405300():
         flag=11405303,
         character_1=1400610,
         character_2=1400611,
-        model_point=144,
-        model_point_1=150,
+        dummy_id=144,
+        dummy_id_1=150,
     )
     Event_11405301(3, character=1400500, part_index=4, npc_part_id=3293, npc_part_id_1=3293, flag=11405304)
     Event_11405310(5, character=1400500, flag=11405304, bit_index=4, bit_index_1=9)
-    Event_11405320(5, character=1400500, flag=11405304, obj=1401510, obj_1=1401511, model_point=132, model_point_1=134)
+    Event_11405320(5, character=1400500, flag=11405304, obj=1401510, obj_1=1401511, dummy_id=132, dummy_id_1=134)
     Event_11405330(
         6,
         character=1400500,
         flag=11405304,
         character_1=1400612,
         character_2=1400613,
-        model_point=132,
-        model_point_1=134,
+        dummy_id=132,
+        dummy_id_1=134,
     )
     Event_11405330(
         7,
@@ -771,8 +771,8 @@ def Event_11405300():
         flag=11405304,
         character_1=1400614,
         character_2=1400615,
-        model_point=150,
-        model_point_1=152,
+        dummy_id=150,
+        dummy_id_1=152,
     )
 
 
@@ -831,7 +831,7 @@ def Event_11405310(_, character: int, flag: int, bit_index: uchar, bit_index_1: 
 
 
 @EndOnRest(11405320)
-def Event_11405320(_, character: int, flag: int, obj: int, obj_1: int, model_point: short, model_point_1: short):
+def Event_11405320(_, character: int, flag: int, obj: int, obj_1: int, dummy_id: short, dummy_id_1: short):
     """Event 11405320"""
     DisableObject(obj)
     DisableObject(obj_1)
@@ -847,8 +847,8 @@ def Event_11405320(_, character: int, flag: int, obj: int, obj_1: int, model_poi
     EndIfFinishedConditionTrue(input_condition=AND_2)
     EnableObject(obj)
     EnableObject(obj_1)
-    MoveObjectToCharacter(obj, character=character, model_point=model_point)
-    MoveObjectToCharacter(obj_1, character=character, model_point=model_point_1)
+    MoveObjectToCharacter(obj, character=character, dummy_id=dummy_id)
+    MoveObjectToCharacter(obj_1, character=character, dummy_id=dummy_id_1)
     DestroyObject(obj)
     DestroyObject(obj_1)
 
@@ -860,8 +860,8 @@ def Event_11405330(
     flag: int,
     character_1: int,
     character_2: int,
-    model_point: int,
-    model_point_1: int,
+    dummy_id: int,
+    dummy_id_1: int,
 ):
     """Event 11405330"""
     if FlagEnabled(flag):
@@ -881,14 +881,14 @@ def Event_11405330(
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=model_point,
+        dummy_id=dummy_id,
         copy_draw_parent=character,
     )
     Move(
         character_2,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=model_point_1,
+        dummy_id=dummy_id_1,
         copy_draw_parent=character,
     )
     EnableCharacter(character_1)
@@ -927,35 +927,35 @@ def Event_11405350(
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=100,
+        dummy_id=100,
         copy_draw_parent=character,
     )
     Move(
         character_2,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=101,
+        dummy_id=101,
         copy_draw_parent=character,
     )
     Move(
         character_3,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=102,
+        dummy_id=102,
         copy_draw_parent=character,
     )
     Move(
         character_4,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=103,
+        dummy_id=103,
         copy_draw_parent=character,
     )
     Move(
         character_5,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=104,
+        dummy_id=104,
         copy_draw_parent=character,
     )
     EnableCharacter(character_1)
@@ -1086,7 +1086,7 @@ def Event_11400230():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=101,
+        dummy_id=101,
         trigger_attribute=TriggerAttribute.All,
     ))
     
@@ -1105,7 +1105,7 @@ def Event_11405200(_, character: int, obj: int):
     RestoreObject(obj)
     DisableCharacterCollision(character)
     DisableGravity(character)
-    Move(character, destination=obj, destination_type=CoordEntityType.Object, model_point=100, short_move=True)
+    Move(character, destination=obj, destination_type=CoordEntityType.Object, dummy_id=100, short_move=True)
     OR_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     OR_1.Add(ObjectDestroyed(obj))
     
@@ -1549,7 +1549,7 @@ def Event_140():
         anchor_entity=1401960,
         anchor_type=CoordEntityType.Object,
         max_distance=3.4000000953674316,
-        model_point=-1,
+        dummy_id=-1,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
     ))
     

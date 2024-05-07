@@ -15,7 +15,7 @@ class Characters(Character):
     WanderingNoble6 = 1043360218  # c4300_9018 npc 43006010 think 43006000
     WanderingNoble7 = 1043360219  # c4300_9019 npc 43006010 think 43006000
     WanderingNoble8 = 1043360220  # c4300_9021 npc 43007110 think 43006100
-    FlyingDragon = 1043360800  # c4500_9000 npc 45000010 think 45000900 group 1043365100
+    FlyingDragonAgheel = 1043360800  # c4500_9000 npc 45000010 think 45000900 group 1043365100
 
 
 class Assets(Asset):

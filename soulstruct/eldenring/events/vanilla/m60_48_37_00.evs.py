@@ -55,13 +55,13 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005870(0, character=Characters.DecayingEkzykes, name=904501600, npc_threat_level=25)
-    CommonFunc_90005861(
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.DecayingEkzykes, name=904501600, npc_threat_level=25)
+    CommonFunc_KillFieldDragonWyrm(
         0,
         flag=1048370800,
-        left=0,
+        extra_flag=0,
         character=Characters.DecayingEkzykes,
-        left_1=1,
+        felled_banner_rank=1,
         item_lot=30400,
         text=30064,
         seconds=0.0,
@@ -74,7 +74,7 @@ def Constructor():
         region_1=1048372298,
         region_2=1048372297,
     )
-    CommonFunc_90005300(0, flag=1048370299, character=Characters.Scarab, item_lot=40406, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1048370299, character=Characters.Scarab, item_lot=40406, seconds=0.0, item_is_dropped=0)
 
 
 @ContinueOnRest(50)

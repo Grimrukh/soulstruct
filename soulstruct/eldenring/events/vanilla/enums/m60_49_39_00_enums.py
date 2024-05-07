@@ -19,7 +19,7 @@ class Characters(Character):
     RayaLucariaScholar5 = 1049390205  # c3702_9005 npc 37020040 think 37020000
     RayaLucariaScholar6 = 1049390207  # c3702_9007 npc 37021140 think 37020000
     RayaLucariaScholar7 = 1049390208  # c3702_9008 npc 37020040 think 37020000
-    BattleMage = 1049390850  # c3704_9000 npc 37040940 think 37040900 group 1049395104
+    BattleMageHugues = 1049390850  # c3704_9000 npc 37040940 think 37040900 group 1049395104
     Marionette = 1049390405  # c3850_9005 npc 38502040 think 38502000
     Scarab0 = 1049390299  # c4191_9000 npc 41912240 think 41912000
     Scarab1 = 1049390298  # c4191_9003 npc 41914040 think 41910000

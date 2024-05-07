@@ -436,7 +436,7 @@ def Event_11005396():
         1000801,
         destination=1000800,
         destination_type=CoordEntityType.Character,
-        model_point=100,
+        dummy_id=100,
         copy_draw_parent=1000800,
     )
     ForceAnimation(1000801, 8100)
@@ -505,13 +505,13 @@ def Event_11000100():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=101,
+        dummy_id=101,
         trigger_attribute=TriggerAttribute.All,
     ))
     
     MAIN.Await(AND_1)
     
-    Move(PLAYER, destination=1001319, destination_type=CoordEntityType.Object, model_point=121, short_move=True)
+    Move(PLAYER, destination=1001319, destination_type=CoordEntityType.Object, dummy_id=121, short_move=True)
     ForceAnimation(PLAYER, 7110)
     ForceAnimation(1001319, 0)
 
@@ -527,7 +527,7 @@ def Event_11000101():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=100,
+        dummy_id=100,
         trigger_attribute=TriggerAttribute.All,
     ))
     
@@ -551,14 +551,14 @@ def Event_11000110():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=100,
+        dummy_id=100,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
     ))
     
     MAIN.Await(AND_1)
     
     EnableFlag(11000111)
-    Move(PLAYER, destination=1001200, destination_type=CoordEntityType.Object, model_point=120, short_move=True)
+    Move(PLAYER, destination=1001200, destination_type=CoordEntityType.Object, dummy_id=120, short_move=True)
     ForceAnimation(PLAYER, 7120)
     ForceAnimation(1001200, 1)
     if Client():
@@ -579,7 +579,7 @@ def Event_11000111():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=100,
+        dummy_id=100,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
     ))
     AND_2.Add(Client())
@@ -589,7 +589,7 @@ def Event_11000111():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=100,
+        dummy_id=100,
         trigger_attribute=TriggerAttribute.All,
     ))
     OR_1.Add(AND_1)
@@ -671,7 +671,7 @@ def Event_11005060():
     """Event 11005060"""
     if ThisEventFlagEnabled():
         return
-    CreateObjectVFX(1001400, vfx_id=10, model_point=100013)
+    CreateObjectVFX(1001400, vfx_id=10, dummy_id=100013)
     
     MAIN.Await(ObjectDestroyed(1001400))
     

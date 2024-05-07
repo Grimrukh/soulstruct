@@ -66,7 +66,7 @@ def Constructor():
         flag=1038520800,
         character=Characters.TibiaMariner,
     )
-    CommonFunc_90005870(0, character=Characters.TibiaMariner, name=904950602, npc_threat_level=24)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.TibiaMariner, name=904950602, npc_threat_level=24)
     CommonFunc_90005860(
         0,
         flag=1038520800,
@@ -117,10 +117,10 @@ def Constructor():
         region=1038522200,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         1,
@@ -130,10 +130,10 @@ def Constructor():
         region=1038522200,
         radius=10.0,
         seconds=1.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -143,10 +143,10 @@ def Constructor():
         region=1038522205,
         radius=10.0,
         seconds=1.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         1,
@@ -156,10 +156,10 @@ def Constructor():
         region=1038522205,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -169,10 +169,10 @@ def Constructor():
         region=1038522210,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -182,10 +182,10 @@ def Constructor():
         region=1038522215,
         radius=10.0,
         seconds=1.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         1,
@@ -195,10 +195,10 @@ def Constructor():
         region=1038522215,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -208,10 +208,10 @@ def Constructor():
         region=1038522220,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -221,10 +221,10 @@ def Constructor():
         region=1038522221,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         1,
@@ -234,10 +234,10 @@ def Constructor():
         region=1038522221,
         radius=10.0,
         seconds=0.20000000298023224,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -247,10 +247,10 @@ def Constructor():
         region=1038522225,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         1,
@@ -260,10 +260,10 @@ def Constructor():
         region=1038522225,
         radius=10.0,
         seconds=0.4000000059604645,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(
         0,
@@ -281,10 +281,10 @@ def Constructor():
         region=1038522250,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -294,10 +294,10 @@ def Constructor():
         region=1038522255,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         1,
@@ -307,10 +307,10 @@ def Constructor():
         region=1038522255,
         radius=10.0,
         seconds=0.10000000149011612,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         2,
@@ -320,10 +320,10 @@ def Constructor():
         region=1038522255,
         radius=10.0,
         seconds=0.30000001192092896,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -333,10 +333,10 @@ def Constructor():
         region=1038522260,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -346,10 +346,10 @@ def Constructor():
         region=1038522265,
         radius=5.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         3,
@@ -359,10 +359,10 @@ def Constructor():
         region=1038522265,
         radius=5.0,
         seconds=0.4000000059604645,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         4,
@@ -372,10 +372,10 @@ def Constructor():
         region=1038522265,
         radius=5.0,
         seconds=0.20000000298023224,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -385,10 +385,10 @@ def Constructor():
         region=1038522270,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -398,10 +398,10 @@ def Constructor():
         region=1038522280,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         1,
@@ -411,10 +411,10 @@ def Constructor():
         region=1038522280,
         radius=10.0,
         seconds=0.20000000298023224,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         2,
@@ -424,10 +424,10 @@ def Constructor():
         region=1038522280,
         radius=10.0,
         seconds=0.6000000238418579,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -437,10 +437,10 @@ def Constructor():
         region=1038522285,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         1,
@@ -450,10 +450,10 @@ def Constructor():
         region=1038522285,
         radius=10.0,
         seconds=0.5,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         2,
@@ -463,10 +463,10 @@ def Constructor():
         region=1038522285,
         radius=10.0,
         seconds=0.20000000298023224,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -476,10 +476,10 @@ def Constructor():
         region=1038522290,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -489,10 +489,10 @@ def Constructor():
         region=1038522295,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         1,
@@ -502,10 +502,10 @@ def Constructor():
         region=1038522295,
         radius=10.0,
         seconds=0.5,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         2,
@@ -515,12 +515,12 @@ def Constructor():
         region=1038522295,
         radius=10.0,
         seconds=0.20000000298023224,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=1038528600)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=1038528600)
     CommonFunc_90005683(0, flag=62314, asset=Assets.AEG099_055_1001, vfx_id=211, flag_1=78392, flag_2=78392)
 
 

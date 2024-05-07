@@ -58,7 +58,7 @@ def Event_1051372598(
     DisableFlag(left_flag)
     DisableFlag(cancel_flag__right_flag)
     DeleteAssetVFX(asset)
-    CreateAssetVFX(asset, vfx_id=200, model_point=806870)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=806870)
     AND_1.Add(PlayerInOwnWorld())
     AND_2.Add(MultiplayerPending())
     AND_1.Add(not AND_2)
@@ -126,7 +126,7 @@ def Event_1051372598(
         character=PLAYER,
         destination_type=CoordEntityType.Region,
         destination=player_start,
-        model_point=10,
+        dummy_id=10,
         copy_draw_parent=PLAYER,
         use_bonfire_effect=False,
         reset_camera=True,
@@ -170,7 +170,7 @@ def Event_1051372599():
         character=20000,
         destination_type=CoordEntityType.Region,
         destination=1051382302,
-        model_point=10,
+        dummy_id=10,
         copy_draw_parent=20000,
         use_bonfire_effect=False,
         reset_camera=True,

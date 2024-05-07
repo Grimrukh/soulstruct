@@ -37,9 +37,9 @@ def Constructor():
     Event_11205080()
     Event_11205081()
     Event_11205082()
-    Event_11200100(0, flag=11200110, obj=1201000, model_point=120020, anchor_entity=1202500, left=0, flag_1=61200500)
+    Event_11200100(0, flag=11200110, obj=1201000, dummy_id=120020, anchor_entity=1202500, left=0, flag_1=61200500)
     Event_11200110(0, flag=11200100, line_intersects=1201000, anchor_entity=1202500, left=0)
-    Event_11200100(1, flag=11200111, obj=1201010, model_point=120021, anchor_entity=1202501, left=1, flag_1=61200501)
+    Event_11200100(1, flag=11200111, obj=1201010, dummy_id=120021, anchor_entity=1202501, left=1, flag_1=61200501)
     Event_11200110(1, flag=11200101, line_intersects=1201010, anchor_entity=1202501, left=1)
     Event_11200120()
     Event_11205000()
@@ -96,7 +96,7 @@ def Constructor():
         npc_part_id=3530,
         npc_part_id_1=3530,
         character=1200011,
-        model_point=91,
+        dummy_id=91,
         bit_index=0,
         bit_index_1=1,
         special_effect=5430,
@@ -107,7 +107,7 @@ def Constructor():
         npc_part_id=3531,
         npc_part_id_1=3531,
         character=1200012,
-        model_point=92,
+        dummy_id=92,
         bit_index=1,
         bit_index_1=2,
         special_effect=5431,
@@ -118,7 +118,7 @@ def Constructor():
         npc_part_id=3532,
         npc_part_id_1=3532,
         character=1200013,
-        model_point=93,
+        dummy_id=93,
         bit_index=2,
         bit_index_1=3,
         special_effect=5432,
@@ -129,7 +129,7 @@ def Constructor():
         npc_part_id=3533,
         npc_part_id_1=3533,
         character=1200014,
-        model_point=94,
+        dummy_id=94,
         bit_index=3,
         bit_index_1=4,
         special_effect=5433,
@@ -140,7 +140,7 @@ def Constructor():
         npc_part_id=3534,
         npc_part_id_1=3534,
         character=1200015,
-        model_point=95,
+        dummy_id=95,
         bit_index=4,
         bit_index_1=5,
         special_effect=5434,
@@ -151,7 +151,7 @@ def Constructor():
         npc_part_id=3535,
         npc_part_id_1=3535,
         character=1200016,
-        model_point=96,
+        dummy_id=96,
         bit_index=5,
         bit_index_1=6,
         special_effect=5435,
@@ -162,7 +162,7 @@ def Constructor():
         npc_part_id=3536,
         npc_part_id_1=3536,
         character=1200017,
-        model_point=97,
+        dummy_id=97,
         bit_index=6,
         bit_index_1=7,
         special_effect=5436,
@@ -317,7 +317,7 @@ def Event_11200090(_, obj: int, vfx_id: int, destination: int, destination_1: in
         prompt_text=10010403,
         anchor_entity=destination,
         anchor_type=CoordEntityType.Region,
-        model_point=0,
+        dummy_id=0,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         line_intersects=obj,
     ))
@@ -325,7 +325,7 @@ def Event_11200090(_, obj: int, vfx_id: int, destination: int, destination_1: in
         prompt_text=10010407,
         anchor_entity=destination_1,
         anchor_type=CoordEntityType.Region,
-        model_point=0,
+        dummy_id=0,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         line_intersects=obj,
     ))
@@ -813,13 +813,13 @@ def Event_11205120(_, region: int, destination: int):
 
 
 @ContinueOnRest(11200100)
-def Event_11200100(_, flag: int, obj: int, model_point: int, anchor_entity: int, left: int, flag_1: int):
+def Event_11200100(_, flag: int, obj: int, dummy_id: int, anchor_entity: int, left: int, flag_1: int):
     """Event 11200100"""
     SkipLinesIfFlagEnabled(1, flag_1)
     SkipLinesIfThisEventSlotFlagDisabled(2)
     EndOfAnimation(obj=obj, animation_id=1)
     End()
-    CreateObjectVFX(obj, vfx_id=200, model_point=model_point)
+    CreateObjectVFX(obj, vfx_id=200, dummy_id=dummy_id)
     if ValueNotEqual(left=left, right=1):
         AND_1.Add(PlayerHasGood(2002))
     AND_1.Add(ActionButton(
@@ -1124,7 +1124,7 @@ def Event_11205300(
     npc_part_id: short,
     npc_part_id_1: int,
     character: int,
-    model_point: int,
+    dummy_id: int,
     bit_index: uchar,
     bit_index_1: uchar,
     special_effect: int,
@@ -1153,7 +1153,7 @@ def Event_11205300(
         character,
         destination=1200010,
         destination_type=CoordEntityType.Character,
-        model_point=model_point,
+        dummy_id=dummy_id,
         copy_draw_parent=1200010,
     )
     EnableCharacter(character)
@@ -1336,7 +1336,7 @@ def Event_11200530(_, character: int, first_flag: int, last_flag: int, flag: int
         character,
         destination=1200200,
         destination_type=CoordEntityType.Character,
-        model_point=101,
+        dummy_id=101,
         copy_draw_parent=1200200,
     )
     EnableCharacter(character)
@@ -1415,7 +1415,7 @@ def Event_11205040(_, flag: int, destination: int, vfx_id: int):
         prompt_text=50000000,
         anchor_entity=destination,
         anchor_type=CoordEntityType.Region,
-        model_point=0,
+        dummy_id=0,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
     ))
     
@@ -1497,7 +1497,7 @@ def Event_11205070(_, flag: int, destination: int, vfx_id: int):
         prompt_text=50000000,
         anchor_entity=destination,
         anchor_type=CoordEntityType.Region,
-        model_point=0,
+        dummy_id=0,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
     ))
     

@@ -25,12 +25,12 @@ from .enums.m60_53_57_00_enums import *
 def Constructor():
     """Event 0"""
     Event_1053572200(0, character=1053575200)
-    CommonFunc_90005300(0, flag=1053570210, character=Characters.Scarab, item_lot=40510, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1053570210, character=Characters.Scarab, item_lot=40510, seconds=0.0, item_is_dropped=0)
 
 
 @RestartOnRest(1053572200)
 def Event_1053572200(_, character: uint):
     """Event 1053572200"""
     DisableAnimations(character)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
     End()

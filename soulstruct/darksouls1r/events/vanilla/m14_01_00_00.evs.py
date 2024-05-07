@@ -430,7 +430,7 @@ def Event_11410090(_, obj: int, vfx_id: int, destination: int, destination_1: in
         prompt_text=10010403,
         anchor_entity=destination,
         anchor_type=CoordEntityType.Region,
-        model_point=0,
+        dummy_id=0,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         line_intersects=obj,
     ))
@@ -438,7 +438,7 @@ def Event_11410090(_, obj: int, vfx_id: int, destination: int, destination_1: in
         prompt_text=10010407,
         anchor_entity=destination_1,
         anchor_type=CoordEntityType.Region,
-        model_point=0,
+        dummy_id=0,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         line_intersects=obj,
     ))
@@ -585,7 +585,7 @@ def Event_11410095():
         prompt_text=10010410,
         anchor_entity=1412660,
         anchor_type=CoordEntityType.Region,
-        model_point=0,
+        dummy_id=0,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         line_intersects=1411710,
     ))
@@ -1535,7 +1535,7 @@ def Event_11415350(_, flag: int, npc_part_id: short, npc_part_id_1: int, part_he
         character,
         destination=1410700,
         destination_type=CoordEntityType.Character,
-        model_point=140,
+        dummy_id=140,
         copy_draw_parent=1410700,
     )
     ForceAnimation(character, 8100)
@@ -1584,7 +1584,7 @@ def Event_11415360(_, flag: int, npc_part_id: short, npc_part_id_1: int, part_he
         character,
         destination=1410700,
         destination_type=CoordEntityType.Character,
-        model_point=141,
+        dummy_id=141,
         copy_draw_parent=1410700,
     )
     ForceAnimation(character, 8100)
@@ -1725,7 +1725,7 @@ def Event_11410400():
     SkipLinesIfFinishedConditionTrue(8, input_condition=AND_4)
     if FlagDisabled(11410401):
         EnableFlag(11410401)
-        CreateObjectVFX(1411400, vfx_id=100, model_point=140002)
+        CreateObjectVFX(1411400, vfx_id=100, dummy_id=140002)
         ForceAnimation(1411400, 3, wait_for_completion=True)
         DeleteObjectVFX(1411400)
     
@@ -1734,7 +1734,7 @@ def Event_11410400():
         ForceAnimation(1411400, 4, wait_for_completion=True)
         Restart()
     DisableFlag(11410401)
-    CreateObjectVFX(1411400, vfx_id=100, model_point=140002)
+    CreateObjectVFX(1411400, vfx_id=100, dummy_id=140002)
     ForceAnimation(1411400, 1, wait_for_completion=True)
     DeleteObjectVFX(1411400)
     
@@ -1756,7 +1756,7 @@ def Event_11410402():
         anchor_entity=1411400,
         anchor_type=CoordEntityType.Object,
         max_distance=1.5,
-        model_point=100,
+        dummy_id=100,
         trigger_attribute=TriggerAttribute.All,
     ))
     
@@ -1948,16 +1948,16 @@ def Event_11415200():
     Event_11415201(0, character=1410500, part_index=1, npc_part_id=3290, npc_part_id_1=3290, flag=11415201)
     Event_5200(-1, character=1410500, flag=11415201, bit_index=0, bit_index_1=1)
     Event_5200(-1, character=1410500, flag=11415201, bit_index=2, bit_index_1=3)
-    Event_5201(-1, character=1410500, flag=11415201, obj=1411500, obj_1=1411501, model_point=120, model_point_1=123)
-    Event_5201(-1, character=1410500, flag=11415201, obj=1411502, obj_1=1411503, model_point=126, model_point_1=129)
+    Event_5201(-1, character=1410500, flag=11415201, obj=1411500, obj_1=1411501, dummy_id=120, dummy_id_1=123)
+    Event_5201(-1, character=1410500, flag=11415201, obj=1411502, obj_1=1411503, dummy_id=126, dummy_id_1=129)
     Event_5202(
         -1,
         character=1410500,
         flag=11415201,
         character_1=1410550,
         character_2=1410551,
-        model_point=120,
-        model_point_1=123,
+        dummy_id=120,
+        dummy_id_1=123,
     )
     Event_5202(
         -1,
@@ -1965,20 +1965,20 @@ def Event_11415200():
         flag=11415201,
         character_1=1410552,
         character_2=1410553,
-        model_point=126,
-        model_point_1=129,
+        dummy_id=126,
+        dummy_id_1=129,
     )
     Event_11415201(1, character=1410500, part_index=2, npc_part_id=3291, npc_part_id_1=3291, flag=11415202)
     Event_5200(-1, character=1410500, flag=11415202, bit_index=5, bit_index_1=11)
-    Event_5201(-1, character=1410500, flag=11415202, obj=1411504, obj_1=1411505, model_point=135, model_point_1=137)
+    Event_5201(-1, character=1410500, flag=11415202, obj=1411504, obj_1=1411505, dummy_id=135, dummy_id_1=137)
     Event_5202(
         -1,
         character=1410500,
         flag=11415202,
         character_1=1410554,
         character_2=1410555,
-        model_point=135,
-        model_point_1=137,
+        dummy_id=135,
+        dummy_id_1=137,
     )
     Event_5202(
         -1,
@@ -1986,22 +1986,22 @@ def Event_11415200():
         flag=11415202,
         character_1=1410556,
         character_2=1410557,
-        model_point=153,
-        model_point_1=155,
+        dummy_id=153,
+        dummy_id_1=155,
     )
     Event_11415201(2, character=1410500, part_index=3, npc_part_id=3292, npc_part_id_1=3292, flag=11415203)
     Event_5200(-1, character=1410500, flag=11415203, bit_index=6, bit_index_1=7)
     Event_5200(-1, character=1410500, flag=11415203, bit_index=8, bit_index_1=10)
-    Event_5201(-1, character=1410500, flag=11415203, obj=1411506, obj_1=1411507, model_point=138, model_point_1=141)
-    Event_5201(-1, character=1410500, flag=11415203, obj=1411508, obj_1=1411509, model_point=144, model_point_1=150)
+    Event_5201(-1, character=1410500, flag=11415203, obj=1411506, obj_1=1411507, dummy_id=138, dummy_id_1=141)
+    Event_5201(-1, character=1410500, flag=11415203, obj=1411508, obj_1=1411509, dummy_id=144, dummy_id_1=150)
     Event_5202(
         -1,
         character=1410500,
         flag=11415203,
         character_1=1410558,
         character_2=1410559,
-        model_point=138,
-        model_point_1=141,
+        dummy_id=138,
+        dummy_id_1=141,
     )
     Event_5202(
         -1,
@@ -2009,20 +2009,20 @@ def Event_11415200():
         flag=11415203,
         character_1=1410560,
         character_2=1410561,
-        model_point=144,
-        model_point_1=150,
+        dummy_id=144,
+        dummy_id_1=150,
     )
     Event_11415201(3, character=1410500, part_index=4, npc_part_id=3293, npc_part_id_1=3293, flag=11415204)
     Event_5200(-1, character=1410500, flag=11415204, bit_index=4, bit_index_1=9)
-    Event_5201(-1, character=1410500, flag=11415204, obj=1411510, obj_1=1411511, model_point=132, model_point_1=134)
+    Event_5201(-1, character=1410500, flag=11415204, obj=1411510, obj_1=1411511, dummy_id=132, dummy_id_1=134)
     Event_5202(
         -1,
         character=1410500,
         flag=11415204,
         character_1=1410562,
         character_2=1410563,
-        model_point=132,
-        model_point_1=134,
+        dummy_id=132,
+        dummy_id_1=134,
     )
     Event_5202(
         -1,
@@ -2030,8 +2030,8 @@ def Event_11415200():
         flag=11415204,
         character_1=1410564,
         character_2=1410565,
-        model_point=150,
-        model_point_1=152,
+        dummy_id=150,
+        dummy_id_1=152,
     )
 
 
@@ -2075,7 +2075,7 @@ def Event_5200(_, character: int, flag: int, bit_index: uchar, bit_index_1: ucha
 
 
 @EndOnRest(5201)
-def Event_5201(_, character: int, flag: int, obj: int, obj_1: int, model_point: short, model_point_1: short):
+def Event_5201(_, character: int, flag: int, obj: int, obj_1: int, dummy_id: short, dummy_id_1: short):
     """Event 5201"""
     DisableObject(obj)
     DisableObject(obj_1)
@@ -2091,14 +2091,14 @@ def Event_5201(_, character: int, flag: int, obj: int, obj_1: int, model_point: 
     EndIfFinishedConditionTrue(input_condition=AND_2)
     EnableObject(obj)
     EnableObject(obj_1)
-    MoveObjectToCharacter(obj, character=character, model_point=model_point)
-    MoveObjectToCharacter(obj_1, character=character, model_point=model_point_1)
+    MoveObjectToCharacter(obj, character=character, dummy_id=dummy_id)
+    MoveObjectToCharacter(obj_1, character=character, dummy_id=dummy_id_1)
     DestroyObject(obj)
     DestroyObject(obj_1)
 
 
 @EndOnRest(5202)
-def Event_5202(_, character: int, flag: int, character_1: int, character_2: int, model_point: int, model_point_1: int):
+def Event_5202(_, character: int, flag: int, character_1: int, character_2: int, dummy_id: int, dummy_id_1: int):
     """Event 5202"""
     if FlagEnabled(flag):
         return
@@ -2117,14 +2117,14 @@ def Event_5202(_, character: int, flag: int, character_1: int, character_2: int,
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=model_point,
+        dummy_id=dummy_id,
         copy_draw_parent=character,
     )
     Move(
         character_2,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=model_point_1,
+        dummy_id=dummy_id_1,
         copy_draw_parent=character,
     )
     EnableCharacter(character_1)
@@ -2173,35 +2173,35 @@ def Event_11415250(
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=100,
+        dummy_id=100,
         copy_draw_parent=character,
     )
     Move(
         character_2,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=101,
+        dummy_id=101,
         copy_draw_parent=character,
     )
     Move(
         character_3,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=102,
+        dummy_id=102,
         copy_draw_parent=character,
     )
     Move(
         character_4,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=103,
+        dummy_id=103,
         copy_draw_parent=character,
     )
     Move(
         character_5,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=104,
+        dummy_id=104,
         copy_draw_parent=character,
     )
     ForceAnimation(character_1, 7000)
@@ -2222,7 +2222,7 @@ def Event_11410350():
         End()
     DisableObject(1411351)
     DisableTreasure(obj=1411600)
-    CreateObjectVFX(1411600, vfx_id=90, model_point=99010)
+    CreateObjectVFX(1411600, vfx_id=90, dummy_id=99010)
     ForceAnimation(1411600, 115, loop=True)
     OR_1.Add(CharacterInsideRegion(PLAYER, region=1412350))
     OR_1.Add(ObjectDestroyed(1411350))

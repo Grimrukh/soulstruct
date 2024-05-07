@@ -27,7 +27,7 @@ def Constructor():
     """Event 0"""
     Event_1033422211()
     Event_1033422611()
-    CommonFunc_90005300(0, flag=1033420610, character=Characters.GiantTurtle, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1033420610, character=Characters.GiantTurtle, item_lot=0, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005880(
         0,
         flag=1033420800,

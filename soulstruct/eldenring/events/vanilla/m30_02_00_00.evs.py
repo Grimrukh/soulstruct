@@ -84,10 +84,10 @@ def Preconstructor():
         region=30022200,
         radius=1.5,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(0, character=Characters.Imp1, region=30022201, radius=0.0, seconds=0.0, animation_id=3006)
     CommonFunc_90005211(
@@ -98,10 +98,10 @@ def Preconstructor():
         region=30022202,
         radius=1.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -111,10 +111,10 @@ def Preconstructor():
         region=30022203,
         radius=1.0,
         seconds=0.20000000298023224,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -124,10 +124,10 @@ def Preconstructor():
         region=30022204,
         radius=1.0,
         seconds=0.20000000298023224,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -137,10 +137,10 @@ def Preconstructor():
         region=30022205,
         radius=1.0,
         seconds=4.800000190734863,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -150,10 +150,10 @@ def Preconstructor():
         region=30022206,
         radius=0.0,
         seconds=0.4000000059604645,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -163,10 +163,10 @@ def Preconstructor():
         region=30022206,
         radius=0.0,
         seconds=0.20000000298023224,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -176,10 +176,10 @@ def Preconstructor():
         region=30022206,
         radius=0.0,
         seconds=1.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -189,10 +189,10 @@ def Preconstructor():
         region=30022206,
         radius=0.0,
         seconds=0.8999999761581421,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -202,10 +202,10 @@ def Preconstructor():
         region=30022206,
         radius=0.0,
         seconds=0.10000000149011612,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -215,10 +215,10 @@ def Preconstructor():
         region=30022212,
         radius=0.0,
         seconds=1.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -228,10 +228,10 @@ def Preconstructor():
         region=30022212,
         radius=0.0,
         seconds=2.5,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -241,10 +241,10 @@ def Preconstructor():
         region=30022214,
         radius=1.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(0, character=Characters.Imp14, region=30022215, radius=1.0, seconds=0.0, animation_id=0)
     Event_30020050()
@@ -272,10 +272,10 @@ def Event_30022510():
             owner_entity=Characters.TalkDummy1,
             behavior_id=801101070,
             behavior_id_1=801101005,
-            model_point=101,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(56):
         CommonFunc_90005682(
@@ -286,10 +286,10 @@ def Event_30022510():
             owner_entity=Characters.TalkDummy1,
             behavior_id=801101060,
             behavior_id_1=801101005,
-            model_point=101,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(55):
         CommonFunc_90005682(
@@ -300,10 +300,10 @@ def Event_30022510():
             owner_entity=Characters.TalkDummy1,
             behavior_id=801101050,
             behavior_id_1=801101005,
-            model_point=101,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(54):
         CommonFunc_90005682(
@@ -314,10 +314,10 @@ def Event_30022510():
             owner_entity=Characters.TalkDummy1,
             behavior_id=801101040,
             behavior_id_1=801101005,
-            model_point=101,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(53):
         CommonFunc_90005682(
@@ -328,10 +328,10 @@ def Event_30022510():
             owner_entity=Characters.TalkDummy1,
             behavior_id=801101030,
             behavior_id_1=801101005,
-            model_point=101,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(52):
         CommonFunc_90005682(
@@ -342,10 +342,10 @@ def Event_30022510():
             owner_entity=Characters.TalkDummy1,
             behavior_id=801101020,
             behavior_id_1=801101005,
-            model_point=101,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(51):
         CommonFunc_90005682(
@@ -356,10 +356,10 @@ def Event_30022510():
             owner_entity=Characters.TalkDummy1,
             behavior_id=801101010,
             behavior_id_1=801101005,
-            model_point=101,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(50):
         CommonFunc_90005682(
@@ -370,10 +370,10 @@ def Event_30022510():
             owner_entity=Characters.TalkDummy1,
             behavior_id=801101000,
             behavior_id_1=801101005,
-            model_point=101,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     CommonFunc_90005681(0, flag=30020505, flag_1=30020506, flag_2=30020507, flag_3=30020508, attacked_entity=30021505)
     if FlagEnabled(57):
@@ -385,10 +385,10 @@ def Event_30022510():
             owner_entity=Characters.TalkDummy2,
             behavior_id=801101070,
             behavior_id_1=801101005,
-            model_point=101,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(56):
         CommonFunc_90005682(
@@ -399,10 +399,10 @@ def Event_30022510():
             owner_entity=Characters.TalkDummy2,
             behavior_id=801101060,
             behavior_id_1=801101005,
-            model_point=101,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(55):
         CommonFunc_90005682(
@@ -413,10 +413,10 @@ def Event_30022510():
             owner_entity=Characters.TalkDummy2,
             behavior_id=801101050,
             behavior_id_1=801101005,
-            model_point=101,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(54):
         CommonFunc_90005682(
@@ -427,10 +427,10 @@ def Event_30022510():
             owner_entity=Characters.TalkDummy2,
             behavior_id=801101040,
             behavior_id_1=801101005,
-            model_point=101,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(53):
         CommonFunc_90005682(
@@ -441,10 +441,10 @@ def Event_30022510():
             owner_entity=Characters.TalkDummy2,
             behavior_id=801101030,
             behavior_id_1=801101005,
-            model_point=101,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(52):
         CommonFunc_90005682(
@@ -455,10 +455,10 @@ def Event_30022510():
             owner_entity=Characters.TalkDummy2,
             behavior_id=801101020,
             behavior_id_1=801101005,
-            model_point=101,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(51):
         CommonFunc_90005682(
@@ -469,10 +469,10 @@ def Event_30022510():
             owner_entity=Characters.TalkDummy2,
             behavior_id=801101010,
             behavior_id_1=801101005,
-            model_point=101,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(50):
         CommonFunc_90005682(
@@ -483,10 +483,10 @@ def Event_30022510():
             owner_entity=Characters.TalkDummy2,
             behavior_id=801101000,
             behavior_id_1=801101005,
-            model_point=101,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
 
 
@@ -505,10 +505,10 @@ def Event_30022610(
     owner_entity: uint,
     behavior_id: int,
     behavior_id_1: int,
-    model_point: int,
-    model_point_1: int,
-    model_point_2: int,
-    model_point_3: int,
+    dummy_id: int,
+    dummy_id_1: int,
+    dummy_id_2: int,
+    dummy_id_3: int,
 ):
     """Event 30022610"""
     AND_1.Add(FlagEnabled(flag))
@@ -518,12 +518,12 @@ def Event_30022610(
     MAIN.Await(AND_1)
     
     CreateProjectileOwner(entity=owner_entity)
-    GotoIfValueComparison(Label.L1, comparison_type=ComparisonType.Equal, left=model_point, right=0)
+    GotoIfValueComparison(Label.L1, comparison_type=ComparisonType.Equal, left=dummy_id, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -533,7 +533,7 @@ def Event_30022610(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=801101000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -543,7 +543,7 @@ def Event_30022610(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -553,7 +553,7 @@ def Event_30022610(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=801101005,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -562,12 +562,12 @@ def Event_30022610(
 
     # --- Label 1 --- #
     DefineLabel(1)
-    GotoIfValueComparison(Label.L2, comparison_type=ComparisonType.Equal, left=model_point_1, right=0)
+    GotoIfValueComparison(Label.L2, comparison_type=ComparisonType.Equal, left=dummy_id_1, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_1,
+            dummy_id=dummy_id_1,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -577,7 +577,7 @@ def Event_30022610(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_1,
+            dummy_id=dummy_id_1,
             behavior_id=801101000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -587,7 +587,7 @@ def Event_30022610(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_1,
+            dummy_id=dummy_id_1,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -597,7 +597,7 @@ def Event_30022610(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_1,
+            dummy_id=dummy_id_1,
             behavior_id=801101005,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -606,12 +606,12 @@ def Event_30022610(
 
     # --- Label 2 --- #
     DefineLabel(2)
-    GotoIfValueComparison(Label.L3, comparison_type=ComparisonType.Equal, left=model_point_2, right=0)
+    GotoIfValueComparison(Label.L3, comparison_type=ComparisonType.Equal, left=dummy_id_2, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_2,
+            dummy_id=dummy_id_2,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -621,7 +621,7 @@ def Event_30022610(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_2,
+            dummy_id=dummy_id_2,
             behavior_id=801101000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -631,7 +631,7 @@ def Event_30022610(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_2,
+            dummy_id=dummy_id_2,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -641,7 +641,7 @@ def Event_30022610(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_2,
+            dummy_id=dummy_id_2,
             behavior_id=801101005,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -650,12 +650,12 @@ def Event_30022610(
 
     # --- Label 3 --- #
     DefineLabel(3)
-    GotoIfValueComparison(Label.L4, comparison_type=ComparisonType.Equal, left=model_point_3, right=0)
+    GotoIfValueComparison(Label.L4, comparison_type=ComparisonType.Equal, left=dummy_id_3, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_3,
+            dummy_id=dummy_id_3,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -665,7 +665,7 @@ def Event_30022610(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_3,
+            dummy_id=dummy_id_3,
             behavior_id=801101000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -675,7 +675,7 @@ def Event_30022610(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_3,
+            dummy_id=dummy_id_3,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -685,7 +685,7 @@ def Event_30022610(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_3,
+            dummy_id=dummy_id_3,
             behavior_id=801101005,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -812,7 +812,7 @@ def Event_30022849():
         flag_2=30022806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=30020800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=30020800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=30020800,

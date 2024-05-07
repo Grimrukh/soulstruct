@@ -33,10 +33,10 @@ def Constructor():
     Event_11800100()
     Event_11800101()
     Event_11800200()
-    Event_11800230(0, value=1, model_point=180005, obj=1801960)
-    Event_11800230(1, value=2, model_point=180006, obj=1801960)
-    Event_11800230(2, value=3, model_point=180007, obj=1801960)
-    Event_11800230(3, value=4, model_point=180008, obj=1801960)
+    Event_11800230(0, value=1, dummy_id=180005, obj=1801960)
+    Event_11800230(1, value=2, dummy_id=180006, obj=1801960)
+    Event_11800230(2, value=3, dummy_id=180007, obj=1801960)
+    Event_11800230(3, value=4, dummy_id=180008, obj=1801960)
     Event_11800210()
     Event_11800220()
     Event_11806100(0, character=1800100, destination=1802000)
@@ -300,7 +300,7 @@ def Event_20():
         anchor_entity=1801950,
         anchor_type=CoordEntityType.Object,
         max_distance=1.5,
-        model_point=-1,
+        dummy_id=-1,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
     ))
     
@@ -403,7 +403,7 @@ def Event_11800100():
         prompt_text=10010105,
         anchor_entity=1801960,
         anchor_type=CoordEntityType.Object,
-        model_point=150,
+        dummy_id=150,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
     ))
     
@@ -426,7 +426,7 @@ def Event_11800101():
         prompt_text=10010105,
         anchor_entity=1801960,
         anchor_type=CoordEntityType.Object,
-        model_point=150,
+        dummy_id=150,
         trigger_attribute=TriggerAttribute.All,
     ))
     AND_2.Add(FlagEnabled(11800100))
@@ -486,7 +486,7 @@ def Event_11800200():
 
 
 @ContinueOnRest(11800230)
-def Event_11800230(_, value: int, model_point: int, obj: int):
+def Event_11800230(_, value: int, dummy_id: int, obj: int):
     """Event 11800230"""
     AND_1.Add(FlagEnabled(11805111))
     AND_1.Add(EnabledFlagCount(FlagType.Absolute, flag_range=(11800201, 11800204)) == value)
@@ -494,7 +494,7 @@ def Event_11800230(_, value: int, model_point: int, obj: int):
     MAIN.Await(AND_1)
     
     DeleteObjectVFX(obj)
-    CreateObjectVFX(obj, vfx_id=100, model_point=model_point)
+    CreateObjectVFX(obj, vfx_id=100, dummy_id=dummy_id)
     WaitFrames(frames=95)
     SkipLinesIfFlagRangeAllEnabled(1, (11800201, 11800204))
     ForceAnimation(PLAYER, 7701, loop=True)
@@ -517,13 +517,13 @@ def Event_11800210():
     MAIN.Await(OR_1)
     
     SkipLinesIfFinishedConditionFalse(1, input_condition=AND_2)
-    CreateObjectVFX(1801960, vfx_id=100, model_point=180005)
+    CreateObjectVFX(1801960, vfx_id=100, dummy_id=180005)
     SkipLinesIfFinishedConditionFalse(1, input_condition=AND_3)
-    CreateObjectVFX(1801960, vfx_id=100, model_point=180006)
+    CreateObjectVFX(1801960, vfx_id=100, dummy_id=180006)
     SkipLinesIfFinishedConditionFalse(1, input_condition=AND_4)
-    CreateObjectVFX(1801960, vfx_id=100, model_point=180007)
+    CreateObjectVFX(1801960, vfx_id=100, dummy_id=180007)
     SkipLinesIfFinishedConditionFalse(1, input_condition=AND_5)
-    CreateObjectVFX(1801960, vfx_id=100, model_point=180008)
+    CreateObjectVFX(1801960, vfx_id=100, dummy_id=180008)
     if ThisEventFlagEnabled():
         EndOfAnimation(obj=1801101, animation_id=1)
         End()

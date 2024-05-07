@@ -25,7 +25,7 @@ def Constructor():
     RegisterBonfire(bonfire_flag=13900000, obj=3901950, reaction_distance=5.0)
     RegisterBonfire(bonfire_flag=13900002, obj=3901952, reaction_distance=5.0)
     CommonFunc_20005500(0, flag=13900800, bonfire_flag=13900001, character=3900951, obj=3901951)
-    CommonFunc_20005780(0, obj=3901780, model_point=2)
+    CommonFunc_20005780(0, obj=3901780, dummy_id=2)
     CommonFunc_20005750(
         0,
         flag=13900800,
@@ -910,7 +910,7 @@ def Event_13900900():
         return
     if ThisEventSlotFlagEnabled():
         return
-    CreateObjectVFX(3901250, vfx_id=90, model_point=61)
+    CreateObjectVFX(3901250, vfx_id=90, dummy_id=61)
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=4200, entity=3901250))
     
@@ -1050,7 +1050,7 @@ def Event_13900465():
 def Event_13905470():
     """Event 13905470"""
     DeleteObjectVFX(3901470, erase_root=False)
-    CreateObjectVFX(3901470, vfx_id=200, model_point=839020)
+    CreateObjectVFX(3901470, vfx_id=200, dummy_id=839020)
     SkipLinesIfClientTypeCountComparison(
         skip_lines=1,
         client_type=ClientType.Invader,
@@ -1101,7 +1101,7 @@ def Event_13905471():
         ShootProjectile(
             owner_entity=3900470,
             source_entity=3902470,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=5900,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1111,7 +1111,7 @@ def Event_13905471():
         ShootProjectile(
             owner_entity=3900470,
             source_entity=3902470,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=5901,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1121,7 +1121,7 @@ def Event_13905471():
         ShootProjectile(
             owner_entity=3900470,
             source_entity=3902470,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=5902,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1131,7 +1131,7 @@ def Event_13905471():
         ShootProjectile(
             owner_entity=3900470,
             source_entity=3902470,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=5903,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1141,7 +1141,7 @@ def Event_13905471():
         ShootProjectile(
             owner_entity=3900470,
             source_entity=3902470,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=5904,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1151,7 +1151,7 @@ def Event_13905471():
         ShootProjectile(
             owner_entity=3900470,
             source_entity=3902470,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=5905,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1161,7 +1161,7 @@ def Event_13905471():
         ShootProjectile(
             owner_entity=3900470,
             source_entity=3902470,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=5906,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1738,7 +1738,7 @@ def Event_13905820():
         action_button_id=3901800,
         flag_2=13905806,
     )
-    CommonFunc_20005820(0, flag=13900800, obj=3901800, model_point=3, left=0)
+    CommonFunc_20005820(0, flag=13900800, obj=3901800, dummy_id=3, left=0)
     CommonFunc_20001836(
         0,
         flag=13900800,

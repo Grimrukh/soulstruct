@@ -72,7 +72,7 @@ def Event_1041522270(_, owner_entity: uint, region: uint, source_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802103000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -82,7 +82,7 @@ def Event_1041522270(_, owner_entity: uint, region: uint, source_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802103010,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -92,7 +92,7 @@ def Event_1041522270(_, owner_entity: uint, region: uint, source_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802103020,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -102,7 +102,7 @@ def Event_1041522270(_, owner_entity: uint, region: uint, source_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802103030,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -112,7 +112,7 @@ def Event_1041522270(_, owner_entity: uint, region: uint, source_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802103040,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -122,7 +122,7 @@ def Event_1041522270(_, owner_entity: uint, region: uint, source_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802103050,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -132,7 +132,7 @@ def Event_1041522270(_, owner_entity: uint, region: uint, source_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802103060,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -142,7 +142,7 @@ def Event_1041522270(_, owner_entity: uint, region: uint, source_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802103070,
             launch_angle_x=0,
             launch_angle_y=0,

@@ -48,8 +48,8 @@ def Constructor():
             0,
             asset_flag=1047402502,
             asset=Assets.AEG007_432_1001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004070,
             radius=1.0,
             life=0.0,
@@ -60,8 +60,8 @@ def Constructor():
             0,
             asset_flag=1047402502,
             asset=Assets.AEG007_432_1001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004060,
             radius=1.0,
             life=0.0,
@@ -72,8 +72,8 @@ def Constructor():
             0,
             asset_flag=1047402502,
             asset=Assets.AEG007_432_1001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004050,
             radius=1.0,
             life=0.0,
@@ -84,8 +84,8 @@ def Constructor():
             0,
             asset_flag=1047402502,
             asset=Assets.AEG007_432_1001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004040,
             radius=1.0,
             life=0.0,
@@ -96,8 +96,8 @@ def Constructor():
             0,
             asset_flag=1047402502,
             asset=Assets.AEG007_432_1001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004030,
             radius=1.0,
             life=0.0,
@@ -108,8 +108,8 @@ def Constructor():
             0,
             asset_flag=1047402502,
             asset=Assets.AEG007_432_1001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004020,
             radius=1.0,
             life=0.0,
@@ -120,8 +120,8 @@ def Constructor():
             0,
             asset_flag=1047402502,
             asset=Assets.AEG007_432_1001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004010,
             radius=1.0,
             life=0.0,
@@ -132,8 +132,8 @@ def Constructor():
             0,
             asset_flag=1047402502,
             asset=Assets.AEG007_432_1001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004000,
             radius=1.0,
             life=0.0,
@@ -144,8 +144,8 @@ def Constructor():
             0,
             asset_flag=1047402506,
             asset=Assets.AEG007_433_1000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004070,
             radius=1.0,
             life=0.0,
@@ -156,8 +156,8 @@ def Constructor():
             0,
             asset_flag=1047402506,
             asset=Assets.AEG007_433_1000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004060,
             radius=1.0,
             life=0.0,
@@ -168,8 +168,8 @@ def Constructor():
             0,
             asset_flag=1047402506,
             asset=Assets.AEG007_433_1000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004050,
             radius=1.0,
             life=0.0,
@@ -180,8 +180,8 @@ def Constructor():
             0,
             asset_flag=1047402506,
             asset=Assets.AEG007_433_1000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004040,
             radius=1.0,
             life=0.0,
@@ -192,8 +192,8 @@ def Constructor():
             0,
             asset_flag=1047402506,
             asset=Assets.AEG007_433_1000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004030,
             radius=1.0,
             life=0.0,
@@ -204,8 +204,8 @@ def Constructor():
             0,
             asset_flag=1047402506,
             asset=Assets.AEG007_433_1000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004020,
             radius=1.0,
             life=0.0,
@@ -216,8 +216,8 @@ def Constructor():
             0,
             asset_flag=1047402506,
             asset=Assets.AEG007_433_1000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004010,
             radius=1.0,
             life=0.0,
@@ -228,8 +228,8 @@ def Constructor():
             0,
             asset_flag=1047402506,
             asset=Assets.AEG007_433_1000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004000,
             radius=1.0,
             life=0.0,
@@ -240,8 +240,8 @@ def Constructor():
             0,
             asset_flag=1047402507,
             asset=Assets.AEG007_433_1001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004070,
             radius=1.0,
             life=0.0,
@@ -252,8 +252,8 @@ def Constructor():
             0,
             asset_flag=1047402507,
             asset=Assets.AEG007_433_1001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004060,
             radius=1.0,
             life=0.0,
@@ -264,8 +264,8 @@ def Constructor():
             0,
             asset_flag=1047402507,
             asset=Assets.AEG007_433_1001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004050,
             radius=1.0,
             life=0.0,
@@ -276,8 +276,8 @@ def Constructor():
             0,
             asset_flag=1047402507,
             asset=Assets.AEG007_433_1001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004040,
             radius=1.0,
             life=0.0,
@@ -288,8 +288,8 @@ def Constructor():
             0,
             asset_flag=1047402507,
             asset=Assets.AEG007_433_1001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004030,
             radius=1.0,
             life=0.0,
@@ -300,8 +300,8 @@ def Constructor():
             0,
             asset_flag=1047402507,
             asset=Assets.AEG007_433_1001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004020,
             radius=1.0,
             life=0.0,
@@ -312,8 +312,8 @@ def Constructor():
             0,
             asset_flag=1047402507,
             asset=Assets.AEG007_433_1001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004010,
             radius=1.0,
             life=0.0,
@@ -324,8 +324,8 @@ def Constructor():
             0,
             asset_flag=1047402507,
             asset=Assets.AEG007_433_1001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004000,
             radius=1.0,
             life=0.0,
@@ -336,8 +336,8 @@ def Constructor():
             0,
             asset_flag=1047402511,
             asset=Assets.AEG007_470_2000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004070,
             radius=1.0,
             life=0.0,
@@ -348,8 +348,8 @@ def Constructor():
             0,
             asset_flag=1047402511,
             asset=Assets.AEG007_470_2000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004060,
             radius=1.0,
             life=0.0,
@@ -360,8 +360,8 @@ def Constructor():
             0,
             asset_flag=1047402511,
             asset=Assets.AEG007_470_2000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004050,
             radius=1.0,
             life=0.0,
@@ -372,8 +372,8 @@ def Constructor():
             0,
             asset_flag=1047402511,
             asset=Assets.AEG007_470_2000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004040,
             radius=1.0,
             life=0.0,
@@ -384,8 +384,8 @@ def Constructor():
             0,
             asset_flag=1047402511,
             asset=Assets.AEG007_470_2000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004030,
             radius=1.0,
             life=0.0,
@@ -396,8 +396,8 @@ def Constructor():
             0,
             asset_flag=1047402511,
             asset=Assets.AEG007_470_2000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004020,
             radius=1.0,
             life=0.0,
@@ -408,8 +408,8 @@ def Constructor():
             0,
             asset_flag=1047402511,
             asset=Assets.AEG007_470_2000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004010,
             radius=1.0,
             life=0.0,
@@ -420,8 +420,8 @@ def Constructor():
             0,
             asset_flag=1047402511,
             asset=Assets.AEG007_470_2000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004000,
             radius=1.0,
             life=0.0,
@@ -432,8 +432,8 @@ def Constructor():
             0,
             asset_flag=1047402512,
             asset=Assets.AEG007_470_2001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004070,
             radius=1.0,
             life=0.0,
@@ -444,8 +444,8 @@ def Constructor():
             0,
             asset_flag=1047402512,
             asset=Assets.AEG007_470_2001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004060,
             radius=1.0,
             life=0.0,
@@ -456,8 +456,8 @@ def Constructor():
             0,
             asset_flag=1047402512,
             asset=Assets.AEG007_470_2001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004050,
             radius=1.0,
             life=0.0,
@@ -468,8 +468,8 @@ def Constructor():
             0,
             asset_flag=1047402512,
             asset=Assets.AEG007_470_2001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004040,
             radius=1.0,
             life=0.0,
@@ -480,8 +480,8 @@ def Constructor():
             0,
             asset_flag=1047402512,
             asset=Assets.AEG007_470_2001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004030,
             radius=1.0,
             life=0.0,
@@ -492,8 +492,8 @@ def Constructor():
             0,
             asset_flag=1047402512,
             asset=Assets.AEG007_470_2001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004020,
             radius=1.0,
             life=0.0,
@@ -504,8 +504,8 @@ def Constructor():
             0,
             asset_flag=1047402512,
             asset=Assets.AEG007_470_2001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004010,
             radius=1.0,
             life=0.0,
@@ -516,8 +516,8 @@ def Constructor():
             0,
             asset_flag=1047402512,
             asset=Assets.AEG007_470_2001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004000,
             radius=1.0,
             life=0.0,
@@ -535,56 +535,56 @@ def Constructor():
         right=1047402572,
     )
     CommonFunc_90005621(0, flag=1047400570, asset=Assets.AEG099_272_9000)
-    CommonFunc_90005250(0, character=Characters.MonstrousCrow0, region=1047402259, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=1047400259, region=1047402259, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.MonstrousCrow1, region=1047402260, seconds=0.0, animation_id=-1)
-    CommonFunc_90005300(0, flag=1047400290, character=Characters.Scarab, item_lot=40400, seconds=0.0, left=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.MonstrousCrow0, region=1047402259, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=1047400259, region=1047402259, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.MonstrousCrow1, region=1047402260, seconds=0.0, animation_id=-1)
+    CommonFunc_90005300(0, flag=1047400290, character=Characters.Scarab, item_lot=40400, seconds=0.0, item_is_dropped=0)
     Event_1047402399()
-    CommonFunc_90005250(0, character=Characters.Dummy, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse0, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse1, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse2, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse3, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse4, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse5, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse6, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse7, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse8, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse9, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse10, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse11, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse12, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse13, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse14, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse15, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=1047400321, region=1047402321, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=1047400322, region=1047402321, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=1047400323, region=1047402321, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=1047400324, region=1047402321, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=1047400325, region=1047402321, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=1047400326, region=1047402321, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=1047400327, region=1047402321, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=1047400328, region=1047402321, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Dummy, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse0, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse1, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse2, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse3, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse4, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse5, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse6, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse7, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse8, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse9, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse10, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse11, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse12, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse13, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse14, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse15, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=1047400321, region=1047402321, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=1047400322, region=1047402321, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=1047400323, region=1047402321, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=1047400324, region=1047402321, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=1047400325, region=1047402321, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=1047400326, region=1047402321, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=1047400327, region=1047402321, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=1047400328, region=1047402321, seconds=0.0, animation_id=-1)
     Event_1047402302()
-    CommonFunc_90005250(0, character=Characters.PutridCorpse16, region=1047402336, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse17, region=1047402336, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse18, region=1047402336, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse19, region=1047402336, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse20, region=1047402340, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse21, region=1047402340, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse22, region=1047402340, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse23, region=1047402402, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse24, region=1047402402, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpseBare1, region=1047402402, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpseBare2, region=1047402402, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpseBare3, region=1047402402, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpseBare4, region=1047402402, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpseBare5, region=1047402402, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpseBare6, region=1047402402, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpseBare7, region=1047402336, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=1047400468, region=1047402468, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse16, region=1047402336, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse17, region=1047402336, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse18, region=1047402336, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse19, region=1047402336, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse20, region=1047402340, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse21, region=1047402340, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse22, region=1047402340, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse23, region=1047402402, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse24, region=1047402402, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpseBare1, region=1047402402, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpseBare2, region=1047402402, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpseBare3, region=1047402402, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpseBare4, region=1047402402, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpseBare5, region=1047402402, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpseBare6, region=1047402402, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpseBare7, region=1047402336, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=1047400468, region=1047402468, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=1047400391, radius=60.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005870(0, character=Characters.PutridAvatar, name=904811602, npc_threat_level=18)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.PutridAvatar, name=904811602, npc_threat_level=18)
     CommonFunc_90005860(
         0,
         flag=1047400800,
@@ -594,7 +594,7 @@ def Constructor():
         item_lot=30410,
         seconds=0.0,
     )
-    CommonFunc_90005872(0, character=Characters.PutridAvatar, npc_threat_level=18, right=0)
+    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.PutridAvatar, npc_threat_level=18, required_flag=0)
 
 
 @RestartOnRest(1047402301)

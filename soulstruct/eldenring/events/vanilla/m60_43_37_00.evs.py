@@ -26,8 +26,8 @@ from .enums.m60_43_39_00_enums import Characters as m60_43_Characters
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1043370000, asset=Assets.AEG099_060_9000)
-    CommonFunc_90005300(0, flag=1043370210, character=Characters.Scarab, item_lot=40108, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=1043370800, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1043370210, character=Characters.Scarab, item_lot=40108, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1043370800, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005476(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
     RunCommonEvent(90005477)
     Event_1043372340(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
@@ -40,14 +40,14 @@ def Constructor():
         item_lot=1043370400,
         seconds=0.0,
     )
-    CommonFunc_90005871(
+    CommonFunc_NightsCavalryHealthBar(
         0,
-        character=Characters.NightsCavalry,
+        nights_cavalry=Characters.NightsCavalry,
         name=903150600,
         npc_threat_level=10,
-        character_1=Characters.NightsCavalryHorse,
+        horse=Characters.NightsCavalryHorse,
     )
-    CommonFunc_90005872(0, character=Characters.NightsCavalry, npc_threat_level=10, right=0)
+    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.NightsCavalry, npc_threat_level=10, required_flag=0)
     Event_1043373700(0, character=1043370700, character_1=1043370701, character_2=1043370702, asset=1043376700)
     Event_1043373703(0, character=1043370700)
     Event_1043373705(0, character=1043370700)
@@ -162,11 +162,11 @@ def Constructor():
     Event_1043373732(0, character=Characters.DemiHumanShaman, asset=1043371700)
     Event_1043373733(0, character=Characters.DemiHumanShaman)
     Event_1043373734(0, entity=Characters.DemiHumanShaman)
-    CommonFunc_90005630(0, far_view_id=61433700, asset=Assets.AEG099_130_9000, model_point=127)
+    CommonFunc_90005630(0, far_view_id=61433700, asset=Assets.AEG099_130_9000, dummy_id=127)
     CommonFunc_90005460(0, character=1043370200)
     CommonFunc_90005461(0, character=1043370200)
     CommonFunc_90005462(0, character=1043370200)
-    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, dummy_id=800, right=0)
     CommonFunc_90005631(0, anchor_entity=Assets.AEG099_376_1000, text=61010)
     Event_1043372650(
         0,
@@ -282,7 +282,7 @@ def Event_1043372250(_, character: uint, region: uint, owner_entity: uint):
     ShootProjectile(
         owner_entity=owner_entity,
         source_entity=PLAYER,
-        model_point=900,
+        dummy_id=900,
         behavior_id=100920,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -921,7 +921,7 @@ def Event_1043373732(_, character: uint, asset: uint):
     # --- Label 0 --- #
     DefineLabel(0)
     AwaitFlagEnabled(flag=1043379357)
-    CreateTemporaryVFX(vfx_id=641012, anchor_entity=character, model_point=900, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=641012, anchor_entity=character, dummy_id=900, anchor_type=CoordEntityType.Character)
     Wait(0.5)
     DisableAsset(asset)
     Wait(0.30000001192092896)

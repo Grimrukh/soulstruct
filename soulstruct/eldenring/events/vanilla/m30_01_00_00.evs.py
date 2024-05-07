@@ -49,10 +49,10 @@ def Constructor():
         region=30012800,
         radius=1.0,
         seconds=2.5,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -62,10 +62,10 @@ def Constructor():
         region=30012800,
         radius=1.0,
         seconds=2.5,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -75,10 +75,10 @@ def Constructor():
         region=30012800,
         radius=1.0,
         seconds=2.5,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -88,10 +88,10 @@ def Constructor():
         region=30012800,
         radius=1.0,
         seconds=2.5,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005920(0, flag=30010520, asset=30011520, obj_act_id=30013520)
     CommonFunc_90005650(
@@ -131,10 +131,10 @@ def Preconstructor():
         region=30012200,
         radius=0.0,
         seconds=0.800000011920929,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -144,10 +144,10 @@ def Preconstructor():
         region=30012201,
         radius=1.0,
         seconds=0.5,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -157,10 +157,10 @@ def Preconstructor():
         region=30012203,
         radius=1.0,
         seconds=2.5,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -170,10 +170,10 @@ def Preconstructor():
         region=30012204,
         radius=1.0,
         seconds=0.20000000298023224,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -183,10 +183,10 @@ def Preconstructor():
         region=30012205,
         radius=1.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -196,10 +196,10 @@ def Preconstructor():
         region=30012207,
         radius=1.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -209,10 +209,10 @@ def Preconstructor():
         region=30012209,
         radius=1.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -222,10 +222,10 @@ def Preconstructor():
         region=30012315,
         radius=5.0,
         seconds=1.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005200(
         0,
@@ -283,10 +283,10 @@ def Preconstructor():
         region=30012322,
         radius=5.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -296,10 +296,10 @@ def Preconstructor():
         region=30012322,
         radius=5.0,
         seconds=0.30000001192092896,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -309,10 +309,10 @@ def Preconstructor():
         region=30012322,
         radius=5.0,
         seconds=0.8999999761581421,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -322,10 +322,10 @@ def Preconstructor():
         region=30012322,
         radius=5.0,
         seconds=1.5,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -335,10 +335,10 @@ def Preconstructor():
         region=30012322,
         radius=5.0,
         seconds=2.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -348,10 +348,10 @@ def Preconstructor():
         region=30012322,
         radius=5.0,
         seconds=3.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -361,10 +361,10 @@ def Preconstructor():
         region=30012322,
         radius=5.0,
         seconds=3.5999999046325684,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -374,10 +374,10 @@ def Preconstructor():
         region=30012322,
         radius=5.0,
         seconds=3.9000000953674316,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
 
 
@@ -487,13 +487,13 @@ def Event_30012505():
     
     MAIN.Await(AND_1)
     
-    MoveAssetToCharacter(Assets.AEG099_090_9000, character=PLAYER, model_point=93)
+    MoveAssetToCharacter(Assets.AEG099_090_9000, character=PLAYER, dummy_id=93)
     WaitFrames(frames=1)
     if FlagEnabled(50):
         CreateHazard(
             asset_flag=30013501,
             asset=Assets.AEG099_090_9000,
-            model_point=100,
+            dummy_id=100,
             behavior_param_id=801301200,
             target_type=DamageTargetType.Character,
             radius=2.0,
@@ -504,7 +504,7 @@ def Event_30012505():
         CreateHazard(
             asset_flag=30013501,
             asset=Assets.AEG099_090_9000,
-            model_point=100,
+            dummy_id=100,
             behavior_param_id=801301210,
             target_type=DamageTargetType.Character,
             radius=2.0,
@@ -515,7 +515,7 @@ def Event_30012505():
         CreateHazard(
             asset_flag=30013501,
             asset=Assets.AEG099_090_9000,
-            model_point=100,
+            dummy_id=100,
             behavior_param_id=801301220,
             target_type=DamageTargetType.Character,
             radius=2.0,
@@ -526,7 +526,7 @@ def Event_30012505():
         CreateHazard(
             asset_flag=30013501,
             asset=Assets.AEG099_090_9000,
-            model_point=100,
+            dummy_id=100,
             behavior_param_id=801301230,
             target_type=DamageTargetType.Character,
             radius=2.0,
@@ -537,7 +537,7 @@ def Event_30012505():
         CreateHazard(
             asset_flag=30013501,
             asset=Assets.AEG099_090_9000,
-            model_point=100,
+            dummy_id=100,
             behavior_param_id=801301240,
             target_type=DamageTargetType.Character,
             radius=2.0,
@@ -548,7 +548,7 @@ def Event_30012505():
         CreateHazard(
             asset_flag=30013501,
             asset=Assets.AEG099_090_9000,
-            model_point=100,
+            dummy_id=100,
             behavior_param_id=801301250,
             target_type=DamageTargetType.Character,
             radius=2.0,
@@ -559,7 +559,7 @@ def Event_30012505():
         CreateHazard(
             asset_flag=30013501,
             asset=Assets.AEG099_090_9000,
-            model_point=100,
+            dummy_id=100,
             behavior_param_id=801301260,
             target_type=DamageTargetType.Character,
             radius=2.0,
@@ -570,7 +570,7 @@ def Event_30012505():
         CreateHazard(
             asset_flag=30013501,
             asset=Assets.AEG099_090_9000,
-            model_point=100,
+            dummy_id=100,
             behavior_param_id=801301270,
             target_type=DamageTargetType.Character,
             radius=2.0,
@@ -712,7 +712,7 @@ def Event_30012849():
         flag_2=30012806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=30010800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=30010800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=30010800,

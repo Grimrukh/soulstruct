@@ -66,8 +66,8 @@ def Constructor():
     Event_11010190(0, obj_act_id=11010190, text=10010876, obj=1011308, text_1=10010883, item=2017)
     Event_11010190(1, obj_act_id=11010191, text=10010878, obj=1011315, text_1=10010883, item=2019)
     Event_11010190(2, obj_act_id=11010192, text=10010878, obj=1011316, text_1=10010883, item=2019)
-    Event_11010101(0, obj=1011320, animation_id=1, model_point=101, model_point_1=121, animation_id_1=7110)
-    Event_11010102(0, flag=11010142, anchor_entity=1011320, model_point=100)
+    Event_11010101(0, obj=1011320, animation_id=1, dummy_id=101, dummy_id_1=121, animation_id_1=7110)
+    Event_11010102(0, flag=11010142, anchor_entity=1011320, dummy_id=100)
     Event_11015185()
     Event_11010611()
     Event_11010600()
@@ -318,7 +318,7 @@ def Event_11010008():
     CreateHazard(
         obj_flag=11010300,
         obj=1011450,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=5000,
         target_type=DamageTargetType.Character,
         radius=1.2000000476837158,
@@ -328,7 +328,7 @@ def Event_11010008():
     CreateHazard(
         obj_flag=11010308,
         obj=1011407,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=5000,
         target_type=DamageTargetType.Character,
         radius=0.699999988079071,
@@ -338,7 +338,7 @@ def Event_11010008():
     CreateHazard(
         obj_flag=11010309,
         obj=1011408,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=5000,
         target_type=DamageTargetType.Character,
         radius=0.699999988079071,
@@ -721,7 +721,7 @@ def Event_11015397(_, character: int, npc_part_id: short, npc_part_id_1: int, ch
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=130,
+        dummy_id=130,
         copy_draw_parent=character,
     )
     EnableCharacter(character_1)
@@ -1228,14 +1228,14 @@ def Event_11010120():
     ResetAnimation(1010103)
     ForceAnimation(1010103, 3006)
     Wait(0.5)
-    CreateObjectVFX(1011102, vfx_id=1, model_point=100100)
+    CreateObjectVFX(1011102, vfx_id=1, dummy_id=100100)
     ForceAnimation(1011102, 0)
     Wait(0.5)
     EnableAI(1010103)
     CreateHazard(
         obj_flag=11010121,
         obj=1011102,
-        model_point=1,
+        dummy_id=1,
         behavior_param_id=5020,
         target_type=DamageTargetType.Character,
         radius=0.6000000238418579,
@@ -1247,7 +1247,7 @@ def Event_11010120():
 
 
 @ContinueOnRest(11010101)
-def Event_11010101(_, obj: int, animation_id: int, model_point: short, model_point_1: int, animation_id_1: int):
+def Event_11010101(_, obj: int, animation_id: int, dummy_id: short, dummy_id_1: int, animation_id_1: int):
     """Event 11010101"""
     if ThisEventSlotFlagEnabled():
         EndOfAnimation(obj=obj, animation_id=animation_id)
@@ -1259,17 +1259,17 @@ def Event_11010101(_, obj: int, animation_id: int, model_point: short, model_poi
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=model_point,
+        dummy_id=dummy_id,
         trigger_attribute=TriggerAttribute.All,
     ))
     
-    Move(PLAYER, destination=obj, destination_type=CoordEntityType.Object, model_point=model_point_1, short_move=True)
+    Move(PLAYER, destination=obj, destination_type=CoordEntityType.Object, dummy_id=dummy_id_1, short_move=True)
     ForceAnimation(PLAYER, animation_id_1)
     ForceAnimation(obj, animation_id)
 
 
 @ContinueOnRest(11010102)
-def Event_11010102(_, flag: int, anchor_entity: int, model_point: short):
+def Event_11010102(_, flag: int, anchor_entity: int, dummy_id: short):
     """Event 11010102"""
     DisableNetworkSync()
     OR_1.Add(FlagEnabled(flag))
@@ -1279,7 +1279,7 @@ def Event_11010102(_, flag: int, anchor_entity: int, model_point: short):
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=model_point,
+        dummy_id=dummy_id,
         trigger_attribute=TriggerAttribute.All,
     ))
     
@@ -1466,12 +1466,12 @@ def Event_11010100():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=194,
+        dummy_id=194,
         trigger_attribute=TriggerAttribute.All,
     ))
     
     EnableFlag(11010100)
-    Move(PLAYER, destination=1011149, destination_type=CoordEntityType.Object, model_point=192, short_move=True)
+    Move(PLAYER, destination=1011149, destination_type=CoordEntityType.Object, dummy_id=192, short_move=True)
     ForceAnimation(PLAYER, 8005)
     Wait(0.5)
     ForceAnimation(1011149, 0, wait_for_completion=True)
@@ -1587,7 +1587,7 @@ def Event_11010601():
     CreateHazard(
         obj_flag=11010602,
         obj=1011101,
-        model_point=42,
+        dummy_id=42,
         behavior_param_id=5010,
         target_type=DamageTargetType.Character,
         radius=0.6000000238418579,
@@ -1597,7 +1597,7 @@ def Event_11010601():
     CreateHazard(
         obj_flag=11010603,
         obj=1011101,
-        model_point=43,
+        dummy_id=43,
         behavior_param_id=5010,
         target_type=DamageTargetType.Character,
         radius=0.6000000238418579,
@@ -1607,7 +1607,7 @@ def Event_11010601():
     CreateHazard(
         obj_flag=11010604,
         obj=1011101,
-        model_point=44,
+        dummy_id=44,
         behavior_param_id=5010,
         target_type=DamageTargetType.Character,
         radius=0.6000000238418579,
@@ -1966,7 +1966,7 @@ def Event_11015301():
         1010301,
         destination=1010300,
         destination_type=CoordEntityType.Character,
-        model_point=66,
+        dummy_id=66,
         copy_draw_parent=1010300,
     )
     EnableCharacter(1010301)

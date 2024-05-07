@@ -32,7 +32,7 @@ def Constructor():
         region_1=1044322201,
         region_2=1044322202,
     )
-    CommonFunc_90005300(0, flag=1044320200, character=Characters.Scarab, item_lot=40138, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1044320200, character=Characters.Scarab, item_lot=40138, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005860(
         0,
         flag=1044320800,
@@ -42,8 +42,8 @@ def Constructor():
         item_lot=1044320400,
         seconds=0.0,
     )
-    CommonFunc_90005870(0, character=Characters.DeathRiteBird, name=904980602, npc_threat_level=24)
-    CommonFunc_90005300(0, flag=1044320850, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.DeathRiteBird, name=904980602, npc_threat_level=24)
+    CommonFunc_90005300(0, flag=1044320850, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005476(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
     RunCommonEvent(90005477)
     Event_1044322340(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
@@ -56,14 +56,14 @@ def Constructor():
         item_lot=1044320410,
         seconds=0.0,
     )
-    CommonFunc_90005871(
+    CommonFunc_NightsCavalryHealthBar(
         0,
-        character=Characters.NightsCavalry,
+        nights_cavalry=Characters.NightsCavalry,
         name=903150601,
         npc_threat_level=10,
-        character_1=Characters.NightsCavalryHorse,
+        horse=Characters.NightsCavalryHorse,
     )
-    CommonFunc_90005872(0, character=Characters.NightsCavalry, npc_threat_level=10, right=0)
+    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.NightsCavalry, npc_threat_level=10, required_flag=0)
 
 
 @ContinueOnRest(50)
@@ -77,10 +77,10 @@ def Preconstructor():
         region=1044322340,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
 
 
@@ -148,7 +148,7 @@ def Event_1044322200(_, character: uint, special_effect: int, region: uint, regi
 def Event_1044322210(_, asset: uint, entity: uint, flag: uint):
     """Event 1044322210"""
     GotoIfFlagEnabled(Label.L0, flag=flag)
-    CreateAssetVFX(asset, vfx_id=200, model_point=803220)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=803220)
 
     # --- Label 0 --- #
     DefineLabel(0)

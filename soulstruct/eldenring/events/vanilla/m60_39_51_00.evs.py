@@ -45,12 +45,12 @@ def Constructor():
     )
     CommonFunc_90005476(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
     Event_1039512451(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
-    CommonFunc_90005871(
+    CommonFunc_NightsCavalryHealthBar(
         0,
-        character=Characters.NightsCavalry,
+        nights_cavalry=Characters.NightsCavalry,
         name=903150604,
         npc_threat_level=10,
-        character_1=Characters.NightsCavalryHorse,
+        horse=Characters.NightsCavalryHorse,
     )
     CommonFunc_90005860(
         0,
@@ -61,9 +61,9 @@ def Constructor():
         item_lot=1039510200,
         seconds=0.0,
     )
-    CommonFunc_90005300(0, flag=1039510800, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, left=0)
-    CommonFunc_90005872(0, character=Characters.NightsCavalry, npc_threat_level=10, right=0)
-    CommonFunc_90005300(0, flag=1039510500, character=Characters.Scarab, item_lot=40304, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1039510800, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.NightsCavalry, npc_threat_level=10, required_flag=0)
+    CommonFunc_90005300(0, flag=1039510500, character=Characters.Scarab, item_lot=40304, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005703(
         0,
         character=Characters.DemiHumanShaman,
@@ -162,7 +162,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.MadPumpkinHead, region=1039512350, seconds=0.0, animation_id=3003)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.MadPumpkinHead, region=1039512350, seconds=0.0, animation_id=3003)
     CommonFunc_90005201(
         0,
         character=Characters.LeyndellKnight1,
@@ -175,7 +175,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.LeyndellKnight0, region=1039512361, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LeyndellKnight0, region=1039512361, seconds=0.0, animation_id=-1)
 
 
 @RestartOnRest(1039512451)

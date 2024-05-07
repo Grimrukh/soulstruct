@@ -38,7 +38,7 @@ def Constructor():
     Event_31192880()
     Event_31192863(0, character=Characters.Snail1, flag=31192870)
     Event_31192863(1, character=Characters.Snail2, flag=31192871)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
     CommonFunc_90005261(0, character=Characters.Skeleton0, region=31192200, radius=3.0, seconds=0.0, animation_id=0)
     Event_31192210(0, character=Characters.Skeleton1, region=31192210, radius=2.0, seconds=0.0, animation_id=0)
     Event_31192210(1, character=Characters.Skeleton2, region=31192210, radius=2.0, seconds=0.0, animation_id=0)
@@ -351,7 +351,7 @@ def Event_31192860():
     ForceAnimation(Characters.NecromancerGarris, 68011)
     DisableAI(Characters.Snail0)
     ForceAnimation(Characters.Snail0, 30000)
-    SetLockOnPoint(character=Characters.Snail0, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=Characters.Snail0, lock_on_dummy_id=220, state=False)
     AND_2.Add(FlagEnabled(31192855))
     AND_2.Add(CharacterInsideRegion(character=PLAYER, region=31192850))
     
@@ -364,7 +364,7 @@ def Event_31192860():
     ForceAnimation(Characters.Snail0, 20000)
     EnableAI(Characters.Snail0)
     Wait(3.0)
-    SetLockOnPoint(character=Characters.Snail0, lock_on_model_point=220, state=True)
+    SetLockOnPoint(character=Characters.Snail0, lock_on_dummy_id=220, state=True)
 
 
 @RestartOnRest(31192861)
@@ -479,7 +479,7 @@ def Event_31192849():
         flag_2=31192806,
         action_button_id=10000,
     )
-    CommonFunc_9005813(0, flag=31190800, asset=Assets.AEG099_001_9000, model_point=3, right=0, model_point_1=3)
+    CommonFunc_9005813(0, flag=31190800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0, dummy_id_1=3)
     CommonFunc_9005822(
         0,
         flag=31190800,
@@ -516,7 +516,7 @@ def Event_31192899():
         flag_2=31192856,
         action_button_id=10000,
     )
-    CommonFunc_9005813(0, flag=31190850, asset=Assets.AEG099_001_9002, model_point=3, right=0, model_point_1=3)
+    CommonFunc_9005813(0, flag=31190850, asset=Assets.AEG099_001_9002, dummy_id=3, right=0, dummy_id_1=3)
     CommonFunc_9005822(
         0,
         flag=31190850,

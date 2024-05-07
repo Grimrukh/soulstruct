@@ -33,7 +33,7 @@ def Constructor():
         item_lot=1037420400,
         seconds=0.0,
     )
-    CommonFunc_90005870(0, character=Characters.DeathRiteBird, name=904980603, npc_threat_level=24)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.DeathRiteBird, name=904980603, npc_threat_level=24)
     RegisterGrace(grace_flag=1037420000, asset=Assets.AEG099_060_9001)
     CommonFunc_90005100(
         0,
@@ -71,11 +71,11 @@ def Constructor():
         seconds_1=0.0,
     )
     RunEvent(1037422600, slot=0, args=(0,))
-    CommonFunc_90005630(0, far_view_id=61374200, asset=Assets.AEG099_130_9000, model_point=123)
+    CommonFunc_90005630(0, far_view_id=61374200, asset=Assets.AEG099_130_9000, dummy_id=123)
     Event_1037423700(0, character=Characters.RyatheScout, asset=Assets.AEG099_320_9000)
     Event_1037423702(0, flag=1037422704, flag_1=1037422703, flag_2=1037429207, seconds=20.0)
     Event_1037423703(0, attacked_entity=1037421700, other_entity=Characters.RyatheScout)
-    CommonFunc_90005752(0, asset=1037421700, vfx_id=200, model_point=120, seconds=3.0)
+    CommonFunc_90005752(0, asset=1037421700, vfx_id=200, dummy_id=120, seconds=3.0)
     Event_1037423710(0, character=Characters.Patches, asset=Assets.AEG003_363_1000)
     Event_1037423711(0, character=Characters.Patches, flag=1037422731, flag_1=1038419251)
     Event_1037423712()

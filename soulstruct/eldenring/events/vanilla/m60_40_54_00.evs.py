@@ -43,7 +43,7 @@ def Constructor():
         flag_10=78358,
         flag_11=78359,
     )
-    CommonFunc_90005300(0, flag=1040540500, character=Characters.Scarab, item_lot=40312, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1040540500, character=Characters.Scarab, item_lot=40312, seconds=0.0, item_is_dropped=0)
     Event_1040542700(0, character=Characters.BrotherCorhyn)
     CommonFunc_90005704(0, attacked_entity=Characters.BrotherCorhyn, flag=4201, flag_1=4200, flag_2=1040549201, right=3)
     CommonFunc_90005703(
@@ -177,7 +177,7 @@ def Event_1040542300():
     CreateHazard(
         asset_flag=1040541301,
         asset=Assets.AEG100_100_9001,
-        model_point=150,
+        dummy_id=150,
         behavior_param_id=100700,
         target_type=DamageTargetType.Character,
         radius=3.0,
@@ -187,7 +187,7 @@ def Event_1040542300():
     CreateHazard(
         asset_flag=1040541301,
         asset=Assets.AEG100_100_9001,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=100701,
         target_type=DamageTargetType.Character,
         radius=2.0,
@@ -197,7 +197,7 @@ def Event_1040542300():
     CreateHazard(
         asset_flag=1040541301,
         asset=Assets.AEG100_100_9001,
-        model_point=201,
+        dummy_id=201,
         behavior_param_id=100701,
         target_type=DamageTargetType.Character,
         radius=2.0,
@@ -207,7 +207,7 @@ def Event_1040542300():
     CreateHazard(
         asset_flag=1040541301,
         asset=Assets.AEG100_100_9001,
-        model_point=202,
+        dummy_id=202,
         behavior_param_id=100701,
         target_type=DamageTargetType.Character,
         radius=2.0,
@@ -217,7 +217,7 @@ def Event_1040542300():
     CreateHazard(
         asset_flag=1040541301,
         asset=Assets.AEG100_100_9001,
-        model_point=203,
+        dummy_id=203,
         behavior_param_id=100701,
         target_type=DamageTargetType.Character,
         radius=2.0,
@@ -227,7 +227,7 @@ def Event_1040542300():
     CreateHazard(
         asset_flag=1040541301,
         asset=Assets.AEG100_100_9001,
-        model_point=204,
+        dummy_id=204,
         behavior_param_id=100701,
         target_type=DamageTargetType.Character,
         radius=2.0,
@@ -237,7 +237,7 @@ def Event_1040542300():
     CreateHazard(
         asset_flag=1040541301,
         asset=Assets.AEG100_100_9001,
-        model_point=205,
+        dummy_id=205,
         behavior_param_id=100701,
         target_type=DamageTargetType.Character,
         radius=2.0,

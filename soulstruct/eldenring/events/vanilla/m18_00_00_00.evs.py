@@ -135,8 +135,8 @@ def Constructor():
         flag_3=18000533,
         asset=Assets.AEG027_156_9000,
     )
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, dummy_id=800, right=0)
     CommonFunc_90005501(
         0,
         flag=18000510,
@@ -265,7 +265,7 @@ def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.Commoner)
     CommonFunc_90005251(0, character=Characters.WanderingNoble1, radius=2.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=18000300, region=18002300, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=18000300, region=18002300, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.CastleGuard, radius=4.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.BanishedKnight, radius=8.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.Imp0, radius=4.0, seconds=0.0, animation_id=3000)
@@ -295,8 +295,8 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005300(0, flag=18000350, character=Characters.GraftedScion0, item_lot=18002000, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=18000351, character=Characters.GraftedScion1, item_lot=18002010, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=18000350, character=Characters.GraftedScion0, item_lot=18002000, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=18000351, character=Characters.GraftedScion1, item_lot=18002010, seconds=0.0, item_is_dropped=0)
     Event_18002520()
 
 
@@ -515,7 +515,7 @@ def Event_18002400():
     
     DisableInvincibility(Characters.MercilessChariot)
     EnableImmortality(Characters.MercilessChariot)
-    SetLockOnPoint(character=Characters.MercilessChariot, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=Characters.MercilessChariot, lock_on_dummy_id=220, state=False)
     DisableHealthBar(Characters.MercilessChariot)
     AddSpecialEffect(Characters.MercilessChariot, 5000)
     SetNetworkUpdateRate(Characters.MercilessChariot, is_fixed=True, update_rate=CharacterUpdateRate.Always)
@@ -599,7 +599,7 @@ def Event_18002440(_, asset_flag: uint, asset: uint, asset_1: uint, flag: uint, 
     CreateHazard(
         asset_flag=asset_flag,
         asset=asset,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=200500,
         target_type=DamageTargetType.Character,
         radius=2.0,
@@ -613,7 +613,7 @@ def Event_18002440(_, asset_flag: uint, asset: uint, asset_1: uint, flag: uint, 
         ShootProjectile(
             owner_entity=Characters.TalkDummy4,
             source_entity=asset,
-            model_point=200,
+            dummy_id=200,
             behavior_id=803301800,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -623,7 +623,7 @@ def Event_18002440(_, asset_flag: uint, asset: uint, asset_1: uint, flag: uint, 
         ShootProjectile(
             owner_entity=Characters.TalkDummy4,
             source_entity=asset,
-            model_point=200,
+            dummy_id=200,
             behavior_id=803301810,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -633,7 +633,7 @@ def Event_18002440(_, asset_flag: uint, asset: uint, asset_1: uint, flag: uint, 
         ShootProjectile(
             owner_entity=Characters.TalkDummy4,
             source_entity=asset,
-            model_point=200,
+            dummy_id=200,
             behavior_id=803301820,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -643,7 +643,7 @@ def Event_18002440(_, asset_flag: uint, asset: uint, asset_1: uint, flag: uint, 
         ShootProjectile(
             owner_entity=Characters.TalkDummy4,
             source_entity=asset,
-            model_point=200,
+            dummy_id=200,
             behavior_id=803301830,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -653,7 +653,7 @@ def Event_18002440(_, asset_flag: uint, asset: uint, asset_1: uint, flag: uint, 
         ShootProjectile(
             owner_entity=Characters.TalkDummy4,
             source_entity=asset,
-            model_point=200,
+            dummy_id=200,
             behavior_id=803301840,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -663,7 +663,7 @@ def Event_18002440(_, asset_flag: uint, asset: uint, asset_1: uint, flag: uint, 
         ShootProjectile(
             owner_entity=Characters.TalkDummy4,
             source_entity=asset,
-            model_point=200,
+            dummy_id=200,
             behavior_id=803301850,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -673,7 +673,7 @@ def Event_18002440(_, asset_flag: uint, asset: uint, asset_1: uint, flag: uint, 
         ShootProjectile(
             owner_entity=Characters.TalkDummy4,
             source_entity=asset,
-            model_point=200,
+            dummy_id=200,
             behavior_id=803301860,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -683,7 +683,7 @@ def Event_18002440(_, asset_flag: uint, asset: uint, asset_1: uint, flag: uint, 
         ShootProjectile(
             owner_entity=Characters.TalkDummy4,
             source_entity=asset,
-            model_point=200,
+            dummy_id=200,
             behavior_id=803301870,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -710,7 +710,7 @@ def Event_18002450(_, asset_flag: uint, asset: uint, flag: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy4,
             source_entity=asset,
-            model_point=200,
+            dummy_id=200,
             behavior_id=803301800,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -720,7 +720,7 @@ def Event_18002450(_, asset_flag: uint, asset: uint, flag: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy4,
             source_entity=asset,
-            model_point=200,
+            dummy_id=200,
             behavior_id=803301810,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -730,7 +730,7 @@ def Event_18002450(_, asset_flag: uint, asset: uint, flag: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy4,
             source_entity=asset,
-            model_point=200,
+            dummy_id=200,
             behavior_id=803301820,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -740,7 +740,7 @@ def Event_18002450(_, asset_flag: uint, asset: uint, flag: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy4,
             source_entity=asset,
-            model_point=200,
+            dummy_id=200,
             behavior_id=803301830,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -750,7 +750,7 @@ def Event_18002450(_, asset_flag: uint, asset: uint, flag: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy4,
             source_entity=asset,
-            model_point=200,
+            dummy_id=200,
             behavior_id=803301840,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -760,7 +760,7 @@ def Event_18002450(_, asset_flag: uint, asset: uint, flag: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy4,
             source_entity=asset,
-            model_point=200,
+            dummy_id=200,
             behavior_id=803301850,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -770,7 +770,7 @@ def Event_18002450(_, asset_flag: uint, asset: uint, flag: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy4,
             source_entity=asset,
-            model_point=200,
+            dummy_id=200,
             behavior_id=803301860,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -780,7 +780,7 @@ def Event_18002450(_, asset_flag: uint, asset: uint, flag: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy4,
             source_entity=asset,
-            model_point=200,
+            dummy_id=200,
             behavior_id=803301870,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -844,10 +844,10 @@ def Event_18002510():
             owner_entity=Characters.TalkDummy3,
             behavior_id=801100770,
             behavior_id_1=801100705,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(56):
         CommonFunc_90005682(
@@ -858,10 +858,10 @@ def Event_18002510():
             owner_entity=Characters.TalkDummy3,
             behavior_id=801100760,
             behavior_id_1=801100705,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(55):
         CommonFunc_90005682(
@@ -872,10 +872,10 @@ def Event_18002510():
             owner_entity=Characters.TalkDummy3,
             behavior_id=801100750,
             behavior_id_1=801100705,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(54):
         CommonFunc_90005682(
@@ -886,10 +886,10 @@ def Event_18002510():
             owner_entity=Characters.TalkDummy3,
             behavior_id=801100740,
             behavior_id_1=801100705,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(53):
         CommonFunc_90005682(
@@ -900,10 +900,10 @@ def Event_18002510():
             owner_entity=Characters.TalkDummy3,
             behavior_id=801100730,
             behavior_id_1=801100705,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(52):
         CommonFunc_90005682(
@@ -914,10 +914,10 @@ def Event_18002510():
             owner_entity=Characters.TalkDummy3,
             behavior_id=801100720,
             behavior_id_1=801100705,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(51):
         CommonFunc_90005682(
@@ -928,10 +928,10 @@ def Event_18002510():
             owner_entity=Characters.TalkDummy3,
             behavior_id=801100710,
             behavior_id_1=801100705,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(50):
         CommonFunc_90005682(
@@ -942,10 +942,10 @@ def Event_18002510():
             owner_entity=Characters.TalkDummy3,
             behavior_id=801100700,
             behavior_id_1=801100705,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
 
 
@@ -966,7 +966,7 @@ def Event_18002569(_, flag: uint, asset: uint):
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=101, model_point=806043)
+    CreateAssetVFX(asset, vfx_id=101, dummy_id=806043)
     AND_1.Add(FlagEnabled(flag))
     
     MAIN.Await(AND_1)
@@ -1307,7 +1307,7 @@ def Event_18000820():
         flag_2=18002806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=18000800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=18000800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=18000800,
@@ -1385,8 +1385,8 @@ def Event_18000870():
         flag_2=18002856,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=18000850, asset=Assets.AEG099_001_9010, model_point=3, right=0)
-    CommonFunc_9005811(0, flag=18000850, asset=Assets.AEG099_001_9011, model_point=4, right=0)
+    CommonFunc_9005811(0, flag=18000850, asset=Assets.AEG099_001_9010, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=18000850, asset=Assets.AEG099_001_9011, dummy_id=4, right=0)
     CommonFunc_9005822(
         0,
         flag=18000850,

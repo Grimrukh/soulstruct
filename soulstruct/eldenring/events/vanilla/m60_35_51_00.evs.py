@@ -25,7 +25,7 @@ from .enums.m60_35_51_00_enums import *
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
 
 
 @ContinueOnRest(1035512210)
@@ -39,7 +39,7 @@ def Event_1035512210():
     MAIN.Await(OR_14)
     
     EnableHealthBar(1035510200)
-    SetLockOnPoint(character=1035510200, lock_on_model_point=220, state=True)
+    SetLockOnPoint(character=1035510200, lock_on_dummy_id=220, state=True)
     AddSpecialEffect(1035510200, 14501)
     AddSpecialEffect(1035510200, 14502)
     WaitFrames(frames=1)
@@ -58,7 +58,7 @@ def Event_1035512220():
     MAIN.Await(AND_12)
     
     DisableHealthBar(1035510200)
-    SetLockOnPoint(character=1035510200, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=1035510200, lock_on_dummy_id=220, state=False)
     AddSpecialEffect(1035510200, 14500)
     WaitFrames(frames=1)
     Restart()
@@ -74,7 +74,7 @@ def Event_1035512211():
     AND_9.Add(OR_14)
     GotoIfConditionFalse(Label.L0, input_condition=AND_9)
     EnableHealthBar(1035510200)
-    SetLockOnPoint(character=1035510200, lock_on_model_point=220, state=True)
+    SetLockOnPoint(character=1035510200, lock_on_dummy_id=220, state=True)
     AddSpecialEffect(1035510200, 14501)
     AddSpecialEffect(1035510200, 14502)
     WaitFrames(frames=1)
@@ -83,7 +83,7 @@ def Event_1035512211():
     # --- Label 0 --- #
     DefineLabel(0)
     DisableHealthBar(1035510200)
-    SetLockOnPoint(character=1035510200, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=1035510200, lock_on_dummy_id=220, state=False)
     AddSpecialEffect(1035510200, 14500)
     WaitFrames(frames=1)
     Restart()

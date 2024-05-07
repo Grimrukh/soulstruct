@@ -1777,7 +1777,7 @@ def Event_12501803():
     
     MAIN.Await(FlagEnabled(12501800))
     
-    CreateObjectVFX(2500850, vfx_id=200, model_point=900201)
+    CreateObjectVFX(2500850, vfx_id=200, dummy_id=900201)
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=2500030, entity=2500850))
     
@@ -1810,7 +1810,7 @@ def Event_12500600():
     
     MAIN.Await(FlagEnabled(12500810))
     
-    CreateObjectVFX(2500851, vfx_id=200, model_point=900201)
+    CreateObjectVFX(2500851, vfx_id=200, dummy_id=900201)
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=2500040, entity=2500851))
     
@@ -2066,7 +2066,7 @@ def Event_12504806():
         2500801,
         destination=2500800,
         destination_type=CoordEntityType.Character,
-        model_point=100,
+        dummy_id=100,
         copy_draw_parent=2500800,
     )
     EnableCharacter(2500801)
@@ -2081,7 +2081,7 @@ def Event_12504806():
     AICommand(2500800, command_id=-1, command_slot=0)
     ReplanAI(2500800)
     StopPlayLogMeasurement(measurement_id=2501000)
-    CreateTemporaryVFX(vfx_id=623206, anchor_entity=2500801, model_point=100, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=623206, anchor_entity=2500801, dummy_id=100, anchor_type=CoordEntityType.Character)
     AddSpecialEffect(2500801, 5610)
     DisableCharacter(2500801)
     DisableAI(2500801)
@@ -2100,7 +2100,7 @@ def Event_12504807():
     ShootProjectile(
         owner_entity=2500802,
         source_entity=2500800,
-        model_point=6,
+        dummy_id=6,
         behavior_id=223200590,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -2281,7 +2281,7 @@ def Event_12507010(_, flag: int, destination: int):
     """Event 12507010"""
     MAIN.Await(FlagEnabled(flag))
     
-    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Object, model_point=200, short_move=True)
+    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Object, dummy_id=200, short_move=True)
     ForceAnimation(PLAYER, 101160, skip_transition=True)
     Wait(4.0)
     DisableFlag(flag)
@@ -2358,10 +2358,10 @@ def Event_12507050(_, flag: int, character: int, destination: int):
     
     MAIN.Await(CharacterBackreadEnabled(character))
     
-    Move(character, destination=destination, destination_type=CoordEntityType.Object, model_point=250, short_move=True)
+    Move(character, destination=destination, destination_type=CoordEntityType.Object, dummy_id=250, short_move=True)
     ForceAnimation(character, 101165, loop=True)
     Wait(1.0)
-    Move(character, destination=destination, destination_type=CoordEntityType.Object, model_point=250, short_move=True)
+    Move(character, destination=destination, destination_type=CoordEntityType.Object, dummy_id=250, short_move=True)
     
     MAIN.Await(FlagEnabled(flag))
     

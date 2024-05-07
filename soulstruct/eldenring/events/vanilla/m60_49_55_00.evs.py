@@ -188,7 +188,7 @@ def Event_1049552400(_, flag: uint, flag_1: uint, anchor_entity: uint, character
     CreateTemporaryVFX(
         vfx_id=601111,
         anchor_entity=anchor_entity,
-        model_point=960,
+        dummy_id=960,
         anchor_type=CoordEntityType.Character,
     )
     Goto(Label.L3)
@@ -198,7 +198,7 @@ def Event_1049552400(_, flag: uint, flag_1: uint, anchor_entity: uint, character
     CreateTemporaryVFX(
         vfx_id=601110,
         anchor_entity=anchor_entity,
-        model_point=960,
+        dummy_id=960,
         anchor_type=CoordEntityType.Character,
     )
 
@@ -249,18 +249,18 @@ def Event_1049552401(_, flag: uint, flag_1: uint, character: uint, character_1: 
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=900,
+        dummy_id=900,
         copy_draw_parent=character,
     )
     Wait(0.5)
     AddSpecialEffect(character, 4305)
     GotoIfValueComparison(Label.L2, comparison_type=ComparisonType.Equal, left=left, right=0)
-    CreateTemporaryVFX(vfx_id=601101, anchor_entity=character, model_point=900, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=601101, anchor_entity=character, dummy_id=900, anchor_type=CoordEntityType.Character)
     Goto(Label.L3)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    CreateTemporaryVFX(vfx_id=601100, anchor_entity=character, model_point=900, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=601100, anchor_entity=character, dummy_id=900, anchor_type=CoordEntityType.Character)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -423,4 +423,4 @@ def Event_1049552500():
 @RestartOnRest(1049552550)
 def Event_1049552550(_, character: uint, asset: uint):
     """Event 1049552550"""
-    AttachAssetToCharacter(character=character, model_point=72, asset=asset)
+    AttachAssetToCharacter(character=character, dummy_id=72, asset=asset)

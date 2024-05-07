@@ -62,7 +62,7 @@ def Constructor():
         flag_10=78108,
         flag_11=78109,
     )
-    CommonFunc_90005870(0, character=Characters.TreeSentinel, name=903251600, npc_threat_level=12)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.TreeSentinel, name=903251600, npc_threat_level=12)
     CommonFunc_90005860(
         0,
         flag=1042360800,
@@ -72,7 +72,7 @@ def Constructor():
         item_lot=30100,
         seconds=0.0,
     )
-    CommonFunc_90005872(0, character=Characters.TreeSentinel, npc_threat_level=12, right=0)
+    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.TreeSentinel, npc_threat_level=12, required_flag=0)
     CommonFunc_90005683(0, flag=62103, asset=Assets.AEG099_055_1500, vfx_id=210, flag_1=78190, flag_2=78190)
     Event_1042363700(0, character=Characters.WhiteMaskVarre, asset=Assets.AEG007_360_1000)
     CommonFunc_90005704(
@@ -100,8 +100,8 @@ def Constructor():
     RunCommonEvent(1042363703)
     Event_1042360710(0, character=Characters.Ranni, asset=Assets.AEG099_090_9018)
     CommonFunc_90005704(0, attacked_entity=Characters.Ranni, flag=1042369401, flag_1=3746, flag_2=1042369401, right=3)
-    CommonFunc_90005709(0, attacked_entity=Characters.Ranni, model_point=905, vfx_id=603000)
-    CommonFunc_90005709(0, attacked_entity=Characters.Ranni, model_point=960, vfx_id=603050)
+    CommonFunc_90005709(0, attacked_entity=Characters.Ranni, dummy_id=905, vfx_id=603000)
+    CommonFunc_90005709(0, attacked_entity=Characters.Ranni, dummy_id=960, vfx_id=603050)
     Event_1042360711(0, character=Characters.TalkDummy3)
     Event_1042360712(0, entity=Characters.Ranni, asset=Assets.AEG099_090_9018)
     Event_1042360713(0, entity=Characters.Ranni, asset=Assets.AEG099_090_9018, character=Characters.TalkDummy3)
@@ -113,7 +113,7 @@ def Constructor():
         first_flag=400390,
         last_flag=400390,
         flag=1042369413,
-        model_point=0,
+        dummy_id=0,
     )
     CommonFunc_90005708(0, character=Characters.Ranni, flag=3746, left=0)
     Event_1042363720(0, character=Characters.Merchant, character_1=Characters.NomadMule)
@@ -186,7 +186,7 @@ def Preconstructor():
     DisableBackread(Characters.Merchant)
     DisableBackread(Characters.NomadMule)
     DisableBackread(Characters.Ranni)
-    CommonFunc_90005300(0, flag=1042360200, character=1042365200, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1042360200, character=1042365200, item_lot=0, seconds=0.0, item_is_dropped=0)
 
 
 @RestartOnRest(1042362200)
@@ -413,7 +413,7 @@ def Event_1042360690(_, asset: uint, flag: uint, flag_1: uint, flag_2: uint, fla
     
     MAIN.Await(AND_1)
     
-    CreateAssetVFX(asset, vfx_id=210, model_point=800530)
+    CreateAssetVFX(asset, vfx_id=210, dummy_id=800530)
     EnableFlag(flag_3)
 
     # --- Label 1 --- #
@@ -573,7 +573,7 @@ def Event_1042360710(_, character: uint, asset: uint):
         clock_change_duration=0.0,
         clock_finish_delay=0.0,
     )
-    CreateAssetVFX(asset, vfx_id=100, model_point=800227)
+    CreateAssetVFX(asset, vfx_id=100, dummy_id=800227)
     SetCameraAngle(x_angle=0.0, y_angle=-115.86000061035156)
 
     # --- Label 19 --- #

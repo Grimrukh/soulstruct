@@ -41,7 +41,7 @@ def Constructor():
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
-    CommonFunc_90005250(0, character=Characters.LargeCrab, region=1042352210, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LargeCrab, region=1042352210, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=Characters.Skeleton0,

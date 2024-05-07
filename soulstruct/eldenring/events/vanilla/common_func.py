@@ -335,14 +335,14 @@ def CommonFunc_90005211(
     region: uint,
     radius: float,
     seconds: float,
-    left: uint,
-    left_1: uint,
-    left_2: uint,
-    left_3: uint,
+    do_disable_gravity_and_collision: uint,
+    only_battle_state: uint,
+    only_ai_state_5: uint,
+    only_ai_state_4: uint,
 ):
     """CommonFunc 90005211"""
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
-    if UnsignedNotEqual(left=left, right=0):
+    if UnsignedNotEqual(left=do_disable_gravity_and_collision, right=0):
         DisableGravity(character)
         DisableCharacterCollision(character)
     ForceAnimation(character, animation_id, loop=True)
@@ -360,15 +360,15 @@ def CommonFunc_90005211(
     OR_11.Add(CharacterHasSpecialEffect(character, 5080))
     OR_11.Add(CharacterHasSpecialEffect(character, 5450))
     AND_1.Add(OR_11)
-    AND_9.Add(UnsignedEqual(left=left_1, right=0))
-    AND_9.Add(UnsignedEqual(left=left_2, right=0))
-    AND_9.Add(UnsignedEqual(left=left_3, right=0))
+    AND_9.Add(UnsignedEqual(left=only_battle_state, right=0))
+    AND_9.Add(UnsignedEqual(left=only_ai_state_5, right=0))
+    AND_9.Add(UnsignedEqual(left=only_ai_state_4, right=0))
     GotoIfConditionTrue(Label.L9, input_condition=AND_9)
-    if UnsignedNotEqual(left=left_1, right=0):
+    if UnsignedNotEqual(left=only_battle_state, right=0):
         OR_9.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
-    if UnsignedNotEqual(left=left_2, right=0):
+    if UnsignedNotEqual(left=only_ai_state_5, right=0):
         OR_9.Add(HasAIStatus(character, ai_status=AIStatusType.Unknown5))
-    if UnsignedNotEqual(left=left_3, right=0):
+    if UnsignedNotEqual(left=only_ai_state_4, right=0):
         OR_9.Add(HasAIStatus(character, ai_status=AIStatusType.Unknown4))
     AND_1.Add(OR_9)
 
@@ -420,7 +420,7 @@ def CommonFunc_90005211(
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
     GotoIfConditionTrue(Label.L0, input_condition=AND_2)
     Wait(seconds)
-    if UnsignedNotEqual(left=left, right=0):
+    if UnsignedNotEqual(left=do_disable_gravity_and_collision, right=0):
         EnableGravity(character)
         EnableCharacterCollision(character)
     ForceAnimation(character, animation_id_1, loop=True)
@@ -428,7 +428,7 @@ def CommonFunc_90005211(
 
     # --- Label 0 --- #
     DefineLabel(0)
-    if UnsignedNotEqual(left=left, right=0):
+    if UnsignedNotEqual(left=do_disable_gravity_and_collision, right=0):
         EnableGravity(character)
         EnableCharacterCollision(character)
     End()
@@ -706,7 +706,7 @@ def CommonFunc_90005221(_, character: uint, animation_id: int, animation_id_1: i
 
 
 @RestartOnRest(90005250)
-def CommonFunc_90005250(_, character: uint, region: uint, seconds: float, animation_id: int):
+def CommonFunc_AITrigger_RegionOrHurt(_, character: uint, region: uint, seconds: float, animation_id: int):
     """CommonFunc 90005250"""
     if ThisEventSlotFlagEnabled():
         return
@@ -1016,10 +1016,10 @@ def CommonFunc_90005271(_, character: uint, seconds: float, animation_id: int):
 
 
 @RestartOnRest(90005300)
-def CommonFunc_90005300(_, flag: uint, character: uint, item_lot: int, seconds: float, left: int):
+def CommonFunc_90005300(_, flag: uint, character: uint, item_lot: int, seconds: float, item_is_dropped: int):
     """CommonFunc 90005300"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
-    if ValueNotEqual(left=left, right=0):
+    if ValueNotEqual(left=item_is_dropped, right=0):
         DisableCharacter(character)
         DropMandatoryTreasure(character)
         End()
@@ -1037,7 +1037,7 @@ def CommonFunc_90005300(_, flag: uint, character: uint, item_lot: int, seconds: 
     EnableFlag(flag)
     if PlayerNotInOwnWorld():
         return
-    if ValueEqual(left=left, right=1):
+    if ValueEqual(left=item_is_dropped, right=1):
         return
     if ValueEqual(left=item_lot, right=0):
         return
@@ -1079,7 +1079,7 @@ def CommonFunc_90005390(_, flag: uint, flag_1: uint, anchor_entity: uint, charac
     CreateTemporaryVFX(
         vfx_id=601111,
         anchor_entity=anchor_entity,
-        model_point=960,
+        dummy_id=960,
         anchor_type=CoordEntityType.Character,
     )
     Goto(Label.L3)
@@ -1089,7 +1089,7 @@ def CommonFunc_90005390(_, flag: uint, flag_1: uint, anchor_entity: uint, charac
     CreateTemporaryVFX(
         vfx_id=601110,
         anchor_entity=anchor_entity,
-        model_point=960,
+        dummy_id=960,
         anchor_type=CoordEntityType.Character,
     )
 
@@ -1139,17 +1139,17 @@ def CommonFunc_90005391(_, flag: uint, flag_1: uint, character: uint, character_
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=900,
+        dummy_id=900,
         copy_draw_parent=character,
     )
     Wait(0.5)
     GotoIfValueComparison(Label.L2, comparison_type=ComparisonType.Equal, left=left, right=0)
-    CreateTemporaryVFX(vfx_id=601101, anchor_entity=character, model_point=900, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=601101, anchor_entity=character, dummy_id=900, anchor_type=CoordEntityType.Character)
     Goto(Label.L3)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    CreateTemporaryVFX(vfx_id=601100, anchor_entity=character, model_point=900, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=601100, anchor_entity=character, dummy_id=900, anchor_type=CoordEntityType.Character)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -1257,7 +1257,7 @@ def CommonFunc_90005411(_, asset: uint, character: uint, left: uint):
         return
     if UnsignedEqual(left=left, right=0):
         WaitFrames(frames=1)
-    CreateAssetVFX(asset, vfx_id=200, model_point=620)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=620)
     
     MAIN.Await(CharacterHasSpecialEffect(character, 9502))
     
@@ -1282,7 +1282,7 @@ def CommonFunc_90005420(
     """CommonFunc 90005420"""
     DisableAnimations(character)
     AttachCaravanToController(caravan_asset=caravan_asset__parent_asset, character=character)
-    AttachAssetToAsset(child_asset=child_asset, parent_asset=caravan_asset__parent_asset, parent_model_point=151)
+    AttachAssetToAsset(child_asset=child_asset, parent_asset=caravan_asset__parent_asset, parent_dummy_id=151)
     SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
     SetNetworkUpdateRate(character_1, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryFiveFrames)
     SetNetworkUpdateRate(character_2, is_fixed=True, update_rate=CharacterUpdateRate.Always)
@@ -1366,7 +1366,7 @@ def CommonFunc_90005440(_, character: uint, character_1: uint):
     """CommonFunc 90005440"""
     AddSpecialEffect(character_1, 14500)
     DisableHealthBar(character_1)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(CharacterHasSpecialEffect(PLAYER, 3245))
     AND_1.Add(EntityWithinDistance(entity=character_1, other_entity=PLAYER, radius=6.0))
@@ -1380,7 +1380,7 @@ def CommonFunc_90005440(_, character: uint, character_1: uint):
     AddSpecialEffect(character_1, 14501)
     AddSpecialEffect(character_1, 14502)
     EnableHealthBar(character_1)
-    SetLockOnPoint(character=character_1, lock_on_model_point=220, state=True)
+    SetLockOnPoint(character=character_1, lock_on_dummy_id=220, state=True)
     OR_2.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 3245))
     OR_2.Add(EntityBeyondDistance(entity=character_1, other_entity=PLAYER, radius=6.0))
     AND_2.Add(OR_2)
@@ -1403,9 +1403,9 @@ def CommonFunc_90005450(_, character: uint, asset: uint, asset_1: uint, asset_2:
     SetCharacterDisableOnCollisionUnload(character=character, state=False)
     SetDistanceBasedNetworkAuthorityUpdate(character=character, state=True)
     DisableHealthBar(character)
-    AttachAssetToCharacter(character=character, model_point=100, asset=asset)
-    AttachAssetToCharacter(character=character, model_point=80, asset=asset_1)
-    AttachAssetToCharacter(character=character, model_point=165, asset=asset_2)
+    AttachAssetToCharacter(character=character, dummy_id=100, asset=asset)
+    AttachAssetToCharacter(character=character, dummy_id=80, asset=asset_1)
+    AttachAssetToCharacter(character=character, dummy_id=165, asset=asset_2)
 
 
 @RestartOnRest(90005451)
@@ -1439,11 +1439,11 @@ def CommonFunc_90005452(_, character: uint, flag: uint):
 
 
 @RestartOnRest(90005453)
-def CommonFunc_90005453(_, asset__character: uint, asset: uint, model_point: int, seconds: float):
+def CommonFunc_90005453(_, asset__character: uint, asset: uint, dummy_id: int, seconds: float):
     """CommonFunc 90005453"""
     if AssetDestroyed(asset):
         return
-    AttachAssetToCharacter(character=asset__character, model_point=model_point, asset=asset)
+    AttachAssetToCharacter(character=asset__character, dummy_id=dummy_id, asset=asset)
     OR_10.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
     OR_10.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
     OR_10.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
@@ -1536,7 +1536,7 @@ def CommonFunc_90005457(_, character: uint, asset: uint, asset_1: uint, asset_2:
 
     # --- Label 0 --- #
     DefineLabel(0)
-    AttachAssetToCharacter(character=character, model_point=100, asset=asset)
+    AttachAssetToCharacter(character=character, dummy_id=100, asset=asset)
     EndOfAnimation(asset=asset_1, animation_id=1)
     DisableAssetActivation(asset_1, obj_act_id=-1)
     DisableAssetActivation(asset_2, obj_act_id=-1)
@@ -1552,7 +1552,7 @@ def CommonFunc_90005457(_, character: uint, asset: uint, asset_1: uint, asset_2:
 def CommonFunc_90005458(_, character: uint, asset: uint):
     """CommonFunc 90005458"""
     GotoIfThisEventSlotFlagEnabled(Label.L0)
-    AttachAssetToCharacter(character=character, model_point=166, asset=asset)
+    AttachAssetToCharacter(character=character, dummy_id=166, asset=asset)
     DisableAsset(asset)
     AND_1.Add(CharacterHasSpecialEffect(character, 12465))
     
@@ -1583,7 +1583,7 @@ def CommonFunc_90005459(_, copy_draw_parent: uint, flag: uint, character: uint):
         character,
         destination=copy_draw_parent,
         destination_type=CoordEntityType.Character,
-        model_point=270,
+        dummy_id=270,
         copy_draw_parent=copy_draw_parent,
     )
 
@@ -1751,7 +1751,7 @@ def CommonFunc_90005464(_, flag: uint, character: uint, character_1: uint, value
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=70,
+        dummy_id=70,
         copy_draw_parent=character,
     )
     Wait(3.0)
@@ -2207,7 +2207,7 @@ def CommonFunc_90005476(_, character: uint, character_1: uint):
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=230,
+        dummy_id=230,
         copy_draw_parent=character_1,
     )
     Wait(1.0)
@@ -2383,7 +2383,7 @@ def CommonFunc_90005490(
     SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryFiveFrames)
     SetCharacterDisableOnCollisionUnload(character=character, state=False)
     SetCharacterEnableDistance(character=character, distance=2000.0)
-    Move(character, destination=asset, destination_type=CoordEntityType.Asset, model_point=100, short_move=True)
+    Move(character, destination=asset, destination_type=CoordEntityType.Asset, dummy_id=100, short_move=True)
     EndOfAnimation(asset=asset, animation_id=0)
     if PlayerInOwnWorld():
         SetNetworkUpdateAuthority(character, authority_level=UpdateAuthority.Forced)
@@ -3332,7 +3332,7 @@ def CommonFunc_90005505(
 
     # --- Label 1 --- #
     DefineLabel(1)
-    Move(PLAYER, destination=asset, destination_type=CoordEntityType.Asset, model_point=191, short_move=True)
+    Move(PLAYER, destination=asset, destination_type=CoordEntityType.Asset, dummy_id=191, short_move=True)
     ForceAnimation(PLAYER, 60200)
     SkipLinesIfUnsignedEqual(5, left=left, right=2)
     SkipLinesIfUnsignedEqual(2, left=left, right=1)
@@ -3427,7 +3427,7 @@ def CommonFunc_90005505(
 
     # --- Label 5 --- #
     DefineLabel(5)
-    Move(PLAYER, destination=asset, destination_type=CoordEntityType.Asset, model_point=191, short_move=True)
+    Move(PLAYER, destination=asset, destination_type=CoordEntityType.Asset, dummy_id=191, short_move=True)
     ForceAnimation(PLAYER, 60200)
     SkipLinesIfUnsignedEqual(5, left=left, right=2)
     SkipLinesIfUnsignedEqual(2, left=left, right=1)
@@ -4143,7 +4143,7 @@ def CommonFunc_900055278(
     _,
     flag: uint,
     asset: uint,
-    model_point: int,
+    dummy_id: int,
     action_button_id: int,
     text: int,
     left: int,
@@ -4158,7 +4158,7 @@ def CommonFunc_900055278(
     # --- Label 0 --- #
     DefineLabel(0)
     DeleteAssetVFX(asset)
-    CreateAssetVFX(asset, vfx_id=101, model_point=model_point)
+    CreateAssetVFX(asset, vfx_id=101, dummy_id=dummy_id)
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(ActionButtonParamActivated(action_button_id=action_button_id, entity=asset))
     AND_2.Add(FlagEnabled(flag))
@@ -4247,7 +4247,7 @@ def CommonFunc_90005560(_, flag: uint, asset: uint, left: int):
     DefineLabel(0)
     if ValueEqual(left=left, right=0):
         DeleteAssetVFX(asset)
-        CreateAssetVFX(asset, vfx_id=200, model_point=803300)
+        CreateAssetVFX(asset, vfx_id=200, dummy_id=803300)
     DisableTreasure(asset=asset)
     AND_1.Add(AssetDestroyed(asset))
     
@@ -4267,15 +4267,15 @@ def CommonFunc_90005570(_, flag: uint, gesture_param_id: int, asset: uint, left:
     if FlagEnabled(flag):
         return
     if ValueEqual(left=left_1, right=3):
-        CreateAssetVFX(asset, vfx_id=90, model_point=6103)
+        CreateAssetVFX(asset, vfx_id=90, dummy_id=6103)
         Goto(Label.L1)
     if ValueEqual(left=left_1, right=2):
-        CreateAssetVFX(asset, vfx_id=90, model_point=6102)
+        CreateAssetVFX(asset, vfx_id=90, dummy_id=6102)
         Goto(Label.L1)
     if ValueEqual(left=left_1, right=1):
-        CreateAssetVFX(asset, vfx_id=90, model_point=6101)
+        CreateAssetVFX(asset, vfx_id=90, dummy_id=6101)
         Goto(Label.L1)
-    CreateAssetVFX(asset, vfx_id=90, model_point=6100)
+    CreateAssetVFX(asset, vfx_id=90, dummy_id=6100)
 
     # --- Label 1 --- #
     DefineLabel(1)
@@ -4381,7 +4381,7 @@ def CommonFunc_90005605(
         OR_10.Add(FlagDisabled(left))
     GotoIfConditionTrue(Label.L1, input_condition=OR_10)
     GotoIfFlagEnabled(Label.L1, flag=flag)
-    CreateAssetVFX(asset, vfx_id=200, model_point=806870)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=806870)
     EnableFlag(flag)
 
     # --- Label 1 --- #
@@ -4468,7 +4468,7 @@ def CommonFunc_90005605(
 
 
 @ContinueOnRest(900005610)
-def CommonFunc_900005610(_, asset: uint, vfx_id: int, model_point: int, right: uint):
+def CommonFunc_900005610(_, asset: uint, vfx_id: int, dummy_id: int, right: uint):
     """CommonFunc 900005610"""
     DisableNetworkSync()
     DeleteAssetVFX(asset)
@@ -4478,7 +4478,7 @@ def CommonFunc_900005610(_, asset: uint, vfx_id: int, model_point: int, right: u
     
     MAIN.Await(AND_1)
     
-    CreateAssetVFX(asset, vfx_id=vfx_id, model_point=model_point)
+    CreateAssetVFX(asset, vfx_id=vfx_id, dummy_id=dummy_id)
     if UnsignedNotEqual(left=0, right=right):
         OR_2.Add(FlagDisabled(right))
     OR_2.Add(CharacterNotMounted(character=PLAYER))
@@ -4526,9 +4526,9 @@ def CommonFunc_90005620(
     DisableFlag(left_flag)
     DisableFlag(cancel_flag__right_flag)
     DeleteAssetVFX(asset)
-    CreateAssetVFX(asset, vfx_id=200, model_point=806040)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=806040)
     if UnsignedNotEqual(left=asset_2, right=0):
-        CreateAssetVFX(asset, vfx_id=201, model_point=806040)
+        CreateAssetVFX(asset, vfx_id=201, dummy_id=806040)
     DisableAsset(asset_1)
     if UnsignedNotEqual(left=asset_2, right=0):
         DisableAsset(asset_2)
@@ -4579,7 +4579,7 @@ def CommonFunc_90005620(
 
     # --- Label 3 --- #
     DefineLabel(3)
-    Move(PLAYER, destination=asset, destination_type=CoordEntityType.Asset, model_point=191, short_move=True)
+    Move(PLAYER, destination=asset, destination_type=CoordEntityType.Asset, dummy_id=191, short_move=True)
     ForceAnimation(PLAYER, 60810)
     Wait(2.700000047683716)
     DisplayDialog(text=208000, anchor_entity=asset)
@@ -4590,7 +4590,7 @@ def CommonFunc_90005620(
 
     # --- Label 4 --- #
     DefineLabel(4)
-    Move(PLAYER, destination=asset, destination_type=CoordEntityType.Asset, model_point=191, short_move=True)
+    Move(PLAYER, destination=asset, destination_type=CoordEntityType.Asset, dummy_id=191, short_move=True)
     ForceAnimation(PLAYER, 60810)
     Wait(2.6700000762939453)
     EnableAsset(asset_1)
@@ -4624,7 +4624,7 @@ def CommonFunc_90005621(_, flag: uint, asset: uint):
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=101, model_point=806042)
+    CreateAssetVFX(asset, vfx_id=101, dummy_id=806042)
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(FlagEnabled(flag))
     
@@ -4637,7 +4637,7 @@ def CommonFunc_90005621(_, flag: uint, asset: uint):
 
 
 @RestartOnRest(90005630)
-def CommonFunc_90005630(_, far_view_id: uint, asset: uint, model_point: int):
+def CommonFunc_90005630(_, far_view_id: uint, asset: uint, dummy_id: int):
     """CommonFunc 90005630"""
     DisableNetworkSync()
     AND_1.Add(PlayerInOwnWorld())
@@ -4645,7 +4645,7 @@ def CommonFunc_90005630(_, far_view_id: uint, asset: uint, model_point: int):
     
     MAIN.Await(AND_1)
     
-    UseFarViewCamera(far_view_id=far_view_id, asset=asset, model_point=model_point)
+    UseFarViewCamera(far_view_id=far_view_id, asset=asset, dummy_id=dummy_id)
     RotateToFaceEntity(PLAYER, asset, wait_for_completion=True)
     RotateToFaceEntity(PLAYER, asset, animation=60480)
     Wait(1.0)
@@ -4673,7 +4673,7 @@ def CommonFunc_90005632(_, flag: uint, asset: uint, item_lot: int):
     if PlayerNotInOwnWorld():
         return
     DeleteAssetVFX(asset, erase_root=False)
-    CreateAssetVFX(asset, vfx_id=200, model_point=806840)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=806840)
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(ActionButtonParamActivated(action_button_id=9310, entity=asset))
     
@@ -4777,8 +4777,8 @@ def CommonFunc_90005636(
     MAIN.Await(OR_5)
     
     GotoIfFlagDisabled(Label.L1, flag=flag_1)
-    CreateTemporaryVFX(vfx_id=643041, anchor_entity=character, model_point=905, anchor_type=CoordEntityType.Character)
-    CreateTemporaryVFX(vfx_id=643040, anchor_entity=character, model_point=960, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=643041, anchor_entity=character, dummy_id=905, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=643040, anchor_entity=character, dummy_id=960, anchor_type=CoordEntityType.Character)
     Wait(0.20000000298023224)
     DisableCharacter(character)
     DisableAI(character)
@@ -4925,7 +4925,7 @@ def CommonFunc_90005646(
     MAIN.Await(AND_1)
     
     if ThisEventSlotFlagDisabled():
-        CreateAssetVFX(asset, vfx_id=190, model_point=1300)
+        CreateAssetVFX(asset, vfx_id=190, dummy_id=1300)
     OR_2.Add(MultiplayerPending())
     OR_2.Add(Multiplayer())
     AND_2.Add(not OR_2)
@@ -5038,7 +5038,7 @@ def CommonFunc_90005660(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5047,7 +5047,7 @@ def CommonFunc_90005660(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity_1,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5056,7 +5056,7 @@ def CommonFunc_90005660(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity_2,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5066,7 +5066,7 @@ def CommonFunc_90005660(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=102000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5075,7 +5075,7 @@ def CommonFunc_90005660(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity_1,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=102000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5084,7 +5084,7 @@ def CommonFunc_90005660(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity_2,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=102000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5095,7 +5095,7 @@ def CommonFunc_90005660(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5104,7 +5104,7 @@ def CommonFunc_90005660(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity_1,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5113,7 +5113,7 @@ def CommonFunc_90005660(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity_2,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5123,7 +5123,7 @@ def CommonFunc_90005660(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=102000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5132,7 +5132,7 @@ def CommonFunc_90005660(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity_1,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=102000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5141,7 +5141,7 @@ def CommonFunc_90005660(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity_2,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=102000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5152,7 +5152,7 @@ def CommonFunc_90005660(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5161,7 +5161,7 @@ def CommonFunc_90005660(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity_1,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5170,7 +5170,7 @@ def CommonFunc_90005660(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity_2,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5180,7 +5180,7 @@ def CommonFunc_90005660(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=102000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5189,7 +5189,7 @@ def CommonFunc_90005660(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity_1,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=102000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5198,7 +5198,7 @@ def CommonFunc_90005660(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity_2,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=102000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5303,7 +5303,7 @@ def CommonFunc_90005671(
     flag: uint,
     asset__asset_flag: uint,
     asset_flag__region: uint,
-    model_point: int,
+    dummy_id: int,
     behavior_param_id: int,
 ):
     """CommonFunc 90005671"""
@@ -5314,12 +5314,12 @@ def CommonFunc_90005671(
     
     MAIN.Await(AND_1)
     
-    MoveAssetToCharacter(asset__asset_flag, character=PLAYER, model_point=93)
+    MoveAssetToCharacter(asset__asset_flag, character=PLAYER, dummy_id=93)
     WaitFrames(frames=1)
     CreateHazard(
         asset_flag=asset_flag__region,
         asset=asset__asset_flag,
-        model_point=model_point,
+        dummy_id=dummy_id,
         behavior_param_id=behavior_param_id,
         target_type=DamageTargetType.Character,
         radius=2.0,
@@ -5384,8 +5384,8 @@ def CommonFunc_90005675(
         CreateBigHazardousAsset(
             asset_flag=asset_flag,
             asset=asset,
-            model_point_start=30,
-            model_point_end=31,
+            dummy_id_start=30,
+            dummy_id_end=31,
             behaviour_id=behaviour_id,
             target_type=DamageTargetType.Character,
             radius=0.10000000149011612,
@@ -5396,8 +5396,8 @@ def CommonFunc_90005675(
         CreateBigHazardousAsset(
             asset_flag=asset_flag,
             asset=asset,
-            model_point_start=30,
-            model_point_end=31,
+            dummy_id_start=30,
+            dummy_id_end=31,
             behaviour_id=103000,
             target_type=DamageTargetType.Character,
             radius=0.10000000149011612,
@@ -5505,10 +5505,10 @@ def CommonFunc_90005682(
     owner_entity: uint,
     behavior_id: int,
     behavior_id_1: int,
-    model_point: int,
-    model_point_1: int,
-    model_point_2: int,
-    model_point_3: int,
+    dummy_id: int,
+    dummy_id_1: int,
+    dummy_id_2: int,
+    dummy_id_3: int,
 ):
     """CommonFunc 90005682"""
     AND_1.Add(FlagEnabled(flag))
@@ -5518,12 +5518,12 @@ def CommonFunc_90005682(
     MAIN.Await(AND_1)
     
     CreateProjectileOwner(entity=owner_entity)
-    GotoIfValueComparison(Label.L1, comparison_type=ComparisonType.Equal, left=model_point, right=0)
+    GotoIfValueComparison(Label.L1, comparison_type=ComparisonType.Equal, left=dummy_id, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5533,7 +5533,7 @@ def CommonFunc_90005682(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=101100,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5543,7 +5543,7 @@ def CommonFunc_90005682(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5553,7 +5553,7 @@ def CommonFunc_90005682(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=101102,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5562,12 +5562,12 @@ def CommonFunc_90005682(
 
     # --- Label 1 --- #
     DefineLabel(1)
-    GotoIfValueComparison(Label.L2, comparison_type=ComparisonType.Equal, left=model_point_1, right=0)
+    GotoIfValueComparison(Label.L2, comparison_type=ComparisonType.Equal, left=dummy_id_1, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_1,
+            dummy_id=dummy_id_1,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5577,7 +5577,7 @@ def CommonFunc_90005682(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_1,
+            dummy_id=dummy_id_1,
             behavior_id=101100,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5587,7 +5587,7 @@ def CommonFunc_90005682(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_1,
+            dummy_id=dummy_id_1,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5597,7 +5597,7 @@ def CommonFunc_90005682(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_1,
+            dummy_id=dummy_id_1,
             behavior_id=101102,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5606,12 +5606,12 @@ def CommonFunc_90005682(
 
     # --- Label 2 --- #
     DefineLabel(2)
-    GotoIfValueComparison(Label.L3, comparison_type=ComparisonType.Equal, left=model_point_2, right=0)
+    GotoIfValueComparison(Label.L3, comparison_type=ComparisonType.Equal, left=dummy_id_2, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_2,
+            dummy_id=dummy_id_2,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5621,7 +5621,7 @@ def CommonFunc_90005682(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_2,
+            dummy_id=dummy_id_2,
             behavior_id=101100,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5631,7 +5631,7 @@ def CommonFunc_90005682(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_2,
+            dummy_id=dummy_id_2,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5641,7 +5641,7 @@ def CommonFunc_90005682(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_2,
+            dummy_id=dummy_id_2,
             behavior_id=101102,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5650,12 +5650,12 @@ def CommonFunc_90005682(
 
     # --- Label 3 --- #
     DefineLabel(3)
-    GotoIfValueComparison(Label.L4, comparison_type=ComparisonType.Equal, left=model_point_3, right=0)
+    GotoIfValueComparison(Label.L4, comparison_type=ComparisonType.Equal, left=dummy_id_3, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_3,
+            dummy_id=dummy_id_3,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5665,7 +5665,7 @@ def CommonFunc_90005682(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_3,
+            dummy_id=dummy_id_3,
             behavior_id=101100,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5675,7 +5675,7 @@ def CommonFunc_90005682(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_3,
+            dummy_id=dummy_id_3,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5685,7 +5685,7 @@ def CommonFunc_90005682(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_3,
+            dummy_id=dummy_id_3,
             behavior_id=101102,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -5722,12 +5722,12 @@ def CommonFunc_90005683(_, flag: uint, asset: uint, vfx_id: int, flag_1: uint, f
     # --- Label 1 --- #
     DefineLabel(1)
     GotoIfUnsignedEqual(Label.L10, left=1049551600, right=asset)
-    CreateAssetVFX(asset, vfx_id=vfx_id, model_point=800530)
+    CreateAssetVFX(asset, vfx_id=vfx_id, dummy_id=800530)
     Goto(Label.L1)
 
     # --- Label 10 --- #
     DefineLabel(10)
-    CreateAssetVFX(asset, vfx_id=vfx_id, model_point=800531)
+    CreateAssetVFX(asset, vfx_id=vfx_id, dummy_id=800531)
 
     # --- Label 1 --- #
     DefineLabel(1)
@@ -5736,7 +5736,7 @@ def CommonFunc_90005683(_, flag: uint, asset: uint, vfx_id: int, flag_1: uint, f
     MAIN.Await(AND_2)
     
     Restart()
-    CreateAssetVFX(asset, vfx_id=vfx_id, model_point=800530)
+    CreateAssetVFX(asset, vfx_id=vfx_id, dummy_id=800530)
 
 
 @ContinueOnRest(90005684)
@@ -5757,7 +5757,7 @@ def CommonFunc_90005685(_, character: uint):
     """CommonFunc 90005685"""
     EnableImmortality(character)
     DisableInvincibility(character)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
     DisableHealthBar(character)
     AddSpecialEffect(character, 5000)
     SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.Always)
@@ -5771,7 +5771,7 @@ def CommonFunc_90005686(_, source_entity: uint, flag: uint):
     ShootProjectile(
         owner_entity=source_entity,
         source_entity=source_entity,
-        model_point=10,
+        dummy_id=10,
         behavior_id=244600980,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -5780,7 +5780,7 @@ def CommonFunc_90005686(_, source_entity: uint, flag: uint):
     ShootProjectile(
         owner_entity=source_entity,
         source_entity=source_entity,
-        model_point=15,
+        dummy_id=15,
         behavior_id=244600980,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -5789,7 +5789,7 @@ def CommonFunc_90005686(_, source_entity: uint, flag: uint):
     ShootProjectile(
         owner_entity=source_entity,
         source_entity=source_entity,
-        model_point=20,
+        dummy_id=20,
         behavior_id=244600981,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -5798,7 +5798,7 @@ def CommonFunc_90005686(_, source_entity: uint, flag: uint):
     ShootProjectile(
         owner_entity=source_entity,
         source_entity=source_entity,
-        model_point=25,
+        dummy_id=25,
         behavior_id=244600981,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -5807,7 +5807,7 @@ def CommonFunc_90005686(_, source_entity: uint, flag: uint):
     ShootProjectile(
         owner_entity=source_entity,
         source_entity=source_entity,
-        model_point=30,
+        dummy_id=30,
         behavior_id=244600981,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -5903,8 +5903,8 @@ def CommonFunc_90005694(
     _,
     asset_flag: uint,
     asset: uint,
-    model_point_start: int,
-    model_point_end: int,
+    dummy_id_start: int,
+    dummy_id_end: int,
     behavior_param_id__behaviour_id: int,
     radius: float,
     life: float,
@@ -5912,11 +5912,11 @@ def CommonFunc_90005694(
 ):
     """CommonFunc 90005694"""
     RemoveAssetFlag(asset_flag=asset_flag)
-    if ValueEqual(left=0, right=model_point_end):
+    if ValueEqual(left=0, right=dummy_id_end):
         CreateHazard(
             asset_flag=asset_flag,
             asset=asset,
-            model_point=model_point_start,
+            dummy_id=dummy_id_start,
             behavior_param_id=behavior_param_id__behaviour_id,
             target_type=DamageTargetType.Character,
             radius=radius,
@@ -5927,8 +5927,8 @@ def CommonFunc_90005694(
         CreateBigHazardousAsset(
             asset_flag=asset_flag,
             asset=asset,
-            model_point_start=model_point_start,
-            model_point_end=model_point_end,
+            dummy_id_start=dummy_id_start,
+            dummy_id_end=dummy_id_end,
             behaviour_id=behavior_param_id__behaviour_id,
             target_type=DamageTargetType.Character,
             radius=radius,
@@ -5942,8 +5942,8 @@ def CommonFunc_90005695(
     _,
     asset__asset_flag: uint,
     asset: uint,
-    model_point_start: int,
-    model_point_end: int,
+    dummy_id_start: int,
+    dummy_id_end: int,
     behavior_param_id__behaviour_id: int,
     radius: float,
     life: float,
@@ -5953,11 +5953,11 @@ def CommonFunc_90005695(
     RemoveAssetFlag(asset_flag=asset__asset_flag)
     if AssetDestroyed(asset):
         return
-    if ValueEqual(left=0, right=model_point_end):
+    if ValueEqual(left=0, right=dummy_id_end):
         CreateHazard(
             asset_flag=asset__asset_flag,
             asset=asset,
-            model_point=model_point_start,
+            dummy_id=dummy_id_start,
             behavior_param_id=behavior_param_id__behaviour_id,
             target_type=DamageTargetType.Character,
             radius=radius,
@@ -5968,8 +5968,8 @@ def CommonFunc_90005695(
         CreateBigHazardousAsset(
             asset_flag=asset__asset_flag,
             asset=asset,
-            model_point_start=model_point_start,
-            model_point_end=model_point_end,
+            dummy_id_start=dummy_id_start,
+            dummy_id_end=dummy_id_end,
             behaviour_id=behavior_param_id__behaviour_id,
             target_type=DamageTargetType.Character,
             radius=radius,
@@ -6504,7 +6504,7 @@ def CommonFunc_90005708(_, character: uint, flag: uint, left: uint):
 
 
 @RestartOnRest(90005709)
-def CommonFunc_90005709(_, attacked_entity: uint, model_point: int, vfx_id: int):
+def CommonFunc_90005709(_, attacked_entity: uint, dummy_id: int, vfx_id: int):
     """CommonFunc 90005709"""
     if PlayerNotInOwnWorld():
         return
@@ -6514,18 +6514,18 @@ def CommonFunc_90005709(_, attacked_entity: uint, model_point: int, vfx_id: int)
     CreateTemporaryVFX(
         vfx_id=vfx_id,
         anchor_entity=attacked_entity,
-        model_point=model_point,
+        dummy_id=dummy_id,
         anchor_type=CoordEntityType.Character,
     )
     Restart()
 
 
 @RestartOnRest(90005710)
-def CommonFunc_90005710(_, flag: uint, asset: uint, vfx_id: int, model_point: int):
+def CommonFunc_90005710(_, flag: uint, asset: uint, vfx_id: int, dummy_id: int):
     """CommonFunc 90005710"""
     MAIN.Await(FlagDisabled(flag))
     
-    CreateAssetVFX(asset, vfx_id=vfx_id, model_point=model_point)
+    CreateAssetVFX(asset, vfx_id=vfx_id, dummy_id=dummy_id)
     
     MAIN.Await(FlagEnabled(flag))
     
@@ -6551,12 +6551,12 @@ def CommonFunc_90005711(_, flag: uint, patrol_information_id: uint):
 
 
 @RestartOnRest(90005712)
-def CommonFunc_90005712(_, character: uint, asset: uint, vfx_id: int, model_point: int):
+def CommonFunc_90005712(_, character: uint, asset: uint, vfx_id: int, dummy_id: int):
     """CommonFunc 90005712"""
     DisableNetworkSync()
     if PlayerNotInOwnWorld():
         return
-    CreateAssetVFX(asset, vfx_id=vfx_id, model_point=model_point)
+    CreateAssetVFX(asset, vfx_id=vfx_id, dummy_id=dummy_id)
     
     MAIN.Await(CharacterHasSpecialEffect(character, 9502))
     
@@ -6601,7 +6601,7 @@ def CommonFunc_90005713(_, flag: uint, character: uint, character_1: uint):
 
 
 @RestartOnRest(90005720)
-def CommonFunc_90005720(_, character: uint, character_1: uint, special_effect: int, model_point: int):
+def CommonFunc_90005720(_, character: uint, character_1: uint, special_effect: int, dummy_id: int):
     """CommonFunc 90005720"""
     if CharacterHasSpecialEffect(character=character, special_effect=11020):
         return
@@ -6619,7 +6619,7 @@ def CommonFunc_90005720(_, character: uint, character_1: uint, special_effect: i
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=model_point,
+        dummy_id=dummy_id,
         copy_draw_parent=character,
     )
     ForceAnimation(character_1, 20000)
@@ -7015,9 +7015,9 @@ def CommonFunc_90005740(
     flag_1: uint,
     left: uint,
     character: uint,
-    model_point: int,
+    dummy_id: int,
     asset: uint,
-    model_point_1: short,
+    dummy_id_1: short,
     radius: float,
     animation: int,
     animation_id: int,
@@ -7030,9 +7030,9 @@ def CommonFunc_90005740(
     
     MAIN.Await(FlagEnabled(flag))
     
-    GotoIfValueComparison(Label.L0, comparison_type=ComparisonType.Equal, left=model_point, right=0)
+    GotoIfValueComparison(Label.L0, comparison_type=ComparisonType.Equal, left=dummy_id, right=0)
     GotoIfUnsignedEqual(Label.L0, left=asset, right=0)
-    MoveAssetToCharacter(asset, character=character, model_point=model_point_1)
+    MoveAssetToCharacter(asset, character=character, dummy_id=dummy_id_1)
     WaitFramesAfterCutscene(frames=1)
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=asset, radius=radius))
     GotoIfConditionTrue(Label.L9, input_condition=AND_1)
@@ -7059,7 +7059,7 @@ def CommonFunc_90005740(
     OR_2.Add(TimeElapsed(seconds=2.0))
     OR_1.Add(AND_2)
     OR_1.Add(OR_2)
-    SkipLinesIfValueEqual(3, left=model_point, right=0)
+    SkipLinesIfValueEqual(3, left=dummy_id, right=0)
     SkipLinesIfUnsignedEqual(2, left=asset, right=0)
     OR_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=asset, radius=radius))
     SkipLines(1)
@@ -7075,12 +7075,12 @@ def CommonFunc_90005740(
     EnableFlag(flag_1)
     if UnsignedNotEqual(left=left, right=0):
         EnableFlag(left)
-    if ValueNotEqual(left=model_point, right=0):
+    if ValueNotEqual(left=dummy_id, right=0):
         Move(
             PLAYER,
             destination=character,
             destination_type=CoordEntityType.Character,
-            model_point=model_point,
+            dummy_id=dummy_id,
             short_move=True,
         )
     if ValueNotEqual(left=special_effect, right=-1):
@@ -7208,9 +7208,9 @@ def CommonFunc_90005742(
     flag_1: uint,
     left: uint,
     character: uint,
-    model_point: int,
+    dummy_id: int,
     asset: uint,
-    model_point_1: short,
+    dummy_id_1: short,
     radius: float,
     animation: int,
     animation_id: int,
@@ -7224,9 +7224,9 @@ def CommonFunc_90005742(
     
     MAIN.Await(FlagEnabled(flag))
     
-    GotoIfValueComparison(Label.L0, comparison_type=ComparisonType.Equal, left=model_point, right=0)
+    GotoIfValueComparison(Label.L0, comparison_type=ComparisonType.Equal, left=dummy_id, right=0)
     GotoIfUnsignedEqual(Label.L0, left=asset, right=0)
-    MoveAssetToCharacter(asset, character=character, model_point=model_point_1)
+    MoveAssetToCharacter(asset, character=character, dummy_id=dummy_id_1)
     WaitFramesAfterCutscene(frames=1)
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=asset, radius=radius))
     GotoIfConditionTrue(Label.L9, input_condition=AND_1)
@@ -7253,7 +7253,7 @@ def CommonFunc_90005742(
     OR_2.Add(TimeElapsed(seconds=2.0))
     OR_1.Add(AND_2)
     OR_1.Add(OR_2)
-    SkipLinesIfValueEqual(3, left=model_point, right=0)
+    SkipLinesIfValueEqual(3, left=dummy_id, right=0)
     SkipLinesIfUnsignedEqual(2, left=asset, right=0)
     OR_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=asset, radius=radius))
     SkipLines(1)
@@ -7269,12 +7269,12 @@ def CommonFunc_90005742(
     EnableFlag(flag_1)
     if UnsignedNotEqual(left=left, right=0):
         EnableFlag(left)
-    if ValueNotEqual(left=model_point, right=0):
+    if ValueNotEqual(left=dummy_id, right=0):
         Move(
             PLAYER,
             destination=character,
             destination_type=CoordEntityType.Character,
-            model_point=model_point,
+            dummy_id=dummy_id,
             short_move=True,
         )
     if ValueNotEqual(left=special_effect, right=-1):
@@ -7411,7 +7411,7 @@ def CommonFunc_90005750(
     first_flag: uint,
     last_flag: uint,
     flag: uint,
-    model_point: int,
+    dummy_id: int,
 ):
     """CommonFunc 90005750"""
     DisableNetworkSync()
@@ -7422,10 +7422,10 @@ def CommonFunc_90005750(
     
     MAIN.Await(AND_1)
     
-    if ValueNotEqual(left=model_point, right=0):
-        CreateAssetVFX(asset, vfx_id=90, model_point=model_point)
+    if ValueNotEqual(left=dummy_id, right=0):
+        CreateAssetVFX(asset, vfx_id=90, dummy_id=dummy_id)
     else:
-        CreateAssetVFX(asset, vfx_id=90, model_point=6101)
+        CreateAssetVFX(asset, vfx_id=90, dummy_id=6101)
     OR_2.Add(FlagDisabled(flag))
     OR_2.Add(FlagRangeAllEnabled(flag_range=(first_flag, last_flag)))
     OR_1.Add(ActionButtonParamActivated(action_button_id=action_button_id, entity=asset))
@@ -7446,7 +7446,7 @@ def CommonFunc_90005750(
 
 
 @RestartOnRest(90005751)
-def CommonFunc_90005751(_, attacked_entity: uint, model_point: int, vfx_id: int):
+def CommonFunc_90005751(_, attacked_entity: uint, dummy_id: int, vfx_id: int):
     """CommonFunc 90005751"""
     if PlayerNotInOwnWorld():
         return
@@ -7458,14 +7458,14 @@ def CommonFunc_90005751(_, attacked_entity: uint, model_point: int, vfx_id: int)
     CreateTemporaryVFX(
         vfx_id=vfx_id,
         anchor_entity=attacked_entity,
-        model_point=model_point,
+        dummy_id=dummy_id,
         anchor_type=CoordEntityType.Asset,
     )
     Restart()
 
 
 @ContinueOnRest(90005752)
-def CommonFunc_90005752(_, asset: uint, vfx_id: int, model_point: int, seconds: float):
+def CommonFunc_90005752(_, asset: uint, vfx_id: int, dummy_id: int, seconds: float):
     """CommonFunc 90005752"""
     DisableNetworkSync()
     GotoIfThisEventSlotFlagDisabled(Label.L0)
@@ -7487,7 +7487,7 @@ def CommonFunc_90005752(_, asset: uint, vfx_id: int, model_point: int, seconds: 
     
     MAIN.Await(AND_3)
     
-    CreateAssetVFX(asset, vfx_id=vfx_id, model_point=model_point)
+    CreateAssetVFX(asset, vfx_id=vfx_id, dummy_id=dummy_id)
     Restart()
 
 
@@ -7976,7 +7976,7 @@ def CommonFunc_90005795(
     message: int,
     action_button_id: int,
     asset: uint,
-    model_point: int,
+    dummy_id: int,
 ):
     """CommonFunc 90005795"""
     DisableNetworkSync()
@@ -7995,7 +7995,7 @@ def CommonFunc_90005795(
     
     MAIN.Await(AND_1)
     
-    CreateAssetVFX(asset, vfx_id=100, model_point=model_point)
+    CreateAssetVFX(asset, vfx_id=100, dummy_id=dummy_id)
     OR_2.Add(Multiplayer())
     OR_2.Add(MultiplayerPending())
     OR_3.Add(OR_2)
@@ -8203,7 +8203,7 @@ def CommonFunc_9005810(_, flag: uint, grace_flag: uint, character: uint, asset: 
     
     MAIN.Await(FlagEnabled(flag))
     
-    CreateTemporaryVFX(vfx_id=1060, anchor_entity=asset, model_point=200, anchor_type=CoordEntityType.Asset)
+    CreateTemporaryVFX(vfx_id=1060, anchor_entity=asset, dummy_id=200, anchor_type=CoordEntityType.Asset)
     Wait(0.5)
     EnableCharacter(character)
     EnableAsset(asset)
@@ -8220,7 +8220,7 @@ def CommonFunc_9005810(_, flag: uint, grace_flag: uint, character: uint, asset: 
 
 
 @RestartOnRest(9005811)
-def CommonFunc_9005811(_, flag: uint, asset: uint, model_point: int, right: uint):
+def CommonFunc_9005811(_, flag: uint, asset: uint, dummy_id: int, right: uint):
     """CommonFunc 9005811"""
     DisableNetworkSync()
     DisableAsset(asset)
@@ -8260,7 +8260,7 @@ def CommonFunc_9005811(_, flag: uint, asset: uint, model_point: int, right: uint
     
     EnableAsset(asset)
     DeleteAssetVFX(asset)
-    CreateAssetVFX(asset, vfx_id=101, model_point=model_point)
+    CreateAssetVFX(asset, vfx_id=101, dummy_id=dummy_id)
     OR_11.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     OR_11.Add(CharacterType(PLAYER, character_type=CharacterType.Invader))
     OR_11.Add(CharacterType(PLAYER, character_type=CharacterType.Invader2))
@@ -8298,7 +8298,7 @@ def CommonFunc_9005811(_, flag: uint, asset: uint, model_point: int, right: uint
 
 
 @RestartOnRest(9005812)
-def CommonFunc_9005812(_, flag: uint, asset: uint, model_point: int, right: uint, model_point_1: int):
+def CommonFunc_9005812(_, flag: uint, asset: uint, dummy_id: int, right: uint, dummy_id_1: int):
     """CommonFunc 9005812"""
     DisableNetworkSync()
     DisableAsset(asset)
@@ -8323,7 +8323,7 @@ def CommonFunc_9005812(_, flag: uint, asset: uint, model_point: int, right: uint
     
     EnableAsset(asset)
     DeleteAssetVFX(asset)
-    CreateAssetVFX(asset, vfx_id=101, model_point=model_point)
+    CreateAssetVFX(asset, vfx_id=101, dummy_id=dummy_id)
     if UnsignedNotEqual(left=0, right=right):
         AND_11.Add(FlagEnabled(right))
     AND_11.Add(FlagDisabled(flag))
@@ -8362,11 +8362,11 @@ def CommonFunc_9005812(_, flag: uint, asset: uint, model_point: int, right: uint
     MAIN.Await(AND_15)
     
     Restart()
-    CreateAssetVFX(asset, vfx_id=101, model_point=model_point_1)
+    CreateAssetVFX(asset, vfx_id=101, dummy_id=dummy_id_1)
 
 
 @RestartOnRest(9005813)
-def CommonFunc_9005813(_, flag: uint, asset: uint, model_point: int, right: uint, model_point_1: int):
+def CommonFunc_9005813(_, flag: uint, asset: uint, dummy_id: int, right: uint, dummy_id_1: int):
     """CommonFunc 9005813"""
     DisableNetworkSync()
     DisableAsset(asset)
@@ -8391,7 +8391,7 @@ def CommonFunc_9005813(_, flag: uint, asset: uint, model_point: int, right: uint
     
     EnableAsset(asset)
     DeleteAssetVFX(asset)
-    CreateAssetVFX(asset, vfx_id=101, model_point=model_point)
+    CreateAssetVFX(asset, vfx_id=101, dummy_id=dummy_id)
     if UnsignedNotEqual(left=0, right=right):
         AND_11.Add(FlagEnabled(right))
     AND_11.Add(FlagDisabled(flag))
@@ -8423,7 +8423,7 @@ def CommonFunc_9005813(_, flag: uint, asset: uint, model_point: int, right: uint
     
     EnableAsset(asset)
     DeleteAssetVFX(asset)
-    CreateAssetVFX(asset, vfx_id=101, model_point=model_point_1)
+    CreateAssetVFX(asset, vfx_id=101, dummy_id=dummy_id_1)
     OR_12.Add(Invasion())
     OR_12.Add(InvasionPending())
     OR_12.Add(Multiplayer())
@@ -8683,12 +8683,12 @@ def CommonFunc_90005860(_, flag: uint, left: uint, character: uint, left_1: uint
 
 
 @RestartOnRest(90005861)
-def CommonFunc_90005861(
+def CommonFunc_KillFieldDragonWyrm(
     _,
     flag: uint,
-    left: uint,
+    extra_flag: uint,
     character: uint,
-    left_1: uint,
+    felled_banner_rank: uint,
     item_lot: int,
     text: int,
     seconds: float,
@@ -8718,9 +8718,9 @@ def CommonFunc_90005861(
     
     MAIN.Await(CharacterDead(character))
     
-    SkipLinesIfUnsignedEqual(6, left=left_1, right=3)
-    SkipLinesIfUnsignedEqual(4, left=left_1, right=2)
-    SkipLinesIfUnsignedEqual(2, left=left_1, right=1)
+    SkipLinesIfUnsignedEqual(6, left=felled_banner_rank, right=3)
+    SkipLinesIfUnsignedEqual(4, left=felled_banner_rank, right=2)
+    SkipLinesIfUnsignedEqual(2, left=felled_banner_rank, right=1)
     KillBossAndDisplayBanner(character=character, banner_type=BannerType.EnemyFelled)
     Goto(Label.L1)
     KillBossAndDisplayBanner(character=character, banner_type=BannerType.GreatEnemyFelled)
@@ -8732,8 +8732,8 @@ def CommonFunc_90005861(
     # --- Label 1 --- #
     DefineLabel(1)
     EnableFlag(flag)
-    if UnsignedNotEqual(left=left, right=0):
-        EnableFlag(left)
+    if UnsignedNotEqual(left=extra_flag, right=0):
+        EnableFlag(extra_flag)
     if PlayerNotInOwnWorld():
         return
     if ValueEqual(left=item_lot, right=0):
@@ -8747,10 +8747,10 @@ def CommonFunc_90005861(
 
 
 @ContinueOnRest(90005870)
-def CommonFunc_90005870(_, character: uint, name: int, npc_threat_level: uint):
+def CommonFunc_FieldBattleHealthBar(_, boss: uint, name: int, npc_threat_level: uint):
     """CommonFunc 90005870"""
     DisableNetworkSync()
-    AND_1.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
+    AND_1.Add(HasAIStatus(boss, ai_status=AIStatusType.Battle))
     AND_1.Add(FieldBattleMusicEnabled(npc_threat_level=npc_threat_level))
     AND_1.Add(FlagDisabled(9000))
     
@@ -8765,28 +8765,28 @@ def CommonFunc_90005870(_, character: uint, name: int, npc_threat_level: uint):
     DefineLabel(0)
     EnableFlag(9290)
     Wait(1.0)
-    EnableBossHealthBar(character, name=name)
+    EnableBossHealthBar(boss, name=name)
     if PlayerInOwnWorld():
-        SetNetworkUpdateAuthority(character, authority_level=UpdateAuthority.Forced)
-        SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
-    AND_2.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
+        SetNetworkUpdateAuthority(boss, authority_level=UpdateAuthority.Forced)
+        SetNetworkUpdateRate(boss, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
+    AND_2.Add(HasAIStatus(boss, ai_status=AIStatusType.Battle))
     AND_2.Add(FieldBattleMusicEnabled(npc_threat_level=npc_threat_level))
     OR_2.Add(not AND_2)
-    OR_2.Add(CharacterDead(character))
+    OR_2.Add(CharacterDead(boss))
     OR_2.Add(FlagEnabled(9000))
     
     MAIN.Await(OR_2)
     
-    OR_3.Add(CharacterDead(character))
+    OR_3.Add(CharacterDead(boss))
     SkipLinesIfConditionFalse(2, OR_3)
     Wait(3.0)
     SkipLines(2)
     if FlagDisabled(9000):
         Wait(1.0)
-    DisableBossHealthBar(character, name=name)
+    DisableBossHealthBar(boss, name=name)
     if PlayerInOwnWorld():
-        SetNetworkUpdateAuthority(character, authority_level=UpdateAuthority.Normal)
-        SetNetworkUpdateRate(character, is_fixed=False, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
+        SetNetworkUpdateAuthority(boss, authority_level=UpdateAuthority.Normal)
+        SetNetworkUpdateRate(boss, is_fixed=False, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
     DisableFlag(9290)
     Restart()
 
@@ -8794,37 +8794,37 @@ def CommonFunc_90005870(_, character: uint, name: int, npc_threat_level: uint):
     DefineLabel(1)
     EnableFlag(9291)
     Wait(1.0)
-    EnableBossHealthBar(character, name=name, bar_slot=1)
+    EnableBossHealthBar(boss, name=name, bar_slot=1)
     if PlayerInOwnWorld():
-        SetNetworkUpdateAuthority(character, authority_level=UpdateAuthority.Forced)
-        SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
-    AND_12.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
+        SetNetworkUpdateAuthority(boss, authority_level=UpdateAuthority.Forced)
+        SetNetworkUpdateRate(boss, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
+    AND_12.Add(HasAIStatus(boss, ai_status=AIStatusType.Battle))
     AND_12.Add(FieldBattleMusicEnabled(npc_threat_level=npc_threat_level))
     OR_12.Add(not AND_12)
-    OR_12.Add(CharacterDead(character))
+    OR_12.Add(CharacterDead(boss))
     OR_12.Add(FlagEnabled(9000))
     
     MAIN.Await(OR_12)
     
-    OR_13.Add(CharacterDead(character))
+    OR_13.Add(CharacterDead(boss))
     SkipLinesIfConditionFalse(2, OR_13)
     Wait(3.0)
     SkipLines(2)
     if FlagDisabled(9000):
         Wait(1.0)
-    DisableBossHealthBar(character, name=name, bar_slot=1)
+    DisableBossHealthBar(boss, name=name, bar_slot=1)
     if PlayerInOwnWorld():
-        SetNetworkUpdateAuthority(character, authority_level=UpdateAuthority.Normal)
-        SetNetworkUpdateRate(character, is_fixed=False, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
+        SetNetworkUpdateAuthority(boss, authority_level=UpdateAuthority.Normal)
+        SetNetworkUpdateRate(boss, is_fixed=False, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
     DisableFlag(9291)
     Restart()
 
 
 @ContinueOnRest(90005871)
-def CommonFunc_90005871(_, character: uint, name: int, npc_threat_level: uint, character_1: uint):
+def CommonFunc_NightsCavalryHealthBar(_, nights_cavalry: uint, name: int, npc_threat_level: uint, horse: uint):
     """CommonFunc 90005871"""
     DisableNetworkSync()
-    AND_1.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
+    AND_1.Add(HasAIStatus(nights_cavalry, ai_status=AIStatusType.Battle))
     AND_1.Add(FieldBattleMusicEnabled(npc_threat_level=npc_threat_level))
     AND_1.Add(FlagDisabled(9000))
     
@@ -8839,32 +8839,32 @@ def CommonFunc_90005871(_, character: uint, name: int, npc_threat_level: uint, c
     DefineLabel(0)
     EnableFlag(9290)
     Wait(1.0)
-    EnableBossHealthBar(character, name=name)
+    EnableBossHealthBar(nights_cavalry, name=name)
     if PlayerInOwnWorld():
-        SetNetworkUpdateAuthority(character, authority_level=UpdateAuthority.Forced)
-        SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
-        SetNetworkUpdateAuthority(character_1, authority_level=UpdateAuthority.Forced)
-        SetNetworkUpdateRate(character_1, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
-    AND_2.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
+        SetNetworkUpdateAuthority(nights_cavalry, authority_level=UpdateAuthority.Forced)
+        SetNetworkUpdateRate(nights_cavalry, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
+        SetNetworkUpdateAuthority(horse, authority_level=UpdateAuthority.Forced)
+        SetNetworkUpdateRate(horse, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
+    AND_2.Add(HasAIStatus(nights_cavalry, ai_status=AIStatusType.Battle))
     AND_2.Add(FieldBattleMusicEnabled(npc_threat_level=npc_threat_level))
     OR_2.Add(not AND_2)
-    OR_2.Add(CharacterDead(character))
+    OR_2.Add(CharacterDead(nights_cavalry))
     OR_2.Add(FlagEnabled(9000))
     
     MAIN.Await(OR_2)
     
-    OR_3.Add(CharacterDead(character))
+    OR_3.Add(CharacterDead(nights_cavalry))
     SkipLinesIfConditionFalse(2, OR_3)
     Wait(3.0)
     SkipLines(2)
     if FlagDisabled(9000):
         Wait(1.0)
-    DisableBossHealthBar(character, name=name)
+    DisableBossHealthBar(nights_cavalry, name=name)
     if PlayerInOwnWorld():
-        SetNetworkUpdateAuthority(character, authority_level=UpdateAuthority.Normal)
-        SetNetworkUpdateRate(character, is_fixed=False, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
-        SetNetworkUpdateAuthority(character_1, authority_level=UpdateAuthority.Normal)
-        SetNetworkUpdateRate(character_1, is_fixed=False, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
+        SetNetworkUpdateAuthority(nights_cavalry, authority_level=UpdateAuthority.Normal)
+        SetNetworkUpdateRate(nights_cavalry, is_fixed=False, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
+        SetNetworkUpdateAuthority(horse, authority_level=UpdateAuthority.Normal)
+        SetNetworkUpdateRate(horse, is_fixed=False, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
     DisableFlag(9290)
     Restart()
 
@@ -8872,42 +8872,42 @@ def CommonFunc_90005871(_, character: uint, name: int, npc_threat_level: uint, c
     DefineLabel(1)
     EnableFlag(9291)
     Wait(1.0)
-    EnableBossHealthBar(character, name=name, bar_slot=1)
+    EnableBossHealthBar(nights_cavalry, name=name, bar_slot=1)
     if PlayerInOwnWorld():
-        SetNetworkUpdateAuthority(character, authority_level=UpdateAuthority.Forced)
-        SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
-        SetNetworkUpdateAuthority(character, authority_level=UpdateAuthority.Forced)
-        SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
-    AND_12.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
+        SetNetworkUpdateAuthority(nights_cavalry, authority_level=UpdateAuthority.Forced)
+        SetNetworkUpdateRate(nights_cavalry, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
+        SetNetworkUpdateAuthority(nights_cavalry, authority_level=UpdateAuthority.Forced)
+        SetNetworkUpdateRate(nights_cavalry, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
+    AND_12.Add(HasAIStatus(nights_cavalry, ai_status=AIStatusType.Battle))
     AND_12.Add(FieldBattleMusicEnabled(npc_threat_level=npc_threat_level))
     OR_12.Add(not AND_12)
-    OR_12.Add(CharacterDead(character))
+    OR_12.Add(CharacterDead(nights_cavalry))
     OR_12.Add(FlagEnabled(9000))
     
     MAIN.Await(OR_12)
     
-    OR_13.Add(CharacterDead(character))
+    OR_13.Add(CharacterDead(nights_cavalry))
     SkipLinesIfConditionFalse(2, OR_13)
     Wait(3.0)
     SkipLines(2)
     if FlagDisabled(9000):
         Wait(1.0)
-    DisableBossHealthBar(character, name=name, bar_slot=1)
+    DisableBossHealthBar(nights_cavalry, name=name, bar_slot=1)
     if PlayerInOwnWorld():
-        SetNetworkUpdateAuthority(character, authority_level=UpdateAuthority.Normal)
-        SetNetworkUpdateRate(character, is_fixed=False, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
-        SetNetworkUpdateAuthority(character, authority_level=UpdateAuthority.Normal)
-        SetNetworkUpdateRate(character, is_fixed=False, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
+        SetNetworkUpdateAuthority(nights_cavalry, authority_level=UpdateAuthority.Normal)
+        SetNetworkUpdateRate(nights_cavalry, is_fixed=False, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
+        SetNetworkUpdateAuthority(nights_cavalry, authority_level=UpdateAuthority.Normal)
+        SetNetworkUpdateRate(nights_cavalry, is_fixed=False, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
     DisableFlag(9291)
     Restart()
 
 
 @ContinueOnRest(90005872)
-def CommonFunc_90005872(_, character: uint, npc_threat_level: uint, right: uint):
+def CommonFunc_FieldBattleHalfHealthMusic(_, character: uint, npc_threat_level: uint, required_flag: uint):
     """CommonFunc 90005872"""
     DisableNetworkSync()
-    if UnsignedNotEqual(left=0, right=right):
-        AND_1.Add(FlagEnabled(right))
+    if UnsignedNotEqual(left=0, right=required_flag):
+        AND_1.Add(FlagEnabled(required_flag))
     else:
         AND_1.Add(HealthRatio(character) <= 0.550000011920929)
     AND_1.Add(FieldBattleMusicEnabled(npc_threat_level=npc_threat_level))
@@ -9020,7 +9020,7 @@ def CommonFunc_90005881(
         character=PLAYER,
         destination_type=CoordEntityType.Region,
         destination=player_start,
-        model_point=-1,
+        dummy_id=-1,
         copy_draw_parent=PLAYER,
         use_bonfire_effect=True,
         reset_camera=True,
@@ -9073,7 +9073,7 @@ def CommonFunc_90005882(
     ShootProjectile(
         owner_entity=owner_entity,
         source_entity=source_entity,
-        model_point=100,
+        dummy_id=100,
         behavior_id=100500,
         launch_angle_x=0,
         launch_angle_y=90,
@@ -9091,7 +9091,7 @@ def CommonFunc_90005882(
     DisableNetworkFlag(flag_1)
     AddSpecialEffect(PLAYER, 514)
     EnableAsset(asset)
-    CreateAssetVFX(asset, vfx_id=200, model_point=806700)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=806700)
     ForceAnimation(PLAYER, 60451)
     Wait(1.0)
     AddSpecialEffect(20000, 8870)
@@ -9211,7 +9211,7 @@ def CommonFunc_90005885(_, flag: uint, bgm_boss_conv_param_id: int, flag_1: uint
 
 
 @RestartOnRest(91005600)
-def CommonFunc_91005600(_, flag: uint, asset: uint, model_point: int):
+def CommonFunc_91005600(_, flag: uint, asset: uint, dummy_id: int):
     """CommonFunc 91005600"""
     DisableNetworkSync()
     DisableAsset(asset)
@@ -9228,7 +9228,7 @@ def CommonFunc_91005600(_, flag: uint, asset: uint, model_point: int):
     
     EnableAsset(asset)
     DeleteAssetVFX(asset)
-    CreateAssetVFX(asset, vfx_id=101, model_point=model_point)
+    CreateAssetVFX(asset, vfx_id=101, dummy_id=dummy_id)
     OR_5.Add(Multiplayer())
     OR_5.Add(MultiplayerPending())
     OR_5.Add(Invasion())
@@ -9276,7 +9276,7 @@ def CommonFunc_90005100(
     
     MAIN.Await(OR_1)
     
-    CreateAssetVFX(asset, vfx_id=100, model_point=6400)
+    CreateAssetVFX(asset, vfx_id=100, dummy_id=6400)
     if UnsignedEqual(left=value, right=0):
         EnableFlag(flag_2)
         Goto(Label.L6)
@@ -9355,7 +9355,7 @@ def CommonFunc_90005100(
     AND_11.Add(EventValue(flag=source_flag, bit_count=4) > value)
     if AND_11:
         return RESTART
-    CreateAssetVFX(asset, vfx_id=100, model_point=6400)
+    CreateAssetVFX(asset, vfx_id=100, dummy_id=6400)
     if UnsignedEqual(left=value, right=0):
         EnableFlag(flag_2)
         EventValueOperation(
@@ -9517,7 +9517,7 @@ def CommonFunc_90005101(
     
     MAIN.Await(OR_1)
     
-    CreateAssetVFX(asset, vfx_id=100, model_point=6401)
+    CreateAssetVFX(asset, vfx_id=100, dummy_id=6401)
     if UnsignedEqual(left=value, right=0):
         EnableFlag(flag_2)
         Goto(Label.L6)
@@ -9595,7 +9595,7 @@ def CommonFunc_90005101(
     AND_11.Add(EventValue(flag=source_flag, bit_count=4) > value)
     if AND_11:
         return RESTART
-    CreateAssetVFX(asset, vfx_id=100, model_point=6401)
+    CreateAssetVFX(asset, vfx_id=100, dummy_id=6401)
     if UnsignedEqual(left=value, right=0):
         EnableFlag(flag_2)
         EventValueOperation(
@@ -9733,7 +9733,7 @@ def CommonFunc_90005110(
     asset: uint,
     item_lot: int,
     item: int,
-    model_point: int,
+    dummy_id: int,
     action_button_id: int,
     animation_id: int,
     left: int,
@@ -9746,7 +9746,7 @@ def CommonFunc_90005110(
     if FlagDisabled(flag_1):
         return
     DeleteAssetVFX(asset)
-    CreateAssetVFX(asset, vfx_id=100, model_point=model_point)
+    CreateAssetVFX(asset, vfx_id=100, dummy_id=dummy_id)
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(ActionButtonParamActivated(action_button_id=action_button_id, entity=asset))
     
@@ -9778,9 +9778,9 @@ def CommonFunc_9005910(_, asset: uint, first_flag: uint, last_flag: uint, right:
     # --- Label 1 --- #
     DefineLabel(1)
     if ValueGreaterThanOrEqual(left=3, right=right):
-        CreateAssetVFX(asset, vfx_id=201, model_point=62)
+        CreateAssetVFX(asset, vfx_id=201, dummy_id=62)
     else:
-        CreateAssetVFX(asset, vfx_id=201, model_point=63)
+        CreateAssetVFX(asset, vfx_id=201, dummy_id=63)
     
     MAIN.Await(FlagRangeAnyEnabled(flag_range=(first_flag, last_flag)))
     
@@ -9788,7 +9788,7 @@ def CommonFunc_9005910(_, asset: uint, first_flag: uint, last_flag: uint, right:
 
     # --- Label 2 --- #
     DefineLabel(2)
-    CreateAssetVFX(asset, vfx_id=201, model_point=61)
+    CreateAssetVFX(asset, vfx_id=201, dummy_id=61)
     
     MAIN.Await(FlagRangeAllEnabled(flag_range=(first_flag, last_flag)))
     
@@ -9803,7 +9803,7 @@ def CommonFunc_9005910(_, asset: uint, first_flag: uint, last_flag: uint, right:
 @RestartOnRest(9005911)
 def CommonFunc_9005911(_, asset: uint):
     """CommonFunc 9005911"""
-    CreateAssetVFX(asset, vfx_id=201, model_point=40)
+    CreateAssetVFX(asset, vfx_id=201, dummy_id=40)
     
     MAIN.Await(EntityWithinDistance(entity=PLAYER, other_entity=asset, radius=3.0))
     
@@ -9903,7 +9903,7 @@ def CommonFunc_90005920(_, flag: uint, asset: uint, obj_act_id: uint):
     """CommonFunc 90005920"""
     if FlagEnabled(flag):
         return
-    CreateAssetVFX(asset, vfx_id=100, model_point=6150)
+    CreateAssetVFX(asset, vfx_id=100, dummy_id=6150)
     AND_1.Add(AssetActivated(obj_act_id=obj_act_id))
     
     MAIN.Await(AND_1)

@@ -308,7 +308,7 @@ EMEDF = PTDE_EMEDF | {
         "args": {
             "entity": NO_DEFAULT(AnimatedEntityTyping),
             "unk1": INT,
-            "model_point": INT,
+            "dummy_id": INT,
             "magic_id": INT,
             "launch_angle_x": INT,
             "launch_angle_y": INT,

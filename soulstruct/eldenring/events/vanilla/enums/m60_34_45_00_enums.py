@@ -13,7 +13,7 @@ class Characters(Character):
     Scarab6 = 1034450229  # c4191_9009 npc 41911020 think 41910000
     Scarab7 = 1034450230  # c4191_9010 npc 41911020 think 41910000
     Scarab8 = 1034450231  # c4191_9011 npc 41911020 think 41910000
-    GlintstoneDragon = 1034450800  # c4502_9000 npc 45020920 think 45020900 group 1034455100
+    GlintstoneDragonSmarag = 1034450800  # c4502_9000 npc 45020920 think 45020900 group 1034455100
 
 
 class Assets(Asset):

@@ -40,8 +40,8 @@ def Constructor():
         item_lot=1037460400,
         seconds=0.0,
     )
-    CommonFunc_90005870(0, character=Characters.BellBearingHunter, name=903100601, npc_threat_level=10)
-    CommonFunc_90005872(0, character=Characters.BellBearingHunter, npc_threat_level=10, right=0)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.BellBearingHunter, name=903100601, npc_threat_level=10)
+    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.BellBearingHunter, npc_threat_level=10, required_flag=0)
     CommonFunc_90005702(0, character=Characters.GiantTurtle, flag=3723, first_flag=3720, last_flag=3723)
     Event_1037460700(0, character=Characters.GiantTurtle)
     Event_1037460702(0, character=Characters.GiantTurtle)

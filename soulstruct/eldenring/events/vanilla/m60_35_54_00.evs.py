@@ -272,30 +272,30 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(
+    CommonFunc_AITrigger_RegionOrHurt(
         0,
         character=Characters.LesserFingercreeper4,
         region=1035542301,
         seconds=0.5,
         animation_id=20004,
     )
-    CommonFunc_90005250(
+    CommonFunc_AITrigger_RegionOrHurt(
         1,
         character=Characters.LesserFingercreeper5,
         region=1035542301,
         seconds=1.0,
         animation_id=20004,
     )
-    CommonFunc_90005250(
+    CommonFunc_AITrigger_RegionOrHurt(
         2,
         character=Characters.LesserFingercreeper6,
         region=1035542301,
         seconds=1.2000000476837158,
         animation_id=20004,
     )
-    CommonFunc_90005250(4, character=Characters.LesserFingercreeper1, region=1035542301, seconds=1.5, animation_id=-1)
-    CommonFunc_90005250(5, character=Characters.LesserFingercreeper9, region=1035542301, seconds=1.5, animation_id=-1)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_AITrigger_RegionOrHurt(4, character=Characters.LesserFingercreeper1, region=1035542301, seconds=1.5, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(5, character=Characters.LesserFingercreeper9, region=1035542301, seconds=1.5, animation_id=-1)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
     Event_1035542230()
     CommonFunc_90005706(0, character=Characters.WanderingNoble, animation_id=930023, left=0)
     CommonFunc_90005730(
@@ -416,8 +416,8 @@ def Event_1035542500():
             0,
             asset_flag=1035542250,
             asset=Assets.AEG007_557_1024,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802003270,
             radius=1.0,
             life=0.0,
@@ -428,8 +428,8 @@ def Event_1035542500():
             0,
             asset_flag=1035542250,
             asset=Assets.AEG007_557_1024,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802003260,
             radius=1.0,
             life=0.0,
@@ -440,8 +440,8 @@ def Event_1035542500():
             0,
             asset_flag=1035542250,
             asset=Assets.AEG007_557_1024,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802003250,
             radius=1.0,
             life=0.0,
@@ -452,8 +452,8 @@ def Event_1035542500():
             0,
             asset_flag=1035542250,
             asset=Assets.AEG007_557_1024,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802003240,
             radius=1.0,
             life=0.0,
@@ -464,8 +464,8 @@ def Event_1035542500():
             0,
             asset_flag=1035542250,
             asset=Assets.AEG007_557_1024,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802003230,
             radius=1.0,
             life=0.0,
@@ -476,8 +476,8 @@ def Event_1035542500():
             0,
             asset_flag=1035542250,
             asset=Assets.AEG007_557_1024,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802003220,
             radius=1.0,
             life=0.0,
@@ -488,8 +488,8 @@ def Event_1035542500():
             0,
             asset_flag=1035542250,
             asset=Assets.AEG007_557_1024,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802003210,
             radius=1.0,
             life=0.0,
@@ -500,8 +500,8 @@ def Event_1035542500():
             0,
             asset_flag=1035542250,
             asset=Assets.AEG007_557_1024,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802003200,
             radius=1.0,
             life=0.0,

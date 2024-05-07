@@ -25,13 +25,13 @@ from .enums.m60_34_45_00_enums import *
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005870(0, character=Characters.GlintstoneDragon, name=904502600, npc_threat_level=25)
-    CommonFunc_90005861(
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.GlintstoneDragonSmarag, name=904502600, npc_threat_level=25)
+    CommonFunc_KillFieldDragonWyrm(
         0,
         flag=1034450800,
-        left=0,
-        character=Characters.GlintstoneDragon,
-        left_1=1,
+        extra_flag=0,
+        character=Characters.GlintstoneDragonSmarag,
+        felled_banner_rank=1,
         item_lot=30210,
         text=30061,
         seconds=0.0,
@@ -40,20 +40,20 @@ def Constructor():
     Event_1034452805()
     CommonFunc_90005211(
         0,
-        character=Characters.GlintstoneDragon,
+        character=Characters.GlintstoneDragonSmarag,
         animation_id=30000,
         animation_id_1=20000,
         region=1034452800,
         radius=5.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(
         0,
-        character=Characters.GlintstoneDragon,
+        character=Characters.GlintstoneDragonSmarag,
         region=1034452800,
         radius=5.0,
         seconds=0.0,
@@ -95,7 +95,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, dummy_id=800, right=0)
     CommonFunc_90005620(
         0,
         flag=1034450570,
@@ -114,7 +114,7 @@ def Event_1034452800():
     """Event 1034452800"""
     if FlagEnabled(1034450800):
         return
-    AddSpecialEffect(Characters.GlintstoneDragon, 10247)
+    AddSpecialEffect(Characters.GlintstoneDragonSmarag, 10247)
 
 
 @RestartOnRest(1034452805)
@@ -122,6 +122,6 @@ def Event_1034452805():
     """Event 1034452805"""
     if FlagEnabled(1034450800):
         return
-    SetNest(Characters.GlintstoneDragon, region=1034452810)
+    SetNest(Characters.GlintstoneDragonSmarag, region=1034452810)
     Wait(1.0)
     Restart()

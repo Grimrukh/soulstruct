@@ -35,8 +35,8 @@ def Constructor():
         character_1=1041325291,
     )
     CommonFunc_90005722(0, character=1041320290, character_1=1041320291)
-    CommonFunc_90005720(0, character=1041320290, character_1=1041320292, special_effect=10961, model_point=181)
-    CommonFunc_90005720(0, character=1041320290, character_1=1041320293, special_effect=10961, model_point=182)
+    CommonFunc_90005720(0, character=1041320290, character_1=1041320292, special_effect=10961, dummy_id=181)
+    CommonFunc_90005720(0, character=1041320290, character_1=1041320293, special_effect=10961, dummy_id=182)
     CommonFunc_90005721(0, character=1041320290, character_1=1041320292)
     CommonFunc_90005721(0, character=1041320290, character_1=1041320293)
     CommonFunc_90005723(0, character=1041320290)

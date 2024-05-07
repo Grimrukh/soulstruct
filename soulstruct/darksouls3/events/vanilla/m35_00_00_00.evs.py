@@ -543,11 +543,11 @@ def Constructor():
     CommonFunc_20005523(0, obj=3501531, completion_count=2)
     CommonFunc_20005524(0, obj=3501532, flag=9511)
     CommonFunc_20005524(0, obj=3501810, flag=13500800)
-    CommonFunc_20005525(0, flag=53500850, item_lot=3500850, obj=3501540, model_point=61)
-    CommonFunc_20005525(0, flag=53500860, item_lot=3500860, obj=3501541, model_point=60)
-    CommonFunc_20005525(0, flag=53500870, item_lot=3500870, obj=3501542, model_point=60)
-    CommonFunc_20005525(0, flag=53500880, item_lot=3500880, obj=3501543, model_point=61)
-    CommonFunc_20005525(0, flag=53500890, item_lot=3500890, obj=3501544, model_point=61)
+    CommonFunc_20005525(0, flag=53500850, item_lot=3500850, obj=3501540, dummy_id=61)
+    CommonFunc_20005525(0, flag=53500860, item_lot=3500860, obj=3501541, dummy_id=60)
+    CommonFunc_20005525(0, flag=53500870, item_lot=3500870, obj=3501542, dummy_id=60)
+    CommonFunc_20005525(0, flag=53500880, item_lot=3500880, obj=3501543, dummy_id=61)
+    CommonFunc_20005525(0, flag=53500890, item_lot=3500890, obj=3501544, dummy_id=61)
     CommonFunc_20005510(
         0,
         flag=13500500,
@@ -575,9 +575,9 @@ def Constructor():
         action_button_id_1=9401,
         flag_1=13505502,
     )
-    CommonFunc_20005780(0, obj=3501780, model_point=3)
-    CommonFunc_20005780(0, obj=3501781, model_point=3)
-    CommonFunc_20005780(0, obj=3501850, model_point=3)
+    CommonFunc_20005780(0, obj=3501780, dummy_id=3)
+    CommonFunc_20005780(0, obj=3501781, dummy_id=3)
+    CommonFunc_20005780(0, obj=3501850, dummy_id=3)
     CommonFunc_20005670(0, area_id=35, block_id=0, vfx_id=3503100)
     CommonFunc_20005671(0, area_id=35, block_id=0, vfx_id=3503101)
     CommonFunc_20005672(0, area_id=35, block_id=0, vfx_id=3503102)
@@ -595,11 +595,11 @@ def Constructor():
     CommonFunc_20005551(0, obj=3501311, animation_id=10, region=3502402, min_seconds=0.0, max_seconds=2.0, left=1)
     CommonFunc_20005551(0, obj=3501312, animation_id=10, region=3502402, min_seconds=1.0, max_seconds=3.0, left=1)
     CommonFunc_20005551(0, obj=3501313, animation_id=10, region=3502402, min_seconds=1.0, max_seconds=3.0, left=1)
-    Event_13505500(0, owner_entity=3500380, source_entity=3501380, radius=4.0, model_point=100, seconds=10.0)
-    Event_13505500(1, owner_entity=3500381, source_entity=3501381, radius=6.0, model_point=100, seconds=10.0)
-    Event_13505500(2, owner_entity=3500382, source_entity=3501382, radius=6.0, model_point=100, seconds=10.0)
-    Event_13505500(3, owner_entity=3500383, source_entity=3501383, radius=6.0, model_point=100, seconds=10.0)
-    Event_13505500(5, owner_entity=3500385, source_entity=3501385, radius=3.5, model_point=100, seconds=10.0)
+    Event_13505500(0, owner_entity=3500380, source_entity=3501380, radius=4.0, dummy_id=100, seconds=10.0)
+    Event_13505500(1, owner_entity=3500381, source_entity=3501381, radius=6.0, dummy_id=100, seconds=10.0)
+    Event_13505500(2, owner_entity=3500382, source_entity=3501382, radius=6.0, dummy_id=100, seconds=10.0)
+    Event_13505500(3, owner_entity=3500383, source_entity=3501383, radius=6.0, dummy_id=100, seconds=10.0)
+    Event_13505500(5, owner_entity=3500385, source_entity=3501385, radius=3.5, dummy_id=100, seconds=10.0)
     CommonFunc_20005624(0, flag=13500420, flag_1=13501420, entity=3501420, obj=3501421, obj_1=3501422, flag_2=13501421)
     CommonFunc_20005620(0, flag=13500425, flag_1=13501425, entity=3501425, obj=3501426, obj_1=3501427, flag_2=13501426)
     CommonFunc_20005622(0, flag=13500430, flag_1=13501430, entity=3501430, obj=3501431, obj_1=3501432, flag_2=13501431)
@@ -612,7 +612,7 @@ def Constructor():
         character=3500396,
         entity=3501396,
         source_entity=3501396,
-        model_point=10,
+        dummy_id=10,
         behavior_id=5530,
         behavior_id_1=5531,
         behavior_id_2=5532,
@@ -1658,7 +1658,7 @@ def Event_13500490():
 
 
 @RestartOnRest(13505500)
-def Event_13505500(_, owner_entity: int, source_entity: int, radius: float, model_point: int, seconds: float):
+def Event_13505500(_, owner_entity: int, source_entity: int, radius: float, dummy_id: int, seconds: float):
     """Event 13505500"""
     CreateProjectileOwner(entity=owner_entity)
     
@@ -1668,7 +1668,7 @@ def Event_13505500(_, owner_entity: int, source_entity: int, radius: float, mode
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=5500,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1678,7 +1678,7 @@ def Event_13505500(_, owner_entity: int, source_entity: int, radius: float, mode
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=5501,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1688,7 +1688,7 @@ def Event_13505500(_, owner_entity: int, source_entity: int, radius: float, mode
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=5502,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1698,7 +1698,7 @@ def Event_13505500(_, owner_entity: int, source_entity: int, radius: float, mode
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=5503,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1708,7 +1708,7 @@ def Event_13505500(_, owner_entity: int, source_entity: int, radius: float, mode
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=5504,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1718,7 +1718,7 @@ def Event_13505500(_, owner_entity: int, source_entity: int, radius: float, mode
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=5505,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1728,7 +1728,7 @@ def Event_13505500(_, owner_entity: int, source_entity: int, radius: float, mode
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=5506,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1745,7 +1745,7 @@ def Event_13505510(
     source_entity: int,
     radius: float,
     behavior_id: int,
-    model_point: int,
+    dummy_id: int,
     seconds: float,
 ):
     """Event 13505510"""
@@ -1756,7 +1756,7 @@ def Event_13505510(
     ShootProjectile(
         owner_entity=owner_entity,
         source_entity=source_entity,
-        model_point=model_point,
+        dummy_id=dummy_id,
         behavior_id=behavior_id,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1872,7 +1872,7 @@ def Event_13505812(_, first_flag: int, last_flag: int):
     Move(3500800, destination=3502810, destination_type=CoordEntityType.Region, copy_draw_parent=3500800)
     EnableAI(3500800)
     SetCharacterEventTarget(3500800, entity=3500800)
-    CreateTemporaryVFX(vfx_id=652231, anchor_entity=3500800, model_point=220, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=652231, anchor_entity=3500800, dummy_id=220, anchor_type=CoordEntityType.Character)
     EnableCharacter(3505802)
     ForceAnimation(3505802, 20000, unknown2=4.0)
     EnableAI(3505802)
@@ -2070,7 +2070,7 @@ def Event_13505821(_, flag: int, flag_1: int, character: int, special_effect: in
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateTemporaryVFX(vfx_id=652231, anchor_entity=character, model_point=203, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=652231, anchor_entity=character, dummy_id=203, anchor_type=CoordEntityType.Character)
     Wait(2.0)
     AddSpecialEffect(character, 11521)
     OR_1.Add(HealthRatio(character) <= 0.0)
@@ -2093,9 +2093,9 @@ def Event_13505821(_, flag: int, flag_1: int, character: int, special_effect: in
     Wait(0.5)
     AND_4.Add(HealthRatio(3500800) <= 0.6499999761581421)
     SkipLinesIfConditionTrue(2, AND_4)
-    CreateTemporaryVFX(vfx_id=652230, anchor_entity=character, model_point=203, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=652230, anchor_entity=character, dummy_id=203, anchor_type=CoordEntityType.Character)
     SkipLines(1)
-    CreateTemporaryVFX(vfx_id=652232, anchor_entity=character, model_point=203, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=652232, anchor_entity=character, dummy_id=203, anchor_type=CoordEntityType.Character)
     RemoveSpecialEffect(character, 11521)
     Wait(2.0)
     SkipLinesIfClientTypeCountComparison(
@@ -2186,7 +2186,7 @@ def Event_13505899():
         action_button_id=3501800,
         flag_2=13505806,
     )
-    CommonFunc_20005820(0, flag=13500800, obj=3501800, model_point=2, left=0)
+    CommonFunc_20005820(0, flag=13500800, obj=3501800, dummy_id=2, left=0)
     CommonFunc_20005831(
         0,
         flag=13500800,
@@ -2746,7 +2746,7 @@ def Event_13505752(_, obj: int):
         return
     if FlagDisabled(1623):
         return
-    CreateObjectVFX(obj, vfx_id=200, model_point=735504)
+    CreateObjectVFX(obj, vfx_id=200, dummy_id=735504)
     AND_1.Add(PlayerInOwnWorld())
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=6600, entity=obj))

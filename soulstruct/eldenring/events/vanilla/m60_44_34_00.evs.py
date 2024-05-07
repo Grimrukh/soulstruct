@@ -70,7 +70,7 @@ def Constructor():
     Event_1044342300(1, character=Characters.DemiHuman5, asset=1044341302, region=1044342301)
     Event_1044342300(2, character=Characters.DemiHuman6, asset=1044341301, region=1044342301)
     Event_1044342203(0, character=Characters.GodrickFootSoldier1)
-    CommonFunc_90005250(0, character=Characters.GodrickFootSoldier1, region=1044342280, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GodrickFootSoldier1, region=1044342280, seconds=0.0, animation_id=-1)
     Event_1044342280()
     CommonFunc_90005261(
         0,
@@ -93,8 +93,8 @@ def Constructor():
     Event_1044342230(2, character=1044340232)
     Event_1044342230(3, character=1044340240)
     CommonFunc_90005251(0, character=Characters.GodrickFootSoldier2, radius=8.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.GodrickFootSoldier0, region=1044342600, seconds=0.0, animation_id=-1)
-    CommonFunc_90005630(0, far_view_id=61443400, asset=1044341500, model_point=127)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GodrickFootSoldier0, region=1044342600, seconds=0.0, animation_id=-1)
+    CommonFunc_90005630(0, far_view_id=61443400, asset=1044341500, dummy_id=127)
     Event_1044343700(0, character=1044340700, character_1=1044340701, character_2=1044340702, asset=1044346700)
     Event_1044343702(0, character=1044340700)
     Event_1044343704(0, character=1044340700)
@@ -270,7 +270,7 @@ def Event_1044342300(_, character: uint, asset: uint, region: uint):
     
     EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
-    CreateTemporaryVFX(vfx_id=641012, anchor_entity=character, model_point=900, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=641012, anchor_entity=character, dummy_id=900, anchor_type=CoordEntityType.Character)
     Wait(0.5)
     DisableAsset(asset)
     Wait(0.30000001192092896)

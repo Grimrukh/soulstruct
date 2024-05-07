@@ -59,10 +59,10 @@ def Constructor():
         region=0,
         radius=3.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -72,10 +72,10 @@ def Constructor():
         region=0,
         radius=3.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005300(
         0,
@@ -83,7 +83,7 @@ def Constructor():
         character=Characters.ExtraLargeScarab,
         item_lot=1051530700,
         seconds=0.0,
-        left=0,
+        item_is_dropped=0,
     )
     Event_1051532220(
         0,
@@ -105,7 +105,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005300(0, flag=1051530380, character=Characters.BloodyFingerOkina, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1051530380, character=Characters.BloodyFingerOkina, item_lot=0, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005790(
         0,
         right=0,
@@ -176,7 +176,7 @@ def Constructor():
 def Event_1051532200(_, character: uint):
     """Event 1051532200"""
     DisableAnimations(character)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
     End()
 
 

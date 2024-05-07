@@ -24,7 +24,7 @@ from .enums.m60_48_55_00_enums import *
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005300(0, flag=1048550200, character=1048550200, item_lot=40522, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1048550200, character=1048550200, item_lot=40522, seconds=0.0, item_is_dropped=0)
 
 
 @ContinueOnRest(200)
@@ -60,19 +60,19 @@ def Event_200():
         character_1=Characters.NightsCavalryHorse1,
         destination=1248552801,
     )
-    CommonFunc_90005871(
+    CommonFunc_NightsCavalryHealthBar(
         0,
-        character=Characters.NightsCavalry0,
+        nights_cavalry=Characters.NightsCavalry0,
         name=903150608,
         npc_threat_level=10,
-        character_1=Characters.NightsCavalryHorse0,
+        horse=Characters.NightsCavalryHorse0,
     )
-    CommonFunc_90005871(
+    CommonFunc_NightsCavalryHealthBar(
         0,
-        character=Characters.NightsCavalry1,
+        nights_cavalry=Characters.NightsCavalry1,
         name=903150609,
         npc_threat_level=10,
-        character_1=Characters.NightsCavalryHorse1,
+        horse=Characters.NightsCavalryHorse1,
     )
     RunCommonEvent(
         1248552800,

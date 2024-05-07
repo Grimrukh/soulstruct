@@ -86,7 +86,7 @@ def Constructor():
         asset=Assets.AEG099_991_9000,
         item_lot=34140700,
         item=8150,
-        model_point=806932,
+        dummy_id=806932,
         action_button_id=9082,
         animation_id=60521,
         left=0,
@@ -98,12 +98,12 @@ def Constructor():
         asset=Assets.AEG099_991_9001,
         item_lot=34140710,
         item=8152,
-        model_point=806938,
+        dummy_id=806938,
         action_button_id=9084,
         animation_id=60524,
         left=0,
     )
-    CommonFunc_91005600(0, flag=34142800, asset=34141695, model_point=5)
+    CommonFunc_91005600(0, flag=34142800, asset=34141695, dummy_id=5)
     Event_34142550()
     Event_34140700()
 
@@ -130,7 +130,7 @@ def Event_34142250(_, flag: uint, flag_1: uint, anchor_entity: uint, character: 
     CreateTemporaryVFX(
         vfx_id=601111,
         anchor_entity=anchor_entity,
-        model_point=960,
+        dummy_id=960,
         anchor_type=CoordEntityType.Character,
     )
     Goto(Label.L3)
@@ -140,7 +140,7 @@ def Event_34142250(_, flag: uint, flag_1: uint, anchor_entity: uint, character: 
     CreateTemporaryVFX(
         vfx_id=601110,
         anchor_entity=anchor_entity,
-        model_point=960,
+        dummy_id=960,
         anchor_type=CoordEntityType.Character,
     )
 
@@ -189,16 +189,16 @@ def Event_34142251(_, character: uint, flag: uint, character_1: uint, character_
         character_2,
         destination=character_1,
         destination_type=CoordEntityType.Character,
-        model_point=900,
+        dummy_id=900,
         copy_draw_parent=character_1,
     )
     GotoIfValueComparison(Label.L2, comparison_type=ComparisonType.Equal, left=left, right=0)
-    CreateTemporaryVFX(vfx_id=641912, anchor_entity=character_1, model_point=10, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=641912, anchor_entity=character_1, dummy_id=10, anchor_type=CoordEntityType.Character)
     Goto(Label.L3)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    CreateTemporaryVFX(vfx_id=641911, anchor_entity=character_1, model_point=10, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=641911, anchor_entity=character_1, dummy_id=10, anchor_type=CoordEntityType.Character)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -291,7 +291,7 @@ def Event_34142550():
     GotoIfPlayerNotInOwnWorld(Label.L1)
     GotoIfFlagEnabled(Label.L2, flag=34142550)
     DeleteAssetVFX(Assets.AEG099_239_9000)
-    CreateAssetVFX(Assets.AEG099_239_9000, vfx_id=101, model_point=1541)
+    CreateAssetVFX(Assets.AEG099_239_9000, vfx_id=101, dummy_id=1541)
     EnableNetworkFlag(34142550)
 
     # --- Label 2 --- #
@@ -319,7 +319,7 @@ def Event_34142550():
     # --- Label 1 --- #
     DefineLabel(1)
     DeleteAssetVFX(Assets.AEG099_239_9000)
-    CreateAssetVFX(Assets.AEG099_239_9000, vfx_id=101, model_point=1541)
+    CreateAssetVFX(Assets.AEG099_239_9000, vfx_id=101, dummy_id=1541)
     End()
 
 
@@ -437,7 +437,7 @@ def Event_34142870():
         character=PLAYER,
         destination_type=CoordEntityType.Region,
         destination=34142851,
-        model_point=-1,
+        dummy_id=-1,
         copy_draw_parent=PLAYER,
         use_bonfire_effect=False,
         reset_camera=True,

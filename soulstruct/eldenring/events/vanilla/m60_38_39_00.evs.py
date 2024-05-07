@@ -32,10 +32,10 @@ def Constructor():
         region=1038392200,
         radius=7.0,
         seconds=3.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -45,10 +45,10 @@ def Constructor():
         region=1038392200,
         radius=7.0,
         seconds=3.5,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(
         0,

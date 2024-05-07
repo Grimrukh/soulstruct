@@ -268,7 +268,7 @@ def Event_1034482260(
     if AND_1:
         return
     ForceAnimation(destination, 0)
-    Move(character, destination=destination, destination_type=CoordEntityType.Asset, model_point=220, short_move=True)
+    Move(character, destination=destination, destination_type=CoordEntityType.Asset, dummy_id=220, short_move=True)
     Wait(5.400000095367432)
     Restart()
     Wait(seconds)
@@ -317,7 +317,7 @@ def Event_1034482261(
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=200, model_point=803160)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=803160)
     AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
@@ -433,7 +433,7 @@ def Event_1034482262(
 def Event_1034482600(_, asset: uint, entity: uint, flag: uint):
     """Event 1034482600"""
     GotoIfFlagEnabled(Label.L0, flag=flag)
-    CreateAssetVFX(asset, vfx_id=200, model_point=803220)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=803220)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -470,7 +470,7 @@ def Event_1034482610(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -480,7 +480,7 @@ def Event_1034482610(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402010,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -490,7 +490,7 @@ def Event_1034482610(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402020,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -500,7 +500,7 @@ def Event_1034482610(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402030,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -510,7 +510,7 @@ def Event_1034482610(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402040,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -520,7 +520,7 @@ def Event_1034482610(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402050,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -530,7 +530,7 @@ def Event_1034482610(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402060,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -540,7 +540,7 @@ def Event_1034482610(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402070,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -619,7 +619,7 @@ def Event_1034482849():
         flag_2=1034482806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=1034480800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=1034480800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=1034480800,
@@ -631,4 +631,4 @@ def Event_1034482849():
         left=0,
         left_1=0,
     )
-    CommonFunc_9005812(0, flag=1034480800, asset=Assets.AEG099_001_9001, model_point=3, right=0, model_point_1=0)
+    CommonFunc_9005812(0, flag=1034480800, asset=Assets.AEG099_001_9001, dummy_id=3, right=0, dummy_id_1=0)

@@ -44,7 +44,7 @@ def Constructor():
         flag_11=78219,
     )
     RegisterGrace(grace_flag=1036490001, asset=Assets.AEG099_060_9001)
-    CommonFunc_90005300(0, flag=1036490200, character=Characters.ExtraLargeScarab, item_lot=40204, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1036490200, character=Characters.ExtraLargeScarab, item_lot=40204, seconds=0.0, item_is_dropped=0)
     Event_1036492610()
     CommonFunc_90005704(0, attacked_entity=Characters.Hyetta, flag=3381, flag_1=3380, flag_2=1036499201, right=3)
     CommonFunc_90005703(

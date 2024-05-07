@@ -27,12 +27,12 @@ def Constructor():
     RegisterBonfire(bonfire_flag=13200003, obj=3201953, reaction_distance=5.0)
     CommonFunc_20005500(0, flag=13200850, bonfire_flag=13200001, character=3200951, obj=3201951)
     Event_13205390()
-    CommonFunc_20005780(0, obj=3201781, model_point=2)
-    CommonFunc_20005780(0, obj=3201782, model_point=2)
-    CommonFunc_20005780(0, obj=3201783, model_point=2)
-    CommonFunc_20005780(0, obj=3201784, model_point=2)
-    Event_13205490(0, obj=3201785, model_point=2, flag=13200850)
-    Event_13205490(1, obj=3201786, model_point=2, flag=13200850)
+    CommonFunc_20005780(0, obj=3201781, dummy_id=2)
+    CommonFunc_20005780(0, obj=3201782, dummy_id=2)
+    CommonFunc_20005780(0, obj=3201783, dummy_id=2)
+    CommonFunc_20005780(0, obj=3201784, dummy_id=2)
+    Event_13205490(0, obj=3201785, dummy_id=2, flag=13200850)
+    Event_13205490(1, obj=3201786, dummy_id=2, flag=13200850)
     CommonFunc_20005701(
         0,
         left=13200931,
@@ -381,8 +381,8 @@ def Constructor():
     CommonFunc_20005523(0, obj=3201461, completion_count=2)
     CommonFunc_20005520(0, flag=13201470, obj=3201470, obj_act_id=3204470)
     CommonFunc_20005520(0, flag=13201471, obj=3201471, obj_act_id=3204471)
-    CommonFunc_20005525(0, flag=53200300, item_lot=3200300, obj=3201480, model_point=62)
-    CommonFunc_20005525(0, flag=53200310, item_lot=3200310, obj=3201481, model_point=61)
+    CommonFunc_20005525(0, flag=53200300, item_lot=3200300, obj=3201480, dummy_id=62)
+    CommonFunc_20005525(0, flag=53200310, item_lot=3200310, obj=3201481, dummy_id=61)
     Event_13205910(0, flag=13200910, region=3202910, item_lot=3200900)
     Event_13205910(1, flag=13200915, region=3202915, item_lot=3200910)
 
@@ -1277,7 +1277,7 @@ def Event_13205470(_, event_id: uint, sound_id: int):
 
 
 @RestartOnRest(13205490)
-def Event_13205490(_, obj: int, model_point: int, flag: int):
+def Event_13205490(_, obj: int, dummy_id: int, flag: int):
     """Event 13205490"""
     DisableNetworkSync()
     DisableObject(obj)
@@ -1289,7 +1289,7 @@ def Event_13205490(_, obj: int, model_point: int, flag: int):
     
     GotoIfFlagDisabled(Label.L0, flag=flag)
     EnableObject(obj)
-    CreateObjectVFX(obj, vfx_id=101, model_point=model_point)
+    CreateObjectVFX(obj, vfx_id=101, dummy_id=dummy_id)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -1356,7 +1356,7 @@ def Event_13200811():
     WaitFrames(frames=1)
     ForceAnimation(PLAYER, 63010, unknown2=1.0)
     PlaySoundEffect(PLAYER, 138008020, sound_type=SoundType.c_CharacterMotion)
-    CreateTemporaryVFX(vfx_id=30300, anchor_entity=PLAYER, model_point=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=30300, anchor_entity=PLAYER, dummy_id=236, anchor_type=CoordEntityType.Character)
 
 
 @RestartOnRest(13205820)
@@ -1382,8 +1382,8 @@ def Event_13205820():
         action_button_id=3201800,
         flag_2=13205806,
     )
-    CommonFunc_20005820(0, flag=13200800, obj=3201800, model_point=3, left=13200801)
-    CommonFunc_20005820(0, flag=13200800, obj=3201801, model_point=2, left=13200801)
+    CommonFunc_20005820(0, flag=13200800, obj=3201800, dummy_id=3, left=13200801)
+    CommonFunc_20005820(0, flag=13200800, obj=3201801, dummy_id=2, left=13200801)
     CommonFunc_20001835(0, flag=13200800, flag_1=13205805, flag_2=13205806, flag_3=13205802, sound_id=3204801)
     CommonFunc_20005810(0, flag=13200800, entity=3201800, target_entity=3202800, action_button_id=10000)
 
@@ -1634,7 +1634,7 @@ def Event_13205870():
         action_button_id=3201850,
         flag_2=13205856,
     )
-    CommonFunc_20005820(0, flag=13200855, obj=3201850, model_point=832040, left=13200446)
+    CommonFunc_20005820(0, flag=13200855, obj=3201850, dummy_id=832040, left=13200446)
     CommonFunc_20001836(
         0,
         flag=13200850,

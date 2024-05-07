@@ -79,7 +79,7 @@ def Constructor():
         seconds=0.0,
         animation_id=-1,
     )
-    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, dummy_id=800, right=0)
     Event_1037410220(0, character=Characters.WanderingNoble)
 
 

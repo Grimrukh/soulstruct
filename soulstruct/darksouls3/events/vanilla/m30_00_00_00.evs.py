@@ -31,8 +31,8 @@ def Constructor():
     CommonFunc_20005500(0, flag=13000890, bonfire_flag=13000004, character=3000954, obj=3001954)
     Event_13000210()
     Event_13000200()
-    CommonFunc_20005780(0, obj=3001780, model_point=2)
-    Event_13005350(0, obj=3001890, model_point=3)
+    CommonFunc_20005780(0, obj=3001780, dummy_id=2)
+    Event_13005350(0, obj=3001890, dummy_id=3)
     Event_13005810()
     Event_13005811()
     Event_13005815()
@@ -661,8 +661,8 @@ def Constructor():
     CommonFunc_20005520(0, flag=13000353, obj=3001353, obj_act_id=3004353)
     CommonFunc_20005520(0, flag=13000354, obj=3001354, obj_act_id=3004354)
     CommonFunc_20005521(0, flag=13000420, flag_1=13005420, obj=3001250, obj_1=3001251, item_lot=3000170)
-    CommonFunc_20005525(0, flag=53000650, item_lot=3000650, obj=3001260, model_point=61)
-    CommonFunc_20005526(0, flag=53000950, item_lot__obj=3000950, obj=3001900, model_point=61, flag_1=9480)
+    CommonFunc_20005525(0, flag=53000650, item_lot=3000650, obj=3001260, dummy_id=61)
+    CommonFunc_20005526(0, flag=53000950, item_lot__obj=3000950, obj=3001900, dummy_id=61, flag_1=9480)
     CommonFunc_20005620(0, flag=13000300, flag_1=13000301, entity=3001200, obj=3001201, obj_1=3001202, flag_2=13001300)
     CommonFunc_20005624(0, flag=13000310, flag_1=13000311, entity=3001210, obj=3001211, obj_1=3001212, flag_2=13001310)
     CommonFunc_20005620(0, flag=13000320, flag_1=13000321, entity=3001220, obj=3001221, obj_1=3001222, flag_2=13001320)
@@ -688,10 +688,10 @@ def Constructor():
     DeleteObjectVFX(3001886)
     DeleteObjectVFX(3001887)
     DeleteObjectVFX(3001888)
-    CreateObjectVFX(3001885, vfx_id=200, model_point=800023)
-    CreateObjectVFX(3001886, vfx_id=200, model_point=800023)
-    CreateObjectVFX(3001887, vfx_id=200, model_point=800023)
-    CreateObjectVFX(3001888, vfx_id=200, model_point=800023)
+    CreateObjectVFX(3001885, vfx_id=200, dummy_id=800023)
+    CreateObjectVFX(3001886, vfx_id=200, dummy_id=800023)
+    CreateObjectVFX(3001887, vfx_id=200, dummy_id=800023)
+    CreateObjectVFX(3001888, vfx_id=200, dummy_id=800023)
     CommonFunc_20005530(0, obj_flag=13005561, obj=3001619)
     CommonFunc_20005530(0, obj_flag=13005562, obj=3001620)
     CommonFunc_20005530(0, obj_flag=13005563, obj=3001621)
@@ -732,7 +732,7 @@ def Constructor():
         0,
         obj_flag=13005630,
         obj=3001510,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=5110,
         radius=0.5,
         life=0.0,
@@ -742,7 +742,7 @@ def Constructor():
         0,
         obj_flag=13005631,
         obj=3001511,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=5110,
         radius=0.5,
         life=0.0,
@@ -752,7 +752,7 @@ def Constructor():
         0,
         obj_flag=13005632,
         obj=3001512,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=5110,
         radius=0.5,
         life=0.0,
@@ -762,7 +762,7 @@ def Constructor():
         0,
         obj_flag=13005633,
         obj=3001513,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=5110,
         radius=0.5,
         life=0.0,
@@ -881,8 +881,8 @@ def Event_13000360():
     MAIN.Await(FlagEnabled(711))
     
     ForceAnimation(PLAYER, 63010, unknown2=1.0)
-    CreateTemporaryVFX(vfx_id=30300, anchor_entity=PLAYER, model_point=245, anchor_type=CoordEntityType.Character)
-    CreateObjectVFX(3001705, vfx_id=90, model_point=830095)
+    CreateTemporaryVFX(vfx_id=30300, anchor_entity=PLAYER, dummy_id=245, anchor_type=CoordEntityType.Character)
+    CreateObjectVFX(3001705, vfx_id=90, dummy_id=830095)
     EnableFlag(13000360)
     Wait(10.0)
     DeleteObjectVFX(3001705)
@@ -1224,11 +1224,11 @@ def Event_13005280(_, obj: int, vfx_id: int):
     
     MAIN.Await(AND_1)
     
-    CreateTemporaryVFX(vfx_id=vfx_id, anchor_entity=obj, model_point=200, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=vfx_id, anchor_entity=obj, dummy_id=200, anchor_type=CoordEntityType.Object)
 
 
 @RestartOnRest(13005350)
-def Event_13005350(_, obj: int, model_point: int):
+def Event_13005350(_, obj: int, dummy_id: int):
     """Event 13005350"""
     DisableNetworkSync()
     
@@ -1242,7 +1242,7 @@ def Event_13005350(_, obj: int, model_point: int):
     MAIN.Await(OR_1)
     
     EnableObject(obj)
-    CreateObjectVFX(obj, vfx_id=101, model_point=model_point)
+    CreateObjectVFX(obj, vfx_id=101, dummy_id=dummy_id)
     OR_2.Add(TryingToJoinSession())
     OR_2.Add(TryingToCreateSession())
     
@@ -1290,7 +1290,7 @@ def Event_13005480():
     DisableCharacter(3000850)
     DisableGravity(3000850)
     DisableAI(3000850)
-    SetLockOnPoint(character=3000850, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=3000850, lock_on_dummy_id=220, state=False)
     if FlagEnabled(13000481):
         return
     if FlagEnabled(9420):
@@ -1339,7 +1339,7 @@ def Event_13005480():
     DisableCharacter(3000850)
     DisableGravity(3000850)
     DisableAI(3000850)
-    SetLockOnPoint(character=3000850, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=3000850, lock_on_dummy_id=220, state=False)
 
 
 @RestartOnRest(13005481)
@@ -1912,13 +1912,13 @@ def Event_13005812():
     Wait(2.0)
     ForceAnimation(3001815, 1, skip_transition=True, unknown2=1.0)
     Wait(7.5)
-    CreateObjectVFX(3001815, vfx_id=100, model_point=830101)
+    CreateObjectVFX(3001815, vfx_id=100, dummy_id=830101)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
     ForceAnimation(3001815, 2, loop=True, unknown2=1.0)
-    CreateObjectVFX(3001815, vfx_id=100, model_point=830101)
+    CreateObjectVFX(3001815, vfx_id=100, dummy_id=830101)
 
 
 @RestartOnRest(13005815)
@@ -1969,7 +1969,7 @@ def Event_13005820():
         action_button_id=3001800,
         flag_2=13005806,
     )
-    CommonFunc_20005820(0, flag=13000800, obj=3001800, model_point=3, left=13000801)
+    CommonFunc_20005820(0, flag=13000800, obj=3001800, dummy_id=3, left=13000801)
     if FlagDisabled(13000801):
         CommonFunc_20001836(
             0,
@@ -2268,7 +2268,7 @@ def Event_13005840():
         action_button_id=3001830,
         flag_2=13005856,
     )
-    CommonFunc_20005820(0, flag=13000830, obj=3001830, model_point=3, left=0)
+    CommonFunc_20005820(0, flag=13000830, obj=3001830, dummy_id=3, left=0)
     CommonFunc_20001836(
         0,
         flag=13000830,
@@ -2404,18 +2404,18 @@ def Event_13005890():
     DisableSoundEvent(sound_id=3002898)
     ForceAnimation(3001895, 2, loop=True, unknown2=1.0)
     DisableObjectActivation(3001895, obj_act_id=300370)
-    CreateObjectVFX(3001360, vfx_id=210, model_point=800030)
-    CreateObjectVFX(3001360, vfx_id=212, model_point=800030)
-    CreateObjectVFX(3001360, vfx_id=214, model_point=800043)
-    CreateObjectVFX(3001361, vfx_id=210, model_point=800030)
-    CreateObjectVFX(3001361, vfx_id=212, model_point=800030)
-    CreateObjectVFX(3001361, vfx_id=214, model_point=800043)
-    CreateObjectVFX(3001362, vfx_id=210, model_point=800030)
-    CreateObjectVFX(3001362, vfx_id=212, model_point=800030)
-    CreateObjectVFX(3001362, vfx_id=214, model_point=800043)
-    CreateObjectVFX(3001363, vfx_id=210, model_point=800030)
-    CreateObjectVFX(3001363, vfx_id=212, model_point=800030)
-    CreateObjectVFX(3001363, vfx_id=214, model_point=800043)
+    CreateObjectVFX(3001360, vfx_id=210, dummy_id=800030)
+    CreateObjectVFX(3001360, vfx_id=212, dummy_id=800030)
+    CreateObjectVFX(3001360, vfx_id=214, dummy_id=800043)
+    CreateObjectVFX(3001361, vfx_id=210, dummy_id=800030)
+    CreateObjectVFX(3001361, vfx_id=212, dummy_id=800030)
+    CreateObjectVFX(3001361, vfx_id=214, dummy_id=800043)
+    CreateObjectVFX(3001362, vfx_id=210, dummy_id=800030)
+    CreateObjectVFX(3001362, vfx_id=212, dummy_id=800030)
+    CreateObjectVFX(3001362, vfx_id=214, dummy_id=800043)
+    CreateObjectVFX(3001363, vfx_id=210, dummy_id=800030)
+    CreateObjectVFX(3001363, vfx_id=212, dummy_id=800030)
+    CreateObjectVFX(3001363, vfx_id=214, dummy_id=800043)
     DeleteObjectVFX(3001890)
     DeleteObjectVFX(3001899)
     if FlagEnabled(13000890):
@@ -2429,7 +2429,7 @@ def Event_13005890():
         value=0,
     )
     EnableObject(3001890)
-    CreateObjectVFX(3001890, vfx_id=101, model_point=3)
+    CreateObjectVFX(3001890, vfx_id=101, dummy_id=3)
     SkipLinesIfClientTypeCountComparison(
         skip_lines=1,
         client_type=ClientType.Invader,
@@ -2469,13 +2469,13 @@ def Event_13005890():
     NotifyBossBattleStart()
     SkipLinesIfLeavingSession(2)
     EnableObject(3001890)
-    CreateObjectVFX(3001890, vfx_id=101, model_point=3)
+    CreateObjectVFX(3001890, vfx_id=101, dummy_id=3)
     Goto(Label.L3)
 
     # --- Label 1 --- #
     DefineLabel(1)
     EnableObject(3001890)
-    CreateObjectVFX(3001890, vfx_id=101, model_point=3)
+    CreateObjectVFX(3001890, vfx_id=101, dummy_id=3)
     EnableCharacter(3000899)
     EnableAnimations(3000899)
     GotoIfPlayerNotInOwnWorld(Label.L2)
@@ -2691,7 +2691,7 @@ def Event_13000901(_, obj: int):
     if FlagEnabled(6079):
         return
     DisableNetworkSync()
-    CreateObjectVFX(obj, vfx_id=90, model_point=62)
+    CreateObjectVFX(obj, vfx_id=90, dummy_id=62)
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=4200, entity=obj))
     

@@ -84,10 +84,10 @@ def Constructor():
         region=1046402182,
         left=0,
     )
-    CommonFunc_90005250(0, character=Characters.PutridCorpseBare, region=1046402303, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse0, region=1046402301, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse1, region=1046402303, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse2, region=1046402303, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpseBare, region=1046402303, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse0, region=1046402301, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse1, region=1046402303, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse2, region=1046402303, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.LivingMass, radius=2.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005706(0, character=Characters.WanderingNoble, animation_id=930025, left=0)
     CommonFunc_90005631(0, anchor_entity=Assets.AEG099_376_1000, text=61011)

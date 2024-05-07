@@ -126,7 +126,7 @@ def Constructor():
         first_flag=400349,
         last_flag=400349,
         flag=4048,
-        model_point=0,
+        dummy_id=0,
     )
     CommonFunc_90005775(0, world_map_point_param_id=81463900, flag=1045399206, distance=-1.0)
     Event_11100735(0, character=Characters.FiaDeathbedCompanion0)
@@ -137,9 +137,9 @@ def Constructor():
         flag_1=11102846,
         left=11102847,
         character=Characters.FiaDeathbedCompanion0,
-        model_point=702,
+        dummy_id=702,
         asset=Assets.AEG099_090_9000,
-        model_point_1=702,
+        dummy_id_1=702,
         radius=0.4000000059604645,
         animation=90300,
         animation_id=90302,
@@ -171,7 +171,7 @@ def Constructor():
         first_flag=400359,
         last_flag=400359,
         flag=3909,
-        model_point=0,
+        dummy_id=0,
     )
     CommonFunc_90005750(
         0,
@@ -181,7 +181,7 @@ def Constructor():
         first_flag=400356,
         last_flag=400358,
         flag=400359,
-        model_point=0,
+        dummy_id=0,
     )
     Event_11100740(0, character=Characters.SirGideonOfnir0)
     Event_11100741(0, character=Characters.SirGideonOfnir1)
@@ -201,7 +201,7 @@ def Constructor():
         first_flag=400490,
         last_flag=400490,
         flag=11109656,
-        model_point=0,
+        dummy_id=0,
     )
     RunCommonEvent(11103770)
     RunCommonEvent(11103771)
@@ -453,7 +453,7 @@ def Event_11102620(
     MAIN.Await(AND_1)
     
     if ThisEventSlotFlagDisabled():
-        CreateAssetVFX(asset, vfx_id=190, model_point=1300)
+        CreateAssetVFX(asset, vfx_id=190, dummy_id=1300)
     OR_2.Add(MultiplayerPending())
     OR_2.Add(Multiplayer())
     AND_2.Add(not OR_2)
@@ -648,7 +648,7 @@ def Event_11103700(_, character: uint):
     AND_5.Add(FlagEnabled(1035429211))
     SkipLinesIfConditionTrue(6, AND_5)
     DeleteAssetVFX(Assets.AEG099_090_9001)
-    CreateAssetVFX(Assets.AEG099_090_9001, vfx_id=100, model_point=803450)
+    CreateAssetVFX(Assets.AEG099_090_9001, vfx_id=100, dummy_id=803450)
     if FlagEnabled(110):
         EnableAsset(Assets.AEG221_657_4500)
     if FlagDisabled(110):

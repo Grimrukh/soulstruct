@@ -44,7 +44,7 @@ def Constructor():
         flag_11=78509,
     )
     Event_1054552200(0, character=1054555200)
-    CommonFunc_90005630(0, far_view_id=65545500, asset=1054551500, model_point=119)
+    CommonFunc_90005630(0, far_view_id=65545500, asset=1054551500, dummy_id=119)
     CommonFunc_90005771(0, other_entity=Characters.TalkDummy, flag=1054552700)
     CommonFunc_90005771(0, other_entity=Characters.TalkDummy, flag=1054552701)
 
@@ -53,5 +53,5 @@ def Constructor():
 def Event_1054552200(_, character: uint):
     """Event 1054552200"""
     DisableAnimations(character)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
     End()

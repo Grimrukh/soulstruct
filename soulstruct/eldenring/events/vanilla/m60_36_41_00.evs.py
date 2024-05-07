@@ -56,7 +56,7 @@ def Constructor():
         first_flag=400410,
         last_flag=400410,
         flag=1036419215,
-        model_point=0,
+        dummy_id=0,
     )
 
 

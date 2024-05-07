@@ -2439,7 +2439,7 @@ def Event_1040():
     GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
     SetWindVFX(wind_vfx_id=808004)
     Wait(5.0)
-    CreateAssetVFX(1060001500, vfx_id=200, model_point=806800)
+    CreateAssetVFX(1060001500, vfx_id=200, dummy_id=806800)
     Wait(14.0)
     AddSpecialEffect(PLAYER, 4200)
     AddSpecialEffect(PLAYER, 4201)
@@ -2481,7 +2481,7 @@ def Event_1040():
     GotoIfConditionFalse(Label.L2, input_condition=AND_15)
     SetWindVFX(wind_vfx_id=808004)
     Wait(5.0)
-    CreateAssetVFX(1060001500, vfx_id=200, model_point=806800)
+    CreateAssetVFX(1060001500, vfx_id=200, dummy_id=806800)
     Wait(14.0)
 
     # --- Label 2 --- #
@@ -2930,7 +2930,7 @@ def Event_1600(_, flag: uint, flag_1: uint, asset: uint, asset_1: uint):
     # --- Label 1 --- #
     DefineLabel(1)
     if UnsignedNotEqual(left=0, right=asset):
-        CreateAssetVFX(asset, vfx_id=200, model_point=803220)
+        CreateAssetVFX(asset, vfx_id=200, dummy_id=803220)
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(FlagEnabled(flag))
     
@@ -3556,7 +3556,7 @@ def Event_6901():
         character=PLAYER,
         destination_type=CoordEntityType.Region,
         destination=15002950,
-        model_point=-1,
+        dummy_id=-1,
         copy_draw_parent=PLAYER,
         use_bonfire_effect=False,
         reset_camera=True,
@@ -8643,7 +8643,7 @@ def Event_9945():
         20000,
         destination=PLAYER,
         destination_type=CoordEntityType.Character,
-        model_point=260,
+        dummy_id=260,
         set_draw_parent=PLAYER,
     )
 

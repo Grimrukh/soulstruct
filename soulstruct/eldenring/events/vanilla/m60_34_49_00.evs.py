@@ -91,8 +91,8 @@ def Constructor():
         flag_4=1034492704,
     )
     Event_1034490700(0, character=Characters.Iji0)
-    CommonFunc_90005709(0, attacked_entity=Characters.Iji0, model_point=905, vfx_id=603002)
-    CommonFunc_90005709(0, attacked_entity=Characters.Iji0, model_point=960, vfx_id=603052)
+    CommonFunc_90005709(0, attacked_entity=Characters.Iji0, dummy_id=905, vfx_id=603002)
+    CommonFunc_90005709(0, attacked_entity=Characters.Iji0, dummy_id=960, vfx_id=603052)
     CommonFunc_90005704(0, attacked_entity=Characters.Iji1, flag=3761, flag_1=3760, flag_2=1034499203, right=3)
     CommonFunc_90005707(
         0,
@@ -116,8 +116,8 @@ def Constructor():
         character_2=Characters.BlackKnifeAssassin1,
         character_3=Characters.BlackKnifeAssassin2,
     )
-    CommonFunc_90005709(0, attacked_entity=Characters.Iji1, model_point=905, vfx_id=603002)
-    CommonFunc_90005709(0, attacked_entity=Characters.Iji1, model_point=960, vfx_id=603052)
+    CommonFunc_90005709(0, attacked_entity=Characters.Iji1, dummy_id=905, vfx_id=603002)
+    CommonFunc_90005709(0, attacked_entity=Characters.Iji1, dummy_id=960, vfx_id=603052)
     CommonFunc_90005708(0, character=Characters.Iji0, flag=3760, left=0)
     CommonFunc_90005708(0, character=Characters.Iji1, flag=3760, left=0)
     CommonFunc_90005750(
@@ -128,7 +128,7 @@ def Constructor():
         first_flag=400240,
         last_flag=400241,
         flag=3768,
-        model_point=0,
+        dummy_id=0,
     )
 
 
@@ -198,7 +198,7 @@ def Event_1034492290(_, source_entity: uint, region: uint, flag: uint, flag_1: u
     ShootProjectile(
         owner_entity=Characters.BulletDummy,
         source_entity=source_entity,
-        model_point=90,
+        dummy_id=90,
         behavior_id=802600000,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -210,7 +210,7 @@ def Event_1034492290(_, source_entity: uint, region: uint, flag: uint, flag_1: u
     ShootProjectile(
         owner_entity=Characters.BulletDummy,
         source_entity=source_entity,
-        model_point=90,
+        dummy_id=90,
         behavior_id=802600010,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -222,7 +222,7 @@ def Event_1034492290(_, source_entity: uint, region: uint, flag: uint, flag_1: u
     ShootProjectile(
         owner_entity=Characters.BulletDummy,
         source_entity=source_entity,
-        model_point=90,
+        dummy_id=90,
         behavior_id=802600020,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -234,7 +234,7 @@ def Event_1034492290(_, source_entity: uint, region: uint, flag: uint, flag_1: u
     ShootProjectile(
         owner_entity=Characters.BulletDummy,
         source_entity=source_entity,
-        model_point=90,
+        dummy_id=90,
         behavior_id=802600030,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -246,7 +246,7 @@ def Event_1034492290(_, source_entity: uint, region: uint, flag: uint, flag_1: u
     ShootProjectile(
         owner_entity=Characters.BulletDummy,
         source_entity=source_entity,
-        model_point=90,
+        dummy_id=90,
         behavior_id=802600040,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -258,7 +258,7 @@ def Event_1034492290(_, source_entity: uint, region: uint, flag: uint, flag_1: u
     ShootProjectile(
         owner_entity=Characters.BulletDummy,
         source_entity=source_entity,
-        model_point=90,
+        dummy_id=90,
         behavior_id=802600050,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -270,7 +270,7 @@ def Event_1034492290(_, source_entity: uint, region: uint, flag: uint, flag_1: u
     ShootProjectile(
         owner_entity=Characters.BulletDummy,
         source_entity=source_entity,
-        model_point=90,
+        dummy_id=90,
         behavior_id=802600060,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -282,7 +282,7 @@ def Event_1034492290(_, source_entity: uint, region: uint, flag: uint, flag_1: u
     ShootProjectile(
         owner_entity=Characters.BulletDummy,
         source_entity=source_entity,
-        model_point=90,
+        dummy_id=90,
         behavior_id=802600070,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -470,14 +470,14 @@ def Event_1034493704(_, character: uint):
         CreateTemporaryVFX(
             vfx_id=646060,
             anchor_entity=character,
-            model_point=960,
+            dummy_id=960,
             anchor_type=CoordEntityType.Character,
         )
     if FlagEnabled(1034499237):
         CreateTemporaryVFX(
             vfx_id=641111,
             anchor_entity=character,
-            model_point=960,
+            dummy_id=960,
             anchor_type=CoordEntityType.Character,
         )
     Restart()

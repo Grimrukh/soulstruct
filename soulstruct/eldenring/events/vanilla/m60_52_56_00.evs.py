@@ -53,7 +53,7 @@ def Constructor():
         seconds=0.0,
     )
     Event_1052562815(0, character=Characters.ErdtreeAvatar0, name=904810601, npc_threat_level=18)
-    CommonFunc_90005872(0, character=Characters.ErdtreeAvatar0, npc_threat_level=18, right=0)
+    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.ErdtreeAvatar0, npc_threat_level=18, required_flag=0)
     CommonFunc_90005211(
         0,
         character=Characters.ErdtreeAvatar0,
@@ -62,10 +62,10 @@ def Constructor():
         region=1052562800,
         radius=5.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -75,10 +75,10 @@ def Constructor():
         region=0,
         radius=0.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     Event_1052562820()
     Event_1052562821()
@@ -315,7 +315,7 @@ def Event_1052562830(
         character,
         destination=Characters.ErdtreeAvatar0,
         destination_type=CoordEntityType.Character,
-        model_point=900,
+        dummy_id=900,
         copy_draw_parent=Characters.ErdtreeAvatar0,
     )
     ForceAnimation(character, animation_id_1, loop=True)

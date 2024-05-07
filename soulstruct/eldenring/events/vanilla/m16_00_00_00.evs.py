@@ -166,16 +166,16 @@ def Constructor():
     Event_16002579()
     Event_16002689()
     Event_16002670()
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, vfx_id=100, model_point=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9004, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9004, vfx_id=100, dummy_id=800, right=0)
     CommonFunc_90005502(0, flag=16000514, asset=Assets.AEG277_000_0503, region=16002511)
     Event_16002590()
     CommonFunc_90005694(
         0,
         asset_flag=16001651,
         asset=Assets.AEG270_034_2000,
-        model_point_start=201,
-        model_point_end=0,
+        dummy_id_start=201,
+        dummy_id_end=0,
         behavior_param_id__behaviour_id=200400,
         radius=0.75,
         life=0.0,
@@ -257,7 +257,7 @@ def Constructor():
         first_flag=400073,
         last_flag=400073,
         flag=16009208,
-        model_point=6101,
+        dummy_id=6101,
     )
     CommonFunc_90005750(
         0,
@@ -267,7 +267,7 @@ def Constructor():
         first_flag=400074,
         last_flag=400074,
         flag=16009216,
-        model_point=6101,
+        dummy_id=6101,
     )
     CommonFunc_90005750(
         0,
@@ -277,7 +277,7 @@ def Constructor():
         first_flag=400075,
         last_flag=400075,
         flag=16009217,
-        model_point=6101,
+        dummy_id=6101,
     )
     CommonFunc_90005750(
         0,
@@ -287,7 +287,7 @@ def Constructor():
         first_flag=400070,
         last_flag=400072,
         flag=16009270,
-        model_point=6101,
+        dummy_id=6101,
     )
     CommonFunc_90005750(
         0,
@@ -297,7 +297,7 @@ def Constructor():
         first_flag=400071,
         last_flag=400071,
         flag=16009266,
-        model_point=6101,
+        dummy_id=6101,
     )
     CommonFunc_90005750(
         0,
@@ -307,7 +307,7 @@ def Constructor():
         first_flag=400076,
         last_flag=400076,
         flag=16009267,
-        model_point=6101,
+        dummy_id=6101,
     )
     CommonFunc_90005750(
         0,
@@ -317,7 +317,7 @@ def Constructor():
         first_flag=400077,
         last_flag=400077,
         flag=16009268,
-        model_point=6101,
+        dummy_id=6101,
     )
     CommonFunc_90005750(
         0,
@@ -327,7 +327,7 @@ def Constructor():
         first_flag=400078,
         last_flag=400078,
         flag=16009269,
-        model_point=6101,
+        dummy_id=6101,
     )
     CommonFunc_90005775(0, world_map_point_param_id=80110000, flag=400290, distance=-1.0)
     CommonFunc_90005775(0, world_map_point_param_id=80392000, flag=400180, distance=-1.0)
@@ -353,7 +353,7 @@ def Constructor():
         first_flag=400091,
         last_flag=400091,
         flag=16009337,
-        model_point=0,
+        dummy_id=0,
     )
     CommonFunc_90005750(
         0,
@@ -363,7 +363,7 @@ def Constructor():
         first_flag=400091,
         last_flag=400091,
         flag=16009338,
-        model_point=0,
+        dummy_id=0,
     )
     Event_16003730(0, character=Characters.KnightDiallos)
     Event_16003731(0, flag=16009417, flag_1=16002731, flag_2=16009400)
@@ -379,7 +379,7 @@ def Constructor():
         first_flag=400291,
         last_flag=400291,
         flag=16009463,
-        model_point=0,
+        dummy_id=0,
     )
     Event_16003750(
         0,
@@ -399,7 +399,7 @@ def Constructor():
         first_flag=60802,
         last_flag=60802,
         flag=9122,
-        model_point=0,
+        dummy_id=0,
     )
     Event_16003763()
     Event_16003764()
@@ -428,15 +428,15 @@ def Preconstructor():
     EnableAssetInvulnerability(Assets.AEG277_030_9001)
     EnableAssetInvulnerability(Assets.AEG277_037_6000)
     Event_16000519()
-    CommonFunc_90005250(0, character=Characters.Snail2, region=16002345, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Snail3, region=16002345, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Snail4, region=16002345, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Snail8, region=16002355, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Snail1, region=16002344, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Snail0, region=16002343, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Snail5, region=16002343, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Snail6, region=16002343, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Snail7, region=16002343, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Snail2, region=16002345, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Snail3, region=16002345, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Snail4, region=16002345, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Snail8, region=16002355, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Snail1, region=16002344, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Snail0, region=16002343, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Snail5, region=16002343, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Snail6, region=16002343, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Snail7, region=16002343, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.BloodhoundKnight, radius=8.0, seconds=0.0, animation_id=-1)
     RunCommonEvent(16002310, slot=0, args=(16000316, 18.0, 0.0, -1), arg_types="Iffi")
     CommonFunc_90005251(0, character=Characters.ManSerpent2, radius=25.0, seconds=0.0, animation_id=-1)
@@ -449,16 +449,16 @@ def Preconstructor():
     CommonFunc_90005251(0, character=16000210, radius=20.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.Commoner10, radius=8.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.Commoner11, radius=8.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.SmallerDog0, region=16002410, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.SmallerDog1, region=16002410, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.IronVirgin0, region=16002460, seconds=0.0, animation_id=3012)
-    CommonFunc_90005250(0, character=Characters.Omenkiller, region=16002500, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.IronVirgin2, region=16002462, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Commoner1, region=16002203, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Commoner2, region=16002203, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Commoner3, region=16002203, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Commoner4, region=16002203, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Commoner5, region=16002203, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallerDog0, region=16002410, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallerDog1, region=16002410, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.IronVirgin0, region=16002460, seconds=0.0, animation_id=3012)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Omenkiller, region=16002500, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.IronVirgin2, region=16002462, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Commoner1, region=16002203, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Commoner2, region=16002203, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Commoner3, region=16002203, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Commoner4, region=16002203, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Commoner5, region=16002203, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.ManSerpent3, radius=20.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.ManSerpent0, region=16002314, radius=5.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.AlbinauricLookout0, radius=5.0, seconds=0.0, animation_id=-1)
@@ -476,10 +476,10 @@ def Preconstructor():
         region=16002277,
         radius=5.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(
         0,
@@ -535,12 +535,12 @@ def Preconstructor():
         region=16002510,
         radius=20.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
-    CommonFunc_90005300(0, flag=16000512, character=Characters.MagmaWyrm, item_lot=16002000, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=16000512, character=Characters.MagmaWyrm, item_lot=16002000, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005261(0, character=Characters.IronVirgin1, region=16002461, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.ManSerpent8, region=16002338, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.ManSerpent7, region=16002339, radius=5.0, seconds=0.0, animation_id=-1)
@@ -579,10 +579,10 @@ def Preconstructor():
         region=16002446,
         radius=5.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(
         0,
@@ -617,8 +617,8 @@ def Preconstructor():
         left_3=0,
     )
     Event_16009000()
-    CommonFunc_90005300(0, flag=16000420, character=Characters.Scarab0, item_lot=40590, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=16000421, character=Characters.Scarab1, item_lot=40592, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=16000420, character=Characters.Scarab0, item_lot=40590, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=16000421, character=Characters.Scarab1, item_lot=40592, seconds=0.0, item_is_dropped=0)
 
 
 @RestartOnRest(16002185)
@@ -866,7 +866,7 @@ def Event_16002570(
     DisableFlag(left_flag)
     DisableFlag(cancel_flag__right_flag)
     DeleteAssetVFX(asset)
-    CreateAssetVFX(asset, vfx_id=200, model_point=806870)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=806870)
     AND_1.Add(PlayerInOwnWorld())
     AND_2.Add(MultiplayerPending())
     AND_1.Add(not AND_2)
@@ -933,7 +933,7 @@ def Event_16002570(
         character=PLAYER,
         destination_type=CoordEntityType.Region,
         destination=player_start,
-        model_point=10,
+        dummy_id=10,
         copy_draw_parent=PLAYER,
         use_bonfire_effect=False,
         reset_camera=True,
@@ -959,7 +959,7 @@ def Event_16002579():
         character=20000,
         destination_type=CoordEntityType.Region,
         destination=16002575,
-        model_point=10,
+        dummy_id=10,
         copy_draw_parent=20000,
         use_bonfire_effect=False,
         reset_camera=True,
@@ -1104,7 +1104,7 @@ def Event_16002690(_, flag: uint, asset: uint, asset_1: uint):
     DisableAsset(asset)
     DeleteAssetVFX(asset_1)
     End()
-    CreateAssetVFX(asset_1, vfx_id=90, model_point=6102)
+    CreateAssetVFX(asset_1, vfx_id=90, dummy_id=6102)
     ForceAnimation(asset, 0)
     EnableAssetActivation(asset, obj_act_id=99340)
     DisableFlag(16007690)
@@ -1230,8 +1230,8 @@ def Event_16002810():
     SetNetworkUpdateRate(Characters.GodDevouringSerpent1, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     EnableBossHealthBar(Characters.GodDevouringSerpent1, name=904710000)
     EnableFlag(16002803)
-    SetLockOnPoint(character=Characters.GodDevouringSerpent1, lock_on_model_point=220, state=True)
-    SetLockOnPoint(character=Characters.GodDevouringSerpent1, lock_on_model_point=221, state=False)
+    SetLockOnPoint(character=Characters.GodDevouringSerpent1, lock_on_dummy_id=220, state=True)
+    SetLockOnPoint(character=Characters.GodDevouringSerpent1, lock_on_dummy_id=221, state=False)
     EnableFlag(16002801)
     ForceAnimation(Characters.GodDevouringSerpent1, 20002)
 
@@ -1290,15 +1290,15 @@ def Event_16002811():
         Characters.GodDevouringSerpent0,
         destination=16002831,
         destination_type=CoordEntityType.Region,
-        model_point=0,
+        dummy_id=0,
         copy_draw_parent=Characters.GodDevouringSerpent1,
     )
     WaitFrames(frames=1)
     EnableAnimations(Characters.GodDevouringSerpent0)
     EnableAI(Characters.GodDevouringSerpent0)
     EnableBossHealthBar(Characters.GodDevouringSerpent0, name=904710001)
-    SetLockOnPoint(character=Characters.GodDevouringSerpent0, lock_on_model_point=220, state=False)
-    SetLockOnPoint(character=Characters.GodDevouringSerpent0, lock_on_model_point=221, state=True)
+    SetLockOnPoint(character=Characters.GodDevouringSerpent0, lock_on_dummy_id=220, state=False)
+    SetLockOnPoint(character=Characters.GodDevouringSerpent0, lock_on_dummy_id=221, state=True)
     ForceAnimation(Characters.GodDevouringSerpent0, 20002, wait_for_completion=True)
 
 
@@ -1401,7 +1401,7 @@ def Event_16002830():
     ShootProjectile(
         owner_entity=Characters.GodDevouringSerpent0,
         source_entity=Assets.AEG003_316_9002,
-        model_point=100,
+        dummy_id=100,
         behavior_id=247100510,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1410,7 +1410,7 @@ def Event_16002830():
     ShootProjectile(
         owner_entity=Characters.GodDevouringSerpent0,
         source_entity=Assets.AEG003_316_9002,
-        model_point=100,
+        dummy_id=100,
         behavior_id=247100810,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1419,7 +1419,7 @@ def Event_16002830():
     ShootProjectile(
         owner_entity=Characters.GodDevouringSerpent0,
         source_entity=Assets.AEG003_316_9002,
-        model_point=100,
+        dummy_id=100,
         behavior_id=247100820,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1428,7 +1428,7 @@ def Event_16002830():
     ShootProjectile(
         owner_entity=Characters.GodDevouringSerpent0,
         source_entity=Assets.AEG003_316_9002,
-        model_point=100,
+        dummy_id=100,
         behavior_id=247100830,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1730,7 +1730,7 @@ def Event_16002849():
         flag_2=16002806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=16000800, asset=Assets.AEG099_003_9000, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=16000800, asset=Assets.AEG099_003_9000, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=16000800,
@@ -1781,7 +1781,7 @@ def Event_16002855():
     # --- Label 0 --- #
     DefineLabel(0)
     DisableTreasure(asset=Assets.AEG099_990_9001)
-    CreateAssetVFX(Assets.AEG099_990_9002, vfx_id=90, model_point=6101)
+    CreateAssetVFX(Assets.AEG099_990_9002, vfx_id=90, dummy_id=6101)
     DisableAI(Characters.GodskinNoble)
     GotoIfFlagEnabled(Label.L1, flag=16000851)
     DisableCharacter(Characters.GodskinNoble)
@@ -1889,8 +1889,8 @@ def Event_16002889():
         flag_2=16002866,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=16000860, asset=Assets.AEG099_002_9000, model_point=4, right=0)
-    CommonFunc_9005811(0, flag=16000860, asset=Assets.AEG099_002_9001, model_point=5, right=0)
+    CommonFunc_9005811(0, flag=16000860, asset=Assets.AEG099_002_9000, dummy_id=4, right=0)
+    CommonFunc_9005811(0, flag=16000860, asset=Assets.AEG099_002_9001, dummy_id=5, right=0)
     CommonFunc_9005822(
         0,
         flag=16000860,
@@ -1927,8 +1927,8 @@ def Event_16002899():
         flag_2=16002856,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=16000850, asset=Assets.AEG099_003_0500, model_point=4, right=16000851)
-    CommonFunc_9005811(0, flag=16000850, asset=Assets.AEG099_003_0501, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=16000850, asset=Assets.AEG099_003_0500, dummy_id=4, right=16000851)
+    CommonFunc_9005811(0, flag=16000850, asset=Assets.AEG099_003_0501, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=16000850,
@@ -3167,7 +3167,7 @@ def Event_16003762(
     first_flag: uint,
     last_flag: uint,
     flag: uint,
-    model_point: int,
+    dummy_id: int,
 ):
     """Event 16003762"""
     DisableNetworkSync()
@@ -3176,10 +3176,10 @@ def Event_16003762(
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(FlagRangeAnyDisabled(flag_range=(first_flag, last_flag)))
     AwaitConditionTrue(AND_1)
-    if ValueNotEqual(left=model_point, right=0):
-        CreateAssetVFX(asset, vfx_id=90, model_point=model_point)
+    if ValueNotEqual(left=dummy_id, right=0):
+        CreateAssetVFX(asset, vfx_id=90, dummy_id=dummy_id)
     else:
-        CreateAssetVFX(asset, vfx_id=90, model_point=6101)
+        CreateAssetVFX(asset, vfx_id=90, dummy_id=6101)
     OR_2.Add(FlagDisabled(flag))
     OR_2.Add(FlagRangeAllEnabled(flag_range=(first_flag, last_flag)))
     OR_1.Add(ActionButtonParamActivated(action_button_id=action_button_id, entity=asset))

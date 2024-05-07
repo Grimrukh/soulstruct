@@ -83,7 +83,7 @@ def Constructor():
     )
     Event_1035462605(0, flag=1035460605, target_entity=1035462601, animation=60471)
     Event_1035462605(1, flag=1035460615, target_entity=1035462606, animation=60471)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9011, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9011, vfx_id=100, dummy_id=800, right=0)
     CommonFunc_90005795(
         0,
         flag=7607,
@@ -94,7 +94,7 @@ def Constructor():
         message=80607,
         action_button_id=9000,
         asset=Assets.AEG099_090_9020,
-        model_point=30010,
+        dummy_id=30010,
     )
     if CeremonyActive(ceremony=40):
         CommonFunc_90005796(
@@ -157,7 +157,7 @@ def Event_1035462145():
     SetTeamType(Characters.BloodyFingerRavenmountAssassin, TeamType.Human)
     SetTeamType(Characters.YuraHunterofBloodyFingers0, TeamType.Enemy)
     DeleteAssetVFX(1035466700)
-    CreateAssetVFX(1035466700, vfx_id=200, model_point=806700)
+    CreateAssetVFX(1035466700, vfx_id=200, dummy_id=806700)
 
 
 @RestartOnRest(1035463700)

@@ -68,7 +68,7 @@ def Constructor():
     Event_12800401()
     Event_12800402()
     Event_12800403()
-    CreateObjectVFX(2801010, vfx_id=200, model_point=900130)
+    CreateObjectVFX(2801010, vfx_id=200, dummy_id=900130)
     StartPlayLogMeasurement(measurement_id=2800000, name=0, overwrite=True)
     StartPlayLogMeasurement(measurement_id=2800001, name=18, overwrite=True)
     Event_12800990()
@@ -1448,11 +1448,11 @@ def Event_12805920(_, obj: int, flag: int):
     # --- Label 0 --- #
     DefineLabel(0)
     if ThisEventSlotFlagDisabled():
-        CreateObjectVFX(obj, vfx_id=100, model_point=928020)
+        CreateObjectVFX(obj, vfx_id=100, dummy_id=928020)
     ShootProjectile(
         owner_entity=2800560,
         source_entity=obj,
-        model_point=100,
+        dummy_id=100,
         behavior_id=6032,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1842,7 +1842,7 @@ def Event_12800430():
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=2800020, entity=2801500))
     
-    Move(PLAYER, destination=2801500, destination_type=CoordEntityType.Object, model_point=220, short_move=True)
+    Move(PLAYER, destination=2801500, destination_type=CoordEntityType.Object, dummy_id=220, short_move=True)
     ForceAnimation(PLAYER, 101169)
     WaitFrames(frames=180)
     WarpPlayerToRespawnPoint(3202959)
@@ -2725,7 +2725,7 @@ def Event_12804806():
         2800801,
         destination=2800800,
         destination_type=CoordEntityType.Character,
-        model_point=100,
+        dummy_id=100,
         set_draw_parent=2800801,
     )
     Restart()
@@ -2820,7 +2820,7 @@ def Event_12804830():
     
     MAIN.Await(AND_1)
     
-    Move(2800802, destination=PLAYER, destination_type=CoordEntityType.Character, model_point=246, short_move=True)
+    Move(2800802, destination=PLAYER, destination_type=CoordEntityType.Character, dummy_id=246, short_move=True)
     AICommand(2800802, command_id=200, command_slot=0)
     ReplanAI(2800802)
     WaitFrames(frames=1)
@@ -2840,7 +2840,7 @@ def Event_12804831():
     
     MAIN.Await(AND_1)
     
-    Move(2800802, destination=2800800, destination_type=CoordEntityType.Character, model_point=100, short_move=True)
+    Move(2800802, destination=2800800, destination_type=CoordEntityType.Character, dummy_id=100, short_move=True)
     AICommand(2800802, command_id=210, command_slot=0)
     ReplanAI(2800802)
     WaitFrames(frames=1)
@@ -2865,7 +2865,7 @@ def Event_12804832():
     MAIN.Await(TimeElapsed(seconds=1.100000023841858))
     
     RemoveSpecialEffect(2800800, 5585)
-    Move(2800802, destination=2800800, destination_type=CoordEntityType.Character, model_point=10, short_move=True)
+    Move(2800802, destination=2800800, destination_type=CoordEntityType.Character, dummy_id=10, short_move=True)
     AICommand(2800802, command_id=220, command_slot=0)
     ReplanAI(2800802)
     WaitFrames(frames=1)
@@ -2890,7 +2890,7 @@ def Event_12804834():
     MAIN.Await(TimeElapsed(seconds=1.100000023841858))
     
     RemoveSpecialEffect(2800800, 5586)
-    Move(2800802, destination=2800800, destination_type=CoordEntityType.Character, model_point=15, short_move=True)
+    Move(2800802, destination=2800800, destination_type=CoordEntityType.Character, dummy_id=15, short_move=True)
     AICommand(2800802, command_id=220, command_slot=0)
     ReplanAI(2800802)
     WaitFrames(frames=1)
@@ -2915,7 +2915,7 @@ def Event_12804835():
     MAIN.Await(TimeElapsed(seconds=1.100000023841858))
     
     RemoveSpecialEffect(2800800, 5587)
-    Move(2800802, destination=2800800, destination_type=CoordEntityType.Character, model_point=50, short_move=True)
+    Move(2800802, destination=2800800, destination_type=CoordEntityType.Character, dummy_id=50, short_move=True)
     AICommand(2800802, command_id=220, command_slot=0)
     ReplanAI(2800802)
     WaitFrames(frames=1)
@@ -2940,7 +2940,7 @@ def Event_12804836():
     MAIN.Await(TimeElapsed(seconds=1.100000023841858))
     
     RemoveSpecialEffect(2800800, 5588)
-    Move(2800802, destination=2800800, destination_type=CoordEntityType.Character, model_point=55, short_move=True)
+    Move(2800802, destination=2800800, destination_type=CoordEntityType.Character, dummy_id=55, short_move=True)
     AICommand(2800802, command_id=220, command_slot=0)
     ReplanAI(2800802)
     WaitFrames(frames=1)
@@ -2960,7 +2960,7 @@ def Event_12804837():
     
     MAIN.Await(AND_1)
     
-    Move(2800802, destination=PLAYER, destination_type=CoordEntityType.Character, model_point=246, short_move=True)
+    Move(2800802, destination=PLAYER, destination_type=CoordEntityType.Character, dummy_id=246, short_move=True)
     WaitFrames(frames=1)
     AICommand(2800802, command_id=100, command_slot=0)
     ReplanAI(2800802)
@@ -2968,7 +2968,7 @@ def Event_12804837():
     AICommand(2800802, command_id=-1, command_slot=0)
     ReplanAI(2800802)
     Wait(0.800000011920929)
-    Move(2800802, destination=PLAYER, destination_type=CoordEntityType.Character, model_point=246, short_move=True)
+    Move(2800802, destination=PLAYER, destination_type=CoordEntityType.Character, dummy_id=246, short_move=True)
     WaitFrames(frames=1)
     AICommand(2800802, command_id=100, command_slot=0)
     ReplanAI(2800802)
@@ -2976,7 +2976,7 @@ def Event_12804837():
     AICommand(2800802, command_id=-1, command_slot=0)
     ReplanAI(2800802)
     Wait(1.0)
-    Move(2800802, destination=PLAYER, destination_type=CoordEntityType.Character, model_point=246, short_move=True)
+    Move(2800802, destination=PLAYER, destination_type=CoordEntityType.Character, dummy_id=246, short_move=True)
     WaitFrames(frames=1)
     AICommand(2800802, command_id=100, command_slot=0)
     ReplanAI(2800802)
@@ -2984,7 +2984,7 @@ def Event_12804837():
     AICommand(2800802, command_id=-1, command_slot=0)
     ReplanAI(2800802)
     Wait(1.2000000476837158)
-    Move(2800802, destination=PLAYER, destination_type=CoordEntityType.Character, model_point=246, short_move=True)
+    Move(2800802, destination=PLAYER, destination_type=CoordEntityType.Character, dummy_id=246, short_move=True)
     WaitFrames(frames=1)
     AICommand(2800802, command_id=100, command_slot=0)
     ReplanAI(2800802)
@@ -2992,7 +2992,7 @@ def Event_12804837():
     AICommand(2800802, command_id=-1, command_slot=0)
     ReplanAI(2800802)
     Wait(1.399999976158142)
-    Move(2800802, destination=PLAYER, destination_type=CoordEntityType.Character, model_point=246, short_move=True)
+    Move(2800802, destination=PLAYER, destination_type=CoordEntityType.Character, dummy_id=246, short_move=True)
     WaitFrames(frames=1)
     AICommand(2800802, command_id=100, command_slot=0)
     ReplanAI(2800802)
@@ -3385,7 +3385,7 @@ def Event_12800920(_, flag: int, flag_1: int, flag_2: int, obj: int, item_lot: i
     
     MAIN.Await(OR_1)
     
-    CreateObjectVFX(obj, vfx_id=200, model_point=900201)
+    CreateObjectVFX(obj, vfx_id=200, dummy_id=900201)
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=7500, entity=obj))
     

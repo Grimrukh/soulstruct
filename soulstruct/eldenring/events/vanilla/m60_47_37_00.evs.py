@@ -59,7 +59,7 @@ def Event_1047372200(_, flag: uint, flag_1: uint, anchor_entity: uint, character
     CreateTemporaryVFX(
         vfx_id=601111,
         anchor_entity=anchor_entity,
-        model_point=960,
+        dummy_id=960,
         anchor_type=CoordEntityType.Character,
     )
     Goto(Label.L3)
@@ -69,7 +69,7 @@ def Event_1047372200(_, flag: uint, flag_1: uint, anchor_entity: uint, character
     CreateTemporaryVFX(
         vfx_id=601110,
         anchor_entity=anchor_entity,
-        model_point=960,
+        dummy_id=960,
         anchor_type=CoordEntityType.Character,
     )
 

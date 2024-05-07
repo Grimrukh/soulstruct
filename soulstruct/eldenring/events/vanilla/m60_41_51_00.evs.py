@@ -24,8 +24,8 @@ from .enums.m60_41_51_00_enums import *
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005870(0, character=Characters.TreeSentinel0, name=903251600, npc_threat_level=12)
-    CommonFunc_90005870(0, character=Characters.TreeSentinel1, name=903251600, npc_threat_level=12)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.TreeSentinel0, name=903251600, npc_threat_level=12)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.TreeSentinel1, name=903251600, npc_threat_level=12)
     Event_1041512800(
         0,
         flag=1041510800,
@@ -70,7 +70,7 @@ def Constructor():
     )
     Event_1041512200(0, character=Characters.LeyndellKnight0)
     Event_1041512200(1, character=Characters.LeyndellKnight1)
-    CommonFunc_90005300(0, flag=1041510410, character=Characters.GiantMirandaFlower, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1041510410, character=Characters.GiantMirandaFlower, item_lot=0, seconds=0.0, item_is_dropped=0)
     Event_1041512270()
     Event_1041512270(slot=1)
 
@@ -78,7 +78,7 @@ def Constructor():
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
-    CommonFunc_90005250(0, character=Characters.GiantMirandaFlower, region=1041512410, seconds=0.0, animation_id=700)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GiantMirandaFlower, region=1041512410, seconds=0.0, animation_id=700)
     CommonFunc_90005201(
         0,
         character=Characters.GraveSkeleton2,
@@ -99,10 +99,10 @@ def Preconstructor():
         region=1041512450,
         radius=2.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -112,10 +112,10 @@ def Preconstructor():
         region=1041512450,
         radius=2.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005200(
         0,
@@ -154,7 +154,7 @@ def Event_1041512270():
         ShootProjectile(
             owner_entity=Characters.Dummy,
             source_entity=1041512271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802103000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -164,7 +164,7 @@ def Event_1041512270():
         ShootProjectile(
             owner_entity=Characters.Dummy,
             source_entity=1041512271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802103010,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -174,7 +174,7 @@ def Event_1041512270():
         ShootProjectile(
             owner_entity=Characters.Dummy,
             source_entity=1041512271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802103020,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -184,7 +184,7 @@ def Event_1041512270():
         ShootProjectile(
             owner_entity=Characters.Dummy,
             source_entity=1041512271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802103030,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -194,7 +194,7 @@ def Event_1041512270():
         ShootProjectile(
             owner_entity=Characters.Dummy,
             source_entity=1041512271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802103040,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -204,7 +204,7 @@ def Event_1041512270():
         ShootProjectile(
             owner_entity=Characters.Dummy,
             source_entity=1041512271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802103050,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -214,7 +214,7 @@ def Event_1041512270():
         ShootProjectile(
             owner_entity=Characters.Dummy,
             source_entity=1041512271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802103060,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -224,7 +224,7 @@ def Event_1041512270():
         ShootProjectile(
             owner_entity=Characters.Dummy,
             source_entity=1041512271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802103070,
             launch_angle_x=0,
             launch_angle_y=0,

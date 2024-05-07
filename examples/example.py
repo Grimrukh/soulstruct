@@ -30,13 +30,13 @@ def PullOutMeltedIronKey():
     DisableObjectActivation(Objects.DepthsDoor, -1)
     Await(
         ActionButton(
-            EventTexts.Open, anchor_entity=Objects.DepthsDoor, facing_angle=60.0, model_point=100, max_distance=1.5
+            EventTexts.Open, anchor_entity=Objects.DepthsDoor, facing_angle=60.0, dummy_id=100, max_distance=1.5
         )
     )
     DisplayDialog(EventTexts.SomethingInDoor, anchor_entity=Objects.DepthsDoor)
     Wait(1.0)
     Await(ActionButton(
-        EventTexts.RemoveItemFromDoor, anchor_entity=Objects.DepthsDoor, facing_angle=60.0, model_point=100, max_distance=1.5
+        EventTexts.RemoveItemFromDoor, anchor_entity=Objects.DepthsDoor, facing_angle=60.0, dummy_id=100, max_distance=1.5
     ))
     AwardItemLot(ItemLots.InDepthsDoor)
     Wait(DOOR_INACTIVE_DELAY)

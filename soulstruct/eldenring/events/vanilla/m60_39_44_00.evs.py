@@ -160,17 +160,17 @@ def Constructor():
         right=-1,
     )
     Event_1039443724(0, character=Characters.SmallLivingPot0)
-    CommonFunc_90005709(0, attacked_entity=Characters.SmallLivingPot0, model_point=905, vfx_id=603000)
-    CommonFunc_90005709(0, attacked_entity=Characters.SmallLivingPot0, model_point=200, vfx_id=603051)
+    CommonFunc_90005709(0, attacked_entity=Characters.SmallLivingPot0, dummy_id=905, vfx_id=603000)
+    CommonFunc_90005709(0, attacked_entity=Characters.SmallLivingPot0, dummy_id=200, vfx_id=603051)
     Event_1039443725(0, character=Characters.SmallLivingPot1)
-    CommonFunc_90005709(0, attacked_entity=Characters.SmallLivingPot1, model_point=905, vfx_id=603000)
-    CommonFunc_90005709(0, attacked_entity=Characters.SmallLivingPot1, model_point=200, vfx_id=603051)
+    CommonFunc_90005709(0, attacked_entity=Characters.SmallLivingPot1, dummy_id=905, vfx_id=603000)
+    CommonFunc_90005709(0, attacked_entity=Characters.SmallLivingPot1, dummy_id=200, vfx_id=603051)
     Event_1039443726(0, character=Characters.SmallLivingPot7)
-    CommonFunc_90005709(0, attacked_entity=Characters.SmallLivingPot7, model_point=905, vfx_id=603000)
-    CommonFunc_90005709(0, attacked_entity=Characters.SmallLivingPot7, model_point=200, vfx_id=603051)
+    CommonFunc_90005709(0, attacked_entity=Characters.SmallLivingPot7, dummy_id=905, vfx_id=603000)
+    CommonFunc_90005709(0, attacked_entity=Characters.SmallLivingPot7, dummy_id=200, vfx_id=603051)
     Event_1039443732(0, character=Characters.SmallLivingPot8)
-    CommonFunc_90005709(0, attacked_entity=Characters.SmallLivingPot8, model_point=905, vfx_id=603000)
-    CommonFunc_90005709(0, attacked_entity=Characters.SmallLivingPot8, model_point=200, vfx_id=603051)
+    CommonFunc_90005709(0, attacked_entity=Characters.SmallLivingPot8, dummy_id=905, vfx_id=603000)
+    CommonFunc_90005709(0, attacked_entity=Characters.SmallLivingPot8, dummy_id=200, vfx_id=603051)
     CommonFunc_90005750(
         0,
         asset=Assets.AEG099_990_9005,
@@ -179,7 +179,7 @@ def Constructor():
         first_flag=400460,
         last_flag=400460,
         flag=3829,
-        model_point=0,
+        dummy_id=0,
     )
     Event_1039443727()
     Event_1039443728(
@@ -447,7 +447,7 @@ def Constructor():
     )
     Event_1039442344(0, flag=1039440800, character=Characters.TibiaMariner, character_1=1039445250)
     Event_1039442345(0, character__targeting_character=Characters.TibiaMariner, region=1039442810)
-    CommonFunc_90005870(0, character=Characters.TibiaMariner, name=904950601, npc_threat_level=24)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.TibiaMariner, name=904950601, npc_threat_level=24)
     CommonFunc_90005860(
         0,
         flag=1039440800,

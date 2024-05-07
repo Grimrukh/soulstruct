@@ -28,7 +28,7 @@ def Constructor():
     RegisterGrace(grace_flag=35000002, asset=Assets.AEG099_060_9002)
     RegisterGrace(grace_flag=35000003, asset=Assets.AEG099_060_9003)
     RegisterGrace(grace_flag=35000004, asset=Assets.AEG099_060_9004)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, dummy_id=800, right=0)
     CommonFunc_9005810(
         0,
         flag=35000800,
@@ -41,7 +41,7 @@ def Constructor():
     Event_35002504()
     Event_35002506()
     Event_35002508()
-    CommonFunc_90005300(0, flag=35000800, character=Characters.Mohg, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=35000800, character=Characters.Mohg, item_lot=0, seconds=0.0, item_is_dropped=0)
     Event_35002800()
     Event_35002810()
     Event_35002849()
@@ -170,7 +170,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_91005600(0, flag=35002800, asset=35001695, model_point=5)
+    CommonFunc_91005600(0, flag=35002800, asset=35001695, dummy_id=5)
     CommonFunc_90005780(
         0,
         flag=35000800,
@@ -200,9 +200,9 @@ def Constructor():
         flag_1=35002706,
         left=35002707,
         character=Characters.Hyetta,
-        model_point=701,
+        dummy_id=701,
         asset=Assets.AEG099_090_9003,
-        model_point_1=701,
+        dummy_id_1=701,
         radius=0.4000000059604645,
         animation=90202,
         animation_id=-1,
@@ -229,7 +229,7 @@ def Constructor():
         first_flag=400089,
         last_flag=400089,
         flag=35009211,
-        model_point=0,
+        dummy_id=0,
     )
     Event_35000703(0, seconds=7.5)
     Event_35003720(0, character=Characters.DungEater1)
@@ -257,7 +257,7 @@ def Constructor():
         first_flag=9504,
         last_flag=9504,
         flag=35009333,
-        model_point=806782,
+        dummy_id=806782,
     )
     Event_35003723()
     CommonFunc_90005750(
@@ -268,7 +268,7 @@ def Constructor():
         first_flag=400381,
         last_flag=400382,
         flag=35009336,
-        model_point=0,
+        dummy_id=0,
     )
     Event_35003725()
     Event_35003726()
@@ -281,7 +281,7 @@ def Constructor():
         first_flag=400382,
         last_flag=400382,
         flag=35009337,
-        model_point=0,
+        dummy_id=0,
     )
     Event_35003730()
     CommonFunc_90005771(0, other_entity=Characters.TalkDummy0, flag=35002730)
@@ -313,10 +313,10 @@ def Preconstructor():
         region=35002201,
         radius=2.5,
         seconds=0.0,
-        left=1,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=1,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -326,10 +326,10 @@ def Preconstructor():
         region=35002202,
         radius=0.0,
         seconds=0.0,
-        left=1,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=1,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     Event_35002203()
     CommonFunc_90005211(
@@ -340,10 +340,10 @@ def Preconstructor():
         region=35002204,
         radius=0.0,
         seconds=11.0,
-        left=1,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=1,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -353,10 +353,10 @@ def Preconstructor():
         region=35002205,
         radius=2.0,
         seconds=8.0,
-        left=1,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=1,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(0, character=Characters.Imp6, region=35002226, radius=2.0, seconds=0.0, animation_id=3006)
     CommonFunc_90005211(
@@ -367,10 +367,10 @@ def Preconstructor():
         region=35002205,
         radius=2.0,
         seconds=3.0,
-        left=1,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=1,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -380,10 +380,10 @@ def Preconstructor():
         region=35002208,
         radius=1.0,
         seconds=4.0,
-        left=1,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=1,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     Event_35002208()
     CommonFunc_90005211(
@@ -394,10 +394,10 @@ def Preconstructor():
         region=35002209,
         radius=3.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -407,10 +407,10 @@ def Preconstructor():
         region=35002210,
         radius=2.0,
         seconds=0.0,
-        left=1,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=1,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(0, character=Characters.Imp11, region=35002211, radius=2.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
@@ -421,10 +421,10 @@ def Preconstructor():
         region=35002212,
         radius=3.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -434,10 +434,10 @@ def Preconstructor():
         region=35002213,
         radius=0.0,
         seconds=0.0,
-        left=1,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=1,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -447,10 +447,10 @@ def Preconstructor():
         region=35002214,
         radius=3.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -460,10 +460,10 @@ def Preconstructor():
         region=35002215,
         radius=3.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     Event_35002215()
     CommonFunc_90005211(
@@ -474,10 +474,10 @@ def Preconstructor():
         region=35002217,
         radius=2.0,
         seconds=0.0,
-        left=1,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=1,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -487,10 +487,10 @@ def Preconstructor():
         region=35002217,
         radius=2.0,
         seconds=0.30000001192092896,
-        left=1,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=1,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -500,10 +500,10 @@ def Preconstructor():
         region=35002218,
         radius=0.5,
         seconds=3.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -513,10 +513,10 @@ def Preconstructor():
         region=35002219,
         radius=0.0,
         seconds=0.0,
-        left=1,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=1,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     Event_35002220(
         0,
@@ -623,10 +623,10 @@ def Preconstructor():
         region=35002386,
         radius=2.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -636,10 +636,10 @@ def Preconstructor():
         region=35002387,
         radius=2.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(0, character=Characters.Rat0, region=35002230, radius=0.5, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.Rat1, region=35002230, radius=0.5, seconds=0.5, animation_id=0)
@@ -762,10 +762,10 @@ def Preconstructor():
         region=35002278,
         radius=3.0,
         seconds=0.0,
-        left=1,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=1,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -775,10 +775,10 @@ def Preconstructor():
         region=35002278,
         radius=3.0,
         seconds=0.800000011920929,
-        left=1,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=1,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(
         0,
@@ -891,10 +891,10 @@ def Preconstructor():
         region=35002314,
         radius=2.0,
         seconds=0.0,
-        left=1,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=1,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(0, character=Characters.Slug25, region=35002327, radius=2.0, seconds=0.0, animation_id=3003)
     CommonFunc_90005261(
@@ -948,10 +948,10 @@ def Preconstructor():
         region=35002250,
         radius=1.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     Event_35002250()
     Event_35002251()
@@ -966,10 +966,10 @@ def Preconstructor():
         region=35002497,
         radius=1.0,
         seconds=6.0,
-        left=1,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=1,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(0, character=Characters.Scarab0, region=35002490, radius=0.5, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.Scarab1, region=35002491, radius=0.5, seconds=0.0, animation_id=0)
@@ -982,10 +982,10 @@ def Preconstructor():
         region=35002493,
         radius=1.5,
         seconds=2.5,
-        left=1,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=1,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -995,19 +995,19 @@ def Preconstructor():
         region=35002494,
         radius=0.5,
         seconds=1.5,
-        left=1,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=1,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
-    CommonFunc_90005300(0, flag=35000495, character=Characters.Scarab5, item_lot=35000970, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=35000496, character=Characters.Scarab6, item_lot=35000980, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=35000497, character=Characters.Scarab7, item_lot=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=35000490, character=Characters.Scarab0, item_lot=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=35000491, character=Characters.Scarab1, item_lot=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=35000492, character=Characters.Scarab2, item_lot=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=35000493, character=Characters.Scarab3, item_lot=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=35000494, character=Characters.Scarab4, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=35000495, character=Characters.Scarab5, item_lot=35000970, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=35000496, character=Characters.Scarab6, item_lot=35000980, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=35000497, character=Characters.Scarab7, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=35000490, character=Characters.Scarab0, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=35000491, character=Characters.Scarab1, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=35000492, character=Characters.Scarab2, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=35000493, character=Characters.Scarab3, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=35000494, character=Characters.Scarab4, item_lot=0, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005211(
         0,
         character=Characters.Omen0,
@@ -1016,10 +1016,10 @@ def Preconstructor():
         region=35002360,
         radius=2.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005200(
         0,
@@ -1033,7 +1033,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.Omen1, region=35002361, seconds=0.20000000298023224, animation_id=3005)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Omen1, region=35002361, seconds=0.20000000298023224, animation_id=3005)
     CommonFunc_90005261(0, character=Characters.Omen2, region=35002362, radius=2.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.Omen3, region=35002363, radius=2.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.Omen5, region=35002366, radius=3.0, seconds=0.0, animation_id=3024)
@@ -1063,10 +1063,10 @@ def Preconstructor():
         region=35002369,
         radius=3.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(
         0,
@@ -1108,10 +1108,10 @@ def Preconstructor():
         region=35002258,
         radius=2.0,
         seconds=7.0,
-        left=1,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=1,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     Event_35002400()
     CommonFunc_90005211(
@@ -1122,10 +1122,10 @@ def Preconstructor():
         region=35002401,
         radius=3.0,
         seconds=1.5,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     Event_35002401()
     CommonFunc_90005211(
@@ -1136,10 +1136,10 @@ def Preconstructor():
         region=35002416,
         radius=1.0,
         seconds=0.699999988079071,
-        left=1,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=1,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     Event_35002410(
         0,
@@ -1432,8 +1432,8 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.PutridCorpse18, region=35002222, seconds=0.0, animation_id=3023)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse16, region=35002449, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse18, region=35002222, seconds=0.0, animation_id=3023)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse16, region=35002449, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.PutridCorpse23,
@@ -1482,7 +1482,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.Omen11, region=35002365, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Omen11, region=35002365, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.Omen11,
@@ -1508,9 +1508,9 @@ def Preconstructor():
         left_3=0,
     )
     CommonFunc_90005261(0, character=Characters.Omen6, region=35002366, radius=0.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Omen10, region=35002483, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Omen8, region=35002483, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Omen12, region=35002483, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Omen10, region=35002483, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Omen8, region=35002483, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Omen12, region=35002483, seconds=0.0, animation_id=-1)
 
 
 @ContinueOnRest(35000050)
@@ -1598,7 +1598,7 @@ def Event_35002504():
     GotoIfPlayerNotInOwnWorld(Label.L1)
     GotoIfFlagEnabled(Label.L2, flag=35002504)
     DeleteAssetVFX(Assets.AEG099_002_9000)
-    CreateAssetVFX(Assets.AEG099_002_9000, vfx_id=101, model_point=1540)
+    CreateAssetVFX(Assets.AEG099_002_9000, vfx_id=101, dummy_id=1540)
     EnableNetworkFlag(35002504)
 
     # --- Label 2 --- #
@@ -1626,7 +1626,7 @@ def Event_35002504():
     # --- Label 1 --- #
     DefineLabel(1)
     DeleteAssetVFX(Assets.AEG099_002_9000)
-    CreateAssetVFX(Assets.AEG099_002_9000, vfx_id=101, model_point=1540)
+    CreateAssetVFX(Assets.AEG099_002_9000, vfx_id=101, dummy_id=1540)
     End()
 
 
@@ -1743,10 +1743,10 @@ def Event_35002510():
             owner_entity=Characters.TalkDummy4,
             behavior_id=801103370,
             behavior_id_1=801103305,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(56):
         CommonFunc_90005682(
@@ -1757,10 +1757,10 @@ def Event_35002510():
             owner_entity=Characters.TalkDummy4,
             behavior_id=801103360,
             behavior_id_1=801103305,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(55):
         CommonFunc_90005682(
@@ -1771,10 +1771,10 @@ def Event_35002510():
             owner_entity=Characters.TalkDummy4,
             behavior_id=801103350,
             behavior_id_1=801103305,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(54):
         CommonFunc_90005682(
@@ -1785,10 +1785,10 @@ def Event_35002510():
             owner_entity=Characters.TalkDummy4,
             behavior_id=801103340,
             behavior_id_1=801103305,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(53):
         CommonFunc_90005682(
@@ -1799,10 +1799,10 @@ def Event_35002510():
             owner_entity=Characters.TalkDummy4,
             behavior_id=801103330,
             behavior_id_1=801103305,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(52):
         CommonFunc_90005682(
@@ -1813,10 +1813,10 @@ def Event_35002510():
             owner_entity=Characters.TalkDummy4,
             behavior_id=801103320,
             behavior_id_1=801103305,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(51):
         CommonFunc_90005682(
@@ -1827,10 +1827,10 @@ def Event_35002510():
             owner_entity=Characters.TalkDummy4,
             behavior_id=801103310,
             behavior_id_1=801103305,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(50):
         CommonFunc_90005682(
@@ -1841,10 +1841,10 @@ def Event_35002510():
             owner_entity=Characters.TalkDummy4,
             behavior_id=801103300,
             behavior_id_1=801103305,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     CommonFunc_90005681(0, flag=35000675, flag_1=35000676, flag_2=35000677, flag_3=35000678, attacked_entity=35001675)
     if FlagEnabled(57):
@@ -1856,10 +1856,10 @@ def Event_35002510():
             owner_entity=Characters.TalkDummy5,
             behavior_id=801103370,
             behavior_id_1=801103305,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(56):
         CommonFunc_90005682(
@@ -1870,10 +1870,10 @@ def Event_35002510():
             owner_entity=Characters.TalkDummy5,
             behavior_id=801103360,
             behavior_id_1=801103305,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(55):
         CommonFunc_90005682(
@@ -1884,10 +1884,10 @@ def Event_35002510():
             owner_entity=Characters.TalkDummy5,
             behavior_id=801103350,
             behavior_id_1=801103305,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(54):
         CommonFunc_90005682(
@@ -1898,10 +1898,10 @@ def Event_35002510():
             owner_entity=Characters.TalkDummy5,
             behavior_id=801103340,
             behavior_id_1=801103305,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(53):
         CommonFunc_90005682(
@@ -1912,10 +1912,10 @@ def Event_35002510():
             owner_entity=Characters.TalkDummy5,
             behavior_id=801103330,
             behavior_id_1=801103305,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(52):
         CommonFunc_90005682(
@@ -1926,10 +1926,10 @@ def Event_35002510():
             owner_entity=Characters.TalkDummy5,
             behavior_id=801103320,
             behavior_id_1=801103305,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(51):
         CommonFunc_90005682(
@@ -1940,10 +1940,10 @@ def Event_35002510():
             owner_entity=Characters.TalkDummy5,
             behavior_id=801103310,
             behavior_id_1=801103305,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
     if FlagEnabled(50):
         CommonFunc_90005682(
@@ -1954,10 +1954,10 @@ def Event_35002510():
             owner_entity=Characters.TalkDummy5,
             behavior_id=801103300,
             behavior_id_1=801103305,
-            model_point=102,
-            model_point_1=0,
-            model_point_2=0,
-            model_point_3=0,
+            dummy_id=102,
+            dummy_id_1=0,
+            dummy_id_2=0,
+            dummy_id_3=0,
         )
 
 
@@ -3189,8 +3189,8 @@ def Event_35002849():
         flag_2=35002806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=35000800, asset=Assets.AEG099_001_9000, model_point=5, right=35000801)
-    CommonFunc_9005812(0, flag=35000800, asset=Assets.AEG099_001_9001, model_point=5, right=35000801, model_point_1=5)
+    CommonFunc_9005811(0, flag=35000800, asset=Assets.AEG099_001_9000, dummy_id=5, right=35000801)
+    CommonFunc_9005812(0, flag=35000800, asset=Assets.AEG099_001_9001, dummy_id=5, right=35000801, dummy_id_1=5)
     CommonFunc_9005822(
         0,
         flag=35000800,
@@ -3274,7 +3274,7 @@ def Event_35002899():
         flag_2=35002856,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=35000850, asset=Assets.AEG099_002_9100, model_point=5, right=0)
+    CommonFunc_9005811(0, flag=35000850, asset=Assets.AEG099_002_9100, dummy_id=5, right=0)
     CommonFunc_9005822(
         0,
         flag=35000850,
@@ -3336,7 +3336,7 @@ def Event_35000700(_, character: uint, asset: uint):
     DefineLabel(13)
     DisableCharacter(character)
     DisableBackread(character)
-    CreateAssetVFX(asset, vfx_id=100, model_point=600930)
+    CreateAssetVFX(asset, vfx_id=100, dummy_id=600930)
     Goto(Label.L20)
 
     # --- Label 20 --- #
@@ -3646,7 +3646,7 @@ def Event_35003724(
     first_flag: uint,
     last_flag: uint,
     flag: uint,
-    model_point: int,
+    dummy_id: int,
 ):
     """Event 35003724"""
     DisableNetworkSync()
@@ -3657,10 +3657,10 @@ def Event_35003724(
     
     MAIN.Await(AND_1)
     
-    if ValueNotEqual(left=model_point, right=0):
-        CreateAssetVFX(asset, vfx_id=90, model_point=model_point)
+    if ValueNotEqual(left=dummy_id, right=0):
+        CreateAssetVFX(asset, vfx_id=90, dummy_id=dummy_id)
     else:
-        CreateAssetVFX(asset, vfx_id=90, model_point=6101)
+        CreateAssetVFX(asset, vfx_id=90, dummy_id=6101)
     Wait(1.5)
     OR_2.Add(FlagDisabled(flag))
     OR_2.Add(FlagRangeAllEnabled(flag_range=(first_flag, last_flag)))

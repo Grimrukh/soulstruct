@@ -24,8 +24,8 @@ def Constructor():
     """Event 0"""
     RegisterBonfire(bonfire_flag=13410001, obj=3411951, reaction_distance=5.0)
     CommonFunc_20005500(0, flag=13410830, bonfire_flag=13410000, character=3410950, obj=3411950)
-    CommonFunc_20005780(0, obj=3411750, model_point=2)
-    CommonFunc_20005780(0, obj=3411751, model_point=3)
+    CommonFunc_20005780(0, obj=3411750, dummy_id=2)
+    CommonFunc_20005780(0, obj=3411751, dummy_id=3)
     CommonFunc_20005701(
         0,
         left=13410830,
@@ -2255,7 +2255,7 @@ def Event_13417500(
     CreateHazard(
         obj_flag=obj_flag,
         obj=obj_1,
-        model_point=210,
+        dummy_id=210,
         behavior_param_id=5210,
         target_type=DamageTargetType.Character,
         radius=1.5,
@@ -2325,7 +2325,7 @@ def Event_13417600(
     CreateHazard(
         obj_flag=obj_flag,
         obj=obj_1,
-        model_point=210,
+        dummy_id=210,
         behavior_param_id=5210,
         target_type=DamageTargetType.Character,
         radius=1.5,
@@ -2548,7 +2548,7 @@ def Event_13415831():
         3410830,
         destination=3410832,
         destination_type=CoordEntityType.Character,
-        model_point=-1,
+        dummy_id=-1,
         copy_draw_parent=3410832,
     )
     DisableCharacter(3410832)
@@ -2630,7 +2630,7 @@ def Event_13415833():
         action_button_id=3411830,
         flag_2=13415836,
     )
-    CommonFunc_20005820(0, flag=13410830, obj=3411830, model_point=3, left=13410831)
+    CommonFunc_20005820(0, flag=13410830, obj=3411830, dummy_id=3, left=13410831)
     CommonFunc_20001836(
         0,
         flag=13410830,
@@ -2673,7 +2673,7 @@ def Event_13415841():
         3410831,
         destination=3410830,
         destination_type=CoordEntityType.Character,
-        model_point=50,
+        dummy_id=50,
         copy_draw_parent=3410830,
     )
     Restart()

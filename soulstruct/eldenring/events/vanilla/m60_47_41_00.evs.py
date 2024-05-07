@@ -257,7 +257,7 @@ def Event_1047412300():
         dismissal_flag=1047410230,
         unknown=0,
     )
-    CreateAssetVFX(Assets.AEG099_090_9000, vfx_id=100, model_point=30090)
+    CreateAssetVFX(Assets.AEG099_090_9000, vfx_id=100, dummy_id=30090)
     AND_3.Add(CharacterDead(Characters.KnightoftheGreatJar1))
     SkipLinesIfConditionTrue(2, AND_3)
     PlaceSummonSign(
@@ -268,7 +268,7 @@ def Event_1047412300():
         dismissal_flag=1047410231,
         unknown=0,
     )
-    CreateAssetVFX(Assets.AEG099_090_9001, vfx_id=100, model_point=30090)
+    CreateAssetVFX(Assets.AEG099_090_9001, vfx_id=100, dummy_id=30090)
     AND_4.Add(CharacterDead(Characters.KnightoftheGreatJar2))
     SkipLinesIfConditionTrue(2, AND_4)
     PlaceSummonSign(
@@ -279,7 +279,7 @@ def Event_1047412300():
         dismissal_flag=1047410232,
         unknown=0,
     )
-    CreateAssetVFX(Assets.AEG099_090_9002, vfx_id=100, model_point=30090)
+    CreateAssetVFX(Assets.AEG099_090_9002, vfx_id=100, dummy_id=30090)
     
     MAIN.Await(MultiplayerPending())
     

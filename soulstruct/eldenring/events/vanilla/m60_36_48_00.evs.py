@@ -51,7 +51,7 @@ def Constructor():
         seconds=0.0,
         animation_id=-1,
     )
-    CommonFunc_90005300(0, flag=1036480800, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1036480800, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005476(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
     RunCommonEvent(90005477)
     Event_1036482340(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
@@ -64,13 +64,13 @@ def Constructor():
         item_lot=1036480400,
         seconds=0.0,
     )
-    CommonFunc_90005872(0, character=Characters.NightsCavalry, npc_threat_level=10, right=0)
-    CommonFunc_90005871(
+    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.NightsCavalry, npc_threat_level=10, required_flag=0)
+    CommonFunc_NightsCavalryHealthBar(
         0,
-        character=Characters.NightsCavalry,
+        nights_cavalry=Characters.NightsCavalry,
         name=903150603,
         npc_threat_level=10,
-        character_1=Characters.NightsCavalryHorse,
+        horse=Characters.NightsCavalryHorse,
     )
     CommonFunc_90005703(
         0,

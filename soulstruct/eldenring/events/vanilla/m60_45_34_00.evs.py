@@ -68,7 +68,7 @@ def Constructor():
     CommonFunc_90005461(0, character=1045340207)
     CommonFunc_90005462(1, character=1045340207)
     CommonFunc_90005460(0, character=1045340207)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, model_point=800, right=1045348540)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, dummy_id=800, right=1045348540)
     CommonFunc_90005683(0, flag=62151, asset=Assets.AEG099_055_1000, vfx_id=208, flag_1=78198, flag_2=78198)
     CommonFunc_90005704(0, attacked_entity=Characters.IrinaofMorne0, flag=3381, flag_1=3380, flag_2=1045349201, right=3)
     CommonFunc_90005703(
@@ -107,7 +107,7 @@ def Constructor():
         first_flag=400061,
         last_flag=400061,
         flag=1045349258,
-        model_point=0,
+        dummy_id=0,
     )
     Event_1045340707(0, attacked_entity=Characters.Edgar)
 
@@ -119,7 +119,7 @@ def Preconstructor():
     DisableBackread(Characters.IrinaofMorne1)
     DisableBackread(Characters.Edgar)
     Event_1045340706()
-    CommonFunc_90005250(0, character=1045340405, region=1045342405, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=1045340405, region=1045342405, seconds=0.0, animation_id=0)
 
 
 @RestartOnRest(1045342250)
@@ -134,7 +134,7 @@ def Event_1045342680():
     """Event 1045342680"""
     MAIN.Await(FlagEnabled(1045348540))
     
-    CreateAssetVFX(Assets.AEG099_090_9001, vfx_id=100, model_point=800)
+    CreateAssetVFX(Assets.AEG099_090_9001, vfx_id=100, dummy_id=800)
 
 
 @RestartOnRest(1045340700)

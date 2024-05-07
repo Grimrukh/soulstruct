@@ -42,13 +42,13 @@ def Constructor():
     RunEvent(9240, slot=0, args=(2200710, 12204220, 12204221, 12204222, 22))
     RunEvent(9260, slot=0, args=(2200710, 12204220, 12204221, 12204222, 22))
     RunEvent(9280, slot=0, args=(2200710, 12204220, 12204221, 2200, 12204800, 22))
-    CreateObjectVFX(2201000, vfx_id=750, model_point=900110)
-    CreateObjectVFX(2201003, vfx_id=750, model_point=900110)
-    CreateObjectVFX(2201004, vfx_id=750, model_point=900110)
+    CreateObjectVFX(2201000, vfx_id=750, dummy_id=900110)
+    CreateObjectVFX(2201003, vfx_id=750, dummy_id=900110)
+    CreateObjectVFX(2201004, vfx_id=750, dummy_id=900110)
     CreateHazard(
         obj_flag=12200050,
         obj=2201000,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6010,
         target_type=DamageTargetType.Character,
         radius=0.5,
@@ -58,7 +58,7 @@ def Constructor():
     CreateHazard(
         obj_flag=12200051,
         obj=2201003,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6010,
         target_type=DamageTargetType.Character,
         radius=0.5,
@@ -68,7 +68,7 @@ def Constructor():
     CreateHazard(
         obj_flag=12200052,
         obj=2201004,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6010,
         target_type=DamageTargetType.Character,
         radius=0.5,
@@ -2420,7 +2420,7 @@ def Event_12205170(_, obj: int, owner_entity: int):
     ShootProjectile(
         owner_entity=owner_entity,
         source_entity=obj,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=6051,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -2435,7 +2435,7 @@ def Event_12205170(_, obj: int, owner_entity: int):
     ShootProjectile(
         owner_entity=owner_entity,
         source_entity=obj,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=6055,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -2444,7 +2444,7 @@ def Event_12205170(_, obj: int, owner_entity: int):
     ShootProjectile(
         owner_entity=owner_entity,
         source_entity=obj,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=6071,
         launch_angle_x=0,
         launch_angle_y=90,

@@ -25,7 +25,7 @@ from .enums.m60_45_37_00_enums import *
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, vfx_id=100, dummy_id=800, right=0)
     CommonFunc_90005251(0, character=1045370201, radius=80.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=1045370207, radius=50.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=1045370214, radius=10.0, seconds=0.0, animation_id=-1)
@@ -67,7 +67,7 @@ def Constructor():
         left_3=0,
     )
     Event_1045372344()
-    CommonFunc_90005300(0, flag=1045370200, character=Characters.Scarab, item_lot=40116, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1045370200, character=Characters.Scarab, item_lot=40116, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005400(0, character=Characters.Runebear3, special_effect=0, seconds=0.0, seconds_1=0.0, left=0)
     CommonFunc_90005401(0, flag=98101, character=Characters.Runebear3)
     CommonFunc_90005637(0, flag=1045378601, character=Characters.WanderingNoble, region=1045371620)
@@ -135,7 +135,7 @@ def Preconstructor():
 def Event_1045372200(_, asset: uint, entity: uint, flag: uint):
     """Event 1045372200"""
     GotoIfFlagEnabled(Label.L0, flag=flag)
-    CreateAssetVFX(asset, vfx_id=200, model_point=803220)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=803220)
 
     # --- Label 0 --- #
     DefineLabel(0)

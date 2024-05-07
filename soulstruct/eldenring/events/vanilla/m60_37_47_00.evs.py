@@ -58,4 +58,4 @@ def Constructor():
     )
     CommonFunc_90005251(0, character=Characters.WildMouflon, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.Runebear, radius=10.0, seconds=0.0, animation_id=-1)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)

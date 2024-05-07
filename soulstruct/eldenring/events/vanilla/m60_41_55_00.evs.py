@@ -63,7 +63,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.SmallerDog1, region=1041552352, seconds=0.0, animation_id=3000)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallerDog1, region=1041552352, seconds=0.0, animation_id=3000)
     Event_1041552350(0, character=Characters.DominulaCelebrant0, region=1041552200, character_1=1041555200)
     Event_1041552350(1, character=Characters.DominulaCelebrant1, region=1041552201, character_1=1041555200)
     Event_1041552350(2, character=Characters.DominulaCelebrant2, region=1041552202, character_1=1041555200)

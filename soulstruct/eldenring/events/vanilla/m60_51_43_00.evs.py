@@ -25,7 +25,7 @@ from .enums.m60_51_43_00_enums import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1051430000, asset=Assets.AEG099_060_9000)
-    CommonFunc_90005870(0, character=Characters.Gargoyle, name=904770600, npc_threat_level=16)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.Gargoyle, name=904770600, npc_threat_level=16)
     CommonFunc_90005860(
         0,
         flag=1051430800,
@@ -35,7 +35,7 @@ def Constructor():
         item_lot=30425,
         seconds=0.0,
     )
-    CommonFunc_90005872(0, character=Characters.Gargoyle, npc_threat_level=16, right=0)
+    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.Gargoyle, npc_threat_level=16, required_flag=0)
     Event_1051432209()
     Event_1051432200(0, character=Characters.Gargoyle, radius=55.0, seconds=0.0, animation_id=-1)
     Event_1051430700(0, character=Characters.BeastClergyman)
@@ -171,7 +171,7 @@ def Event_1051430700(_, character: uint):
             character,
             destination=1051432700,
             destination_type=CoordEntityType.Region,
-            model_point=900,
+            dummy_id=900,
             copy_draw_parent=character,
         )
         Goto(Label.L20)

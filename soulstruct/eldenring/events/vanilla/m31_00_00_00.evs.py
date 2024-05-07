@@ -656,7 +656,7 @@ def Event_31002849():
         flag_2=31002806,
         action_button_id=10000,
     )
-    Event_31002832(0, flag=31000800, asset=Assets.AEG099_001_9000, model_point=4, right=0)
+    Event_31002832(0, flag=31000800, asset=Assets.AEG099_001_9000, dummy_id=4, right=0)
     Event_31002833(
         0,
         flag=31000800,
@@ -804,7 +804,7 @@ def Event_31002830(
 
 
 @RestartOnRest(31002832)
-def Event_31002832(_, flag: uint, asset: uint, model_point: int, right: uint):
+def Event_31002832(_, flag: uint, asset: uint, dummy_id: int, right: uint):
     """Event 31002832"""
     if FlagEnabled(3691):
         return
@@ -846,7 +846,7 @@ def Event_31002832(_, flag: uint, asset: uint, model_point: int, right: uint):
     
     EnableAsset(asset)
     DeleteAssetVFX(asset)
-    CreateAssetVFX(asset, vfx_id=101, model_point=model_point)
+    CreateAssetVFX(asset, vfx_id=101, dummy_id=dummy_id)
     OR_11.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     OR_11.Add(CharacterType(PLAYER, character_type=CharacterType.Invader))
     OR_11.Add(CharacterType(PLAYER, character_type=CharacterType.Invader2))
@@ -952,7 +952,7 @@ def Event_31002899():
         left=0,
         region_1=0,
     )
-    Event_31002872(0, flag=31000850, asset=Assets.AEG099_001_9000, model_point=4, right=0)
+    Event_31002872(0, flag=31000850, asset=Assets.AEG099_001_9000, dummy_id=4, right=0)
     Event_31002873(
         0,
         flag=31000850,
@@ -1202,7 +1202,7 @@ def Event_31002870(
 
 
 @RestartOnRest(31002872)
-def Event_31002872(_, flag: uint, asset: uint, model_point: int, right: uint):
+def Event_31002872(_, flag: uint, asset: uint, dummy_id: int, right: uint):
     """Event 31002872"""
     if FlagDisabled(3691):
         return
@@ -1244,7 +1244,7 @@ def Event_31002872(_, flag: uint, asset: uint, model_point: int, right: uint):
     
     EnableAsset(asset)
     DeleteAssetVFX(asset)
-    CreateAssetVFX(asset, vfx_id=101, model_point=model_point)
+    CreateAssetVFX(asset, vfx_id=101, dummy_id=dummy_id)
     OR_11.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     OR_11.Add(CharacterType(PLAYER, character_type=CharacterType.Invader))
     OR_11.Add(CharacterType(PLAYER, character_type=CharacterType.Invader2))
@@ -1434,7 +1434,7 @@ def Event_31002876(
     MAIN.Await(AND_1)
     
     if ThisEventSlotFlagDisabled():
-        CreateAssetVFX(asset, vfx_id=190, model_point=1300)
+        CreateAssetVFX(asset, vfx_id=190, dummy_id=1300)
     OR_2.Add(MultiplayerPending())
     OR_2.Add(Multiplayer())
     AND_2.Add(not OR_2)
@@ -1841,13 +1841,13 @@ def Event_31003707():
     CreateTemporaryVFX(
         vfx_id=806881,
         anchor_entity=Assets.AEG099_520_9000,
-        model_point=90,
+        dummy_id=90,
         anchor_type=CoordEntityType.Asset,
     )
     CreateTemporaryVFX(
         vfx_id=806882,
         anchor_entity=Assets.AEG099_520_9000,
-        model_point=90,
+        dummy_id=90,
         anchor_type=CoordEntityType.Asset,
     )
     FadeToBlack(strength=0.0, duration=0.0, freeze_player=True, freeze_player_delay=0.0)

@@ -52,12 +52,12 @@ def Constructor():
     Event_13200990()
     Event_13200950()
     Event_13200960()
-    CreateObjectVFX(3201000, vfx_id=200, model_point=900130)
-    CreateObjectVFX(3201001, vfx_id=200, model_point=900130)
-    CreateObjectVFX(3201002, vfx_id=200, model_point=900130)
-    CreateObjectVFX(3201003, vfx_id=200, model_point=900130)
-    CreateObjectVFX(3201004, vfx_id=200, model_point=900130)
-    CreateObjectVFX(3201005, vfx_id=200, model_point=900130)
+    CreateObjectVFX(3201000, vfx_id=200, dummy_id=900130)
+    CreateObjectVFX(3201001, vfx_id=200, dummy_id=900130)
+    CreateObjectVFX(3201002, vfx_id=200, dummy_id=900130)
+    CreateObjectVFX(3201003, vfx_id=200, dummy_id=900130)
+    CreateObjectVFX(3201004, vfx_id=200, dummy_id=900130)
+    CreateObjectVFX(3201005, vfx_id=200, dummy_id=900130)
     DeleteVFX(3203910, erase_root_only=False)
     DeleteVFX(3203911, erase_root_only=False)
     DeleteVFX(3203912, erase_root_only=False)
@@ -1060,7 +1060,7 @@ def Event_13200400():
     AND_15.Add(CharacterHuman(PLAYER))
     if not AND_15:
         return
-    CreateObjectVFX(3201010, vfx_id=200, model_point=900201)
+    CreateObjectVFX(3201010, vfx_id=200, dummy_id=900201)
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=3200010, entity=3201010))
     
@@ -1810,7 +1810,7 @@ def Event_13204820():
     
     GotoIfClient(Label.L0)
     EnableInvincibility(PLAYER)
-    CreateTemporaryVFX(vfx_id=932210, anchor_entity=PLAYER, model_point=246, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=932210, anchor_entity=PLAYER, dummy_id=246, anchor_type=CoordEntityType.Character)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -1831,7 +1831,7 @@ def Event_13204821():
     MAIN.Await(AND_1)
     
     EnableInvincibility(PLAYER)
-    CreateTemporaryVFX(vfx_id=932210, anchor_entity=PLAYER, model_point=246, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=932210, anchor_entity=PLAYER, dummy_id=246, anchor_type=CoordEntityType.Character)
     Wait(5.0)
     DisableInvincibility(PLAYER)
     EnableFlag(13204801)
@@ -2014,7 +2014,7 @@ def Event_13205200():
         3200621,
         destination=3200620,
         destination_type=CoordEntityType.Character,
-        model_point=90,
+        dummy_id=90,
         copy_draw_parent=3200620,
     )
     EnableCharacter(3200621)

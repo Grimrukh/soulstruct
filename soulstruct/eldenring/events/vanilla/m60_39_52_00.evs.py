@@ -69,7 +69,7 @@ def Constructor():
         left=0,
     )
     CommonFunc_90005631(0, anchor_entity=Assets.AEG099_376_1000, text=61031)
-    CommonFunc_90005300(0, flag=1039520500, character=Characters.Scarab, item_lot=40306, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1039520500, character=Characters.Scarab, item_lot=40306, seconds=0.0, item_is_dropped=0)
     Event_1039523700(0, character=Characters.YuraHunterofBloodyFingers)
     Event_1039523701(0, character=Characters.YuraHunterofBloodyFingers)
     Event_1039523703(0, asset=Assets.AEG099_429_9000, asset_1=Assets.AEG099_429_9001, asset_2=Assets.AEG099_429_9002)
@@ -83,7 +83,7 @@ def Constructor():
         first_flag=400163,
         last_flag=400163,
         flag=1039529205,
-        model_point=0,
+        dummy_id=0,
     )
 
 
@@ -171,7 +171,7 @@ def Preconstructor():
         left_3=0,
     )
     Event_1039522400()
-    CommonFunc_90005300(0, flag=1039520400, character=Characters.SanguineNoble, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1039520400, character=Characters.SanguineNoble, item_lot=0, seconds=0.0, item_is_dropped=0)
 
 
 @RestartOnRest(1039522220)

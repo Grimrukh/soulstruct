@@ -26,15 +26,15 @@ def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1049370000, asset=Assets.AEG099_060_9000)
     CommonFunc_90005251(0, character=1049370200, radius=20.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005300(0, flag=1049370800, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1049370800, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005476(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
     Event_1049372291(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
-    CommonFunc_90005871(
+    CommonFunc_NightsCavalryHealthBar(
         0,
-        character=Characters.NightsCavalry,
+        nights_cavalry=Characters.NightsCavalry,
         name=903150605,
         npc_threat_level=10,
-        character_1=Characters.NightsCavalryHorse,
+        horse=Characters.NightsCavalryHorse,
     )
     CommonFunc_90005860(
         0,
@@ -45,8 +45,8 @@ def Constructor():
         item_lot=1049370100,
         seconds=0.0,
     )
-    CommonFunc_90005872(0, character=Characters.NightsCavalry, npc_threat_level=10, right=0)
-    CommonFunc_90005870(0, character=Characters.DeathRiteBird, name=904980606, npc_threat_level=24)
+    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.NightsCavalry, npc_threat_level=10, required_flag=0)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.DeathRiteBird, name=904980606, npc_threat_level=24)
     CommonFunc_90005860(
         0,
         flag=1049370850,
@@ -57,7 +57,7 @@ def Constructor():
         seconds=0.0,
     )
     Event_1049372299()
-    CommonFunc_90005300(0, flag=1049370299, character=Characters.LionGuardian, item_lot=1049370700, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1049370299, character=Characters.LionGuardian, item_lot=1049370700, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005725(
         0,
         flag=4780,

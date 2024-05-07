@@ -45,7 +45,7 @@ def Constructor():
     )
     RegisterGrace(grace_flag=1035500000, asset=Assets.AEG099_060_9002)
     RegisterGrace(grace_flag=1035500001, asset=Assets.AEG099_060_9001)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, dummy_id=800, right=0)
     Event_1035502200(0, region=1035502700)
     CommonFunc_9005810(
         0,
@@ -55,8 +55,8 @@ def Constructor():
         asset=Assets.AEG099_060_9000,
         enemy_block_distance=5.0,
     )
-    CommonFunc_90005300(0, flag=1035500322, character=Characters.Scarab1, item_lot=40220, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=1035500320, character=Characters.Scarab0, item_lot=40250, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1035500322, character=Characters.Scarab1, item_lot=40220, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1035500320, character=Characters.Scarab0, item_lot=40250, seconds=0.0, item_is_dropped=0)
     Event_1035502580()
     CommonFunc_90005501(
         0,
@@ -480,9 +480,9 @@ def Constructor():
     )
     CommonFunc_90005251(0, character=1035500303, radius=15.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.Page0, region=1035502311, radius=18.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Page1, region=1035502313, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Page2, region=1035502314, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BigWolf, region=1035502342, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Page1, region=1035502313, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Page2, region=1035502314, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BigWolf, region=1035502342, seconds=0.0, animation_id=0)
     CommonFunc_90005200(
         0,
         character=Characters.Fingercreeper0,
@@ -533,13 +533,13 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.LargeCrabSnow, region=1035502390, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.LiurniaTroll, region=1035502391, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LargeCrabSnow, region=1035502390, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LiurniaTroll, region=1035502391, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.IronVirgin, radius=5.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier0, region=1035502400, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier1, region=1035502400, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier2, region=1035502402, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier5, region=1035502409, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaSoldier0, region=1035502400, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaSoldier1, region=1035502400, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaSoldier2, region=1035502402, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaSoldier5, region=1035502409, seconds=0.0, animation_id=-1)
     CommonFunc_90005260(
         0,
         character=Characters.RayaLucariaSoldier6,
@@ -548,9 +548,9 @@ def Constructor():
         seconds=0.0,
         animation_id=-1,
     )
-    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier7, region=1035502411, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier8, region=1035502412, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier9, region=1035502412, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaSoldier7, region=1035502411, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaSoldier8, region=1035502412, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaSoldier9, region=1035502412, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.RayaLucariaSoldier10,
@@ -564,7 +564,7 @@ def Constructor():
         left_3=0,
     )
     CommonFunc_90005251(0, character=Characters.RayaLucariaSoldier11, radius=17.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier12, region=1035502416, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaSoldier12, region=1035502416, seconds=0.0, animation_id=-1)
     CommonFunc_90005260(
         0,
         character=Characters.RayaLucariaSoldier17,
@@ -626,7 +626,7 @@ def Constructor():
         first_flag=400149,
         last_flag=400149,
         flag=1035509215,
-        model_point=0,
+        dummy_id=0,
     )
     CommonFunc_90005750(
         0,
@@ -636,7 +636,7 @@ def Constructor():
         first_flag=400149,
         last_flag=400149,
         flag=1035509216,
-        model_point=0,
+        dummy_id=0,
     )
     CommonFunc_90005706(0, character=Characters.CariaManorSilentSpirit, animation_id=90102, left=0)
 
@@ -706,7 +706,7 @@ def Event_1035502210(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -716,7 +716,7 @@ def Event_1035502210(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402010,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -726,7 +726,7 @@ def Event_1035502210(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402020,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -736,7 +736,7 @@ def Event_1035502210(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402030,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -746,7 +746,7 @@ def Event_1035502210(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402040,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -756,7 +756,7 @@ def Event_1035502210(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402050,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -766,7 +766,7 @@ def Event_1035502210(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402060,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -776,7 +776,7 @@ def Event_1035502210(_, asset: uint, flag: uint, owner_entity: uint):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=asset,
-            model_point=100,
+            dummy_id=100,
             behavior_id=802402070,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1151,8 +1151,8 @@ def Event_1035502849():
         flag_2=1035502806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=1035500800, asset=Assets.AEG099_003_9000, model_point=3, right=1035500801)
-    CommonFunc_9005813(0, flag=1035500800, asset=Assets.AEG099_003_9001, model_point=3, right=0, model_point_1=3)
+    CommonFunc_9005811(0, flag=1035500800, asset=Assets.AEG099_003_9000, dummy_id=3, right=1035500801)
+    CommonFunc_9005813(0, flag=1035500800, asset=Assets.AEG099_003_9001, dummy_id=3, right=0, dummy_id_1=3)
     CommonFunc_9005822(
         0,
         flag=1035500800,

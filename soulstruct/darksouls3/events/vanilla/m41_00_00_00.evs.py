@@ -110,7 +110,7 @@ def Event_14100100():
     MAIN.Await(AND_1)
     
     if FlagDisabled(14105100):
-        CreateObjectVFX(4101100, vfx_id=0, model_point=30001)
+        CreateObjectVFX(4101100, vfx_id=0, dummy_id=30001)
     AND_2.Add(FlagDisabled(101))
     AND_2.Add(LeavingSession())
     AND_2.Add(ActionButtonParamActivated(action_button_id=9341, entity=4101100))
@@ -334,7 +334,7 @@ def Event_14100800():
     EnableFlag(14101100)
     EnableFlag(9321)
     EnableFlag(6321)
-    CreateTemporaryVFX(vfx_id=1060, anchor_entity=4101952, model_point=200, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=1060, anchor_entity=4101952, dummy_id=200, anchor_type=CoordEntityType.Object)
 
 
 @RestartOnRest(14105810)
@@ -503,7 +503,7 @@ def Event_14005829():
         sound_id_1=4104801,
         flag_3=14105802,
     )
-    CommonFunc_20005820(0, flag=14100800, obj=4101800, model_point=4, left=14100801)
+    CommonFunc_20005820(0, flag=14100800, obj=4101800, dummy_id=4, left=14100801)
     CommonFunc_20005810(0, flag=14100800, entity=4101800, target_entity=4102800, action_button_id=10000)
 
 

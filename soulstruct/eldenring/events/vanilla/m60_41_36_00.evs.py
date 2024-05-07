@@ -24,7 +24,7 @@ from .enums.m60_41_36_00_enums import *
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, dummy_id=800, right=0)
     CommonFunc_90005460(0, character=Characters.GiantOctopus0)
     CommonFunc_90005461(0, character=Characters.GiantOctopus0)
     CommonFunc_90005462(0, character=Characters.GiantOctopus0)

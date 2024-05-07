@@ -44,7 +44,7 @@ def Constructor():
         flag_10=78528,
         flag_11=78529,
     )
-    CommonFunc_90005300(0, flag=1049540200, character=Characters.Scarab, item_lot=1049540700, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1049540200, character=Characters.Scarab, item_lot=1049540700, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005501(
         0,
         flag=1049540510,
@@ -62,7 +62,7 @@ def Constructor():
     CommonFunc_90005261(0, character=Characters.Wolf, region=1049542260, radius=10.0, seconds=0.0, animation_id=20010)
     CommonFunc_90005261(0, character=1049540373, region=1049542260, radius=10.0, seconds=0.0, animation_id=20002)
     Event_1049542350(0, character=Characters.AlbinauricArcher, character_1=Characters.BigWolf)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, dummy_id=800, right=0)
     Event_1049543700(0, character=Characters.TalkDummy1, region=1049542700, distance=155.0)
     CommonFunc_90005706(0, character=Characters.WanderingNoble4, animation_id=930023, left=0)
 
@@ -199,7 +199,7 @@ def Event_1049542216(_, character: uint):
     EnableImmortality(character)
     DisableAnimations(character)
     ForceAnimation(character, 30005, loop=True)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
     DisableHealthBar(character)
     End()
 
@@ -221,7 +221,7 @@ def Event_1049542350(_, character: uint, character_1: uint):
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=283,
+        dummy_id=283,
         set_draw_parent=0,
     )
     WaitFrames(frames=1)

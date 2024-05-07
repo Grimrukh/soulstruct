@@ -25,7 +25,7 @@ from .enums.m60_46_39_00_enums import *
 def Constructor():
     """Event 0"""
     Event_1035472602()
-    CommonFunc_90005300(0, flag=1046390210, character=Characters.Scarab, item_lot=40118, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1046390210, character=Characters.Scarab, item_lot=40118, seconds=0.0, item_is_dropped=0)
     Event_1035472200(
         0,
         asset=Assets.AEG099_510_9000,
@@ -85,7 +85,7 @@ def Event_1035472200(
     GotoIfConditionTrue(Label.L1, input_condition=OR_10)
     GotoIfFlagEnabled(Label.L1, flag=flag)
     DeleteAssetVFX(asset)
-    CreateAssetVFX(asset, vfx_id=200, model_point=806870)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=806870)
     EnableFlag(flag)
 
     # --- Label 1 --- #

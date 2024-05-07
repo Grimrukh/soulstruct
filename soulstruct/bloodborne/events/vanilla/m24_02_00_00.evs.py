@@ -72,7 +72,7 @@ def Constructor():
     CreateHazard(
         obj_flag=12420020,
         obj=2421230,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6110,
         target_type=DamageTargetType.Character,
         radius=0.6000000238418579,
@@ -863,7 +863,7 @@ def Event_12424990():
     ShootProjectile(
         owner_entity=2420801,
         source_entity=2420800,
-        model_point=6,
+        dummy_id=6,
         behavior_id=225100310,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1470,7 +1470,7 @@ def Event_12424790():
         2420811,
         destination=2420810,
         destination_type=CoordEntityType.Character,
-        model_point=203,
+        dummy_id=203,
         copy_draw_parent=2420810,
     )
     EnableGravity(2420811)
@@ -1490,14 +1490,14 @@ def Event_12424791():
         2420750,
         destination=2420811,
         destination_type=CoordEntityType.Character,
-        model_point=40,
+        dummy_id=40,
         copy_draw_parent=2420811,
     )
     Move(
         2420751,
         destination=2420811,
         destination_type=CoordEntityType.Character,
-        model_point=41,
+        dummy_id=41,
         copy_draw_parent=2420811,
     )
     Restart()
@@ -1615,8 +1615,8 @@ def Event_12420123():
     MAIN.Await(ObjectActivated(obj_act_id=12420122))
     
     ForceAnimation(2421200, 1)
-    CreateObjectVFX(2421200, vfx_id=200, model_point=920204)
-    CreateObjectVFX(2421200, vfx_id=201, model_point=920205)
+    CreateObjectVFX(2421200, vfx_id=200, dummy_id=920204)
+    CreateObjectVFX(2421200, vfx_id=201, dummy_id=920205)
 
 
 @ContinueOnRest(12420124)
@@ -1889,47 +1889,47 @@ def Event_12420320():
     DisableAI(2420202)
     DisableGravity(2420202)
     ForceAnimation(2420202, 7012, loop=True)
-    CreateObjectVFX(2421300, vfx_id=100, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=101, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=102, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=103, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=104, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=105, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=106, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=107, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=108, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=109, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=110, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=111, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=112, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=113, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=114, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=115, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=116, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=117, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=118, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=119, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=120, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=121, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=122, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=123, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=124, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=125, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=126, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=127, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=128, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=129, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=130, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=131, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=132, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=133, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=134, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=135, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=136, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=137, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=138, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=139, model_point=924500)
-    CreateObjectVFX(2421300, vfx_id=201, model_point=924501)
+    CreateObjectVFX(2421300, vfx_id=100, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=101, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=102, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=103, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=104, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=105, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=106, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=107, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=108, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=109, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=110, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=111, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=112, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=113, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=114, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=115, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=116, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=117, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=118, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=119, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=120, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=121, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=122, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=123, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=124, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=125, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=126, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=127, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=128, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=129, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=130, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=131, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=132, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=133, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=134, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=135, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=136, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=137, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=138, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=139, dummy_id=924500)
+    CreateObjectVFX(2421300, vfx_id=201, dummy_id=924501)
     OR_1.Add(CharacterHuman(PLAYER))
     OR_1.Add(CharacterWhitePhantom(PLAYER))
     AND_1.Add(CharacterInsideRegion(PLAYER, region=2422653))
@@ -1944,9 +1944,9 @@ def Event_12420320():
     ForceAnimation(2421300, 1)
     WaitFrames(frames=81)
     DeleteObjectVFX(2421300, erase_root=False)
-    CreateObjectVFX(2421300, vfx_id=201, model_point=924502)
+    CreateObjectVFX(2421300, vfx_id=201, dummy_id=924502)
     WaitFrames(frames=32)
-    CreateObjectVFX(2421300, vfx_id=201, model_point=924503)
+    CreateObjectVFX(2421300, vfx_id=201, dummy_id=924503)
     DisableObject(2421300)
     EnableObject(2421301)
     DestroyObject(2421301)
@@ -2057,8 +2057,8 @@ def Event_12420853():
     
     Wait(6.0)
     CreateVFX(2427031)
-    CreateTemporaryVFX(vfx_id=920206, anchor_entity=2421204, model_point=200, anchor_type=CoordEntityType.Object)
-    CreateTemporaryVFX(vfx_id=920207, anchor_entity=2421204, model_point=242, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=920206, anchor_entity=2421204, dummy_id=200, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=920207, anchor_entity=2421204, dummy_id=242, anchor_type=CoordEntityType.Object)
     Wait(4.0)
     CreateVFX(2427032)
     CreateVFX(2427033)
@@ -2405,7 +2405,7 @@ def Event_12425601():
     
     MAIN.Await(AND_1)
     
-    Move(2420731, destination=2420402, destination_type=CoordEntityType.Character, model_point=40, short_move=True)
+    Move(2420731, destination=2420402, destination_type=CoordEntityType.Character, dummy_id=40, short_move=True)
     Restart()
 
 

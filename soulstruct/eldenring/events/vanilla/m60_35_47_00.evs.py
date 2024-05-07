@@ -37,10 +37,10 @@ def Constructor():
     Event_1035472222()
     Event_1035472200()
     Event_1035472210()
-    CommonFunc_90005300(0, flag=1035470200, character=Characters.Turtle0, item_lot=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=1035470201, character=Characters.Turtle1, item_lot=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=1035470202, character=Characters.Turtle2, item_lot=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=1035470220, character=Characters.Scarab1, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1035470200, character=Characters.Turtle0, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1035470201, character=Characters.Turtle1, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1035470202, character=Characters.Turtle2, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1035470220, character=Characters.Scarab1, item_lot=0, seconds=0.0, item_is_dropped=0)
     Event_1035472240(
         0,
         character=Characters.Scarab0,
@@ -49,7 +49,7 @@ def Constructor():
         region_1=1035472241,
         region_2=1035472242,
     )
-    CommonFunc_90005300(0, flag=1035470260, character=Characters.Scarab0, item_lot=40210, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1035470260, character=Characters.Scarab0, item_lot=40210, seconds=0.0, item_is_dropped=0)
     Event_1035472270()
     Event_1035472270(slot=1)
 
@@ -213,7 +213,7 @@ def Event_1035472220():
     # --- Label 0 --- #
     DefineLabel(0)
     DeleteAssetVFX(Assets.AEG099_251_2000)
-    CreateAssetVFX(Assets.AEG099_251_2000, vfx_id=200, model_point=1500)
+    CreateAssetVFX(Assets.AEG099_251_2000, vfx_id=200, dummy_id=1500)
     AND_1.Add(FlagEnabled(1035470200))
     AND_1.Add(FlagEnabled(1035470201))
     AND_1.Add(FlagEnabled(1035470202))
@@ -348,7 +348,7 @@ def Event_1035472270():
         ShootProjectile(
             owner_entity=Characters.Dummy,
             source_entity=1035472271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -358,7 +358,7 @@ def Event_1035472270():
         ShootProjectile(
             owner_entity=Characters.Dummy,
             source_entity=1035472271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102010,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -368,7 +368,7 @@ def Event_1035472270():
         ShootProjectile(
             owner_entity=Characters.Dummy,
             source_entity=1035472271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102020,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -378,7 +378,7 @@ def Event_1035472270():
         ShootProjectile(
             owner_entity=Characters.Dummy,
             source_entity=1035472271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102030,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -388,7 +388,7 @@ def Event_1035472270():
         ShootProjectile(
             owner_entity=Characters.Dummy,
             source_entity=1035472271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102040,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -398,7 +398,7 @@ def Event_1035472270():
         ShootProjectile(
             owner_entity=Characters.Dummy,
             source_entity=1035472271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102050,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -408,7 +408,7 @@ def Event_1035472270():
         ShootProjectile(
             owner_entity=Characters.Dummy,
             source_entity=1035472271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102060,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -418,7 +418,7 @@ def Event_1035472270():
         ShootProjectile(
             owner_entity=Characters.Dummy,
             source_entity=1035472271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102070,
             launch_angle_x=0,
             launch_angle_y=0,

@@ -45,7 +45,7 @@ def Constructor():
         0,
         flag=1034510739,
         asset=Assets.AEG099_251_2000,
-        model_point=1506,
+        dummy_id=1506,
         action_button_id=9320,
         text=30051,
         left=0,

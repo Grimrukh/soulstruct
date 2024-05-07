@@ -918,7 +918,7 @@ def Event_12100114():
     
     MAIN.Await(FlagEnabled(7500))
     
-    CreateTemporaryVFX(vfx_id=178, anchor_entity=PLAYER, model_point=1, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=178, anchor_entity=PLAYER, dummy_id=1, anchor_type=CoordEntityType.Character)
     DisableFlag(7500)
     Restart()
 
@@ -2637,7 +2637,7 @@ def Event_12105010():
     MAIN.Await(OR_1)
     
     WaitFrames(frames=31)
-    CreateTemporaryVFX(vfx_id=350, anchor_entity=2100954, model_point=200, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=350, anchor_entity=2100954, dummy_id=200, anchor_type=CoordEntityType.Character)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
     GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
     GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_3)
@@ -2720,7 +2720,7 @@ def Event_12105010():
 
     # --- Label 9 --- #
     DefineLabel(9)
-    CreateTemporaryVFX(vfx_id=351, anchor_entity=2100954, model_point=200, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=351, anchor_entity=2100954, dummy_id=200, anchor_type=CoordEntityType.Character)
     Restart()
 
 
@@ -2776,7 +2776,7 @@ def Event_12105011():
     MAIN.Await(OR_1)
     
     WaitFrames(frames=31)
-    CreateTemporaryVFX(vfx_id=350, anchor_entity=2100955, model_point=200, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=350, anchor_entity=2100955, dummy_id=200, anchor_type=CoordEntityType.Character)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
     GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
     GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_3)
@@ -2877,7 +2877,7 @@ def Event_12105011():
 
     # --- Label 9 --- #
     DefineLabel(9)
-    CreateTemporaryVFX(vfx_id=351, anchor_entity=2100955, model_point=200, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=351, anchor_entity=2100955, dummy_id=200, anchor_type=CoordEntityType.Character)
     Restart()
 
 
@@ -2933,7 +2933,7 @@ def Event_12105012():
     MAIN.Await(OR_1)
     
     WaitFrames(frames=31)
-    CreateTemporaryVFX(vfx_id=350, anchor_entity=2100956, model_point=200, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=350, anchor_entity=2100956, dummy_id=200, anchor_type=CoordEntityType.Character)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
     GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
     GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_3)
@@ -3034,7 +3034,7 @@ def Event_12105012():
 
     # --- Label 9 --- #
     DefineLabel(9)
-    CreateTemporaryVFX(vfx_id=351, anchor_entity=2100956, model_point=200, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=351, anchor_entity=2100956, dummy_id=200, anchor_type=CoordEntityType.Character)
     Restart()
 
 
@@ -3090,7 +3090,7 @@ def Event_12105013():
     MAIN.Await(OR_1)
     
     WaitFrames(frames=31)
-    CreateTemporaryVFX(vfx_id=350, anchor_entity=2100957, model_point=200, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=350, anchor_entity=2100957, dummy_id=200, anchor_type=CoordEntityType.Character)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
     GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
     GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_3)
@@ -3191,7 +3191,7 @@ def Event_12105013():
 
     # --- Label 9 --- #
     DefineLabel(9)
-    CreateTemporaryVFX(vfx_id=351, anchor_entity=2100957, model_point=200, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=351, anchor_entity=2100957, dummy_id=200, anchor_type=CoordEntityType.Character)
     Restart()
 
 
@@ -3247,7 +3247,7 @@ def Event_12105014():
     MAIN.Await(OR_1)
     
     WaitFrames(frames=31)
-    CreateTemporaryVFX(vfx_id=350, anchor_entity=2100958, model_point=200, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=350, anchor_entity=2100958, dummy_id=200, anchor_type=CoordEntityType.Character)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
     GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
     GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_3)
@@ -3348,7 +3348,7 @@ def Event_12105014():
 
     # --- Label 9 --- #
     DefineLabel(9)
-    CreateTemporaryVFX(vfx_id=351, anchor_entity=2100958, model_point=200, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=351, anchor_entity=2100958, dummy_id=200, anchor_type=CoordEntityType.Character)
     Restart()
 
 
@@ -3404,7 +3404,7 @@ def Event_12105015():
     MAIN.Await(OR_1)
     
     WaitFrames(frames=31)
-    CreateTemporaryVFX(vfx_id=350, anchor_entity=2100959, model_point=200, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=350, anchor_entity=2100959, dummy_id=200, anchor_type=CoordEntityType.Character)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
     GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
     GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_3)
@@ -3505,7 +3505,7 @@ def Event_12105015():
 
     # --- Label 9 --- #
     DefineLabel(9)
-    CreateTemporaryVFX(vfx_id=351, anchor_entity=2100959, model_point=200, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=351, anchor_entity=2100959, dummy_id=200, anchor_type=CoordEntityType.Character)
     Restart()
 
 
@@ -3561,7 +3561,7 @@ def Event_12105016():
     MAIN.Await(OR_1)
     
     WaitFrames(frames=31)
-    CreateTemporaryVFX(vfx_id=350, anchor_entity=2100960, model_point=200, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=350, anchor_entity=2100960, dummy_id=200, anchor_type=CoordEntityType.Character)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
     GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
     GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_3)
@@ -3662,7 +3662,7 @@ def Event_12105016():
 
     # --- Label 9 --- #
     DefineLabel(9)
-    CreateTemporaryVFX(vfx_id=351, anchor_entity=2100960, model_point=200, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=351, anchor_entity=2100960, dummy_id=200, anchor_type=CoordEntityType.Character)
     Restart()
 
 

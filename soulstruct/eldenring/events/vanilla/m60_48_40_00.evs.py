@@ -118,8 +118,8 @@ def Event_1048402849():
         flag_2=1048402806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=1048400800, asset=Assets.AEG099_003_9000, model_point=3, right=0)
-    CommonFunc_9005811(0, flag=1048400800, asset=Assets.AEG099_003_9001, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=1048400800, asset=Assets.AEG099_003_9000, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=1048400800, asset=Assets.AEG099_003_9001, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=1048400800,

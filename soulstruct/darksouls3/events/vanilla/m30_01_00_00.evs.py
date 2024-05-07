@@ -26,9 +26,9 @@ def Constructor():
     RegisterBonfire(bonfire_flag=13010002, obj=3011952, reaction_distance=5.0)
     CommonFunc_20005500(0, flag=13010800, bonfire_flag=13010001, character=3010951, obj=3011951)
     Event_13015470()
-    CommonFunc_20005780(0, obj=3011750, model_point=3)
-    CommonFunc_20005780(0, obj=3011751, model_point=3)
-    CommonFunc_20005780(0, obj=3011753, model_point=3)
+    CommonFunc_20005780(0, obj=3011750, dummy_id=3)
+    CommonFunc_20005780(0, obj=3011751, dummy_id=3)
+    CommonFunc_20005780(0, obj=3011753, dummy_id=3)
     CommonFunc_20005400(0, character=3010300)
     CommonFunc_20005400(0, character=3010301)
     CommonFunc_20005110(0, character=3010350, region=3012380)
@@ -139,8 +139,8 @@ def Constructor():
     Event_13015590(1, flag=13010891, character=3010831, tae_event_id=30)
     Event_13015556(0, character=3010835, flag=13010895, flag_1=13010890, flag_2=13015550)
     Event_13015557(0, character=3010836, flag=13010896, flag_1=13010891)
-    Event_13015558(0, character=3010835, destination=3010830, flag=13010895, model_point=40)
-    Event_13015559(0, character=3010836, destination=3010831, flag=13010896, model_point=41)
+    Event_13015558(0, character=3010835, destination=3010830, flag=13010895, dummy_id=40)
+    Event_13015559(0, character=3010836, destination=3010831, flag=13010896, dummy_id=41)
     Event_13015580()
     Event_13015581()
     Event_13015585()
@@ -554,7 +554,7 @@ def Event_13015210(_, flag: int, obj: int):
     CreateHazard(
         obj_flag=13015211,
         obj=obj,
-        model_point=40,
+        dummy_id=40,
         behavior_param_id=5300,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -564,7 +564,7 @@ def Event_13015210(_, flag: int, obj: int):
     CreateHazard(
         obj_flag=13015212,
         obj=obj,
-        model_point=41,
+        dummy_id=41,
         behavior_param_id=5300,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -574,7 +574,7 @@ def Event_13015210(_, flag: int, obj: int):
     CreateHazard(
         obj_flag=13015213,
         obj=obj,
-        model_point=42,
+        dummy_id=42,
         behavior_param_id=5300,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -584,7 +584,7 @@ def Event_13015210(_, flag: int, obj: int):
     CreateHazard(
         obj_flag=13015214,
         obj=obj,
-        model_point=43,
+        dummy_id=43,
         behavior_param_id=5300,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -594,7 +594,7 @@ def Event_13015210(_, flag: int, obj: int):
     CreateHazard(
         obj_flag=13015215,
         obj=obj,
-        model_point=44,
+        dummy_id=44,
         behavior_param_id=5300,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -604,7 +604,7 @@ def Event_13015210(_, flag: int, obj: int):
     CreateHazard(
         obj_flag=13015216,
         obj=obj,
-        model_point=45,
+        dummy_id=45,
         behavior_param_id=5300,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -614,7 +614,7 @@ def Event_13015210(_, flag: int, obj: int):
     CreateHazard(
         obj_flag=13015217,
         obj=obj,
-        model_point=46,
+        dummy_id=46,
         behavior_param_id=5300,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -624,7 +624,7 @@ def Event_13015210(_, flag: int, obj: int):
     CreateHazard(
         obj_flag=13015218,
         obj=obj,
-        model_point=47,
+        dummy_id=47,
         behavior_param_id=5300,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -949,7 +949,7 @@ def Event_13015550(_, character: int):
     EnableImmortality(character)
     ForceAnimation(character, 30002, loop=True, unknown2=1.0)
     DisableHealthBar(character)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
     WaitFrames(frames=1)
     SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.EveryFiveFrames)
 
@@ -997,7 +997,7 @@ def Event_13015551(_, character: int):
     DisableAnimations(character)
     ForceAnimation(character, 30002, loop=True, unknown2=1.0)
     DisableHealthBar(character)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
     WaitFrames(frames=1)
     SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.EveryFiveFrames)
 
@@ -1034,12 +1034,12 @@ def Event_13015555():
     # --- Label 0 --- #
     DefineLabel(0)
     DisableHealthBar(3010830)
-    SetLockOnPoint(character=3010830, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=3010830, lock_on_dummy_id=220, state=False)
     ForceAnimation(3010830, 20005, unknown2=1.0)
     DisableAnimations(3010830)
     Wait(3.0)
     DisableHealthBar(3010831)
-    SetLockOnPoint(character=3010831, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=3010831, lock_on_dummy_id=220, state=False)
     DisableAnimations(3010831)
     ForceAnimation(3010831, 20005, wait_for_completion=True, unknown2=1.0)
     SetNetworkUpdateRate(3010830, is_fixed=True, update_rate=CharacterUpdateRate.EveryFiveFrames)
@@ -1049,12 +1049,12 @@ def Event_13015555():
     # --- Label 1 --- #
     DefineLabel(1)
     DisableHealthBar(3010831)
-    SetLockOnPoint(character=3010831, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=3010831, lock_on_dummy_id=220, state=False)
     ForceAnimation(3010831, 20005, unknown2=1.0)
     DisableAnimations(3010831)
     Wait(3.0)
     DisableHealthBar(3010830)
-    SetLockOnPoint(character=3010830, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=3010830, lock_on_dummy_id=220, state=False)
     DisableAnimations(3010830)
     ForceAnimation(3010830, 20005, wait_for_completion=True, unknown2=1.0)
     SetNetworkUpdateRate(3010830, is_fixed=True, update_rate=CharacterUpdateRate.EveryFiveFrames)
@@ -1067,7 +1067,7 @@ def Event_13015556(_, character: int, flag: int, flag_1: int, flag_2: int):
     """Event 13015556"""
     DisableCharacter(character)
     DisableAnimations(character)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
     if FlagEnabled(flag):
         return
     
@@ -1086,7 +1086,7 @@ def Event_13015556(_, character: int, flag: int, flag_1: int, flag_2: int):
     MAIN.Await(FlagEnabled(flag_1))
     
     EnableAI(character)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=True)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=True)
     DisableInvincibility(character)
     EnableHealthBar(character)
     ForceAnimation(character, 1700, unknown2=1.0)
@@ -1096,7 +1096,7 @@ def Event_13015556(_, character: int, flag: int, flag_1: int, flag_2: int):
     EnableCharacter(character)
     EnableAnimations(character)
     EnableAI(character)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=True)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=True)
     DisableInvincibility(character)
     EnableHealthBar(character)
     
@@ -1118,7 +1118,7 @@ def Event_13015557(_, character: int, flag: int, flag_1: int):
     """Event 13015557"""
     DisableCharacter(character)
     DisableAnimations(character)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
     DisableHealthBar(character)
     DisableCharacterCollision(character)
     if FlagEnabled(flag):
@@ -1143,7 +1143,7 @@ def Event_13015557(_, character: int, flag: int, flag_1: int):
     EnableAI(character)
     DisableInvincibility(character)
     EnableHealthBar(character)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=True)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=True)
     ForceAnimation(character, 1700, wait_for_completion=True, unknown2=1.0)
 
     # --- Label 0 --- #
@@ -1151,7 +1151,7 @@ def Event_13015557(_, character: int, flag: int, flag_1: int):
     EnableAI(character)
     DisableInvincibility(character)
     EnableHealthBar(character)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=True)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=True)
     
     MAIN.Await(HealthRatio(character) <= 0.0)
     
@@ -1167,7 +1167,7 @@ def Event_13015557(_, character: int, flag: int, flag_1: int):
 
 
 @RestartOnRest(13015558)
-def Event_13015558(_, character: int, destination: int, flag: int, model_point: int):
+def Event_13015558(_, character: int, destination: int, flag: int, dummy_id: int):
     """Event 13015558"""
     if FlagEnabled(flag):
         return
@@ -1177,7 +1177,7 @@ def Event_13015558(_, character: int, destination: int, flag: int, model_point: 
     MoveToEntity(
         character,
         destination=destination,
-        model_point=model_point,
+        dummy_id=dummy_id,
         destination_type=CoordEntityType.Character,
     )
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=10.0))
@@ -1189,7 +1189,7 @@ def Event_13015558(_, character: int, destination: int, flag: int, model_point: 
 
 
 @RestartOnRest(13015559)
-def Event_13015559(_, character: int, destination: int, flag: int, model_point: int):
+def Event_13015559(_, character: int, destination: int, flag: int, dummy_id: int):
     """Event 13015559"""
     if FlagEnabled(flag):
         return
@@ -1199,7 +1199,7 @@ def Event_13015559(_, character: int, destination: int, flag: int, model_point: 
     MoveToEntity(
         character,
         destination=destination,
-        model_point=model_point,
+        dummy_id=dummy_id,
         destination_type=CoordEntityType.Character,
     )
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=10.0))
@@ -1460,6 +1460,6 @@ def Event_13015820():
         sound_id_1=3012804,
         flag_4=13015811,
     )
-    CommonFunc_20005820(0, flag=13010800, obj=3011800, model_point=3, left=0)
-    CommonFunc_20005820(0, flag=13010800, obj=3011801, model_point=3, left=0)
+    CommonFunc_20005820(0, flag=13010800, obj=3011800, dummy_id=3, left=0)
+    CommonFunc_20005820(0, flag=13010800, obj=3011801, dummy_id=3, left=0)
     CommonFunc_20005810(0, flag=13010800, entity=3011800, target_entity=3012801, action_button_id=10000)

@@ -944,10 +944,10 @@ def Constructor():
     CommonFunc_20005523(0, obj=3301312, completion_count=1)
     CommonFunc_20005523(0, obj=3301313, completion_count=2)
     CommonFunc_20005523(0, obj=3301314, completion_count=2)
-    CommonFunc_20005525(0, flag=53300950, item_lot=3300950, obj=3301320, model_point=62)
-    CommonFunc_20005525(0, flag=53300960, item_lot=3300960, obj=3301321, model_point=60)
-    CommonFunc_20005525(0, flag=53300970, item_lot=3300970, obj=3301322, model_point=60)
-    CommonFunc_20005525(0, flag=53300980, item_lot=3300980, obj=3301323, model_point=62)
+    CommonFunc_20005525(0, flag=53300950, item_lot=3300950, obj=3301320, dummy_id=62)
+    CommonFunc_20005525(0, flag=53300960, item_lot=3300960, obj=3301321, dummy_id=60)
+    CommonFunc_20005525(0, flag=53300970, item_lot=3300970, obj=3301322, dummy_id=60)
+    CommonFunc_20005525(0, flag=53300980, item_lot=3300980, obj=3301323, dummy_id=62)
     CommonFunc_20005524(0, obj=3301330, flag=9481)
     CommonFunc_20005610(0, flag=63300432, region=3302432, region_1=3302433)
     CommonFunc_20005611(0, flag=63300432, obj_act_id=3303432, obj=3301432, obj_act_id_1=332100)
@@ -955,36 +955,36 @@ def Constructor():
     Event_13305409()
     CommonFunc_20005650(0, flag=13300440, obj=3301440)
     Event_13305470()
-    CommonFunc_20005781(0, obj=3301570, model_point=4, flag=13305161)
+    CommonFunc_20005781(0, obj=3301570, dummy_id=4, flag=13305161)
     CommonFunc_20005541(
         0,
         obj_flag=13305560,
         obj=3301510,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=5400,
         radius=0.5,
         life=0.0,
         repetition_time=1.0,
-        model_point_1=800061,
+        dummy_id_1=800061,
         vfx_id=200,
     )
     CommonFunc_20005541(
         0,
         obj_flag=13305561,
         obj=3301511,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=5400,
         radius=0.5,
         life=0.0,
         repetition_time=1.0,
-        model_point_1=800061,
+        dummy_id_1=800061,
         vfx_id=200,
     )
     CommonFunc_20005540(
         0,
         obj_flag=13305562,
         obj=3301520,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=5410,
         radius=0.5,
         life=0.0,
@@ -994,7 +994,7 @@ def Constructor():
         0,
         obj_flag=13305563,
         obj=3301521,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=5410,
         radius=0.5,
         life=0.0,
@@ -1004,7 +1004,7 @@ def Constructor():
         0,
         obj_flag=13305564,
         obj=3301522,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=5410,
         radius=0.5,
         life=0.0,
@@ -1014,7 +1014,7 @@ def Constructor():
         0,
         obj_flag=13305565,
         obj=3301523,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=5410,
         radius=0.5,
         life=0.0,
@@ -1024,7 +1024,7 @@ def Constructor():
         0,
         obj_flag=13305566,
         obj=3301524,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=5410,
         radius=0.5,
         life=0.0,
@@ -1034,7 +1034,7 @@ def Constructor():
         0,
         obj_flag=13305567,
         obj=3301526,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=5410,
         radius=0.5,
         life=0.0,
@@ -1044,7 +1044,7 @@ def Constructor():
         0,
         obj_flag=13305568,
         obj=3301527,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=5410,
         radius=0.5,
         life=0.0,
@@ -1054,7 +1054,7 @@ def Constructor():
         0,
         obj_flag=13305570,
         obj=3301530,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=5410,
         radius=0.5,
         life=0.0,
@@ -1064,7 +1064,7 @@ def Constructor():
         0,
         obj_flag=13305571,
         obj=3301531,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=5410,
         radius=0.5,
         life=0.0,
@@ -1074,7 +1074,7 @@ def Constructor():
         0,
         obj_flag=13305572,
         obj=3301532,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=5410,
         radius=0.5,
         life=0.0,
@@ -1084,7 +1084,7 @@ def Constructor():
         0,
         obj_flag=13305573,
         obj=3301533,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=5410,
         radius=0.5,
         life=0.0,
@@ -1094,7 +1094,7 @@ def Constructor():
         0,
         obj_flag=13305574,
         obj=3301534,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=5410,
         radius=0.5,
         life=0.0,
@@ -1104,7 +1104,7 @@ def Constructor():
         0,
         obj_flag=13305575,
         obj=3301535,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=5410,
         radius=0.5,
         life=0.0,
@@ -1114,7 +1114,7 @@ def Constructor():
         0,
         obj_flag=13305576,
         obj=3301536,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=5410,
         radius=0.5,
         life=0.0,
@@ -1124,7 +1124,7 @@ def Constructor():
         0,
         obj_flag=13305577,
         obj=3301537,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=5410,
         radius=0.5,
         life=0.0,
@@ -1134,7 +1134,7 @@ def Constructor():
         0,
         obj_flag=13305578,
         obj=3301538,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=5410,
         radius=0.5,
         life=0.0,
@@ -1369,7 +1369,7 @@ def Constructor():
         character=3300578,
         entity=3301579,
         source_entity=3301578,
-        model_point=90,
+        dummy_id=90,
         behavior_id=5430,
         behavior_id_1=5431,
         behavior_id_2=5432,
@@ -1489,12 +1489,12 @@ def Event_13305171():
     
     EnableCharacter(3300191)
     Wait(1.5)
-    CreateObjectVFX(3301170, vfx_id=0, model_point=30041)
+    CreateObjectVFX(3301170, vfx_id=0, dummy_id=30041)
     Move(
         3300191,
         destination=3300170,
         destination_type=CoordEntityType.Character,
-        model_point=236,
+        dummy_id=236,
         copy_draw_parent=3300191,
     )
     AND_2.Add(PlayerInOwnWorld())
@@ -1543,7 +1543,7 @@ def Event_13305172():
     SkipLines(1)
     DisplayBattlefieldMessage(10012120, display_location_index=1)
     WaitFrames(frames=1)
-    CreateTemporaryVFX(vfx_id=30340, anchor_entity=3300170, model_point=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=30340, anchor_entity=3300170, dummy_id=236, anchor_type=CoordEntityType.Character)
     EnableCharacter(3300170)
     EnableAnimations(3300170)
     SetBackreadStateAlternate(3300170, True)
@@ -2146,7 +2146,7 @@ def Event_13300412(
     
     MAIN.Await(AND_1)
     
-    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Object, model_point=120, short_move=True)
+    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Object, dummy_id=120, short_move=True)
     ForceAnimation(PLAYER, 60380, unknown2=1.0)
     SetNetworkConnectedFlagState(flag=flag_1, state=FlagSetting.On)
     DeleteVFX(vfx_id_1)
@@ -2262,14 +2262,14 @@ def Event_13305470():
     if ThisEventSlotFlagEnabled():
         return
     DeleteObjectVFX(3301470)
-    CreateObjectVFX(3301470, vfx_id=200, model_point=831023)
-    CreateObjectVFX(3301470, vfx_id=200, model_point=60)
+    CreateObjectVFX(3301470, vfx_id=200, dummy_id=831023)
+    CreateObjectVFX(3301470, vfx_id=200, dummy_id=60)
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=9333, entity=3301470))
     
     ForceAnimation(PLAYER, 60070, unknown2=1.0)
     Wait(0.20000000298023224)
-    CreateTemporaryVFX(vfx_id=301002, anchor_entity=PLAYER, model_point=220, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=301002, anchor_entity=PLAYER, dummy_id=220, anchor_type=CoordEntityType.Character)
     PlaySoundEffect(PLAYER, 999999988, sound_type=SoundType.c_CharacterMotion)
     AddSpecialEffect(PLAYER, 2005)
     DeleteObjectVFX(3301470)
@@ -2589,7 +2589,7 @@ def Event_13305829():
         sound_id_1=3304802,
         flag_3=13305802,
     )
-    CommonFunc_20005820(0, flag=13300800, obj=3301800, model_point=3, left=13300801)
+    CommonFunc_20005820(0, flag=13300800, obj=3301800, dummy_id=3, left=13300801)
     DisableObject(3301801)
     CommonFunc_20005810(0, flag=13300800, entity=3301800, target_entity=3302800, action_button_id=10000)
 
@@ -2855,7 +2855,7 @@ def Event_13305870(
     ShootProjectile(
         owner_entity=character,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=213200010,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -2864,7 +2864,7 @@ def Event_13305870(
     ShootProjectile(
         owner_entity=character,
         source_entity=source_entity_1,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=213200010,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -2873,7 +2873,7 @@ def Event_13305870(
     ShootProjectile(
         owner_entity=character,
         source_entity=source_entity_2,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=213200010,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -2926,7 +2926,7 @@ def Event_13305885(
     ShootProjectile(
         owner_entity=character,
         source_entity=source_entity_2,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=213200010,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -2935,7 +2935,7 @@ def Event_13305885(
     ShootProjectile(
         owner_entity=character,
         source_entity=source_entity_7,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=213200010,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -2944,7 +2944,7 @@ def Event_13305885(
     ShootProjectile(
         owner_entity=character,
         source_entity=source_entity_8,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=213200010,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -2953,7 +2953,7 @@ def Event_13305885(
     ShootProjectile(
         owner_entity=character,
         source_entity=source_entity_9,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=213200010,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -2965,7 +2965,7 @@ def Event_13305885(
     ShootProjectile(
         owner_entity=character,
         source_entity=source_entity_1,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=213200010,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -2974,7 +2974,7 @@ def Event_13305885(
     ShootProjectile(
         owner_entity=character,
         source_entity=source_entity_6,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=213200010,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -2986,7 +2986,7 @@ def Event_13305885(
     ShootProjectile(
         owner_entity=character,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=213200010,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -2995,7 +2995,7 @@ def Event_13305885(
     ShootProjectile(
         owner_entity=character,
         source_entity=source_entity_3,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=213200010,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3004,7 +3004,7 @@ def Event_13305885(
     ShootProjectile(
         owner_entity=character,
         source_entity=source_entity_4,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=213200010,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3013,7 +3013,7 @@ def Event_13305885(
     ShootProjectile(
         owner_entity=character,
         source_entity=source_entity_5,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=213200010,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3071,8 +3071,8 @@ def Event_13305900():
         sound_id_1=3304852,
         flag_3=13305851,
     )
-    CommonFunc_20005820(0, flag=13300850, obj=3301850, model_point=3, left=13300852)
-    CommonFunc_20005820(0, flag=13300850, obj=3301851, model_point=3, left=0)
+    CommonFunc_20005820(0, flag=13300850, obj=3301850, dummy_id=3, left=13300852)
+    CommonFunc_20005820(0, flag=13300850, obj=3301851, dummy_id=3, left=0)
     CommonFunc_20005810(0, flag=13300110, entity=3301850, target_entity=3302850, action_button_id=10000)
 
 

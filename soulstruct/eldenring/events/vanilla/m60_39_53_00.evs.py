@@ -81,7 +81,7 @@ def Constructor():
         message=80603,
         action_button_id=9000,
         asset=Assets.AEG099_090_9002,
-        model_point=30010,
+        dummy_id=30010,
     )
     if CeremonyActive(ceremony=20):
         CommonFunc_90005796(0, flag=7603, character=Characters.RileightheIdle, banner_type=5, region=1039532141)
@@ -110,7 +110,7 @@ def Event_1039532145():
     EnableBackread(Characters.RileightheIdle)
     SetTeamType(Characters.RileightheIdle, TeamType.Human)
     DeleteAssetVFX(1039536700)
-    CreateAssetVFX(1039536700, vfx_id=200, model_point=806700)
+    CreateAssetVFX(1039536700, vfx_id=200, dummy_id=806700)
 
 
 @RestartOnRest(1039532300)

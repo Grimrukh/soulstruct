@@ -34,7 +34,7 @@ def Constructor():
         item_lot=1042380400,
         seconds=0.0,
     )
-    CommonFunc_90005870(0, character=Characters.DeathRiteBird, name=904980601, npc_threat_level=24)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.DeathRiteBird, name=904980601, npc_threat_level=24)
     Event_1042382350()
     CommonFunc_90005460(0, character=Characters.GiantOctopus)
     CommonFunc_90005461(0, character=Characters.GiantOctopus)
@@ -56,8 +56,8 @@ def Constructor():
         item_lot=1042380410,
         seconds=0.0,
     )
-    CommonFunc_90005870(0, character=Characters.BellBearingHunter, name=903100600, npc_threat_level=10)
-    CommonFunc_90005872(0, character=Characters.BellBearingHunter, npc_threat_level=10, right=0)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.BellBearingHunter, name=903100600, npc_threat_level=10)
+    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.BellBearingHunter, npc_threat_level=10, required_flag=0)
     Event_1042383700(0, character=Characters.KnightBernahl)
     CommonFunc_90005704(0, attacked_entity=Characters.KnightBernahl, flag=3881, flag_1=3880, flag_2=1042389251, right=3)
     CommonFunc_90005703(
@@ -72,7 +72,7 @@ def Constructor():
         right=-1,
     )
     CommonFunc_90005702(0, character=Characters.KnightBernahl, flag=3883, first_flag=3880, last_flag=3884)
-    CommonFunc_90005630(0, far_view_id=61423800, asset=1042381500, model_point=127)
+    CommonFunc_90005630(0, far_view_id=61423800, asset=1042381500, dummy_id=127)
     CommonFunc_90005560(0, flag=1042380600, asset=Assets.AEG099_635_9000, left=0)
 
 
@@ -127,10 +127,10 @@ def Preconstructor():
         region=1042382340,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
 
 

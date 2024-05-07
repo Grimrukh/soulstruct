@@ -24,7 +24,7 @@ from .enums.m60_41_50_00_enums import *
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005870(0, character=Characters.FallingstarBeast, name=904680602, npc_threat_level=19)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.FallingstarBeast, name=904680602, npc_threat_level=19)
     CommonFunc_90005860(
         0,
         flag=1041500800,

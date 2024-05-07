@@ -25,7 +25,7 @@ from .enums.m60_48_41_00_enums import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1048410000, asset=Assets.AEG099_060_9000)
-    CommonFunc_90005300(0, flag=1048410290, character=Characters.Scarab, item_lot=40412, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1048410290, character=Characters.Scarab, item_lot=40412, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005760(
         0,
         flag=1048410800,
@@ -33,7 +33,7 @@ def Constructor():
         region=1048412300,
         flag_1=1048412708,
     )
-    CommonFunc_90005870(0, character=Characters.BellBearingHunter, name=903100603, npc_threat_level=10)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.BellBearingHunter, name=903100603, npc_threat_level=10)
     CommonFunc_90005860(
         0,
         flag=1048410800,
@@ -43,7 +43,7 @@ def Constructor():
         item_lot=1048410800,
         seconds=0.0,
     )
-    CommonFunc_90005872(0, character=Characters.BellBearingHunter, npc_threat_level=10, right=0)
+    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.BellBearingHunter, npc_threat_level=10, required_flag=0)
     CommonFunc_90005702(0, character=Characters.Merchant, flag=4793, first_flag=4790, last_flag=4793)
     CommonFunc_90005703(
         0,

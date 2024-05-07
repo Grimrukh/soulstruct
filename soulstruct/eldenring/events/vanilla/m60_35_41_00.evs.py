@@ -40,7 +40,7 @@ def Constructor():
     Event_1035412610(0, flag=1035410610, character=Characters.GiantTurtle)
     Event_1035412611(0, flag=1035410610, attacked_entity=Characters.GiantTurtle)
     CommonFunc_90005251(0, character=Characters.GiantTurtle, radius=0.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005300(0, flag=1035410610, character=Characters.GiantTurtle, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1035410610, character=Characters.GiantTurtle, item_lot=0, seconds=0.0, item_is_dropped=0)
 
 
 @ContinueOnRest(50)

@@ -73,9 +73,9 @@ def Constructor():
         flag_1=1044362703,
         left=1044362704,
         character=Characters.SorceressSellen0,
-        model_point=704,
+        dummy_id=704,
         asset=Assets.AEG099_090_9001,
-        model_point_1=704,
+        dummy_id_1=704,
         radius=0.20000000298023224,
         animation=90204,
         animation_id=-1,
@@ -194,7 +194,7 @@ def Event_1041332849():
         flag_2=1041332806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=1041330800, asset=1041331800, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=1041330800, asset=1041331800, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=1041330800,
@@ -206,7 +206,7 @@ def Event_1041332849():
         left=0,
         left_1=0,
     )
-    CommonFunc_9005812(0, flag=1041330800, asset=1041331801, model_point=3, right=0, model_point_1=0)
+    CommonFunc_9005812(0, flag=1041330800, asset=1041331801, dummy_id=3, right=0, dummy_id_1=0)
 
 
 @RestartOnRest(1041333700)

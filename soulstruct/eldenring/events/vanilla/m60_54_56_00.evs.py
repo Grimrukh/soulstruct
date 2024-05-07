@@ -32,7 +32,7 @@ def Constructor():
 def Event_1054562200(_, character: uint):
     """Event 1054562200"""
     DisableAnimations(character)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
     End()
 
 
@@ -47,13 +47,13 @@ def Event_1054562500():
 @ContinueOnRest(200)
 def Event_200():
     """Event 200"""
-    CommonFunc_90005870(0, character=Characters.BorealistheFreezingFog, name=904503600, npc_threat_level=25)
-    CommonFunc_90005861(
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.BorealistheFreezingFog, name=904503600, npc_threat_level=25)
+    CommonFunc_KillFieldDragonWyrm(
         0,
         flag=1254560800,
-        left=0,
+        extra_flag=0,
         character=Characters.BorealistheFreezingFog,
-        left_1=1,
+        felled_banner_rank=1,
         item_lot=30510,
         text=30066,
         seconds=0.0,

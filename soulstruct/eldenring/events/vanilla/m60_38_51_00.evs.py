@@ -48,9 +48,9 @@ def Constructor():
     Event_1038512810()
     Event_1038512849()
     Event_1038512500()
-    CommonFunc_90005300(0, flag=1038510500, character=Characters.Scarab, item_lot=40302, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1038510500, character=Characters.Scarab, item_lot=40302, seconds=0.0, item_is_dropped=0)
     Event_1038513700(0, character=Characters.RyatheScout, asset=Assets.AEG099_320_9000)
-    CommonFunc_90005752(0, asset=1038511700, vfx_id=200, model_point=120, seconds=3.0)
+    CommonFunc_90005752(0, asset=1038511700, vfx_id=200, dummy_id=120, seconds=3.0)
     Event_1038513701()
     Event_1038513702(0, attacked_entity=1038511700, other_entity=Characters.RyatheScout)
     Event_1038513703()
@@ -60,9 +60,9 @@ def Constructor():
         flag_1=1038512726,
         left=1038512727,
         character=Characters.RyatheScout,
-        model_point=703,
+        dummy_id=703,
         asset=Assets.AEG099_090_9002,
-        model_point_1=703,
+        dummy_id_1=703,
         radius=0.20000000298023224,
         animation=90203,
         animation_id=-1,
@@ -114,10 +114,10 @@ def Preconstructor():
         region=1038512400,
         radius=2.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -127,10 +127,10 @@ def Preconstructor():
         region=1038512400,
         radius=2.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -140,10 +140,10 @@ def Preconstructor():
         region=1038512400,
         radius=2.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(
         0,
@@ -165,7 +165,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.DemiHumanShaman2, region=1038512482, seconds=0.0, animation_id=3005)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.DemiHumanShaman2, region=1038512482, seconds=0.0, animation_id=3005)
     Event_1038512405(
         0,
         character=Characters.DemiHuman4,
@@ -433,7 +433,7 @@ def Event_1038512849():
         flag_2=1038512806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=1038510800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=1038510800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=1038510800,
@@ -445,7 +445,7 @@ def Event_1038512849():
         left=0,
         left_1=0,
     )
-    CommonFunc_9005812(0, flag=1038510800, asset=Assets.AEG099_001_9001, model_point=3, right=0, model_point_1=0)
+    CommonFunc_9005812(0, flag=1038510800, asset=Assets.AEG099_001_9001, dummy_id=3, right=0, dummy_id_1=0)
 
 
 @RestartOnRest(1038513700)

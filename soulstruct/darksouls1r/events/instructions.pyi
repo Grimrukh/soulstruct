@@ -1048,7 +1048,7 @@ def IfActionButtonBasic(
     anchor_entity: Object | Character | Region | int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
-    model_point: int = -1,
+    dummy_id: int = -1,
     max_distance: float = None,
     trigger_attribute: TriggerAttribute | int = 48,
     button: int = 0,
@@ -1313,7 +1313,7 @@ def IfActionButtonBoss(
     anchor_entity: Object | Character | Region | int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
-    model_point: int = -1,
+    dummy_id: int = -1,
     max_distance: float = None,
     trigger_attribute: TriggerAttribute | int = 48,
     button: int = 0,
@@ -1405,7 +1405,7 @@ def IfActionButtonBasicLineIntersect(
     line_intersects: int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
-    model_point: int = -1,
+    dummy_id: int = -1,
     max_distance: float = None,
     trigger_attribute: TriggerAttribute | int = 48,
     button: int = 0,
@@ -1426,7 +1426,7 @@ def IfActionButtonBossLineIntersect(
     line_intersects: int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
-    model_point: int = -1,
+    dummy_id: int = -1,
     max_distance: float = None,
     trigger_attribute: TriggerAttribute | int = 48,
     button: int = 0,
@@ -2918,7 +2918,7 @@ def AwardItemLotToAllPlayers(item_lot: int):
 def ShootProjectile(
     owner_entity: Object | Character | Region | int,
     source_entity: Object | Character | Region | int,
-    model_point: int,
+    dummy_id: int,
     behavior_id: int,
     launch_angle_x: int,
     launch_angle_y: int,
@@ -3345,7 +3345,7 @@ def Unknown_2003_47():
 def Unknown_2003_48(
     entity: Character | Object | int,
     unk1: int,
-    model_point: int,
+    dummy_id: int,
     magic_id: int,
     launch_angle_x: int,
     launch_angle_y: int,
@@ -3389,7 +3389,7 @@ def SetTeamType(character: Character | int, new_team: TeamType | int):
 def MoveToEntity(
     character: Character | int,
     destination: Object | Character | Region | int,
-    model_point: int = -1,
+    dummy_id: int = -1,
     destination_type: CoordEntityType | int = None,
 ):
     """
@@ -3764,7 +3764,7 @@ def MoveAndSetDrawParent(
     character: Character | int,
     destination: Object | Character | Region | int,
     set_draw_parent: MapPart | int,
-    model_point: int = -1,
+    dummy_id: int = -1,
     destination_type: CoordEntityType | int = None,
 ):
     """
@@ -3776,7 +3776,7 @@ def MoveAndSetDrawParent(
 def ShortMove(
     character: Character | int,
     destination: Object | Character | Region | int,
-    model_point: int = -1,
+    dummy_id: int = -1,
     destination_type: CoordEntityType | int = None,
 ):
     """
@@ -3789,7 +3789,7 @@ def MoveAndCopyDrawParent(
     character: Character | int,
     destination: Object | Character | Region | int,
     copy_draw_parent: Character | Object | int,
-    model_point: int = -1,
+    dummy_id: int = -1,
     destination_type: CoordEntityType | int = None,
 ):
     """
@@ -3952,7 +3952,7 @@ def PostDestruction(obj: Object | int, request_slot: int = 1):
 def CreateHazard(
     obj_flag: Flag | int,
     obj: Object | int,
-    model_point: int,
+    dummy_id: int,
     behavior_param_id: int,
     target_type: DamageTargetType | int,
     radius: float,
@@ -3961,7 +3961,7 @@ def CreateHazard(
 ):
     """
     Turn an object into an environmental hazard. It deals damage when touched according to the NPC Behavior
-    params you give it. The model_point determines which part of the object is hazardous (with the given radius
+    params you give it. The dummy_id determines which part of the object is hazardous (with the given radius
     and life, relative to the time this instruction occurs).
     
     An example is the large fire in the Lower Undead Burg, or near the first Armored Tusk.
@@ -3976,7 +3976,7 @@ def RegisterStatue(obj: Object | int, game_map: Map | tuple | list, statue_type:
     """
 
 
-def MoveObjectToCharacter(obj: Object | int, character: Character | int, model_point: int = -1):
+def MoveObjectToCharacter(obj: Object | int, character: Character | int, dummy_id: int = -1):
     """
     Move an object to a character.
     """
@@ -4037,7 +4037,7 @@ def CreateVFX(vfx_id: VFXEvent | int):
 def CreateTemporaryVFX(
     vfx_id: int,
     anchor_entity: Object | Character | Region | int,
-    model_point: int = -1,
+    dummy_id: int = -1,
     anchor_type: CoordEntityType | int = None,
 ):
     """
@@ -4048,7 +4048,7 @@ def CreateTemporaryVFX(
     """
 
 
-def CreateObjectVFX(obj: Object | int, vfx_id: int, model_point: int):
+def CreateObjectVFX(obj: Object | int, vfx_id: int, dummy_id: int):
     """
     TODO
     """
@@ -4166,7 +4166,7 @@ def ChangeCamera(normal_camera_id: int, locked_camera_id: int):
 def SetCameraVibration(
     vibration_id: int,
     anchor_entity: Object | Character | Region | int,
-    model_point: int = -1,
+    dummy_id: int = -1,
     decay_start_distance: float = 999.0,
     decay_end_distance: float = 999.0,
     anchor_type: CoordEntityType | int = None,
@@ -4553,7 +4553,7 @@ def ActionButtonBasic(
     anchor_entity: Object | Character | Region | int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
-    model_point: int = -1,
+    dummy_id: int = -1,
     max_distance: float = None,
     trigger_attribute: TriggerAttribute | int = 48,
     button: int = 0,
@@ -4707,7 +4707,7 @@ def ActionButtonBoss(
     anchor_entity: Object | Character | Region | int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
-    model_point: int = -1,
+    dummy_id: int = -1,
     max_distance: float = None,
     trigger_attribute: TriggerAttribute | int = 48,
     button: int = 0,
@@ -4761,7 +4761,7 @@ def ActionButtonBasicLineIntersect(
     line_intersects: int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
-    model_point: int = -1,
+    dummy_id: int = -1,
     max_distance: float = None,
     trigger_attribute: TriggerAttribute | int = 48,
     button: int = 0,
@@ -4775,7 +4775,7 @@ def ActionButtonBossLineIntersect(
     line_intersects: int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
-    model_point: int = -1,
+    dummy_id: int = -1,
     max_distance: float = None,
     trigger_attribute: TriggerAttribute | int = 48,
     button: int = 0,
@@ -5076,7 +5076,7 @@ def ActionButton(
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
     max_distance: float = None,
-    model_point: int = -1,
+    dummy_id: int = -1,
     trigger_attribute: TriggerAttribute | int = 48,
     button: int = 0,
     boss_version: bool = False,

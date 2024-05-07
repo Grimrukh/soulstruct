@@ -55,10 +55,10 @@ def Preconstructor():
         region=1035432200,
         radius=3.0,
         seconds=1.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -68,10 +68,10 @@ def Preconstructor():
         region=1035432200,
         radius=3.0,
         seconds=2.5,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -81,10 +81,10 @@ def Preconstructor():
         region=1035432200,
         radius=3.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -94,10 +94,10 @@ def Preconstructor():
         region=1035432200,
         radius=3.0,
         seconds=1.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
 
 
@@ -148,7 +148,7 @@ def Event_1035432390(_, flag: uint, flag_1: uint, character: uint, character_1: 
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=900,
+        dummy_id=900,
         copy_draw_parent=character,
     )
 
@@ -161,12 +161,12 @@ def Event_1035432390(_, flag: uint, flag_1: uint, character: uint, character_1: 
 
     # --- Label 2 --- #
     DefineLabel(2)
-    CreateTemporaryVFX(vfx_id=601101, anchor_entity=character, model_point=900, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=601101, anchor_entity=character, dummy_id=900, anchor_type=CoordEntityType.Character)
     Goto(Label.L4)
 
     # --- Label 3 --- #
     DefineLabel(3)
-    CreateTemporaryVFX(vfx_id=601100, anchor_entity=character, model_point=900, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=601100, anchor_entity=character, dummy_id=900, anchor_type=CoordEntityType.Character)
     Goto(Label.L4)
 
     # --- Label 4 --- #
@@ -201,7 +201,7 @@ def Event_1035432395(_, flag: uint, flag_1: uint, character: uint, character_1: 
     CreateTemporaryVFX(
         vfx_id=601111,
         anchor_entity=character_1,
-        model_point=960,
+        dummy_id=960,
         anchor_type=CoordEntityType.Character,
     )
     Goto(Label.L3)
@@ -211,7 +211,7 @@ def Event_1035432395(_, flag: uint, flag_1: uint, character: uint, character_1: 
     CreateTemporaryVFX(
         vfx_id=601110,
         anchor_entity=character_1,
-        model_point=960,
+        dummy_id=960,
         anchor_type=CoordEntityType.Character,
     )
     Goto(Label.L3)

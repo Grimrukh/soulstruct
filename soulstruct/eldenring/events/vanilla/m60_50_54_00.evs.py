@@ -28,5 +28,5 @@ def Constructor():
 def Event_1050542200(_, character: uint):
     """Event 1050542200"""
     DisableAnimations(character)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
     End()

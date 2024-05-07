@@ -56,7 +56,7 @@ def Constructor():
         seconds=0.0,
         seconds_1=0.0,
     )
-    CommonFunc_90005630(0, far_view_id=61394200, asset=1039421500, model_point=115)
+    CommonFunc_90005630(0, far_view_id=61394200, asset=1039421500, dummy_id=115)
     CommonFunc_90005683(0, flag=62203, asset=Assets.AEG099_055_1000, vfx_id=209, flag_1=78294, flag_2=78294)
     CommonFunc_90005631(0, anchor_entity=Assets.AEG099_376_1000, text=61020)
     CommonFunc_90005706(0, character=Characters.WanderingNoble9, animation_id=930025, left=0)
@@ -241,7 +241,7 @@ def Event_1039422340(_, character: uint, region: uint, flag: uint):
 def Event_1039422600(_, asset: uint, entity: uint, flag: uint):
     """Event 1039422600"""
     GotoIfFlagEnabled(Label.L0, flag=flag)
-    CreateAssetVFX(asset, vfx_id=200, model_point=803220)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=803220)
 
     # --- Label 0 --- #
     DefineLabel(0)

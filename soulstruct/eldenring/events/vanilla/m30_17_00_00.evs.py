@@ -25,7 +25,7 @@ from .enums.m30_17_00_00_enums import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=301700, asset=Assets.AEG099_060_9000)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
     CommonFunc_90005525(0, flag=30170570, asset=30171570)
     CommonFunc_90005620(
         0,
@@ -120,8 +120,8 @@ def Constructor():
     Event_30172400(6, character=Characters.Imp5)
     Event_30172400(7, character=Characters.Imp6)
     Event_30172400(8, character=Characters.Imp4)
-    CommonFunc_90005250(0, character=Characters.Imp4, region=30172315, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Imp4, region=30172217, seconds=0.0, animation_id=3005)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Imp4, region=30172315, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Imp4, region=30172217, seconds=0.0, animation_id=3005)
     CommonFunc_90005200(
         0,
         character=Characters.Imp5,
@@ -149,26 +149,26 @@ def Constructor():
     Event_30172400(9, character=30170215)
     Event_30172402(0, character=30170216, region=30172202)
     Event_30172400(10, character=30170316)
-    CommonFunc_90005250(0, character=30170215, region=30172221, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=30170216, region=30172201, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=30170215, region=30172221, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=30170216, region=30172201, seconds=0.0, animation_id=-1)
     Event_30172311()
-    CommonFunc_90005250(0, character=30170317, region=30172318, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=30170316, region=30172318, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=30170215, region=30172214, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=30170300, region=30172300, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(1, character=30170301, region=30172300, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=30170305, region=30172305, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=30170306, region=30172306, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=30170309, region=30172309, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.FireMonk1, region=30172350, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.FireMonk0, region=30172310, seconds=0.0, animation_id=3015)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=30170317, region=30172318, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=30170316, region=30172318, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=30170215, region=30172214, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=30170300, region=30172300, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(1, character=30170301, region=30172300, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=30170305, region=30172305, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=30170306, region=30172306, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=30170309, region=30172309, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.FireMonk1, region=30172350, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.FireMonk0, region=30172310, seconds=0.0, animation_id=3015)
     CommonFunc_90005261(0, character=30170314, region=30172315, radius=2.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(1, character=30170315, region=30172315, radius=5.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.FireMonk2, region=30172315, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Imp1, region=30172223, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Imp0, region=30172223, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(1, character=30170311, region=30172353, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(2, character=30170312, region=30172353, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.FireMonk2, region=30172315, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Imp1, region=30172223, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Imp0, region=30172223, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(1, character=30170311, region=30172353, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(2, character=30170312, region=30172353, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.FireMonk0,
@@ -184,11 +184,11 @@ def Constructor():
     Event_30172400(12, character=Characters.ErdtreeBurialWatchdog0)
     Event_30172400(13, character=Characters.ErdtreeBurialWatchdog1)
     Event_30172400(14, character=Characters.ErdtreeBurialWatchdog2)
-    CommonFunc_90005250(1, character=Characters.ErdtreeBurialWatchdog0, region=30172451, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(1, character=Characters.ErdtreeBurialWatchdog1, region=30172216, seconds=0.0, animation_id=3025)
-    CommonFunc_90005250(1, character=Characters.ErdtreeBurialWatchdog2, region=30172450, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=30170351, region=30172351, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=30170351, region=30172352, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(1, character=Characters.ErdtreeBurialWatchdog0, region=30172451, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(1, character=Characters.ErdtreeBurialWatchdog1, region=30172216, seconds=0.0, animation_id=3025)
+    CommonFunc_AITrigger_RegionOrHurt(1, character=Characters.ErdtreeBurialWatchdog2, region=30172450, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=30170351, region=30172351, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=30170351, region=30172352, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.FireMonk2,
@@ -201,7 +201,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.FirePrelate, region=30172353, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.FirePrelate, region=30172353, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=30170450,
@@ -227,7 +227,7 @@ def Constructor():
         left_3=0,
     )
     Event_30172400(11, character=Characters.Troll)
-    CommonFunc_90005300(0, flag=30170400, character=Characters.Troll, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=30170400, character=Characters.Troll, item_lot=0, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005652(0, flag=30170540, asset=Assets.AEG027_041_0500, flag_1=30170400)
     CommonFunc_90005651(0, flag=30170540, anchor_entity=Assets.AEG027_041_0500)
     Event_30172600()
@@ -309,7 +309,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_91005600(0, flag=30172800, asset=30171695, model_point=5)
+    CommonFunc_91005600(0, flag=30172800, asset=30171695, dummy_id=5)
     Event_16002520(0, flag=30170620, asset=30171620)
     Event_30170050()
 
@@ -517,10 +517,10 @@ def Event_30172500():
             owner_entity=Characters.TalkDummy0,
             behavior_id=801105070,
             behavior_id_1=801105005,
-            model_point=101,
-            model_point_1=104,
-            model_point_2=100,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=104,
+            dummy_id_2=100,
+            dummy_id_3=0,
         )
     if FlagEnabled(56):
         CommonFunc_90005682(
@@ -531,10 +531,10 @@ def Event_30172500():
             owner_entity=Characters.TalkDummy0,
             behavior_id=801105060,
             behavior_id_1=801105005,
-            model_point=101,
-            model_point_1=104,
-            model_point_2=100,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=104,
+            dummy_id_2=100,
+            dummy_id_3=0,
         )
     if FlagEnabled(55):
         CommonFunc_90005682(
@@ -545,10 +545,10 @@ def Event_30172500():
             owner_entity=Characters.TalkDummy0,
             behavior_id=801105050,
             behavior_id_1=801105005,
-            model_point=101,
-            model_point_1=104,
-            model_point_2=100,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=104,
+            dummy_id_2=100,
+            dummy_id_3=0,
         )
     if FlagEnabled(54):
         CommonFunc_90005682(
@@ -559,10 +559,10 @@ def Event_30172500():
             owner_entity=Characters.TalkDummy0,
             behavior_id=801105040,
             behavior_id_1=801105005,
-            model_point=101,
-            model_point_1=104,
-            model_point_2=100,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=104,
+            dummy_id_2=100,
+            dummy_id_3=0,
         )
     if FlagEnabled(53):
         CommonFunc_90005682(
@@ -573,10 +573,10 @@ def Event_30172500():
             owner_entity=Characters.TalkDummy0,
             behavior_id=801105030,
             behavior_id_1=801105005,
-            model_point=101,
-            model_point_1=104,
-            model_point_2=100,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=104,
+            dummy_id_2=100,
+            dummy_id_3=0,
         )
     if FlagEnabled(52):
         CommonFunc_90005682(
@@ -587,10 +587,10 @@ def Event_30172500():
             owner_entity=Characters.TalkDummy0,
             behavior_id=801105020,
             behavior_id_1=801105005,
-            model_point=101,
-            model_point_1=104,
-            model_point_2=100,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=104,
+            dummy_id_2=100,
+            dummy_id_3=0,
         )
     if FlagEnabled(51):
         CommonFunc_90005682(
@@ -601,10 +601,10 @@ def Event_30172500():
             owner_entity=Characters.TalkDummy0,
             behavior_id=801105010,
             behavior_id_1=801105005,
-            model_point=101,
-            model_point_1=104,
-            model_point_2=100,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=104,
+            dummy_id_2=100,
+            dummy_id_3=0,
         )
     if FlagEnabled(50):
         CommonFunc_90005682(
@@ -615,10 +615,10 @@ def Event_30172500():
             owner_entity=Characters.TalkDummy0,
             behavior_id=801105000,
             behavior_id_1=801105005,
-            model_point=101,
-            model_point_1=104,
-            model_point_2=100,
-            model_point_3=0,
+            dummy_id=101,
+            dummy_id_1=104,
+            dummy_id_2=100,
+            dummy_id_3=0,
         )
 
 
@@ -697,10 +697,10 @@ def Event_30172502(
     owner_entity: uint,
     behavior_id: int,
     behavior_id_1: int,
-    model_point: int,
-    model_point_1: int,
-    model_point_2: int,
-    model_point_3: int,
+    dummy_id: int,
+    dummy_id_1: int,
+    dummy_id_2: int,
+    dummy_id_3: int,
 ):
     """Event 30172502"""
     AND_1.Add(FlagEnabled(flag))
@@ -710,12 +710,12 @@ def Event_30172502(
     MAIN.Await(AND_1)
     
     CreateProjectileOwner(entity=owner_entity)
-    GotoIfValueComparison(Label.L1, comparison_type=ComparisonType.Equal, left=model_point, right=0)
+    GotoIfValueComparison(Label.L1, comparison_type=ComparisonType.Equal, left=dummy_id, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -725,7 +725,7 @@ def Event_30172502(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=801105000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -735,7 +735,7 @@ def Event_30172502(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -745,7 +745,7 @@ def Event_30172502(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=801105005,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -754,12 +754,12 @@ def Event_30172502(
 
     # --- Label 1 --- #
     DefineLabel(1)
-    GotoIfValueComparison(Label.L2, comparison_type=ComparisonType.Equal, left=model_point_1, right=0)
+    GotoIfValueComparison(Label.L2, comparison_type=ComparisonType.Equal, left=dummy_id_1, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_1,
+            dummy_id=dummy_id_1,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -769,7 +769,7 @@ def Event_30172502(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_1,
+            dummy_id=dummy_id_1,
             behavior_id=801105000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -779,7 +779,7 @@ def Event_30172502(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_1,
+            dummy_id=dummy_id_1,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -789,7 +789,7 @@ def Event_30172502(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_1,
+            dummy_id=dummy_id_1,
             behavior_id=801105005,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -798,12 +798,12 @@ def Event_30172502(
 
     # --- Label 2 --- #
     DefineLabel(2)
-    GotoIfValueComparison(Label.L3, comparison_type=ComparisonType.Equal, left=model_point_2, right=0)
+    GotoIfValueComparison(Label.L3, comparison_type=ComparisonType.Equal, left=dummy_id_2, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_2,
+            dummy_id=dummy_id_2,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -813,7 +813,7 @@ def Event_30172502(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_2,
+            dummy_id=dummy_id_2,
             behavior_id=801105000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -823,7 +823,7 @@ def Event_30172502(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_2,
+            dummy_id=dummy_id_2,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -833,7 +833,7 @@ def Event_30172502(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_2,
+            dummy_id=dummy_id_2,
             behavior_id=801105005,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -842,12 +842,12 @@ def Event_30172502(
 
     # --- Label 3 --- #
     DefineLabel(3)
-    GotoIfValueComparison(Label.L4, comparison_type=ComparisonType.Equal, left=model_point_3, right=0)
+    GotoIfValueComparison(Label.L4, comparison_type=ComparisonType.Equal, left=dummy_id_3, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_3,
+            dummy_id=dummy_id_3,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -857,7 +857,7 @@ def Event_30172502(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_3,
+            dummy_id=dummy_id_3,
             behavior_id=801105000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -867,7 +867,7 @@ def Event_30172502(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_3,
+            dummy_id=dummy_id_3,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -877,7 +877,7 @@ def Event_30172502(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_3,
+            dummy_id=dummy_id_3,
             behavior_id=801105005,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1098,7 +1098,7 @@ def Event_30172849():
         flag_2=30172806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=30170800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=30170800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=30170800,

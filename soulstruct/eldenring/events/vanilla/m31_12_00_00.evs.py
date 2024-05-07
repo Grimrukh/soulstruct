@@ -29,7 +29,7 @@ def Constructor():
     Event_31122810()
     Event_31122849()
     Event_31122811()
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
     CommonFunc_90005646(
         0,
         flag=31120800,
@@ -95,12 +95,12 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.Misbegotten0, region=31122203, seconds=0.0, animation_id=1700)
-    CommonFunc_90005250(0, character=Characters.ScalyMisbegotten0, region=31122203, seconds=0.0, animation_id=1700)
-    CommonFunc_90005250(0, character=Characters.SpiritJellyfish0, region=31122205, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.SpiritJellyfish0, region=31122220, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.SpiritJellyfish1, region=31122205, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.SpiritJellyfish1, region=31122220, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Misbegotten0, region=31122203, seconds=0.0, animation_id=1700)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.ScalyMisbegotten0, region=31122203, seconds=0.0, animation_id=1700)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SpiritJellyfish0, region=31122205, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SpiritJellyfish0, region=31122220, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SpiritJellyfish1, region=31122205, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SpiritJellyfish1, region=31122220, seconds=0.0, animation_id=0)
 
 
 @RestartOnRest(31122800)
@@ -186,7 +186,7 @@ def Event_31122849():
         flag_2=31122806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=31120800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=31120800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=31120800,

@@ -96,7 +96,7 @@ def Event_1048562350(_, character: uint, character_1: uint):
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=283,
+        dummy_id=283,
         set_draw_parent=0,
     )
     WaitFrames(frames=1)
@@ -113,4 +113,4 @@ def Event_1048562350(_, character: uint, character_1: uint):
 @ContinueOnRest(100)
 def Event_100():
     """Event 100"""
-    CommonFunc_90005300(0, flag=1148560200, character=Characters.Scarab, item_lot=40524, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1148560200, character=Characters.Scarab, item_lot=40524, seconds=0.0, item_is_dropped=0)

@@ -95,17 +95,17 @@ def Event_1052522810():
     DisableAnimations(Characters.FireGiant1)
     DisableAI(Characters.FireGiant1)
     DisableAI(Characters.FireGiant0)
-    SetLockOnPoint(character=Characters.FireGiant1, lock_on_model_point=221, state=False)
-    SetLockOnPoint(character=Characters.FireGiant1, lock_on_model_point=222, state=False)
-    SetLockOnPoint(character=Characters.FireGiant1, lock_on_model_point=225, state=False)
-    SetLockOnPoint(character=Characters.FireGiant1, lock_on_model_point=226, state=False)
-    SetLockOnPoint(character=Characters.FireGiant1, lock_on_model_point=227, state=False)
-    SetLockOnPoint(character=Characters.FireGiant0, lock_on_model_point=221, state=False)
-    SetLockOnPoint(character=Characters.FireGiant0, lock_on_model_point=223, state=False)
-    SetLockOnPoint(character=Characters.FireGiant0, lock_on_model_point=224, state=False)
-    SetLockOnPoint(character=Characters.FireGiant0, lock_on_model_point=225, state=False)
-    SetLockOnPoint(character=Characters.FireGiant0, lock_on_model_point=226, state=False)
-    SetLockOnPoint(character=Characters.FireGiant0, lock_on_model_point=227, state=False)
+    SetLockOnPoint(character=Characters.FireGiant1, lock_on_dummy_id=221, state=False)
+    SetLockOnPoint(character=Characters.FireGiant1, lock_on_dummy_id=222, state=False)
+    SetLockOnPoint(character=Characters.FireGiant1, lock_on_dummy_id=225, state=False)
+    SetLockOnPoint(character=Characters.FireGiant1, lock_on_dummy_id=226, state=False)
+    SetLockOnPoint(character=Characters.FireGiant1, lock_on_dummy_id=227, state=False)
+    SetLockOnPoint(character=Characters.FireGiant0, lock_on_dummy_id=221, state=False)
+    SetLockOnPoint(character=Characters.FireGiant0, lock_on_dummy_id=223, state=False)
+    SetLockOnPoint(character=Characters.FireGiant0, lock_on_dummy_id=224, state=False)
+    SetLockOnPoint(character=Characters.FireGiant0, lock_on_dummy_id=225, state=False)
+    SetLockOnPoint(character=Characters.FireGiant0, lock_on_dummy_id=226, state=False)
+    SetLockOnPoint(character=Characters.FireGiant0, lock_on_dummy_id=227, state=False)
     GotoIfFlagEnabled(Label.L1, flag=1252520801)
     if PlayerInOwnWorld():
         DisableFlag(1252520804)
@@ -256,7 +256,7 @@ def Event_1052522815(
     CreateTemporaryVFX(
         vfx_id=647605,
         anchor_entity=Characters.FireGiant0,
-        model_point=110,
+        dummy_id=110,
         anchor_type=CoordEntityType.Character,
     )
 
@@ -271,7 +271,7 @@ def Event_1052522815(
     CreateTemporaryVFX(
         vfx_id=647605,
         anchor_entity=Characters.FireGiant0,
-        model_point=110,
+        dummy_id=110,
         anchor_type=CoordEntityType.Character,
     )
 
@@ -286,7 +286,7 @@ def Event_1052522815(
     CreateTemporaryVFX(
         vfx_id=647605,
         anchor_entity=Characters.FireGiant0,
-        model_point=110,
+        dummy_id=110,
         anchor_type=CoordEntityType.Character,
     )
 
@@ -301,7 +301,7 @@ def Event_1052522815(
     CreateTemporaryVFX(
         vfx_id=647605,
         anchor_entity=Characters.FireGiant0,
-        model_point=110,
+        dummy_id=110,
         anchor_type=CoordEntityType.Character,
     )
 
@@ -316,7 +316,7 @@ def Event_1052522815(
     CreateTemporaryVFX(
         vfx_id=647605,
         anchor_entity=Characters.FireGiant0,
-        model_point=110,
+        dummy_id=110,
         anchor_type=CoordEntityType.Character,
     )
 
@@ -331,7 +331,7 @@ def Event_1052522815(
     CreateTemporaryVFX(
         vfx_id=647605,
         anchor_entity=Characters.FireGiant0,
-        model_point=110,
+        dummy_id=110,
         anchor_type=CoordEntityType.Character,
     )
 
@@ -346,7 +346,7 @@ def Event_1052522815(
     CreateTemporaryVFX(
         vfx_id=647605,
         anchor_entity=Characters.FireGiant0,
-        model_point=110,
+        dummy_id=110,
         anchor_type=CoordEntityType.Character,
     )
 
@@ -361,7 +361,7 @@ def Event_1052522815(
     CreateTemporaryVFX(
         vfx_id=647605,
         anchor_entity=Characters.FireGiant0,
-        model_point=110,
+        dummy_id=110,
         anchor_type=CoordEntityType.Character,
     )
 
@@ -376,7 +376,7 @@ def Event_1052522815(
     CreateTemporaryVFX(
         vfx_id=647605,
         anchor_entity=Characters.FireGiant0,
-        model_point=110,
+        dummy_id=110,
         anchor_type=CoordEntityType.Character,
     )
 
@@ -436,7 +436,7 @@ def Event_1052522816(
     CreateTemporaryVFX(
         vfx_id=647605,
         anchor_entity=Characters.FireGiant0,
-        model_point=111,
+        dummy_id=111,
         anchor_type=CoordEntityType.Character,
     )
 
@@ -451,7 +451,7 @@ def Event_1052522816(
     CreateTemporaryVFX(
         vfx_id=647605,
         anchor_entity=Characters.FireGiant0,
-        model_point=111,
+        dummy_id=111,
         anchor_type=CoordEntityType.Character,
     )
 
@@ -466,7 +466,7 @@ def Event_1052522816(
     CreateTemporaryVFX(
         vfx_id=647605,
         anchor_entity=Characters.FireGiant0,
-        model_point=111,
+        dummy_id=111,
         anchor_type=CoordEntityType.Character,
     )
 
@@ -481,7 +481,7 @@ def Event_1052522816(
     CreateTemporaryVFX(
         vfx_id=647605,
         anchor_entity=Characters.FireGiant0,
-        model_point=111,
+        dummy_id=111,
         anchor_type=CoordEntityType.Character,
     )
 
@@ -496,7 +496,7 @@ def Event_1052522816(
     CreateTemporaryVFX(
         vfx_id=647605,
         anchor_entity=Characters.FireGiant0,
-        model_point=111,
+        dummy_id=111,
         anchor_type=CoordEntityType.Character,
     )
 
@@ -511,7 +511,7 @@ def Event_1052522816(
     CreateTemporaryVFX(
         vfx_id=647605,
         anchor_entity=Characters.FireGiant0,
-        model_point=111,
+        dummy_id=111,
         anchor_type=CoordEntityType.Character,
     )
 
@@ -526,7 +526,7 @@ def Event_1052522816(
     CreateTemporaryVFX(
         vfx_id=647605,
         anchor_entity=Characters.FireGiant0,
-        model_point=111,
+        dummy_id=111,
         anchor_type=CoordEntityType.Character,
     )
 
@@ -541,7 +541,7 @@ def Event_1052522816(
     CreateTemporaryVFX(
         vfx_id=647605,
         anchor_entity=Characters.FireGiant0,
-        model_point=111,
+        dummy_id=111,
         anchor_type=CoordEntityType.Character,
     )
 
@@ -556,7 +556,7 @@ def Event_1052522816(
     CreateTemporaryVFX(
         vfx_id=647605,
         anchor_entity=Characters.FireGiant0,
-        model_point=111,
+        dummy_id=111,
         anchor_type=CoordEntityType.Character,
     )
 
@@ -640,10 +640,10 @@ def Event_1052522849():
         flag_2=1252522806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=1252520800, asset=m60_52_Assets.AEG099_002_9000, model_point=9, right=1252520804)
-    CommonFunc_9005811(0, flag=1252520800, asset=m60_52_Assets.AEG099_003_9001, model_point=10, right=1252520804)
-    CommonFunc_9005811(0, flag=1252520800, asset=Assets.AEG099_019_1000, model_point=0, right=1252520804)
-    CommonFunc_9005811(0, flag=1252520800, asset=m60_52_Assets.AEG099_017_1000, model_point=0, right=1252520804)
+    CommonFunc_9005811(0, flag=1252520800, asset=m60_52_Assets.AEG099_002_9000, dummy_id=9, right=1252520804)
+    CommonFunc_9005811(0, flag=1252520800, asset=m60_52_Assets.AEG099_003_9001, dummy_id=10, right=1252520804)
+    CommonFunc_9005811(0, flag=1252520800, asset=Assets.AEG099_019_1000, dummy_id=0, right=1252520804)
+    CommonFunc_9005811(0, flag=1252520800, asset=m60_52_Assets.AEG099_017_1000, dummy_id=0, right=1252520804)
     CommonFunc_9005822(
         0,
         flag=1252520800,

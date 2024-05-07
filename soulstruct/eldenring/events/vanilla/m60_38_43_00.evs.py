@@ -152,7 +152,7 @@ def Event_1038432260(
     if AND_1:
         return
     ForceAnimation(destination, 0)
-    Move(character, destination=destination, destination_type=CoordEntityType.Asset, model_point=220, short_move=True)
+    Move(character, destination=destination, destination_type=CoordEntityType.Asset, dummy_id=220, short_move=True)
     Wait(5.400000095367432)
     Restart()
     Wait(seconds)
@@ -201,7 +201,7 @@ def Event_1038432261(
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=200, model_point=803160)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=803160)
     AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)

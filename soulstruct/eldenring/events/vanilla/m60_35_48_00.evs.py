@@ -147,7 +147,7 @@ def Event_1035482260(
     if AND_1:
         return
     ForceAnimation(destination, 0)
-    Move(character, destination=destination, destination_type=CoordEntityType.Asset, model_point=220, short_move=True)
+    Move(character, destination=destination, destination_type=CoordEntityType.Asset, dummy_id=220, short_move=True)
     Wait(5.400000095367432)
     Restart()
     Wait(seconds)
@@ -196,7 +196,7 @@ def Event_1035482261(
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=200, model_point=803160)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=803160)
     AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
@@ -322,7 +322,7 @@ def Event_1035482270():
         ShootProjectile(
             owner_entity=Characters.Dummy0,
             source_entity=1035482271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -332,7 +332,7 @@ def Event_1035482270():
         ShootProjectile(
             owner_entity=Characters.Dummy0,
             source_entity=1035482271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102010,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -342,7 +342,7 @@ def Event_1035482270():
         ShootProjectile(
             owner_entity=Characters.Dummy0,
             source_entity=1035482271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102020,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -352,7 +352,7 @@ def Event_1035482270():
         ShootProjectile(
             owner_entity=Characters.Dummy0,
             source_entity=1035482271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102030,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -362,7 +362,7 @@ def Event_1035482270():
         ShootProjectile(
             owner_entity=Characters.Dummy0,
             source_entity=1035482271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102040,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -372,7 +372,7 @@ def Event_1035482270():
         ShootProjectile(
             owner_entity=Characters.Dummy0,
             source_entity=1035482271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102050,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -382,7 +382,7 @@ def Event_1035482270():
         ShootProjectile(
             owner_entity=Characters.Dummy0,
             source_entity=1035482271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102060,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -392,7 +392,7 @@ def Event_1035482270():
         ShootProjectile(
             owner_entity=Characters.Dummy0,
             source_entity=1035482271,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102070,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -416,7 +416,7 @@ def Event_1035482280():
         ShootProjectile(
             owner_entity=Characters.Dummy1,
             source_entity=1035482281,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -426,7 +426,7 @@ def Event_1035482280():
         ShootProjectile(
             owner_entity=Characters.Dummy1,
             source_entity=1035482281,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102010,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -436,7 +436,7 @@ def Event_1035482280():
         ShootProjectile(
             owner_entity=Characters.Dummy1,
             source_entity=1035482281,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102020,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -446,7 +446,7 @@ def Event_1035482280():
         ShootProjectile(
             owner_entity=Characters.Dummy1,
             source_entity=1035482281,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102030,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -456,7 +456,7 @@ def Event_1035482280():
         ShootProjectile(
             owner_entity=Characters.Dummy1,
             source_entity=1035482281,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102040,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -466,7 +466,7 @@ def Event_1035482280():
         ShootProjectile(
             owner_entity=Characters.Dummy1,
             source_entity=1035482281,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102050,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -476,7 +476,7 @@ def Event_1035482280():
         ShootProjectile(
             owner_entity=Characters.Dummy1,
             source_entity=1035482281,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102060,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -486,7 +486,7 @@ def Event_1035482280():
         ShootProjectile(
             owner_entity=Characters.Dummy1,
             source_entity=1035482281,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802102070,
             launch_angle_x=0,
             launch_angle_y=0,

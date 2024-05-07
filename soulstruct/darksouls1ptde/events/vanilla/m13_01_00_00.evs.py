@@ -136,7 +136,7 @@ def Event_11310090(_, obj: int, vfx_id: int, destination: int, destination_1: in
         prompt_text=10010403,
         anchor_entity=destination,
         anchor_type=CoordEntityType.Region,
-        model_point=0,
+        dummy_id=0,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         line_intersects=obj,
     ))
@@ -144,7 +144,7 @@ def Event_11310090(_, obj: int, vfx_id: int, destination: int, destination_1: in
         prompt_text=10010407,
         anchor_entity=destination_1,
         anchor_type=CoordEntityType.Region,
-        model_point=0,
+        dummy_id=0,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         line_intersects=obj,
     ))
@@ -297,7 +297,7 @@ def Event_11310095():
         prompt_text=10010410,
         anchor_entity=1312610,
         anchor_type=CoordEntityType.Region,
-        model_point=0,
+        dummy_id=0,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         line_intersects=1311710,
     ))
@@ -581,7 +581,7 @@ def Event_11315398():
     CreateHazard(
         obj_flag=11315399,
         obj=1311250,
-        model_point=1,
+        dummy_id=1,
         behavior_param_id=11300,
         target_type=DamageTargetType.Character,
         radius=0.30000001192092896,
@@ -634,14 +634,14 @@ def Event_11315370(
         SetDisplayMask(1310800, bit_index=6, switch_type=OnOffChange.On)
         SetDisplayMask(1310800, bit_index=9, switch_type=OnOffChange.On)
     EnableObject(obj)
-    MoveObjectToCharacter(obj, character=1310800, model_point=50)
+    MoveObjectToCharacter(obj, character=1310800, dummy_id=50)
     DestroyObject(obj)
     EnableCharacter(character)
     Move(
         character,
         destination=1310800,
         destination_type=CoordEntityType.Character,
-        model_point=50,
+        dummy_id=50,
         copy_draw_parent=1310800,
     )
     ForceAnimation(character, 7000)
@@ -650,7 +650,7 @@ def Event_11315370(
         character_1,
         destination=1310800,
         destination_type=CoordEntityType.Character,
-        model_point=51,
+        dummy_id=51,
         copy_draw_parent=1310800,
     )
     ForceAnimation(character_1, 7000)

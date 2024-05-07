@@ -29,15 +29,15 @@ def Constructor():
     Event_1052412270()
     Event_1052412270(slot=1)
     Event_1052412200(0, character=Characters.GiantBall, asset=Assets.AEG099_090_9000, region=1052412210)
-    CommonFunc_90005300(0, flag=1052410850, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1052410850, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005476(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
     Event_1052412291(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
-    CommonFunc_90005871(
+    CommonFunc_NightsCavalryHealthBar(
         0,
-        character=Characters.NightsCavalry,
+        nights_cavalry=Characters.NightsCavalry,
         name=903150606,
         npc_threat_level=10,
-        character_1=Characters.NightsCavalryHorse,
+        horse=Characters.NightsCavalryHorse,
     )
     CommonFunc_90005860(
         0,
@@ -48,7 +48,7 @@ def Constructor():
         item_lot=1052410100,
         seconds=0.0,
     )
-    CommonFunc_90005872(0, character=Characters.NightsCavalry, npc_threat_level=10, right=0)
+    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.NightsCavalry, npc_threat_level=10, required_flag=0)
     Event_1052412510()
     CommonFunc_90005501(
         0,
@@ -60,7 +60,7 @@ def Constructor():
         asset_2=Assets.AEG099_182_2000,
         flag_2=1052410512,
     )
-    CommonFunc_90005870(0, character=Characters.FlyingDragon, name=904500601, npc_threat_level=25)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.FlyingDragon, name=904500601, npc_threat_level=25)
     CommonFunc_90005860(
         0,
         flag=1052410800,
@@ -100,7 +100,7 @@ def Event_1052412200(_, character: uint, asset: uint, region: uint):
     
     MAIN.Await(AND_2)
     
-    CreateAssetVFX(asset, vfx_id=100, model_point=620383)
+    CreateAssetVFX(asset, vfx_id=100, dummy_id=620383)
     EnableCharacter(character)
     EnableNetworkFlag(region)
     Wait(2.0)
@@ -119,7 +119,7 @@ def Event_1052412200(_, character: uint, asset: uint, region: uint):
 @RestartOnRest(1052412220)
 def Event_1052412220():
     """Event 1052412220"""
-    CreateAssetVFX(Assets.AEG099_251_2000, vfx_id=200, model_point=1500)
+    CreateAssetVFX(Assets.AEG099_251_2000, vfx_id=200, dummy_id=1500)
 
 
 @RestartOnRest(1052412230)
@@ -202,7 +202,7 @@ def Event_1052412270():
     ShootProjectile(
         owner_entity=Characters.Dummy,
         source_entity=1052412271,
-        model_point=900,
+        dummy_id=900,
         behavior_id=802104200,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -214,7 +214,7 @@ def Event_1052412270():
     ShootProjectile(
         owner_entity=Characters.Dummy,
         source_entity=1052412271,
-        model_point=900,
+        dummy_id=900,
         behavior_id=802104210,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -226,7 +226,7 @@ def Event_1052412270():
     ShootProjectile(
         owner_entity=Characters.Dummy,
         source_entity=1052412271,
-        model_point=900,
+        dummy_id=900,
         behavior_id=802104220,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -238,7 +238,7 @@ def Event_1052412270():
     ShootProjectile(
         owner_entity=Characters.Dummy,
         source_entity=1052412271,
-        model_point=900,
+        dummy_id=900,
         behavior_id=802104230,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -250,7 +250,7 @@ def Event_1052412270():
     ShootProjectile(
         owner_entity=Characters.Dummy,
         source_entity=1052412271,
-        model_point=900,
+        dummy_id=900,
         behavior_id=802104240,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -262,7 +262,7 @@ def Event_1052412270():
     ShootProjectile(
         owner_entity=Characters.Dummy,
         source_entity=1052412271,
-        model_point=900,
+        dummy_id=900,
         behavior_id=802104250,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -274,7 +274,7 @@ def Event_1052412270():
     ShootProjectile(
         owner_entity=Characters.Dummy,
         source_entity=1052412271,
-        model_point=900,
+        dummy_id=900,
         behavior_id=802104260,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -286,7 +286,7 @@ def Event_1052412270():
     ShootProjectile(
         owner_entity=Characters.Dummy,
         source_entity=1052412271,
-        model_point=900,
+        dummy_id=900,
         behavior_id=802104270,
         launch_angle_x=0,
         launch_angle_y=0,

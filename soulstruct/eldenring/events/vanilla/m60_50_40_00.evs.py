@@ -97,7 +97,7 @@ def Constructor():
         character=Characters.LargeDragonbarrowDragon,
         item_lot=1050400800,
         seconds=0.0,
-        left=0,
+        item_is_dropped=0,
     )
     Event_1050402205()
 

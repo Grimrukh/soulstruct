@@ -63,10 +63,10 @@ def Preconstructor():
         region=1044372200,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(0, character=Characters.Skeleton1, region=1044372200, radius=10.0, seconds=1.0, animation_id=-1)
     CommonFunc_90005211(
@@ -77,10 +77,10 @@ def Preconstructor():
         region=1044372200,
         radius=10.0,
         seconds=1.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(0, character=Characters.Runebear, region=1044372350, radius=15.0, seconds=0.0, animation_id=0)
 
@@ -145,7 +145,7 @@ def Event_1044372210(_, character: uint, asset: uint, region: uint):
     
     EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
-    CreateTemporaryVFX(vfx_id=641012, anchor_entity=character, model_point=900, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=641012, anchor_entity=character, dummy_id=900, anchor_type=CoordEntityType.Character)
     Wait(0.5)
     DisableAsset(asset)
     Wait(0.30000001192092896)

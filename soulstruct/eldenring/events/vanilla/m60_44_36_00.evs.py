@@ -35,7 +35,7 @@ def Constructor():
     Event_1044362800()
     Event_1044362810()
     Event_1044362849()
-    CommonFunc_90005300(0, flag=1044360220, character=Characters.Scarab, item_lot=40112, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1044360220, character=Characters.Scarab, item_lot=40112, seconds=0.0, item_is_dropped=0)
     Event_1044362500()
     CommonFunc_90005704(
         0,
@@ -55,8 +55,8 @@ def Constructor():
     Event_1044363712(0, entity=Characters.SorceressSellen)
     Event_1044363713()
     Event_1044363714(0, entity=Characters.SorceressSellen)
-    CommonFunc_90005709(0, attacked_entity=Characters.SorceressSellen, model_point=905, vfx_id=603001)
-    CommonFunc_90005709(0, attacked_entity=Characters.SorceressSellen, model_point=200, vfx_id=603051)
+    CommonFunc_90005709(0, attacked_entity=Characters.SorceressSellen, dummy_id=905, vfx_id=603001)
+    CommonFunc_90005709(0, attacked_entity=Characters.SorceressSellen, dummy_id=200, vfx_id=603051)
 
 
 @ContinueOnRest(50)
@@ -102,10 +102,10 @@ def Preconstructor():
         region=1044362200,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
 
 
@@ -154,7 +154,7 @@ def Event_1044362300():
     CreateHazard(
         asset_flag=1044361301,
         asset=Assets.AEG100_100_9000,
-        model_point=150,
+        dummy_id=150,
         behavior_param_id=100700,
         target_type=DamageTargetType.Character,
         radius=3.0,
@@ -164,7 +164,7 @@ def Event_1044362300():
     CreateHazard(
         asset_flag=1044361301,
         asset=Assets.AEG100_100_9000,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=100701,
         target_type=DamageTargetType.Character,
         radius=2.0,
@@ -174,7 +174,7 @@ def Event_1044362300():
     CreateHazard(
         asset_flag=1044361301,
         asset=Assets.AEG100_100_9000,
-        model_point=201,
+        dummy_id=201,
         behavior_param_id=100701,
         target_type=DamageTargetType.Character,
         radius=2.0,
@@ -184,7 +184,7 @@ def Event_1044362300():
     CreateHazard(
         asset_flag=1044361301,
         asset=Assets.AEG100_100_9000,
-        model_point=202,
+        dummy_id=202,
         behavior_param_id=100701,
         target_type=DamageTargetType.Character,
         radius=2.0,
@@ -194,7 +194,7 @@ def Event_1044362300():
     CreateHazard(
         asset_flag=1044361301,
         asset=Assets.AEG100_100_9000,
-        model_point=203,
+        dummy_id=203,
         behavior_param_id=100701,
         target_type=DamageTargetType.Character,
         radius=2.0,
@@ -204,7 +204,7 @@ def Event_1044362300():
     CreateHazard(
         asset_flag=1044361301,
         asset=Assets.AEG100_100_9000,
-        model_point=204,
+        dummy_id=204,
         behavior_param_id=100701,
         target_type=DamageTargetType.Character,
         radius=2.0,
@@ -214,7 +214,7 @@ def Event_1044362300():
     CreateHazard(
         asset_flag=1044361301,
         asset=Assets.AEG100_100_9000,
-        model_point=205,
+        dummy_id=205,
         behavior_param_id=100701,
         target_type=DamageTargetType.Character,
         radius=2.0,
@@ -645,7 +645,7 @@ def Event_1044362849():
         flag_2=1044362806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=1044360800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=1044360800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=1044360800,
@@ -657,4 +657,4 @@ def Event_1044362849():
         left=0,
         left_1=0,
     )
-    CommonFunc_9005812(0, flag=1044360800, asset=Assets.AEG099_001_9001, model_point=3, right=0, model_point_1=0)
+    CommonFunc_9005812(0, flag=1044360800, asset=Assets.AEG099_001_9001, dummy_id=3, right=0, dummy_id_1=0)

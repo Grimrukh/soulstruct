@@ -57,7 +57,7 @@ def Constructor():
         first_flag=400312,
         last_flag=400312,
         flag=7611,
-        model_point=0,
+        dummy_id=0,
     )
     CommonFunc_90005750(
         0,
@@ -67,7 +67,7 @@ def Constructor():
         first_flag=400312,
         last_flag=400312,
         flag=1050389238,
-        model_point=0,
+        dummy_id=0,
     )
     Event_1050383710(0, character=Characters.Millicent0)
     CommonFunc_90005704(0, attacked_entity=Characters.Millicent0, flag=4181, flag_1=4180, flag_2=1050389251, right=3)
@@ -113,7 +113,7 @@ def Constructor():
     CommonFunc_90005702(0, character=Characters.Millicent1, flag=4183, first_flag=4180, last_flag=4184)
     Event_1050383713()
     Event_1050383714()
-    CommonFunc_90005752(0, asset=1050381700, vfx_id=200, model_point=120, seconds=3.0)
+    CommonFunc_90005752(0, asset=1050381700, vfx_id=200, dummy_id=120, seconds=3.0)
 
 
 @ContinueOnRest(50)
@@ -296,7 +296,7 @@ def Event_1050383703(_, character: uint):
         character,
         destination=Characters.SageGowry0,
         destination_type=CoordEntityType.Character,
-        model_point=900,
+        dummy_id=900,
         short_move=True,
     )
     EnableAnimations(character)

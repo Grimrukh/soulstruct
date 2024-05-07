@@ -25,4 +25,4 @@ from .enums.m60_50_37_00_enums import *
 def Constructor():
     """Event 0"""
     CommonFunc_90005251(0, character=Characters.Troll, radius=100.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005300(0, flag=1050370299, character=Characters.Troll, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1050370299, character=Characters.Troll, item_lot=0, seconds=0.0, item_is_dropped=0)

@@ -43,7 +43,7 @@ def Constructor():
         flag_10=78208,
         flag_11=78209,
     )
-    CommonFunc_900005610(0, asset=Assets.AEG003_316_9001, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG003_316_9001, vfx_id=100, dummy_id=800, right=0)
     Event_1039400700(0, character=Characters.Hyetta)
     CommonFunc_90005702(0, character=Characters.Hyetta, flag=3383, first_flag=3380, last_flag=3383)
     CommonFunc_90005703(
@@ -100,10 +100,10 @@ def Preconstructor():
         region=1039402220,
         radius=0.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
 
 

@@ -409,7 +409,7 @@ EMEDF = {
                 "type": float,
                 "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 180.0,
             },
-            "model_point": MODEL_POINT,
+            "dummy_id": MODEL_POINT,
             "max_distance": {
                 "type": float,
                 "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 2.0,
@@ -427,7 +427,7 @@ EMEDF = {
             "anchor_entity": {},
             "anchor_type": {},
             "facing_angle": {},
-            "model_point": {},
+            "dummy_id": {},
             "max_distance": {},
             "trigger_attribute": {},
             "button": {},
@@ -557,7 +557,7 @@ EMEDF = {
                 "type": float,
                 "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 180.0,
             },
-            "model_point": MODEL_POINT,
+            "dummy_id": MODEL_POINT,
             "max_distance": {
                 "type": float,
                 "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 2.0,
@@ -575,7 +575,7 @@ EMEDF = {
             "anchor_entity": {},
             "anchor_type": {},
             "facing_angle": {},
-            "model_point": {},
+            "dummy_id": {},
             "max_distance": {},
             "trigger_attribute": {},
             "button": {},
@@ -653,7 +653,7 @@ EMEDF = {
                 "type": float,
                 "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 180.0,
             },
-            "model_point": MODEL_POINT,
+            "dummy_id": MODEL_POINT,
             "max_distance": {
                 "type": float,
                 "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 2.0,
@@ -673,7 +673,7 @@ EMEDF = {
             "line_intersects": {},
             "anchor_type": {},
             "facing_angle": {},
-            "model_point": {},
+            "dummy_id": {},
             "max_distance": {},
             "trigger_attribute": {},
             "button": {},
@@ -694,7 +694,7 @@ EMEDF = {
                 "type": float,
                 "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 180.0,
             },
-            "model_point": MODEL_POINT,
+            "dummy_id": MODEL_POINT,
             "max_distance": {
                 "type": float,
                 "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 2.0,
@@ -714,7 +714,7 @@ EMEDF = {
             "line_intersects": {},
             "anchor_type": {},
             "facing_angle": {},
-            "model_point": {},
+            "dummy_id": {},
             "max_distance": {},
             "trigger_attribute": {},
             "button": {},
@@ -1696,7 +1696,7 @@ EMEDF = {
         "args": {
             "owner_entity": NO_DEFAULT(CoordEntityTyping),
             "source_entity": NO_DEFAULT(CoordEntityTyping),
-            "model_point": INT,
+            "dummy_id": INT,
             "behavior_id": INT,
             "launch_angle_x": INT,
             "launch_angle_y": INT,
@@ -2034,12 +2034,12 @@ EMEDF = {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "destination_type": AUTO_COORD_ENTITY_TYPE("destination"),
             "destination": NO_DEFAULT(CoordEntityTyping),
-            "model_point": MODEL_POINT,
+            "dummy_id": MODEL_POINT,
         },
         "evs_args": {
             "character": {},
             "destination": {},
-            "model_point": {},
+            "dummy_id": {},
             "destination_type": {},
         },
     },
@@ -2515,7 +2515,7 @@ EMEDF = {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "destination_type": AUTO_COORD_ENTITY_TYPE("destination"),
             "destination": NO_DEFAULT(CoordEntityTyping),
-            "model_point": MODEL_POINT,
+            "dummy_id": MODEL_POINT,
             "set_draw_parent": {
                 "type": MapPartTyping,
                 "default": None,
@@ -2525,7 +2525,7 @@ EMEDF = {
             "character": {},
             "destination": {},
             "set_draw_parent": {},
-            "model_point": {},
+            "dummy_id": {},
             "destination_type": {},
         },
     },
@@ -2536,12 +2536,12 @@ EMEDF = {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "destination_type": AUTO_COORD_ENTITY_TYPE("destination"),
             "destination": NO_DEFAULT(CoordEntityTyping),
-            "model_point": MODEL_POINT,
+            "dummy_id": MODEL_POINT,
         },
         "evs_args": {
             "character": {},
             "destination": {},
-            "model_point": {},
+            "dummy_id": {},
             "destination_type": {},
         },
     },
@@ -2552,14 +2552,14 @@ EMEDF = {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "destination_type": AUTO_COORD_ENTITY_TYPE("destination"),
             "destination": NO_DEFAULT(CoordEntityTyping),
-            "model_point": MODEL_POINT,
+            "dummy_id": MODEL_POINT,
             "copy_draw_parent": NO_DEFAULT(AnimatedEntityTyping),
         },
         "evs_args": {
             "character": {},
             "destination": {},
             "copy_draw_parent": {},
-            "model_point": {},
+            "dummy_id": {},
             "destination_type": {},
         },
     },
@@ -2709,7 +2709,7 @@ EMEDF = {
         "alias": "CreateHazard",
         "docstring": """
             Turn an asset into an environmental hazard. It deals damage when touched according to the NPC Behavior 
-            params you give it. The model_point determines which part of the asset is hazardous (with the given radius 
+            params you give it. The dummy_id determines which part of the asset is hazardous (with the given radius 
             and life, relative to the time this instruction occurs).
 
             An example is the large fire in the Lower Undead Burg, or near the first Armored Tusk.
@@ -2719,7 +2719,7 @@ EMEDF = {
         "args": {
             "asset_flag": FLAG,
             "asset": NO_DEFAULT(AssetTyping),
-            "model_point": INT,
+            "dummy_id": INT,
             "behavior_param_id": INT,
             "target_type": {
                 "type": DamageTargetType,
@@ -2740,7 +2740,7 @@ EMEDF = {
                 "default": None,
                 "internal_default": -1,
             },
-            "model_point": MODEL_POINT,
+            "dummy_id": MODEL_POINT,
         },
     },
     (2005, 12): {
@@ -2823,13 +2823,13 @@ EMEDF = {
         "args": {
             "anchor_type": AUTO_COORD_ENTITY_TYPE("anchor_entity", check_player=True),
             "anchor_entity": NO_DEFAULT(CoordEntityTyping),
-            "model_point": MODEL_POINT,
+            "dummy_id": MODEL_POINT,
             "vfx_id": INT,
         },
         "evs_args": {
             "vfx_id": {},
             "anchor_entity": {},
-            "model_point": {},
+            "dummy_id": {},
             "anchor_type": {},
         },
     },
@@ -2839,7 +2839,7 @@ EMEDF = {
         "args": {
             "asset": NO_DEFAULT(AssetTyping) | HIDE_NAME,
             "vfx_id": INT,
-            "model_point": INT,
+            "dummy_id": INT,
         },
     },
     (2006, 5): {
@@ -2949,7 +2949,7 @@ EMEDF = {
             "vibration_id": INT,
             "anchor_type": AUTO_COORD_ENTITY_TYPE("anchor_entity"),
             "anchor_entity": NO_DEFAULT(CoordEntityTyping),
-            "model_point": MODEL_POINT,
+            "dummy_id": MODEL_POINT,
             "decay_start_distance": {
                 "type": float,
                 "default": 999.0,
@@ -2962,7 +2962,7 @@ EMEDF = {
         "evs_args": {
             "vibration_id": {},
             "anchor_entity": {},
-            "model_point": {},
+            "dummy_id": {},
             "decay_start_distance": {},
             "decay_end_distance": {},
             "anchor_type": {},
@@ -4656,7 +4656,7 @@ EMEDF = {
         "args": {
             "far_view_id": INT,
             "asset": NO_DEFAULT(AssetTyping),
-            "model_point": MODEL_POINT,
+            "dummy_id": MODEL_POINT,
         },
     },
     (2003, 76): {
@@ -4756,7 +4756,7 @@ EMEDF = {
         """,
         "args": {
             "character": NO_DEFAULT(CharacterTyping),
-            "lock_on_model_point": INT,
+            "lock_on_dummy_id": INT,
             "state": BOOL,
         },
     },
@@ -4804,7 +4804,7 @@ EMEDF = {
         "docstring": "TODO",
         "args": {
             "character": NO_DEFAULT(CharacterTyping),
-            "model_point": INT | {"internal_default": -1},
+            "dummy_id": INT | {"internal_default": -1},
             "asset": NO_DEFAULT(AssetTyping),
         },
     },
@@ -4851,7 +4851,7 @@ EMEDF = {
             "character": NO_DEFAULT(CharacterTyping),
             "destination_type": NO_DEFAULT(CoordEntityType),
             "destination": NO_DEFAULT(CoordEntityTyping),
-            "model_point": MODEL_POINT | {"default": None},
+            "dummy_id": MODEL_POINT | {"default": None},
             "copy_draw_parent": NO_DEFAULT(CoordEntityTyping),
             "use_bonfire_effect": BOOL,
             "reset_camera": BOOL,
@@ -4947,7 +4947,7 @@ EMEDF = {
         "args": {
             "child_asset": NO_DEFAULT(AssetTyping),
             "parent_asset": NO_DEFAULT(AssetTyping),
-            "parent_model_point": MODEL_POINT,
+            "parent_dummy_id": MODEL_POINT,
         },
     },
     (2005, 19): {
@@ -4965,8 +4965,8 @@ EMEDF = {
         "args": {
             "asset_flag": FLAG,
             "asset": INT,
-            "model_point_start": INT | {"internal_default": -1},
-            "model_point_end": INT | {"internal_default": -1},
+            "dummy_id_start": INT | {"internal_default": -1},
+            "dummy_id_end": INT | {"internal_default": -1},
             "behaviour_id": INT,
             "target_type": NO_DEFAULT(DamageTargetType),
             "radius": FLOAT,

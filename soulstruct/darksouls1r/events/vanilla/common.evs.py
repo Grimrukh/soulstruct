@@ -1118,7 +1118,7 @@ def Event_754():
     DisableFlag(754)
     AddSpecialEffect(PLAYER, 4600)
     AddSpecialEffect(PLAYER, 4601)
-    CreateTemporaryVFX(vfx_id=22715, anchor_entity=PLAYER, model_point=7, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=22715, anchor_entity=PLAYER, dummy_id=7, anchor_type=CoordEntityType.Character)
     Restart()
 
 

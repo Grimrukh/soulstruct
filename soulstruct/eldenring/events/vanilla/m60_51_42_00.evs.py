@@ -24,4 +24,4 @@ from .enums.m60_51_42_00_enums import *
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005300(0, flag=1051420299, character=Characters.Scarab, item_lot=40428, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1051420299, character=Characters.Scarab, item_lot=40428, seconds=0.0, item_is_dropped=0)

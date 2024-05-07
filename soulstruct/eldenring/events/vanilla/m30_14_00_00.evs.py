@@ -25,7 +25,7 @@ from .enums.m30_14_00_00_enums import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=301400, asset=Assets.AEG099_060_9000)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
     Event_30142800()
     Event_30142801()
     Event_30142849()
@@ -54,8 +54,8 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.Imp1, region=30142251, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=30140202, region=30142202, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Imp1, region=30142251, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=30140202, region=30142202, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.Imp4,
@@ -68,8 +68,8 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.Imp5, region=30142264, seconds=0.0, animation_id=3003)
-    CommonFunc_90005250(0, character=30140253, region=30142261, seconds=0.5, animation_id=3004)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Imp5, region=30142264, seconds=0.0, animation_id=3003)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=30140253, region=30142261, seconds=0.5, animation_id=3004)
     CommonFunc_90005200(
         0,
         character=30140269,
@@ -178,9 +178,9 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.Imp10, region=30142215, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=30140217, region=30142215, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Imp9, region=30142215, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Imp10, region=30142215, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=30140217, region=30142215, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Imp9, region=30142215, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.LivingMass2,
@@ -253,10 +253,10 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=30140219, region=30142219, seconds=1.0, animation_id=-1)
-    CommonFunc_90005250(0, character=30140220, region=30142219, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=30140222, region=30142219, seconds=0.5, animation_id=-1)
-    CommonFunc_90005250(0, character=30140223, region=30142223, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=30140219, region=30142219, seconds=1.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=30140220, region=30142219, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=30140222, region=30142219, seconds=0.5, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=30140223, region=30142223, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.LivingMass0,
@@ -338,7 +338,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_91005600(0, flag=30142800, asset=30141695, model_point=5)
+    CommonFunc_91005600(0, flag=30142800, asset=30141695, dummy_id=5)
 
 
 @ContinueOnRest(50)
@@ -494,7 +494,7 @@ def Event_30142849():
         flag_2=30142806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=30140800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=30140800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=30140800,

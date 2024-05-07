@@ -234,7 +234,7 @@ def Event_11300090(_, obj: int, vfx_id: int, destination: int, destination_1: in
         prompt_text=10010403,
         anchor_entity=destination,
         anchor_type=CoordEntityType.Region,
-        model_point=0,
+        dummy_id=0,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         line_intersects=obj,
     ))
@@ -242,7 +242,7 @@ def Event_11300090(_, obj: int, vfx_id: int, destination: int, destination_1: in
         prompt_text=10010407,
         anchor_entity=destination_1,
         anchor_type=CoordEntityType.Region,
-        model_point=0,
+        dummy_id=0,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         line_intersects=obj,
     ))
@@ -904,7 +904,7 @@ def Event_11300700(_, obj: int, obj_flag: int):
     CreateHazard(
         obj_flag=obj_flag,
         obj=obj,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=5120,
         target_type=DamageTargetType.Character,
         radius=0.10000000149011612,
@@ -914,7 +914,7 @@ def Event_11300700(_, obj: int, obj_flag: int):
     CreateHazard(
         obj_flag=obj_flag,
         obj=obj,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=5120,
         target_type=DamageTargetType.Character,
         radius=0.10000000149011612,
@@ -924,7 +924,7 @@ def Event_11300700(_, obj: int, obj_flag: int):
     CreateHazard(
         obj_flag=obj_flag,
         obj=obj,
-        model_point=102,
+        dummy_id=102,
         behavior_param_id=5120,
         target_type=DamageTargetType.Character,
         radius=0.10000000149011612,
@@ -943,7 +943,7 @@ def Event_11300300():
     CreateHazard(
         obj_flag=11300301,
         obj=1301102,
-        model_point=2,
+        dummy_id=2,
         behavior_param_id=5100,
         target_type=DamageTargetType.Character,
         radius=0.5,
@@ -953,7 +953,7 @@ def Event_11300300():
     CreateHazard(
         obj_flag=11300302,
         obj=1301102,
-        model_point=4,
+        dummy_id=4,
         behavior_param_id=5100,
         target_type=DamageTargetType.Character,
         radius=1.0,
@@ -963,7 +963,7 @@ def Event_11300300():
     CreateHazard(
         obj_flag=11300303,
         obj=1301102,
-        model_point=6,
+        dummy_id=6,
         behavior_param_id=5100,
         target_type=DamageTargetType.Character,
         radius=1.0,
@@ -973,7 +973,7 @@ def Event_11300300():
     CreateHazard(
         obj_flag=11300304,
         obj=1301102,
-        model_point=8,
+        dummy_id=8,
         behavior_param_id=5100,
         target_type=DamageTargetType.Character,
         radius=1.0,
@@ -983,7 +983,7 @@ def Event_11300300():
     CreateHazard(
         obj_flag=11300305,
         obj=1301102,
-        model_point=10,
+        dummy_id=10,
         behavior_param_id=5100,
         target_type=DamageTargetType.Character,
         radius=1.0,
@@ -993,7 +993,7 @@ def Event_11300300():
     CreateHazard(
         obj_flag=11300306,
         obj=1301102,
-        model_point=12,
+        dummy_id=12,
         behavior_param_id=5100,
         target_type=DamageTargetType.Character,
         radius=1.0,
@@ -1003,7 +1003,7 @@ def Event_11300300():
     CreateHazard(
         obj_flag=11300307,
         obj=1301102,
-        model_point=14,
+        dummy_id=14,
         behavior_param_id=5100,
         target_type=DamageTargetType.Character,
         radius=1.0,
@@ -1013,7 +1013,7 @@ def Event_11300300():
     CreateHazard(
         obj_flag=11300308,
         obj=1301102,
-        model_point=15,
+        dummy_id=15,
         behavior_param_id=5100,
         target_type=DamageTargetType.Character,
         radius=0.5,
@@ -1042,7 +1042,7 @@ def Event_11300350():
     CreateHazard(
         obj_flag=11300351,
         obj=1301103,
-        model_point=2,
+        dummy_id=2,
         behavior_param_id=5100,
         target_type=DamageTargetType.Character,
         radius=0.5,
@@ -1052,7 +1052,7 @@ def Event_11300350():
     CreateHazard(
         obj_flag=11300352,
         obj=1301103,
-        model_point=4,
+        dummy_id=4,
         behavior_param_id=5100,
         target_type=DamageTargetType.Character,
         radius=1.0,
@@ -1062,7 +1062,7 @@ def Event_11300350():
     CreateHazard(
         obj_flag=11300353,
         obj=1301103,
-        model_point=6,
+        dummy_id=6,
         behavior_param_id=5100,
         target_type=DamageTargetType.Character,
         radius=1.0,
@@ -1072,7 +1072,7 @@ def Event_11300350():
     CreateHazard(
         obj_flag=11300354,
         obj=1301103,
-        model_point=8,
+        dummy_id=8,
         behavior_param_id=5100,
         target_type=DamageTargetType.Character,
         radius=1.0,
@@ -1082,7 +1082,7 @@ def Event_11300350():
     CreateHazard(
         obj_flag=11300355,
         obj=1301103,
-        model_point=10,
+        dummy_id=10,
         behavior_param_id=5100,
         target_type=DamageTargetType.Character,
         radius=1.0,
@@ -1092,7 +1092,7 @@ def Event_11300350():
     CreateHazard(
         obj_flag=11300356,
         obj=1301103,
-        model_point=12,
+        dummy_id=12,
         behavior_param_id=5100,
         target_type=DamageTargetType.Character,
         radius=1.0,
@@ -1102,7 +1102,7 @@ def Event_11300350():
     CreateHazard(
         obj_flag=11300357,
         obj=1301103,
-        model_point=14,
+        dummy_id=14,
         behavior_param_id=5100,
         target_type=DamageTargetType.Character,
         radius=1.0,
@@ -1112,7 +1112,7 @@ def Event_11300350():
     CreateHazard(
         obj_flag=11300358,
         obj=1301103,
-        model_point=33,
+        dummy_id=33,
         behavior_param_id=5100,
         target_type=DamageTargetType.Character,
         radius=1.0,
@@ -1122,7 +1122,7 @@ def Event_11300350():
     CreateHazard(
         obj_flag=11300359,
         obj=1301103,
-        model_point=35,
+        dummy_id=35,
         behavior_param_id=5100,
         target_type=DamageTargetType.Character,
         radius=1.0,
@@ -1132,7 +1132,7 @@ def Event_11300350():
     CreateHazard(
         obj_flag=11300360,
         obj=1301103,
-        model_point=37,
+        dummy_id=37,
         behavior_param_id=5100,
         target_type=DamageTargetType.Character,
         radius=1.0,
@@ -1142,7 +1142,7 @@ def Event_11300350():
     CreateHazard(
         obj_flag=11300361,
         obj=1301103,
-        model_point=39,
+        dummy_id=39,
         behavior_param_id=5100,
         target_type=DamageTargetType.Character,
         radius=0.5,

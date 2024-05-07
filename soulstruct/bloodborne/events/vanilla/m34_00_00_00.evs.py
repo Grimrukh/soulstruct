@@ -2549,35 +2549,35 @@ def Event_13404840():
     
     MAIN.Await(CharacterHasTAEEvent(3400800, tae_event_id=100))
     
-    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, model_point=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, dummy_id=236, anchor_type=CoordEntityType.Character)
     Wait(0.10000000149011612)
-    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, model_point=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, dummy_id=236, anchor_type=CoordEntityType.Character)
     Wait(0.10000000149011612)
-    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, model_point=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, dummy_id=236, anchor_type=CoordEntityType.Character)
     Wait(0.10000000149011612)
-    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, model_point=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, dummy_id=236, anchor_type=CoordEntityType.Character)
     Wait(0.10000000149011612)
-    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, model_point=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, dummy_id=236, anchor_type=CoordEntityType.Character)
     Wait(0.10000000149011612)
-    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, model_point=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, dummy_id=236, anchor_type=CoordEntityType.Character)
     Wait(0.5)
     DisableCharacter(3400800)
-    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, model_point=236, anchor_type=CoordEntityType.Character)
-    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, model_point=236, anchor_type=CoordEntityType.Character)
-    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, model_point=236, anchor_type=CoordEntityType.Character)
-    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, model_point=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, dummy_id=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, dummy_id=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, dummy_id=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, dummy_id=236, anchor_type=CoordEntityType.Character)
     Wait(0.10000000149011612)
-    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, model_point=236, anchor_type=CoordEntityType.Character)
-    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, model_point=236, anchor_type=CoordEntityType.Character)
-    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, model_point=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, dummy_id=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, dummy_id=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, dummy_id=236, anchor_type=CoordEntityType.Character)
     Wait(0.10000000149011612)
-    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, model_point=236, anchor_type=CoordEntityType.Character)
-    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, model_point=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, dummy_id=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, dummy_id=236, anchor_type=CoordEntityType.Character)
     Wait(0.10000000149011612)
-    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, model_point=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=645114, anchor_entity=PLAYER, dummy_id=236, anchor_type=CoordEntityType.Character)
     Wait(1.2000000476837158)
     EnableCharacter(3400800)
-    Move(3400800, destination=PLAYER, destination_type=CoordEntityType.Character, model_point=236, short_move=True)
+    Move(3400800, destination=PLAYER, destination_type=CoordEntityType.Character, dummy_id=236, short_move=True)
     ForceAnimation(3400800, 3017)
     Restart()
 
@@ -3185,7 +3185,7 @@ def Event_13400320():
     AND_1.Add(CharacterHuman(PLAYER))
     if not AND_1:
         return
-    CreateObjectVFX(3401500, vfx_id=200, model_point=900201)
+    CreateObjectVFX(3401500, vfx_id=200, dummy_id=900201)
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=3400100, entity=3401500))
     
@@ -3258,11 +3258,11 @@ def Event_13405100(_, obj: int, region: int, region_1: int):
 
     # --- Label 2 --- #
     DefineLabel(2)
-    CreateObjectVFX(obj, vfx_id=100, model_point=900260)
+    CreateObjectVFX(obj, vfx_id=100, dummy_id=900260)
     CreateHazard(
         obj_flag=13405101,
         obj=obj,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6291,
         target_type=DamageTargetType.Character,
         radius=1.600000023841858,
@@ -3344,7 +3344,7 @@ def Event_13405105(
     ShootProjectile(
         owner_entity=3400799,
         source_entity=obj,
-        model_point=200,
+        dummy_id=200,
         behavior_id=6280,
         launch_angle_x=launch_angle_x,
         launch_angle_y=launch_angle_y,
@@ -3354,7 +3354,7 @@ def Event_13405105(
     ShootProjectile(
         owner_entity=3400799,
         source_entity=obj,
-        model_point=200,
+        dummy_id=200,
         behavior_id=6281,
         launch_angle_x=launch_angle_x,
         launch_angle_y=launch_angle_y,
@@ -3364,7 +3364,7 @@ def Event_13405105(
     ShootProjectile(
         owner_entity=3400799,
         source_entity=obj,
-        model_point=200,
+        dummy_id=200,
         behavior_id=6282,
         launch_angle_x=launch_angle_x,
         launch_angle_y=launch_angle_y,
@@ -3374,7 +3374,7 @@ def Event_13405105(
     ShootProjectile(
         owner_entity=3400799,
         source_entity=obj,
-        model_point=200,
+        dummy_id=200,
         behavior_id=6283,
         launch_angle_x=launch_angle_x,
         launch_angle_y=launch_angle_y,
@@ -3384,7 +3384,7 @@ def Event_13405105(
     ShootProjectile(
         owner_entity=3400799,
         source_entity=obj,
-        model_point=200,
+        dummy_id=200,
         behavior_id=6280,
         launch_angle_x=launch_angle_x,
         launch_angle_y=launch_angle_y,
@@ -3441,7 +3441,7 @@ def Event_13405112():
     ShootProjectile(
         owner_entity=3400799,
         source_entity=3401320,
-        model_point=10,
+        dummy_id=10,
         behavior_id=6290,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3475,7 +3475,7 @@ def Event_13405113(
     ShootProjectile(
         owner_entity=3400799,
         source_entity=obj,
-        model_point=200,
+        dummy_id=200,
         behavior_id=behavior_id,
         launch_angle_x=340,
         launch_angle_y=0,
@@ -3487,7 +3487,7 @@ def Event_13405113(
     ShootProjectile(
         owner_entity=3400799,
         source_entity=obj,
-        model_point=200,
+        dummy_id=200,
         behavior_id=behavior_id_1,
         launch_angle_x=340,
         launch_angle_y=0,
@@ -3499,7 +3499,7 @@ def Event_13405113(
     ShootProjectile(
         owner_entity=3400799,
         source_entity=obj,
-        model_point=200,
+        dummy_id=200,
         behavior_id=behavior_id_2,
         launch_angle_x=340,
         launch_angle_y=0,
@@ -3511,7 +3511,7 @@ def Event_13405113(
     ShootProjectile(
         owner_entity=3400799,
         source_entity=obj,
-        model_point=200,
+        dummy_id=200,
         behavior_id=behavior_id_3,
         launch_angle_x=340,
         launch_angle_y=0,
@@ -3523,7 +3523,7 @@ def Event_13405113(
     ShootProjectile(
         owner_entity=3400799,
         source_entity=obj,
-        model_point=200,
+        dummy_id=200,
         behavior_id=behavior_id,
         launch_angle_x=340,
         launch_angle_y=0,
@@ -3561,7 +3561,7 @@ def Event_13405115(
     ShootProjectile(
         owner_entity=3400799,
         source_entity=obj,
-        model_point=200,
+        dummy_id=200,
         behavior_id=behavior_id,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3573,7 +3573,7 @@ def Event_13405115(
     ShootProjectile(
         owner_entity=3400799,
         source_entity=obj,
-        model_point=200,
+        dummy_id=200,
         behavior_id=behavior_id_1,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3585,7 +3585,7 @@ def Event_13405115(
     ShootProjectile(
         owner_entity=3400799,
         source_entity=obj,
-        model_point=200,
+        dummy_id=200,
         behavior_id=behavior_id_2,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3597,7 +3597,7 @@ def Event_13405115(
     ShootProjectile(
         owner_entity=3400799,
         source_entity=obj,
-        model_point=200,
+        dummy_id=200,
         behavior_id=behavior_id_3,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3609,7 +3609,7 @@ def Event_13405115(
     ShootProjectile(
         owner_entity=3400799,
         source_entity=obj,
-        model_point=200,
+        dummy_id=200,
         behavior_id=behavior_id,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3713,7 +3713,7 @@ def Event_13405160(_, obj: int):
     ShootProjectile(
         owner_entity=3400799,
         source_entity=obj,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=6051,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -3728,7 +3728,7 @@ def Event_13405160(_, obj: int):
     ShootProjectile(
         owner_entity=3400799,
         source_entity=obj,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=6292,
         launch_angle_x=0,
         launch_angle_y=90,
@@ -4348,7 +4348,7 @@ def Event_13400942(_, flag: int):
     MAIN.Await(OR_1)
     
     EnableCharacter(3400906)
-    Move(3400906, destination=3400900, destination_type=CoordEntityType.Character, model_point=10, short_move=True)
+    Move(3400906, destination=3400900, destination_type=CoordEntityType.Character, dummy_id=10, short_move=True)
     WaitFrames(frames=1)
     DropMandatoryTreasure(3400906)
     if FlagEnabled(73400519):

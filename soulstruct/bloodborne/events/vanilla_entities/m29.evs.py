@@ -165,7 +165,7 @@ def Event12900078(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=90,
+        dummy_id=90,
         behavior_id=6051,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -175,7 +175,7 @@ def Event12900078(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=90,
+        dummy_id=90,
         behavior_id=6053,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -185,7 +185,7 @@ def Event12900078(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=90,
+        dummy_id=90,
         behavior_id=6055,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -195,7 +195,7 @@ def Event12900078(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=90,
+        dummy_id=90,
         behavior_id=6055,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -205,7 +205,7 @@ def Event12900078(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=90,
+        dummy_id=90,
         behavior_id=6055,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -399,14 +399,14 @@ def Event12900192(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12900192: Event 12900192 """
     SkipLinesIfFlagDisabled(3, arg_4_7)
     DisableObjectActivation(arg_8_11, obj_act_id=2902000)
-    CreateObjectVFX(929136, obj=arg_8_11, model_point=703)
+    CreateObjectVFX(929136, obj=arg_8_11, dummy_id=703)
     End()
-    CreateObjectVFX(929134, obj=arg_8_11, model_point=703)
+    CreateObjectVFX(929134, obj=arg_8_11, dummy_id=703)
     IfObjectActivated(0, obj_act_id=arg_0_3)
     WaitFrames(56)
     EnableFlag(arg_4_7)
     DeleteObjectVFX(arg_8_11, erase_root=True)
-    CreateObjectVFX(929136, obj=arg_8_11, model_point=703)
+    CreateObjectVFX(929136, obj=arg_8_11, dummy_id=703)
     DisplayBanner(BannerType.YouWin)
     PlaySoundEffect(anchor_entity=PLAYER, sound_type=SoundType.v_Voice, sound_id=888880000)
     WaitFrames(44)
@@ -467,23 +467,23 @@ def Event12900229(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12900229: Event 12900229 """
     WaitFrames(2)
     SkipLinesIfFlagDisabled(2, arg_8_11)
-    CreateObjectVFX(929136, obj=arg_0_3, model_point=703)
+    CreateObjectVFX(929136, obj=arg_0_3, dummy_id=703)
     End()
     GotoIfThisEventSlotFlagDisabled(Label.L0)
     EndOfAnimation(arg_0_3, 1)
-    CreateObjectVFX(929136, obj=arg_0_3, model_point=703)
+    CreateObjectVFX(929136, obj=arg_0_3, dummy_id=703)
     EnableObjectActivation(arg_0_3, obj_act_id=2900100)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
     DisableObjectActivation(arg_0_3, obj_act_id=2900100)
-    CreateObjectVFX(929134, obj=arg_0_3, model_point=703)
+    CreateObjectVFX(929134, obj=arg_0_3, dummy_id=703)
     IfFlagEnabled(0, arg_4_7)
     DeleteObjectVFX(arg_0_3, erase_root=True)
     ForceAnimation(arg_0_3, 1)
     Wait(2.5)
-    CreateObjectVFX(929136, obj=arg_0_3, model_point=703)
+    CreateObjectVFX(929136, obj=arg_0_3, dummy_id=703)
     EnableObjectActivation(arg_0_3, obj_act_id=2900100)
     Wait(0.5)
 
@@ -572,7 +572,7 @@ def Event12900239(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=120,
+        dummy_id=120,
         behavior_id=6020,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -735,19 +735,19 @@ def Event12900304(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 def Event12901732(_, arg_0_3: int, arg_4_7: int):
     """ 12901732: Event 12901732 """
     GotoIfThisEventSlotFlagDisabled(Label.L0)
-    CreateObjectVFX(929102, obj=arg_4_7, model_point=700)
-    CreateObjectVFX(929102, obj=arg_4_7, model_point=702)
+    CreateObjectVFX(929102, obj=arg_4_7, dummy_id=700)
+    CreateObjectVFX(929102, obj=arg_4_7, dummy_id=702)
 
     # --- 0 --- #
     DefineLabel(0)
     IfFlagEnabled(0, arg_0_3)
     GotoIfThisEventSlotFlagEnabled(Label.L1)
-    CreateObjectVFX(929102, obj=arg_4_7, model_point=700)
-    CreateObjectVFX(929102, obj=arg_4_7, model_point=702)
+    CreateObjectVFX(929102, obj=arg_4_7, dummy_id=700)
+    CreateObjectVFX(929102, obj=arg_4_7, dummy_id=702)
 
     # --- 1 --- #
     DefineLabel(1)
-    CreateTemporaryVFX(929213, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=200)
+    CreateTemporaryVFX(929213, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, dummy_id=200)
     DisableFlag(arg_0_3)
     Restart()
 
@@ -755,7 +755,7 @@ def Event12901732(_, arg_0_3: int, arg_4_7: int):
 def Event12901743(_, arg_0_3: int, arg_4_7: int):
     """ 12901743: Event 12901743 """
     IfFlagEnabled(0, arg_0_3)
-    CreateTemporaryVFX(929215, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=-1)
+    CreateTemporaryVFX(929215, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, dummy_id=-1)
     DisableFlag(arg_0_3)
     Restart()
 
@@ -1358,7 +1358,7 @@ def Event12900377(_, arg_0_3: int, arg_4_7: int):
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6130,
         target_type=DamageTargetType.Character,
         radius=0.30000001192092896,
@@ -1372,7 +1372,7 @@ def Event12900377(_, arg_0_3: int, arg_4_7: int):
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6131,
         target_type=DamageTargetType.Character,
         radius=0.30000001192092896,
@@ -1386,7 +1386,7 @@ def Event12900377(_, arg_0_3: int, arg_4_7: int):
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6132,
         target_type=DamageTargetType.Character,
         radius=0.30000001192092896,
@@ -1400,7 +1400,7 @@ def Event12900377(_, arg_0_3: int, arg_4_7: int):
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6133,
         target_type=DamageTargetType.Character,
         radius=0.30000001192092896,
@@ -1414,7 +1414,7 @@ def Event12900377(_, arg_0_3: int, arg_4_7: int):
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6134,
         target_type=DamageTargetType.Character,
         radius=0.30000001192092896,
@@ -1428,7 +1428,7 @@ def Event12900377(_, arg_0_3: int, arg_4_7: int):
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6135,
         target_type=DamageTargetType.Character,
         radius=0.30000001192092896,
@@ -1442,7 +1442,7 @@ def Event12900377(_, arg_0_3: int, arg_4_7: int):
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6136,
         target_type=DamageTargetType.Character,
         radius=0.30000001192092896,
@@ -1456,7 +1456,7 @@ def Event12900377(_, arg_0_3: int, arg_4_7: int):
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6137,
         target_type=DamageTargetType.Character,
         radius=0.30000001192092896,
@@ -1467,7 +1467,7 @@ def Event12900377(_, arg_0_3: int, arg_4_7: int):
 
 def Event12900395(_, arg_0_3: int, arg_4_7: int):
     """ 12900395: Event 12900395 """
-    CreateObjectVFX(900110, obj=arg_0_3, model_point=704)
+    CreateObjectVFX(900110, obj=arg_0_3, dummy_id=704)
     GotoIfFlagEnabled(Label.L7, 92905107)
     GotoIfFlagEnabled(Label.L6, 92905106)
     GotoIfFlagEnabled(Label.L5, 92905105)
@@ -1482,7 +1482,7 @@ def Event12900395(_, arg_0_3: int, arg_4_7: int):
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=704,
+        dummy_id=704,
         behavior_param_id=6160,
         target_type=DamageTargetType.Character,
         radius=0.6000000238418579,
@@ -1496,7 +1496,7 @@ def Event12900395(_, arg_0_3: int, arg_4_7: int):
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=704,
+        dummy_id=704,
         behavior_param_id=6161,
         target_type=DamageTargetType.Character,
         radius=0.6000000238418579,
@@ -1510,7 +1510,7 @@ def Event12900395(_, arg_0_3: int, arg_4_7: int):
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=704,
+        dummy_id=704,
         behavior_param_id=6162,
         target_type=DamageTargetType.Character,
         radius=0.6000000238418579,
@@ -1524,7 +1524,7 @@ def Event12900395(_, arg_0_3: int, arg_4_7: int):
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=704,
+        dummy_id=704,
         behavior_param_id=6163,
         target_type=DamageTargetType.Character,
         radius=0.6000000238418579,
@@ -1538,7 +1538,7 @@ def Event12900395(_, arg_0_3: int, arg_4_7: int):
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=704,
+        dummy_id=704,
         behavior_param_id=6164,
         target_type=DamageTargetType.Character,
         radius=0.6000000238418579,
@@ -1552,7 +1552,7 @@ def Event12900395(_, arg_0_3: int, arg_4_7: int):
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=704,
+        dummy_id=704,
         behavior_param_id=6165,
         target_type=DamageTargetType.Character,
         radius=0.6000000238418579,
@@ -1566,7 +1566,7 @@ def Event12900395(_, arg_0_3: int, arg_4_7: int):
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=704,
+        dummy_id=704,
         behavior_param_id=6166,
         target_type=DamageTargetType.Character,
         radius=0.6000000238418579,
@@ -1580,7 +1580,7 @@ def Event12900395(_, arg_0_3: int, arg_4_7: int):
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=704,
+        dummy_id=704,
         behavior_param_id=6167,
         target_type=DamageTargetType.Character,
         radius=0.6000000238418579,
@@ -1599,7 +1599,7 @@ def Event12900423(_, arg_0_3: int, arg_4_7: int):
     DefineLabel(0)
     IfCharacterInsideRegion(0, PLAYER, region=arg_0_3)
     CreatePlayLog(152)
-    CreateTemporaryVFX(929209, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=-1)
+    CreateTemporaryVFX(929209, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, dummy_id=-1)
     PlaySoundEffect(anchor_entity=arg_4_7, sound_type=SoundType.o_Object, sound_id=997400000)
     DestroyObject(arg_4_7)
 
@@ -1631,7 +1631,7 @@ def Event12901200(_, arg_0_3: int, arg_4_7: int):
         arg_4_7,
         destination=arg_0_3,
         destination_type=CoordEntityType.Character,
-        model_point=30,
+        dummy_id=30,
         copy_draw_parent=arg_0_3,
     )
     IfCharacterDoesNotHaveTAEEvent(0, arg_4_7, tae_event_id=100)
@@ -1688,7 +1688,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     IfConditionTrue(0, input_condition=3)
     EndIfFinishedConditionFalse(1)
     CreatePlayLog(188)
-    CreateTemporaryVFX(150005, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Object, model_point=101)
+    CreateTemporaryVFX(150005, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Object, dummy_id=101)
     PlaySoundEffect(anchor_entity=arg_0_3, sound_type=SoundType.o_Object, sound_id=990100001)
     SkipLinesIfFlagEnabled(84, 92905107)
     SkipLinesIfFlagEnabled(72, 92905106)
@@ -1704,7 +1704,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6200,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1714,7 +1714,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6210,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1724,7 +1724,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6220,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1734,7 +1734,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6230,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1747,7 +1747,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6201,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1757,7 +1757,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6211,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1767,7 +1767,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6221,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1777,7 +1777,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6231,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1790,7 +1790,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6202,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1800,7 +1800,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6212,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1810,7 +1810,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6222,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1820,7 +1820,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6232,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1833,7 +1833,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6203,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1843,7 +1843,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6213,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1853,7 +1853,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6223,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1863,7 +1863,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6233,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1876,7 +1876,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6204,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1886,7 +1886,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6214,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1896,7 +1896,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6224,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1906,7 +1906,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6234,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1919,7 +1919,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6205,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1929,7 +1929,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6215,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1939,7 +1939,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6225,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1949,7 +1949,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6235,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1962,7 +1962,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6206,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1972,7 +1972,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6216,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1982,7 +1982,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6226,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1992,7 +1992,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6236,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -2005,7 +2005,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6207,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -2015,7 +2015,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6217,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -2025,7 +2025,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6227,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -2035,7 +2035,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6237,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -2464,7 +2464,7 @@ def Event12901600(_, arg_0_3: int, arg_4_7: int):
     IfCharacterBackreadEnabled(0, arg_0_3)
     DisableCharacter(arg_0_3)
     IfCharacterInsideRegion(0, PLAYER, region=arg_4_7)
-    CreateTemporaryVFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=205)
+    CreateTemporaryVFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, dummy_id=205)
     WaitFrames(10)
     EnableCharacter(arg_0_3)
 
@@ -2476,12 +2476,12 @@ def Event12901601(_, arg_0_3: int):
 
 def Event12901602(_, arg_0_3: int, arg_4_7: int):
     """ 12901602: Event 12901602 """
-    CreateObjectVFX(8020, obj=arg_4_7, model_point=200)
+    CreateObjectVFX(8020, obj=arg_4_7, dummy_id=200)
     ForceAnimation(arg_4_7, 200, loop=True, wait_for_completion=True)
     SkipLinesIfThisEventSlotFlagEnabled(1)
     IfCharacterInsideRegion(0, PLAYER, region=arg_0_3)
     ForceAnimation(arg_4_7, 1000000, wait_for_completion=True)
-    CreateObjectVFX(8023, obj=arg_4_7, model_point=100)
+    CreateObjectVFX(8023, obj=arg_4_7, dummy_id=100)
     ForceAnimation(arg_4_7, 1000100, loop=True, wait_for_completion=True)
 
 
@@ -2871,7 +2871,7 @@ def Event12901701(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfConditionTrue(0, input_condition=1)
     EnableFlag(arg_12_15)
     EnableFlag(arg_16_19)
-    CreateTemporaryVFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=6)
+    CreateTemporaryVFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, dummy_id=6)
     WaitFrames(15)
     EnableCharacter(arg_0_3)
 
@@ -2919,7 +2919,7 @@ def Event12901706(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfConditionTrue(0, input_condition=1)
     EnableFlag(arg_12_15)
     EnableFlag(arg_16_19)
-    CreateTemporaryVFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=6)
+    CreateTemporaryVFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, dummy_id=6)
     WaitFrames(15)
     EnableCharacter(arg_0_3)
 
@@ -2951,15 +2951,15 @@ def Event12901707(
     IfConditionTrue(0, input_condition=1)
     EnableFlag(arg_12_15)
     EnableFlag(arg_16_19)
-    CreateTemporaryVFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=6)
+    CreateTemporaryVFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, dummy_id=6)
     WaitFrames(15)
     EnableCharacter(arg_0_3)
     WaitFrames(15)
-    CreateTemporaryVFX(929227, anchor_entity=arg_20_23, anchor_type=CoordEntityType.Character, model_point=6)
+    CreateTemporaryVFX(929227, anchor_entity=arg_20_23, anchor_type=CoordEntityType.Character, dummy_id=6)
     WaitFrames(15)
     EnableCharacter(arg_20_23)
     WaitFrames(15)
-    CreateTemporaryVFX(929227, anchor_entity=arg_24_27, anchor_type=CoordEntityType.Character, model_point=6)
+    CreateTemporaryVFX(929227, anchor_entity=arg_24_27, anchor_type=CoordEntityType.Character, dummy_id=6)
     WaitFrames(15)
     EnableCharacter(arg_24_27)
 
@@ -3508,7 +3508,7 @@ def Event12904000(_, arg_0_3: int, arg_4_7: int):
     IfHealthLessThanOrEqual(1, arg_0_3, 0.0)
     IfCharacterHasTAEEvent(1, arg_0_3, tae_event_id=10)
     IfConditionTrue(0, input_condition=1)
-    Move(arg_4_7, destination=arg_0_3, destination_type=CoordEntityType.Character, model_point=90, short_move=True)
+    Move(arg_4_7, destination=arg_0_3, destination_type=CoordEntityType.Character, dummy_id=90, short_move=True)
     EnableCharacter(arg_4_7)
     ForceAnimation(arg_4_7, 2250, loop=True)
     WaitFrames(5)
@@ -3824,7 +3824,7 @@ def Event12904041(_, arg_0_3: int, arg_4_7: int):
     DisableBackread(arg_4_7)
     End()
     Move(
-        arg_4_7, destination=arg_0_3, destination_type=CoordEntityType.Character, model_point=6, set_draw_parent=arg_0_3
+        arg_4_7, destination=arg_0_3, destination_type=CoordEntityType.Character, dummy_id=6, set_draw_parent=arg_0_3
     )
     Restart()
 
@@ -3874,7 +3874,7 @@ def Event12904070(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
         arg_4_7,
         destination=arg_0_3,
         destination_type=CoordEntityType.Character,
-        model_point=230,
+        dummy_id=230,
         copy_draw_parent=arg_0_3,
     )
 
@@ -3896,7 +3896,7 @@ def Event12904156(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
         arg_0_3,
         destination=arg_4_7,
         destination_type=CoordEntityType.Character,
-        model_point=arg_8_11,
+        dummy_id=arg_8_11,
         copy_draw_parent=arg_4_7,
     )
     IfCharacterDoesNotHaveTAEEvent(0, arg_0_3, tae_event_id=100)
@@ -4058,7 +4058,7 @@ def Event12904337(_, arg_0_3: int, arg_4_7: int):
 def Event12904338(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12904338: Event 12904338 """
     EndIfFlagEnabled(arg_12_15)
-    CreateTemporaryVFX(0, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Object, model_point=-1)
+    CreateTemporaryVFX(0, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Object, dummy_id=-1)
     IfCharacterBackreadEnabled(0, arg_8_11)
     DisableAI(arg_8_11)
     DisableCharacter(arg_8_11)
@@ -4093,7 +4093,7 @@ def Event12904342(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6140,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -4105,7 +4105,7 @@ def Event12904342(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6141,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -4117,7 +4117,7 @@ def Event12904342(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6142,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -4129,7 +4129,7 @@ def Event12904342(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6143,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -4141,7 +4141,7 @@ def Event12904342(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6144,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -4153,7 +4153,7 @@ def Event12904342(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6145,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -4165,7 +4165,7 @@ def Event12904342(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6146,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -4177,7 +4177,7 @@ def Event12904342(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6147,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -4196,7 +4196,7 @@ def Event12904342(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=5110,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -4216,7 +4216,7 @@ def Event12904342(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6140,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -4228,7 +4228,7 @@ def Event12904342(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6141,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -4240,7 +4240,7 @@ def Event12904342(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6142,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -4252,7 +4252,7 @@ def Event12904342(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6143,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -4264,7 +4264,7 @@ def Event12904342(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6144,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -4276,7 +4276,7 @@ def Event12904342(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6145,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -4288,7 +4288,7 @@ def Event12904342(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6146,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -4300,7 +4300,7 @@ def Event12904342(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6147,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -4319,7 +4319,7 @@ def Event12904342(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=5110,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -4383,7 +4383,7 @@ def Event12904361(_, arg_0_3: int, arg_4_7: int):
         arg_4_7,
         destination=arg_0_3,
         destination_type=CoordEntityType.Character,
-        model_point=40,
+        dummy_id=40,
         copy_draw_parent=arg_0_3,
     )
     EnableCharacter(arg_4_7)
@@ -4402,7 +4402,7 @@ def Event12904369(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 
     # --- 0 --- #
     DefineLabel(0)
-    CreateObjectVFX(900201, obj=arg_4_7, model_point=90)
+    CreateObjectVFX(900201, obj=arg_4_7, dummy_id=90)
     ForceAnimation(arg_4_7, arg_16_19)
     IfObjectDestroyed(0, arg_0_3)
     ForceAnimation(arg_4_7, arg_20_23, wait_for_completion=True)
@@ -4437,7 +4437,7 @@ def Event12904374(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12904374: Event 12904374 """
     IfObjectActivated(0, obj_act_id=arg_0_3)
     Wait(2.299999952316284)
-    Move(arg_4_7, destination=arg_8_11, destination_type=CoordEntityType.Object, model_point=200, short_move=True)
+    Move(arg_4_7, destination=arg_8_11, destination_type=CoordEntityType.Object, dummy_id=200, short_move=True)
     AddSpecialEffect(arg_4_7, 5580, affect_npc_part_hp=False)
     ForceAnimation(arg_8_11, 1)
     Wait(1.0)
@@ -4487,10 +4487,10 @@ def Event12904390(
     CreatePlayLog(844)
     PlaySoundEffect(anchor_entity=arg_16_19, sound_type=SoundType.o_Object, sound_id=990100001)
     ForceAnimation(arg_16_19, 0)
-    CreateTemporaryVFX(150005, anchor_entity=arg_16_19, anchor_type=CoordEntityType.Object, model_point=101)
+    CreateTemporaryVFX(150005, anchor_entity=arg_16_19, anchor_type=CoordEntityType.Object, dummy_id=101)
     PlaySoundEffect(anchor_entity=arg_20_23, sound_type=SoundType.o_Object, sound_id=990100001)
     ForceAnimation(arg_20_23, 0)
-    CreateTemporaryVFX(150005, anchor_entity=arg_20_23, anchor_type=CoordEntityType.Object, model_point=101)
+    CreateTemporaryVFX(150005, anchor_entity=arg_20_23, anchor_type=CoordEntityType.Object, dummy_id=101)
     Wait(0.10000000149011612)
     EnableFlag(arg_24_27)
     ForceAnimation(arg_4_7, 1)
@@ -4518,7 +4518,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_8_11,
         arg_0_3,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6250,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4528,7 +4528,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_12_15,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6250,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4538,7 +4538,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_16_19,
         arg_0_3,
-        model_point=102,
+        dummy_id=102,
         behavior_param_id=6250,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4549,7 +4549,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_8_11,
         arg_0_3,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6251,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4559,7 +4559,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_12_15,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6251,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4569,7 +4569,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_16_19,
         arg_0_3,
-        model_point=102,
+        dummy_id=102,
         behavior_param_id=6251,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4580,7 +4580,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_8_11,
         arg_0_3,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6252,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4590,7 +4590,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_12_15,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6252,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4600,7 +4600,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_16_19,
         arg_0_3,
-        model_point=102,
+        dummy_id=102,
         behavior_param_id=6252,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4611,7 +4611,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_8_11,
         arg_0_3,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6253,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4621,7 +4621,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_12_15,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6253,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4631,7 +4631,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_16_19,
         arg_0_3,
-        model_point=102,
+        dummy_id=102,
         behavior_param_id=6253,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4642,7 +4642,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_8_11,
         arg_0_3,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6254,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4652,7 +4652,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_12_15,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6254,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4662,7 +4662,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_16_19,
         arg_0_3,
-        model_point=102,
+        dummy_id=102,
         behavior_param_id=6254,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4673,7 +4673,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_8_11,
         arg_0_3,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6255,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4683,7 +4683,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_12_15,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6255,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4693,7 +4693,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_16_19,
         arg_0_3,
-        model_point=102,
+        dummy_id=102,
         behavior_param_id=6255,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4704,7 +4704,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_8_11,
         arg_0_3,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6256,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4714,7 +4714,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_12_15,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6256,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4724,7 +4724,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_16_19,
         arg_0_3,
-        model_point=102,
+        dummy_id=102,
         behavior_param_id=6256,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4735,7 +4735,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_8_11,
         arg_0_3,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6257,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4745,7 +4745,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_12_15,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6257,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4755,7 +4755,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_16_19,
         arg_0_3,
-        model_point=102,
+        dummy_id=102,
         behavior_param_id=6257,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4774,7 +4774,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_8_11,
         arg_0_3,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=5041,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4784,7 +4784,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_12_15,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=5041,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -4794,7 +4794,7 @@ def Event12904398(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreateHazard(
         arg_16_19,
         arg_0_3,
-        model_point=102,
+        dummy_id=102,
         behavior_param_id=5041,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -5041,7 +5041,7 @@ def Event12904568(_, arg_0_3: int, arg_4_7: int):
     SkipLinesIfConditionFalse(1, 1)
     CreatePlayLog(970)
     DestroyObject(arg_4_7)
-    CreateTemporaryVFX(900257, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=-1)
+    CreateTemporaryVFX(900257, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, dummy_id=-1)
     PlaySoundEffect(anchor_entity=arg_4_7, sound_type=SoundType.a_Ambient, sound_id=124005001)
     PlaySoundEffect(anchor_entity=arg_4_7, sound_type=SoundType.o_Object, sound_id=43000000)
     EnableCharacter(arg_0_3)
@@ -5069,7 +5069,7 @@ def Event12904579(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     SkipLinesIfConditionFalse(1, 1)
     CreatePlayLog(970)
     DestroyObject(arg_4_7)
-    CreateTemporaryVFX(900257, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=-1)
+    CreateTemporaryVFX(900257, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, dummy_id=-1)
     PlaySoundEffect(anchor_entity=arg_4_7, sound_type=SoundType.a_Ambient, sound_id=124005001)
     PlaySoundEffect(anchor_entity=arg_4_7, sound_type=SoundType.o_Object, sound_id=43000000)
     EnableCharacter(arg_0_3)
@@ -5096,11 +5096,11 @@ def Event12904584(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     SkipLinesIfConditionFalse(1, 1)
     CreatePlayLog(1008)
     DestroyObject(arg_4_7)
-    CreateTemporaryVFX(900257, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=-1)
+    CreateTemporaryVFX(900257, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, dummy_id=-1)
     PlaySoundEffect(anchor_entity=arg_4_7, sound_type=SoundType.a_Ambient, sound_id=124005001)
     PlaySoundEffect(anchor_entity=arg_4_7, sound_type=SoundType.o_Object, sound_id=43000000)
     EnableCharacter(arg_0_3)
-    Move(arg_0_3, destination=arg_8_11, destination_type=CoordEntityType.Character, model_point=101, short_move=True)
+    Move(arg_0_3, destination=arg_8_11, destination_type=CoordEntityType.Character, dummy_id=101, short_move=True)
     IfFramesElapsed(0, 3)
     RotateToFaceEntity(arg_0_3, PLAYER, animation=arg_12_15, wait_for_completion=False)
     IfFramesElapsed(0, 1)
@@ -5186,9 +5186,9 @@ def Event12904597(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     CreatePlayLog(1052)
     PlaySoundEffect(anchor_entity=arg_8_11, sound_type=SoundType.o_Object, sound_id=990100001)
     ForceAnimation(arg_8_11, 0, wait_for_completion=True)
-    CreateTemporaryVFX(929200, anchor_entity=arg_8_11, anchor_type=CoordEntityType.Object, model_point=-1)
+    CreateTemporaryVFX(929200, anchor_entity=arg_8_11, anchor_type=CoordEntityType.Object, dummy_id=-1)
     EnableCharacter(arg_0_3)
-    CreateTemporaryVFX(arg_12_15, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=203)
+    CreateTemporaryVFX(arg_12_15, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, dummy_id=203)
 
 
 @RestartOnRest
@@ -5240,7 +5240,7 @@ def Event12904643(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6064,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -5251,7 +5251,7 @@ def Event12904643(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=205,
+        dummy_id=205,
         behavior_id=6051,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -5263,7 +5263,7 @@ def Event12904643(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=205,
+        dummy_id=205,
         behavior_id=6053,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -5291,10 +5291,10 @@ def Event12904733(_, arg_0_3: int, arg_4_7: int):
     End()
     IfCharacterInsideRegion(0, PLAYER, region=arg_0_3)
     AddSpecialEffect(PLAYER, 71, affect_npc_part_hp=False)
-    CreateTemporaryVFX(850, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=7)
+    CreateTemporaryVFX(850, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, dummy_id=7)
     IfObjectDestroyed(0, arg_4_7)
     RemoveSpecialEffect(PLAYER, 71)
-    CreateTemporaryVFX(851, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=200)
+    CreateTemporaryVFX(851, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, dummy_id=200)
 
 
 @RestartOnRest
@@ -5335,7 +5335,7 @@ def Event12904737(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6063,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -5345,7 +5345,7 @@ def Event12904737(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6055,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -5355,7 +5355,7 @@ def Event12904737(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6059,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -5365,7 +5365,7 @@ def Event12904737(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6062,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -5398,9 +5398,9 @@ def Event12904755(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     CreatePlayLog(1170)
     PlaySoundEffect(anchor_entity=arg_8_11, sound_type=SoundType.o_Object, sound_id=990100001)
     ForceAnimation(arg_8_11, 0, wait_for_completion=True)
-    CreateTemporaryVFX(929200, anchor_entity=arg_8_11, anchor_type=CoordEntityType.Object, model_point=-1)
+    CreateTemporaryVFX(929200, anchor_entity=arg_8_11, anchor_type=CoordEntityType.Object, dummy_id=-1)
     EnableCharacter(arg_0_3)
-    CreateTemporaryVFX(arg_12_15, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=203)
+    CreateTemporaryVFX(arg_12_15, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, dummy_id=203)
     Wait(1.0)
     AICommand(arg_0_3, command_id=10, slot=0)
     SetNest(arg_0_3, arg_16_19)
@@ -5499,7 +5499,7 @@ def Event12904776(
     EnableObject(arg_28_31)
     CreateVFX(arg_8_11)
     Wait(2.5)
-    CreateTemporaryVFX(arg_24_27, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=205)
+    CreateTemporaryVFX(arg_24_27, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, dummy_id=205)
     WaitFrames(10)
     EnableCharacter(arg_0_3)
     ActivateMultiplayerBuffs(arg_0_3)
@@ -5571,7 +5571,7 @@ def Event12904852(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
         arg_4_7,
         destination=arg_0_3,
         destination_type=CoordEntityType.Character,
-        model_point=30,
+        dummy_id=30,
         copy_draw_parent=arg_0_3,
     )
     EnableCharacter(arg_4_7)
@@ -5686,7 +5686,7 @@ def Event12904864(
     CreateVFX(arg_8_11)
     DisableFlag(arg_0_3)
     Wait(2.5)
-    CreateTemporaryVFX(arg_24_27, anchor_entity=arg_12_15, anchor_type=CoordEntityType.Character, model_point=205)
+    CreateTemporaryVFX(arg_24_27, anchor_entity=arg_12_15, anchor_type=CoordEntityType.Character, dummy_id=205)
     WaitFrames(10)
     EnableCharacter(arg_12_15)
     ActivateMultiplayerBuffs(arg_12_15)
@@ -5915,7 +5915,7 @@ def Event12904872(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     End()
     IfCharacterInsideRegion(0, PLAYER, region=arg_8_11)
     Wait(2.5999999046325684)
-    CreateTemporaryVFX(arg_12_15, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=205)
+    CreateTemporaryVFX(arg_12_15, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, dummy_id=205)
     WaitFrames(10)
     EnableCharacter(arg_0_3)
 
@@ -6124,11 +6124,11 @@ def Event12904887(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfFlagEnabled(1, arg_8_11)
     IfHealthLessThanOrEqual(1, arg_4_7, arg_20_23)
     IfConditionTrue(0, input_condition=1)
-    Move(arg_0_3, destination=arg_4_7, destination_type=CoordEntityType.Character, model_point=-1, short_move=True)
+    Move(arg_0_3, destination=arg_4_7, destination_type=CoordEntityType.Character, dummy_id=-1, short_move=True)
     Move(arg_0_3, destination=arg_12_15, destination_type=CoordEntityType.Region, short_move=True)
     EnableCharacter(arg_0_3)
     EnableBossHealthBar(arg_0_3, name=arg_16_19, slot=1)
-    CreateTemporaryVFX(929203, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=203)
+    CreateTemporaryVFX(929203, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, dummy_id=203)
 
 
 @RestartOnRest
@@ -6160,7 +6160,7 @@ def Event12904890(
     IfCharacterInsideRegion(0, PLAYER, region=arg_4_7)
     EnableObject(arg_28_31)
     CreateVFX(arg_8_11)
-    CreateTemporaryVFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=205)
+    CreateTemporaryVFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, dummy_id=205)
     IfValueComparison(0, ComparisonType.Equal, left=arg_24_27, right=arg_24_27)
     WaitFrames(10)
     EnableCharacter(arg_0_3)
@@ -6193,7 +6193,7 @@ def Event12904891(
     EnableObject(arg_28_31)
     CreateVFX(arg_8_11)
     Wait(2.5)
-    CreateTemporaryVFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=205)
+    CreateTemporaryVFX(929227, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, dummy_id=205)
     IfValueComparison(0, ComparisonType.Equal, left=arg_24_27, right=arg_24_27)
     WaitFrames(10)
     EnableCharacter(arg_0_3)
@@ -8478,7 +8478,7 @@ def Event12905337(_, arg_0_3: int, arg_4_7: int):
     ForceAnimation(arg_4_7, 3002, wait_for_completion=True)
     End()
     Move(
-        arg_4_7, destination=arg_0_3, destination_type=CoordEntityType.Character, model_point=6, set_draw_parent=arg_0_3
+        arg_4_7, destination=arg_0_3, destination_type=CoordEntityType.Character, dummy_id=6, set_draw_parent=arg_0_3
     )
     Restart()
 
@@ -8636,7 +8636,7 @@ def Event12906400(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=200,
+        dummy_id=200,
         behavior_id=6051,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -8646,7 +8646,7 @@ def Event12906400(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=200,
+        dummy_id=200,
         behavior_id=6053,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -8659,7 +8659,7 @@ def Event12906400(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=200,
+        dummy_id=200,
         behavior_id=6150,
         launch_angle_x=0,
         launch_angle_y=90,
@@ -8670,7 +8670,7 @@ def Event12906400(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=200,
+        dummy_id=200,
         behavior_id=6151,
         launch_angle_x=0,
         launch_angle_y=90,
@@ -8681,7 +8681,7 @@ def Event12906400(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=200,
+        dummy_id=200,
         behavior_id=6152,
         launch_angle_x=0,
         launch_angle_y=90,
@@ -8692,7 +8692,7 @@ def Event12906400(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=200,
+        dummy_id=200,
         behavior_id=6153,
         launch_angle_x=0,
         launch_angle_y=90,
@@ -8703,7 +8703,7 @@ def Event12906400(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=200,
+        dummy_id=200,
         behavior_id=6154,
         launch_angle_x=0,
         launch_angle_y=90,
@@ -8714,7 +8714,7 @@ def Event12906400(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=200,
+        dummy_id=200,
         behavior_id=6155,
         launch_angle_x=0,
         launch_angle_y=90,
@@ -8725,7 +8725,7 @@ def Event12906400(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=200,
+        dummy_id=200,
         behavior_id=6156,
         launch_angle_x=0,
         launch_angle_y=90,
@@ -8736,7 +8736,7 @@ def Event12906400(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=200,
+        dummy_id=200,
         behavior_id=6157,
         launch_angle_x=0,
         launch_angle_y=90,
@@ -8754,7 +8754,7 @@ def Event12906400(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=200,
+        dummy_id=200,
         behavior_id=6000,
         launch_angle_x=0,
         launch_angle_y=90,
@@ -8763,7 +8763,7 @@ def Event12906400(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=200,
+        dummy_id=200,
         behavior_id=6055,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -8798,7 +8798,7 @@ def Event12906534(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6140,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -8810,7 +8810,7 @@ def Event12906534(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6141,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -8822,7 +8822,7 @@ def Event12906534(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6142,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -8834,7 +8834,7 @@ def Event12906534(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6143,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -8846,7 +8846,7 @@ def Event12906534(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6144,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -8858,7 +8858,7 @@ def Event12906534(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6145,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -8870,7 +8870,7 @@ def Event12906534(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6146,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -8882,7 +8882,7 @@ def Event12906534(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6147,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -8901,7 +8901,7 @@ def Event12906534(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=5110,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -8921,7 +8921,7 @@ def Event12906534(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6140,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -8933,7 +8933,7 @@ def Event12906534(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6141,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -8945,7 +8945,7 @@ def Event12906534(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6142,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -8957,7 +8957,7 @@ def Event12906534(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6143,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -8969,7 +8969,7 @@ def Event12906534(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6144,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -8981,7 +8981,7 @@ def Event12906534(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6145,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -8993,7 +8993,7 @@ def Event12906534(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6146,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9005,7 +9005,7 @@ def Event12906534(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6147,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9024,7 +9024,7 @@ def Event12906534(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=5110,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9044,7 +9044,7 @@ def Event12906534(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6140,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9056,7 +9056,7 @@ def Event12906534(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6141,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9068,7 +9068,7 @@ def Event12906534(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6142,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9080,7 +9080,7 @@ def Event12906534(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6143,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9092,7 +9092,7 @@ def Event12906534(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6144,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9104,7 +9104,7 @@ def Event12906534(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6145,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9116,7 +9116,7 @@ def Event12906534(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6146,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9128,7 +9128,7 @@ def Event12906534(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6147,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9147,7 +9147,7 @@ def Event12906534(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=5110,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9176,7 +9176,7 @@ def Event12906537(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6140,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9188,7 +9188,7 @@ def Event12906537(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6141,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9200,7 +9200,7 @@ def Event12906537(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6142,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9212,7 +9212,7 @@ def Event12906537(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6143,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9224,7 +9224,7 @@ def Event12906537(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6144,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9236,7 +9236,7 @@ def Event12906537(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6145,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9248,7 +9248,7 @@ def Event12906537(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6146,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9260,7 +9260,7 @@ def Event12906537(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6147,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9279,7 +9279,7 @@ def Event12906537(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=5110,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9299,7 +9299,7 @@ def Event12906537(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6140,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9311,7 +9311,7 @@ def Event12906537(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6141,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9323,7 +9323,7 @@ def Event12906537(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6142,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9335,7 +9335,7 @@ def Event12906537(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6143,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9347,7 +9347,7 @@ def Event12906537(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6144,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9359,7 +9359,7 @@ def Event12906537(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6145,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9371,7 +9371,7 @@ def Event12906537(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6146,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9383,7 +9383,7 @@ def Event12906537(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6147,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9402,7 +9402,7 @@ def Event12906537(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=5110,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9422,7 +9422,7 @@ def Event12906537(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6140,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9434,7 +9434,7 @@ def Event12906537(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6141,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9446,7 +9446,7 @@ def Event12906537(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6142,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9458,7 +9458,7 @@ def Event12906537(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6143,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9470,7 +9470,7 @@ def Event12906537(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6144,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9482,7 +9482,7 @@ def Event12906537(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6145,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9494,7 +9494,7 @@ def Event12906537(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6146,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9506,7 +9506,7 @@ def Event12906537(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6147,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9525,7 +9525,7 @@ def Event12906537(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=5110,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9563,7 +9563,7 @@ def Event12906540(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6140,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9575,7 +9575,7 @@ def Event12906540(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6141,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9587,7 +9587,7 @@ def Event12906540(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6142,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9599,7 +9599,7 @@ def Event12906540(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6143,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9611,7 +9611,7 @@ def Event12906540(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6144,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9623,7 +9623,7 @@ def Event12906540(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6145,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9635,7 +9635,7 @@ def Event12906540(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6146,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9647,7 +9647,7 @@ def Event12906540(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6147,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9666,7 +9666,7 @@ def Event12906540(
     CreateHazard(
         arg_4_7,
         arg_0_3,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=5110,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9686,7 +9686,7 @@ def Event12906540(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6140,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9698,7 +9698,7 @@ def Event12906540(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6141,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9710,7 +9710,7 @@ def Event12906540(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6142,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9722,7 +9722,7 @@ def Event12906540(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6143,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9734,7 +9734,7 @@ def Event12906540(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6144,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9746,7 +9746,7 @@ def Event12906540(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6145,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9758,7 +9758,7 @@ def Event12906540(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6146,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9770,7 +9770,7 @@ def Event12906540(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6147,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9789,7 +9789,7 @@ def Event12906540(
     CreateHazard(
         arg_12_15,
         arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=5110,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9809,7 +9809,7 @@ def Event12906540(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6140,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9821,7 +9821,7 @@ def Event12906540(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6141,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9833,7 +9833,7 @@ def Event12906540(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6142,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9845,7 +9845,7 @@ def Event12906540(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6143,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9857,7 +9857,7 @@ def Event12906540(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6144,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9869,7 +9869,7 @@ def Event12906540(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6145,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9881,7 +9881,7 @@ def Event12906540(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6146,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9893,7 +9893,7 @@ def Event12906540(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6147,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9912,7 +9912,7 @@ def Event12906540(
     CreateHazard(
         arg_20_23,
         arg_16_19,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=5110,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9951,14 +9951,14 @@ def Event12906541(
     PlaySoundEffect(anchor_entity=arg_24_27, sound_type=SoundType.a_Ambient, sound_id=290000002)
     PlaySoundEffect(anchor_entity=arg_24_27, sound_type=SoundType.a_Ambient, sound_id=290000003)
     ForceAnimation(arg_4_7, 20)
-    CreateObjectVFX(900260, obj=arg_4_7, model_point=100)
+    CreateObjectVFX(900260, obj=arg_4_7, dummy_id=100)
     WaitFrames(30)
     SkipLinesIfFlagDisabled(2, 92905100)
     IfFlagEnabled(0, 92905100)
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6140,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9970,7 +9970,7 @@ def Event12906541(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6141,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9982,7 +9982,7 @@ def Event12906541(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6142,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -9994,7 +9994,7 @@ def Event12906541(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6143,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10006,7 +10006,7 @@ def Event12906541(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6144,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10018,7 +10018,7 @@ def Event12906541(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6145,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10030,7 +10030,7 @@ def Event12906541(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6146,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10042,7 +10042,7 @@ def Event12906541(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6147,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10061,7 +10061,7 @@ def Event12906541(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=5110,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10103,14 +10103,14 @@ def Event12906543(
     PlaySoundEffect(anchor_entity=arg_24_27, sound_type=SoundType.a_Ambient, sound_id=290000002)
     PlaySoundEffect(anchor_entity=arg_24_27, sound_type=SoundType.a_Ambient, sound_id=290000003)
     ForceAnimation(arg_4_7, 30)
-    CreateObjectVFX(900260, obj=arg_4_7, model_point=100)
+    CreateObjectVFX(900260, obj=arg_4_7, dummy_id=100)
     WaitFrames(30)
     SkipLinesIfFlagDisabled(2, 92905100)
     IfFlagEnabled(0, 92905100)
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6140,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10122,7 +10122,7 @@ def Event12906543(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6141,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10134,7 +10134,7 @@ def Event12906543(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6142,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10146,7 +10146,7 @@ def Event12906543(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6143,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10158,7 +10158,7 @@ def Event12906543(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6144,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10170,7 +10170,7 @@ def Event12906543(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6145,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10182,7 +10182,7 @@ def Event12906543(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6146,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10194,7 +10194,7 @@ def Event12906543(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6147,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10213,7 +10213,7 @@ def Event12906543(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=5110,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10255,14 +10255,14 @@ def Event12906545(
     PlaySoundEffect(anchor_entity=arg_24_27, sound_type=SoundType.a_Ambient, sound_id=290000002)
     PlaySoundEffect(anchor_entity=arg_24_27, sound_type=SoundType.a_Ambient, sound_id=290000003)
     ForceAnimation(arg_4_7, 40)
-    CreateObjectVFX(900260, obj=arg_4_7, model_point=100)
+    CreateObjectVFX(900260, obj=arg_4_7, dummy_id=100)
     WaitFrames(30)
     SkipLinesIfFlagDisabled(2, 92905100)
     IfFlagEnabled(0, 92905100)
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6140,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10274,7 +10274,7 @@ def Event12906545(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6141,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10286,7 +10286,7 @@ def Event12906545(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6142,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10298,7 +10298,7 @@ def Event12906545(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6143,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10310,7 +10310,7 @@ def Event12906545(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6144,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10322,7 +10322,7 @@ def Event12906545(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6145,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10334,7 +10334,7 @@ def Event12906545(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6146,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10346,7 +10346,7 @@ def Event12906545(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6147,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10365,7 +10365,7 @@ def Event12906545(
     CreateHazard(
         arg_28_31,
         arg_4_7,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=5110,
         target_type=DamageTargetType.Character,
         radius=2.0999999046325684,
@@ -10492,7 +10492,7 @@ def Event12906654(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=32,
+        dummy_id=32,
         behavior_id=210200599,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -10505,7 +10505,7 @@ def Event12906654(_, arg_0_3: int, arg_4_7: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=32,
+        dummy_id=32,
         behavior_id=210200599,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -10543,7 +10543,7 @@ def Event12906656(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
         arg_8_11,
         destination=PLAYER,
         destination_type=CoordEntityType.Character,
-        model_point=236,
+        dummy_id=236,
         copy_draw_parent=PLAYER,
     )
     PlaySoundEffect(anchor_entity=arg_0_3, sound_type=SoundType.c_CharacterMotion, sound_id=arg_4_7)
@@ -10552,7 +10552,7 @@ def Event12906656(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6064,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -10563,7 +10563,7 @@ def Event12906656(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6051,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -10575,7 +10575,7 @@ def Event12906656(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6054,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -10587,7 +10587,7 @@ def Event12906656(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6056,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -10599,7 +10599,7 @@ def Event12906656(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6056,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -10611,7 +10611,7 @@ def Event12906656(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_8_11,
-        model_point=101,
+        dummy_id=101,
         behavior_id=6056,
         launch_angle_x=270,
         launch_angle_y=0,
@@ -10626,18 +10626,18 @@ def Event12906660(_, arg_0_3: int):
     EndIfObjectDestroyed(arg_0_3)
     GotoIfFlagEnabled(Label.L1, 92905310)
     GotoIfFlagEnabled(Label.L0, 92905301)
-    CreateObjectVFX(929302, obj=arg_0_3, model_point=600)
+    CreateObjectVFX(929302, obj=arg_0_3, dummy_id=600)
     IfObjectDamaged(0, arg_0_3, attacker=-1)
     Goto(Label.L3)
 
     # --- 0 --- #
     DefineLabel(0)
     SkipLinesIfThisEventSlotFlagEnabled(1)
-    CreateObjectVFX(929305, obj=arg_0_3, model_point=600)
+    CreateObjectVFX(929305, obj=arg_0_3, dummy_id=600)
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=100,
+        dummy_id=100,
         behavior_id=6090,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -10648,7 +10648,7 @@ def Event12906660(_, arg_0_3: int):
     # --- 1 --- #
     DefineLabel(1)
     SkipLinesIfThisEventSlotFlagEnabled(1)
-    CreateObjectVFX(929304, obj=arg_0_3, model_point=600)
+    CreateObjectVFX(929304, obj=arg_0_3, dummy_id=600)
     SkipLinesIfFlagEnabled(21, 92905107)
     SkipLinesIfFlagEnabled(18, 92905106)
     SkipLinesIfFlagEnabled(15, 92905105)
@@ -10660,7 +10660,7 @@ def Event12906660(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=100,
+        dummy_id=100,
         behavior_id=6120,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -10670,7 +10670,7 @@ def Event12906660(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=100,
+        dummy_id=100,
         behavior_id=6121,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -10680,7 +10680,7 @@ def Event12906660(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=100,
+        dummy_id=100,
         behavior_id=6122,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -10690,7 +10690,7 @@ def Event12906660(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=100,
+        dummy_id=100,
         behavior_id=6123,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -10700,7 +10700,7 @@ def Event12906660(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=100,
+        dummy_id=100,
         behavior_id=6124,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -10710,7 +10710,7 @@ def Event12906660(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=100,
+        dummy_id=100,
         behavior_id=6125,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -10720,7 +10720,7 @@ def Event12906660(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=100,
+        dummy_id=100,
         behavior_id=6126,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -10730,7 +10730,7 @@ def Event12906660(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=100,
+        dummy_id=100,
         behavior_id=6127,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -10841,7 +10841,7 @@ def Event12906750(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
     Move(
-        arg_4_7, destination=arg_0_3, destination_type=CoordEntityType.Character, model_point=arg_8_11, short_move=True
+        arg_4_7, destination=arg_0_3, destination_type=CoordEntityType.Character, dummy_id=arg_8_11, short_move=True
     )
     Restart()
 
@@ -12991,7 +12991,7 @@ def Event12906825(
     IfConditionTrue(0, input_condition=1)
     Move(arg_0_3, destination=arg_12_15, destination_type=CoordEntityType.Region, short_move=True)
     EnableCharacter(arg_0_3)
-    CreateTemporaryVFX(929203, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, model_point=6)
+    CreateTemporaryVFX(929203, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, dummy_id=6)
 
     # --- 1 --- #
     DefineLabel(1)
@@ -14954,7 +14954,7 @@ def Event12906829(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
         arg_4_7,
         destination=arg_0_3,
         destination_type=CoordEntityType.Character,
-        model_point=arg_8_11,
+        dummy_id=arg_8_11,
         copy_draw_parent=arg_0_3,
     )
     Restart()
@@ -15017,7 +15017,7 @@ def Event12904734(_, arg_0_3: int):
     ShootProjectile(
         owner_entity=2900000,
         projectile_id=arg_0_3,
-        model_point=6,
+        dummy_id=6,
         behavior_id=225100310,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -15369,7 +15369,7 @@ def Event12907000(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfFlagEnabled(0, arg_8_11)
     EnableObject(arg_4_7)
     EnableCharacter(arg_0_3)
-    CreateTemporaryVFX(100330, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=100)
+    CreateTemporaryVFX(100330, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, dummy_id=100)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -15392,7 +15392,7 @@ def Event12907020(_, arg_0_3: int, arg_4_7: int):
     DisableFlag(arg_0_3)
     RotateToFaceEntity(PLAYER, arg_4_7, animation=101160, wait_for_completion=False)
     Wait(1.0)
-    CreateTemporaryVFX(100320, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=100)
+    CreateTemporaryVFX(100320, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, dummy_id=100)
     Wait(3.0)
     SkipLinesIfFlagDisabled(2, 9020)
     WarpPlayerToRespawnPoint(2102954)
@@ -15423,7 +15423,7 @@ def Event12907030(_, arg_0_3: int, arg_4_7: int):
     EndIfClient()
     IfFlagEnabled(0, arg_0_3)
     WaitFrames(1)
-    CreateTemporaryVFX(100321, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=100)
+    CreateTemporaryVFX(100321, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, dummy_id=100)
     InitializeWarpObject(arg_4_7)
     DisableFlag(arg_0_3)
 

@@ -26,8 +26,8 @@ from .enums.m30_11_00_00_enums import Assets as m30_11_Assets
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1043390000, asset=Assets.AEG099_060_9000)
-    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, model_point=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, vfx_id=100, model_point=800, right=1043398540)
+    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, vfx_id=100, dummy_id=800, right=1043398540)
     CommonFunc_90005460(0, character=Characters.GiantOctopus0)
     CommonFunc_90005461(0, character=Characters.GiantOctopus0)
     CommonFunc_90005462(0, character=Characters.GiantOctopus0)

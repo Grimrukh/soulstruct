@@ -25,13 +25,13 @@ from .enums.m60_50_57_00_enums import Characters as m60_50_Characters
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005870(0, character=Characters.GreatWyrmTheodorix, name=904911600, npc_threat_level=5)
-    CommonFunc_90005861(
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.GreatWyrmTheodorix, name=904911600, npc_threat_level=5)
+    CommonFunc_KillFieldDragonWyrm(
         0,
         flag=1050560800,
-        left=0,
+        extra_flag=0,
         character=Characters.GreatWyrmTheodorix,
-        left_1=1,
+        felled_banner_rank=1,
         item_lot=30550,
         text=30065,
         seconds=0.0,
@@ -90,7 +90,7 @@ def Constructor():
     Event_1050562260(0, anchor_entity=Assets.AEG099_251_9000)
     Event_1050562260(1, anchor_entity=Assets.AEG099_251_9001)
     Event_1050562260(2, anchor_entity=Assets.AEG099_251_9002)
-    CommonFunc_90005300(0, flag=1050560300, character=Characters.RedWolf, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1050560300, character=Characters.RedWolf, item_lot=0, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005560(0, flag=1050560500, asset=Assets.AEG099_635_9000, left=0)
     CommonFunc_90005795(
         0,
@@ -102,7 +102,7 @@ def Constructor():
         message=80604,
         action_button_id=9000,
         asset=Assets.AEG099_090_9001,
-        model_point=30010,
+        dummy_id=30010,
     )
     if CeremonyActive(ceremony=20):
         CommonFunc_90005796(0, flag=7604, character=Characters.JunoHoslow, banner_type=5, region=1050562141)
@@ -128,7 +128,7 @@ def Event_1050562145():
     DisableCharacter(m60_50_Characters.GiantSkeletonTorso)
     DisableAnimations(m60_50_Characters.GiantSkeletonTorso)
     DeleteAssetVFX(1050566700)
-    CreateAssetVFX(1050566700, vfx_id=200, model_point=806700)
+    CreateAssetVFX(1050566700, vfx_id=200, dummy_id=806700)
 
 
 @RestartOnRest(1050562200)
@@ -192,7 +192,7 @@ def Event_1050562250(
     EnableSpawner(entity=1050563250)
     EnableSpawner(entity=1050563251)
     DeleteAssetVFX(asset)
-    CreateAssetVFX(asset, vfx_id=200, model_point=1500)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=1500)
     GotoIfPlayerNotInOwnWorld(Label.L1)
     AND_1.Add(CharacterHasSpecialEffect(character, special_effect))
     AND_1.Add(CharacterHasSpecialEffect(character, special_effect_1))

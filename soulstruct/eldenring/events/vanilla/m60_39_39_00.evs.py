@@ -40,7 +40,7 @@ def Constructor():
     Event_1039393700(0, asset__character=Characters.SorcererThops)
     Event_1039393701()
     Event_1039393702(0, character=Characters.SorcererThops, asset=Assets.AEG003_061_9000)
-    CommonFunc_90005300(0, flag=1039390200, character=Characters.Scarab, item_lot=40206, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1039390200, character=Characters.Scarab, item_lot=40206, seconds=0.0, item_is_dropped=0)
     Event_1039392200()
 
 

@@ -230,7 +230,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.CatacombsSkeleton7, region=30052207, seconds=0.0, animation_id=3021)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CatacombsSkeleton7, region=30052207, seconds=0.0, animation_id=3021)
     CommonFunc_90005211(
         0,
         character=Characters.CatacombsSkeleton8,
@@ -239,10 +239,10 @@ def Preconstructor():
         region=30052208,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005200(
         0,
@@ -268,7 +268,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.CatacombsSkeleton11, region=30052211, seconds=0.0, animation_id=3011)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CatacombsSkeleton11, region=30052211, seconds=0.0, animation_id=3011)
     Event_30052203(1, character=Characters.CatacombsSkeleton12)
     CommonFunc_90005200(
         0,
@@ -282,7 +282,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.CatacombsSkeleton18, region=30052215, seconds=0.0, animation_id=3030)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CatacombsSkeleton18, region=30052215, seconds=0.0, animation_id=3030)
     CommonFunc_90005200(
         0,
         character=Characters.CatacombsSkeleton13,
@@ -315,7 +315,7 @@ def Preconstructor():
     Event_30052350(0, character=Characters.Commoner0, character_1=Characters.CatacombsSkeleton5)
     Event_30052350(1, character=Characters.Commoner0, character_1=Characters.CatacombsSkeleton6)
     Event_30052350(2, character=Characters.Commoner0, character_1=Characters.CatacombsSkeleton8)
-    CommonFunc_90005250(0, character=Characters.Commoner1, region=30052301, seconds=0.0, animation_id=3015)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Commoner1, region=30052301, seconds=0.0, animation_id=3015)
     Event_30052301()
     Event_30052300(3, character=Characters.Commoner1, character_1=Characters.CatacombsSkeleton9)
     Event_30052300(4, character=Characters.Commoner1, character_1=Characters.CatacombsSkeleton10)
@@ -323,26 +323,26 @@ def Preconstructor():
     Event_30052350(3, character=Characters.Commoner1, character_1=Characters.CatacombsSkeleton9)
     Event_30052350(4, character=Characters.Commoner1, character_1=Characters.CatacombsSkeleton10)
     Event_30052350(5, character=Characters.Commoner1, character_1=Characters.CatacombsSkeleton11)
-    CommonFunc_90005250(0, character=Characters.Commoner2, region=30052302, seconds=0.0, animation_id=3015)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Commoner2, region=30052302, seconds=0.0, animation_id=3015)
     Event_30052300(6, character=Characters.Commoner2, character_1=Characters.CatacombsSkeleton1)
     Event_30052300(7, character=Characters.Commoner2, character_1=Characters.CatacombsSkeleton4)
     Event_30052350(6, character=Characters.Commoner2, character_1=Characters.CatacombsSkeleton1)
     Event_30052350(7, character=Characters.Commoner2, character_1=Characters.CatacombsSkeleton4)
-    CommonFunc_90005250(0, character=Characters.SmallCrabWorms0, region=30052400, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.SmallCrabWorms1, region=30052400, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.SmallCrabWorms2, region=30052400, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.SmallCrabWorms3, region=30052400, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.SmallCrabWorms4, region=30052400, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.SmallCrabWorms5, region=30052400, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.SmallCrabWorms6, region=30052400, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.SmallCrabWorms7, region=30052400, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.SmallCrabWorms8, region=30052400, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.SmallCrabWorms9, region=30052400, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.SmallCrabWorms10, region=30052400, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.SmallCrabWorms11, region=30052400, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.SmallCrabWorms12, region=30052400, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.SmallCrabWorms13, region=30052400, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.SmallCrabWorms14, region=30052400, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallCrabWorms0, region=30052400, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallCrabWorms1, region=30052400, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallCrabWorms2, region=30052400, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallCrabWorms3, region=30052400, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallCrabWorms4, region=30052400, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallCrabWorms5, region=30052400, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallCrabWorms6, region=30052400, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallCrabWorms7, region=30052400, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallCrabWorms8, region=30052400, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallCrabWorms9, region=30052400, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallCrabWorms10, region=30052400, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallCrabWorms11, region=30052400, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallCrabWorms12, region=30052400, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallCrabWorms13, region=30052400, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallCrabWorms14, region=30052400, seconds=0.0, animation_id=0)
     CommonFunc_90005200(
         0,
         character=Characters.LargeCrabInjured0,
@@ -1039,7 +1039,7 @@ def Event_30052849():
         flag_2=30052806,
         action_button_id=10000,
     )
-    CommonFunc_9005813(0, flag=30050800, asset=Assets.AEG099_001_9000, model_point=3, right=0, model_point_1=3)
+    CommonFunc_9005813(0, flag=30050800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0, dummy_id_1=3)
     CommonFunc_9005822(
         0,
         flag=30050800,
@@ -1076,7 +1076,7 @@ def Event_30052899():
         flag_2=30052856,
         action_button_id=10000,
     )
-    CommonFunc_9005813(0, flag=30050850, asset=Assets.AEG099_001_9002, model_point=3, right=0, model_point_1=3)
+    CommonFunc_9005813(0, flag=30050850, asset=Assets.AEG099_001_9002, dummy_id=3, right=0, dummy_id_1=3)
     CommonFunc_9005822(
         0,
         flag=30050850,

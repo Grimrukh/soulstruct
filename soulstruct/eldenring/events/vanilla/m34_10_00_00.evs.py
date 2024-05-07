@@ -61,12 +61,12 @@ def Constructor():
         asset=Assets.AEG099_991_9000,
         item_lot=34100500,
         item=8148,
-        model_point=806934,
+        dummy_id=806934,
         action_button_id=9080,
         animation_id=60522,
         left=0,
     )
-    CommonFunc_90005300(0, flag=34100300, character=34100300, item_lot=34100300, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=34100300, character=34100300, item_lot=34100300, seconds=0.0, item_is_dropped=0)
 
 
 @ContinueOnRest(50)
@@ -96,7 +96,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.GuardianGolem2, region=34102200, seconds=8.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GuardianGolem2, region=34102200, seconds=8.0, animation_id=-1)
 
 
 @ContinueOnRest(34102510)
@@ -226,7 +226,7 @@ def Event_34102849():
         flag_2=34102806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=34100800, asset=34101800, model_point=3, right=34100801)
+    CommonFunc_9005811(0, flag=34100800, asset=34101800, dummy_id=3, right=34100801)
     CommonFunc_9005822(
         0,
         flag=34100800,

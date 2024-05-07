@@ -40,30 +40,30 @@ def Constructor():
         asset=Assets.AEG099_166_9000,
         asset_1=Assets.AEG099_090_9006,
     )
-    Event_1043362340(0, character=Characters.FlyingDragon, region=1043362340, destination=1043362360)
-    Event_1043362340(1, character=Characters.FlyingDragon, region=1043362341, destination=1043362361)
-    Event_1043362340(2, character=Characters.FlyingDragon, region=1043362342, destination=1043362362)
-    Event_1043362340(3, character=Characters.FlyingDragon, region=1043362343, destination=1043362363)
-    Event_1043362340(4, character=Characters.FlyingDragon, region=1043362344, destination=1043362364)
-    Event_1043362340(5, character=Characters.FlyingDragon, region=1043362345, destination=1043362365)
-    Event_1043362340(6, character=Characters.FlyingDragon, region=1043362346, destination=1043362366)
-    Event_1043362340(7, character=Characters.FlyingDragon, region=1043362347, destination=1043362367)
-    Event_1043362340(8, character=Characters.FlyingDragon, region=1043362348, destination=1043362368)
-    Event_1043362340(9, character=Characters.FlyingDragon, region=1043362349, destination=1043362369)
-    Event_1043362340(10, character=Characters.FlyingDragon, region=1043362350, destination=1043362370)
-    Event_1043362340(11, character=Characters.FlyingDragon, region=1043362351, destination=1043362371)
-    Event_1043362340(12, character=Characters.FlyingDragon, region=1043362352, destination=1043362372)
-    CommonFunc_90005861(
+    Event_1043362340(0, character=Characters.FlyingDragonAgheel, region=1043362340, destination=1043362360)
+    Event_1043362340(1, character=Characters.FlyingDragonAgheel, region=1043362341, destination=1043362361)
+    Event_1043362340(2, character=Characters.FlyingDragonAgheel, region=1043362342, destination=1043362362)
+    Event_1043362340(3, character=Characters.FlyingDragonAgheel, region=1043362343, destination=1043362363)
+    Event_1043362340(4, character=Characters.FlyingDragonAgheel, region=1043362344, destination=1043362364)
+    Event_1043362340(5, character=Characters.FlyingDragonAgheel, region=1043362345, destination=1043362365)
+    Event_1043362340(6, character=Characters.FlyingDragonAgheel, region=1043362346, destination=1043362366)
+    Event_1043362340(7, character=Characters.FlyingDragonAgheel, region=1043362347, destination=1043362367)
+    Event_1043362340(8, character=Characters.FlyingDragonAgheel, region=1043362348, destination=1043362368)
+    Event_1043362340(9, character=Characters.FlyingDragonAgheel, region=1043362349, destination=1043362369)
+    Event_1043362340(10, character=Characters.FlyingDragonAgheel, region=1043362350, destination=1043362370)
+    Event_1043362340(11, character=Characters.FlyingDragonAgheel, region=1043362351, destination=1043362371)
+    Event_1043362340(12, character=Characters.FlyingDragonAgheel, region=1043362352, destination=1043362372)
+    CommonFunc_KillFieldDragonWyrm(
         0,
         flag=1043360800,
-        left=0,
-        character=Characters.FlyingDragon,
-        left_1=1,
+        extra_flag=0,
+        character=Characters.FlyingDragonAgheel,
+        felled_banner_rank=1,
         item_lot=30110,
         text=30060,
         seconds=0.0,
     )
-    CommonFunc_90005870(0, character=Characters.FlyingDragon, name=904500600, npc_threat_level=25)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.FlyingDragonAgheel, name=904500600, npc_threat_level=25)
     Event_1043362380()
     Event_1043362510(0, asset=Assets.AEG099_290_9001, region=1043362510, flag=1043362500, obj_act_id=1043363600)
     CommonFunc_90005781(
@@ -470,7 +470,7 @@ def Event_1043363700():
     if FlagEnabled(1043360800):
         return
     
-    MAIN.Await(AttackedWithDamageType(attacked_entity=Characters.FlyingDragon, attacker=PLAYER))
+    MAIN.Await(AttackedWithDamageType(attacked_entity=Characters.FlyingDragonAgheel, attacker=PLAYER))
     
     EnableFlag(1043359258)
     End()

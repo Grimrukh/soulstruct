@@ -41,8 +41,8 @@ def Constructor():
     )
     Event_1043522510()
     Event_1043522515()
-    CommonFunc_90005300(0, flag=1043520506, character=Characters.Margit, item_lot=1043520500, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=1043520400, character=Characters.Scarab, item_lot=40316, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1043520506, character=Characters.Margit, item_lot=1043520500, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1043520400, character=Characters.Scarab, item_lot=40316, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005631(0, anchor_entity=Assets.AEG099_376_1000, text=61032)
     CommonFunc_90005705(0, character=Characters.FingerReader)
 
@@ -89,16 +89,16 @@ def Event_1043522500(_, character: uint, character_1: uint, flag: uint, region: 
     GotoIfConditionTrue(Label.L0, input_condition=AND_15)
     EnableAI(character)
     ForceAnimation(character, 20030, loop=True, skip_transition=True)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
     AddSpecialEffect(character, 9730)
     Wait(1.0)
-    CreateTemporaryVFX(vfx_id=636615, anchor_entity=character, model_point=900, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=636615, anchor_entity=character, dummy_id=900, anchor_type=CoordEntityType.Character)
     ForceAnimation(character, 20030, skip_transition=True)
     Move(
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=900,
+        dummy_id=900,
         short_move=True,
     )
     Wait(1.0)
@@ -143,7 +143,7 @@ def Event_1043522505(_, flag: uint, character: uint, character_1: uint, flag_1: 
         character,
         destination=character_1,
         destination_type=CoordEntityType.Character,
-        model_point=900,
+        dummy_id=900,
         short_move=True,
     )
     EnableCharacter(character)

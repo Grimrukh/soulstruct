@@ -1117,7 +1117,7 @@ def Event_15005300(_, character: int, character_1: int, spawner: int):
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=8,
+        dummy_id=8,
         copy_draw_parent=character,
     )
     Restart()
@@ -1174,7 +1174,7 @@ def Event_15005340(_, character: int, character_1: int):
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=50,
+        dummy_id=50,
         copy_draw_parent=character,
     )
     WaitFrames(frames=1)
@@ -1205,7 +1205,7 @@ def Event_15005360(_, character: int, character_1: int):
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=50,
+        dummy_id=50,
         copy_draw_parent=character,
     )
     WaitFrames(frames=1)
@@ -1619,7 +1619,7 @@ def Event_15005500():
     CreateHazard(
         obj_flag=15005500,
         obj=5001500,
-        model_point=40,
+        dummy_id=40,
         behavior_param_id=6210,
         target_type=DamageTargetType.Character,
         radius=2.0,
@@ -1630,7 +1630,7 @@ def Event_15005500():
     CreateHazard(
         obj_flag=15005501,
         obj=5001500,
-        model_point=41,
+        dummy_id=41,
         behavior_param_id=6210,
         target_type=DamageTargetType.Character,
         radius=2.0,
@@ -1836,7 +1836,7 @@ def Event_15005810():
     DefineLabel(0)
     EnableImmortality(5000800)
     DisableHealthBar(5000800)
-    SetLockOnPoint(character=5000800, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=5000800, lock_on_dummy_id=220, state=False)
     DisableAI(5005800)
     EnableImmortality(5000801)
     DisableAI(5005801)
@@ -2031,7 +2031,7 @@ def Event_15005825(
     flag: int,
     special_effect: int,
     spawner: int,
-    model_point: int,
+    dummy_id: int,
     right: int,
 ):
     """Event 15005825"""
@@ -2052,7 +2052,7 @@ def Event_15005825(
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=model_point,
+        dummy_id=dummy_id,
         copy_draw_parent=character,
     )
     SetNetworkConnectedFlagState(flag=flag, state=FlagSetting.On)
@@ -2300,8 +2300,8 @@ def Event_15005849():
             sound_id_1=5004802,
             flag_3=15005802,
         )
-    CommonFunc_20005820(0, flag=15000800, obj=5001800, model_point=3, left=15005801)
-    CommonFunc_20005820(0, flag=15000800, obj=5001801, model_point=2, left=15005801)
+    CommonFunc_20005820(0, flag=15000800, obj=5001800, dummy_id=3, left=15005801)
+    CommonFunc_20005820(0, flag=15000800, obj=5001801, dummy_id=2, left=15005801)
     CommonFunc_20005810(0, flag=15000800, entity=5001800, target_entity=5002801, action_button_id=10000)
     Event_15005820(0, character=5000802, character_1=5000810, flag=15005840)
     Event_15005820(1, character=5000802, character_1=5000811, flag=15005841)
@@ -2315,7 +2315,7 @@ def Event_15005849():
         flag=15005840,
         special_effect=15020,
         spawner=5004810,
-        model_point=100,
+        dummy_id=100,
         right=0,
     )
     Event_15005825(
@@ -2325,7 +2325,7 @@ def Event_15005849():
         flag=15005841,
         special_effect=15021,
         spawner=5004811,
-        model_point=1,
+        dummy_id=1,
         right=0,
     )
     Event_15005825(
@@ -2335,7 +2335,7 @@ def Event_15005849():
         flag=15005842,
         special_effect=15022,
         spawner=5004812,
-        model_point=2,
+        dummy_id=2,
         right=0,
     )
     Event_15005825(
@@ -2345,7 +2345,7 @@ def Event_15005849():
         flag=15005843,
         special_effect=15027,
         spawner=5004813,
-        model_point=1,
+        dummy_id=1,
         right=1,
     )
     Event_15005825(
@@ -2355,7 +2355,7 @@ def Event_15005849():
         flag=15005844,
         special_effect=15028,
         spawner=5004814,
-        model_point=2,
+        dummy_id=2,
         right=1,
     )
     Event_15005835()

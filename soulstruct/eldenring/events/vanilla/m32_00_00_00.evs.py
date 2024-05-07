@@ -53,7 +53,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
     Event_32002250(
         0,
         character=Characters.TunnelMiner0,
@@ -269,11 +269,11 @@ def Constructor():
 def Preconstructor():
     """Event 50"""
     Event_32000519()
-    CommonFunc_90005250(0, character=Characters.TunnelMiner3, region=32002207, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.TunnelMiner4, region=32002207, seconds=1.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.TunnelMiner5, region=32002210, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.TunnelMiner6, region=32002211, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.TunnelMiner7, region=32002212, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.TunnelMiner3, region=32002207, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.TunnelMiner4, region=32002207, seconds=1.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.TunnelMiner5, region=32002210, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.TunnelMiner6, region=32002211, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.TunnelMiner7, region=32002212, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.Misbegotten0, radius=27.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
@@ -287,8 +287,8 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.Misbegotten7, region=32002317, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Misbegotten9, region=32002315, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Misbegotten7, region=32002317, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Misbegotten9, region=32002315, seconds=0.0, animation_id=-1)
 
 
 @ContinueOnRest(32002510)
@@ -852,7 +852,7 @@ def Event_32002849():
         flag_2=32002806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=32000800, asset=Assets.AEG099_002_9000, model_point=7, right=32000801)
+    CommonFunc_9005811(0, flag=32000800, asset=Assets.AEG099_002_9000, dummy_id=7, right=32000801)
     CommonFunc_9005822(
         0,
         flag=32000800,

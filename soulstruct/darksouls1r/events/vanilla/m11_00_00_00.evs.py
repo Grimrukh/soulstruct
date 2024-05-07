@@ -138,7 +138,7 @@ def Event_11100090(_, obj: int, vfx_id: int, destination: int, destination_1: in
         prompt_text=10010403,
         anchor_entity=destination,
         anchor_type=CoordEntityType.Region,
-        model_point=0,
+        dummy_id=0,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         line_intersects=obj,
     ))
@@ -146,7 +146,7 @@ def Event_11100090(_, obj: int, vfx_id: int, destination: int, destination_1: in
         prompt_text=10010407,
         anchor_entity=destination_1,
         anchor_type=CoordEntityType.Region,
-        model_point=0,
+        dummy_id=0,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         line_intersects=obj,
     ))
@@ -475,7 +475,7 @@ def Event_11105396():
         1100161,
         destination=1100160,
         destination_type=CoordEntityType.Character,
-        model_point=40,
+        dummy_id=40,
         copy_draw_parent=1100160,
     )
     ForceAnimation(1100161, 8100)
@@ -697,7 +697,7 @@ def Event_11100070(_, obj: int, obj_1: int, animation_id: int, animation_id_1: i
         End()
     DisableTreasure(obj=obj_1)
     SkipLinesIfClient(1)
-    CreateObjectVFX(obj_1, vfx_id=90, model_point=99005)
+    CreateObjectVFX(obj_1, vfx_id=90, dummy_id=99005)
     ForceAnimation(obj_1, animation_id, loop=True)
     
     MAIN.Await(ObjectDestroyed(obj))
@@ -749,7 +749,7 @@ def Event_11105371():
         1100172,
         destination=1100170,
         destination_type=CoordEntityType.Character,
-        model_point=30,
+        dummy_id=30,
         copy_draw_parent=1100170,
     )
     EnableCharacter(1100172)
@@ -803,7 +803,7 @@ def Event_11100030():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=100,
+        dummy_id=100,
         trigger_attribute=TriggerAttribute.All,
     ))
     
@@ -826,7 +826,7 @@ def Event_11100031():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=101,
+        dummy_id=101,
         trigger_attribute=TriggerAttribute.All,
     ))
     
@@ -864,14 +864,14 @@ def Event_11100135():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=192,
+        dummy_id=192,
         trigger_attribute=TriggerAttribute.All,
     ))
     
     DisableObject(1101018)
     DisableObject(1101019)
     DisableObject(1101020)
-    Move(PLAYER, destination=1101150, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
+    Move(PLAYER, destination=1101150, destination_type=CoordEntityType.Object, dummy_id=191, short_move=True)
     ForceAnimation(PLAYER, 8010)
     ForceAnimation(1101150, 1, wait_for_completion=True)
     SkipLinesIfSingleplayer(2)
@@ -894,7 +894,7 @@ def Event_11100136():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=100,
+        dummy_id=100,
         trigger_attribute=TriggerAttribute.All,
     ))
     

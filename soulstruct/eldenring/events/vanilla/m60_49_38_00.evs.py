@@ -85,7 +85,7 @@ def Constructor():
         region=1049382400,
         left=0,
     )
-    CommonFunc_90005300(0, flag=1049380290, character=Characters.Scarab, item_lot=40404, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1049380290, character=Characters.Scarab, item_lot=40404, seconds=0.0, item_is_dropped=0)
     Event_1049382210()
     Event_1049382211(0, source_entity=Assets.AEG099_046_9035, seconds=6.0)
     Event_1049382211(1, source_entity=Assets.AEG099_046_9036, seconds=12.0)
@@ -96,13 +96,13 @@ def Constructor():
     Event_1049382211(6, source_entity=Assets.AEG099_046_9041, seconds=8.0)
     Event_1049382211(7, source_entity=Assets.AEG099_046_9042, seconds=5.0)
     Event_1049382211(8, source_entity=Assets.AEG099_046_9043, seconds=4.0)
-    CommonFunc_90005250(0, character=Characters.DeathRiteBird, region=1049382399, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.DeathRiteBird, region=1049382399, seconds=0.0, animation_id=-1)
     Event_1049382200(0, character=Characters.RayaLucariaScholar0, special_effect=14807)
     Event_1049382200(1, character=Characters.RayaLucariaScholar1, special_effect=14807)
     Event_1049382200(2, character=Characters.RayaLucariaScholar2, special_effect=14807)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar0, region=1049382200, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar1, region=1049382200, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar2, region=1049382200, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar0, region=1049382200, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar1, region=1049382200, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar2, region=1049382200, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.CleanrotKnight2,
@@ -115,12 +115,12 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.CleanrotKnight0, region=1049382311, seconds=82.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.CleanrotKnight1, region=1049382311, seconds=22.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.CleanrotKnight3, region=1049382311, seconds=115.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.CleanrotKnight4, region=1049382311, seconds=50.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CleanrotKnight0, region=1049382311, seconds=82.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CleanrotKnight1, region=1049382311, seconds=22.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CleanrotKnight3, region=1049382311, seconds=115.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CleanrotKnight4, region=1049382311, seconds=50.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.Commander, radius=35.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005870(0, character=Characters.Commander, name=903050600, npc_threat_level=11)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.Commander, name=903050600, npc_threat_level=11)
     CommonFunc_90005860(
         0,
         flag=1049380800,
@@ -130,7 +130,7 @@ def Constructor():
         item_lot=30405,
         seconds=0.0,
     )
-    CommonFunc_90005872(0, character=Characters.Commander, npc_threat_level=11, right=0)
+    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.Commander, npc_threat_level=11, required_flag=0)
     Event_1049382820(
         0,
         character=Characters.Commander,
@@ -180,7 +180,7 @@ def Event_1049382211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human0,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700000,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -192,7 +192,7 @@ def Event_1049382211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human0,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700010,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -204,7 +204,7 @@ def Event_1049382211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human0,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700020,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -216,7 +216,7 @@ def Event_1049382211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human0,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700030,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -228,7 +228,7 @@ def Event_1049382211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human0,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700040,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -240,7 +240,7 @@ def Event_1049382211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human0,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700050,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -252,7 +252,7 @@ def Event_1049382211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human0,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700060,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -264,7 +264,7 @@ def Event_1049382211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human0,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700070,
         launch_angle_x=0,
         launch_angle_y=0,

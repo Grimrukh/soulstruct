@@ -413,8 +413,8 @@ def Constructor():
     Event_14002590()
     Event_14002592()
     Event_14002594()
-    CommonFunc_90005300(0, flag=14000276, character=Characters.RayaLucariaScholar23, item_lot=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=14000277, character=Characters.RayaLucariaScholar24, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=14000276, character=Characters.RayaLucariaScholar23, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=14000277, character=Characters.RayaLucariaScholar24, item_lot=0, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005525(0, flag=14000610, asset=14001610)
     CommonFunc_90005525(0, flag=14000611, asset=14001611)
     CommonFunc_90005525(0, flag=14000612, asset=14001612)
@@ -457,16 +457,16 @@ def Constructor():
         character=Characters.SmallCrabCrystal0,
         item_lot=14000005,
         seconds=0.0,
-        left=0,
+        item_is_dropped=0,
     )
-    CommonFunc_90005300(0, flag=14000634, character=14000634, item_lot=14000015, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=14000634, character=14000634, item_lot=14000015, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005300(
         0,
         flag=14000637,
         character=Characters.SmallCrabCrystal1,
         item_lot=14000025,
         seconds=0.0,
-        left=0,
+        item_is_dropped=0,
     )
     CommonFunc_90005300(
         0,
@@ -474,7 +474,7 @@ def Constructor():
         character=Characters.SmallCrabCrystal2,
         item_lot=14000035,
         seconds=0.0,
-        left=0,
+        item_is_dropped=0,
     )
     Event_14002491(0, character=Characters.Avionette2, region=14002492, radius=15.0, seconds=0.0, animation_id=3032)
     Event_14002491(1, character=Characters.Avionette3, region=14002493, radius=15.0, seconds=0.0, animation_id=3032)
@@ -483,14 +483,14 @@ def Constructor():
     Event_14002490(1, character=Characters.Avionette1, region=14002491, seconds=0.0, animation_id=3032)
     Event_14002490(2, character=Characters.Avionette6, region=14002496, seconds=0.0, animation_id=3032)
     Event_14002490(3, character=Characters.Avionette7, region=14002496, seconds=1.0, animation_id=3032)
-    CommonFunc_90005300(0, flag=14000486, character=Characters.Scarab, item_lot=40272, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=14000486, character=Characters.Scarab, item_lot=40272, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005300(
         0,
         flag=14000499,
         character=Characters.MoongrumCarianKnight,
         item_lot=14000980,
         seconds=0.0,
-        left=0,
+        item_is_dropped=0,
     )
     CommonFunc_90005780(
         0,
@@ -524,7 +524,7 @@ def Constructor():
         message=80609,
         action_button_id=9000,
         asset=Assets.AEG099_090_9001,
-        model_point=30010,
+        dummy_id=30010,
     )
     if CeremonyActive(ceremony=20):
         CommonFunc_90005796(0, flag=7608, character=Characters.SorceressSellen2, banner_type=5, region=14002141)
@@ -539,7 +539,7 @@ def Constructor():
         message=80608,
         action_button_id=9000,
         asset=Assets.AEG099_090_9002,
-        model_point=30000,
+        dummy_id=30000,
     )
     if CeremonyActive(ceremony=30):
         Event_14002155()
@@ -560,7 +560,7 @@ def Constructor():
         first_flag=400107,
         last_flag=400107,
         flag=3469,
-        model_point=0,
+        dummy_id=0,
     )
     Event_14000712()
     Event_14000713()
@@ -601,7 +601,7 @@ def Constructor():
         first_flag=400360,
         last_flag=400362,
         flag=3806,
-        model_point=0,
+        dummy_id=0,
     )
 
 
@@ -622,8 +622,8 @@ def Preconstructor():
     DisableBackread(Characters.SorcererThops)
     DisableAsset(14006710)
     Event_14000519()
-    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar0, region=14002200, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar1, region=14002200, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar0, region=14002200, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar1, region=14002200, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.RayaLucariaScholar2,
@@ -649,7 +649,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar7, region=14002228, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar7, region=14002228, seconds=0.0, animation_id=-1)
     CommonFunc_90005210(
         0,
         character=Characters.RayaLucariaScholar8,
@@ -663,20 +663,20 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar9, region=14002228, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar3, region=14002222, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar11, region=14002222, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar13, region=14002251, seconds=0.5, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar14, region=14002251, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar15, region=14002252, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=14000260, region=14002260, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar9, region=14002228, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar3, region=14002222, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar11, region=14002222, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar13, region=14002251, seconds=0.5, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar14, region=14002251, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar15, region=14002252, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=14000260, region=14002260, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=14000261, radius=10.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar17, region=14002260, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=14000263, region=14002260, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar16, region=14002267, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar18, region=14002267, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar20, region=14002267, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar19, region=14002266, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar17, region=14002260, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=14000263, region=14002260, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar16, region=14002267, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar18, region=14002267, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar20, region=14002267, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar19, region=14002266, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(
         0,
         character=Characters.RayaLucariaScholar21,
@@ -693,12 +693,12 @@ def Preconstructor():
         seconds=0.0,
         animation_id=-1,
     )
-    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar23, region=14002276, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar24, region=14002276, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar25, region=14002285, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar26, region=14002285, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar27, region=14002285, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpse0, region=14002300, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar23, region=14002276, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar24, region=14002276, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar25, region=14002285, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar26, region=14002285, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar27, region=14002285, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse0, region=14002300, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.PutridCorpse1,
@@ -711,7 +711,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.PutridCorpse2, region=14002310, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse2, region=14002310, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=Characters.PutridCorpse3,
@@ -820,7 +820,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.PutridCorpse12, region=14002323, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse12, region=14002323, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.PutridCorpse13,
@@ -969,10 +969,10 @@ def Preconstructor():
         region=14002355,
         radius=5.0,
         seconds=0.5,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -982,10 +982,10 @@ def Preconstructor():
         region=14002355,
         radius=5.0,
         seconds=0.5,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005221(
         0,
@@ -1020,7 +1020,7 @@ def Preconstructor():
         left_3=0,
     )
     CommonFunc_90005251(0, character=Characters.PutridCorpseBare0, radius=16.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.PutridCorpseBare2, region=14002345, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpseBare2, region=14002345, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=14000392,
@@ -1029,10 +1029,10 @@ def Preconstructor():
         region=14002355,
         radius=5.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005200(
         0,
@@ -1082,7 +1082,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.SmallerDog0, region=14002345, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallerDog0, region=14002345, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=Characters.SmallerDog1,
@@ -1091,10 +1091,10 @@ def Preconstructor():
         region=14002345,
         radius=5.0,
         seconds=0.0,
-        left=0,
-        left_1=1,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=1,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -1104,10 +1104,10 @@ def Preconstructor():
         region=14002345,
         radius=5.0,
         seconds=0.0,
-        left=0,
-        left_1=1,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=1,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -1117,10 +1117,10 @@ def Preconstructor():
         region=14002345,
         radius=5.0,
         seconds=0.0,
-        left=0,
-        left_1=1,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=1,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005221(
         0,
@@ -1206,7 +1206,7 @@ def Preconstructor():
         seconds=0.0,
         left=0,
     )
-    CommonFunc_90005250(0, character=Characters.WanderingNoble13, region=14002267, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.WanderingNoble13, region=14002267, seconds=0.0, animation_id=-1)
     CommonFunc_90005221(
         0,
         character=Characters.WanderingNoble12,
@@ -1458,8 +1458,8 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.Marionette11, region=14002487, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Marionette12, region=14002487, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Marionette11, region=14002487, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Marionette12, region=14002487, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=Characters.Avionette5,
@@ -1468,18 +1468,18 @@ def Preconstructor():
         region=14002495,
         radius=3.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
-    CommonFunc_90005250(0, character=Characters.Avionette8, region=14002396, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Avionette9, region=14002396, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Page, region=14002675, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.MadPumpkinHead, region=14002276, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.IronVirgin0, region=14002293, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.IronVirgin1, region=14002294, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.MoongrumCarianKnight, region=14002499, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Avionette8, region=14002396, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Avionette9, region=14002396, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Page, region=14002675, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.MadPumpkinHead, region=14002276, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.IronVirgin0, region=14002293, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.IronVirgin1, region=14002294, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.MoongrumCarianKnight, region=14002499, seconds=0.0, animation_id=-1)
 
 
 @ContinueOnRest(14002080)
@@ -1508,7 +1508,7 @@ def Event_14002145():
     SetTeamType(Characters.SorceressSellen2, TeamType.Human)
     SetTeamType(Characters.WitchHunterJerren0, TeamType.Enemy)
     DeleteAssetVFX(14006710)
-    CreateAssetVFX(14006710, vfx_id=200, model_point=806700)
+    CreateAssetVFX(14006710, vfx_id=200, dummy_id=806700)
 
 
 @RestartOnRest(14002155)
@@ -1521,7 +1521,7 @@ def Event_14002155():
     SetTeamType(Characters.WitchHunterJerren1, TeamType.Enemy)
     SetTeamType(Characters.SorceressSellen1, TeamType.Human)
     DeleteAssetVFX(14006700)
-    CreateAssetVFX(14006700, vfx_id=200, model_point=806700)
+    CreateAssetVFX(14006700, vfx_id=200, dummy_id=806700)
 
 
 @RestartOnRest(14002165)
@@ -1680,14 +1680,14 @@ def Event_14002590():
     CreateTemporaryVFX(
         vfx_id=814630,
         anchor_entity=Assets.AEG003_316_9001,
-        model_point=100,
+        dummy_id=100,
         anchor_type=CoordEntityType.Asset,
     )
     if FlagEnabled(50):
         CreateHazard(
             asset_flag=14000590,
             asset=Assets.AEG257_014_0500,
-            model_point=200,
+            dummy_id=200,
             behavior_param_id=802500000,
             target_type=DamageTargetType.Character,
             radius=3.799999952316284,
@@ -1698,7 +1698,7 @@ def Event_14002590():
         CreateHazard(
             asset_flag=14000590,
             asset=Assets.AEG257_014_0500,
-            model_point=200,
+            dummy_id=200,
             behavior_param_id=802500010,
             target_type=DamageTargetType.Character,
             radius=3.799999952316284,
@@ -1709,7 +1709,7 @@ def Event_14002590():
         CreateHazard(
             asset_flag=14000590,
             asset=Assets.AEG257_014_0500,
-            model_point=200,
+            dummy_id=200,
             behavior_param_id=802500020,
             target_type=DamageTargetType.Character,
             radius=3.799999952316284,
@@ -1720,7 +1720,7 @@ def Event_14002590():
         CreateHazard(
             asset_flag=14000590,
             asset=Assets.AEG257_014_0500,
-            model_point=200,
+            dummy_id=200,
             behavior_param_id=802500030,
             target_type=DamageTargetType.Character,
             radius=3.799999952316284,
@@ -1731,7 +1731,7 @@ def Event_14002590():
         CreateHazard(
             asset_flag=14000590,
             asset=Assets.AEG257_014_0500,
-            model_point=200,
+            dummy_id=200,
             behavior_param_id=802500040,
             target_type=DamageTargetType.Character,
             radius=3.799999952316284,
@@ -1742,7 +1742,7 @@ def Event_14002590():
         CreateHazard(
             asset_flag=14000590,
             asset=Assets.AEG257_014_0500,
-            model_point=200,
+            dummy_id=200,
             behavior_param_id=802500050,
             target_type=DamageTargetType.Character,
             radius=3.799999952316284,
@@ -1753,7 +1753,7 @@ def Event_14002590():
         CreateHazard(
             asset_flag=14000590,
             asset=Assets.AEG257_014_0500,
-            model_point=200,
+            dummy_id=200,
             behavior_param_id=802500060,
             target_type=DamageTargetType.Character,
             radius=3.799999952316284,
@@ -1764,7 +1764,7 @@ def Event_14002590():
         CreateHazard(
             asset_flag=14000590,
             asset=Assets.AEG257_014_0500,
-            model_point=200,
+            dummy_id=200,
             behavior_param_id=802500070,
             target_type=DamageTargetType.Character,
             radius=3.799999952316284,
@@ -1780,7 +1780,7 @@ def Event_14002590():
 def Event_14002592():
     """Event 14002592"""
     DeleteAssetVFX(Assets.AEG003_316_9002)
-    CreateAssetVFX(Assets.AEG003_316_9002, vfx_id=100, model_point=814631)
+    CreateAssetVFX(Assets.AEG003_316_9002, vfx_id=100, dummy_id=814631)
 
 
 @RestartOnRest(14002594)
@@ -2520,7 +2520,7 @@ def Event_14002811():
     EnableBossHealthBar(Characters.RennalaPhaseTwo, name=902030001)
     SetNetworkUpdateRate(Characters.RennalaPhaseTwo, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     WaitFramesAfterCutscene(frames=1)
-    AttachAssetToCharacter(character=Characters.TalkDummy7, model_point=10, asset=Assets.AEG099_052_9001)
+    AttachAssetToCharacter(character=Characters.TalkDummy7, dummy_id=10, asset=Assets.AEG099_052_9001)
 
 
 @RestartOnRest(140028121)
@@ -2602,7 +2602,7 @@ def Event_14002849():
         flag_2=14002806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=14000800, asset=Assets.AEG099_001_9000, model_point=3, right=14000801)
+    CommonFunc_9005811(0, flag=14000800, asset=Assets.AEG099_001_9000, dummy_id=3, right=14000801)
     CommonFunc_9005822(
         0,
         flag=14000800,
@@ -2699,14 +2699,14 @@ def Event_14002889():
         flag_2=14002856,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=14000850, asset=Assets.AEG099_003_9000, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=14000850, asset=Assets.AEG099_003_9000, dummy_id=3, right=0)
     CommonFunc_9005813(
         0,
         flag=14000850,
         asset=Assets.AEG099_003_9001,
-        model_point=3,
+        dummy_id=3,
         right=14000851,
-        model_point_1=806760,
+        dummy_id_1=806760,
     )
     CommonFunc_9005822(
         0,
@@ -3331,7 +3331,7 @@ def Event_14003814(_, destination: uint, character: uint):
         character,
         destination=destination,
         destination_type=CoordEntityType.Character,
-        model_point=20,
+        dummy_id=20,
         short_move=True,
     )
     Wait(1.0)
@@ -3487,11 +3487,11 @@ def Event_14003845(
     MAIN.Await(CharacterHasSpecialEffect(character, 14362))
     
     if FlagEnabled(asset_5):
-        CreateAssetVFX(asset_2, vfx_id=200, model_point=814625)
+        CreateAssetVFX(asset_2, vfx_id=200, dummy_id=814625)
     if FlagEnabled(asset_4):
-        CreateAssetVFX(asset_1, vfx_id=200, model_point=814625)
+        CreateAssetVFX(asset_1, vfx_id=200, dummy_id=814625)
     if FlagEnabled(asset_3):
-        CreateAssetVFX(asset, vfx_id=200, model_point=814625)
+        CreateAssetVFX(asset, vfx_id=200, dummy_id=814625)
     Wait(1.5)
     if FlagEnabled(asset_5):
         OR_1.Add(EntityWithinDistance(entity=20000, other_entity=asset_2, radius=4.5))
@@ -3513,7 +3513,7 @@ def Event_14003845(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset_2,
-        model_point=200,
+        dummy_id=200,
         behavior_id=220400140,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3531,7 +3531,7 @@ def Event_14003845(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset_1,
-        model_point=200,
+        dummy_id=200,
         behavior_id=220400140,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3549,7 +3549,7 @@ def Event_14003845(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset,
-        model_point=200,
+        dummy_id=200,
         behavior_id=220400140,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3601,7 +3601,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag,
-        model_point=220,
+        dummy_id=220,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3610,7 +3610,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag,
-        model_point=223,
+        dummy_id=223,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3619,7 +3619,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag,
-        model_point=225,
+        dummy_id=225,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3632,7 +3632,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag,
-        model_point=221,
+        dummy_id=221,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3641,7 +3641,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag,
-        model_point=222,
+        dummy_id=222,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3651,7 +3651,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag,
-        model_point=224,
+        dummy_id=224,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3660,7 +3660,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag,
-        model_point=220,
+        dummy_id=220,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3670,7 +3670,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag,
-        model_point=223,
+        dummy_id=223,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3679,7 +3679,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag,
-        model_point=225,
+        dummy_id=225,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3688,7 +3688,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag,
-        model_point=221,
+        dummy_id=221,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3698,7 +3698,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag,
-        model_point=222,
+        dummy_id=222,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3707,7 +3707,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag,
-        model_point=224,
+        dummy_id=224,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3716,7 +3716,7 @@ def Event_14003850(
     CreateHazard(
         asset_flag=asset__asset_flag,
         asset=asset__asset_flag,
-        model_point=210,
+        dummy_id=210,
         behavior_param_id=220400150,
         target_type=DamageTargetType.Character,
         radius=3.5,
@@ -3731,7 +3731,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_1,
-        model_point=220,
+        dummy_id=220,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3740,7 +3740,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_1,
-        model_point=223,
+        dummy_id=223,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3749,7 +3749,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_1,
-        model_point=225,
+        dummy_id=225,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3762,7 +3762,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_1,
-        model_point=221,
+        dummy_id=221,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3771,7 +3771,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_1,
-        model_point=222,
+        dummy_id=222,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3781,7 +3781,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_1,
-        model_point=224,
+        dummy_id=224,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3790,7 +3790,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_1,
-        model_point=220,
+        dummy_id=220,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3800,7 +3800,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_1,
-        model_point=223,
+        dummy_id=223,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3809,7 +3809,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_1,
-        model_point=225,
+        dummy_id=225,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3818,7 +3818,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_1,
-        model_point=221,
+        dummy_id=221,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3828,7 +3828,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_1,
-        model_point=222,
+        dummy_id=222,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3837,7 +3837,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_1,
-        model_point=224,
+        dummy_id=224,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3846,7 +3846,7 @@ def Event_14003850(
     CreateHazard(
         asset_flag=asset__asset_flag_1,
         asset=asset__asset_flag_1,
-        model_point=210,
+        dummy_id=210,
         behavior_param_id=220400150,
         target_type=DamageTargetType.Character,
         radius=3.5,
@@ -3861,7 +3861,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_2,
-        model_point=220,
+        dummy_id=220,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3870,7 +3870,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_2,
-        model_point=223,
+        dummy_id=223,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3879,7 +3879,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_2,
-        model_point=225,
+        dummy_id=225,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3892,7 +3892,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_2,
-        model_point=221,
+        dummy_id=221,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3901,7 +3901,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_2,
-        model_point=222,
+        dummy_id=222,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3911,7 +3911,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_2,
-        model_point=224,
+        dummy_id=224,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3920,7 +3920,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_2,
-        model_point=220,
+        dummy_id=220,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3930,7 +3930,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_2,
-        model_point=223,
+        dummy_id=223,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3939,7 +3939,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_2,
-        model_point=225,
+        dummy_id=225,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3948,7 +3948,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_2,
-        model_point=221,
+        dummy_id=221,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3958,7 +3958,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_2,
-        model_point=222,
+        dummy_id=222,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3967,7 +3967,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_2,
-        model_point=224,
+        dummy_id=224,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -3976,7 +3976,7 @@ def Event_14003850(
     CreateHazard(
         asset_flag=asset__asset_flag_2,
         asset=asset__asset_flag_2,
-        model_point=210,
+        dummy_id=210,
         behavior_param_id=220400150,
         target_type=DamageTargetType.Character,
         radius=3.5,
@@ -3991,7 +3991,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_3,
-        model_point=220,
+        dummy_id=220,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4000,7 +4000,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_3,
-        model_point=223,
+        dummy_id=223,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4009,7 +4009,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_3,
-        model_point=225,
+        dummy_id=225,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4022,7 +4022,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_3,
-        model_point=221,
+        dummy_id=221,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4031,7 +4031,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_3,
-        model_point=222,
+        dummy_id=222,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4041,7 +4041,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_3,
-        model_point=224,
+        dummy_id=224,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4050,7 +4050,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_3,
-        model_point=220,
+        dummy_id=220,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4060,7 +4060,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_3,
-        model_point=223,
+        dummy_id=223,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4069,7 +4069,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_3,
-        model_point=225,
+        dummy_id=225,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4078,7 +4078,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_3,
-        model_point=221,
+        dummy_id=221,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4088,7 +4088,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_3,
-        model_point=222,
+        dummy_id=222,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4097,7 +4097,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_3,
-        model_point=224,
+        dummy_id=224,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4106,7 +4106,7 @@ def Event_14003850(
     CreateHazard(
         asset_flag=asset__asset_flag_3,
         asset=asset__asset_flag_3,
-        model_point=210,
+        dummy_id=210,
         behavior_param_id=220400150,
         target_type=DamageTargetType.Character,
         radius=3.5,
@@ -4121,7 +4121,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_4,
-        model_point=220,
+        dummy_id=220,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4130,7 +4130,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_4,
-        model_point=223,
+        dummy_id=223,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4139,7 +4139,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_4,
-        model_point=225,
+        dummy_id=225,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4152,7 +4152,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_4,
-        model_point=221,
+        dummy_id=221,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4161,7 +4161,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_4,
-        model_point=222,
+        dummy_id=222,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4171,7 +4171,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_4,
-        model_point=224,
+        dummy_id=224,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4180,7 +4180,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_4,
-        model_point=220,
+        dummy_id=220,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4190,7 +4190,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_4,
-        model_point=223,
+        dummy_id=223,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4199,7 +4199,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_4,
-        model_point=225,
+        dummy_id=225,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4208,7 +4208,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_4,
-        model_point=221,
+        dummy_id=221,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4218,7 +4218,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_4,
-        model_point=222,
+        dummy_id=222,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4227,7 +4227,7 @@ def Event_14003850(
     ShootProjectile(
         owner_entity=character,
         source_entity=asset__asset_flag_4,
-        model_point=224,
+        dummy_id=224,
         behavior_id=220400155,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4236,7 +4236,7 @@ def Event_14003850(
     CreateHazard(
         asset_flag=asset__asset_flag_4,
         asset=asset__asset_flag_4,
-        model_point=210,
+        dummy_id=210,
         behavior_param_id=220400150,
         target_type=DamageTargetType.Character,
         radius=3.5,
@@ -4599,7 +4599,7 @@ def Event_14003900(_, owner_entity: uint, source_entity: uint):
     ShootProjectile(
         owner_entity=owner_entity,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=220400180,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4630,7 +4630,7 @@ def Event_14003922(_, flag: uint, character: uint, character_1: uint):
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=230,
+        dummy_id=230,
         copy_draw_parent=character,
     )
     SetNetworkUpdateRate(character_1, is_fixed=True, update_rate=CharacterUpdateRate.Always)
@@ -4734,7 +4734,7 @@ def Event_14003937(
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=71,
+        dummy_id=71,
         copy_draw_parent=character,
     )
     ReplanAI(character_2)
@@ -4750,7 +4750,7 @@ def Event_14003937(
         character_2,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=72,
+        dummy_id=72,
         copy_draw_parent=character,
     )
     ReplanAI(character_2)
@@ -4765,7 +4765,7 @@ def Event_14003937(
         character_3,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=73,
+        dummy_id=73,
         copy_draw_parent=character,
     )
     ReplanAI(character_3)
@@ -4780,7 +4780,7 @@ def Event_14003937(
         character_4,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=70,
+        dummy_id=70,
         copy_draw_parent=character,
     )
     ReplanAI(character_4)
@@ -4903,7 +4903,7 @@ def Event_14003962(_, flag: uint, character: uint, character_1: uint):
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=243,
+        dummy_id=243,
         copy_draw_parent=character,
     )
     SetNetworkUpdateRate(character_1, is_fixed=True, update_rate=CharacterUpdateRate.Always)
@@ -4998,7 +4998,7 @@ def Event_14003972(_, flag: uint, character: uint, character_1: uint):
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=65,
+        dummy_id=65,
         copy_draw_parent=character,
     )
     SetNetworkUpdateRate(character_1, is_fixed=True, update_rate=CharacterUpdateRate.Always)

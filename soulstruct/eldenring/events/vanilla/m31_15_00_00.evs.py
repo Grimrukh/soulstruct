@@ -25,7 +25,7 @@ from .enums.m31_15_00_00_enums import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=31150000, asset=Assets.AEG099_060_9000)
-    CommonFunc_90005250(0, character=31155800, region=31152500, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=31155800, region=31152500, seconds=0.0, animation_id=0)
     Event_31152800()
     Event_31152810()
     Event_31152820(0, character=Characters.DemiHumanBeastman0)
@@ -78,8 +78,8 @@ def Constructor():
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.DemiHumanShaman)
-    CommonFunc_90005250(0, character=Characters.DemiHumanBeastman0, region=31152800, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.DemiHumanBeastman1, region=31152800, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.DemiHumanBeastman0, region=31152800, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.DemiHumanBeastman1, region=31152800, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.DemiHuman0, radius=7.0, seconds=0.0, animation_id=0)
     CommonFunc_90005211(
         0,
@@ -89,10 +89,10 @@ def Preconstructor():
         region=31152217,
         radius=2.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -102,10 +102,10 @@ def Preconstructor():
         region=31152217,
         radius=2.0,
         seconds=1.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(0, character=Characters.DemiHuman9, region=31152219, radius=2.0, seconds=1.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.DemiHuman10, region=31152219, radius=2.0, seconds=0.0, animation_id=0)
@@ -340,14 +340,14 @@ def Event_31152849():
         flag_2=31152806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=31150800, asset=Assets.AEG099_003_9000, model_point=3, right=31150815)
+    CommonFunc_9005811(0, flag=31150800, asset=Assets.AEG099_003_9000, dummy_id=3, right=31150815)
     CommonFunc_9005812(
         0,
         flag=31150800,
         asset=Assets.AEG099_001_9000,
-        model_point=3,
+        dummy_id=3,
         right=31150815,
-        model_point_1=806760,
+        dummy_id_1=806760,
     )
     CommonFunc_9005822(
         0,

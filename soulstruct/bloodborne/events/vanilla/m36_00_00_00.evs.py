@@ -1606,7 +1606,7 @@ def Event_13601312():
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=3600000, entity=3601305))
     
-    Move(PLAYER, destination=3601305, destination_type=CoordEntityType.Object, model_point=192, short_move=True)
+    Move(PLAYER, destination=3601305, destination_type=CoordEntityType.Object, dummy_id=192, short_move=True)
     ForceAnimation(PLAYER, 101330)
     ForceAnimation(3601305, 1, wait_for_completion=True)
     RegisterLadder(start_climbing_flag=13601310, stop_climbing_flag=13601311, obj=3601305)
@@ -1665,7 +1665,7 @@ def Event_13604400(_, obj: int):
     ShootProjectile(
         owner_entity=3600799,
         source_entity=obj,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=6310,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1680,7 +1680,7 @@ def Event_13604400(_, obj: int):
     ShootProjectile(
         owner_entity=3600799,
         source_entity=obj,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=6310,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1689,7 +1689,7 @@ def Event_13604400(_, obj: int):
     ShootProjectile(
         owner_entity=3600799,
         source_entity=obj,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=6320,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -1848,7 +1848,7 @@ def Event_13601802():
     
     MAIN.Await(CharacterBackreadEnabled(3600802))
     
-    Move(3600802, destination=3601802, destination_type=CoordEntityType.Object, model_point=100, short_move=True)
+    Move(3600802, destination=3601802, destination_type=CoordEntityType.Object, dummy_id=100, short_move=True)
     ForceAnimation(3600802, 7000, loop=True)
     if FlagEnabled(13601803):
         return
@@ -2248,7 +2248,7 @@ def Event_13604820():
         3600801,
         destination=3600800,
         destination_type=CoordEntityType.Character,
-        model_point=203,
+        dummy_id=203,
         copy_draw_parent=3600800,
     )
     ForceAnimation(3600801, 3031)
@@ -2571,7 +2571,7 @@ def Event_13605600(_, character__set_draw_parent: int, character: int):
         character,
         destination=character__set_draw_parent,
         destination_type=CoordEntityType.Character,
-        model_point=100,
+        dummy_id=100,
         set_draw_parent=character__set_draw_parent,
     )
     Restart()
@@ -2646,7 +2646,7 @@ def Event_13605720(_, character: int):
     ShootProjectile(
         owner_entity=3600799,
         source_entity=3601799,
-        model_point=200,
+        dummy_id=200,
         behavior_id=6300,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -2671,7 +2671,7 @@ def Event_13605730():
     ShootProjectile(
         owner_entity=3600799,
         source_entity=3601798,
-        model_point=200,
+        dummy_id=200,
         behavior_id=6330,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -2750,7 +2750,7 @@ def Event_13605751():
     ShootProjectile(
         owner_entity=3600799,
         source_entity=3601799,
-        model_point=200,
+        dummy_id=200,
         behavior_id=6300,
         launch_angle_x=0,
         launch_angle_y=0,

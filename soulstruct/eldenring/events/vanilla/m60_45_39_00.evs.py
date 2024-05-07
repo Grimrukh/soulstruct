@@ -86,7 +86,7 @@ def Constructor():
     )
     Event_1045392345(0, flag=1045390800, character=Characters.TibiaMariner, character_1=1045395230)
     Event_1045392346(0, character__targeting_character=Characters.TibiaMariner, region=1045392810)
-    CommonFunc_90005870(0, character=Characters.TibiaMariner, name=904950600, npc_threat_level=24)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.TibiaMariner, name=904950600, npc_threat_level=24)
     CommonFunc_90005860(
         0,
         flag=1045390800,
@@ -227,7 +227,7 @@ def Event_1045392281(_, character: uint, region: uint, owner_entity: uint):
     ShootProjectile(
         owner_entity=owner_entity,
         source_entity=PLAYER,
-        model_point=900,
+        dummy_id=900,
         behavior_id=100920,
         launch_angle_x=0,
         launch_angle_y=0,

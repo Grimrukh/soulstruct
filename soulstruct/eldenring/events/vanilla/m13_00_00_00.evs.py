@@ -102,32 +102,32 @@ def Constructor():
     )
     Event_13002892()
     Event_13002236(0, region=13002314, character=Characters.BeastmanofFarumAzula29)
-    CommonFunc_90005300(0, flag=13000340, character=13000340, item_lot=40770, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=13000341, character=Characters.Scarab, item_lot=40772, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=13000342, character=13000342, item_lot=40774, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=13000343, character=13000343, item_lot=40776, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=13000369, character=Characters.WormfaceLarge, item_lot=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=13000490, character=Characters.AncientDragon0, item_lot=13002091, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=13000340, character=13000340, item_lot=40770, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=13000341, character=Characters.Scarab, item_lot=40772, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=13000342, character=13000342, item_lot=40774, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=13000343, character=13000343, item_lot=40776, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=13000369, character=Characters.WormfaceLarge, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=13000490, character=Characters.AncientDragon0, item_lot=13002091, seconds=0.0, item_is_dropped=0)
     Event_13002493(0, character=Characters.AncientDragon0, region=13002641, region_1=13002640)
     Event_13002646(0, flag=13000492, region=13002492, character=Characters.AncientDragon1, seconds=10.0)
-    CommonFunc_90005300(0, flag=13000494, character=Characters.AncientDragon2, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=13000494, character=Characters.AncientDragon2, item_lot=0, seconds=0.0, item_is_dropped=0)
     Event_13002493(2, character=Characters.AncientDragon2, region=13002645, region_1=13002494)
     Event_13002646(1, flag=13000494, region=13002646, character=Characters.AncientDragon2, seconds=10.0)
     Event_13002610()
-    CommonFunc_90005300(0, flag=13000495, character=Characters.AncientDragon3, item_lot=13002093, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=13000495, character=Characters.AncientDragon3, item_lot=13002093, seconds=0.0, item_is_dropped=0)
     Event_13002646(2, flag=13000495, region=13002495, character=Characters.AncientDragon3, seconds=1.0)
-    CommonFunc_90005300(0, flag=13000701, character=Characters.AncientDragon4, item_lot=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=13000702, character=Characters.AncientDragon5, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=13000701, character=Characters.AncientDragon4, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=13000702, character=Characters.AncientDragon5, item_lot=0, seconds=0.0, item_is_dropped=0)
     Event_13002493(3, character=Characters.AncientDragon5, region=13002497, region_1=13002493)
-    CommonFunc_90005300(0, flag=13000295, character=Characters.CrucibleKnight0, item_lot=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=13000296, character=Characters.CrucibleKnight1, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=13000295, character=Characters.CrucibleKnight0, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=13000296, character=Characters.CrucibleKnight1, item_lot=0, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005300(
         0,
         flag=13000496,
         character=Characters.DraconicTreeSentinel,
         item_lot=13002095,
         seconds=2.0,
-        left=0,
+        item_is_dropped=0,
     )
     Event_13002580()
     Event_13002510()
@@ -292,7 +292,7 @@ def Constructor():
         first_flag=400174,
         last_flag=400174,
         flag=13009254,
-        model_point=0,
+        dummy_id=0,
     )
     Event_13003720()
     Event_13003721()
@@ -358,9 +358,9 @@ def Preconstructor():
         seconds=0.0,
         animation_id=-1,
     )
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula4, region=13002201, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula33, region=13002201, seconds=3.5, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula15, region=13002217, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula4, region=13002201, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula33, region=13002201, seconds=3.5, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula15, region=13002217, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.BeastmanofFarumAzula16,
@@ -397,25 +397,25 @@ def Preconstructor():
         region=13002207,
         radius=3.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula8, region=13002210, seconds=0.0, animation_id=3001)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula8, region=13002210, seconds=0.0, animation_id=3001)
     CommonFunc_90005251(0, character=Characters.BeastmanofFarumAzula8, radius=3.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula9, region=13002207, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula10, region=13002207, seconds=1.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula9, region=13002207, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula10, region=13002207, seconds=1.0, animation_id=-1)
     CommonFunc_90005271(0, character=Characters.BeastmanofFarumAzula10, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula11, region=13002212, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula12, region=13002215, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula13, region=13002215, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula14, region=13002215, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula17, region=13002214, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula34, region=13002214, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula18, region=13002220, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula19, region=13002222, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula20, region=13002223, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula11, region=13002212, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula12, region=13002215, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula13, region=13002215, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula14, region=13002215, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula17, region=13002214, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula34, region=13002214, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula18, region=13002220, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula19, region=13002222, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula20, region=13002223, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(
         0,
         character=Characters.BeastmanofFarumAzula21,
@@ -437,8 +437,8 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula23, region=13002228, seconds=0.0, animation_id=3002)
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula24, region=13002230, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula23, region=13002228, seconds=0.0, animation_id=3002)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula24, region=13002230, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.BeastmanofFarumAzula25,
@@ -451,8 +451,8 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula26, region=13002230, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula28, region=13002234, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula26, region=13002230, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula28, region=13002234, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.BeastmanofFarumAzula27,
@@ -486,7 +486,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula32, region=13002245, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula32, region=13002245, seconds=0.0, animation_id=-1)
     CommonFunc_90005221(
         0,
         character=Characters.BeastmanofFarumAzula39,
@@ -524,9 +524,9 @@ def Preconstructor():
         left_3=0,
     )
     CommonFunc_90005251(0, character=Characters.BeastmanofFarumAzula43, radius=40.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula36, region=13002296, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula37, region=13002296, seconds=1.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula38, region=13002296, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula36, region=13002296, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula37, region=13002296, seconds=1.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula38, region=13002296, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(
         0,
         character=Characters.BeastmanofFarumAzula47,
@@ -535,9 +535,9 @@ def Preconstructor():
         seconds=0.0,
         animation_id=-1,
     )
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula44, region=13002277, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula45, region=13002277, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula46, region=13002277, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula44, region=13002277, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula45, region=13002277, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BeastmanofFarumAzula46, region=13002277, seconds=0.0, animation_id=-1)
     CommonFunc_90005221(
         0,
         character=Characters.BeastmanofFarumAzula48,
@@ -590,10 +590,10 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.Skeleton5, region=13002412, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Skeleton7, region=13002412, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Skeleton0, region=13002412, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Skeleton4, region=13002408, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Skeleton5, region=13002412, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Skeleton7, region=13002412, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Skeleton0, region=13002412, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Skeleton4, region=13002408, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.Skeleton2,
@@ -618,10 +618,10 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.Skeleton8, region=13002416, seconds=0.0, animation_id=3014)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Skeleton8, region=13002416, seconds=0.0, animation_id=3014)
     CommonFunc_90005251(0, character=Characters.Skeleton9, radius=1.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=13000418, region=13002418, seconds=0.0, animation_id=3003)
-    CommonFunc_90005250(0, character=13000419, region=13002418, seconds=0.5, animation_id=3003)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=13000418, region=13002418, seconds=0.0, animation_id=3003)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=13000419, region=13002418, seconds=0.5, animation_id=3003)
     CommonFunc_90005261(0, character=Characters.Skeleton10, region=13002420, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
@@ -671,7 +671,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.Skeleton15, region=13002435, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Skeleton15, region=13002435, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.Skeleton17,
@@ -815,8 +815,8 @@ def Preconstructor():
         left=0,
     )
     CommonFunc_90005251(0, character=Characters.Skeleton28, radius=3.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.UndeadAzulaBeastman1, region=13002481, seconds=0.0, animation_id=3003)
-    CommonFunc_90005250(0, character=Characters.UndeadAzulaBeastman2, region=13002418, seconds=0.5, animation_id=3003)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.UndeadAzulaBeastman1, region=13002481, seconds=0.0, animation_id=3003)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.UndeadAzulaBeastman2, region=13002418, seconds=0.5, animation_id=3003)
     CommonFunc_90005200(
         0,
         character=Characters.UndeadAzulaBeastman3,
@@ -953,8 +953,8 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=13000330, region=13002355, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=13000331, region=13002355, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=13000330, region=13002355, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=13000331, region=13002355, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.BladedTalonEagle0,
@@ -979,7 +979,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.BladedTalonEagle2, region=13002352, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BladedTalonEagle2, region=13002352, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.BladedTalonEagle2,
@@ -1139,20 +1139,20 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.BanishedKnight0, region=13002381, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BanishedKnight1, region=13002382, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BanishedKnight2, region=13002384, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BanishedKnight0, region=13002381, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BanishedKnight1, region=13002382, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BanishedKnight2, region=13002384, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.BanishedKnight3, radius=10.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=13000380, region=13002380, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=13000383, region=13002380, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BanishedKnight8, region=13002390, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=13000380, region=13002380, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=13000383, region=13002380, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BanishedKnight8, region=13002390, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.BanishedKnight4, radius=55.0, seconds=6.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BanishedKnight6, region=13002388, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BanishedKnight7, region=13002389, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BanishedKnight10, region=13002392, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BanishedKnight11, region=13002395, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=13000396, region=13002396, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BanishedKnight13, region=13002398, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BanishedKnight6, region=13002388, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BanishedKnight7, region=13002389, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BanishedKnight10, region=13002392, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BanishedKnight11, region=13002395, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=13000396, region=13002396, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BanishedKnight13, region=13002398, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.Wormface1,
@@ -1214,7 +1214,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.Wormface7, region=13002377, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Wormface7, region=13002377, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.Wormface8,
@@ -1275,7 +1275,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.AncientDragon3, region=13002495, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AncientDragon3, region=13002495, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.AncientDragon5,
@@ -1288,8 +1288,8 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.CrucibleKnight0, region=13002295, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.CrucibleKnight1, region=13002296, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CrucibleKnight0, region=13002295, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CrucibleKnight1, region=13002296, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(
         0,
         character=Characters.DraconicTreeSentinel,
@@ -1612,7 +1612,7 @@ def Event_13002805():
     CreateTemporaryVFX(
         vfx_id=1060,
         anchor_entity=Assets.AEG099_060_9000,
-        model_point=200,
+        dummy_id=200,
         anchor_type=CoordEntityType.Asset,
     )
     Wait(0.5)
@@ -1804,7 +1804,7 @@ def Event_13002829():
         flag_2=13002806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=13000800, asset=Assets.AEG099_002_9000, model_point=4, right=0)
+    CommonFunc_9005811(0, flag=13000800, asset=Assets.AEG099_002_9000, dummy_id=4, right=0)
     CommonFunc_9005822(
         0,
         flag=13000800,
@@ -1853,7 +1853,7 @@ def Event_13002834():
         character=20000,
         destination_type=CoordEntityType.Region,
         destination=13002836,
-        model_point=-1,
+        dummy_id=-1,
         copy_draw_parent=20000,
         use_bonfire_effect=False,
         reset_camera=True,
@@ -1880,7 +1880,7 @@ def Event_13002834():
         PLAYER,
         destination=Assets.AEG099_090_9006,
         destination_type=CoordEntityType.Asset,
-        model_point=100,
+        dummy_id=100,
         short_move=True,
     )
     ForceAnimation(PLAYER, 67010)
@@ -1949,10 +1949,10 @@ def Event_13002835():
         unk_20_24=139,
         unk_24_28=0,
     )
-    SetLockOnPoint(character=Characters.DragonlordPlacidusax, lock_on_model_point=222, state=False)
-    SetLockOnPoint(character=Characters.DragonlordPlacidusax, lock_on_model_point=223, state=False)
-    SetLockOnPoint(character=Characters.DragonlordPlacidusax, lock_on_model_point=224, state=False)
-    SetLockOnPoint(character=Characters.DragonlordPlacidusax, lock_on_model_point=225, state=False)
+    SetLockOnPoint(character=Characters.DragonlordPlacidusax, lock_on_dummy_id=222, state=False)
+    SetLockOnPoint(character=Characters.DragonlordPlacidusax, lock_on_dummy_id=223, state=False)
+    SetLockOnPoint(character=Characters.DragonlordPlacidusax, lock_on_dummy_id=224, state=False)
+    SetLockOnPoint(character=Characters.DragonlordPlacidusax, lock_on_dummy_id=225, state=False)
     SetCharacterEventTarget(Characters.DragonlordPlacidusax, entity=Characters.TalkDummy15)
     SetBackreadStateAlternate(Characters.DragonlordPlacidusax, True)
     ForceAnimation(Characters.DragonlordPlacidusax, 30000, loop=True)
@@ -2356,11 +2356,11 @@ def Event_13002865():
         flag_2=13002856,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=13000850, asset=Assets.AEG099_001_9000, model_point=5, right=13000851)
-    CommonFunc_9005811(0, flag=13000850, asset=Assets.AEG099_001_9003, model_point=5, right=13000851)
-    CommonFunc_9005811(0, flag=13000850, asset=Assets.AEG099_001_9002, model_point=5, right=13000851)
-    CommonFunc_9005811(0, flag=13000850, asset=Assets.AEG099_001_9001, model_point=5, right=13000851)
-    CommonFunc_9005811(0, flag=13000850, asset=Assets.AEG099_001_9004, model_point=5, right=13000851)
+    CommonFunc_9005811(0, flag=13000850, asset=Assets.AEG099_001_9000, dummy_id=5, right=13000851)
+    CommonFunc_9005811(0, flag=13000850, asset=Assets.AEG099_001_9003, dummy_id=5, right=13000851)
+    CommonFunc_9005811(0, flag=13000850, asset=Assets.AEG099_001_9002, dummy_id=5, right=13000851)
+    CommonFunc_9005811(0, flag=13000850, asset=Assets.AEG099_001_9001, dummy_id=5, right=13000851)
+    CommonFunc_9005811(0, flag=13000850, asset=Assets.AEG099_001_9004, dummy_id=5, right=13000851)
     CommonFunc_9005822(
         0,
         flag=13000850,
@@ -2427,7 +2427,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy0,
             source_entity=13002610,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2437,7 +2437,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy0,
             source_entity=13002610,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000010,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2447,7 +2447,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy0,
             source_entity=13002610,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000020,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2457,7 +2457,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy0,
             source_entity=13002610,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000030,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2467,7 +2467,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy0,
             source_entity=13002610,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000040,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2477,7 +2477,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy0,
             source_entity=13002610,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000050,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2487,7 +2487,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy0,
             source_entity=13002610,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000060,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2497,7 +2497,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy0,
             source_entity=13002610,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000070,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2512,7 +2512,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy1,
             source_entity=13002620,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2522,7 +2522,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy1,
             source_entity=13002620,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000010,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2532,7 +2532,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy1,
             source_entity=13002620,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000020,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2542,7 +2542,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy1,
             source_entity=13002620,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000030,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2552,7 +2552,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy1,
             source_entity=13002620,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000040,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2562,7 +2562,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy1,
             source_entity=13002620,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000050,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2572,7 +2572,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy1,
             source_entity=13002620,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000060,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2582,7 +2582,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy1,
             source_entity=13002620,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000070,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2592,7 +2592,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy2,
             source_entity=13002621,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2602,7 +2602,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy2,
             source_entity=13002621,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000010,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2612,7 +2612,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy2,
             source_entity=13002621,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000020,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2622,7 +2622,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy2,
             source_entity=13002621,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000030,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2632,7 +2632,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy2,
             source_entity=13002621,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000040,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2642,7 +2642,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy2,
             source_entity=13002621,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000050,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2652,7 +2652,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy2,
             source_entity=13002621,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000060,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2662,7 +2662,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy2,
             source_entity=13002621,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000070,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2677,7 +2677,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy3,
             source_entity=13002630,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2687,7 +2687,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy3,
             source_entity=13002630,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000010,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2697,7 +2697,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy3,
             source_entity=13002630,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000020,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2707,7 +2707,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy3,
             source_entity=13002630,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000030,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2717,7 +2717,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy3,
             source_entity=13002630,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000040,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2727,7 +2727,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy3,
             source_entity=13002630,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000050,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2737,7 +2737,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy3,
             source_entity=13002630,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000060,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2747,7 +2747,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy3,
             source_entity=13002630,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000070,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2757,7 +2757,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy4,
             source_entity=13002631,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2767,7 +2767,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy4,
             source_entity=13002631,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000010,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2777,7 +2777,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy4,
             source_entity=13002631,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000020,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2787,7 +2787,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy4,
             source_entity=13002631,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000030,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2797,7 +2797,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy4,
             source_entity=13002631,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000040,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2807,7 +2807,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy4,
             source_entity=13002631,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000050,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2817,7 +2817,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy4,
             source_entity=13002631,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000060,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2827,7 +2827,7 @@ def Event_13002610():
         ShootProjectile(
             owner_entity=Characters.BulletDummy4,
             source_entity=13002631,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=803000070,
             launch_angle_x=0,
             launch_angle_y=0,

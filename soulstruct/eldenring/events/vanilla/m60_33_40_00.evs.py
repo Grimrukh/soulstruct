@@ -54,7 +54,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005300(0, flag=1033400610, character=Characters.GiantTurtle, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1033400610, character=Characters.GiantTurtle, item_lot=0, seconds=0.0, item_is_dropped=0)
 
 
 @ContinueOnRest(50)
@@ -110,7 +110,7 @@ def Event_1033402610(_, flag: uint, flag_1: uint, flag_2: uint, flag_3: uint):
     # --- Label 0 --- #
     DefineLabel(0)
     DeleteAssetVFX(Assets.AEG099_251_2000)
-    CreateAssetVFX(Assets.AEG099_251_2000, vfx_id=200, model_point=1500)
+    CreateAssetVFX(Assets.AEG099_251_2000, vfx_id=200, dummy_id=1500)
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(FlagEnabled(flag_1))
     AND_1.Add(FlagEnabled(flag_2))

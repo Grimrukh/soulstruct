@@ -170,10 +170,10 @@ def Constructor():
         region=32012205,
         radius=5.0,
         seconds=0.0,
-        left=0,
-        left_1=1,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=1,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     Event_32012250(
         3,
@@ -287,22 +287,22 @@ def Preconstructor():
         region=32012205,
         radius=5.0,
         seconds=0.0,
-        left=0,
-        left_1=1,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=1,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
-    CommonFunc_90005250(0, character=Characters.TunnelMiner5, region=32012300, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.TunnelMiner5, region=32012301, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.TunnelMiner7, region=32012220, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.TunnelMiner9, region=32012219, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.TunnelMiner10, region=32012220, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.SmallerDog0, region=32012300, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.SmallerDog0, region=32012301, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.SmallerDog1, region=32012301, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Rat0, region=32012350, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Rat1, region=32012350, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Rat2, region=32012350, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.TunnelMiner5, region=32012300, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.TunnelMiner5, region=32012301, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.TunnelMiner7, region=32012220, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.TunnelMiner9, region=32012219, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.TunnelMiner10, region=32012220, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallerDog0, region=32012300, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallerDog0, region=32012301, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallerDog1, region=32012301, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Rat0, region=32012350, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Rat1, region=32012350, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Rat2, region=32012350, seconds=0.0, animation_id=-1)
 
 
 @ContinueOnRest(32012510)
@@ -854,7 +854,7 @@ def Event_32012849():
         flag_2=32012806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=32010800, asset=Assets.AEG099_002_9000, model_point=7, right=32010801)
+    CommonFunc_9005811(0, flag=32010800, asset=Assets.AEG099_002_9000, dummy_id=7, right=32010801)
     CommonFunc_9005822(
         0,
         flag=32010800,

@@ -113,7 +113,7 @@ def Event_1033462611(_, flag: uint, destination: uint, left_flag: uint, cancel_f
 
     # --- Label 2 --- #
     DefineLabel(2)
-    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Asset, model_point=191, short_move=True)
+    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Asset, dummy_id=191, short_move=True)
     ForceAnimation(PLAYER, 60810)
     Wait(2.5)
     EnableNetworkFlag(flag)

@@ -29,8 +29,8 @@ def Constructor():
     Event_31022810()
     Event_31022811()
     Event_31022849()
-    CommonFunc_90005250(0, character=31025800, region=31022361, seconds=0.0, animation_id=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=31025800, region=31022361, seconds=0.0, animation_id=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
     CommonFunc_90005646(
         0,
         flag=31020800,
@@ -187,10 +187,10 @@ def Preconstructor():
         region=31022300,
         radius=2.0,
         seconds=0.0,
-        left=1,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=1,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -200,10 +200,10 @@ def Preconstructor():
         region=31022300,
         radius=2.0,
         seconds=0.5,
-        left=1,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=1,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -213,10 +213,10 @@ def Preconstructor():
         region=31022303,
         radius=2.0,
         seconds=0.0,
-        left=1,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=1,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -226,10 +226,10 @@ def Preconstructor():
         region=31022304,
         radius=2.0,
         seconds=0.0,
-        left=1,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=1,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(
         0,
@@ -623,7 +623,7 @@ def Event_31022849():
         flag_2=31022806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=31020800, asset=Assets.AEG099_003_9000, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=31020800, asset=Assets.AEG099_003_9000, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=31020800,

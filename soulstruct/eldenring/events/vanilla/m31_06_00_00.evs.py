@@ -46,7 +46,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_91005600(0, flag=31062800, asset=Assets.AEG099_001_9002, model_point=5)
+    CommonFunc_91005600(0, flag=31062800, asset=Assets.AEG099_001_9002, dummy_id=5)
 
 
 @ContinueOnRest(50)
@@ -264,8 +264,8 @@ def Event_31062849():
         flag_2=31062806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=31060800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005813(0, flag=31060800, asset=Assets.AEG099_001_9001, model_point=3, right=0, model_point_1=806760)
+    CommonFunc_9005811(0, flag=31060800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
+    CommonFunc_9005813(0, flag=31060800, asset=Assets.AEG099_001_9001, dummy_id=3, right=0, dummy_id_1=806760)
     CommonFunc_9005822(
         0,
         flag=31060800,

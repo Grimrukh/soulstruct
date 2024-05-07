@@ -54,7 +54,7 @@ def Constructor():
         first_flag=400308,
         last_flag=400309,
         flag=1044529272,
-        model_point=6101,
+        dummy_id=6101,
     )
     Event_1044523710()
     Event_1044523711()
@@ -339,7 +339,7 @@ def Event_1044523707(_, asset: uint, asset_1: uint):
     DeleteAssetVFX(asset_1)
     GotoIfFlagEnabled(Label.L20, flag=4143)
     GotoIfFlagEnabled(Label.L20, flag=4147)
-    CreateAssetVFX(asset_1, vfx_id=90, model_point=800291)
+    CreateAssetVFX(asset_1, vfx_id=90, dummy_id=800291)
     Goto(Label.L20)
 
     # --- Label 20 --- #

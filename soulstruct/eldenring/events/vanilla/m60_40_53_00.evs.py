@@ -28,7 +28,7 @@ def Constructor():
     Event_1040532800()
     Event_1040532810()
     Event_1040532849()
-    AttachAssetToAsset(child_asset=1040531201, parent_asset=1040531200, parent_model_point=151)
+    AttachAssetToAsset(child_asset=1040531201, parent_asset=1040531200, parent_dummy_id=151)
     Event_1040532650()
     Event_1040532660()
     Event_1040532665()
@@ -36,7 +36,7 @@ def Constructor():
     Event_1040532680()
     Event_1040532685()
     Event_1040532690()
-    CommonFunc_90005300(0, flag=1040530500, character=Characters.Scarab, item_lot=40320, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1040530500, character=Characters.Scarab, item_lot=40320, seconds=0.0, item_is_dropped=0)
 
 
 @ContinueOnRest(50)
@@ -53,7 +53,7 @@ def Preconstructor():
     )
     CommonFunc_90005261(0, character=Characters.AltusDog, region=1040532404, radius=7.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.AltusDog, region=1040532430, radius=5.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BleedDog0, region=1040532402, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BleedDog0, region=1040532402, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(
         0,
         character=Characters.LivingMass0,
@@ -248,7 +248,7 @@ def Preconstructor():
     )
     CommonFunc_90005251(0, character=Characters.BleedDog2, radius=6.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.LivingMass11, radius=5.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Wormface3, region=1040532357, seconds=0.0, animation_id=3000)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Wormface3, region=1040532357, seconds=0.0, animation_id=3000)
     CommonFunc_90005251(0, character=Characters.Wormface3, radius=2.0, seconds=0.0, animation_id=0)
     CommonFunc_90005201(
         0,
@@ -420,7 +420,7 @@ def Event_1040532849():
         flag_2=1040532806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=1040530800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=1040530800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=1040530800,
@@ -432,7 +432,7 @@ def Event_1040532849():
         left=0,
         left_1=0,
     )
-    CommonFunc_9005812(0, flag=1040530800, asset=Assets.AEG099_001_9001, model_point=3, right=0, model_point_1=0)
+    CommonFunc_9005812(0, flag=1040530800, asset=Assets.AEG099_001_9001, dummy_id=3, right=0, dummy_id_1=0)
 
 
 @RestartOnRest(1040532650)

@@ -77,7 +77,7 @@ def Event_12110300():
         return
     if Client():
         return
-    CreateObjectVFX(2111100, vfx_id=200, model_point=900201)
+    CreateObjectVFX(2111100, vfx_id=200, dummy_id=900201)
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=2110010, entity=2111100))
     
@@ -93,7 +93,7 @@ def Event_12110301():
         return
     if Client():
         return
-    CreateObjectVFX(2111101, vfx_id=200, model_point=900201)
+    CreateObjectVFX(2111101, vfx_id=200, dummy_id=900201)
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=2110011, entity=2111101))
     
@@ -109,7 +109,7 @@ def Event_12110302():
         return
     if Client():
         return
-    CreateObjectVFX(2111102, vfx_id=200, model_point=900201)
+    CreateObjectVFX(2111102, vfx_id=200, dummy_id=900201)
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=2110012, entity=2111102))
     

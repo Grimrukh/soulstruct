@@ -119,7 +119,7 @@ class SingleEventArg:
         for vague_arg_name in (
             "entity", "other_entity", "target_entity", "owner_entity", "anchor_entity", "attacked_entity",
             "destination", "source_entity", "copy_draw_parent", "line_intersects", "flag", "left", "right",
-            "model_point",
+            "dummy_id",
         ):
             if len(self.names) >= 2 and vague_arg_name in self.names:
                 self.names.remove(vague_arg_name)

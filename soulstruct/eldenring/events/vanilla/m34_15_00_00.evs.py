@@ -43,7 +43,7 @@ def Constructor():
         asset=Assets.AEG099_991_9000,
         item_lot=34150000,
         item=8153,
-        model_point=806940,
+        dummy_id=806940,
         action_button_id=9085,
         animation_id=60525,
         left=0,
@@ -138,7 +138,7 @@ def Event_34152849():
         flag_2=34152806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=34150800, asset=34151800, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=34150800, asset=34151800, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=34150800,

@@ -55,7 +55,7 @@ def Constructor():
         0,
         flag=1034500739,
         asset=Assets.AEG099_251_2000,
-        model_point=1506,
+        dummy_id=1506,
         action_button_id=9320,
         text=30050,
         left=0,
@@ -66,7 +66,7 @@ def Constructor():
         0,
         flag=1034500739,
         asset=Assets.AEG099_251_2001,
-        model_point=1506,
+        dummy_id=1506,
         action_button_id=9320,
         text=30050,
         left=0,
@@ -77,7 +77,7 @@ def Constructor():
         0,
         flag=1034500739,
         asset=Assets.AEG099_251_2002,
-        model_point=1506,
+        dummy_id=1506,
         action_button_id=9320,
         text=30050,
         left=0,
@@ -87,7 +87,7 @@ def Constructor():
     Event_1034503600(0, region=1034502500, flag=1034500738)
     Event_1034502610()
     Event_1034502620()
-    CommonFunc_90005870(0, character=Characters.GlintstoneDragon, name=904502601, npc_threat_level=25)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.GlintstoneDragon, name=904502601, npc_threat_level=25)
     CommonFunc_90005860(
         0,
         flag=1034500800,
@@ -102,7 +102,7 @@ def Constructor():
     Event_1034502804()
     Event_1034502802()
     Event_1034502803()
-    CommonFunc_90005300(0, flag=1035510200, character=Characters.Scarab, item_lot=40200, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1035510200, character=Characters.Scarab, item_lot=40200, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005525(0, flag=1034500620, asset=1034501620)
     CommonFunc_90005525(0, flag=1034500621, asset=1034501621)
     Event_1034502580()
@@ -156,8 +156,8 @@ def Constructor():
         left=1034502742,
         flag_4=1034502743,
     )
-    CommonFunc_90005709(0, attacked_entity=Characters.Ranni, model_point=905, vfx_id=603000)
-    CommonFunc_90005709(0, attacked_entity=Characters.Ranni, model_point=960, vfx_id=603050)
+    CommonFunc_90005709(0, attacked_entity=Characters.Ranni, dummy_id=905, vfx_id=603000)
+    CommonFunc_90005709(0, attacked_entity=Characters.Ranni, dummy_id=960, vfx_id=603050)
     CommonFunc_90005708(0, character=Characters.Ranni, flag=3740, left=0)
     Event_1034500731()
     Event_1034500732(0, character=Characters.Ranni)
@@ -200,8 +200,8 @@ def Constructor():
         left=1034502722,
         flag_4=1034502723,
     )
-    CommonFunc_90005709(0, attacked_entity=Characters.PreceptorSeluvis1, model_point=905, vfx_id=603001)
-    CommonFunc_90005709(0, attacked_entity=Characters.PreceptorSeluvis1, model_point=200, vfx_id=603051)
+    CommonFunc_90005709(0, attacked_entity=Characters.PreceptorSeluvis1, dummy_id=905, vfx_id=603001)
+    CommonFunc_90005709(0, attacked_entity=Characters.PreceptorSeluvis1, dummy_id=200, vfx_id=603051)
     Event_1034500717(0, character=Characters.PreceptorSeluvis2)
     Event_1034500718(0, value=2)
     Event_1034500719()
@@ -224,7 +224,7 @@ def Constructor():
         first_flag=400148,
         last_flag=400148,
         flag=3569,
-        model_point=0,
+        dummy_id=0,
     )
     Event_1034503740()
 

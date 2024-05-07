@@ -31,7 +31,7 @@ def Constructor():
     CommonFunc_90005261(0, character=Characters.SmallerDog0, region=1039412270, radius=3.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.SmallerDog1, region=1039412270, radius=3.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.SmallerDog2, region=1039412272, radius=3.0, seconds=0.0, animation_id=0)
-    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, model_point=800, right=1039418600)
+    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, dummy_id=800, right=1039418600)
     CommonFunc_90005706(0, character=Characters.Commoner3, animation_id=930018, left=0)
     Event_1039412250(
         0,
@@ -179,7 +179,7 @@ def Event_1039412250(
     if AND_1:
         return
     ForceAnimation(destination, 0)
-    Move(character, destination=destination, destination_type=CoordEntityType.Asset, model_point=220, short_move=True)
+    Move(character, destination=destination, destination_type=CoordEntityType.Asset, dummy_id=220, short_move=True)
     Wait(5.400000095367432)
     Restart()
     Wait(seconds)
@@ -224,7 +224,7 @@ def Event_1039412251(
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=200, model_point=803160)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=803160)
     AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)

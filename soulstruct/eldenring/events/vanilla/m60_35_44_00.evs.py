@@ -54,9 +54,9 @@ def Constructor():
         flag_1=1035442706,
         left=1035442707,
         character=Characters.WhiteMaskVarre,
-        model_point=700,
+        dummy_id=700,
         asset=Assets.AEG099_090_9002,
-        model_point_1=700,
+        dummy_id_1=700,
         radius=0.20000000298023224,
         animation=90201,
         animation_id=-1,
@@ -116,10 +116,10 @@ def Preconstructor():
         region=1035442220,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
 
 

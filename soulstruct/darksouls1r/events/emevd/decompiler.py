@@ -162,16 +162,16 @@ def _MoveAndSetDrawParent(
     character: Character,
     destination_type: CoordEntityType,
     destination: Object | Character | Region,
-    model_point: int,
+    dummy_id: int,
     set_draw_parent: MapPart,
 ):
-    if not isinstance(destination_type, str) and destination_type.name == "Region" and model_point == -1:
+    if not isinstance(destination_type, str) and destination_type.name == "Region" and dummy_id == -1:
         if isinstance(destination, MapEntity):  # `destination_type` is implicit
             return f"Move({character}, {destination=}, {set_draw_parent=})"  # default model point
         return f"Move({character}, {destination=}, {destination_type=}, {set_draw_parent=})"  # default model point
     if isinstance(destination, MapEntity):  # `destination_type` is implicit
-        return f"Move({character}, {destination=}, {model_point=}, {set_draw_parent=})"
-    return f"Move({character}, {destination=}, {destination_type=}, {model_point=}, {set_draw_parent=})"
+        return f"Move({character}, {destination=}, {dummy_id=}, {set_draw_parent=})"
+    return f"Move({character}, {destination=}, {destination_type=}, {dummy_id=}, {set_draw_parent=})"
 
 
 @_decompile(2004, 41)
@@ -179,15 +179,15 @@ def _ShortMove(
     character: Character,
     destination_type: CoordEntityType,
     destination: Object | Character | Region,
-    model_point: int,
+    dummy_id: int,
 ):
-    if not isinstance(destination_type, str) and destination_type.name == "Region" and model_point == -1:
+    if not isinstance(destination_type, str) and destination_type.name == "Region" and dummy_id == -1:
         if isinstance(destination, MapEntity):  # `destination_type` is implicit
             return f"Move({character}, {destination=}, short_move=True)"  # default model point
         return f"Move({character}, {destination=}, {destination_type=}, short_move=True)"  # default model point
     if isinstance(destination, MapEntity):  # `destination_type` is implicit
-        return f"Move({character}, {destination=}, {model_point=}, short_move=True)"
-    return f"Move({character}, {destination=}, {destination_type=}, {model_point=}, short_move=True)"
+        return f"Move({character}, {destination=}, {dummy_id=}, short_move=True)"
+    return f"Move({character}, {destination=}, {destination_type=}, {dummy_id=}, short_move=True)"
 
 
 @_decompile(2004, 42)
@@ -195,16 +195,16 @@ def _MoveAndCopyDrawParent(
     character: Character,
     destination_type: CoordEntityType,
     destination: Object | Character | Region,
-    model_point: int,
+    dummy_id: int,
     copy_draw_parent: Object | Character,
 ):
-    if not isinstance(destination_type, str) and destination_type.name == "Region" and model_point == -1:
+    if not isinstance(destination_type, str) and destination_type.name == "Region" and dummy_id == -1:
         if isinstance(destination, MapEntity):  # `destination_type` is implicit
             return f"Move({character}, {destination=}, {copy_draw_parent=})"  # default model point
         return f"Move({character}, {destination=}, {destination_type=}, {copy_draw_parent=})"  # default model point
     if isinstance(destination, MapEntity):  # `destination_type` is implicit
-        return f"Move({character}, {destination=}, {model_point=}, {copy_draw_parent=})"
-    return f"Move({character}, {destination=}, {destination_type=}, {model_point=}, {copy_draw_parent=})"
+        return f"Move({character}, {destination=}, {dummy_id=}, {copy_draw_parent=})"
+    return f"Move({character}, {destination=}, {destination_type=}, {dummy_id=}, {copy_draw_parent=})"
 
 
 @_decompile(3, 4)
@@ -232,7 +232,7 @@ def _IfActionButton(
     anchor_type: CoordEntityType,
     anchor_entity: Object | Character | Region,
     facing_angle: float,
-    model_point: int,
+    dummy_id: int,
     max_distance: float,
     prompt_text: int,
     trigger_attribute: TriggerAttribute,
@@ -248,7 +248,7 @@ def _IfActionButton(
         defaults["facing_angle"] = 0.0 if anchor_type.name == "Region" else 180.0
         defaults["max_distance"] = 0.0 if anchor_type.name == "Region" else 2.0
         if anchor_type.name == "Region":
-            defaults["model_point"] = -1
+            defaults["dummy_id"] = -1
     arg_string = assemble_arg_string(
         defaults,
         condition,
@@ -257,7 +257,7 @@ def _IfActionButton(
         anchor_type=anchor_type,
         facing_angle=facing_angle,
         max_distance=max_distance,
-        model_point=model_point,
+        dummy_id=dummy_id,
         button=button,
         trigger_attribute=trigger_attribute,
     )
@@ -279,7 +279,7 @@ def _IfActionButtonBasic(
     anchor_type: CoordEntityType,
     anchor_entity: Object | Character | Region,
     facing_angle: float,
-    model_point: int,
+    dummy_id: int,
     max_distance: float,
     prompt_text: int,
     trigger_attribute: TriggerAttribute,
@@ -290,7 +290,7 @@ def _IfActionButtonBasic(
         anchor_type,
         anchor_entity,
         facing_angle,
-        model_point,
+        dummy_id,
         max_distance,
         prompt_text,
         trigger_attribute,
@@ -306,7 +306,7 @@ def _IfActionButtonBasic(
     anchor_type: CoordEntityType,
     anchor_entity: Object | Character | Region,
     facing_angle: float,
-    model_point: int,
+    dummy_id: int,
     max_distance: float,
     prompt_text: int,
     trigger_attribute: TriggerAttribute,
@@ -317,7 +317,7 @@ def _IfActionButtonBasic(
         anchor_type,
         anchor_entity,
         facing_angle,
-        model_point,
+        dummy_id,
         max_distance,
         prompt_text,
         trigger_attribute,
@@ -333,7 +333,7 @@ def _IfActionButtonBasic(
     anchor_type: CoordEntityType,
     anchor_entity: Object | Character | Region,
     facing_angle: float,
-    model_point: int,
+    dummy_id: int,
     max_distance: float,
     prompt_text: int,
     trigger_attribute: TriggerAttribute,
@@ -345,7 +345,7 @@ def _IfActionButtonBasic(
         anchor_type,
         anchor_entity,
         facing_angle,
-        model_point,
+        dummy_id,
         max_distance,
         prompt_text,
         trigger_attribute,
@@ -361,7 +361,7 @@ def _IfActionButtonBasic(
     anchor_type: CoordEntityType,
     anchor_entity: Object | Character | Region,
     facing_angle: float,
-    model_point: int,
+    dummy_id: int,
     max_distance: float,
     prompt_text: int,
     trigger_attribute: TriggerAttribute,
@@ -373,7 +373,7 @@ def _IfActionButtonBasic(
         anchor_type,
         anchor_entity,
         facing_angle,
-        model_point,
+        dummy_id,
         max_distance,
         prompt_text,
         trigger_attribute,

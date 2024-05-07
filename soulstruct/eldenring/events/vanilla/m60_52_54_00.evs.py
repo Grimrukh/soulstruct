@@ -141,9 +141,9 @@ def Constructor():
         left_3=0,
     )
     CommonFunc_90005261(0, character=Characters.SnowTroll2, region=1052542334, radius=50.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005300(0, flag=1052540491, character=Characters.SnowTroll0, item_lot=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=1052540492, character=Characters.SnowTroll1, item_lot=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=1052540494, character=Characters.SnowTroll2, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1052540491, character=Characters.SnowTroll0, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1052540492, character=Characters.SnowTroll1, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1052540494, character=Characters.SnowTroll2, item_lot=0, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005771(0, other_entity=Characters.TalkDummy, flag=1052542700)
 
 
@@ -151,5 +151,5 @@ def Constructor():
 def Event_1052542200(_, character: uint):
     """Event 1052542200"""
     DisableAnimations(character)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
     End()

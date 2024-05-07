@@ -205,7 +205,7 @@ def Constructor():
         first_flag=9500,
         last_flag=9500,
         flag=11059206,
-        model_point=806780,
+        dummy_id=806780,
     )
     Event_11053707()
     CommonFunc_90005750(
@@ -216,7 +216,7 @@ def Constructor():
         first_flag=400500,
         last_flag=400500,
         flag=11059305,
-        model_point=0,
+        dummy_id=0,
     )
     RunCommonEvent(
         11053708,
@@ -327,10 +327,10 @@ def Preconstructor():
         region=11052300,
         radius=5.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -340,10 +340,10 @@ def Preconstructor():
         region=11052301,
         radius=5.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -353,10 +353,10 @@ def Preconstructor():
         region=11052302,
         radius=5.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
 
 
@@ -673,8 +673,8 @@ def Event_11052849():
         flag_2=11052806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=11050800, asset=Assets.AEG099_001_9001, model_point=17, right=0)
-    CommonFunc_9005813(0, flag=11050800, asset=Assets.AEG099_001_9002, model_point=18, right=11050801, model_point_1=18)
+    CommonFunc_9005811(0, flag=11050800, asset=Assets.AEG099_001_9001, dummy_id=17, right=0)
+    CommonFunc_9005813(0, flag=11050800, asset=Assets.AEG099_001_9002, dummy_id=18, right=11050801, dummy_id_1=18)
     CommonFunc_9005822(
         0,
         flag=11050800,
@@ -898,13 +898,13 @@ def Event_11052859():
         flag_2=11052856,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9003, model_point=5, right=11050854)
-    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9004, model_point=4, right=11050854)
-    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9005, model_point=4, right=11050854)
-    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_002_9000, model_point=8, right=11050854)
-    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9006, model_point=4, right=11050854)
-    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9007, model_point=5, right=11050854)
-    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9008, model_point=5, right=11050854)
+    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9003, dummy_id=5, right=11050854)
+    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9004, dummy_id=4, right=11050854)
+    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9005, dummy_id=4, right=11050854)
+    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_002_9000, dummy_id=8, right=11050854)
+    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9006, dummy_id=4, right=11050854)
+    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9007, dummy_id=5, right=11050854)
+    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9008, dummy_id=5, right=11050854)
     CommonFunc_9005822(
         0,
         flag=11050850,
@@ -1060,7 +1060,7 @@ def Event_11053708(
     first_flag: uint,
     last_flag: uint,
     flag: uint,
-    model_point: int,
+    dummy_id: int,
     flag_1: uint,
 ):
     """Event 11053708"""
@@ -1073,10 +1073,10 @@ def Event_11053708(
     
     MAIN.Await(AND_1)
     
-    if ValueNotEqual(left=model_point, right=0):
-        CreateAssetVFX(asset, vfx_id=90, model_point=model_point)
+    if ValueNotEqual(left=dummy_id, right=0):
+        CreateAssetVFX(asset, vfx_id=90, dummy_id=dummy_id)
     else:
-        CreateAssetVFX(asset, vfx_id=90, model_point=6101)
+        CreateAssetVFX(asset, vfx_id=90, dummy_id=6101)
     OR_2.Add(FlagDisabled(flag))
     OR_2.Add(FlagRangeAllEnabled(flag_range=(first_flag, last_flag)))
     OR_1.Add(ActionButtonParamActivated(action_button_id=action_button_id, entity=asset))

@@ -29,7 +29,7 @@ def Constructor():
     Event_31092810()
     Event_31092849()
     Event_31092811()
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
     CommonFunc_90005261(0, character=Characters.DemiHuman0, region=31092200, radius=1.0, seconds=0.0, animation_id=0)
     CommonFunc_90005211(
         0,
@@ -39,10 +39,10 @@ def Constructor():
         region=31092201,
         radius=1.0,
         seconds=1.399999976158142,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -52,10 +52,10 @@ def Constructor():
         region=31092201,
         radius=1.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -65,10 +65,10 @@ def Constructor():
         region=31092201,
         radius=1.0,
         seconds=1.600000023841858,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -78,10 +78,10 @@ def Constructor():
         region=31092201,
         radius=1.0,
         seconds=1.7999999523162842,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -91,10 +91,10 @@ def Constructor():
         region=31092214,
         radius=1.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -104,10 +104,10 @@ def Constructor():
         region=31092214,
         radius=1.0,
         seconds=0.30000001192092896,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -117,10 +117,10 @@ def Constructor():
         region=31092214,
         radius=1.0,
         seconds=0.6000000238418579,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -130,10 +130,10 @@ def Constructor():
         region=31092214,
         radius=1.0,
         seconds=0.800000011920929,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(
         0,
@@ -151,10 +151,10 @@ def Constructor():
         region=31092256,
         radius=5.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     Event_31092301(0, character=Characters.DemiHuman8, seconds=1.0)
     Event_31092301(1, character=Characters.DemiHumanShaman2, seconds=0.5)
@@ -408,7 +408,7 @@ def Event_31092849():
         flag_2=31092806,
         action_button_id=10010,
     )
-    CommonFunc_9005811(0, flag=31090800, asset=Assets.AEG099_001_9001, model_point=5, right=0)
+    CommonFunc_9005811(0, flag=31090800, asset=Assets.AEG099_001_9001, dummy_id=5, right=0)
     CommonFunc_9005822(
         0,
         flag=31090800,

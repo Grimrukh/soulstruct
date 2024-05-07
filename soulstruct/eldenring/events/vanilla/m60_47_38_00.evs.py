@@ -60,8 +60,8 @@ def Constructor():
             0,
             asset_flag=1047382500,
             asset=Assets.AEG007_470_2000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004070,
             radius=1.0,
             life=0.0,
@@ -72,8 +72,8 @@ def Constructor():
             0,
             asset_flag=1047382500,
             asset=Assets.AEG007_470_2000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004060,
             radius=1.0,
             life=0.0,
@@ -84,8 +84,8 @@ def Constructor():
             0,
             asset_flag=1047382500,
             asset=Assets.AEG007_470_2000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004050,
             radius=1.0,
             life=0.0,
@@ -96,8 +96,8 @@ def Constructor():
             0,
             asset_flag=1047382500,
             asset=Assets.AEG007_470_2000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004040,
             radius=1.0,
             life=0.0,
@@ -108,8 +108,8 @@ def Constructor():
             0,
             asset_flag=1047382500,
             asset=Assets.AEG007_470_2000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004030,
             radius=1.0,
             life=0.0,
@@ -120,8 +120,8 @@ def Constructor():
             0,
             asset_flag=1047382500,
             asset=Assets.AEG007_470_2000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004020,
             radius=1.0,
             life=0.0,
@@ -132,8 +132,8 @@ def Constructor():
             0,
             asset_flag=1047382500,
             asset=Assets.AEG007_470_2000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004010,
             radius=1.0,
             life=0.0,
@@ -144,14 +144,14 @@ def Constructor():
             0,
             asset_flag=1047382500,
             asset=Assets.AEG007_470_2000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004000,
             radius=1.0,
             life=0.0,
             repetition_time=1.0,
         )
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
     CommonFunc_90005636(
         0,
         flag=31218690,
@@ -166,16 +166,16 @@ def Constructor():
     )
     CommonFunc_90005637(0, flag=31218690, character=Characters.WanderingNoble, region=1047382625)
     CommonFunc_90005251(0, character=1047380294, radius=8.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=1047380296, region=1047382296, seconds=0.0, animation_id=-1)
-    CommonFunc_90005300(0, flag=1047380299, character=Characters.LionGuardian, item_lot=1047380700, seconds=0.0, left=0)
-    CommonFunc_90005250(0, character=1047380301, region=1047382453, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.KindredofRot0, region=1047382302, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.KindredofRot1, region=1047382302, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=1047380296, region=1047382296, seconds=0.0, animation_id=-1)
+    CommonFunc_90005300(0, flag=1047380299, character=Characters.LionGuardian, item_lot=1047380700, seconds=0.0, item_is_dropped=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=1047380301, region=1047382453, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.KindredofRot0, region=1047382302, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.KindredofRot1, region=1047382302, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=1047380307, radius=8.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.KindredofRot2, region=1047382302, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.FungalSorcerer0, region=1047382450, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.KindredofRot2, region=1047382302, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.FungalSorcerer0, region=1047382450, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.FungalSorcerer1, radius=15.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RedmaneKnight, region=1047382474, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RedmaneKnight, region=1047382474, seconds=0.0, animation_id=-1)
     CommonFunc_90005513(
         0,
         flag=1047380540,
@@ -217,7 +217,7 @@ def Event_1047382211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700000,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -229,7 +229,7 @@ def Event_1047382211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700010,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -241,7 +241,7 @@ def Event_1047382211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700020,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -253,7 +253,7 @@ def Event_1047382211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700030,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -265,7 +265,7 @@ def Event_1047382211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700040,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -277,7 +277,7 @@ def Event_1047382211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700050,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -289,7 +289,7 @@ def Event_1047382211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700060,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -301,7 +301,7 @@ def Event_1047382211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700070,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -323,7 +323,7 @@ def Event_1047382569(_, flag: uint, asset: uint):
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=101, model_point=806043)
+    CreateAssetVFX(asset, vfx_id=101, dummy_id=806043)
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(FlagEnabled(flag))
     

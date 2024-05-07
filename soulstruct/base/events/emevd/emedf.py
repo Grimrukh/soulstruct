@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 __all__ = [
+    "EMEDF_TYPING",
     "ArgType",
     "add_common_emedf_info",
     "build_emedf_aliases_tests",
@@ -22,6 +23,10 @@ from pathlib import Path
 from soulstruct.utilities.files import read_json
 from .enums import BaseNegatableEMEVDEnum
 from .utils import get_coord_entity_type
+
+
+# EMEDF is a dictionary mapping instruction `(category, index)` to a dictionary of information (strings and types).
+EMEDF_TYPING = tp.Dict[tuple[int, int], dict[str, tp.Any]]
 
 
 class ArgType(IntEnum):
@@ -105,7 +110,7 @@ class ArgType(IntEnum):
             raise ValueError(f"Invalid `ArgType` fmt: {fmt}")
 
 
-def add_common_emedf_info(emedf: dict, common_emedf_path: Path | str):
+def add_common_emedf_info(emedf: EMEDF_TYPING, common_emedf_path: Path | str):
     """Insert information from EMEDF JSON into dictionary.
 
     Currently, just adds internal argument types.
@@ -147,8 +152,8 @@ def add_common_emedf_info(emedf: dict, common_emedf_path: Path | str):
                 )
 
 
-def build_emedf_aliases_tests(emedf: dict) -> tuple[dict, dict, dict]:
-    # Retrieve instruction information by EVS instruction alias name (or partial name) and build test dictionary.
+def build_emedf_aliases_tests(emedf: EMEDF_TYPING) -> tuple[dict, dict, dict]:
+    """Retrieve instruction information by EVS instruction alias name (or partial name) and build test dictionary."""
     emedf_aliases = {v["alias"]: (category, index, v) for (category, index), v in emedf.items()}
     emedf_tests = {}
     emedf_comparison_tests = {}

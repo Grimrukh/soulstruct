@@ -339,7 +339,7 @@ def Event_11210090(_, obj: int, vfx_id: int, destination: int, destination_1: in
         prompt_text=10010403,
         anchor_entity=destination,
         anchor_type=CoordEntityType.Region,
-        model_point=0,
+        dummy_id=0,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         line_intersects=obj,
     ))
@@ -347,7 +347,7 @@ def Event_11210090(_, obj: int, vfx_id: int, destination: int, destination_1: in
         prompt_text=10010407,
         anchor_entity=destination_1,
         anchor_type=CoordEntityType.Region,
-        model_point=0,
+        dummy_id=0,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         line_intersects=obj,
     ))
@@ -678,7 +678,7 @@ def Event_11215006(_, character: int, character_1: int, item_lot: int):
         character,
         destination=character_1,
         destination_type=CoordEntityType.Character,
-        model_point=150,
+        dummy_id=150,
         copy_draw_parent=character_1,
     )
     EnableCharacter(character)
@@ -1472,7 +1472,7 @@ def Event_11215040():
         prompt_text=50000000,
         anchor_entity=1212300,
         anchor_type=CoordEntityType.Region,
-        model_point=0,
+        dummy_id=0,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
     ))
     
@@ -1817,10 +1817,10 @@ def Event_11210100():
     EnableFlag(11215220)
     SkipLinesIfFinishedConditionTrue(25, input_condition=AND_2)
     SkipLinesIfFinishedConditionTrue(24, input_condition=AND_4)
-    CreateTemporaryVFX(vfx_id=120030, anchor_entity=1211001, model_point=101, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=120030, anchor_entity=1211001, dummy_id=101, anchor_type=CoordEntityType.Object)
     EnableFlag(11210101)
     EnableFlag(11210102)
-    CreateObjectVFX(1211000, vfx_id=191, model_point=120029)
+    CreateObjectVFX(1211000, vfx_id=191, dummy_id=120029)
     ForceAnimation(1211000, 0)
     WaitFrames(frames=180)
     DeleteObjectVFX(1211000, erase_root=False)
@@ -1845,9 +1845,9 @@ def Event_11210100():
     
     DisableFlag(11215220)
     Restart()
-    CreateTemporaryVFX(vfx_id=120030, anchor_entity=1211002, model_point=101, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=120030, anchor_entity=1211002, dummy_id=101, anchor_type=CoordEntityType.Object)
     DisableFlag(11210101)
-    CreateObjectVFX(1211000, vfx_id=191, model_point=120029)
+    CreateObjectVFX(1211000, vfx_id=191, dummy_id=120029)
     ForceAnimation(1211000, 10)
     WaitFrames(frames=180)
     DeleteObjectVFX(1211000, erase_root=False)
@@ -1917,9 +1917,9 @@ def Event_11210110():
     EnableFlag(11215221)
     SkipLinesIfFinishedConditionTrue(24, input_condition=AND_2)
     SkipLinesIfFinishedConditionTrue(23, input_condition=AND_4)
-    CreateTemporaryVFX(vfx_id=120030, anchor_entity=1211011, model_point=101, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=120030, anchor_entity=1211011, dummy_id=101, anchor_type=CoordEntityType.Object)
     DisableFlag(11210111)
-    CreateObjectVFX(1211010, vfx_id=191, model_point=120029)
+    CreateObjectVFX(1211010, vfx_id=191, dummy_id=120029)
     ForceAnimation(1211010, 1)
     WaitFrames(frames=140)
     DeleteObjectVFX(1211010, erase_root=False)
@@ -1944,9 +1944,9 @@ def Event_11210110():
     
     DisableFlag(11215221)
     Restart()
-    CreateTemporaryVFX(vfx_id=120030, anchor_entity=1211012, model_point=101, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=120030, anchor_entity=1211012, dummy_id=101, anchor_type=CoordEntityType.Object)
     EnableFlag(11210111)
-    CreateObjectVFX(1211010, vfx_id=191, model_point=120029)
+    CreateObjectVFX(1211010, vfx_id=191, dummy_id=120029)
     ForceAnimation(1211010, 11)
     WaitFrames(frames=140)
     DeleteObjectVFX(1211010, erase_root=False)
@@ -2010,10 +2010,10 @@ def Event_11210120():
     EnableFlag(11215222)
     SkipLinesIfFinishedConditionTrue(25, input_condition=AND_2)
     SkipLinesIfFinishedConditionTrue(24, input_condition=AND_4)
-    CreateTemporaryVFX(vfx_id=120030, anchor_entity=1211021, model_point=101, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=120030, anchor_entity=1211021, dummy_id=101, anchor_type=CoordEntityType.Object)
     EnableFlag(11210121)
     EnableFlag(11210122)
-    CreateObjectVFX(1211020, vfx_id=191, model_point=120029)
+    CreateObjectVFX(1211020, vfx_id=191, dummy_id=120029)
     ForceAnimation(1211020, 2)
     WaitFrames(frames=140)
     DeleteObjectVFX(1211020, erase_root=False)
@@ -2038,9 +2038,9 @@ def Event_11210120():
     
     DisableFlag(11215222)
     Restart()
-    CreateTemporaryVFX(vfx_id=120030, anchor_entity=1211022, model_point=101, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=120030, anchor_entity=1211022, dummy_id=101, anchor_type=CoordEntityType.Object)
     DisableFlag(11210121)
-    CreateObjectVFX(1211020, vfx_id=191, model_point=120029)
+    CreateObjectVFX(1211020, vfx_id=191, dummy_id=120029)
     ForceAnimation(1211020, 12)
     WaitFrames(frames=140)
     DeleteObjectVFX(1211020, erase_root=False)
@@ -2116,10 +2116,10 @@ def Event_11210130():
     EnableFlag(11215223)
     SkipLinesIfFinishedConditionTrue(25, input_condition=AND_2)
     SkipLinesIfFinishedConditionTrue(24, input_condition=AND_4)
-    CreateTemporaryVFX(vfx_id=120030, anchor_entity=1211031, model_point=101, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=120030, anchor_entity=1211031, dummy_id=101, anchor_type=CoordEntityType.Object)
     EnableFlag(11210131)
     EnableFlag(11210132)
-    CreateObjectVFX(1211030, vfx_id=191, model_point=120029)
+    CreateObjectVFX(1211030, vfx_id=191, dummy_id=120029)
     ForceAnimation(1211030, 3)
     WaitFrames(frames=240)
     DeleteObjectVFX(1211030, erase_root=False)
@@ -2144,9 +2144,9 @@ def Event_11210130():
     
     DisableFlag(11215223)
     Restart()
-    CreateTemporaryVFX(vfx_id=120030, anchor_entity=1211032, model_point=101, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=120030, anchor_entity=1211032, dummy_id=101, anchor_type=CoordEntityType.Object)
     DisableFlag(11210131)
-    CreateObjectVFX(1211030, vfx_id=191, model_point=120029)
+    CreateObjectVFX(1211030, vfx_id=191, dummy_id=120029)
     ForceAnimation(1211030, 13)
     WaitFrames(frames=240)
     DeleteObjectVFX(1211030, erase_root=False)
@@ -2213,9 +2213,9 @@ def Event_11210140():
     EnableFlag(11210160)
     SkipLinesIfFinishedConditionTrue(24, input_condition=AND_2)
     SkipLinesIfFinishedConditionTrue(23, input_condition=AND_4)
-    CreateTemporaryVFX(vfx_id=120030, anchor_entity=1211041, model_point=101, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=120030, anchor_entity=1211041, dummy_id=101, anchor_type=CoordEntityType.Object)
     EnableFlag(11210141)
-    CreateObjectVFX(1211040, vfx_id=191, model_point=120029)
+    CreateObjectVFX(1211040, vfx_id=191, dummy_id=120029)
     ForceAnimation(1211040, 4)
     WaitFrames(frames=180)
     DeleteObjectVFX(1211040, erase_root=False)
@@ -2240,9 +2240,9 @@ def Event_11210140():
     
     DisableFlag(11215224)
     Restart()
-    CreateTemporaryVFX(vfx_id=120030, anchor_entity=1211042, model_point=101, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=120030, anchor_entity=1211042, dummy_id=101, anchor_type=CoordEntityType.Object)
     DisableFlag(11210141)
-    CreateObjectVFX(1211040, vfx_id=191, model_point=120029)
+    CreateObjectVFX(1211040, vfx_id=191, dummy_id=120029)
     ForceAnimation(1211040, 14)
     WaitFrames(frames=180)
     DeleteObjectVFX(1211040, erase_root=False)
@@ -2761,7 +2761,7 @@ def Event_11215051():
         1210410,
         destination=1210401,
         destination_type=CoordEntityType.Character,
-        model_point=150,
+        dummy_id=150,
         copy_draw_parent=1210401,
     )
     EnableCharacter(1210410)
@@ -2807,7 +2807,7 @@ def Event_11215160(_, character: int):
         anchor_type=CoordEntityType.Character,
         facing_angle=45.0,
         max_distance=1.2000000476837158,
-        model_point=7,
+        dummy_id=7,
         trigger_attribute=TriggerAttribute.All,
     ))
     
@@ -2817,7 +2817,7 @@ def Event_11215160(_, character: int):
         PLAYER,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=100,
+        dummy_id=100,
         copy_draw_parent=character,
     )
     ForceAnimation(PLAYER, 7521)
@@ -3008,7 +3008,7 @@ def Event_11210230(_, obj: int, obj_1: int, animation_id: int, animation_id_1: i
         End()
     DisableTreasure(obj=obj_1)
     SkipLinesIfClient(1)
-    CreateObjectVFX(obj_1, vfx_id=90, model_point=99005)
+    CreateObjectVFX(obj_1, vfx_id=90, dummy_id=99005)
     ForceAnimation(obj_1, animation_id, loop=True)
     
     MAIN.Await(ObjectDestroyed(obj))
@@ -3253,7 +3253,7 @@ def Event_11210540():
         6700,
         destination=1210840,
         destination_type=CoordEntityType.Character,
-        model_point=30,
+        dummy_id=30,
         copy_draw_parent=1210840,
     )
     RequestAnimation(6700, animation_id=7915, loop=True)
@@ -3743,7 +3743,7 @@ def Event_11210710(_, anchor_entity: int, player_start: int, prompt_text: int, r
         prompt_text=prompt_text,
         anchor_entity=anchor_entity,
         anchor_type=CoordEntityType.Object,
-        model_point=100,
+        dummy_id=100,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
     ))
     
@@ -3752,7 +3752,7 @@ def Event_11210710(_, anchor_entity: int, player_start: int, prompt_text: int, r
     RotateToFaceEntity(PLAYER, target_entity=anchor_entity)
     ForceAnimation(PLAYER, 7114)
     Wait(0.699999988079071)
-    CreateTemporaryVFX(vfx_id=90021, anchor_entity=PLAYER, model_point=17, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=90021, anchor_entity=PLAYER, dummy_id=17, anchor_type=CoordEntityType.Character)
     Wait(1.5)
     AND_1.Add(HealthRatio(PLAYER) == 0.0)
     if AND_1:

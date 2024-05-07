@@ -43,7 +43,7 @@ def Constructor():
         flag_10=78508,
         flag_11=78509,
     )
-    CommonFunc_90005300(0, flag=1051560210, character=Characters.LargeScarab, item_lot=1051560700, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1051560210, character=Characters.LargeScarab, item_lot=1051560700, seconds=0.0, item_is_dropped=0)
     Event_1051562200(0, character=1051565200)
     Event_1051562500()
     Event_1051562510()
@@ -164,7 +164,7 @@ def Preconstructor():
 def Event_1051562200(_, character: uint):
     """Event 1051562200"""
     DisableAnimations(character)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
     End()
 
 
@@ -173,7 +173,7 @@ def Event_1051562500():
     """Event 1051562500"""
     GotoIfFlagEnabled(Label.L0, flag=1051569206)
     DeleteAssetVFX(Assets.AEG099_251_9000)
-    CreateAssetVFX(Assets.AEG099_251_9000, vfx_id=200, model_point=1520)
+    CreateAssetVFX(Assets.AEG099_251_9000, vfx_id=200, dummy_id=1520)
     AwaitFlagEnabled(flag=1051569206)
     DisplayDialog(text=30030, anchor_entity=0, display_distance=5.0)
 

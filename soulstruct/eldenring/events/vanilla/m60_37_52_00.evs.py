@@ -92,10 +92,10 @@ def Constructor():
         region=1037522405,
         radius=3.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(0, character=Characters.DemiHuman6, region=1037522302, radius=5.0, seconds=2.0, animation_id=-1)
     CommonFunc_90005261(
@@ -146,7 +146,7 @@ def Constructor():
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
-    CommonFunc_90005300(0, flag=1037520355, character=1037525350, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1037520355, character=1037525350, item_lot=0, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005600(0, grace_flag=1037520001, asset=Assets.AEG099_060_9001, enemy_block_distance=5.0, character=0)
     CommonFunc_90005200(
         0,
@@ -307,7 +307,7 @@ def Event_1037522900(
     
     MAIN.Await(CharacterDead(character_1))
     
-    CreateTemporaryVFX(vfx_id=1060, anchor_entity=asset, model_point=200, anchor_type=CoordEntityType.Asset)
+    CreateTemporaryVFX(vfx_id=1060, anchor_entity=asset, dummy_id=200, anchor_type=CoordEntityType.Asset)
     EnableFlag(flag)
     Wait(0.5)
     EnableCharacter(character)

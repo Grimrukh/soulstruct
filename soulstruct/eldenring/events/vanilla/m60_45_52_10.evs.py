@@ -27,7 +27,7 @@ def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=76314, asset=Assets.AEG099_060_9000)
     Event_1045522500()
-    CommonFunc_90005870(0, character=m60_45_Characters.DraconicTreeSentinel, name=903250600, npc_threat_level=12)
+    CommonFunc_FieldBattleHealthBar(0, boss=m60_45_Characters.DraconicTreeSentinel, name=903250600, npc_threat_level=12)
     CommonFunc_90005860(
         0,
         flag=1045520800,
@@ -37,8 +37,8 @@ def Constructor():
         item_lot=30315,
         seconds=0.0,
     )
-    CommonFunc_90005872(0, character=m60_45_Characters.DraconicTreeSentinel, npc_threat_level=12, right=0)
-    CommonFunc_9005811(0, flag=1045520800, asset=m60_45_Assets.AEG099_001_9000, model_point=5, right=0)
+    CommonFunc_FieldBattleHalfHealthMusic(0, character=m60_45_Characters.DraconicTreeSentinel, npc_threat_level=12, required_flag=0)
+    CommonFunc_9005811(0, flag=1045520800, asset=m60_45_Assets.AEG099_001_9000, dummy_id=5, right=0)
     CommonFunc_90005251(0, character=m60_45_Characters.GuardianGolem2, radius=70.0, seconds=0.0, animation_id=3006)
     Event_1045522200()
     CommonFunc_90005300(
@@ -47,7 +47,7 @@ def Constructor():
         character=m60_45_Characters.GuardianGolem0,
         item_lot=30360,
         seconds=0.0,
-        left=0,
+        item_is_dropped=0,
     )
     CommonFunc_90005300(
         0,
@@ -55,7 +55,7 @@ def Constructor():
         character=m60_45_Characters.GuardianGolem1,
         item_lot=30365,
         seconds=0.0,
-        left=0,
+        item_is_dropped=0,
     )
     CommonFunc_90005251(0, character=m60_45_Characters.WanderingNoble0, radius=100.0, seconds=0.0, animation_id=0)
     CommonFunc_90005251(0, character=m60_45_Characters.WanderingNoble1, radius=100.0, seconds=0.0, animation_id=0)
@@ -76,8 +76,8 @@ def Constructor():
     )
     CommonFunc_90005560(0, flag=1045520600, asset=m60_45_Assets.AEG099_635_9000, left=0)
     CommonFunc_90005683(0, flag=62315, asset=Assets.AEG099_055_1000, vfx_id=205, flag_1=78394, flag_2=78394)
-    CommonFunc_900005610(0, asset=m60_45_Assets.AEG099_090_9001, vfx_id=100, model_point=800, right=1045528600)
-    CommonFunc_900005610(0, asset=m60_45_Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=m60_45_Assets.AEG099_090_9001, vfx_id=100, dummy_id=800, right=1045528600)
+    CommonFunc_900005610(0, asset=m60_45_Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
     CommonFunc_90005780(
         0,
         flag=1045520800,
@@ -203,7 +203,7 @@ def Event_1045522500():
     GotoIfPlayerNotInOwnWorld(Label.L1)
     GotoIfFlagEnabled(Label.L2, flag=1045522550)
     DeleteAssetVFX(m60_45_Assets.AEG099_002_9000)
-    CreateAssetVFX(m60_45_Assets.AEG099_002_9000, vfx_id=101, model_point=1540)
+    CreateAssetVFX(m60_45_Assets.AEG099_002_9000, vfx_id=101, dummy_id=1540)
     EnableNetworkFlag(1045522550)
 
     # --- Label 2 --- #
@@ -232,7 +232,7 @@ def Event_1045522500():
     # --- Label 1 --- #
     DefineLabel(1)
     DeleteAssetVFX(m60_45_Assets.AEG099_002_9000)
-    CreateAssetVFX(m60_45_Assets.AEG099_002_9000, vfx_id=101, model_point=1540)
+    CreateAssetVFX(m60_45_Assets.AEG099_002_9000, vfx_id=101, dummy_id=1540)
     End()
 
 

@@ -44,7 +44,7 @@ def Constructor():
         flag_10=78208,
         flag_11=78209,
     )
-    CommonFunc_90005300(0, flag=1037440210, character=Characters.Scarab, item_lot=40262, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1037440210, character=Characters.Scarab, item_lot=40262, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005920(0, flag=1037440600, asset=1037441600, obj_act_id=1037443600)
     Event_1037442610(0, asset=1037441610, entity=1037441611, flag=82021)
     Event_1037443700(0, character=Characters.KnightDiallos, character_1=Characters.Human)
@@ -113,7 +113,7 @@ def Preconstructor():
 def Event_1037442610(_, asset: uint, entity: uint, flag: uint):
     """Event 1037442610"""
     GotoIfFlagEnabled(Label.L0, flag=flag)
-    CreateAssetVFX(asset, vfx_id=200, model_point=803220)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=803220)
 
     # --- Label 0 --- #
     DefineLabel(0)

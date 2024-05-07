@@ -564,7 +564,7 @@ def Event_11020106():
         anchor_entity=1021960,
         anchor_type=CoordEntityType.Object,
         max_distance=3.4000000953674316,
-        model_point=-1,
+        dummy_id=-1,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
     ))
     

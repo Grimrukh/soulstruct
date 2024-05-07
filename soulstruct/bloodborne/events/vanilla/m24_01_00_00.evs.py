@@ -50,9 +50,9 @@ def Constructor():
     RunEvent(9280, slot=3, args=(2410750, 12414220, 12414221, 2410, 12414223, 280))
     Event_12411899()
     Event_12410310()
-    CreateObjectVFX(2411000, vfx_id=200, model_point=900130)
-    CreateObjectVFX(2411001, vfx_id=200, model_point=900130)
-    CreateObjectVFX(2411004, vfx_id=200, model_point=900130)
+    CreateObjectVFX(2411000, vfx_id=200, dummy_id=900130)
+    CreateObjectVFX(2411001, vfx_id=200, dummy_id=900130)
+    CreateObjectVFX(2411004, vfx_id=200, dummy_id=900130)
     DeleteVFX(2413230, erase_root_only=False)
     DeleteVFX(2413233, erase_root_only=False)
     Event_12414400(0, flag=12414440, vfx_id=2413230, flag_1=12414420, flag_2=12414430, flag_3=12411700, flag_4=6001)
@@ -260,7 +260,7 @@ def Constructor():
     CreateHazard(
         obj_flag=12410430,
         obj=2411205,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6110,
         target_type=DamageTargetType.Character,
         radius=1.5,
@@ -270,7 +270,7 @@ def Constructor():
     CreateHazard(
         obj_flag=12410431,
         obj=2411206,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6110,
         target_type=DamageTargetType.Character,
         radius=0.6000000238418579,
@@ -280,7 +280,7 @@ def Constructor():
     CreateHazard(
         obj_flag=12410432,
         obj=2411207,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6110,
         target_type=DamageTargetType.Character,
         radius=0.6000000238418579,
@@ -290,7 +290,7 @@ def Constructor():
     CreateHazard(
         obj_flag=12410433,
         obj=2411208,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6110,
         target_type=DamageTargetType.Character,
         radius=0.6000000238418579,
@@ -772,10 +772,10 @@ def Constructor():
     Event_12415750(2, sound_id=2413712, flag=1439, flag_1=70000070, flag_2=9802)
     Event_12415750(3, sound_id=2413713, flag=1439, flag_1=70000071, flag_2=9802)
     Event_12415759(0, sound_id=2413714, flag=1439, flag_1=70000140, flag_2=9802)
-    Event_12415770(0, obj=2411250, flag=9802, model_point=924110)
-    Event_12415770(1, obj=2411251, flag=9802, model_point=924113)
-    Event_12415770(2, obj=2411252, flag=9802, model_point=924110)
-    Event_12415770(3, obj=2411253, flag=9802, model_point=924113)
+    Event_12415770(0, obj=2411250, flag=9802, dummy_id=924110)
+    Event_12415770(1, obj=2411251, flag=9802, dummy_id=924113)
+    Event_12415770(2, obj=2411252, flag=9802, dummy_id=924110)
+    Event_12415770(3, obj=2411253, flag=9802, dummy_id=924113)
     Event_12415779(0, obj=2411254)
     Event_12414100(0, entity=2411000, action_button_id=7400, text=10012000)
     Event_12414100(1, entity=2411001, action_button_id=7401, text=10012001)
@@ -1556,7 +1556,7 @@ def Event_12415498(_, character: int, behavior_id: int):
     ShootProjectile(
         owner_entity=character,
         source_entity=character,
-        model_point=7,
+        dummy_id=7,
         behavior_id=behavior_id,
         launch_angle_x=90,
         launch_angle_y=0,
@@ -2535,7 +2535,7 @@ def Event_12414807():
         2410811,
         destination=2410810,
         destination_type=CoordEntityType.Character,
-        model_point=203,
+        dummy_id=203,
         copy_draw_parent=2410810,
     )
     ForceAnimation(2410811, 3030, wait_for_completion=True)
@@ -3295,18 +3295,18 @@ def Event_12415759(_, sound_id: int, flag: int, flag_1: int, flag_2: int):
 
 
 @RestartOnRest(12415770)
-def Event_12415770(_, obj: int, flag: int, model_point: int):
+def Event_12415770(_, obj: int, flag: int, dummy_id: int):
     """Event 12415770"""
     DeleteObjectVFX(obj)
     if FlagEnabled(flag):
         return
-    CreateObjectVFX(obj, vfx_id=200, model_point=model_point)
+    CreateObjectVFX(obj, vfx_id=200, dummy_id=dummy_id)
 
 
 @RestartOnRest(12415779)
 def Event_12415779(_, obj: int):
     """Event 12415779"""
-    CreateObjectVFX(obj, vfx_id=200, model_point=924113)
+    CreateObjectVFX(obj, vfx_id=200, dummy_id=924113)
     AND_1.Add(FlagEnabled(1180))
     AND_1.Add(FlagEnabled(1193))
     AND_1.Add(FlagEnabled(1194))
@@ -3494,7 +3494,7 @@ def Event_12410510():
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateObjectVFX(2411200, vfx_id=200, model_point=900201)
+    CreateObjectVFX(2411200, vfx_id=200, dummy_id=900201)
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=2410060, entity=2411200))
     
@@ -4775,7 +4775,7 @@ def Event_12410750(_, flag: int, action_button_id: int, destination: int):
     
     MAIN.Await(AND_1)
     
-    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Object, model_point=210, short_move=True)
+    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Object, dummy_id=210, short_move=True)
     ForceAnimation(PLAYER, 101320)
     WaitFrames(frames=25)
     WaitFrames(frames=20)
@@ -5616,7 +5616,7 @@ def Event_12410850(_, flag: int, action_button_id: int, destination: int):
     
     MAIN.Await(AND_1)
     
-    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Object, model_point=210, short_move=True)
+    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Object, dummy_id=210, short_move=True)
     ForceAnimation(PLAYER, 101320)
     WaitFrames(frames=25)
     WaitFrames(frames=20)
@@ -6334,7 +6334,7 @@ def Event_12414502():
     ReplanAI(2410740)
     Wait(1.0)
     AddSpecialEffect(2410740, 5560)
-    CreateTemporaryVFX(vfx_id=121, anchor_entity=2410740, model_point=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=121, anchor_entity=2410740, dummy_id=236, anchor_type=CoordEntityType.Character)
     Wait(2.0)
     DisableCharacter(2410740)
 
@@ -6792,16 +6792,16 @@ def Event_12410285(_, start_climbing_flag: int, stop_climbing_flag: int, obj: in
 def Event_12410287(_, obj: int, region: int, name: int):
     """Event 12410287"""
     if ThisEventSlotFlagEnabled():
-        CreateObjectVFX(obj, vfx_id=100, model_point=8028)
+        CreateObjectVFX(obj, vfx_id=100, dummy_id=8028)
         End()
-    CreateObjectVFX(obj, vfx_id=100, model_point=8029)
+    CreateObjectVFX(obj, vfx_id=100, dummy_id=8029)
     
     MAIN.Await(CharacterInsideRegion(PLAYER, region=region))
     
     ForceAnimation(obj, 1000000)
     WaitFrames(frames=30)
     DeleteObjectVFX(obj)
-    CreateObjectVFX(obj, vfx_id=100, model_point=8028)
+    CreateObjectVFX(obj, vfx_id=100, dummy_id=8028)
     PlaySoundEffect(obj, 600000000, sound_type=SoundType.a_Ambient)
     CreatePlayLog(name=name)
 
@@ -6869,11 +6869,11 @@ def Event_12410370():
     WaitFrames(frames=40)
     EnableInvincibility(2410028)
     EnableInvincibility(2410030)
-    CreateObjectVFX(2411220, vfx_id=100, model_point=900260)
+    CreateObjectVFX(2411220, vfx_id=100, dummy_id=900260)
     CreateHazard(
         obj_flag=12410376,
         obj=2411220,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6111,
         target_type=DamageTargetType.Character,
         radius=1.600000023841858,
@@ -6995,7 +6995,7 @@ def Event_12410490(_, obj: int, obj_1: int, flag: int):
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateObjectVFX(obj_1, vfx_id=90, model_point=900201)
+    CreateObjectVFX(obj_1, vfx_id=90, dummy_id=900201)
     ForceAnimation(obj_1, 0)
     
     MAIN.Await(ObjectDestroyed(obj))

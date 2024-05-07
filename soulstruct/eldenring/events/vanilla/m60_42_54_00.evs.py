@@ -44,7 +44,7 @@ def Constructor():
 def Preconstructor():
     """Event 50"""
     DisableBackread(1042540700)
-    CommonFunc_90005250(0, character=Characters.SmallerDog0, region=1042542200, seconds=0.0, animation_id=3005)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallerDog0, region=1042542200, seconds=0.0, animation_id=3005)
     Event_1042542350(0, character=Characters.DominulaCelebrant0, region=1042542300, character_1=1042545300)
     Event_1042542350(1, character=Characters.DominulaCelebrant1, region=1042542301, character_1=1042545300)
     Event_1042542350(2, character=Characters.DominulaCelebrant2, region=1042542302, character_1=1042545300)

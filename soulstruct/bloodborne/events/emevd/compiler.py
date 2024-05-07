@@ -252,7 +252,7 @@ def PlayCutscene(
 def Move(
     character: CharacterTyping,
     destination: CoordEntityTyping,
-    model_point=-1,
+    dummy_id=-1,
     copy_draw_parent: MapPartTyping = None,
     set_draw_parent: MapPartTyping = None,
     short_move=False,
@@ -287,7 +287,7 @@ def Move(
             "ShortMove",
             character=character,
             destination=destination,
-            model_point=model_point,
+            dummy_id=dummy_id,
             destination_type=destination_type,
         )
     if copy_draw_parent is not None:
@@ -296,7 +296,7 @@ def Move(
             character=character,
             destination=destination,
             copy_draw_parent=copy_draw_parent,
-            model_point=model_point,
+            dummy_id=dummy_id,
             destination_type=destination_type,
         )
     if set_draw_parent is not None:
@@ -305,14 +305,14 @@ def Move(
             character=character,
             destination=destination,
             set_draw_parent=set_draw_parent,
-            model_point=model_point,
+            dummy_id=dummy_id,
             destination_type=destination_type,
         )
     return compile_instruction(
         "MoveToEntity",
         character=character,
         destination=destination,
-        model_point=model_point,
+        dummy_id=dummy_id,
         destination_type=destination_type,
     )
 
@@ -398,7 +398,7 @@ def IfActionButton(
     anchor_type: CoordEntityType = None,
     facing_angle: float = None,
     max_distance: float = None,
-    model_point: int = -1,
+    dummy_id: int = -1,
     trigger_attribute: TriggerAttribute = TriggerAttribute.Human | TriggerAttribute.Hollow,
     button: int = 0,
     boss_version: bool = False,
@@ -418,7 +418,7 @@ def IfActionButton(
         anchor_type=anchor_type,
         anchor_entity=anchor_entity,
         facing_angle=facing_angle,
-        model_point=model_point,
+        dummy_id=dummy_id,
         max_distance=max_distance,
         prompt_text=prompt_text,
         trigger_attribute=trigger_attribute,

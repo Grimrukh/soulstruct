@@ -55,14 +55,14 @@ def Constructor():
     CommonFunc_90005460(0, character=1041380240)
     CommonFunc_90005461(0, character=1041380240)
     CommonFunc_90005462(0, character=1041380240)
-    CommonFunc_90005300(0, flag=1041380230, character=Characters.Scarab, item_lot=40104, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1041380230, character=Characters.Scarab, item_lot=40104, seconds=0.0, item_is_dropped=0)
     Event_1041382200(0, character=Characters.Wolf0, region=1041382250, owner_entity=Characters.Dummy)
     Event_1041382200(1, character=Characters.Wolf1, region=1041382250, owner_entity=Characters.Dummy)
     Event_1041382200(2, character=Characters.Wolf2, region=1041382250, owner_entity=Characters.Dummy)
     Event_1041382200(3, character=Characters.Wolf3, region=1041382250, owner_entity=Characters.Dummy)
     Event_1041383710(0, flag=4720, flag_1=1042389201, flag_2=1041389370)
     Event_1041383730(0, character=Characters.Roderika)
-    CommonFunc_90005752(0, asset=1041381700, vfx_id=200, model_point=120, seconds=3.0)
+    CommonFunc_90005752(0, asset=1041381700, vfx_id=200, dummy_id=120, seconds=3.0)
     Event_1041383731()
     CommonFunc_90005750(
         0,
@@ -72,7 +72,7 @@ def Constructor():
         first_flag=400191,
         last_flag=400191,
         flag=1041389414,
-        model_point=0,
+        dummy_id=0,
     )
     CommonFunc_90005750(
         0,
@@ -82,7 +82,7 @@ def Constructor():
         first_flag=400191,
         last_flag=400191,
         flag=3708,
-        model_point=0,
+        dummy_id=0,
     )
     CommonFunc_90005750(
         0,
@@ -92,7 +92,7 @@ def Constructor():
         first_flag=400191,
         last_flag=400191,
         flag=3709,
-        model_point=0,
+        dummy_id=0,
     )
     Event_1041383750(0, character=1041380705)
     Event_1041383760(0, flag=78103, other_entity=Characters.TalkDummy0, flag_1=1041389500)
@@ -177,7 +177,7 @@ def Event_1041382200(_, character: uint, region: uint, owner_entity: uint):
     ShootProjectile(
         owner_entity=owner_entity,
         source_entity=PLAYER,
-        model_point=900,
+        dummy_id=900,
         behavior_id=100920,
         launch_angle_x=0,
         launch_angle_y=0,

@@ -31,7 +31,7 @@ def Constructor():
 @RestartOnRest(1052402200)
 def Event_1052402200():
     """Event 1052402200"""
-    CommonFunc_9005811(0, flag=1252380800, asset=Assets.AEG099_003_9000, model_point=5, right=0)
+    CommonFunc_9005811(0, flag=1252380800, asset=Assets.AEG099_003_9000, dummy_id=5, right=0)
 
 
 @RestartOnRest(1052402210)

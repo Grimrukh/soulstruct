@@ -429,7 +429,7 @@ def Event_11810313():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=100,
+        dummy_id=100,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
     ))
     
@@ -666,7 +666,7 @@ def Event_11810211():
     CreateHazard(
         obj_flag=11810212,
         obj=1811215,
-        model_point=1,
+        dummy_id=1,
         behavior_param_id=5110,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,

@@ -32,7 +32,7 @@ def Constructor():
     Event_31222849()
     Event_31222813(0, character=Characters.Snail5, flag=31222821)
     Event_31222813(1, character=Characters.GodskinNoble, flag=31222820)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
     Event_31222500()
     CommonFunc_90005646(
         0,
@@ -51,8 +51,8 @@ def Constructor():
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
-    CommonFunc_90005250(0, character=Characters.Wolf4, region=31222304, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.Wolf5, region=31222304, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Wolf4, region=31222304, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Wolf5, region=31222304, seconds=0.0, animation_id=0)
     Event_31222300()
     Event_31222306()
     Event_31222312()
@@ -527,7 +527,7 @@ def Event_31222849():
         flag_2=31222806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=31220800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=31220800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=31220800,

@@ -51,7 +51,7 @@ def Constructor():
         dd_id=0,
     )
     Event_32082650()
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
     Event_32082200(
         0,
         character=Characters.GlintstoneMiner0,
@@ -148,11 +148,11 @@ def Constructor():
 def Preconstructor():
     """Event 50"""
     Event_32082820()
-    CommonFunc_90005250(0, character=Characters.GlintstoneMiner5, region=32082211, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.GlintstoneMiner6, region=32082302, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.GlintstoneMiner7, region=32082217, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.GlintstoneMiner8, region=32082217, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BigGlintstoneMiner, region=32082250, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner5, region=32082211, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner6, region=32082302, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner7, region=32082217, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner8, region=32082217, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BigGlintstoneMiner, region=32082250, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.KindredofRot0,
@@ -201,10 +201,10 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=32080305, region=32082305, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.KindredofRot4, region=32082306, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.KindredofRot5, region=32082306, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.KindredofRot6, region=32082308, seconds=0.0, animation_id=3008)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=32080305, region=32082305, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.KindredofRot4, region=32082306, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.KindredofRot5, region=32082306, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.KindredofRot6, region=32082308, seconds=0.0, animation_id=3008)
 
 
 @RestartOnRest(32082580)
@@ -461,7 +461,7 @@ def Event_32082849():
         flag_2=32082806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=32080800, asset=Assets.AEG099_003_9000, model_point=7, right=32080801)
+    CommonFunc_9005811(0, flag=32080800, asset=Assets.AEG099_003_9000, dummy_id=7, right=32080801)
     CommonFunc_9005822(
         0,
         flag=32080800,

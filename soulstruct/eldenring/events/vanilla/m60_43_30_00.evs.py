@@ -116,7 +116,7 @@ def Event_1043302810():
     # --- Label 0 --- #
     DefineLabel(0)
     DisableAI(Characters.LeonineMisbegotten)
-    SetLockOnPoint(character=Characters.LeonineMisbegotten, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=Characters.LeonineMisbegotten, lock_on_dummy_id=220, state=False)
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(FlagEnabled(1043302805))
     OR_1.Add(CharacterInsideRegion(character=PLAYER, region=1043302850))
@@ -133,7 +133,7 @@ def Event_1043302810():
     EnableAI(Characters.LeonineMisbegotten)
     SetNetworkUpdateRate(Characters.LeonineMisbegotten, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     EnableBossHealthBar(Characters.LeonineMisbegotten, name=903460500)
-    SetLockOnPoint(character=Characters.LeonineMisbegotten, lock_on_model_point=220, state=True)
+    SetLockOnPoint(character=Characters.LeonineMisbegotten, lock_on_dummy_id=220, state=True)
     AddSpecialEffect(Characters.LeonineMisbegotten, 8089)
 
 
@@ -160,7 +160,7 @@ def Event_1043302849():
         flag_2=1043302806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=1043300800, asset=Assets.AEG099_002_9000, model_point=5, right=0)
+    CommonFunc_9005811(0, flag=1043300800, asset=Assets.AEG099_002_9000, dummy_id=5, right=0)
     CommonFunc_9005822(
         0,
         flag=1043300800,

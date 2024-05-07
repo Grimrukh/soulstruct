@@ -32,7 +32,7 @@ def Constructor():
         asset=Assets.AEG099_060_9000,
         enemy_block_distance=5.0,
     )
-    CommonFunc_90005870(0, character=Characters.GodskinApostle, name=903560600, npc_threat_level=27)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.GodskinApostle, name=903560600, npc_threat_level=27)
     CommonFunc_90005860(
         0,
         flag=1042550800,

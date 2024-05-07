@@ -37,11 +37,11 @@ def Constructor():
     StartPlayLogMeasurement(measurement_id=3300000, name=0, overwrite=False)
     StartPlayLogMeasurement(measurement_id=3300001, name=18, overwrite=True)
     Event_13300990()
-    CreateObjectVFX(3301020, vfx_id=100, model_point=8028)
-    CreateObjectVFX(3301022, vfx_id=100, model_point=8028)
-    CreateObjectVFX(3301023, vfx_id=100, model_point=8028)
-    CreateObjectVFX(3301024, vfx_id=100, model_point=8028)
-    CreateObjectVFX(3301025, vfx_id=100, model_point=8028)
+    CreateObjectVFX(3301020, vfx_id=100, dummy_id=8028)
+    CreateObjectVFX(3301022, vfx_id=100, dummy_id=8028)
+    CreateObjectVFX(3301023, vfx_id=100, dummy_id=8028)
+    CreateObjectVFX(3301024, vfx_id=100, dummy_id=8028)
+    CreateObjectVFX(3301025, vfx_id=100, dummy_id=8028)
     ForceAnimation(3301020, 200, loop=True)
     ForceAnimation(3301022, 200, loop=True)
     ForceAnimation(3301023, 200, loop=True)
@@ -1322,7 +1322,7 @@ def Event_13305030(_, character__set_draw_parent: int, character: int):
         character,
         destination=character__set_draw_parent,
         destination_type=CoordEntityType.Character,
-        model_point=100,
+        dummy_id=100,
         set_draw_parent=character__set_draw_parent,
     )
     Restart()

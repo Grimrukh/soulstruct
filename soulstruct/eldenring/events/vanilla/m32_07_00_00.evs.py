@@ -130,8 +130,8 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, dummy_id=800, right=0)
     CommonFunc_90005703(
         0,
         character=Characters.LivingPot,
@@ -154,17 +154,17 @@ def Constructor():
 def Preconstructor():
     """Event 50"""
     Event_32072820()
-    CommonFunc_90005250(0, character=Characters.TunnelMiner4, region=32072204, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Octopus, region=32072306, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RadahnSoldier0, region=32072300, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RadahnSoldier1, region=32072300, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RadahnSoldier3, region=32072306, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RadahnSoldier4, region=32072306, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RadahnSoldier5, region=32072308, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RadahnSoldier6, region=32072309, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RadahnSoldier7, region=32072309, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RadahnSoldier8, region=32072315, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RadahnSoldier9, region=32072316, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.TunnelMiner4, region=32072204, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Octopus, region=32072306, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier0, region=32072300, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier1, region=32072300, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier3, region=32072306, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier4, region=32072306, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier5, region=32072308, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier6, region=32072309, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier7, region=32072309, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier8, region=32072315, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier9, region=32072316, seconds=0.0, animation_id=-1)
 
 
 @RestartOnRest(32072580)
@@ -405,7 +405,7 @@ def Event_32072849():
         flag_2=32072806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=32070800, asset=Assets.AEG099_001_9000, model_point=7, right=32070801)
+    CommonFunc_9005811(0, flag=32070800, asset=Assets.AEG099_001_9000, dummy_id=7, right=32070801)
     CommonFunc_9005822(
         0,
         flag=32070800,

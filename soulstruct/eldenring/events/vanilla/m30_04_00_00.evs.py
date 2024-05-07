@@ -469,7 +469,7 @@ def Event_30042849():
         flag_2=30042806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=30040800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=30040800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=30040800,

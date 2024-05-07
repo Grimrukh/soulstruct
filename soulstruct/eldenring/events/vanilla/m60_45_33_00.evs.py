@@ -30,7 +30,7 @@ def Constructor():
     CommonFunc_9005910(0, asset=1045331940, first_flag=1045330101, last_flag=1045330103, right=3)
     CommonFunc_9005911(0, asset=1045331941)
     CommonFunc_9005912(0, flag=1045330100, text=605053)
-    CommonFunc_90005300(0, flag=1045330200, character=Characters.Turtle0, item_lot=45000000, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1045330200, character=Characters.Turtle0, item_lot=45000000, seconds=0.0, item_is_dropped=0)
     Event_1045332220()
     Event_1045332250(0, flag=1045330200, flag_1=1045330201, flag_2=1045330202, flag_3=1045330205)
     Event_1045332251(0, flag=1045330200, attacked_entity=Characters.Turtle0)
@@ -43,11 +43,11 @@ def Constructor():
     Event_1045332254()
     Event_1045332255()
     Event_1045332256()
-    CommonFunc_90005300(0, flag=1045330200, character=Characters.Turtle0, item_lot=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=1045330201, character=Characters.Turtle1, item_lot=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=1045330202, character=Characters.Turtle2, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1045330200, character=Characters.Turtle0, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1045330201, character=Characters.Turtle1, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1045330202, character=Characters.Turtle2, item_lot=0, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005251(0, character=Characters.Turtle1, radius=0.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005300(0, flag=1045330900, character=Characters.OnyxLord, item_lot=1045330400, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1045330900, character=Characters.OnyxLord, item_lot=1045330400, seconds=0.0, item_is_dropped=0)
 
 
 @ContinueOnRest(50)
@@ -112,7 +112,7 @@ def Event_1045332250(_, flag: uint, flag_1: uint, flag_2: uint, flag_3: uint):
     """Event 1045332250"""
     GotoIfFlagEnabled(Label.L0, flag=flag_3)
     DeleteAssetVFX(Assets.AEG099_251_2000)
-    CreateAssetVFX(Assets.AEG099_251_2000, vfx_id=200, model_point=1500)
+    CreateAssetVFX(Assets.AEG099_251_2000, vfx_id=200, dummy_id=1500)
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(FlagEnabled(flag_1))
     AND_1.Add(FlagEnabled(flag_2))
@@ -267,7 +267,7 @@ def Event_1045332900():
     
     MAIN.Await(AND_1)
     
-    CreateAssetVFX(Assets.AEG099_090_9000, vfx_id=100, model_point=806901)
+    CreateAssetVFX(Assets.AEG099_090_9000, vfx_id=100, dummy_id=806901)
     
     MAIN.Await(TimeOfDayInRange(earliest=(1, 0, 1), latest=(23, 59, 59)))
     

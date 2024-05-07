@@ -41,7 +41,7 @@ def Constructor():
         character=Characters.DemiHumanQueen,
         item_lot=1043340400,
         seconds=0.0,
-        left=0,
+        item_is_dropped=0,
     )
     CommonFunc_90005706(0, character=Characters.Commoner, animation_id=930025, left=Assets.AEG099_590_9000)
     CommonFunc_90005771(0, other_entity=Characters.TalkDummy0, flag=1043342700)
@@ -71,10 +71,10 @@ def Preconstructor():
         region=1043342212,
         radius=10.0,
         seconds=2.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -84,10 +84,10 @@ def Preconstructor():
         region=1043342212,
         radius=10.0,
         seconds=1.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -97,12 +97,12 @@ def Preconstructor():
         region=1043342212,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
-    CommonFunc_90005250(0, character=1043340300, region=1043342300, seconds=0.0, animation_id=3031)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=1043340300, region=1043342300, seconds=0.0, animation_id=3031)
 
 
 @RestartOnRest(1043342220)
@@ -134,7 +134,7 @@ def Event_1043342220(_, character: uint, asset: uint, region: uint):
     MAIN.Await(AND_1)
     
     EnableFlag(1044342300)
-    CreateTemporaryVFX(vfx_id=641012, anchor_entity=character, model_point=900, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=641012, anchor_entity=character, dummy_id=900, anchor_type=CoordEntityType.Character)
     Wait(0.5)
     DisableAsset(asset)
     Wait(0.30000001192092896)

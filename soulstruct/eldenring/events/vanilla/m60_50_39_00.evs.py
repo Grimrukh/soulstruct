@@ -36,7 +36,7 @@ def Constructor():
     CommonFunc_90005251(0, character=Characters.RayaLucariaScholar0, radius=11.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.RayaLucariaScholar3, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.RayaLucariaScholar4, radius=7.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar6, region=1050392208, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar6, region=1050392208, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.RayaLucariaScholar7, radius=8.0, seconds=0.0, animation_id=-1)
     Event_1050392200(0, character=Characters.RayaLucariaScholar0, special_effect=14807)
     Event_1050392200(1, character=Characters.RayaLucariaScholar1, special_effect=14808)
@@ -94,7 +94,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.Marionette, region=1050392400, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Marionette, region=1050392400, seconds=0.0, animation_id=-1)
 
 
 @RestartOnRest(1050392200)
@@ -136,7 +136,7 @@ def Event_1050392210(_, character: uint, asset: uint, region: uint):
     
     MAIN.Await(AND_2)
     
-    CreateAssetVFX(asset, vfx_id=100, model_point=620383)
+    CreateAssetVFX(asset, vfx_id=100, dummy_id=620383)
     EnableCharacter(character)
     EnableNetworkFlag(region)
     Wait(2.0)
@@ -156,7 +156,7 @@ def Event_1050392210(_, character: uint, asset: uint, region: uint):
 def Event_1050392300(_, asset: uint, flag: uint):
     """Event 1050392300"""
     EnableNetworkSync()
-    CreateAssetVFX(asset, vfx_id=200, model_point=1502)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=1502)
     
     MAIN.Await(FlagEnabled(flag))
     
@@ -169,7 +169,7 @@ def Event_1050392300(_, asset: uint, flag: uint):
 def Event_1050392301(_, asset: uint, flag: uint):
     """Event 1050392301"""
     EnableNetworkSync()
-    CreateAssetVFX(asset, vfx_id=200, model_point=1501)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=1501)
     
     MAIN.Await(FlagEnabled(flag))
     
@@ -196,7 +196,7 @@ def Event_1050392303(_, asset: uint, flag: uint):
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=100, model_point=806031)
+    CreateAssetVFX(asset, vfx_id=100, dummy_id=806031)
     End()
 
 

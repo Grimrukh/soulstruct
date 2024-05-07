@@ -27,7 +27,7 @@ def Constructor():
     RegisterBonfire(bonfire_flag=13100003, obj=3101953, reaction_distance=5.0)
     RegisterBonfire(bonfire_flag=13100004, obj=3101954, reaction_distance=5.0)
     CommonFunc_20005500(0, flag=13100800, bonfire_flag=13100001, character=3100951, obj=3101951)
-    CommonFunc_20005781(0, obj=3101780, model_point=3, flag=13105161)
+    CommonFunc_20005781(0, obj=3101780, dummy_id=3, flag=13105161)
     Event_13105810()
     Event_13105812()
     Event_13105820()
@@ -48,7 +48,7 @@ def Constructor():
         bit_index=3,
         bit_index_1=13,
         special_effect=11461,
-        model_point=810,
+        dummy_id=810,
         npc_part_id_2=29,
         npc_part_id_3=29,
         bit_index_2=7,
@@ -63,7 +63,7 @@ def Constructor():
         bit_index=2,
         bit_index_1=12,
         special_effect=11462,
-        model_point=811,
+        dummy_id=811,
         npc_part_id_2=30,
         npc_part_id_3=30,
         bit_index_2=8,
@@ -78,7 +78,7 @@ def Constructor():
         bit_index=1,
         bit_index_1=11,
         special_effect=11463,
-        model_point=812,
+        dummy_id=812,
         npc_part_id_2=31,
         npc_part_id_3=31,
         bit_index_2=9,
@@ -93,7 +93,7 @@ def Constructor():
         bit_index=8,
         bit_index_1=18,
         special_effect=11464,
-        model_point=813,
+        dummy_id=813,
         npc_part_id_2=21,
         npc_part_id_3=21,
         bit_index_2=2,
@@ -108,7 +108,7 @@ def Constructor():
         bit_index=6,
         bit_index_1=16,
         special_effect=11465,
-        model_point=814,
+        dummy_id=814,
         npc_part_id_2=32,
         npc_part_id_3=32,
         bit_index_2=3,
@@ -123,7 +123,7 @@ def Constructor():
         bit_index=4,
         bit_index_1=14,
         special_effect=11466,
-        model_point=815,
+        dummy_id=815,
         npc_part_id_2=33,
         npc_part_id_3=33,
         bit_index_2=4,
@@ -138,7 +138,7 @@ def Constructor():
         bit_index=5,
         bit_index_1=15,
         special_effect=11467,
-        model_point=816,
+        dummy_id=816,
         npc_part_id_2=34,
         npc_part_id_3=34,
         bit_index_2=5,
@@ -153,7 +153,7 @@ def Constructor():
         bit_index=7,
         bit_index_1=17,
         special_effect=11460,
-        model_point=817,
+        dummy_id=817,
         npc_part_id_2=22,
         npc_part_id_3=22,
         bit_index_2=6,
@@ -871,16 +871,16 @@ def Constructor():
     Event_13105420(6, flag=53100760, obj=3101576)
     Event_13105420(7, flag=53100770, obj=3101577)
     Event_13105420(9, flag=53100800, obj=3101579)
-    CommonFunc_20005525(0, flag=6700, item_lot=4200, obj=3101290, model_point=60)
-    CommonFunc_20005525(0, flag=53100630, item_lot=3100630, obj=3101291, model_point=60)
-    CommonFunc_20005525(0, flag=53100660, item_lot=3100660, obj=3101292, model_point=60)
+    CommonFunc_20005525(0, flag=6700, item_lot=4200, obj=3101290, dummy_id=60)
+    CommonFunc_20005525(0, flag=53100630, item_lot=3100630, obj=3101291, dummy_id=60)
+    CommonFunc_20005525(0, flag=53100660, item_lot=3100660, obj=3101292, dummy_id=60)
     CommonFunc_20005524(0, obj=3101260, flag=9482)
     Event_13105295()
     CommonFunc_20005542(
         0,
         obj_flag=13105351,
         obj=3101501,
-        model_point=201,
+        dummy_id=201,
         behavior_param_id=5110,
         radius=0.5,
         life=0.0,
@@ -890,7 +890,7 @@ def Constructor():
         0,
         obj_flag=13105352,
         obj=3101502,
-        model_point=201,
+        dummy_id=201,
         behavior_param_id=5110,
         radius=0.5,
         life=0.0,
@@ -900,7 +900,7 @@ def Constructor():
         0,
         obj_flag=13105353,
         obj=3101530,
-        model_point=201,
+        dummy_id=201,
         behavior_param_id=5110,
         radius=0.8500000238418579,
         life=0.0,
@@ -910,7 +910,7 @@ def Constructor():
         0,
         obj_flag=13105354,
         obj=3101531,
-        model_point=201,
+        dummy_id=201,
         behavior_param_id=5110,
         radius=0.5,
         life=0.0,
@@ -920,7 +920,7 @@ def Constructor():
         0,
         obj_flag=13105355,
         obj=3101532,
-        model_point=201,
+        dummy_id=201,
         behavior_param_id=5110,
         radius=0.699999988079071,
         life=0.0,
@@ -930,7 +930,7 @@ def Constructor():
         0,
         obj_flag=13105356,
         obj=3101533,
-        model_point=201,
+        dummy_id=201,
         behavior_param_id=5110,
         radius=0.699999988079071,
         life=0.0,
@@ -979,7 +979,7 @@ def Constructor():
         message=10012030,
         action_button_id=9360,
         obj=3101180,
-        model_point=30001,
+        dummy_id=30001,
     )
     CommonFunc_20005061(0, 8220, 3100741, event_layers=[2, 3, 4, 5, 6, 7, 8, 9])
     CommonFunc_20005062(0, 8221, 8222, event_layers=[2, 3, 4, 5, 6, 7, 8, 9])
@@ -1062,7 +1062,7 @@ def Constructor():
         character=3100195,
         entity=3101190,
         source_entity=3101190,
-        model_point=10,
+        dummy_id=10,
         behavior_id=5310,
         behavior_id_1=5311,
         behavior_id_2=5312,
@@ -1103,7 +1103,7 @@ def Constructor():
     CommonFunc_20006002(0, character=3100725, flag=1138, first_flag=1135, last_flag=1139)
     Event_13105721()
     Event_13105722(0, attacked_entity=3100725)
-    CommonFunc_20005526(0, flag=50006083, item_lot__obj=60830, obj=3101700, model_point=61, flag_1=8220)
+    CommonFunc_20005526(0, flag=50006083, item_lot__obj=60830, obj=3101700, dummy_id=61, flag_1=8220)
     Event_13105723()
     CommonFunc_20006002(0, character=3100740, flag=1598, first_flag=1595, last_flag=1599)
     CommonFunc_20006000(
@@ -1249,7 +1249,7 @@ def Event_13105172():
     SkipLines(1)
     DisplayBattlefieldMessage(10012230, display_location_index=1)
     WaitFrames(frames=1)
-    CreateTemporaryVFX(vfx_id=30310, anchor_entity=3100190, model_point=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=30310, anchor_entity=3100190, dummy_id=236, anchor_type=CoordEntityType.Character)
     EnableCharacter(3100190)
     EnableAnimations(3100190)
     SetBackreadStateAlternate(3100190, True)
@@ -1444,7 +1444,7 @@ def Event_13105212(_, character: int):
         character,
         destination=3101300,
         destination_type=CoordEntityType.Object,
-        model_point=803,
+        dummy_id=803,
         copy_draw_parent=character,
     )
     Restart()
@@ -1552,14 +1552,14 @@ def Event_13105930(_, obj: int, entity: int):
     DisableNetworkSync()
     if ThisEventSlotFlagEnabled():
         return
-    CreateObjectVFX(obj, vfx_id=200, model_point=831023)
-    CreateObjectVFX(obj, vfx_id=200, model_point=60)
+    CreateObjectVFX(obj, vfx_id=200, dummy_id=831023)
+    CreateObjectVFX(obj, vfx_id=200, dummy_id=60)
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=9600, entity=entity))
     
     ForceAnimation(PLAYER, 60070, unknown2=1.0)
     Wait(0.20000000298023224)
-    CreateTemporaryVFX(vfx_id=301002, anchor_entity=PLAYER, model_point=220, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=301002, anchor_entity=PLAYER, dummy_id=220, anchor_type=CoordEntityType.Character)
     PlaySoundEffect(PLAYER, 999999988, sound_type=SoundType.c_CharacterMotion)
     AddSpecialEffect(PLAYER, 2005)
     DeleteObjectVFX(obj)
@@ -1929,7 +1929,7 @@ def Event_13105285(_, obj: int):
     CreateHazard(
         obj_flag=13105286,
         obj=obj,
-        model_point=40,
+        dummy_id=40,
         behavior_param_id=5300,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -1939,7 +1939,7 @@ def Event_13105285(_, obj: int):
     CreateHazard(
         obj_flag=13105287,
         obj=obj,
-        model_point=41,
+        dummy_id=41,
         behavior_param_id=5300,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -1949,7 +1949,7 @@ def Event_13105285(_, obj: int):
     CreateHazard(
         obj_flag=13105288,
         obj=obj,
-        model_point=42,
+        dummy_id=42,
         behavior_param_id=5300,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -1959,7 +1959,7 @@ def Event_13105285(_, obj: int):
     CreateHazard(
         obj_flag=13105289,
         obj=obj,
-        model_point=43,
+        dummy_id=43,
         behavior_param_id=5300,
         target_type=DamageTargetType.Character,
         radius=0.800000011920929,
@@ -2141,7 +2141,7 @@ def Event_13105420(_, flag: int, obj: int):
         return
     DeleteObjectVFX(obj)
     DisableTreasure(obj=obj)
-    CreateObjectVFX(obj, vfx_id=90, model_point=60)
+    CreateObjectVFX(obj, vfx_id=90, dummy_id=60)
     
     MAIN.Await(ObjectDestroyed(obj))
     
@@ -2356,8 +2356,8 @@ def Event_13105810():
     SetNetworkUpdateRate(3100800, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     DisableHealthBar(3100800)
     EnableInvincibility(3100800)
-    SetLockOnPoint(character=3100800, lock_on_model_point=220, state=False)
-    SetLockOnPoint(character=3100800, lock_on_model_point=221, state=False)
+    SetLockOnPoint(character=3100800, lock_on_dummy_id=220, state=False)
+    SetLockOnPoint(character=3100800, lock_on_dummy_id=221, state=False)
     ForceAnimation(3100800, 700, loop=True, unknown2=1.0)
     OR_1.Add(ThisEventSlotFlagEnabled())
     OR_1.Add(CharacterInsideRegion(character=PLAYER, region=3102805))
@@ -2373,8 +2373,8 @@ def Event_13105810():
     SetNetworkUpdateRate(3100800, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     if FlagDisabled(13105811):
         EnableSpawner(entity=3104810)
-    SetLockOnPoint(character=3100800, lock_on_model_point=220, state=True)
-    SetLockOnPoint(character=3100800, lock_on_model_point=221, state=True)
+    SetLockOnPoint(character=3100800, lock_on_dummy_id=220, state=True)
+    SetLockOnPoint(character=3100800, lock_on_dummy_id=221, state=True)
     DisableNetworkSync()
     EnableBossHealthBar(3100800, name=905180)
     EnableFlag(13105803)
@@ -2448,7 +2448,7 @@ def Event_13105814():
     MAIN.Await(CharacterHasTAEEvent(3100800, tae_event_id=100))
     
     EnableMapCollision(collision=3104801)
-    CreateTemporaryVFX(vfx_id=831110, anchor_entity=3101820, model_point=200, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=831110, anchor_entity=3101820, dummy_id=200, anchor_type=CoordEntityType.Object)
     EnableFlag(13100820)
     WaitFrames(frames=50)
     DisableObject(3101801)
@@ -2596,7 +2596,7 @@ def Event_13105820():
         action_button_id=3101800,
         flag_2=13105806,
     )
-    CommonFunc_20005820(0, flag=13100800, obj=3101800, model_point=4, left=13100801)
+    CommonFunc_20005820(0, flag=13100800, obj=3101800, dummy_id=4, left=13100801)
     CommonFunc_20001836(
         0,
         flag=13100800,
@@ -2633,7 +2633,7 @@ def Event_13105825(
     bit_index: uchar,
     bit_index_1: uchar,
     special_effect: int,
-    model_point: int,
+    dummy_id: int,
     npc_part_id_2: short,
     npc_part_id_3: int,
     bit_index_2: uchar,
@@ -2663,7 +2663,7 @@ def Event_13105825(
     CreateTemporaryVFX(
         vfx_id=651850,
         anchor_entity=3100800,
-        model_point=model_point,
+        dummy_id=dummy_id,
         anchor_type=CoordEntityType.Character,
     )
     AND_1.Add(CharacterDoesNotHaveSpecialEffect(3100800, 11451))
@@ -2720,7 +2720,7 @@ def Event_13105830(
     bit_index: uchar,
     bit_index_1: uchar,
     special_effect: int,
-    model_point: int,
+    dummy_id: int,
     npc_part_id_2: short,
     npc_part_id_3: int,
     bit_index_2: uchar,
@@ -2755,7 +2755,7 @@ def Event_13105830(
     CreateTemporaryVFX(
         vfx_id=651850,
         anchor_entity=3100800,
-        model_point=model_point,
+        dummy_id=dummy_id,
         anchor_type=CoordEntityType.Character,
     )
     AND_1.Add(CharacterDoesNotHaveSpecialEffect(3100800, 11451))
@@ -2812,7 +2812,7 @@ def Event_13105835(
     bit_index: uchar,
     bit_index_1: uchar,
     special_effect: int,
-    model_point: int,
+    dummy_id: int,
     npc_part_id_2: short,
     npc_part_id_3: int,
     bit_index_2: uchar,
@@ -2842,7 +2842,7 @@ def Event_13105835(
     CreateTemporaryVFX(
         vfx_id=651850,
         anchor_entity=3100800,
-        model_point=model_point,
+        dummy_id=dummy_id,
         anchor_type=CoordEntityType.Character,
     )
     AND_1.Add(CharacterDoesNotHaveSpecialEffect(3100800, 11451))

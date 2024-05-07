@@ -78,7 +78,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
 
 
 @ContinueOnRest(50)
@@ -133,7 +133,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.TunnelMiner3, region=32112206, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.TunnelMiner3, region=32112206, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.TunnelMiner4,
@@ -158,7 +158,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=32110208, region=32112208, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=32110208, region=32112208, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.TunnelMiner5,
@@ -183,7 +183,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.TunnelMiner6, region=32112209, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.TunnelMiner6, region=32112209, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=Characters.TunnelMiner7,
@@ -208,7 +208,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.TunnelMiner8, region=32112215, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.TunnelMiner8, region=32112215, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.TunnelMiner9,
@@ -221,8 +221,8 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.OnyxLord0, region=32112300, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.OnyxLord1, region=32112301, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.OnyxLord0, region=32112300, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.OnyxLord1, region=32112301, seconds=0.0, animation_id=-1)
 
 
 @ContinueOnRest(32112510)
@@ -346,7 +346,7 @@ def Event_32112820(_, character: uint, destination: uint):
         character,
         destination=destination,
         destination_type=CoordEntityType.Asset,
-        model_point=100,
+        dummy_id=100,
         copy_draw_parent=character,
     )
     Wait(1.0)
@@ -396,7 +396,7 @@ def Event_32112849():
         flag_2=32112806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=32110800, asset=Assets.AEG099_003_9000, model_point=7, right=32110801)
+    CommonFunc_9005811(0, flag=32110800, asset=Assets.AEG099_003_9000, dummy_id=7, right=32110801)
     CommonFunc_9005822(
         0,
         flag=32110800,

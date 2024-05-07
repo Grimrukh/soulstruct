@@ -1412,7 +1412,7 @@ def Event_12604840():
     
     MAIN.Await(AND_1)
     
-    MoveObjectToCharacter(2601857, character=PLAYER, model_point=245)
+    MoveObjectToCharacter(2601857, character=PLAYER, dummy_id=245)
     WaitFrames(frames=1)
     EnableCharacter(2600801)
     ResetAnimation(2600801)
@@ -1425,27 +1425,27 @@ def Event_12604840():
 
     # --- Label 0 --- #
     DefineLabel(0)
-    Move(2600801, destination=2601857, destination_type=CoordEntityType.Object, model_point=4, short_move=True)
+    Move(2600801, destination=2601857, destination_type=CoordEntityType.Object, dummy_id=4, short_move=True)
     Goto(Label.L4)
 
     # --- Label 1 --- #
     DefineLabel(1)
-    Move(2600801, destination=2601857, destination_type=CoordEntityType.Object, model_point=104, short_move=True)
+    Move(2600801, destination=2601857, destination_type=CoordEntityType.Object, dummy_id=104, short_move=True)
     Goto(Label.L4)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    Move(2600801, destination=2601857, destination_type=CoordEntityType.Object, model_point=10, short_move=True)
+    Move(2600801, destination=2601857, destination_type=CoordEntityType.Object, dummy_id=10, short_move=True)
     Goto(Label.L4)
 
     # --- Label 3 --- #
     DefineLabel(3)
-    Move(2600801, destination=2601857, destination_type=CoordEntityType.Object, model_point=110, short_move=True)
+    Move(2600801, destination=2601857, destination_type=CoordEntityType.Object, dummy_id=110, short_move=True)
 
     # --- Label 4 --- #
     DefineLabel(4)
     WaitFrames(frames=1)
-    CreateTemporaryVFX(vfx_id=655105, anchor_entity=2600801, model_point=220, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=655105, anchor_entity=2600801, dummy_id=220, anchor_type=CoordEntityType.Character)
     ReplanAI(2600801)
     AICommand(2600801, command_id=100, command_slot=0)
     AddSpecialEffect(2600801, 5631)
@@ -1454,7 +1454,7 @@ def Event_12604840():
     
     MAIN.Await(OR_1)
     
-    CreateTemporaryVFX(vfx_id=655105, anchor_entity=2600801, model_point=220, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=655105, anchor_entity=2600801, dummy_id=220, anchor_type=CoordEntityType.Character)
     WaitFrames(frames=10)
     DisableCharacter(2600801)
     Restart()
@@ -2152,15 +2152,15 @@ def Event_12604878():
     EnableInvincibility(2600850)
     SkipLinesIfFinishedConditionTrue(1, input_condition=AND_1)
     SkipLinesIfFinishedConditionTrue(3, input_condition=AND_2)
-    CreateTemporaryVFX(vfx_id=926201, anchor_entity=2601853, model_point=800, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=926201, anchor_entity=2601853, dummy_id=800, anchor_type=CoordEntityType.Object)
     ForceAnimation(2600850, 103122, wait_for_completion=True)
     SkipLines(2)
-    CreateTemporaryVFX(vfx_id=926201, anchor_entity=2601854, model_point=800, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=926201, anchor_entity=2601854, dummy_id=800, anchor_type=CoordEntityType.Object)
     ForceAnimation(2600850, 103122, wait_for_completion=True)
     Move(2600850, destination=2602073, destination_type=CoordEntityType.Region, set_draw_parent=2604811)
     SetNest(2600850, region=2602065)
     WaitFrames(frames=5)
-    CreateTemporaryVFX(vfx_id=926201, anchor_entity=2601855, model_point=800, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=926201, anchor_entity=2601855, dummy_id=800, anchor_type=CoordEntityType.Object)
     ForceAnimation(2600850, 103120)
     EnableCharacterCollision(2600850)
     EnableGravity(2600850)
@@ -2329,7 +2329,7 @@ def Event_12604888():
     if FlagEnabled(12604946):
         return RESTART
     ForceAnimation(2600850, 103120)
-    CreateTemporaryVFX(vfx_id=926210, anchor_entity=2600850, model_point=200, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=926210, anchor_entity=2600850, dummy_id=200, anchor_type=CoordEntityType.Character)
     GotoIfFlagEnabled(Label.L0, flag=12604940)
     GotoIfFlagEnabled(Label.L1, flag=12604941)
     GotoIfFlagEnabled(Label.L2, flag=12604942)
@@ -2387,7 +2387,7 @@ def Event_12604889():
         return RESTART
     WaitFrames(frames=15)
     ForceAnimation(2600850, 103120)
-    CreateTemporaryVFX(vfx_id=926210, anchor_entity=2600850, model_point=200, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=926210, anchor_entity=2600850, dummy_id=200, anchor_type=CoordEntityType.Character)
     SkipLinesIfFlagEnabled(10, 12604949)
     SkipLinesIfFlagEnabled(11, 12604950)
     SkipLinesIfFlagEnabled(12, 12604951)
@@ -3018,7 +3018,7 @@ def Event_12600180(_, character: int, item_lot: int):
     
     Wait(60.0)
     MoveObjectToCharacter(2601040, character=character)
-    CreateObjectVFX(2601040, vfx_id=200, model_point=900201)
+    CreateObjectVFX(2601040, vfx_id=200, dummy_id=900201)
     AND_1.Add(ActionButtonParamActivated(action_button_id=2600030, entity=2601040))
     AND_2.Add(TimeElapsed(seconds=15.0))
     OR_1.Add(AND_1)
@@ -3150,7 +3150,7 @@ def Event_12600110(_, character: int, character_1: int, character_2: int):
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=30,
+        dummy_id=30,
         copy_draw_parent=character,
     )
     EnableCharacter(character_1)
@@ -3160,7 +3160,7 @@ def Event_12600110(_, character: int, character_1: int, character_2: int):
         character_2,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=30,
+        dummy_id=30,
         copy_draw_parent=character,
     )
     EnableCharacter(character_2)
@@ -3189,7 +3189,7 @@ def Event_12600125(_, obj: int, item_lot: int):
         return
     if Client():
         return
-    CreateObjectVFX(obj, vfx_id=200, model_point=900201)
+    CreateObjectVFX(obj, vfx_id=200, dummy_id=900201)
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=2600030, entity=obj))
     
@@ -3511,7 +3511,7 @@ def Event_12605200(_, character__set_draw_parent: int, character: int):
         character,
         destination=character__set_draw_parent,
         destination_type=CoordEntityType.Character,
-        model_point=100,
+        dummy_id=100,
         set_draw_parent=character__set_draw_parent,
     )
     Restart()
@@ -3594,7 +3594,7 @@ def Event_12607010(_, flag: int, destination: int):
     """Event 12607010"""
     MAIN.Await(FlagEnabled(flag))
     
-    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Object, model_point=200, short_move=True)
+    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Object, dummy_id=200, short_move=True)
     ForceAnimation(PLAYER, 101160, skip_transition=True)
     Wait(4.0)
     DisableFlag(flag)
@@ -3661,10 +3661,10 @@ def Event_12607050(_, flag: int, character: int, destination: int):
     
     MAIN.Await(CharacterBackreadEnabled(character))
     
-    Move(character, destination=destination, destination_type=CoordEntityType.Object, model_point=250, short_move=True)
+    Move(character, destination=destination, destination_type=CoordEntityType.Object, dummy_id=250, short_move=True)
     ForceAnimation(character, 101165, loop=True)
     Wait(1.0)
-    Move(character, destination=destination, destination_type=CoordEntityType.Object, model_point=250, short_move=True)
+    Move(character, destination=destination, destination_type=CoordEntityType.Object, dummy_id=250, short_move=True)
     
     MAIN.Await(FlagEnabled(flag))
     

@@ -313,7 +313,7 @@ def Event_11510090(_, obj: int, vfx_id: int, destination: int, destination_1: in
         prompt_text=10010403,
         anchor_entity=destination,
         anchor_type=CoordEntityType.Region,
-        model_point=0,
+        dummy_id=0,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         line_intersects=obj,
     ))
@@ -321,7 +321,7 @@ def Event_11510090(_, obj: int, vfx_id: int, destination: int, destination_1: in
         prompt_text=10010407,
         anchor_entity=destination_1,
         anchor_type=CoordEntityType.Region,
-        model_point=0,
+        dummy_id=0,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         line_intersects=obj,
     ))
@@ -1047,7 +1047,7 @@ def Event_11515080(_, character: int, character_1: int):
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=110,
+        dummy_id=110,
         copy_draw_parent=character,
     )
     EnableCharacter(character_1)
@@ -1081,7 +1081,7 @@ def Event_11510100():
         End()
     DisableTreasure(obj=1511600)
     SkipLinesIfClient(1)
-    CreateObjectVFX(1511600, vfx_id=90, model_point=99010)
+    CreateObjectVFX(1511600, vfx_id=90, dummy_id=99010)
     ForceAnimation(1511600, 110, loop=True)
     
     MAIN.Await(ObjectDestroyed(1511100))
@@ -1108,11 +1108,11 @@ def Event_11510110():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=100,
+        dummy_id=100,
         trigger_attribute=TriggerAttribute.All,
     ))
     
-    Move(PLAYER, destination=1511010, destination_type=CoordEntityType.Object, model_point=120, short_move=True)
+    Move(PLAYER, destination=1511010, destination_type=CoordEntityType.Object, dummy_id=120, short_move=True)
     ForceAnimation(PLAYER, 7120)
     ForceAnimation(1511010, 0)
 
@@ -1132,13 +1132,13 @@ def Event_11510200():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=102,
+        dummy_id=102,
         trigger_attribute=TriggerAttribute.All,
     ))
     
     MAIN.Await(AND_1)
     
-    Move(PLAYER, destination=1511001, destination_type=CoordEntityType.Object, model_point=103, short_move=True)
+    Move(PLAYER, destination=1511001, destination_type=CoordEntityType.Object, dummy_id=103, short_move=True)
     ForceAnimation(PLAYER, 8021)
     ForceAnimation(1511001, 0, wait_for_completion=True)
     ForceAnimation(1511000, 0)
@@ -1177,11 +1177,11 @@ def Event_11510210():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=101,
+        dummy_id=101,
         trigger_attribute=TriggerAttribute.All,
     ))
     
-    Move(PLAYER, destination=1511200, destination_type=CoordEntityType.Object, model_point=121, short_move=True)
+    Move(PLAYER, destination=1511200, destination_type=CoordEntityType.Object, dummy_id=121, short_move=True)
     ForceAnimation(PLAYER, 7110)
     ForceAnimation(1511200, 0)
     DisableNavmeshType(navmesh_id=1513200, navmesh_type=NavmeshType.Disable)
@@ -1198,7 +1198,7 @@ def Event_11510211():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=100,
+        dummy_id=100,
         trigger_attribute=TriggerAttribute.All,
     ))
     
@@ -1264,7 +1264,7 @@ def Event_11510300():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=102,
+        dummy_id=102,
         trigger_attribute=TriggerAttribute.All,
     ))
     AND_2.Add(FlagDisabled(11510303))
@@ -1274,7 +1274,7 @@ def Event_11510300():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=104,
+        dummy_id=104,
         trigger_attribute=TriggerAttribute.All,
     ))
     AND_3.Add(FlagEnabled(11510305))
@@ -1285,7 +1285,7 @@ def Event_11510300():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=192,
+        dummy_id=192,
         trigger_attribute=TriggerAttribute.All,
     ))
     AND_4.Add(FlagEnabled(11510305))
@@ -1296,7 +1296,7 @@ def Event_11510300():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=192,
+        dummy_id=192,
         trigger_attribute=TriggerAttribute.All,
     ))
     AND_5.Add(FlagEnabled(11510305))
@@ -1307,7 +1307,7 @@ def Event_11510300():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=192,
+        dummy_id=192,
         trigger_attribute=TriggerAttribute.All,
     ))
     AND_6.Add(FlagEnabled(11510305))
@@ -1318,7 +1318,7 @@ def Event_11510300():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=192,
+        dummy_id=192,
         trigger_attribute=TriggerAttribute.All,
     ))
     OR_1.Add(AND_1)
@@ -1333,7 +1333,7 @@ def Event_11510300():
     WaitForNetworkApproval(max_seconds=3.0)
     EnableFlag(11515300)
     SkipLinesIfFlagEnabled(20, 11510305)
-    Move(PLAYER, destination=1511300, destination_type=CoordEntityType.Object, model_point=103, short_move=True)
+    Move(PLAYER, destination=1511300, destination_type=CoordEntityType.Object, dummy_id=103, short_move=True)
     ForceAnimation(PLAYER, 8021)
     ForceAnimation(1511300, 10, wait_for_completion=True)
     SkipLinesIfMultiplayer(2)
@@ -1371,7 +1371,7 @@ def Event_11510300():
     Restart()
     SkipLinesIfFlagDisabled(33, 11510303)
     SkipLinesIfFinishedConditionFalse(6, input_condition=AND_1)
-    Move(PLAYER, destination=1511300, destination_type=CoordEntityType.Object, model_point=103, short_move=True)
+    Move(PLAYER, destination=1511300, destination_type=CoordEntityType.Object, dummy_id=103, short_move=True)
     ForceAnimation(PLAYER, 8021)
     ForceAnimation(1511300, 10)
     WaitFrames(frames=130)
@@ -1388,7 +1388,7 @@ def Event_11510300():
         frames=180,
     )
     SkipLinesIfFinishedConditionFalse(7, input_condition=AND_4)
-    Move(PLAYER, destination=1511302, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
+    Move(PLAYER, destination=1511302, destination_type=CoordEntityType.Object, dummy_id=191, short_move=True)
     ForceAnimation(PLAYER, 8000)
     ForceAnimation(1511302, 1)
     ForceAnimation(1511300, 10)
@@ -1406,7 +1406,7 @@ def Event_11510300():
         frames=180,
     )
     SkipLinesIfFinishedConditionFalse(7, input_condition=AND_5)
-    Move(PLAYER, destination=1511303, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
+    Move(PLAYER, destination=1511303, destination_type=CoordEntityType.Object, dummy_id=191, short_move=True)
     ForceAnimation(PLAYER, 8000)
     ForceAnimation(1511303, 1)
     ForceAnimation(1511300, 10)
@@ -1426,7 +1426,7 @@ def Event_11510300():
         frames_1=360,
     )
     SkipLinesIfFinishedConditionFalse(7, input_condition=AND_6)
-    Move(PLAYER, destination=1511304, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
+    Move(PLAYER, destination=1511304, destination_type=CoordEntityType.Object, dummy_id=191, short_move=True)
     ForceAnimation(PLAYER, 8000)
     ForceAnimation(1511304, 1)
     ForceAnimation(1511300, 10)
@@ -1449,7 +1449,7 @@ def Event_11510300():
     Restart()
     SkipLinesIfFlagDisabled(32, 11510302)
     SkipLinesIfFinishedConditionFalse(6, input_condition=AND_1)
-    Move(PLAYER, destination=1511300, destination_type=CoordEntityType.Object, model_point=103, short_move=True)
+    Move(PLAYER, destination=1511300, destination_type=CoordEntityType.Object, dummy_id=103, short_move=True)
     ForceAnimation(PLAYER, 8021)
     ForceAnimation(1511300, 11)
     WaitFrames(frames=130)
@@ -1466,7 +1466,7 @@ def Event_11510300():
         frames=360,
     )
     SkipLinesIfFinishedConditionFalse(6, input_condition=AND_2)
-    Move(PLAYER, destination=1511300, destination_type=CoordEntityType.Object, model_point=101, short_move=True)
+    Move(PLAYER, destination=1511300, destination_type=CoordEntityType.Object, dummy_id=101, short_move=True)
     ForceAnimation(PLAYER, 8020)
     ForceAnimation(1511300, 13)
     WaitFrames(frames=130)
@@ -1483,7 +1483,7 @@ def Event_11510300():
         frames=180,
     )
     SkipLinesIfFinishedConditionFalse(7, input_condition=AND_3)
-    Move(PLAYER, destination=1511301, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
+    Move(PLAYER, destination=1511301, destination_type=CoordEntityType.Object, dummy_id=191, short_move=True)
     ForceAnimation(PLAYER, 8000)
     ForceAnimation(1511301, 1)
     ForceAnimation(1511300, 13)
@@ -1501,7 +1501,7 @@ def Event_11510300():
         frames=180,
     )
     SkipLinesIfFinishedConditionFalse(7, input_condition=AND_5)
-    Move(PLAYER, destination=1511303, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
+    Move(PLAYER, destination=1511303, destination_type=CoordEntityType.Object, dummy_id=191, short_move=True)
     ForceAnimation(PLAYER, 8000)
     ForceAnimation(1511303, 1)
     ForceAnimation(1511300, 11)
@@ -1524,7 +1524,7 @@ def Event_11510300():
     Restart()
     SkipLinesIfFlagDisabled(25, 11510301)
     SkipLinesIfFinishedConditionFalse(6, input_condition=AND_2)
-    Move(PLAYER, destination=1511300, destination_type=CoordEntityType.Object, model_point=101, short_move=True)
+    Move(PLAYER, destination=1511300, destination_type=CoordEntityType.Object, dummy_id=101, short_move=True)
     ForceAnimation(PLAYER, 8020)
     ForceAnimation(1511300, 12)
     WaitFrames(frames=130)
@@ -1541,7 +1541,7 @@ def Event_11510300():
         frames=360,
     )
     SkipLinesIfFinishedConditionFalse(7, input_condition=AND_3)
-    Move(PLAYER, destination=1511301, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
+    Move(PLAYER, destination=1511301, destination_type=CoordEntityType.Object, dummy_id=191, short_move=True)
     ForceAnimation(PLAYER, 8000)
     ForceAnimation(1511301, 1)
     ForceAnimation(1511300, 12)
@@ -1561,7 +1561,7 @@ def Event_11510300():
         frames_1=180,
     )
     SkipLinesIfFinishedConditionFalse(7, input_condition=AND_6)
-    Move(PLAYER, destination=1511304, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
+    Move(PLAYER, destination=1511304, destination_type=CoordEntityType.Object, dummy_id=191, short_move=True)
     ForceAnimation(PLAYER, 8000)
     ForceAnimation(1511304, 1)
     ForceAnimation(1511300, 12)
@@ -1771,7 +1771,7 @@ def Event_11510310():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=102,
+        dummy_id=102,
         trigger_attribute=TriggerAttribute.All,
     ))
     AND_2.Add(FlagEnabled(11510303))
@@ -1781,7 +1781,7 @@ def Event_11510310():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=104,
+        dummy_id=104,
         trigger_attribute=TriggerAttribute.All,
     ))
     OR_2.Add(FlagDisabled(11510305))
@@ -1793,7 +1793,7 @@ def Event_11510310():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=192,
+        dummy_id=192,
         trigger_attribute=TriggerAttribute.All,
     ))
     OR_3.Add(FlagDisabled(11510305))
@@ -1805,7 +1805,7 @@ def Event_11510310():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=192,
+        dummy_id=192,
         trigger_attribute=TriggerAttribute.All,
     ))
     OR_4.Add(FlagDisabled(11510305))
@@ -1817,7 +1817,7 @@ def Event_11510310():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=192,
+        dummy_id=192,
         trigger_attribute=TriggerAttribute.All,
     ))
     OR_5.Add(FlagDisabled(11510305))
@@ -1829,7 +1829,7 @@ def Event_11510310():
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
-        model_point=192,
+        dummy_id=192,
         trigger_attribute=TriggerAttribute.All,
     ))
     AND_7.Add(FlagEnabled(11515300))
@@ -2076,7 +2076,7 @@ def Event_11510240():
         anchor_entity=1510100,
         anchor_type=CoordEntityType.Character,
         max_distance=7.0,
-        model_point=-1,
+        dummy_id=-1,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
     ))
     
@@ -2343,7 +2343,7 @@ def Event_11515200(_, character: int):
         anchor_type=CoordEntityType.Character,
         facing_angle=45.0,
         max_distance=1.2000000476837158,
-        model_point=7,
+        dummy_id=7,
         trigger_attribute=TriggerAttribute.All,
     ))
     
@@ -2353,7 +2353,7 @@ def Event_11515200(_, character: int):
         PLAYER,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=100,
+        dummy_id=100,
         copy_draw_parent=character,
     )
     ForceAnimation(PLAYER, 7521)
@@ -2835,7 +2835,7 @@ def Event_151():
         anchor_entity=1511960,
         anchor_type=CoordEntityType.Object,
         max_distance=3.4000000953674316,
-        model_point=-1,
+        dummy_id=-1,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
     ))
     

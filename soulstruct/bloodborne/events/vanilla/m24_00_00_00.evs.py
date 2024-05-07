@@ -93,8 +93,8 @@ def Constructor():
         region_3=2402801,
     )
     Event_12404490()
-    CreateObjectVFX(2401900, vfx_id=200, model_point=900130)
-    CreateObjectVFX(2401901, vfx_id=200, model_point=900130)
+    CreateObjectVFX(2401900, vfx_id=200, dummy_id=900130)
+    CreateObjectVFX(2401901, vfx_id=200, dummy_id=900130)
     RegisterLadder(start_climbing_flag=12400600, stop_climbing_flag=12400601, obj=2401020)
     RegisterLadder(start_climbing_flag=12400602, stop_climbing_flag=12400603, obj=2401021)
     RegisterLadder(start_climbing_flag=12400604, stop_climbing_flag=12400605, obj=2401022)
@@ -109,7 +109,7 @@ def Constructor():
     CreateHazard(
         obj_flag=12400190,
         obj=2401017,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6110,
         target_type=DamageTargetType.Character,
         radius=0.6000000238418579,
@@ -119,7 +119,7 @@ def Constructor():
     CreateHazard(
         obj_flag=12400191,
         obj=2401018,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6110,
         target_type=DamageTargetType.Character,
         radius=0.6000000238418579,
@@ -794,11 +794,11 @@ def Constructor():
         bit_index=1,
         bit_index_1=11,
     )
-    Event_12405790(0, obj=2401150, flag=9802, model_point=924110)
-    Event_12405790(1, obj=2401151, flag=9801, model_point=924110)
-    Event_12405790(2, obj=2401152, flag=6001, model_point=924113)
-    Event_12405790(3, obj=2401153, flag=9802, model_point=924110)
-    Event_12405790(4, obj=2401154, flag=9801, model_point=924113)
+    Event_12405790(0, obj=2401150, flag=9802, dummy_id=924110)
+    Event_12405790(1, obj=2401151, flag=9801, dummy_id=924110)
+    Event_12405790(2, obj=2401152, flag=6001, dummy_id=924113)
+    Event_12405790(3, obj=2401153, flag=9802, dummy_id=924110)
+    Event_12405790(4, obj=2401154, flag=9801, dummy_id=924113)
     Event_12405800(0, sound_id=2403310, flag=1439, flag_1=70000052, flag_2=9802)
     Event_12405800(1, sound_id=2403311, flag=1439, flag_1=70000053, flag_2=9801)
     Event_12405800(2, sound_id=2403312, flag=1439, flag_1=70000054, flag_2=6001)
@@ -1174,8 +1174,8 @@ def Event_12400125():
     EnableFlag(12400178)
     ForceAnimation(2401207, 1)
     Wait(1.0)
-    CreateObjectVFX(2401207, vfx_id=200, model_point=920204)
-    CreateObjectVFX(2401207, vfx_id=201, model_point=920205)
+    CreateObjectVFX(2401207, vfx_id=200, dummy_id=920204)
+    CreateObjectVFX(2401207, vfx_id=201, dummy_id=920205)
     Wait(3.0)
     DisableFlag(12400178)
     EnableObjectActivation(2401006, obj_act_id=2400000)
@@ -1197,8 +1197,8 @@ def Event_12400126():
     EnableFlag(12400178)
     ForceAnimation(2401207, 2)
     Wait(1.0)
-    CreateObjectVFX(2401207, vfx_id=200, model_point=920204)
-    CreateObjectVFX(2401207, vfx_id=201, model_point=920205)
+    CreateObjectVFX(2401207, vfx_id=200, dummy_id=920204)
+    CreateObjectVFX(2401207, vfx_id=201, dummy_id=920205)
     Wait(3.0)
     DisableFlag(12400178)
     EnableObjectActivation(2401006, obj_act_id=2400000)
@@ -1370,8 +1370,8 @@ def Event_12400155():
     EnableFlag(12405179)
     ForceAnimation(2401208, 1)
     Wait(1.0)
-    CreateObjectVFX(2401208, vfx_id=200, model_point=920204)
-    CreateObjectVFX(2401208, vfx_id=201, model_point=920205)
+    CreateObjectVFX(2401208, vfx_id=200, dummy_id=920204)
+    CreateObjectVFX(2401208, vfx_id=201, dummy_id=920205)
     Wait(3.0)
     DisableFlag(12405179)
     EnableObjectActivation(2401008, obj_act_id=2400000)
@@ -1393,8 +1393,8 @@ def Event_12400156():
     EnableFlag(12405179)
     ForceAnimation(2401208, 2)
     Wait(1.0)
-    CreateObjectVFX(2401208, vfx_id=200, model_point=920204)
-    CreateObjectVFX(2401208, vfx_id=201, model_point=920205)
+    CreateObjectVFX(2401208, vfx_id=200, dummy_id=920204)
+    CreateObjectVFX(2401208, vfx_id=201, dummy_id=920205)
     Wait(3.0)
     DisableFlag(12405179)
     EnableObjectActivation(2401008, obj_act_id=2400000)
@@ -1460,8 +1460,8 @@ def Event_12400760():
     WaitFrames(frames=31)
     ForceAnimation(2401220, 1)
     WaitFrames(frames=30)
-    CreateObjectVFX(2401220, vfx_id=200, model_point=920204)
-    CreateObjectVFX(2401220, vfx_id=201, model_point=920205)
+    CreateObjectVFX(2401220, vfx_id=200, dummy_id=920204)
+    CreateObjectVFX(2401220, vfx_id=201, dummy_id=920205)
     EnableFlag(12400160)
     if FlagEnabled(12401800):
         return
@@ -1483,8 +1483,8 @@ def Event_12400760():
     WaitFrames(frames=24)
     ForceAnimation(2400650, 7022, loop=True)
     WaitFrames(frames=6)
-    CreateObjectVFX(2401220, vfx_id=200, model_point=920204)
-    CreateObjectVFX(2401220, vfx_id=201, model_point=920205)
+    CreateObjectVFX(2401220, vfx_id=200, dummy_id=920204)
+    CreateObjectVFX(2401220, vfx_id=201, dummy_id=920205)
     DisplayDialog(text=10010174, number_buttons=NumberButtons.OneButton)
     EnableFlag(12400160)
     if FlagEnabled(12401800):
@@ -1547,8 +1547,8 @@ def Event_12400175():
     DisableObjectActivation(2401016, obj_act_id=2400000)
     ForceAnimation(2401209, 2)
     Wait(1.0)
-    CreateObjectVFX(2401209, vfx_id=200, model_point=920204)
-    CreateObjectVFX(2401209, vfx_id=201, model_point=920205)
+    CreateObjectVFX(2401209, vfx_id=200, dummy_id=920204)
+    CreateObjectVFX(2401209, vfx_id=201, dummy_id=920205)
     Wait(3.0)
     DisableFlag(12405175)
     EnableObjectActivation(2401015, obj_act_id=2400000)
@@ -1568,8 +1568,8 @@ def Event_12400175():
     DisableObjectActivation(2401016, obj_act_id=2400000)
     ForceAnimation(2401209, 1)
     Wait(1.0)
-    CreateObjectVFX(2401209, vfx_id=200, model_point=920204)
-    CreateObjectVFX(2401209, vfx_id=201, model_point=920205)
+    CreateObjectVFX(2401209, vfx_id=200, dummy_id=920204)
+    CreateObjectVFX(2401209, vfx_id=201, dummy_id=920205)
     Wait(3.0)
     DisableFlag(12400169)
     DisableFlag(12405175)
@@ -2047,8 +2047,8 @@ def Event_12400854():
     
     Wait(6.0)
     CreateVFX(2406711)
-    CreateTemporaryVFX(vfx_id=920206, anchor_entity=2401204, model_point=200, anchor_type=CoordEntityType.Object)
-    CreateTemporaryVFX(vfx_id=920207, anchor_entity=2401204, model_point=201, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=920206, anchor_entity=2401204, dummy_id=200, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=920207, anchor_entity=2401204, dummy_id=201, anchor_type=CoordEntityType.Object)
     Wait(4.0)
     CreateVFX(2406712)
     CreateVFX(2406713)
@@ -2209,7 +2209,7 @@ def Event_12405110(_, region: int, obj: int, vfx_id: int, obj_1: int, launch_ang
     PlaySoundEffect(obj, 990100001, sound_type=SoundType.o_Object)
     ForceAnimation(obj, 0, wait_for_completion=True)
     EnableFlag(flag)
-    CreateTemporaryVFX(vfx_id=150005, anchor_entity=obj, model_point=101, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=150005, anchor_entity=obj, dummy_id=101, anchor_type=CoordEntityType.Object)
     DeleteVFX(vfx_id, erase_root_only=False)
     EndIfFinishedConditionTrue(input_condition=AND_2)
     Wait(0.20000000298023224)
@@ -2217,38 +2217,38 @@ def Event_12405110(_, region: int, obj: int, vfx_id: int, obj_1: int, launch_ang
     ShootProjectile(
         owner_entity=2400000,
         source_entity=obj_1,
-        model_point=101,
+        dummy_id=101,
         behavior_id=5071,
         launch_angle_x=0,
         launch_angle_y=launch_angle_y,
         launch_angle_z=0,
     )
     PlaySoundEffect(obj_1, 243007000, sound_type=SoundType.a_Ambient)
-    CreateTemporaryVFX(vfx_id=929208, anchor_entity=obj_1, model_point=101, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=929208, anchor_entity=obj_1, dummy_id=101, anchor_type=CoordEntityType.Object)
     Wait(0.699999988079071)
     ShootProjectile(
         owner_entity=2400000,
         source_entity=obj_1,
-        model_point=101,
+        dummy_id=101,
         behavior_id=5071,
         launch_angle_x=0,
         launch_angle_y=launch_angle_y,
         launch_angle_z=0,
     )
     PlaySoundEffect(obj_1, 243007000, sound_type=SoundType.a_Ambient)
-    CreateTemporaryVFX(vfx_id=929208, anchor_entity=obj_1, model_point=101, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=929208, anchor_entity=obj_1, dummy_id=101, anchor_type=CoordEntityType.Object)
     Wait(0.699999988079071)
     ShootProjectile(
         owner_entity=2400000,
         source_entity=obj_1,
-        model_point=101,
+        dummy_id=101,
         behavior_id=5071,
         launch_angle_x=0,
         launch_angle_y=launch_angle_y,
         launch_angle_z=0,
     )
     PlaySoundEffect(obj_1, 243007000, sound_type=SoundType.a_Ambient)
-    CreateTemporaryVFX(vfx_id=929208, anchor_entity=obj_1, model_point=101, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=929208, anchor_entity=obj_1, dummy_id=101, anchor_type=CoordEntityType.Object)
     Wait(3.0)
     AND_3.Add(CharacterOutsideRegion(PLAYER, region=region))
     AND_3.Add(ObjectNotDestroyed(obj_1))
@@ -2974,12 +2974,12 @@ def Event_12405460(
 
 
 @RestartOnRest(12405790)
-def Event_12405790(_, obj: int, flag: int, model_point: int):
+def Event_12405790(_, obj: int, flag: int, dummy_id: int):
     """Event 12405790"""
     DeleteObjectVFX(obj)
     if FlagEnabled(flag):
         return
-    CreateObjectVFX(obj, vfx_id=200, model_point=model_point)
+    CreateObjectVFX(obj, vfx_id=200, dummy_id=dummy_id)
 
 
 @RestartOnRest(12405800)
@@ -6313,7 +6313,7 @@ def Event_12400840(_, flag: int, action_button_id: int, destination: int):
     
     MAIN.Await(AND_1)
     
-    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Object, model_point=210, short_move=True)
+    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Object, dummy_id=210, short_move=True)
     ForceAnimation(PLAYER, 101320)
     WaitFrames(frames=25)
     WaitFrames(frames=20)
@@ -7005,7 +7005,7 @@ def Event_12407020(_, flag: int, destination: int):
     """Event 12407020"""
     MAIN.Await(FlagEnabled(flag))
     
-    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Object, model_point=200, short_move=True)
+    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Object, dummy_id=200, short_move=True)
     ForceAnimation(PLAYER, 101160, skip_transition=True)
     Wait(4.0)
     DisableFlag(flag)
@@ -7029,10 +7029,10 @@ def Event_12407050(_, flag: int, character: int, destination: int):
     
     MAIN.Await(CharacterBackreadEnabled(character))
     
-    Move(character, destination=destination, destination_type=CoordEntityType.Object, model_point=250, short_move=True)
+    Move(character, destination=destination, destination_type=CoordEntityType.Object, dummy_id=250, short_move=True)
     ForceAnimation(character, 101165, loop=True)
     Wait(1.0)
-    Move(character, destination=destination, destination_type=CoordEntityType.Object, model_point=250, short_move=True)
+    Move(character, destination=destination, destination_type=CoordEntityType.Object, dummy_id=250, short_move=True)
     
     MAIN.Await(FlagEnabled(flag))
     

@@ -27,7 +27,7 @@ def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1034440000, asset=Assets.AEG099_060_9000)
     RunCommonEvent(1034442200)
-    CommonFunc_90005300(0, flag=1034440220, character=Characters.Scarab, item_lot=40218, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1034440220, character=Characters.Scarab, item_lot=40218, seconds=0.0, item_is_dropped=0)
     Event_1034440700(0, character=Characters.Commoner, animation_id=930023, flag=3409)
 
 
@@ -51,10 +51,10 @@ def Preconstructor():
         region=1034442200,
         radius=3.0,
         seconds=2.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -64,10 +64,10 @@ def Preconstructor():
         region=1034442200,
         radius=3.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(
         0,
@@ -85,10 +85,10 @@ def Preconstructor():
         region=1034442200,
         radius=3.0,
         seconds=1.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
 
 

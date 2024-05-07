@@ -138,8 +138,8 @@ def Constructor():
     CommonFunc_90005502(0, flag=10000524, asset=Assets.AEG219_010_0506, region=10002522)
     CommonFunc_90005690(0, region=10002610)
     CommonFunc_90005691(0, region=10002610)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, vfx_id=100, model_point=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, vfx_id=100, dummy_id=800, right=0)
     CommonFunc_90005632(0, flag=580040, asset=Assets.AEG099_388_5000, item_lot=80040)
     CommonFunc_90005570(0, flag=60836, gesture_param_id=94, asset=Assets.AEG099_610_9048, left=0, left_1=1, right=0)
     CommonFunc_90005560(0, flag=10000698, asset=Assets.AEG099_635_9000, left=0)
@@ -265,8 +265,8 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005300(0, flag=10000280, character=Characters.GraftedScion, item_lot=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=10000289, character=Characters.LionGuardian, item_lot=10001085, seconds=1.0, left=0)
+    CommonFunc_90005300(0, flag=10000280, character=Characters.GraftedScion, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=10000289, character=Characters.LionGuardian, item_lot=10001085, seconds=1.0, item_is_dropped=0)
     Event_11002291(0, character=Characters.UlceratedTreeSpirit, region=10002291, seconds=3.0)
     CommonFunc_90005300(
         0,
@@ -274,12 +274,12 @@ def Constructor():
         character=Characters.UlceratedTreeSpirit,
         item_lot=10001095,
         seconds=0.0,
-        left=0,
+        item_is_dropped=0,
     )
-    CommonFunc_90005300(0, flag=10000498, character=Characters.CrucibleKnight, item_lot=10001295, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=10000495, character=Characters.Scarab0, item_lot=40170, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=10000496, character=Characters.Scarab1, item_lot=40172, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=10000497, character=Characters.Scarab2, item_lot=40174, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=10000498, character=Characters.CrucibleKnight, item_lot=10001295, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=10000495, character=Characters.Scarab0, item_lot=40170, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=10000496, character=Characters.Scarab1, item_lot=40172, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=10000497, character=Characters.Scarab2, item_lot=40174, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005780(
         0,
         flag=10000800,
@@ -589,17 +589,17 @@ def Preconstructor():
     DisableBackread(Characters.Commoner25)
     Event_10000519()
     CommonFunc_90005260(0, character=Characters.Dummy1, region=0, radius=0.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Commoner0, region=10002218, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Commoner1, region=10002218, seconds=1.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Commoner0, region=10002218, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Commoner1, region=10002218, seconds=1.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.Commoner2, region=10002233, radius=3.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Commoner3, region=10002204, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Commoner3, region=10002204, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.Commoner4, region=10002233, radius=3.0, seconds=3.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Commoner5, region=10002204, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Commoner6, region=10002231, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Commoner7, region=10002236, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Commoner5, region=10002204, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Commoner6, region=10002231, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Commoner7, region=10002236, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.Commoner8, region=10002209, radius=3.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=10000210, region=10002211, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=10000211, region=10002211, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=10000210, region=10002211, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=10000211, region=10002211, seconds=0.0, animation_id=-1)
     CommonFunc_90005221(0, character=10000220, animation_id=30001, animation_id_1=20003, seconds=0.0, left=0)
     CommonFunc_90005221(0, character=10000221, animation_id=30002, animation_id_1=20005, seconds=0.0, left=0)
     CommonFunc_90005221(0, character=10000222, animation_id=30001, animation_id_1=20003, seconds=0.0, left=0)
@@ -667,20 +667,20 @@ def Preconstructor():
         left_4=1,
     )
     CommonFunc_90005251(0, character=Characters.Commoner14, radius=2.0, seconds=1.0, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.Commoner17, region=10002208, seconds=2.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Commoner18, region=10002208, seconds=1.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Commoner19, region=10002208, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Commoner20, region=10002208, seconds=2.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Commoner21, region=10002208, seconds=1.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Commoner22, region=10002208, seconds=3.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Commoner23, region=10002208, seconds=2.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Commoner24, region=10002208, seconds=1.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.CastleGuard0, region=10002300, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.CastleGuard1, region=10002300, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.CastleGuard3, region=10002301, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Commoner17, region=10002208, seconds=2.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Commoner18, region=10002208, seconds=1.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Commoner19, region=10002208, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Commoner20, region=10002208, seconds=2.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Commoner21, region=10002208, seconds=1.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Commoner22, region=10002208, seconds=3.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Commoner23, region=10002208, seconds=2.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Commoner24, region=10002208, seconds=1.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CastleGuard0, region=10002300, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CastleGuard1, region=10002300, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CastleGuard3, region=10002301, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.CastleGuard6, region=10002306, radius=1.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.CastleGuard7, region=10002306, radius=1.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.CastleGuard8, region=10002311, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CastleGuard8, region=10002311, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.CastleGuard9, region=10002313, radius=3.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(
         0,
@@ -719,12 +719,12 @@ def Preconstructor():
         seconds=0.0,
         animation_id=-1,
     )
-    CommonFunc_90005250(0, character=Characters.CastleGuard21, region=10002351, seconds=2.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.CastleGuard22, region=10002351, seconds=1.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.CastleGuard23, region=10002351, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.CastleGuard24, region=10002351, seconds=1.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.CastleGuard25, region=10002351, seconds=2.0, animation_id=-1)
-    CommonFunc_90005250(0, character=10000355, region=10002351, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CastleGuard21, region=10002351, seconds=2.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CastleGuard22, region=10002351, seconds=1.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CastleGuard23, region=10002351, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CastleGuard24, region=10002351, seconds=1.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CastleGuard25, region=10002351, seconds=2.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=10000355, region=10002351, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=1000393, radius=5.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=1000394, radius=5.0, seconds=1.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.CastleGuard27, radius=10.0, seconds=0.0, animation_id=-1)
@@ -744,9 +744,9 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.CastleGuard33, region=10002416, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.CastleGuard34, region=10002416, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.CastleGuard35, region=10002416, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CastleGuard33, region=10002416, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CastleGuard34, region=10002416, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CastleGuard35, region=10002416, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(
         0,
         character=Characters.CastleGuard36,
@@ -755,7 +755,7 @@ def Preconstructor():
         seconds=0.0,
         animation_id=-1,
     )
-    CommonFunc_90005250(0, character=Characters.CastleGuard38, region=10002214, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CastleGuard38, region=10002214, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=Characters.CastleGuard32,
@@ -768,8 +768,8 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.CastleGuard31, region=10002616, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.CastleGuard44, region=10002238, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CastleGuard31, region=10002616, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CastleGuard44, region=10002238, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.CastleGuard45,
@@ -808,9 +808,9 @@ def Preconstructor():
         left_3=0,
     )
     CommonFunc_90005251(0, character=Characters.CastleGuard48, radius=7.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.CastleGuard49, region=10002214, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BanishedKnight0, region=10002260, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BanishedKnight1, region=10002710, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CastleGuard49, region=10002214, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BanishedKnight0, region=10002260, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BanishedKnight1, region=10002710, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(
         0,
         character=Characters.BanishedKnight2,
@@ -819,11 +819,11 @@ def Preconstructor():
         seconds=0.0,
         animation_id=0,
     )
-    CommonFunc_90005250(0, character=Characters.BanishedKnight3, region=10002609, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BanishedKnight4, region=10002609, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BanishedKnight5, region=10002274, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BanishedKnight6, region=10002616, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BladedTalonEagle0, region=10002460, seconds=1.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BanishedKnight3, region=10002609, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BanishedKnight4, region=10002609, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BanishedKnight5, region=10002274, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BanishedKnight6, region=10002616, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BladedTalonEagle0, region=10002460, seconds=1.0, animation_id=-1)
     CommonFunc_90005261(
         0,
         character=Characters.BladedTalonEagle1,
@@ -840,17 +840,17 @@ def Preconstructor():
         seconds=0.0,
         animation_id=-1,
     )
-    CommonFunc_90005250(0, character=Characters.BladedTalonEagle3, region=10002463, seconds=0.5, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BladedTalonEagle4, region=10002463, seconds=0.0, animation_id=3009)
-    CommonFunc_90005250(0, character=Characters.BladedTalonEagle5, region=10002463, seconds=3.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BladedTalonEagle6, region=10002470, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BladedTalonEagle7, region=10002471, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BladedTalonEagle8, region=10002471, seconds=1.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BladedTalonEagle9, region=10002473, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BladedTalonEagle10, region=10002475, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=10000476, region=10002475, seconds=1.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BladedTalonEagle11, region=10002477, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BladedTalonEagle13, region=10002274, seconds=1.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BladedTalonEagle3, region=10002463, seconds=0.5, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BladedTalonEagle4, region=10002463, seconds=0.0, animation_id=3009)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BladedTalonEagle5, region=10002463, seconds=3.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BladedTalonEagle6, region=10002470, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BladedTalonEagle7, region=10002471, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BladedTalonEagle8, region=10002471, seconds=1.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BladedTalonEagle9, region=10002473, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BladedTalonEagle10, region=10002475, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=10000476, region=10002475, seconds=1.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BladedTalonEagle11, region=10002477, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BladedTalonEagle13, region=10002274, seconds=1.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=Characters.BladedTalonEagle14,
@@ -859,33 +859,33 @@ def Preconstructor():
         region=10002486,
         radius=5.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
-    CommonFunc_90005250(0, character=Characters.GiantRat, region=10002285, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GiantRat, region=10002285, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=10000285, region=10002285, radius=2.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Bat, region=10002544, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.Omen, region=10002213, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.LionGuardian, region=10002220, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.CrucibleKnight, region=10002498, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Eagle0, region=10002211, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Eagle1, region=10002211, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Eagle2, region=10002211, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Eagle3, region=10002211, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Eagle4, region=10002211, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Eagle5, region=10002211, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Eagle6, region=10002211, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Eagle7, region=10002211, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=10000588, region=10002212, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Eagle8, region=10002212, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Eagle9, region=10002212, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Eagle10, region=10002212, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Eagle11, region=10002212, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Eagle12, region=10002212, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Eagle13, region=10002212, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Eagle14, region=10002212, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Bat, region=10002544, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Omen, region=10002213, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LionGuardian, region=10002220, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CrucibleKnight, region=10002498, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Eagle0, region=10002211, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Eagle1, region=10002211, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Eagle2, region=10002211, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Eagle3, region=10002211, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Eagle4, region=10002211, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Eagle5, region=10002211, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Eagle6, region=10002211, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Eagle7, region=10002211, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=10000588, region=10002212, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Eagle8, region=10002212, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Eagle9, region=10002212, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Eagle10, region=10002212, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Eagle11, region=10002212, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Eagle12, region=10002212, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Eagle13, region=10002212, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Eagle14, region=10002212, seconds=0.0, animation_id=-1)
     Event_10003700(0, character=Characters.GatekeeperGostoc0, asset=Assets.AEG217_016_1000)
     Event_10003702(0, character=Characters.GatekeeperGostoc5)
     Event_10003703(0, character=Characters.GatekeeperGostoc6)
@@ -1370,7 +1370,7 @@ def Event_10002330(_, character: uint, asset: uint):
         return
     EnableNetworkSync()
     EnableAsset(asset)
-    AttachAssetToCharacter(character=character, model_point=50, asset=asset)
+    AttachAssetToCharacter(character=character, dummy_id=50, asset=asset)
     
     MAIN.Await(CharacterHasSpecialEffect(character, 10941))
     
@@ -1603,7 +1603,7 @@ def Event_10002673(_, tutorial_param_id: int, flag: uint, flag_1: uint, tutorial
 @RestartOnRest(10002680)
 def Event_10002680():
     """Event 10002680"""
-    CreateAssetVFX(Assets.AEG099_090_9002, vfx_id=100, model_point=800)
+    CreateAssetVFX(Assets.AEG099_090_9002, vfx_id=100, dummy_id=800)
 
 
 @RestartOnRest(10002690)
@@ -1776,7 +1776,7 @@ def Event_10002810():
         Characters.GodricktheGrafted,
         destination=Assets.AEG003_316_9001,
         destination_type=CoordEntityType.Asset,
-        model_point=100,
+        dummy_id=100,
         short_move=True,
     )
     DisableAsset(Assets.AEG099_330_9000)
@@ -1795,7 +1795,7 @@ def Event_10002810():
         Characters.GodricktheGrafted,
         destination=Assets.AEG003_316_9001,
         destination_type=CoordEntityType.Asset,
-        model_point=100,
+        dummy_id=100,
         short_move=True,
     )
     AND_2.Add(FlagEnabled(10002805))
@@ -1847,7 +1847,7 @@ def Event_10002811():
         Characters.GodricktheGrafted,
         destination=Assets.AEG003_316_9001,
         destination_type=CoordEntityType.Asset,
-        model_point=100,
+        dummy_id=100,
         short_move=True,
     )
     AddSpecialEffect(Characters.GodricktheGrafted, 14750)
@@ -1996,7 +1996,7 @@ def Event_10002849():
         flag_2=10002806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=10000800, asset=Assets.AEG099_002_9000, model_point=5, right=0)
+    CommonFunc_9005811(0, flag=10000800, asset=Assets.AEG099_002_9000, dummy_id=5, right=0)
     CommonFunc_9005822(
         0,
         flag=10000800,
@@ -2157,14 +2157,14 @@ def Event_10002889():
         flag_2=10002856,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=10000850, asset=Assets.AEG099_002_9001, model_point=3, right=10000851)
+    CommonFunc_9005811(0, flag=10000850, asset=Assets.AEG099_002_9001, dummy_id=3, right=10000851)
     CommonFunc_9005813(
         0,
         flag=10000850,
         asset=Assets.AEG099_002_9002,
-        model_point=3,
+        dummy_id=3,
         right=10000851,
-        model_point_1=806760,
+        dummy_id_1=806760,
     )
     CommonFunc_9005822(
         0,
@@ -3003,7 +3003,7 @@ def Event_10003738():
         return
     SkipLinesIfHost(2)
     EnableAsset(Assets.AEG099_003_9000)
-    CreateAssetVFX(Assets.AEG099_003_9000, vfx_id=101, model_point=3)
+    CreateAssetVFX(Assets.AEG099_003_9000, vfx_id=101, dummy_id=3)
     AND_5.Add(CharacterOutsideRegion(character=PLAYER, region=10002711))
     AND_5.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
     AND_6.Add(FlagEnabled(10009377))
@@ -3240,7 +3240,7 @@ def Event_10000763(_, asset: uint, radius: float):
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=100, model_point=42)
+    CreateAssetVFX(asset, vfx_id=100, dummy_id=42)
 
 
 @RestartOnRest(10000764)

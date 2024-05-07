@@ -43,8 +43,8 @@ def Constructor():
         flag_10=78108,
         flag_11=78109,
     )
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, vfx_id=100, model_point=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, vfx_id=100, dummy_id=800, right=0)
     CommonFunc_90005880(
         0,
         flag=1042370800,
@@ -136,7 +136,7 @@ def Event_1042372620(_, asset: uint, entity: uint, flag: uint):
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=200, model_point=803220)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=803220)
     
     MAIN.Await(FlagEnabled(flag))
     

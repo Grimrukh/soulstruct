@@ -32,8 +32,8 @@ def Constructor():
     Event_312112811()
     Event_31212830(0, flag=31210801, character=Characters.TalkDummy1)
     Event_31212860()
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, dummy_id=800, right=0)
     CommonFunc_90005261(
         0,
         character=Characters.GraveWardenDuelist,
@@ -192,10 +192,10 @@ def Preconstructor():
         region=31212209,
         radius=0.0,
         seconds=1.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(
         0,
@@ -984,8 +984,8 @@ def Event_31032849():
         flag_2=31212806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=31210800, asset=Assets.AEG099_001_9000, model_point=3, right=31210801)
-    CommonFunc_9005811(0, flag=31210800, asset=Assets.AEG099_001_9001, model_point=3, right=31210801)
+    CommonFunc_9005811(0, flag=31210800, asset=Assets.AEG099_001_9000, dummy_id=3, right=31210801)
+    CommonFunc_9005811(0, flag=31210800, asset=Assets.AEG099_001_9001, dummy_id=3, right=31210801)
     CommonFunc_9005822(
         0,
         flag=31210800,

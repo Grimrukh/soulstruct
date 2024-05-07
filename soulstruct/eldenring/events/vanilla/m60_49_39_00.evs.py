@@ -94,13 +94,13 @@ def Constructor():
     Event_1049392849()
     Event_1049390800()
     Event_1049392810()
-    CommonFunc_9005811(0, flag=1049390800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=1049390800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
     CommonFunc_90005880(
         0,
         flag=1049390850,
         flag_1=1049390855,
         flag_2=1049392850,
-        character=Characters.BattleMage,
+        character=Characters.BattleMageHugues,
         item_lot=1049390850,
         area_id=60,
         block_id=49,
@@ -127,7 +127,7 @@ def Constructor():
         flag=1049390850,
         flag_1=1049390855,
         flag_2=1049392850,
-        character=Characters.BattleMage,
+        character=Characters.BattleMageHugues,
         flag_3=1049392856,
         character_1=1049395860,
         asset=Assets.AEG099_120_1000,
@@ -178,12 +178,12 @@ def Constructor():
         region_1=1049392298,
         region_2=1049392297,
     )
-    CommonFunc_90005300(0, flag=1049390299, character=Characters.Scarab0, item_lot=40418, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=1049390298, character=Characters.Scarab1, item_lot=40416, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1049390299, character=Characters.Scarab0, item_lot=40418, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1049390298, character=Characters.Scarab1, item_lot=40416, seconds=0.0, item_is_dropped=0)
     Event_1049392201(0, character=Characters.WanderingNoble0, special_effect=10113, seconds=3.0, seconds_1=5.0)
     Event_1049392201(2, character=Characters.WanderingNoble2, special_effect=10113, seconds=6.0, seconds_1=2.0)
     Event_1049392201(3, character=Characters.RayaLucariaScholar3, special_effect=10113, seconds=9.0, seconds_1=3.0)
-    CommonFunc_90005250(0, character=Characters.Marionette, region=1049392405, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Marionette, region=1049392405, seconds=0.0, animation_id=-1)
 
 
 @RestartOnRest(1049392200)
@@ -224,7 +224,7 @@ def Event_1049392211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700000,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -236,7 +236,7 @@ def Event_1049392211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700010,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -248,7 +248,7 @@ def Event_1049392211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700020,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -260,7 +260,7 @@ def Event_1049392211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700030,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -272,7 +272,7 @@ def Event_1049392211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700040,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -284,7 +284,7 @@ def Event_1049392211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700050,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -296,7 +296,7 @@ def Event_1049392211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700060,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -308,7 +308,7 @@ def Event_1049392211(_, source_entity: uint, seconds: float):
     ShootProjectile(
         owner_entity=Characters.Human,
         source_entity=source_entity,
-        model_point=-1,
+        dummy_id=-1,
         behavior_id=802700070,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -325,7 +325,7 @@ def Event_1049392211(_, source_entity: uint, seconds: float):
 def Event_1049392300(_, asset: uint, flag: uint):
     """Event 1049392300"""
     EnableNetworkSync()
-    CreateAssetVFX(asset, vfx_id=200, model_point=1502)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=1502)
     
     MAIN.Await(FlagEnabled(flag))
     
@@ -338,7 +338,7 @@ def Event_1049392300(_, asset: uint, flag: uint):
 def Event_1049392301(_, asset: uint, flag: uint):
     """Event 1049392301"""
     EnableNetworkSync()
-    CreateAssetVFX(asset, vfx_id=200, model_point=1501)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=1501)
     
     MAIN.Await(FlagEnabled(flag))
     
@@ -365,7 +365,7 @@ def Event_1049392302(_, asset: uint, flag: uint):
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=100, model_point=806031)
+    CreateAssetVFX(asset, vfx_id=100, dummy_id=806031)
     End()
 
 
@@ -388,7 +388,7 @@ def Event_1049392303(_, asset: uint, flag: uint):
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=100, model_point=806031)
+    CreateAssetVFX(asset, vfx_id=100, dummy_id=806031)
 
 
 @ContinueOnRest(1049392350)
@@ -532,7 +532,7 @@ def Event_1049392849():
         flag_2=1049392806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=1049390800, asset=Assets.AEG099_002_9000, model_point=4, right=0)
+    CommonFunc_9005811(0, flag=1049390800, asset=Assets.AEG099_002_9000, dummy_id=4, right=0)
     CommonFunc_9005822(
         0,
         flag=1049390800,

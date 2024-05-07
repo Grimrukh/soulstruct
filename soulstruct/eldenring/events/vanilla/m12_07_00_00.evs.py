@@ -27,7 +27,7 @@ def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=71270, asset=Assets.AEG099_060_9000)
     RegisterGrace(grace_flag=71271, asset=Assets.AEG099_060_9001)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
     CommonFunc_90005501(
         0,
         flag=12070525,
@@ -57,13 +57,13 @@ def Preconstructor():
     DisableBackread(12070700)
     DisableBackread(12070701)
     Event_12070519()
-    CommonFunc_90005250(0, character=Characters.Clayman0, region=12072250, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Clayman1, region=12072250, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Clayman2, region=12072250, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Clayman3, region=12072250, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Clayman4, region=12072250, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Clayman5, region=12072250, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.Clayman6, region=12072250, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Clayman0, region=12072250, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Clayman1, region=12072250, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Clayman2, region=12072250, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Clayman3, region=12072250, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Clayman4, region=12072250, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Clayman5, region=12072250, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Clayman6, region=12072250, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=Characters.Clayman7,
@@ -72,10 +72,10 @@ def Preconstructor():
         region=12072271,
         radius=2.0,
         seconds=1.7999999523162842,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -85,10 +85,10 @@ def Preconstructor():
         region=12072271,
         radius=2.0,
         seconds=0.5,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -98,10 +98,10 @@ def Preconstructor():
         region=12072271,
         radius=2.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -111,10 +111,10 @@ def Preconstructor():
         region=12072271,
         radius=2.0,
         seconds=1.2000000476837158,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -124,10 +124,10 @@ def Preconstructor():
         region=12072271,
         radius=2.0,
         seconds=1.399999976158142,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -137,10 +137,10 @@ def Preconstructor():
         region=12072271,
         radius=2.0,
         seconds=0.30000001192092896,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -150,10 +150,10 @@ def Preconstructor():
         region=12072300,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -163,10 +163,10 @@ def Preconstructor():
         region=12072300,
         radius=10.0,
         seconds=0.5,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -176,10 +176,10 @@ def Preconstructor():
         region=12072310,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -189,10 +189,10 @@ def Preconstructor():
         region=12072310,
         radius=10.0,
         seconds=0.30000001192092896,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -202,10 +202,10 @@ def Preconstructor():
         region=12072310,
         radius=10.0,
         seconds=0.8999999761581421,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -215,10 +215,10 @@ def Preconstructor():
         region=12072310,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(0, character=Characters.SilverTear6, region=12072300, radius=5.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
@@ -229,10 +229,10 @@ def Preconstructor():
         region=12072320,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -242,10 +242,10 @@ def Preconstructor():
         region=12072320,
         radius=10.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005200(
         0,
@@ -357,8 +357,8 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.Dummy, region=12072382, seconds=0.0, animation_id=-1)
-    CommonFunc_90005300(0, flag=12070402, character=Characters.Scarab1, item_lot=40652, seconds=1.5, left=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Dummy, region=12072382, seconds=0.0, animation_id=-1)
+    CommonFunc_90005300(0, flag=12070402, character=Characters.Scarab1, item_lot=40652, seconds=1.5, item_is_dropped=0)
     Event_12073700(0, character=12070700, character_1=12070701)
 
 

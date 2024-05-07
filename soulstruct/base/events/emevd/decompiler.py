@@ -1,3 +1,4 @@
+from __future__ import annotations
 
 __all__ = [
     "base_decompiler_instruction",
@@ -16,6 +17,9 @@ import typing as tp
 from soulstruct.base.game_types.game_enums_manager import GameEnumsManager
 from soulstruct.base.events.emevd.enums import BaseEMEVDFlags
 from soulstruct.base.game_types import GameObjectInt
+
+if tp.TYPE_CHECKING:
+    from soulstruct.base.events.emevd.emedf import EMEDF_TYPING
 
 _LOGGER = logging.getLogger("soulstruct")
 
@@ -180,17 +184,42 @@ def assemble_arg_string(defaults: dict, *args, **kwargs):
 
 
 def base_decompiler_instruction(
-    emedf: dict,
+    emedf: EMEDF_TYPING,
     decompiler_funcs: dict[tuple[int, int], tp.Callable],
     opt_args_decompiler_funcs: dict[tuple[int, int], tp.Callable],
     enums_module: tp.Any,
     category: int,
     index: int,
     req_args: list[tp.Any],
-    opt_args: list[tp.Any],
+    opt_args: list[tp.Any] | None,
     opt_arg_types="",
     enums_manager: GameEnumsManager = None,
-):
+) -> str:
+    """
+    Shared code (for all games) for decompiling a single EMEVD `Instruction` inside an `Event`.
+
+    Args:
+        emedf: EMEDF dictionary for caller's game. Used to look up instruction information, including more advanced
+            properties like whether it should have its keyword used.
+        decompiler_funcs: Dictionary mapping instruction (category, index) to a function that decompiles it. If an
+            instruction is not present in this dictionary (or the opt_args alternative below), it will be decompiled
+            from EMEDF information only.
+        opt_args_decompiler_funcs: Alternate dictionary mapping instruction (category, index) to a function that
+            accepts optional arguments in addition to standard required arguments, such as instruction (2000, 0).
+        enums_module: Game-specific Python module from which general EMEVD enums like `ComparisonType` and `PLAYER`
+            should be imported.
+        category: Category (class) of instruction.
+        index: Index of instruction within category.
+        req_args: List of required Python-typed arguments for the instruction, already unpacked from bytes.
+        opt_args: List of optional Python-typed arguments for the instruction, already unpacked from bytes. Should be
+            `None` for most instructions.
+        opt_arg_types: Format string for `opt_args` types, e.g. 'IIiBbh'. Must match length of `opt_args`.
+        enums_manager: `GameEnumsManager` game-specific subclass used to look up entity IDs and other enums, so they
+            can be decompiled as named variables rather than raw integers.
+
+    Returns:
+        Decompiled instruction string, e.g. 'EnableFlag(10010800)`.
+    """
     instr_info = emedf[category, index]
     emedf_args_info = instr_info["args"]
     if len(emedf_args_info) != len(req_args):
@@ -248,7 +277,7 @@ def base_decompiler_instruction(
     for evs_arg_name, arg_value in filtered_evs_args.items():
         hide_name = evs_args_info[evs_arg_name].get("hide_name", False)
         if hide_name and not hiding_names:
-            print(f"# WARNING: 'hide_name' is False then True again for instruction '{evs_name}'.")
+            _LOGGER.warning(f"EMEDF warning: 'hide_name' is False then True again for instruction '{evs_name}'.")
         hiding_names &= hide_name
         default = evs_args_info[evs_arg_name]["default"]
         if default is not None:

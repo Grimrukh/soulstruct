@@ -2739,7 +2739,7 @@ def Event_1252382200(
             character,
             destination=destination,
             destination_type=CoordEntityType.Asset,
-            model_point=100,
+            dummy_id=100,
             copy_draw_parent=PLAYER,
         )
     Wait(1.0)
@@ -2811,7 +2811,7 @@ def Event_1252382280(
     SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
     AddSpecialEffect(character, 110)
     AddSpecialEffect(character, 111)
-    CreateAssetVFX(asset, vfx_id=100, model_point=30320)
+    CreateAssetVFX(asset, vfx_id=100, dummy_id=30320)
     RemoveSpecialEffect(character, 4380)
     RemoveSpecialEffect(character, 18677)
     EnableCharacter(character)
@@ -2857,7 +2857,7 @@ def Event_1252382360(_, character: uint, left: uint, flag: uint, flag_1: uint, f
     AND_4.Add(FlagEnabled(flag))
     AND_4.Add(FlagEnabled(flag_1))
     GotoIfConditionTrue(Label.L1, input_condition=AND_4)
-    CreateAssetVFX(asset, vfx_id=100, model_point=30080)
+    CreateAssetVFX(asset, vfx_id=100, dummy_id=30080)
     OR_1.Add(FlagEnabled(flag_1))
     OR_1.Add(FlagEnabled(1252380800))
     
@@ -2937,7 +2937,7 @@ def Event_1252382440(
         character,
         destination=destination,
         destination_type=CoordEntityType.Asset,
-        model_point=100,
+        dummy_id=100,
         copy_draw_parent=PLAYER,
     )
     WaitFrames(frames=1)
@@ -3031,7 +3031,7 @@ def Event_1252382520(
         character,
         destination=destination,
         destination_type=CoordEntityType.Asset,
-        model_point=100,
+        dummy_id=100,
         copy_draw_parent=PLAYER,
     )
     ClearTargetList(character)
@@ -3323,7 +3323,7 @@ def Event_1252382810():
     DefineLabel(0)
     DisableAnimations(Characters.Human0)
     DisableGravity(Characters.Human0)
-    SetLockOnPoint(character=Characters.Human0, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=Characters.Human0, lock_on_dummy_id=220, state=False)
     SetTeamType(Characters.Human0, TeamType.NoTeam)
     DisableAI(Characters.Human0)
     SetDistanceBasedNetworkAuthorityUpdate(character=Characters.Human0, state=True)
@@ -3384,7 +3384,7 @@ def Event_1252382820():
         Characters.Human0,
         destination=PLAYER,
         destination_type=CoordEntityType.Character,
-        model_point=900,
+        dummy_id=900,
         copy_draw_parent=PLAYER,
     )
     RotateToFaceEntity(Characters.Human0, 1052382299, wait_for_completion=True)
@@ -3394,7 +3394,7 @@ def Event_1252382820():
         Characters.StarscourgeRadahn,
         destination=Characters.Human0,
         destination_type=CoordEntityType.Character,
-        model_point=900,
+        dummy_id=900,
         copy_draw_parent=Characters.Human0,
     )
     Goto(Label.L2)
@@ -3406,7 +3406,7 @@ def Event_1252382820():
         Characters.StarscourgeRadahn,
         destination=PLAYER,
         destination_type=CoordEntityType.Character,
-        model_point=229,
+        dummy_id=229,
         copy_draw_parent=PLAYER,
     )
 

@@ -30,7 +30,7 @@ def Constructor():
         character=Characters.UlceratedTreeSpirit,
         item_lot=1042500020,
         seconds=0.0,
-        left=0,
+        item_is_dropped=0,
     )
 
 

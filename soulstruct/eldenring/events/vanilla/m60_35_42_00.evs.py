@@ -26,7 +26,7 @@ def Constructor():
     """Event 0"""
     Event_1035422150()
     RegisterGrace(grace_flag=1035420000, asset=Assets.AEG099_060_9000)
-    CommonFunc_90005870(0, character=Characters.Omenkiller, name=904820600, npc_threat_level=5)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.Omenkiller, name=904820600, npc_threat_level=5)
     CommonFunc_90005860(
         0,
         flag=1035420800,
@@ -36,7 +36,7 @@ def Constructor():
         item_lot=30225,
         seconds=0.0,
     )
-    CommonFunc_90005300(0, flag=1035420220, character=Characters.Scarab, item_lot=40208, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1035420220, character=Characters.Scarab, item_lot=40208, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005780(
         0,
         flag=1035420800,
@@ -100,8 +100,8 @@ def Constructor():
         left=1035422712,
         flag_4=1035422713,
     )
-    CommonFunc_90005709(0, attacked_entity=Characters.Ranni, model_point=905, vfx_id=603000)
-    CommonFunc_90005709(0, attacked_entity=Characters.Ranni, model_point=960, vfx_id=603050)
+    CommonFunc_90005709(0, attacked_entity=Characters.Ranni, dummy_id=905, vfx_id=603000)
+    CommonFunc_90005709(0, attacked_entity=Characters.Ranni, dummy_id=960, vfx_id=603050)
     CommonFunc_90005750(
         0,
         asset=Assets.AEG099_990_9000,
@@ -110,7 +110,7 @@ def Constructor():
         first_flag=400393,
         last_flag=400393,
         flag=1035429255,
-        model_point=0,
+        dummy_id=0,
     )
     Event_1035420711(0, entity=Characters.Ranni)
     Event_1035420712()
@@ -131,10 +131,10 @@ def Preconstructor():
         seconds=0.0,
         animation_id=-1,
     )
-    CommonFunc_90005250(0, character=1035420201, region=1035422204, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=1035420201, region=1035422204, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.AlbinauricLookout1, radius=8.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.AlbinauricLookout2, radius=8.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=1035420204, region=1035422204, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=1035420204, region=1035422204, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=1035420205,
@@ -147,15 +147,15 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=1035420206, region=1035422204, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=1035420207, region=1035422204, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=1035420206, region=1035422204, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=1035420207, region=1035422204, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.AlbinauricLookout3, radius=5.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.AlbinauricLookout4, region=1035422204, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.AlbinauricLookout5, region=1035422204, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.AlbinauricLookout6, region=1035422204, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.AlbinauricLookout7, region=1035422204, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.SmallCrabCrystal0, region=1035422315, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.SmallCrabCrystal1, region=1035422317, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AlbinauricLookout4, region=1035422204, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AlbinauricLookout5, region=1035422204, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AlbinauricLookout6, region=1035422204, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AlbinauricLookout7, region=1035422204, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallCrabCrystal0, region=1035422315, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallCrabCrystal1, region=1035422317, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.LargeCrabSnow0,
@@ -399,7 +399,7 @@ def Event_1035420701(_, character: uint, asset: uint):
     DisableAsset(Assets.AEG099_090_9020)
     GotoIfFlagEnabled(Label.L1, flag=1035420701)
     EnableAsset(Assets.AEG099_090_9020)
-    CreateAssetVFX(Assets.AEG099_090_9020, vfx_id=100, model_point=600904)
+    CreateAssetVFX(Assets.AEG099_090_9020, vfx_id=100, dummy_id=600904)
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(AttackedWithDamageType(attacked_entity=asset, attacker=20000))
     
@@ -415,7 +415,7 @@ def Event_1035420701(_, character: uint, asset: uint):
     ForceAnimation(character, 20042)
     EnableCharacter(character)
     WaitFrames(frames=1)
-    CreateTemporaryVFX(vfx_id=302603, anchor_entity=character, model_point=220, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=302603, anchor_entity=character, dummy_id=220, anchor_type=CoordEntityType.Character)
     Wait(1.0)
 
     # --- Label 1 --- #

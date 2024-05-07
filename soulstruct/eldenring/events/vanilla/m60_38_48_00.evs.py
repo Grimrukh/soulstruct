@@ -26,7 +26,7 @@ from .enums.m60_37_49_00_enums import Characters as m60_37_Characters
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1038480000, asset=Assets.AEG099_060_9000)
-    CommonFunc_90005870(0, character=Characters.ErdtreeAvatar, name=904810601, npc_threat_level=18)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.ErdtreeAvatar, name=904810601, npc_threat_level=18)
     CommonFunc_90005860(
         0,
         flag=1038480800,
@@ -36,7 +36,7 @@ def Constructor():
         item_lot=30200,
         seconds=0.0,
     )
-    CommonFunc_90005872(0, character=Characters.ErdtreeAvatar, npc_threat_level=18, right=0)
+    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.ErdtreeAvatar, npc_threat_level=18, required_flag=0)
     Event_1038482580()
     CommonFunc_90005683(0, flag=62201, asset=Assets.AEG099_055_2000, vfx_id=209, flag_1=78290, flag_2=78290)
 

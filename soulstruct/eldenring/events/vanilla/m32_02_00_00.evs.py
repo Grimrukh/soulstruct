@@ -367,19 +367,19 @@ def Constructor():
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
-    CommonFunc_90005250(0, character=Characters.GlintstoneMiner0, region=32022200, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner0, region=32022200, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.GlintstoneMiner1, radius=26.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.GlintstoneMiner5, region=32022208, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.GlintstoneMiner6, region=32022210, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.GlintstoneMiner7, region=32022210, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.GlintstoneMiner8, region=32022213, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.GlintstoneMiner8, region=32022212, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.GlintstoneMiner9, region=32022210, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.GlintstoneMiner9, region=32022213, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.GlintstoneMiner13, region=32022217, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=32020220, region=32022220, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.BigGlintstoneMiner, region=32022230, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.GlintstoneMiner21, region=32022230, seconds=5.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner5, region=32022208, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner6, region=32022210, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner7, region=32022210, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner8, region=32022213, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner8, region=32022212, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner9, region=32022210, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner9, region=32022213, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner13, region=32022217, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=32020220, region=32022220, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BigGlintstoneMiner, region=32022230, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner21, region=32022230, seconds=5.0, animation_id=-1)
     CommonFunc_90005260(
         0,
         character=Characters.GlintstoneMiner22,
@@ -413,7 +413,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=32020305, region=32022305, seconds=2.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=32020305, region=32022305, seconds=2.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.Marionette0,
@@ -897,7 +897,7 @@ def Event_32022810():
     DisableAI(Characters.Crystalian)
     AddSpecialEffect(Characters.Crystalian, 8090)
     EnableInvincibility(Characters.Crystalian)
-    SetLockOnPoint(character=Characters.Crystalian, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=Characters.Crystalian, lock_on_dummy_id=220, state=False)
     ForceAnimation(Characters.Crystalian, 30001, loop=True)
     AND_2.Add(FlagEnabled(32022805))
     AND_2.Add(CharacterInsideRegion(character=PLAYER, region=32022800))
@@ -912,7 +912,7 @@ def Event_32022810():
     SetNetworkUpdateRate(Characters.Crystalian, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     EnableBossHealthBar(Characters.Crystalian, name=903350320)
     DisableInvincibility(Characters.Crystalian)
-    SetLockOnPoint(character=Characters.Crystalian, lock_on_model_point=220, state=True)
+    SetLockOnPoint(character=Characters.Crystalian, lock_on_dummy_id=220, state=True)
 
 
 @RestartOnRest(32022811)
@@ -950,7 +950,7 @@ def Event_32022849():
         flag_2=32022806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=32020800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=32020800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=32020800,

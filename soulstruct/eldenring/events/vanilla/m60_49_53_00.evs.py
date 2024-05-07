@@ -48,7 +48,7 @@ def Constructor():
     CommonFunc_90005261(0, character=Characters.Springhare1, region=1049532261, radius=1.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.Springhare2, region=1049532262, radius=1.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.Springhare3, region=1049532263, radius=1.0, seconds=0.0, animation_id=0)
-    CommonFunc_900005610(0, asset=1049531600, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=1049531600, vfx_id=100, dummy_id=800, right=0)
     Event_1049532200(0, character=1049535200)
     CommonFunc_90005704(0, attacked_entity=Characters.Shabriri, flag=3621, flag_1=3620, flag_2=1049539201, right=3)
     CommonFunc_90005703(
@@ -83,7 +83,7 @@ def Preconstructor():
 def Event_1049532200(_, character: uint):
     """Event 1049532200"""
     DisableAnimations(character)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
     End()
 
 

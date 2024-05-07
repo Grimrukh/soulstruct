@@ -46,11 +46,11 @@ def Constructor():
     )
     RegisterGrace(grace_flag=1038500001, asset=Assets.AEG099_060_9001)
     RegisterGrace(grace_flag=76301, asset=Assets.AEG099_060_9002)
-    CommonFunc_90005300(0, flag=1038500210, character=Characters.Scarab, item_lot=40256, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1038500210, character=Characters.Scarab, item_lot=40256, seconds=0.0, item_is_dropped=0)
     Event_1038502580()
     Event_1038502500()
     Event_1038503700(0, character=Characters.RyatheScout, asset=Assets.AEG099_320_9000)
-    CommonFunc_90005752(0, asset=1038501700, vfx_id=200, model_point=120, seconds=3.0)
+    CommonFunc_90005752(0, asset=1038501700, vfx_id=200, dummy_id=120, seconds=3.0)
     Event_1038503701()
     Event_1038503702(0, attacked_entity=1038501700, other_entity=Characters.RyatheScout)
     Event_1038503703()
@@ -60,9 +60,9 @@ def Constructor():
         flag_1=1038502706,
         left=1038502707,
         character=Characters.RyatheScout,
-        model_point=703,
+        dummy_id=703,
         asset=Assets.AEG099_090_9003,
-        model_point_1=703,
+        dummy_id_1=703,
         radius=0.20000000298023224,
         animation=90203,
         animation_id=-1,

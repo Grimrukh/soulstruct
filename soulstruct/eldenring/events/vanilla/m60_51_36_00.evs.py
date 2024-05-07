@@ -75,8 +75,8 @@ def Constructor():
             0,
             asset__asset_flag=1051362501,
             asset=Assets.AEG007_505_2001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004070,
             radius=1.0,
             life=0.0,
@@ -87,8 +87,8 @@ def Constructor():
             0,
             asset__asset_flag=1051362501,
             asset=Assets.AEG007_505_2001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004060,
             radius=1.0,
             life=0.0,
@@ -99,8 +99,8 @@ def Constructor():
             0,
             asset__asset_flag=1051362501,
             asset=Assets.AEG007_505_2001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004050,
             radius=1.0,
             life=0.0,
@@ -111,8 +111,8 @@ def Constructor():
             0,
             asset__asset_flag=1051362501,
             asset=Assets.AEG007_505_2001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004040,
             radius=1.0,
             life=0.0,
@@ -123,8 +123,8 @@ def Constructor():
             0,
             asset__asset_flag=1051362501,
             asset=Assets.AEG007_505_2001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004030,
             radius=1.0,
             life=0.0,
@@ -135,8 +135,8 @@ def Constructor():
             0,
             asset__asset_flag=1051362501,
             asset=Assets.AEG007_505_2001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004020,
             radius=1.0,
             life=0.0,
@@ -147,8 +147,8 @@ def Constructor():
             0,
             asset__asset_flag=1051362501,
             asset=Assets.AEG007_505_2001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004010,
             radius=1.0,
             life=0.0,
@@ -159,8 +159,8 @@ def Constructor():
             0,
             asset__asset_flag=1051362501,
             asset=Assets.AEG007_505_2001,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004000,
             radius=1.0,
             life=0.0,
@@ -171,8 +171,8 @@ def Constructor():
             0,
             asset__asset_flag=1051362503,
             asset=Assets.AEG007_505_2003,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004070,
             radius=1.0,
             life=0.0,
@@ -183,8 +183,8 @@ def Constructor():
             0,
             asset__asset_flag=1051362503,
             asset=Assets.AEG007_505_2003,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004060,
             radius=1.0,
             life=0.0,
@@ -195,8 +195,8 @@ def Constructor():
             0,
             asset__asset_flag=1051362503,
             asset=Assets.AEG007_505_2003,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004050,
             radius=1.0,
             life=0.0,
@@ -207,8 +207,8 @@ def Constructor():
             0,
             asset__asset_flag=1051362503,
             asset=Assets.AEG007_505_2003,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004040,
             radius=1.0,
             life=0.0,
@@ -219,8 +219,8 @@ def Constructor():
             0,
             asset__asset_flag=1051362503,
             asset=Assets.AEG007_505_2003,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004030,
             radius=1.0,
             life=0.0,
@@ -231,8 +231,8 @@ def Constructor():
             0,
             asset__asset_flag=1051362503,
             asset=Assets.AEG007_505_2003,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004020,
             radius=1.0,
             life=0.0,
@@ -243,8 +243,8 @@ def Constructor():
             0,
             asset__asset_flag=1051362503,
             asset=Assets.AEG007_505_2003,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004010,
             radius=1.0,
             life=0.0,
@@ -255,8 +255,8 @@ def Constructor():
             0,
             asset__asset_flag=1051362503,
             asset=Assets.AEG007_505_2003,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802004000,
             radius=1.0,
             life=0.0,
@@ -266,8 +266,8 @@ def Constructor():
         0,
         asset__asset_flag=1051362500,
         asset=Assets.AEG007_505_2000,
-        model_point_start=200,
-        model_point_end=0,
+        dummy_id_start=200,
+        dummy_id_end=0,
         behavior_param_id__behaviour_id=802004000,
         radius=1.0,
         life=0.0,
@@ -278,8 +278,8 @@ def Constructor():
         1,
         asset__asset_flag=1051362500,
         asset=Assets.AEG007_505_2000,
-        model_point_start=200,
-        model_point_end=0,
+        dummy_id_start=200,
+        dummy_id_end=0,
         behavior_param_id__behaviour_id=802004010,
         radius=1.0,
         life=0.0,
@@ -290,8 +290,8 @@ def Constructor():
         2,
         asset__asset_flag=1051362500,
         asset=Assets.AEG007_505_2000,
-        model_point_start=200,
-        model_point_end=0,
+        dummy_id_start=200,
+        dummy_id_end=0,
         behavior_param_id__behaviour_id=802004020,
         radius=1.0,
         life=0.0,
@@ -302,8 +302,8 @@ def Constructor():
         3,
         asset__asset_flag=1051362500,
         asset=Assets.AEG007_505_2000,
-        model_point_start=200,
-        model_point_end=0,
+        dummy_id_start=200,
+        dummy_id_end=0,
         behavior_param_id__behaviour_id=802004030,
         radius=1.0,
         life=0.0,
@@ -314,8 +314,8 @@ def Constructor():
         4,
         asset__asset_flag=1051362500,
         asset=Assets.AEG007_505_2000,
-        model_point_start=200,
-        model_point_end=0,
+        dummy_id_start=200,
+        dummy_id_end=0,
         behavior_param_id__behaviour_id=802004040,
         radius=1.0,
         life=0.0,
@@ -326,8 +326,8 @@ def Constructor():
         5,
         asset__asset_flag=1051362500,
         asset=Assets.AEG007_505_2000,
-        model_point_start=200,
-        model_point_end=0,
+        dummy_id_start=200,
+        dummy_id_end=0,
         behavior_param_id__behaviour_id=802004050,
         radius=1.0,
         life=0.0,
@@ -338,8 +338,8 @@ def Constructor():
         6,
         asset__asset_flag=1051362500,
         asset=Assets.AEG007_505_2000,
-        model_point_start=200,
-        model_point_end=0,
+        dummy_id_start=200,
+        dummy_id_end=0,
         behavior_param_id__behaviour_id=802004060,
         radius=1.0,
         life=0.0,
@@ -350,21 +350,21 @@ def Constructor():
         7,
         asset__asset_flag=1051362500,
         asset=Assets.AEG007_505_2000,
-        model_point_start=200,
-        model_point_end=0,
+        dummy_id_start=200,
+        dummy_id_end=0,
         behavior_param_id__behaviour_id=802004070,
         radius=1.0,
         life=0.0,
         repetition_time=1.0,
         flag=57,
     )
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, vfx_id=100, model_point=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, vfx_id=100, model_point=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9004, vfx_id=100, model_point=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9005, vfx_id=100, model_point=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9006, vfx_id=100, model_point=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9007, vfx_id=100, model_point=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9008, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9004, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9005, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9006, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9007, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9008, vfx_id=100, dummy_id=800, right=0)
     CommonFunc_90005605(
         0,
         asset=Assets.AEG099_510_9000,
@@ -410,7 +410,7 @@ def Constructor():
         character=Characters.LionGuardian0,
         item_lot=1051360700,
         seconds=0.0,
-        left=0,
+        item_is_dropped=0,
     )
     CommonFunc_90005300(
         0,
@@ -418,14 +418,14 @@ def Constructor():
         character=Characters.LionGuardian1,
         item_lot=1051360800,
         seconds=0.0,
-        left=0,
+        item_is_dropped=0,
     )
     Event_1051362340(0, character=Characters.Troll)
-    CommonFunc_90005250(0, character=Characters.RadahnSoldier, region=1051362422, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RadahnFootSoldier0, region=1051362422, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RadahnFootSoldier1, region=1051362422, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.RadahnFootSoldier2, region=1051362422, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.MadPumpkinHead, region=1051362490, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier, region=1051362422, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnFootSoldier0, region=1051362422, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnFootSoldier1, region=1051362422, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnFootSoldier2, region=1051362422, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.MadPumpkinHead, region=1051362490, seconds=0.0, animation_id=-1)
     CommonFunc_90005501(
         0,
         flag=1051360510,
@@ -547,8 +547,8 @@ def Event_1051362216(
     _,
     asset__asset_flag: uint,
     asset: uint,
-    model_point_start: int,
-    model_point_end: int,
+    dummy_id_start: int,
+    dummy_id_end: int,
     behavior_param_id__behaviour_id: int,
     radius: float,
     life: float,
@@ -565,11 +565,11 @@ def Event_1051362216(
         return
     if AssetDestroyed(asset):
         return
-    if ValueEqual(left=0, right=model_point_end):
+    if ValueEqual(left=0, right=dummy_id_end):
         CreateHazard(
             asset_flag=asset__asset_flag,
             asset=asset,
-            model_point=model_point_start,
+            dummy_id=dummy_id_start,
             behavior_param_id=behavior_param_id__behaviour_id,
             target_type=DamageTargetType.Character,
             radius=radius,
@@ -580,8 +580,8 @@ def Event_1051362216(
         CreateBigHazardousAsset(
             asset_flag=asset__asset_flag,
             asset=asset,
-            model_point_start=model_point_start,
-            model_point_end=model_point_end,
+            dummy_id_start=dummy_id_start,
+            dummy_id_end=dummy_id_end,
             behaviour_id=behavior_param_id__behaviour_id,
             target_type=DamageTargetType.Character,
             radius=radius,
@@ -619,7 +619,7 @@ def Event_1051362220():
     DefineLabel(1)
     EndOfAnimation(asset=Assets.AEG030_419_2000, animation_id=2)
     EnableAsset(Assets.AEG099_001_9002)
-    CreateAssetVFX(Assets.AEG099_001_9002, vfx_id=101, model_point=5)
+    CreateAssetVFX(Assets.AEG099_001_9002, vfx_id=101, dummy_id=5)
     SetCurrentTime(
         time=(3, 30, 0),
         fade_transition=False,
@@ -841,7 +841,7 @@ def Event_1051362650(
     if AND_10:
         return
     if FlagDisabled(9000):
-        CreateAssetVFX(asset, vfx_id=100, model_point=6400)
+        CreateAssetVFX(asset, vfx_id=100, dummy_id=6400)
     AND_1.Add(FlagEnabled(flag_1))
     AND_1.Add(FlagDisabled(9000))
     OR_1.Add(FlagEnabled(flag))
@@ -854,7 +854,7 @@ def Event_1051362650(
     AND_11.Add(EventValue(flag=source_flag, bit_count=3) > value)
     if AND_11:
         return RESTART
-    CreateAssetVFX(asset, vfx_id=100, model_point=6400)
+    CreateAssetVFX(asset, vfx_id=100, dummy_id=6400)
     if UnsignedEqual(left=value, right=0):
         EnableFlag(flag_2)
         EventValueOperation(
@@ -1042,8 +1042,8 @@ def Event_1051362849():
         flag_2=1051362806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=1051360800, asset=Assets.AEG099_001_9000, model_point=5, right=0)
-    CommonFunc_9005811(0, flag=1051360800, asset=Assets.AEG099_001_9001, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=1051360800, asset=Assets.AEG099_001_9000, dummy_id=5, right=0)
+    CommonFunc_9005811(0, flag=1051360800, asset=Assets.AEG099_001_9001, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=1051360800,

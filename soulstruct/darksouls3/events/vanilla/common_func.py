@@ -2212,7 +2212,7 @@ def CommonFunc_20005400(_, character: int):
         PLAYER,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=100,
+        dummy_id=100,
         copy_draw_parent=PLAYER,
     )
     ForceAnimation(PLAYER, 60080, unknown2=1.0)
@@ -2351,7 +2351,7 @@ def CommonFunc_20005415(
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=110,
+        dummy_id=110,
         copy_draw_parent=character,
     )
     ForceAnimation(character_1, 3010, skip_transition=True, unknown2=1.0)
@@ -2371,7 +2371,7 @@ def CommonFunc_20005415(
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=110,
+        dummy_id=110,
         copy_draw_parent=character,
     )
     DisableCharacter(character)
@@ -2491,7 +2491,7 @@ def CommonFunc_20005417(
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=110,
+        dummy_id=110,
         copy_draw_parent=character,
     )
     ForceAnimation(character_1, 3010, skip_transition=True, unknown2=1.0)
@@ -2511,7 +2511,7 @@ def CommonFunc_20005417(
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=110,
+        dummy_id=110,
         copy_draw_parent=character,
     )
     DisableCharacter(character)
@@ -2676,7 +2676,7 @@ def CommonFunc_20005434(_, character: int, character_1: int):
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=50,
+        dummy_id=50,
         copy_draw_parent=character,
     )
     SetDisplayMask(character_1, bit_index=0, switch_type=OnOffChange.On)
@@ -2717,7 +2717,7 @@ def CommonFunc_20005440(_, character: int, character_1: int, tae_event_id: int):
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=100,
+        dummy_id=100,
         copy_draw_parent=character,
     )
     Restart()
@@ -2742,7 +2742,7 @@ def CommonFunc_20005490(
     character: int,
     entity: int,
     source_entity: int,
-    model_point: int,
+    dummy_id: int,
     behavior_id: int,
     behavior_id_1: int,
     behavior_id_2: int,
@@ -2777,7 +2777,7 @@ def CommonFunc_20005490(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2787,7 +2787,7 @@ def CommonFunc_20005490(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2797,7 +2797,7 @@ def CommonFunc_20005490(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=behavior_id_2,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2807,7 +2807,7 @@ def CommonFunc_20005490(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=behavior_id_3,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2817,7 +2817,7 @@ def CommonFunc_20005490(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=behavior_id_4,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2827,7 +2827,7 @@ def CommonFunc_20005490(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=behavior_id_5,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2837,7 +2837,7 @@ def CommonFunc_20005490(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=behavior_id_6,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -3064,7 +3064,7 @@ def CommonFunc_20005500(_, flag: int, bonfire_flag: int, character: int, obj: in
     
     MAIN.Await(FlagEnabled(flag))
     
-    CreateTemporaryVFX(vfx_id=1060, anchor_entity=obj, model_point=200, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=1060, anchor_entity=obj, dummy_id=200, anchor_type=CoordEntityType.Object)
     Wait(0.5)
     EnableObject(obj)
     EnableCharacter(character)
@@ -3088,9 +3088,9 @@ def CommonFunc_20005510(
     GotoIfFlagEnabled(Label.L0, flag=flag_1)
     DeleteObjectVFX(obj)
     if FlagDisabled(flag):
-        CreateObjectVFX(obj, vfx_id=10, model_point=82)
+        CreateObjectVFX(obj, vfx_id=10, dummy_id=82)
     else:
-        CreateObjectVFX(obj, vfx_id=10, model_point=83)
+        CreateObjectVFX(obj, vfx_id=10, dummy_id=83)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -3113,8 +3113,8 @@ def CommonFunc_20005510(
     RotateToFaceEntity(PLAYER, obj, animation=60800)
     Wait(2.0999999046325684)
     DeleteObjectVFX(obj)
-    CreateTemporaryVFX(vfx_id=84, anchor_entity=obj, model_point=10, anchor_type=CoordEntityType.Object)
-    CreateObjectVFX(obj, vfx_id=10, model_point=83)
+    CreateTemporaryVFX(vfx_id=84, anchor_entity=obj, dummy_id=10, anchor_type=CoordEntityType.Object)
+    CreateObjectVFX(obj, vfx_id=10, dummy_id=83)
     EnableFlag(flag)
 
     # --- Label 1 --- #
@@ -3139,17 +3139,17 @@ def CommonFunc_20005511(
     action_button_id: int,
     action_button_id_1: int,
     flag_1: int,
-    model_point: int,
-    model_point_1: int,
+    dummy_id: int,
+    dummy_id_1: int,
     vfx_id: int,
 ):
     """CommonFunc 20005511"""
     GotoIfFlagEnabled(Label.L0, flag=flag_1)
     DeleteObjectVFX(obj)
     if FlagDisabled(flag):
-        CreateObjectVFX(obj, vfx_id=10, model_point=model_point)
+        CreateObjectVFX(obj, vfx_id=10, dummy_id=dummy_id)
     else:
-        CreateObjectVFX(obj, vfx_id=10, model_point=model_point_1)
+        CreateObjectVFX(obj, vfx_id=10, dummy_id=dummy_id_1)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -3172,8 +3172,8 @@ def CommonFunc_20005511(
     RotateToFaceEntity(PLAYER, obj, animation=60800)
     Wait(2.0999999046325684)
     DeleteObjectVFX(obj)
-    CreateTemporaryVFX(vfx_id=vfx_id, anchor_entity=obj, model_point=10, anchor_type=CoordEntityType.Object)
-    CreateObjectVFX(obj, vfx_id=10, model_point=model_point_1)
+    CreateTemporaryVFX(vfx_id=vfx_id, anchor_entity=obj, dummy_id=10, anchor_type=CoordEntityType.Object)
+    CreateObjectVFX(obj, vfx_id=10, dummy_id=dummy_id_1)
     EnableFlag(flag)
 
     # --- Label 1 --- #
@@ -3223,7 +3223,7 @@ def CommonFunc_20005521(_, flag: int, flag_1: int, obj: int, obj_1: int, item_lo
         return
     if PlayerNotInOwnWorld():
         return
-    CreateObjectVFX(obj_1, vfx_id=90, model_point=60)
+    CreateObjectVFX(obj_1, vfx_id=90, dummy_id=60)
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=4200, entity=obj_1))
     
@@ -3289,14 +3289,14 @@ def CommonFunc_20005524(_, obj: int, flag: int):
 
 
 @ContinueOnRest(20005525)
-def CommonFunc_20005525(_, flag: int, item_lot: int, obj: int, model_point: int):
+def CommonFunc_20005525(_, flag: int, item_lot: int, obj: int, dummy_id: int):
     """CommonFunc 20005525"""
     DisableNetworkSync()
     if PlayerNotInOwnWorld():
         return
     if FlagEnabled(flag):
         return
-    CreateObjectVFX(obj, vfx_id=90, model_point=model_point)
+    CreateObjectVFX(obj, vfx_id=90, dummy_id=dummy_id)
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=9700, entity=obj))
     
@@ -3306,7 +3306,7 @@ def CommonFunc_20005525(_, flag: int, item_lot: int, obj: int, model_point: int)
 
 
 @ContinueOnRest(20005526)
-def CommonFunc_20005526(_, flag: int, item_lot__obj: int, obj: int, model_point: int, flag_1: int):
+def CommonFunc_20005526(_, flag: int, item_lot__obj: int, obj: int, dummy_id: int, flag_1: int):
     """CommonFunc 20005526"""
     DisableNetworkSync()
     if PlayerNotInOwnWorld():
@@ -3320,7 +3320,7 @@ def CommonFunc_20005526(_, flag: int, item_lot__obj: int, obj: int, model_point:
     # --- Label 0 --- #
     DefineLabel(0)
     EnableObject(item_lot__obj)
-    CreateObjectVFX(obj, vfx_id=90, model_point=model_point)
+    CreateObjectVFX(obj, vfx_id=90, dummy_id=dummy_id)
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=9700, entity=obj))
     
@@ -3343,17 +3343,17 @@ def CommonFunc_20005527(_, flag: int, item_lot: int, obj: int, left: int, action
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateObjectVFX(obj, vfx_id=90, model_point=60)
+    CreateObjectVFX(obj, vfx_id=90, dummy_id=60)
     Goto(Label.L9)
 
     # --- Label 1 --- #
     DefineLabel(1)
-    CreateObjectVFX(obj, vfx_id=90, model_point=61)
+    CreateObjectVFX(obj, vfx_id=90, dummy_id=61)
     Goto(Label.L9)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    CreateObjectVFX(obj, vfx_id=90, model_point=62)
+    CreateObjectVFX(obj, vfx_id=90, dummy_id=62)
     Goto(Label.L9)
 
     # --- Label 9 --- #
@@ -3380,12 +3380,12 @@ def CommonFunc_20005530(_, obj_flag: int, obj: int):
     MAIN.Await(OR_1)
     
     WaitFrames(frames=1)
-    CreateTemporaryVFX(vfx_id=810010, anchor_entity=obj, model_point=10, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=810010, anchor_entity=obj, dummy_id=10, anchor_type=CoordEntityType.Object)
     if FlagEnabled(50):
         CreateHazard(
             obj_flag=obj_flag,
             obj=obj,
-            model_point=10,
+            dummy_id=10,
             behavior_param_id=7000,
             target_type=DamageTargetType.Character,
             radius=3.5,
@@ -3396,7 +3396,7 @@ def CommonFunc_20005530(_, obj_flag: int, obj: int):
         CreateHazard(
             obj_flag=obj_flag,
             obj=obj,
-            model_point=10,
+            dummy_id=10,
             behavior_param_id=7001,
             target_type=DamageTargetType.Character,
             radius=3.5,
@@ -3407,7 +3407,7 @@ def CommonFunc_20005530(_, obj_flag: int, obj: int):
         CreateHazard(
             obj_flag=obj_flag,
             obj=obj,
-            model_point=10,
+            dummy_id=10,
             behavior_param_id=7002,
             target_type=DamageTargetType.Character,
             radius=3.5,
@@ -3418,7 +3418,7 @@ def CommonFunc_20005530(_, obj_flag: int, obj: int):
         CreateHazard(
             obj_flag=obj_flag,
             obj=obj,
-            model_point=10,
+            dummy_id=10,
             behavior_param_id=7003,
             target_type=DamageTargetType.Character,
             radius=3.5,
@@ -3429,7 +3429,7 @@ def CommonFunc_20005530(_, obj_flag: int, obj: int):
         CreateHazard(
             obj_flag=obj_flag,
             obj=obj,
-            model_point=10,
+            dummy_id=10,
             behavior_param_id=7004,
             target_type=DamageTargetType.Character,
             radius=3.5,
@@ -3440,7 +3440,7 @@ def CommonFunc_20005530(_, obj_flag: int, obj: int):
         CreateHazard(
             obj_flag=obj_flag,
             obj=obj,
-            model_point=10,
+            dummy_id=10,
             behavior_param_id=7005,
             target_type=DamageTargetType.Character,
             radius=3.5,
@@ -3451,7 +3451,7 @@ def CommonFunc_20005530(_, obj_flag: int, obj: int):
         CreateHazard(
             obj_flag=obj_flag,
             obj=obj,
-            model_point=10,
+            dummy_id=10,
             behavior_param_id=7006,
             target_type=DamageTargetType.Character,
             radius=3.5,
@@ -3465,8 +3465,8 @@ def CommonFunc_20005531(
     _,
     obj_flag: int,
     obj: int,
-    model_point: int,
-    model_point_1: int,
+    dummy_id: int,
+    dummy_id_1: int,
     vfx_id: int,
     behavior_param_id: int,
     radius: float,
@@ -3480,11 +3480,11 @@ def CommonFunc_20005531(
     MAIN.Await(ObjectDestroyed(obj))
     
     WaitFrames(frames=1)
-    CreateTemporaryVFX(vfx_id=vfx_id, anchor_entity=obj, model_point=model_point, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=vfx_id, anchor_entity=obj, dummy_id=dummy_id, anchor_type=CoordEntityType.Object)
     CreateHazard(
         obj_flag=obj_flag,
         obj=obj,
-        model_point=model_point_1,
+        dummy_id=dummy_id_1,
         behavior_param_id=behavior_param_id,
         target_type=DamageTargetType.Character,
         radius=radius,
@@ -3498,7 +3498,7 @@ def CommonFunc_20005540(
     _,
     obj_flag: int,
     obj: int,
-    model_point: int,
+    dummy_id: int,
     behavior_param_id: int,
     radius: float,
     life: float,
@@ -3509,7 +3509,7 @@ def CommonFunc_20005540(
     CreateHazard(
         obj_flag=obj_flag,
         obj=obj,
-        model_point=model_point,
+        dummy_id=dummy_id,
         behavior_param_id=behavior_param_id,
         target_type=DamageTargetType.Character,
         radius=radius,
@@ -3523,22 +3523,22 @@ def CommonFunc_20005541(
     _,
     obj_flag: int,
     obj: int,
-    model_point: int,
+    dummy_id: int,
     behavior_param_id: int,
     radius: float,
     life: float,
     repetition_time: float,
-    model_point_1: int,
+    dummy_id_1: int,
     vfx_id: int,
 ):
     """CommonFunc 20005541"""
     DeleteObjectVFX(obj)
-    CreateObjectVFX(obj, vfx_id=vfx_id, model_point=model_point_1)
+    CreateObjectVFX(obj, vfx_id=vfx_id, dummy_id=dummy_id_1)
     RemoveObjectFlag(obj_flag=obj_flag)
     CreateHazard(
         obj_flag=obj_flag,
         obj=obj,
-        model_point=model_point,
+        dummy_id=dummy_id,
         behavior_param_id=behavior_param_id,
         target_type=DamageTargetType.Character,
         radius=radius,
@@ -3552,7 +3552,7 @@ def CommonFunc_20005542(
     _,
     obj_flag: int,
     obj: int,
-    model_point: int,
+    dummy_id: int,
     behavior_param_id: int,
     radius: float,
     life: float,
@@ -3565,7 +3565,7 @@ def CommonFunc_20005542(
     CreateHazard(
         obj_flag=obj_flag,
         obj=obj,
-        model_point=model_point,
+        dummy_id=dummy_id,
         behavior_param_id=behavior_param_id,
         target_type=DamageTargetType.Character,
         radius=radius,
@@ -5097,7 +5097,7 @@ def CommonFunc_20005760(_, flag: int, flag_1: int, flag_2: int, character: int):
 
 
 @ContinueOnRest(20005780)
-def CommonFunc_20005780(_, obj: int, model_point: int):
+def CommonFunc_20005780(_, obj: int, dummy_id: int):
     """CommonFunc 20005780"""
     DisableNetworkSync()
     DisableObject(obj)
@@ -5108,7 +5108,7 @@ def CommonFunc_20005780(_, obj: int, model_point: int):
     MAIN.Await(OR_1)
     
     EnableObject(obj)
-    CreateObjectVFX(obj, vfx_id=101, model_point=model_point)
+    CreateObjectVFX(obj, vfx_id=101, dummy_id=dummy_id)
     OR_2.Add(TryingToJoinSession())
     OR_2.Add(TryingToCreateSession())
     
@@ -5118,7 +5118,7 @@ def CommonFunc_20005780(_, obj: int, model_point: int):
 
 
 @RestartOnRest(20005781)
-def CommonFunc_20005781(_, obj: int, model_point: int, flag: int):
+def CommonFunc_20005781(_, obj: int, dummy_id: int, flag: int):
     """CommonFunc 20005781"""
     DisableNetworkSync()
     DisableObject(obj)
@@ -5130,7 +5130,7 @@ def CommonFunc_20005781(_, obj: int, model_point: int, flag: int):
     MAIN.Await(OR_1)
     
     EnableObject(obj)
-    CreateObjectVFX(obj, vfx_id=101, model_point=model_point)
+    CreateObjectVFX(obj, vfx_id=101, dummy_id=dummy_id)
     AND_1.Add(FlagDisabled(flag))
     OR_2.Add(TryingToJoinSession())
     OR_2.Add(TryingToCreateSession())
@@ -5299,7 +5299,7 @@ def CommonFunc_20005802(
 
 
 @RestartOnRest(20005820)
-def CommonFunc_20005820(_, flag: int, obj: int, model_point: int, left: int):
+def CommonFunc_20005820(_, flag: int, obj: int, dummy_id: int, left: int):
     """CommonFunc 20005820"""
     DisableNetworkSync()
     DisableObject(obj)
@@ -5321,7 +5321,7 @@ def CommonFunc_20005820(_, flag: int, obj: int, model_point: int, left: int):
     
     EnableObject(obj)
     DeleteObjectVFX(obj)
-    CreateObjectVFX(obj, vfx_id=101, model_point=model_point)
+    CreateObjectVFX(obj, vfx_id=101, dummy_id=dummy_id)
     OR_5.Add(PlayerNotInOwnWorld())
     OR_6.Add(FlagEnabled(left))
     OR_6.Add(ValueEqual(left=left, right=0))
@@ -5341,7 +5341,7 @@ def CommonFunc_20005820(_, flag: int, obj: int, model_point: int, left: int):
 
 
 @RestartOnRest(20005825)
-def CommonFunc_20005825(_, flag: int, obj: int, model_point: int, left: int, vfx_id: int):
+def CommonFunc_20005825(_, flag: int, obj: int, dummy_id: int, left: int, vfx_id: int):
     """CommonFunc 20005825"""
     DisableNetworkSync()
     DisableObject(obj)
@@ -5363,7 +5363,7 @@ def CommonFunc_20005825(_, flag: int, obj: int, model_point: int, left: int, vfx
     
     EnableObject(obj)
     DeleteObjectVFX(obj)
-    CreateObjectVFX(obj, vfx_id=vfx_id, model_point=model_point)
+    CreateObjectVFX(obj, vfx_id=vfx_id, dummy_id=dummy_id)
     OR_5.Add(PlayerNotInOwnWorld())
     OR_6.Add(FlagEnabled(left))
     OR_6.Add(ValueEqual(left=left, right=0))
@@ -5984,7 +5984,7 @@ def CommonFunc_20005060(
     message: int,
     action_button_id: int,
     obj: int,
-    model_point: int,
+    dummy_id: int,
 ):
     """CommonFunc 20005060"""
     DisableNetworkSync()
@@ -6003,7 +6003,7 @@ def CommonFunc_20005060(
     
     MAIN.Await(AND_1)
     
-    CreateObjectVFX(obj, vfx_id=0, model_point=model_point)
+    CreateObjectVFX(obj, vfx_id=0, dummy_id=dummy_id)
     OR_2.Add(TryingToJoinSession())
     OR_2.Add(TryingToCreateSession())
     OR_3.Add(OR_2)
@@ -6749,7 +6749,7 @@ def CommonFunc_20006011(_, flag: int, vfx_id: int):
     
     MAIN.Await(FlagEnabled(flag))
     
-    CreateTemporaryVFX(vfx_id=vfx_id, anchor_entity=PLAYER, model_point=200, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=vfx_id, anchor_entity=PLAYER, dummy_id=200, anchor_type=CoordEntityType.Character)
     Restart()
 
 
@@ -6788,17 +6788,17 @@ def CommonFunc_20006030(
     
     GotoIfValueComparison(Label.L1, comparison_type=ComparisonType.Equal, left=1, right=right)
     GotoIfValueComparison(Label.L2, comparison_type=ComparisonType.Equal, left=2, right=right)
-    CreateObjectVFX(obj, vfx_id=90, model_point=60)
+    CreateObjectVFX(obj, vfx_id=90, dummy_id=60)
     Goto(Label.L20)
 
     # --- Label 1 --- #
     DefineLabel(1)
-    CreateObjectVFX(obj, vfx_id=90, model_point=61)
+    CreateObjectVFX(obj, vfx_id=90, dummy_id=61)
     Goto(Label.L20)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    CreateObjectVFX(obj, vfx_id=90, model_point=62)
+    CreateObjectVFX(obj, vfx_id=90, dummy_id=62)
 
     # --- Label 20 --- #
     DefineLabel(20)
@@ -6841,7 +6841,7 @@ def CommonFunc_20006032(_, character: int, obj: int):
 
     # --- Label 0 --- #
     DefineLabel(0)
-    MoveObjectToCharacter(obj, character=character, model_point=236)
+    MoveObjectToCharacter(obj, character=character, dummy_id=236)
     OR_1.Add(FlagDisabled(73501050))
     OR_1.Add(FlagDisabled(73501010))
     OR_1.Add(FlagDisabled(73501020))
@@ -6852,7 +6852,7 @@ def CommonFunc_20006032(_, character: int, obj: int):
     
     MAIN.Await(AND_1)
     
-    CreateObjectVFX(obj, vfx_id=90, model_point=61)
+    CreateObjectVFX(obj, vfx_id=90, dummy_id=61)
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=4000, entity=obj))
     

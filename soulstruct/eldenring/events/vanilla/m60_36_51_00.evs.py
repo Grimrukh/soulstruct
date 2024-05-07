@@ -25,7 +25,7 @@ from .enums.m60_36_51_00_enums import *
 def Constructor():
     """Event 0"""
     CommonFunc_90005683(0, flag=62313, asset=Assets.AEG099_055_3000, vfx_id=208, flag_1=78390, flag_2=78390)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=1036518600)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=1036518600)
     CommonFunc_90005620(
         0,
         flag=1036510570,
@@ -61,8 +61,8 @@ def Preconstructor():
     Event_1036512450(16, character=Characters.MirandaFlower1, radius=2.0, seconds=0.0, animation_id=0)
     Event_1036512450(17, character=Characters.MirandaFlower4, radius=2.0, seconds=0.0, animation_id=0)
     CommonFunc_90005251(0, character=Characters.GiantMirandaFlower, radius=5.0, seconds=0.0, animation_id=3001)
-    CommonFunc_90005250(0, character=Characters.DepravedPerfumer, region=1036512300, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.DepravedPerfumer, region=1036512301, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.DepravedPerfumer, region=1036512300, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.DepravedPerfumer, region=1036512301, seconds=0.0, animation_id=-1)
     Event_1036512300()
     CommonFunc_90005261(0, character=Characters.Omenkiller, region=1036512300, radius=3.0, seconds=1.0, animation_id=-1)
 

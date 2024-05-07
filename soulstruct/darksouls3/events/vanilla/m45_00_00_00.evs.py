@@ -830,7 +830,7 @@ def Constructor():
     Event_14505630()
     CommonFunc_20005650(0, flag=14500640, obj=4501640)
     CommonFunc_20005650(0, flag=14500641, obj=4501641)
-    CommonFunc_20005780(0, obj=4501690, model_point=2)
+    CommonFunc_20005780(0, obj=4501690, dummy_id=2)
     Event_14505670()
     Event_14505180()
     Event_14505181()
@@ -951,7 +951,7 @@ def Event_14505160():
     
     MAIN.Await(AND_3)
     
-    CreateTemporaryVFX(vfx_id=1060, anchor_entity=4501101, model_point=200, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=1060, anchor_entity=4501101, dummy_id=200, anchor_type=CoordEntityType.Object)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -1028,7 +1028,7 @@ def Event_14505182():
     SkipLines(1)
     DisplayBattlefieldMessage(10012700, display_location_index=1)
     WaitFrames(frames=1)
-    CreateTemporaryVFX(vfx_id=30310, anchor_entity=4500176, model_point=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=30310, anchor_entity=4500176, dummy_id=236, anchor_type=CoordEntityType.Character)
     EnableCharacter(4500176)
     EnableAnimations(4500176)
     SetBackreadStateAlternate(4500176, True)
@@ -1751,7 +1751,7 @@ def Event_14505310(_, character: int):
     """Event 14505310"""
     EnableInvincibility(character)
     DisableHealthBar(character)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
     DisableAI(character)
 
 
@@ -1761,7 +1761,7 @@ def Event_14505350(_, character: int):
     DisableAnimations(character)
     DisableAI(character)
     DisableHealthBar(character)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
     DisableGravity(character)
     AddSpecialEffect(character, 13028)
 
@@ -2491,14 +2491,14 @@ def Event_14505540(
     
     EnableFlag(flag)
     ActivateCollisionAndCreateNavmesh(collision=collision, state=False)
-    Move(PLAYER, destination=obj, destination_type=CoordEntityType.Object, model_point=100, short_move=True)
+    Move(PLAYER, destination=obj, destination_type=CoordEntityType.Object, dummy_id=100, short_move=True)
     ForceAnimation(PLAYER, 60440, unknown2=1.0)
     ForceAnimation(obj, 1, unknown2=1.0)
     Wait(1.5)
     CreateHazard(
         obj_flag=obj_flag,
         obj=obj,
-        model_point=40,
+        dummy_id=40,
         behavior_param_id=6210,
         target_type=DamageTargetType.Character,
         radius=1.0,
@@ -2508,7 +2508,7 @@ def Event_14505540(
     CreateHazard(
         obj_flag=obj_flag_1,
         obj=obj,
-        model_point=41,
+        dummy_id=41,
         behavior_param_id=6210,
         target_type=DamageTargetType.Character,
         radius=1.0,
@@ -2518,7 +2518,7 @@ def Event_14505540(
     CreateHazard(
         obj_flag=obj_flag_2,
         obj=obj,
-        model_point=42,
+        dummy_id=42,
         behavior_param_id=6210,
         target_type=DamageTargetType.Character,
         radius=1.0,
@@ -2528,7 +2528,7 @@ def Event_14505540(
     CreateHazard(
         obj_flag=obj_flag_3,
         obj=obj,
-        model_point=43,
+        dummy_id=43,
         behavior_param_id=6210,
         target_type=DamageTargetType.Character,
         radius=1.0,
@@ -2538,7 +2538,7 @@ def Event_14505540(
     CreateHazard(
         obj_flag=obj_flag_4,
         obj=obj,
-        model_point=44,
+        dummy_id=44,
         behavior_param_id=6210,
         target_type=DamageTargetType.Character,
         radius=1.0,
@@ -2636,7 +2636,7 @@ def Event_14505610():
     CreateHazard(
         obj_flag=14505611,
         obj=4501610,
-        model_point=41,
+        dummy_id=41,
         behavior_param_id=6200,
         target_type=DamageTargetType.Character_and_Map,
         radius=2.0,
@@ -2871,7 +2871,7 @@ def Event_14505810():
     DisableAnimations(4500800)
     DisableAI(4500800)
     DisableAI(4500801)
-    SetLockOnPoint(character=4500803, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=4500803, lock_on_dummy_id=220, state=False)
     EnableImmortality(4500803)
     EnableInvincibility(4500803)
     DisableHealthBar(4500803)
@@ -3266,8 +3266,8 @@ def Event_14505829():
             flag_3=14505802,
             flag_4=14505803,
         )
-    CommonFunc_20005825(0, flag=14500800, obj=4501800, model_point=3, left=14500801, vfx_id=110)
-    CommonFunc_20005820(0, flag=14500800, obj=4501801, model_point=0, left=14500801)
+    CommonFunc_20005825(0, flag=14500800, obj=4501800, dummy_id=3, left=14500801, vfx_id=110)
+    CommonFunc_20005820(0, flag=14500800, obj=4501801, dummy_id=0, left=14500801)
     CommonFunc_20005810(0, flag=14500800, entity=4501800, target_entity=4502800, action_button_id=10000)
 
 
@@ -3307,7 +3307,7 @@ def Event_14505831():
     EnableCharacter(4500171)
     Wait(1.5)
     Move(4500171, destination=4502830, destination_type=CoordEntityType.Region, copy_draw_parent=4500171)
-    CreateObjectVFX(4501170, vfx_id=0, model_point=30001)
+    CreateObjectVFX(4501170, vfx_id=0, dummy_id=30001)
     AND_2.Add(PlayerInOwnWorld())
     AND_2.Add(ActionButtonParamActivated(action_button_id=9334, entity=4501170))
     OR_1.Add(AND_2)
@@ -3362,7 +3362,7 @@ def Event_14505832():
     SkipLines(1)
     DisplayBattlefieldMessage(10012610, display_location_index=1)
     WaitFrames(frames=1)
-    CreateTemporaryVFX(vfx_id=30300, anchor_entity=4500170, model_point=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=30300, anchor_entity=4500170, dummy_id=236, anchor_type=CoordEntityType.Character)
     EnableCharacter(4500170)
     EnableAnimations(4500170)
     SetBackreadStateAlternate(4500170, True)
@@ -3642,7 +3642,7 @@ def Event_14505889():
             sound_id_1=4504862,
             flag_3=14505863,
         )
-    CommonFunc_20005820(0, flag=14500860, obj=4501860, model_point=5, left=14505861)
+    CommonFunc_20005820(0, flag=14500860, obj=4501860, dummy_id=5, left=14505861)
     CommonFunc_20005810(0, flag=14500860, entity=4501860, target_entity=4502860, action_button_id=10000)
 
 

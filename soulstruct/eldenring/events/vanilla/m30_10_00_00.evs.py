@@ -150,9 +150,9 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.Basilisk6, region=30102205, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(1, character=Characters.Basilisk7, region=30102205, seconds=0.5, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.CatacombsSkeleton2, region=30102215, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Basilisk6, region=30102205, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(1, character=Characters.Basilisk7, region=30102205, seconds=0.5, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CatacombsSkeleton2, region=30102215, seconds=0.0, animation_id=0)
     CommonFunc_90005200(
         0,
         character=Characters.CatacombsSkeleton3,
@@ -173,12 +173,12 @@ def Constructor():
         region=30102212,
         radius=5.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
-    CommonFunc_90005250(0, character=Characters.CatacombsSkeleton5, region=30102213, seconds=0.0, animation_id=3011)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CatacombsSkeleton5, region=30102213, seconds=0.0, animation_id=3011)
     CommonFunc_90005200(
         0,
         character=30100228,
@@ -239,7 +239,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.CatacombsSkeleton11, region=30102240, seconds=0.0, animation_id=3008)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CatacombsSkeleton11, region=30102240, seconds=0.0, animation_id=3008)
     CommonFunc_90005200(
         1,
         character=30100241,
@@ -252,11 +252,11 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.CatacombsSkeleton6, region=30102232, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(1, character=Characters.CatacombsSkeleton7, region=30102232, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(2, character=Characters.CatacombsSkeleton8, region=30102232, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, character=Characters.Basilisk0, region=30102250, seconds=0.0, animation_id=3001)
-    CommonFunc_90005250(1, character=Characters.Basilisk1, region=30102250, seconds=0.0, animation_id=3001)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CatacombsSkeleton6, region=30102232, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(1, character=Characters.CatacombsSkeleton7, region=30102232, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(2, character=Characters.CatacombsSkeleton8, region=30102232, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Basilisk0, region=30102250, seconds=0.0, animation_id=3001)
+    CommonFunc_AITrigger_RegionOrHurt(1, character=Characters.Basilisk1, region=30102250, seconds=0.0, animation_id=3001)
     CommonFunc_90005200(
         0,
         character=Characters.Basilisk2,
@@ -322,7 +322,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.Omen, region=30102300, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Omen, region=30102300, seconds=0.0, animation_id=0)
     Event_30102480()
     Event_30102490()
     Event_30102400(0, character=Characters.MercilessChariot0)
@@ -334,7 +334,7 @@ def Constructor():
         region_1=30102455,
         patrol_information_id_1=30103452,
     )
-    CommonFunc_90005250(0, character=Characters.MercilessChariot1, region=30102415, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.MercilessChariot1, region=30102415, seconds=0.0, animation_id=0)
     Event_30102400(1, character=Characters.MercilessChariot1)
     Event_30102410(
         1,
@@ -353,7 +353,7 @@ def Constructor():
         patrol_information_id_1=30103412,
     )
     Event_30102465(0, character=Characters.MercilessChariot1)
-    CommonFunc_90005250(0, character=Characters.MercilessChariot2, region=30102425, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.MercilessChariot2, region=30102425, seconds=0.0, animation_id=0)
     Event_30102400(2, character=Characters.MercilessChariot2)
     Event_30102410(
         3,
@@ -415,9 +415,9 @@ def Event_30102200():
     DeleteAssetVFX(Assets.AEG020_948_1000, erase_root=False)
     DeleteAssetVFX(Assets.AEG020_948_1001, erase_root=False)
     DeleteAssetVFX(Assets.AEG027_057_0500, erase_root=False)
-    CreateAssetVFX(Assets.AEG020_948_1000, vfx_id=201, model_point=806721)
-    CreateAssetVFX(Assets.AEG020_948_1001, vfx_id=201, model_point=806721)
-    CreateAssetVFX(Assets.AEG027_057_0500, vfx_id=108, model_point=806721)
+    CreateAssetVFX(Assets.AEG020_948_1000, vfx_id=201, dummy_id=806721)
+    CreateAssetVFX(Assets.AEG020_948_1001, vfx_id=201, dummy_id=806721)
+    CreateAssetVFX(Assets.AEG027_057_0500, vfx_id=108, dummy_id=806721)
     End()
 
 
@@ -426,7 +426,7 @@ def Event_30102400(_, character: uint):
     """Event 30102400"""
     GotoIfFlagEnabled(Label.L0, flag=30102465)
     EnableInvincibility(character)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
     DisableHealthBar(character)
     AddSpecialEffect(character, 5000)
     SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.Always)
@@ -456,7 +456,7 @@ def Event_30102300(_, asset__asset_flag: uint, other_entity: uint):
     CreateHazard(
         asset_flag=asset__asset_flag,
         asset=asset__asset_flag,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=103000,
         target_type=DamageTargetType.Character,
         radius=2.299999952316284,
@@ -486,7 +486,7 @@ def Event_30102305(_, asset__asset_flag: uint, other_entity: uint):
     CreateHazard(
         asset_flag=asset__asset_flag,
         asset=asset__asset_flag,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=103000,
         target_type=DamageTargetType.Character,
         radius=3.0999999046325684,
@@ -827,14 +827,14 @@ def Event_30102520(
     owner_entity: uint,
     behavior_id: int,
     behavior_id_1: int,
-    model_point: int,
-    model_point_1: int,
-    model_point_2: int,
-    model_point_3: int,
-    model_point_4: int,
-    model_point_5: int,
-    model_point_6: int,
-    model_point_7: int,
+    dummy_id: int,
+    dummy_id_1: int,
+    dummy_id_2: int,
+    dummy_id_3: int,
+    dummy_id_4: int,
+    dummy_id_5: int,
+    dummy_id_6: int,
+    dummy_id_7: int,
 ):
     """Event 30102520"""
     AND_1.Add(FlagDisabled(flag))
@@ -844,12 +844,12 @@ def Event_30102520(
     MAIN.Await(AND_1)
     
     CreateProjectileOwner(entity=owner_entity)
-    GotoIfValueComparison(Label.L1, comparison_type=ComparisonType.Equal, left=model_point, right=0)
+    GotoIfValueComparison(Label.L1, comparison_type=ComparisonType.Equal, left=dummy_id, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -859,7 +859,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=101100,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -869,7 +869,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -879,7 +879,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=101102,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -888,12 +888,12 @@ def Event_30102520(
 
     # --- Label 1 --- #
     DefineLabel(1)
-    GotoIfValueComparison(Label.L2, comparison_type=ComparisonType.Equal, left=model_point_1, right=0)
+    GotoIfValueComparison(Label.L2, comparison_type=ComparisonType.Equal, left=dummy_id_1, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_1,
+            dummy_id=dummy_id_1,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -903,7 +903,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_1,
+            dummy_id=dummy_id_1,
             behavior_id=101100,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -913,7 +913,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_1,
+            dummy_id=dummy_id_1,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -923,7 +923,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_1,
+            dummy_id=dummy_id_1,
             behavior_id=101102,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -932,12 +932,12 @@ def Event_30102520(
 
     # --- Label 2 --- #
     DefineLabel(2)
-    GotoIfValueComparison(Label.L3, comparison_type=ComparisonType.Equal, left=model_point_2, right=0)
+    GotoIfValueComparison(Label.L3, comparison_type=ComparisonType.Equal, left=dummy_id_2, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_2,
+            dummy_id=dummy_id_2,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -947,7 +947,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_2,
+            dummy_id=dummy_id_2,
             behavior_id=101100,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -957,7 +957,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_2,
+            dummy_id=dummy_id_2,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -967,7 +967,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_2,
+            dummy_id=dummy_id_2,
             behavior_id=101102,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -976,12 +976,12 @@ def Event_30102520(
 
     # --- Label 3 --- #
     DefineLabel(3)
-    GotoIfValueComparison(Label.L4, comparison_type=ComparisonType.Equal, left=model_point_3, right=0)
+    GotoIfValueComparison(Label.L4, comparison_type=ComparisonType.Equal, left=dummy_id_3, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_3,
+            dummy_id=dummy_id_3,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -991,7 +991,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_3,
+            dummy_id=dummy_id_3,
             behavior_id=101100,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1001,7 +1001,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_3,
+            dummy_id=dummy_id_3,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1011,7 +1011,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_3,
+            dummy_id=dummy_id_3,
             behavior_id=101102,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1020,12 +1020,12 @@ def Event_30102520(
 
     # --- Label 4 --- #
     DefineLabel(4)
-    GotoIfValueComparison(Label.L5, comparison_type=ComparisonType.Equal, left=model_point_4, right=0)
+    GotoIfValueComparison(Label.L5, comparison_type=ComparisonType.Equal, left=dummy_id_4, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_4,
+            dummy_id=dummy_id_4,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1035,7 +1035,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_4,
+            dummy_id=dummy_id_4,
             behavior_id=101100,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1045,7 +1045,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_4,
+            dummy_id=dummy_id_4,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1055,7 +1055,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_4,
+            dummy_id=dummy_id_4,
             behavior_id=101102,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1064,12 +1064,12 @@ def Event_30102520(
 
     # --- Label 5 --- #
     DefineLabel(5)
-    GotoIfValueComparison(Label.L6, comparison_type=ComparisonType.Equal, left=model_point_5, right=0)
+    GotoIfValueComparison(Label.L6, comparison_type=ComparisonType.Equal, left=dummy_id_5, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_5,
+            dummy_id=dummy_id_5,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1079,7 +1079,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_5,
+            dummy_id=dummy_id_5,
             behavior_id=101100,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1089,7 +1089,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_5,
+            dummy_id=dummy_id_5,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1099,7 +1099,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_5,
+            dummy_id=dummy_id_5,
             behavior_id=101102,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1108,12 +1108,12 @@ def Event_30102520(
 
     # --- Label 6 --- #
     DefineLabel(6)
-    GotoIfValueComparison(Label.L7, comparison_type=ComparisonType.Equal, left=model_point_6, right=0)
+    GotoIfValueComparison(Label.L7, comparison_type=ComparisonType.Equal, left=dummy_id_6, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_6,
+            dummy_id=dummy_id_6,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1123,7 +1123,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_6,
+            dummy_id=dummy_id_6,
             behavior_id=101100,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1133,7 +1133,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_6,
+            dummy_id=dummy_id_6,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1143,7 +1143,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_6,
+            dummy_id=dummy_id_6,
             behavior_id=101102,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1152,12 +1152,12 @@ def Event_30102520(
 
     # --- Label 7 --- #
     DefineLabel(7)
-    GotoIfValueComparison(Label.L8, comparison_type=ComparisonType.Equal, left=model_point_7, right=0)
+    GotoIfValueComparison(Label.L8, comparison_type=ComparisonType.Equal, left=dummy_id_7, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_7,
+            dummy_id=dummy_id_7,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1167,7 +1167,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_7,
+            dummy_id=dummy_id_7,
             behavior_id=101100,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1177,7 +1177,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_7,
+            dummy_id=dummy_id_7,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1187,7 +1187,7 @@ def Event_30102520(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_7,
+            dummy_id=dummy_id_7,
             behavior_id=101102,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1214,7 +1214,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=102,
+            dummy_id=102,
             behavior_id=801103300,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1223,7 +1223,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=102,
+            dummy_id=102,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1232,7 +1232,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=104,
+            dummy_id=104,
             behavior_id=801103300,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1241,7 +1241,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=104,
+            dummy_id=104,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1250,7 +1250,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=109,
+            dummy_id=109,
             behavior_id=801103300,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1259,7 +1259,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=109,
+            dummy_id=109,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1269,7 +1269,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=102,
+            dummy_id=102,
             behavior_id=801103310,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1278,7 +1278,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=102,
+            dummy_id=102,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1287,7 +1287,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=104,
+            dummy_id=104,
             behavior_id=801103310,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1296,7 +1296,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=104,
+            dummy_id=104,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1305,7 +1305,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=109,
+            dummy_id=109,
             behavior_id=801103310,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1314,7 +1314,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=109,
+            dummy_id=109,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1324,7 +1324,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=102,
+            dummy_id=102,
             behavior_id=801103320,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1333,7 +1333,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=102,
+            dummy_id=102,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1342,7 +1342,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=104,
+            dummy_id=104,
             behavior_id=801103320,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1351,7 +1351,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=104,
+            dummy_id=104,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1360,7 +1360,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=109,
+            dummy_id=109,
             behavior_id=801103320,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1369,7 +1369,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=109,
+            dummy_id=109,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1379,7 +1379,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=102,
+            dummy_id=102,
             behavior_id=801103330,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1388,7 +1388,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=102,
+            dummy_id=102,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1397,7 +1397,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=104,
+            dummy_id=104,
             behavior_id=801103330,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1406,7 +1406,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=104,
+            dummy_id=104,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1415,7 +1415,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=109,
+            dummy_id=109,
             behavior_id=801103330,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1424,7 +1424,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=109,
+            dummy_id=109,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1434,7 +1434,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=102,
+            dummy_id=102,
             behavior_id=801103340,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1443,7 +1443,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=102,
+            dummy_id=102,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1452,7 +1452,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=104,
+            dummy_id=104,
             behavior_id=801103340,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1461,7 +1461,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=104,
+            dummy_id=104,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1470,7 +1470,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=109,
+            dummy_id=109,
             behavior_id=801103340,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1479,7 +1479,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=109,
+            dummy_id=109,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1489,7 +1489,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=102,
+            dummy_id=102,
             behavior_id=801103350,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1498,7 +1498,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=102,
+            dummy_id=102,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1507,7 +1507,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=104,
+            dummy_id=104,
             behavior_id=801103350,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1516,7 +1516,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=104,
+            dummy_id=104,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1525,7 +1525,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=109,
+            dummy_id=109,
             behavior_id=801103350,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1534,7 +1534,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=109,
+            dummy_id=109,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1544,7 +1544,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=102,
+            dummy_id=102,
             behavior_id=801103360,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1553,7 +1553,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=102,
+            dummy_id=102,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1562,7 +1562,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=104,
+            dummy_id=104,
             behavior_id=801103360,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1571,7 +1571,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=104,
+            dummy_id=104,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1580,7 +1580,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=109,
+            dummy_id=109,
             behavior_id=801103360,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1589,7 +1589,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=109,
+            dummy_id=109,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1599,7 +1599,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=102,
+            dummy_id=102,
             behavior_id=801103370,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1608,7 +1608,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=102,
+            dummy_id=102,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1617,7 +1617,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=104,
+            dummy_id=104,
             behavior_id=801103370,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1626,7 +1626,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=104,
+            dummy_id=104,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1635,7 +1635,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=109,
+            dummy_id=109,
             behavior_id=801103370,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1644,7 +1644,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
         ShootProjectile(
             owner_entity=Characters.TalkDummy0,
             source_entity=Assets.AEG027_057_0500,
-            model_point=109,
+            dummy_id=109,
             behavior_id=801103305,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1663,14 +1663,14 @@ def Event_30102530(
     owner_entity: uint,
     behavior_id: int,
     behavior_id_1: int,
-    model_point: int,
-    model_point_1: int,
-    model_point_2: int,
-    model_point_3: int,
-    model_point_4: int,
-    model_point_5: int,
-    model_point_6: int,
-    model_point_7: int,
+    dummy_id: int,
+    dummy_id_1: int,
+    dummy_id_2: int,
+    dummy_id_3: int,
+    dummy_id_4: int,
+    dummy_id_5: int,
+    dummy_id_6: int,
+    dummy_id_7: int,
 ):
     """Event 30102530"""
     AND_1.Add(FlagDisabled(flag))
@@ -1680,12 +1680,12 @@ def Event_30102530(
     MAIN.Await(AND_1)
     
     CreateProjectileOwner(entity=owner_entity)
-    GotoIfValueComparison(Label.L1, comparison_type=ComparisonType.Equal, left=model_point, right=0)
+    GotoIfValueComparison(Label.L1, comparison_type=ComparisonType.Equal, left=dummy_id, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1695,7 +1695,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=101100,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1705,7 +1705,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1715,7 +1715,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point,
+            dummy_id=dummy_id,
             behavior_id=101102,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1724,12 +1724,12 @@ def Event_30102530(
 
     # --- Label 1 --- #
     DefineLabel(1)
-    GotoIfValueComparison(Label.L2, comparison_type=ComparisonType.Equal, left=model_point_1, right=0)
+    GotoIfValueComparison(Label.L2, comparison_type=ComparisonType.Equal, left=dummy_id_1, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_1,
+            dummy_id=dummy_id_1,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1739,7 +1739,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_1,
+            dummy_id=dummy_id_1,
             behavior_id=101100,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1749,7 +1749,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_1,
+            dummy_id=dummy_id_1,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1759,7 +1759,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_1,
+            dummy_id=dummy_id_1,
             behavior_id=101102,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1768,12 +1768,12 @@ def Event_30102530(
 
     # --- Label 2 --- #
     DefineLabel(2)
-    GotoIfValueComparison(Label.L3, comparison_type=ComparisonType.Equal, left=model_point_2, right=0)
+    GotoIfValueComparison(Label.L3, comparison_type=ComparisonType.Equal, left=dummy_id_2, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_2,
+            dummy_id=dummy_id_2,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1783,7 +1783,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_2,
+            dummy_id=dummy_id_2,
             behavior_id=101100,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1793,7 +1793,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_2,
+            dummy_id=dummy_id_2,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1803,7 +1803,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_2,
+            dummy_id=dummy_id_2,
             behavior_id=101102,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1812,12 +1812,12 @@ def Event_30102530(
 
     # --- Label 3 --- #
     DefineLabel(3)
-    GotoIfValueComparison(Label.L4, comparison_type=ComparisonType.Equal, left=model_point_3, right=0)
+    GotoIfValueComparison(Label.L4, comparison_type=ComparisonType.Equal, left=dummy_id_3, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_3,
+            dummy_id=dummy_id_3,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1827,7 +1827,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_3,
+            dummy_id=dummy_id_3,
             behavior_id=101100,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1837,7 +1837,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_3,
+            dummy_id=dummy_id_3,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1847,7 +1847,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_3,
+            dummy_id=dummy_id_3,
             behavior_id=101102,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1856,12 +1856,12 @@ def Event_30102530(
 
     # --- Label 4 --- #
     DefineLabel(4)
-    GotoIfValueComparison(Label.L5, comparison_type=ComparisonType.Equal, left=model_point_3, right=0)
+    GotoIfValueComparison(Label.L5, comparison_type=ComparisonType.Equal, left=dummy_id_3, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_4,
+            dummy_id=dummy_id_4,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1871,7 +1871,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_4,
+            dummy_id=dummy_id_4,
             behavior_id=101100,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1881,7 +1881,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_4,
+            dummy_id=dummy_id_4,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1891,7 +1891,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_4,
+            dummy_id=dummy_id_4,
             behavior_id=101102,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1900,12 +1900,12 @@ def Event_30102530(
 
     # --- Label 5 --- #
     DefineLabel(5)
-    GotoIfValueComparison(Label.L6, comparison_type=ComparisonType.Equal, left=model_point_3, right=0)
+    GotoIfValueComparison(Label.L6, comparison_type=ComparisonType.Equal, left=dummy_id_3, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_5,
+            dummy_id=dummy_id_5,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1915,7 +1915,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_5,
+            dummy_id=dummy_id_5,
             behavior_id=101100,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1925,7 +1925,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_5,
+            dummy_id=dummy_id_5,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1935,7 +1935,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_5,
+            dummy_id=dummy_id_5,
             behavior_id=101102,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1944,12 +1944,12 @@ def Event_30102530(
 
     # --- Label 6 --- #
     DefineLabel(6)
-    GotoIfValueComparison(Label.L7, comparison_type=ComparisonType.Equal, left=model_point_3, right=0)
+    GotoIfValueComparison(Label.L7, comparison_type=ComparisonType.Equal, left=dummy_id_3, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_6,
+            dummy_id=dummy_id_6,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1959,7 +1959,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_6,
+            dummy_id=dummy_id_6,
             behavior_id=101100,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1969,7 +1969,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_6,
+            dummy_id=dummy_id_6,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1979,7 +1979,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_6,
+            dummy_id=dummy_id_6,
             behavior_id=101102,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -1988,12 +1988,12 @@ def Event_30102530(
 
     # --- Label 7 --- #
     DefineLabel(7)
-    GotoIfValueComparison(Label.L8, comparison_type=ComparisonType.Equal, left=model_point_3, right=0)
+    GotoIfValueComparison(Label.L8, comparison_type=ComparisonType.Equal, left=dummy_id_3, right=0)
     if ValueNotEqual(left=behavior_id, right=0):
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_7,
+            dummy_id=dummy_id_7,
             behavior_id=behavior_id,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2003,7 +2003,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_7,
+            dummy_id=dummy_id_7,
             behavior_id=101100,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2013,7 +2013,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_7,
+            dummy_id=dummy_id_7,
             behavior_id=behavior_id_1,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2023,7 +2023,7 @@ def Event_30102530(
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=model_point_7,
+            dummy_id=dummy_id_7,
             behavior_id=101102,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -2225,7 +2225,7 @@ def Event_30102849():
         flag_2=30102806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=30100800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=30100800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=30100800,

@@ -30,7 +30,7 @@ def Constructor():
     Event_31202810()
     Event_31202811()
     Event_31092849()
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
     RegisterGrace(grace_flag=31200000, asset=Assets.AEG099_060_9000)
     CommonFunc_90005646(
         0,
@@ -102,8 +102,8 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.Rat1, region=31202230, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(1, character=Characters.Rat2, region=31202230, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Rat1, region=31202230, seconds=0.0, animation_id=0)
+    CommonFunc_AITrigger_RegionOrHurt(1, character=Characters.Rat2, region=31202230, seconds=0.0, animation_id=0)
 
 
 @RestartOnRest(31202520)
@@ -138,7 +138,7 @@ def Event_31202550(_, owner_entity: uint, source_entity: uint, seconds: float, s
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=802730000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -148,7 +148,7 @@ def Event_31202550(_, owner_entity: uint, source_entity: uint, seconds: float, s
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=802730010,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -158,7 +158,7 @@ def Event_31202550(_, owner_entity: uint, source_entity: uint, seconds: float, s
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=802730020,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -168,7 +168,7 @@ def Event_31202550(_, owner_entity: uint, source_entity: uint, seconds: float, s
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=802730030,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -178,7 +178,7 @@ def Event_31202550(_, owner_entity: uint, source_entity: uint, seconds: float, s
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=802730040,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -188,7 +188,7 @@ def Event_31202550(_, owner_entity: uint, source_entity: uint, seconds: float, s
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=802730050,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -198,7 +198,7 @@ def Event_31202550(_, owner_entity: uint, source_entity: uint, seconds: float, s
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=802730060,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -208,7 +208,7 @@ def Event_31202550(_, owner_entity: uint, source_entity: uint, seconds: float, s
         ShootProjectile(
             owner_entity=owner_entity,
             source_entity=source_entity,
-            model_point=-1,
+            dummy_id=-1,
             behavior_id=802730070,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -333,7 +333,7 @@ def Event_31092849():
         flag_2=31202806,
         action_button_id=10010,
     )
-    CommonFunc_9005811(0, flag=31200800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=31200800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=31200800,

@@ -201,7 +201,7 @@ def Event_1042322400():
     # --- Label 0 --- #
     DefineLabel(0)
     DeleteAssetVFX(1042321400, erase_root=False)
-    CreateAssetVFX(1042321400, vfx_id=101, model_point=6)
+    CreateAssetVFX(1042321400, vfx_id=101, dummy_id=6)
     AND_1.Add(FlagEnabled(1042320401))
     AND_1.Add(FlagEnabled(1042320402))
     AND_1.Add(FlagEnabled(1042320403))
@@ -218,7 +218,7 @@ def Event_1042322401(_, flag: uint, asset: uint, asset_1: uint):
     """Event 1042322401"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     DestroyAsset(asset)
-    CreateAssetVFX(asset_1, vfx_id=90, model_point=800056)
+    CreateAssetVFX(asset_1, vfx_id=90, dummy_id=800056)
     End()
 
     # --- Label 0 --- #
@@ -228,7 +228,7 @@ def Event_1042322401(_, flag: uint, asset: uint, asset_1: uint):
     MAIN.Await(AND_1)
     
     EnableFlag(flag)
-    CreateAssetVFX(asset_1, vfx_id=90, model_point=800056)
+    CreateAssetVFX(asset_1, vfx_id=90, dummy_id=800056)
 
 
 @RestartOnRest(1042322402)

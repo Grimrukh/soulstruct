@@ -44,8 +44,8 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_91005600(0, flag=31112800, asset=31111695, model_point=5)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_91005600(0, flag=31112800, asset=31111695, dummy_id=5)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
     CommonFunc_90005525(0, flag=31110600, asset=31111600)
     CommonFunc_90005525(0, flag=31110601, asset=31111601)
     CommonFunc_90005525(0, flag=31110602, asset=31111602)
@@ -65,10 +65,10 @@ def Preconstructor():
         region=31112200,
         radius=2.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -78,10 +78,10 @@ def Preconstructor():
         region=31112201,
         radius=2.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -91,10 +91,10 @@ def Preconstructor():
         region=31112202,
         radius=2.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(
         0,
@@ -121,10 +121,10 @@ def Preconstructor():
         region=31112210,
         radius=2.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -134,10 +134,10 @@ def Preconstructor():
         region=31112213,
         radius=2.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(0, character=31110215, region=31112215, radius=2.0, seconds=0.0, animation_id=0)
     CommonFunc_90005211(
@@ -148,10 +148,10 @@ def Preconstructor():
         region=31112216,
         radius=2.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -161,10 +161,10 @@ def Preconstructor():
         region=31112217,
         radius=2.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -174,10 +174,10 @@ def Preconstructor():
         region=31112223,
         radius=2.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(
         0,
@@ -251,10 +251,10 @@ def Preconstructor():
         region=31112256,
         radius=1.0,
         seconds=0.5,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -264,10 +264,10 @@ def Preconstructor():
         region=31112256,
         radius=1.0,
         seconds=0.800000011920929,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005261(0, character=Characters.Snail9, region=31112300, radius=2.0, seconds=0.0, animation_id=0)
     Event_31112240(0, character=Characters.Snail9)
@@ -284,10 +284,10 @@ def Preconstructor():
         region=31112213,
         radius=2.0,
         seconds=1.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
 
 
@@ -743,7 +743,7 @@ def Event_31112849():
         flag_2=31112806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=31110800, asset=Assets.AEG099_002_9000, model_point=5, right=0)
+    CommonFunc_9005811(0, flag=31110800, asset=Assets.AEG099_002_9000, dummy_id=5, right=0)
     CommonFunc_9005822(
         0,
         flag=31110800,

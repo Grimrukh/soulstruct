@@ -51,10 +51,10 @@ def Constructor():
         region=0,
         radius=3.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
     CommonFunc_90005211(
         0,
@@ -64,14 +64,14 @@ def Constructor():
         region=0,
         radius=3.0,
         seconds=0.0,
-        left=0,
-        left_1=0,
-        left_2=0,
-        left_3=0,
+        do_disable_gravity_and_collision=0,
+        only_battle_state=0,
+        only_ai_state_5=0,
+        only_ai_state_4=0,
     )
-    CommonFunc_90005250(0, character=Characters.Avionette0, region=1052572240, seconds=0.0, animation_id=3010)
-    CommonFunc_90005250(0, character=Characters.Avionette1, region=1052572240, seconds=0.5, animation_id=3010)
-    CommonFunc_90005250(0, character=Characters.Avionette2, region=1052572243, seconds=0.0, animation_id=3032)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Avionette0, region=1052572240, seconds=0.0, animation_id=3010)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Avionette1, region=1052572240, seconds=0.5, animation_id=3010)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Avionette2, region=1052572243, seconds=0.0, animation_id=3032)
     Event_1052572200(0, character=1052575200)
     CommonFunc_90005261(0, character=1052570320, region=1052572320, radius=3.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=1052570321, region=1052572321, radius=3.0, seconds=0.0, animation_id=0)
@@ -90,7 +90,7 @@ def Constructor():
         asset_2=Assets.AEG099_182_2000,
         flag_2=1052570512,
     )
-    CommonFunc_90005630(0, far_view_id=65525700, asset=Assets.AEG099_130_9000, model_point=125)
+    CommonFunc_90005630(0, far_view_id=65525700, asset=Assets.AEG099_130_9000, dummy_id=125)
 
 
 @ContinueOnRest(50)
@@ -103,7 +103,7 @@ def Preconstructor():
 def Event_1052572200(_, character: uint):
     """Event 1052572200"""
     DisableAnimations(character)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
     End()
 
 
@@ -112,7 +112,7 @@ def Event_1052572210():
     """Event 1052572210"""
     GotoIfFlagEnabled(Label.L0, flag=1052570210)
     DeleteAssetVFX(Assets.AEG099_251_9000)
-    CreateAssetVFX(Assets.AEG099_251_9000, vfx_id=200, model_point=1500)
+    CreateAssetVFX(Assets.AEG099_251_9000, vfx_id=200, dummy_id=1500)
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=1052572210))
     

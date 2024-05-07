@@ -92,7 +92,7 @@ def Constructor():
     CreateHazard(
         obj_flag=12700050,
         obj=2701080,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6010,
         target_type=DamageTargetType.Character,
         radius=0.5,
@@ -102,7 +102,7 @@ def Constructor():
     CreateHazard(
         obj_flag=12700050,
         obj=2701081,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6010,
         target_type=DamageTargetType.Character,
         radius=0.5,
@@ -112,7 +112,7 @@ def Constructor():
     CreateHazard(
         obj_flag=12700050,
         obj=2701082,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6010,
         target_type=DamageTargetType.Character,
         radius=0.5,
@@ -122,7 +122,7 @@ def Constructor():
     CreateHazard(
         obj_flag=12700050,
         obj=2701083,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6010,
         target_type=DamageTargetType.Character,
         radius=0.5,
@@ -132,7 +132,7 @@ def Constructor():
     CreateHazard(
         obj_flag=12700050,
         obj=2701084,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6010,
         target_type=DamageTargetType.Character,
         radius=0.5,
@@ -142,7 +142,7 @@ def Constructor():
     CreateHazard(
         obj_flag=12700050,
         obj=2701085,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6010,
         target_type=DamageTargetType.Character,
         radius=0.5,
@@ -152,7 +152,7 @@ def Constructor():
     CreateHazard(
         obj_flag=12700050,
         obj=2701086,
-        model_point=100,
+        dummy_id=100,
         behavior_param_id=6010,
         target_type=DamageTargetType.Character,
         radius=0.5,
@@ -162,7 +162,7 @@ def Constructor():
     CreateHazard(
         obj_flag=12701100,
         obj=2701300,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=6110,
         target_type=DamageTargetType.Character,
         radius=0.699999988079071,
@@ -172,7 +172,7 @@ def Constructor():
     CreateHazard(
         obj_flag=12701101,
         obj=2701301,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=6110,
         target_type=DamageTargetType.Character,
         radius=0.699999988079071,
@@ -182,7 +182,7 @@ def Constructor():
     CreateHazard(
         obj_flag=12701102,
         obj=2701302,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=6110,
         target_type=DamageTargetType.Character,
         radius=0.699999988079071,
@@ -192,7 +192,7 @@ def Constructor():
     CreateHazard(
         obj_flag=12701103,
         obj=2701303,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=6110,
         target_type=DamageTargetType.Character,
         radius=0.699999988079071,
@@ -202,7 +202,7 @@ def Constructor():
     CreateHazard(
         obj_flag=12701104,
         obj=2701304,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=6110,
         target_type=DamageTargetType.Character,
         radius=0.699999988079071,
@@ -212,7 +212,7 @@ def Constructor():
     CreateHazard(
         obj_flag=12701105,
         obj=2701305,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=6110,
         target_type=DamageTargetType.Character,
         radius=0.699999988079071,
@@ -222,7 +222,7 @@ def Constructor():
     CreateHazard(
         obj_flag=12701106,
         obj=2701306,
-        model_point=200,
+        dummy_id=200,
         behavior_param_id=6110,
         target_type=DamageTargetType.Character,
         radius=0.699999988079071,
@@ -320,10 +320,10 @@ def Constructor():
     Event_12704812(0, character=2700800, character_1=2700801, character_2=2700802)
     Event_12704812(1, character=2700801, character_1=2700802, character_2=2700800)
     Event_12704812(2, character=2700802, character_1=2700800, character_2=2700801)
-    Event_12704815(0, character=2700810, character__set_draw_parent=2700800, model_point=60)
-    Event_12704815(1, character=2700811, character__set_draw_parent=2700800, model_point=61)
-    Event_12704815(3, character=2700813, character__set_draw_parent=2700801, model_point=61)
-    Event_12704815(4, character=2700814, character__set_draw_parent=2700802, model_point=60)
+    Event_12704815(0, character=2700810, character__set_draw_parent=2700800, dummy_id=60)
+    Event_12704815(1, character=2700811, character__set_draw_parent=2700800, dummy_id=61)
+    Event_12704815(3, character=2700813, character__set_draw_parent=2700801, dummy_id=61)
+    Event_12704815(4, character=2700814, character__set_draw_parent=2700802, dummy_id=60)
     Event_12704825(0, character=2700801, special_effect=5536)
     Event_12704825(1, character=2700802, special_effect=5537)
     Event_12704830(0, character=2700803, entity=2705001, event_slot=0)
@@ -1279,7 +1279,7 @@ def Event_12704812(_, character: int, character_1: int, character_2: int):
 
 
 @RestartOnRest(12704815)
-def Event_12704815(_, character: int, character__set_draw_parent: int, model_point: int):
+def Event_12704815(_, character: int, character__set_draw_parent: int, dummy_id: int):
     """Event 12704815"""
     if ThisEventSlotFlagDisabled():
         MAIN.Await(CharacterBackreadEnabled(character))
@@ -1296,7 +1296,7 @@ def Event_12704815(_, character: int, character__set_draw_parent: int, model_poi
         character,
         destination=character__set_draw_parent,
         destination_type=CoordEntityType.Character,
-        model_point=model_point,
+        dummy_id=dummy_id,
         set_draw_parent=character__set_draw_parent,
     )
     if ThisEventSlotFlagDisabled():
@@ -1821,7 +1821,7 @@ def Event_12700180(_, character: int, character_1: int):
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=40,
+        dummy_id=40,
         short_move=True,
     )
     Restart()
@@ -2225,7 +2225,7 @@ def Event_12700901(_, character: int, obj: int):
     DisableBackread(character)
     EnableObject(obj)
     EnableObjectInvulnerability(obj)
-    CreateObjectVFX(obj, vfx_id=200, model_point=900201)
+    CreateObjectVFX(obj, vfx_id=200, dummy_id=900201)
     End()
 
     # --- Label 4 --- #
@@ -2568,7 +2568,7 @@ def Event_12705090(_, obj: int, obj_flag: int, obj_flag_1: int, obj_flag_2: int,
     CreateHazard(
         obj_flag=obj_flag,
         obj=obj,
-        model_point=101,
+        dummy_id=101,
         behavior_param_id=6100,
         target_type=DamageTargetType.Character,
         radius=1.0,
@@ -2578,7 +2578,7 @@ def Event_12705090(_, obj: int, obj_flag: int, obj_flag_1: int, obj_flag_2: int,
     CreateHazard(
         obj_flag=obj_flag_1,
         obj=obj,
-        model_point=102,
+        dummy_id=102,
         behavior_param_id=6100,
         target_type=DamageTargetType.Character,
         radius=1.0,
@@ -2588,7 +2588,7 @@ def Event_12705090(_, obj: int, obj_flag: int, obj_flag_1: int, obj_flag_2: int,
     CreateHazard(
         obj_flag=obj_flag_2,
         obj=obj,
-        model_point=103,
+        dummy_id=103,
         behavior_param_id=6100,
         target_type=DamageTargetType.Character,
         radius=1.0,
@@ -2718,7 +2718,7 @@ def Event_12705300(_, obj_act_id: int, character: int, obj: int):
     MAIN.Await(ObjectActivated(obj_act_id=obj_act_id))
     
     Wait(2.299999952316284)
-    Move(character, destination=obj, destination_type=CoordEntityType.Object, model_point=200, short_move=True)
+    Move(character, destination=obj, destination_type=CoordEntityType.Object, dummy_id=200, short_move=True)
     AddSpecialEffect(character, 5580)
     ForceAnimation(obj, 1)
     Wait(1.0)
@@ -2854,7 +2854,7 @@ def Event_12705370(_, character: int, seconds: float, character_1: int, copy_dra
         character,
         destination=copy_draw_parent,
         destination_type=CoordEntityType.Character,
-        model_point=21,
+        dummy_id=21,
         copy_draw_parent=copy_draw_parent,
     )
     WaitFrames(frames=75)
@@ -3127,7 +3127,7 @@ def Event_12705550():
         2700756,
         destination=2700755,
         destination_type=CoordEntityType.Character,
-        model_point=245,
+        dummy_id=245,
         copy_draw_parent=2700755,
     )
     EnableGravity(2700756)

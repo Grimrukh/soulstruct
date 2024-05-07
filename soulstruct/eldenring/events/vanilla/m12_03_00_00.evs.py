@@ -88,16 +88,16 @@ def Constructor():
     CommonFunc_90005261(0, character=Characters.GiantAnt3, region=12032200, radius=50.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.GiantAnt4, region=12032200, radius=50.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.GiantAnt5, region=12032200, radius=50.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005300(0, flag=12030240, character=Characters.GiantAnt14, item_lot=12030800, seconds=1.5, left=0)
-    CommonFunc_90005300(0, flag=12030241, character=Characters.GiantAnt15, item_lot=12030810, seconds=1.5, left=0)
-    CommonFunc_90005300(0, flag=12030256, character=Characters.GiantAnt30, item_lot=12030820, seconds=1.5, left=0)
-    CommonFunc_90005300(0, flag=12030257, character=Characters.GiantAnt31, item_lot=12030830, seconds=1.5, left=0)
-    CommonFunc_90005300(0, flag=12030297, character=Characters.GiantAnt13, item_lot=12030840, seconds=1.5, left=0)
-    CommonFunc_90005300(0, flag=12030201, character=Characters.GiantAnt0, item_lot=12030850, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12030240, character=Characters.GiantAnt14, item_lot=12030800, seconds=1.5, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=12030241, character=Characters.GiantAnt15, item_lot=12030810, seconds=1.5, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=12030256, character=Characters.GiantAnt30, item_lot=12030820, seconds=1.5, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=12030257, character=Characters.GiantAnt31, item_lot=12030830, seconds=1.5, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=12030297, character=Characters.GiantAnt13, item_lot=12030840, seconds=1.5, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=12030201, character=Characters.GiantAnt0, item_lot=12030850, seconds=1.5, item_is_dropped=0)
     CommonFunc_90005251(0, character=12030303, radius=8.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005300(0, flag=12030350, character=Characters.Scarab0, item_lot=40660, seconds=1.5, left=0)
-    CommonFunc_90005300(0, flag=12030354, character=Characters.Scarab1, item_lot=40668, seconds=1.5, left=0)
-    CommonFunc_90005300(0, flag=12030355, character=Characters.Scarab2, item_lot=40670, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12030350, character=Characters.Scarab0, item_lot=40660, seconds=1.5, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=12030354, character=Characters.Scarab1, item_lot=40668, seconds=1.5, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=12030355, character=Characters.Scarab2, item_lot=40670, seconds=1.5, item_is_dropped=0)
     CommonFunc_90005860(
         0,
         flag=12030390,
@@ -107,10 +107,10 @@ def Constructor():
         item_lot=12030950,
         seconds=0.0,
     )
-    CommonFunc_90005870(0, character=Characters.CrucibleKnight, name=902500600, npc_threat_level=12)
-    CommonFunc_90005872(0, character=Characters.CrucibleKnight, npc_threat_level=12, right=0)
-    CommonFunc_90005300(0, flag=12030391, character=Characters.ErdtreeAvatar, item_lot=12030960, seconds=1.5, left=0)
-    CommonFunc_90005250(0, character=Characters.ErdtreeAvatar, region=12032391, seconds=0.0, animation_id=-1)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.CrucibleKnight, name=902500600, npc_threat_level=12)
+    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.CrucibleKnight, npc_threat_level=12, required_flag=0)
+    CommonFunc_90005300(0, flag=12030391, character=Characters.ErdtreeAvatar, item_lot=12030960, seconds=1.5, item_is_dropped=0)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.ErdtreeAvatar, region=12032391, seconds=0.0, animation_id=-1)
     Event_12032504()
     Event_12032509()
     CommonFunc_90005251(0, character=Characters.WalkingMausoleum, radius=200.0, seconds=10.0, animation_id=-1)
@@ -129,108 +129,108 @@ def Constructor():
         0,
         asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9000,
-        model_point=60,
+        dummy_id=60,
         seconds=0.0,
     )
     CommonFunc_90005453(
         1,
         asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9001,
-        model_point=61,
+        dummy_id=61,
         seconds=0.10000000149011612,
     )
     CommonFunc_90005453(
         0,
         asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9002,
-        model_point=62,
+        dummy_id=62,
         seconds=0.20000000298023224,
     )
     CommonFunc_90005453(
         0,
         asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9003,
-        model_point=63,
+        dummy_id=63,
         seconds=0.30000001192092896,
     )
     CommonFunc_90005453(
         0,
         asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9004,
-        model_point=64,
+        dummy_id=64,
         seconds=0.4000000059604645,
     )
     CommonFunc_90005453(
         0,
         asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9005,
-        model_point=65,
+        dummy_id=65,
         seconds=0.5,
     )
     CommonFunc_90005453(
         0,
         asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9006,
-        model_point=66,
+        dummy_id=66,
         seconds=0.6000000238418579,
     )
     CommonFunc_90005453(
         0,
         asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9007,
-        model_point=67,
+        dummy_id=67,
         seconds=0.699999988079071,
     )
     CommonFunc_90005453(
         0,
         asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9008,
-        model_point=68,
+        dummy_id=68,
         seconds=0.800000011920929,
     )
     CommonFunc_90005453(
         0,
         asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9009,
-        model_point=69,
+        dummy_id=69,
         seconds=0.8999999761581421,
     )
     CommonFunc_90005453(
         0,
         asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9010,
-        model_point=70,
+        dummy_id=70,
         seconds=1.0,
     )
     CommonFunc_90005453(
         0,
         asset__character=Characters.WalkingMausoleum,
         asset=12031431,
-        model_point=71,
+        dummy_id=71,
         seconds=0.10000000149011612,
     )
     CommonFunc_90005453(
         0,
         asset__character=Characters.WalkingMausoleum,
         asset=12031432,
-        model_point=72,
+        dummy_id=72,
         seconds=0.20000000298023224,
     )
     CommonFunc_90005453(
         0,
         asset__character=Characters.WalkingMausoleum,
         asset=12031433,
-        model_point=73,
+        dummy_id=73,
         seconds=0.30000001192092896,
     )
     CommonFunc_90005453(
         0,
         asset__character=Characters.WalkingMausoleum,
         asset=12031434,
-        model_point=74,
+        dummy_id=74,
         seconds=0.4000000059604645,
     )
-    CommonFunc_90005453(0, asset__character=Characters.WalkingMausoleum, asset=12031435, model_point=75, seconds=0.5)
+    CommonFunc_90005453(0, asset__character=Characters.WalkingMausoleum, asset=12031435, dummy_id=75, seconds=0.5)
     Event_12032300(0, character=12035380, seconds=1.0)
     Event_12032500()
     Event_12030050()
@@ -263,7 +263,7 @@ def Constructor():
         first_flag=400348,
         last_flag=400348,
         flag=4067,
-        model_point=0,
+        dummy_id=0,
     )
     CommonFunc_90005704(
         0,
@@ -304,9 +304,9 @@ def Constructor():
         flag_1=12032716,
         left=12032717,
         character=Characters.FiaDeathbedCompanion2,
-        model_point=702,
+        dummy_id=702,
         asset=Assets.AEG099_090_9003,
-        model_point_1=702,
+        dummy_id_1=702,
         radius=0.4000000059604645,
         animation=90305,
         animation_id=90307,
@@ -335,7 +335,7 @@ def Constructor():
         first_flag=9502,
         last_flag=9502,
         flag=4131,
-        model_point=806781,
+        dummy_id=806781,
     )
     CommonFunc_90005750(
         0,
@@ -345,7 +345,7 @@ def Constructor():
         first_flag=400339,
         last_flag=400339,
         flag=12039162,
-        model_point=0,
+        dummy_id=0,
     )
     CommonFunc_90005733(0, flag=12032714)
     CommonFunc_90005740(
@@ -354,16 +354,16 @@ def Constructor():
         flag_1=12032726,
         left=0,
         character=Characters.FiaDeathbedCompanion0,
-        model_point=0,
+        dummy_id=0,
         asset=0,
-        model_point_1=0,
+        dummy_id_1=0,
         radius=1.2999999523162842,
         animation=90305,
         animation_id=90307,
         special_effect=-1,
         radius_1=1.2999999523162842,
     )
-    CommonFunc_90005752(0, asset=12031730, vfx_id=200, model_point=120, seconds=3.0)
+    CommonFunc_90005752(0, asset=12031730, vfx_id=200, dummy_id=120, seconds=3.0)
     Event_12030720(0, character=Characters.FingerReader)
 
 
@@ -433,7 +433,7 @@ def Event_12032500():
     OR_10.Add(FlagEnabled(12032870))
     GotoIfConditionTrue(Label.L1, input_condition=OR_10)
     GotoIfFlagEnabled(Label.L1, flag=12032503)
-    CreateAssetVFX(Assets.AEG099_510_9000, vfx_id=200, model_point=806870)
+    CreateAssetVFX(Assets.AEG099_510_9000, vfx_id=200, dummy_id=806870)
     EnableFlag(12032503)
 
     # --- Label 1 --- #
@@ -789,11 +789,11 @@ def Event_12032810():
     EnableFlag(12032803)
     DeleteAssetVFX(Assets.AEG099_120_9000)
     EnableAsset(Assets.AEG099_120_9000)
-    CreateAssetVFX(Assets.AEG099_120_9000, vfx_id=200, model_point=806700)
+    CreateAssetVFX(Assets.AEG099_120_9000, vfx_id=200, dummy_id=806700)
     CreateTemporaryVFX(
         vfx_id=600940,
         anchor_entity=Characters.FiasChampion0,
-        model_point=900,
+        dummy_id=900,
         anchor_type=CoordEntityType.Character,
     )
     Wait(0.5)
@@ -882,7 +882,7 @@ def Event_12032811():
     CreateTemporaryVFX(
         vfx_id=600940,
         anchor_entity=Characters.SorcererRogier,
-        model_point=900,
+        dummy_id=900,
         anchor_type=CoordEntityType.Character,
     )
     Wait(0.5)
@@ -912,14 +912,14 @@ def Event_12032812():
     CreateTemporaryVFX(
         vfx_id=600940,
         anchor_entity=Characters.LioneltheLionhearted,
-        model_point=900,
+        dummy_id=900,
         anchor_type=CoordEntityType.Character,
     )
     Wait(0.5)
     CreateTemporaryVFX(
         vfx_id=600940,
         anchor_entity=Characters.FiasChampion2,
-        model_point=900,
+        dummy_id=900,
         anchor_type=CoordEntityType.Character,
     )
     EnableCharacter(Characters.LioneltheLionhearted)
@@ -930,7 +930,7 @@ def Event_12032812():
     CreateTemporaryVFX(
         vfx_id=600940,
         anchor_entity=Characters.FiasChampion1,
-        model_point=900,
+        dummy_id=900,
         anchor_type=CoordEntityType.Character,
     )
     Wait(0.5)
@@ -1196,7 +1196,7 @@ def Event_12032840():
         character=PLAYER,
         destination_type=CoordEntityType.Region,
         destination=12032806,
-        model_point=-1,
+        dummy_id=-1,
         copy_draw_parent=0,
         use_bonfire_effect=False,
         reset_camera=False,
@@ -1204,7 +1204,7 @@ def Event_12032840():
     WaitFrames(frames=1)
     ForceAnimation(PLAYER, 63010)
     Wait(0.5)
-    CreateTemporaryVFX(vfx_id=30320, anchor_entity=PLAYER, model_point=900, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=30320, anchor_entity=PLAYER, dummy_id=900, anchor_type=CoordEntityType.Character)
     Restart()
 
 
@@ -1222,7 +1222,7 @@ def Event_12032841():
 
 
 @RestartOnRest(12032842)
-def Event_12032842(_, flag: uint, asset: uint, model_point: int, right: uint):
+def Event_12032842(_, flag: uint, asset: uint, dummy_id: int, right: uint):
     """Event 12032842"""
     DisableNetworkSync()
     DisableAsset(asset)
@@ -1263,7 +1263,7 @@ def Event_12032842(_, flag: uint, asset: uint, model_point: int, right: uint):
     if PlayerNotInOwnWorld():
         EnableAsset(asset)
         DeleteAssetVFX(asset)
-        CreateAssetVFX(asset, vfx_id=101, model_point=model_point)
+        CreateAssetVFX(asset, vfx_id=101, dummy_id=dummy_id)
     OR_11.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     OR_11.Add(CharacterType(PLAYER, character_type=CharacterType.Invader))
     OR_11.Add(CharacterType(PLAYER, character_type=CharacterType.Invader2))
@@ -1437,7 +1437,7 @@ def Event_12032860():
     
     DeleteAssetVFX(Assets.AEG099_002_9001)
     EnableAsset(Assets.AEG099_002_9001)
-    CreateAssetVFX(Assets.AEG099_002_9001, vfx_id=101, model_point=5)
+    CreateAssetVFX(Assets.AEG099_002_9001, vfx_id=101, dummy_id=5)
     EnableAsset(Assets.AEG099_053_9003)
     EnableNetworkFlag(12030852)
     EnableAI(Characters.LichdragonFortissax)
@@ -1506,7 +1506,7 @@ def Event_12032861():
     ShootProjectile(
         owner_entity=Characters.LichdragonFortissax,
         source_entity=Characters.LichdragonFortissax,
-        model_point=900,
+        dummy_id=900,
         behavior_id=1131,
         launch_angle_x=0,
         launch_angle_y=0,

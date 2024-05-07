@@ -41,7 +41,7 @@ def Constructor():
         seconds=0.0,
         animation_id=0,
     )
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, vfx_id=100, dummy_id=800, right=0)
     Event_1046362260(0, attacker__character=1046365260, region=1046362260)
     Event_1046362203()
     Event_1046362300()

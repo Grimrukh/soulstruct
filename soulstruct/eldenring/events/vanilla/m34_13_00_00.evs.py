@@ -37,7 +37,7 @@ def Constructor():
         asset=Assets.AEG099_991_9000,
         item_lot=34130050,
         item=8149,
-        model_point=806930,
+        dummy_id=806930,
         action_button_id=9081,
         animation_id=60520,
         left=0,
@@ -110,7 +110,7 @@ def Constructor():
     CommonFunc_90005691(0, region=34132592)
     CommonFunc_90005690(0, region=34132593)
     CommonFunc_90005691(0, region=34132593)
-    CommonFunc_90005250(0, character=Characters.GodskinMonk0, region=34132299, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GodskinMonk0, region=34132299, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.GodskinMonk1, radius=10.0, seconds=0.0, animation_id=-1)
 
 
@@ -278,7 +278,7 @@ def Event_34132849():
         flag_2=34132806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=34130800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005811(0, flag=34130800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=34130800,
@@ -310,8 +310,8 @@ def Event_34132849():
         flag_2=31122806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=34130800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005812(0, flag=34130800, asset=Assets.AEG099_001_9001, model_point=3, right=0, model_point_1=0)
+    CommonFunc_9005811(0, flag=34130800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
+    CommonFunc_9005812(0, flag=34130800, asset=Assets.AEG099_001_9001, dummy_id=3, right=0, dummy_id_1=0)
     CommonFunc_9005822(
         0,
         flag=34130800,

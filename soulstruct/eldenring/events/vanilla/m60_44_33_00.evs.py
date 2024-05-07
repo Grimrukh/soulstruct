@@ -46,7 +46,7 @@ def Constructor():
         flag_10=78118,
         flag_11=78119,
     )
-    CommonFunc_90005300(0, flag=1044330290, character=Characters.Scarab, item_lot=40140, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1044330290, character=Characters.Scarab, item_lot=40140, seconds=0.0, item_is_dropped=0)
     CommonFunc_90005550(0, flag=1044330500, asset=1044331500, obj_act_id=44333500)
     CommonFunc_90005510(
         0,
@@ -99,8 +99,8 @@ def Constructor():
             0,
             asset__asset_flag=1044331600,
             asset=Assets.AEG007_450_1000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802001270,
             radius=1.0,
             life=0.0,
@@ -111,8 +111,8 @@ def Constructor():
             0,
             asset__asset_flag=1044331600,
             asset=Assets.AEG007_450_1000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802001260,
             radius=1.0,
             life=0.0,
@@ -123,8 +123,8 @@ def Constructor():
             0,
             asset__asset_flag=1044331600,
             asset=Assets.AEG007_450_1000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802001250,
             radius=1.0,
             life=0.0,
@@ -135,8 +135,8 @@ def Constructor():
             0,
             asset__asset_flag=1044331600,
             asset=Assets.AEG007_450_1000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802001240,
             radius=1.0,
             life=0.0,
@@ -147,8 +147,8 @@ def Constructor():
             0,
             asset__asset_flag=1044331600,
             asset=Assets.AEG007_450_1000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802001230,
             radius=1.0,
             life=0.0,
@@ -159,8 +159,8 @@ def Constructor():
             0,
             asset__asset_flag=1044331600,
             asset=Assets.AEG007_450_1000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802001220,
             radius=1.0,
             life=0.0,
@@ -171,8 +171,8 @@ def Constructor():
             0,
             asset__asset_flag=1044331600,
             asset=Assets.AEG007_450_1000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802001210,
             radius=1.0,
             life=0.0,
@@ -183,8 +183,8 @@ def Constructor():
             0,
             asset__asset_flag=1044331600,
             asset=Assets.AEG007_450_1000,
-            model_point_start=200,
-            model_point_end=0,
+            dummy_id_start=200,
+            dummy_id_end=0,
             behavior_param_id__behaviour_id=802001200,
             radius=1.0,
             life=0.0,
@@ -245,11 +245,11 @@ def Preconstructor():
     DisableBackread(Characters.NomadMule)
     CommonFunc_90005251(0, character=Characters.GodrickSoldier0, radius=5.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.GodrickSoldier1, radius=5.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.SmallerDog0, region=1044332233, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=1044330271, region=1044332233, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.SmallerDog1, region=1044332231, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.SmallerDog2, region=1044332231, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.SmallerDog3, region=1044332231, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallerDog0, region=1044332233, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=1044330271, region=1044332233, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallerDog1, region=1044332231, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallerDog2, region=1044332231, seconds=0.0, animation_id=-1)
+    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallerDog3, region=1044332231, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.Troll, radius=3.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(
         0,
@@ -449,7 +449,7 @@ def Event_1044332280(_, character: uint, asset: uint, region: uint):
     
     EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
-    CreateTemporaryVFX(vfx_id=641012, anchor_entity=character, model_point=900, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=641012, anchor_entity=character, dummy_id=900, anchor_type=CoordEntityType.Character)
     Wait(0.5)
     DisableAsset(asset)
     Wait(0.30000001192092896)

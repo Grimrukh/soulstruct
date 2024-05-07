@@ -36,7 +36,7 @@ def Constructor():
     Event_1042392200(9, character=Characters.Wolf9, region=1042392249, owner_entity=Characters.Dummy, flag=1042392249)
     Event_1042392200(10, character=Characters.Wolf10, region=1042392249, owner_entity=Characters.Dummy, flag=1042392249)
     Event_1042392200(11, character=Characters.Wolf11, region=1042392249, owner_entity=Characters.Dummy, flag=1042392249)
-    CommonFunc_90005300(0, flag=1042390310, character=Characters.Scarab, item_lot=40146, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1042390310, character=Characters.Scarab, item_lot=40146, seconds=0.0, item_is_dropped=0)
     Event_1042392600(0, attacked_entity=1042391600, region=1042392600)
     Event_1042392600(1, attacked_entity=1042391601, region=1042392601)
     Event_1042392600(2, attacked_entity=1042391602, region=1042392602)
@@ -89,7 +89,7 @@ def Constructor():
         message=80602,
         action_button_id=9000,
         asset=Assets.AEG099_090_9000,
-        model_point=30010,
+        dummy_id=30010,
     )
     if CeremonyActive(ceremony=20):
         CommonFunc_90005796(0, flag=7602, character=Characters.OldKnightIstvan, banner_type=5, region=1042392141)
@@ -114,7 +114,7 @@ def Event_1042392145():
     EnableBackread(Characters.OldKnightIstvan)
     SetTeamType(Characters.OldKnightIstvan, TeamType.Human)
     DeleteAssetVFX(Assets.AEG099_120_9000)
-    CreateAssetVFX(Assets.AEG099_120_9000, vfx_id=200, model_point=806700)
+    CreateAssetVFX(Assets.AEG099_120_9000, vfx_id=200, dummy_id=806700)
 
 
 @RestartOnRest(1042392200)
@@ -186,7 +186,7 @@ def Event_1042392200(_, character: uint, region: uint, owner_entity: uint, flag:
     ShootProjectile(
         owner_entity=owner_entity,
         source_entity=PLAYER,
-        model_point=900,
+        dummy_id=900,
         behavior_id=100920,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -207,7 +207,7 @@ def Event_1042392300():
     if Multiplayer():
         return
     DisableCharacter(Characters.OldKnightIstvan)
-    CreateAssetVFX(Assets.AEG099_090_9000, vfx_id=100, model_point=30010)
+    CreateAssetVFX(Assets.AEG099_090_9000, vfx_id=100, dummy_id=30010)
     AND_1.Add(FlagDisabled(1042399700))
     AND_1.Add(ActionButtonParamActivated(action_button_id=9000, entity=Assets.AEG099_090_9000))
     AND_1.Add(Singleplayer())
@@ -250,7 +250,7 @@ def Event_1042392302():
     GotoIfFlagEnabled(Label.L1, flag=1042399710)
     GotoIfFlagDisabled(Label.L0, flag=1042399700)
     EnableAsset(Assets.AEG099_120_9000)
-    CreateAssetVFX(Assets.AEG099_120_9000, vfx_id=200, model_point=806700)
+    CreateAssetVFX(Assets.AEG099_120_9000, vfx_id=200, dummy_id=806700)
     DeleteAssetVFX(Assets.AEG099_090_9000)
     AND_1.Add(CharacterDead(Characters.OldKnightIstvan))
     

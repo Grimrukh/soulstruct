@@ -201,7 +201,7 @@ def Event_19000110():
     
     MAIN.Await(AND_3)
     
-    CreateAssetVFX(Assets.AEG099_090_9001, vfx_id=100, model_point=30070)
+    CreateAssetVFX(Assets.AEG099_090_9001, vfx_id=100, dummy_id=30070)
     AND_4.Add(ActionButtonParamActivated(action_button_id=9610, entity=Assets.AEG099_090_9001))
     AND_4.Add(PlayerInOwnWorld())
     
@@ -280,7 +280,7 @@ def Event_19000050():
 def Event_19002500():
     """Event 19002500"""
     GotoIfFlagDisabled(Label.L0, flag=19000800)
-    CreateAssetVFX(Assets.AEG099_003_9000, vfx_id=101, model_point=1530)
+    CreateAssetVFX(Assets.AEG099_003_9000, vfx_id=101, dummy_id=1530)
     End()
 
     # --- Label 0 --- #
@@ -291,7 +291,7 @@ def Event_19002500():
         character=20000,
         destination_type=CoordEntityType.Region,
         destination=19002811,
-        model_point=-1,
+        dummy_id=-1,
         copy_draw_parent=20000,
         use_bonfire_effect=False,
         reset_camera=True,
@@ -300,7 +300,7 @@ def Event_19002500():
 
     # --- Label 1 --- #
     DefineLabel(1)
-    CreateAssetVFX(Assets.AEG099_003_9000, vfx_id=101, model_point=1530)
+    CreateAssetVFX(Assets.AEG099_003_9000, vfx_id=101, dummy_id=1530)
     if PlayerNotInOwnWorld():
         GotoIfFlagEnabled(Label.L2, flag=19002500)
     AND_1.Add(PlayerInOwnWorld())
@@ -322,7 +322,7 @@ def Event_19002500():
     if PlayerNotInOwnWorld():
         GotoIfFlagEnabled(Label.L2, flag=19002500)
     Wait(2.4000000953674316)
-    CreateAssetVFX(Assets.AEG099_003_9001, vfx_id=101, model_point=1531)
+    CreateAssetVFX(Assets.AEG099_003_9001, vfx_id=101, dummy_id=1531)
     if PlayerNotInOwnWorld():
         GotoIfFlagEnabled(Label.L2, flag=19002500)
     Wait(3.5999999046325684)
@@ -574,7 +574,7 @@ def Event_19002812():
     EnableBossHealthBar(Characters.EldenBeast, name=902200000)
     ChangeCamera(normal_camera_id=2200, locked_camera_id=2200)
     WaitFramesAfterCutscene(frames=1)
-    AttachAssetToCharacter(character=Characters.TalkDummy3, model_point=10, asset=Assets.AEG099_052_9000)
+    AttachAssetToCharacter(character=Characters.TalkDummy3, dummy_id=10, asset=Assets.AEG099_052_9000)
 
 
 @RestartOnRest(19002820)
@@ -599,15 +599,15 @@ def Event_19002821():
     """Event 19002821"""
     if FlagEnabled(19000800):
         return
-    Event_19002822(0, flag=19002830, model_point=110, model_point_1=111, model_point_2=112, model_point_3=113)
-    Event_19002822(1, flag=19002831, model_point=111, model_point_1=112, model_point_2=113, model_point_3=114)
-    Event_19002822(2, flag=19002832, model_point=112, model_point_1=113, model_point_2=114, model_point_3=115)
-    Event_19002822(3, flag=19002833, model_point=113, model_point_1=114, model_point_2=115, model_point_3=116)
-    Event_19002822(4, flag=19002834, model_point=114, model_point_1=115, model_point_2=116, model_point_3=117)
+    Event_19002822(0, flag=19002830, dummy_id=110, dummy_id_1=111, dummy_id_2=112, dummy_id_3=113)
+    Event_19002822(1, flag=19002831, dummy_id=111, dummy_id_1=112, dummy_id_2=113, dummy_id_3=114)
+    Event_19002822(2, flag=19002832, dummy_id=112, dummy_id_1=113, dummy_id_2=114, dummy_id_3=115)
+    Event_19002822(3, flag=19002833, dummy_id=113, dummy_id_1=114, dummy_id_2=115, dummy_id_3=116)
+    Event_19002822(4, flag=19002834, dummy_id=114, dummy_id_1=115, dummy_id_2=116, dummy_id_3=117)
 
 
 @RestartOnRest(19002822)
-def Event_19002822(_, flag: uint, model_point: int, model_point_1: int, model_point_2: int, model_point_3: int):
+def Event_19002822(_, flag: uint, dummy_id: int, dummy_id_1: int, dummy_id_2: int, dummy_id_3: int):
     """Event 19002822"""
     if FlagEnabled(19000800):
         return
@@ -620,28 +620,28 @@ def Event_19002822(_, flag: uint, model_point: int, model_point_1: int, model_po
         19000801,
         destination=Characters.EldenBeast,
         destination_type=CoordEntityType.Character,
-        model_point=model_point,
+        dummy_id=dummy_id,
         short_move=True,
     )
     Move(
         19000802,
         destination=Characters.EldenBeast,
         destination_type=CoordEntityType.Character,
-        model_point=model_point_1,
+        dummy_id=dummy_id_1,
         short_move=True,
     )
     Move(
         19000803,
         destination=Characters.EldenBeast,
         destination_type=CoordEntityType.Character,
-        model_point=model_point_2,
+        dummy_id=dummy_id_2,
         short_move=True,
     )
     Move(
         19000804,
         destination=Characters.EldenBeast,
         destination_type=CoordEntityType.Character,
-        model_point=model_point_3,
+        dummy_id=dummy_id_3,
         short_move=True,
     )
     ForceAnimation(Characters.EldenBeast, 3023, skip_transition=True)
@@ -696,7 +696,7 @@ def Event_19002849():
         flag_2=19002806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=19000800, asset=Assets.AEG099_001_9000, model_point=5, right=19002801)
+    CommonFunc_9005811(0, flag=19000800, asset=Assets.AEG099_001_9000, dummy_id=5, right=19002801)
     CommonFunc_9005822(
         0,
         flag=19000800,
@@ -713,7 +713,7 @@ def Event_19002849():
 @RestartOnRest(19002900)
 def Event_19002900():
     """Event 19002900"""
-    CreateAssetVFX(Assets.AEG099_090_9000, vfx_id=100, model_point=1300)
+    CreateAssetVFX(Assets.AEG099_090_9000, vfx_id=100, dummy_id=1300)
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=9000, entity=Assets.AEG099_090_9000))
     
@@ -721,7 +721,7 @@ def Event_19002900():
         character=PLAYER,
         destination_type=CoordEntityType.Region,
         destination=19002900,
-        model_point=-1,
+        dummy_id=-1,
         copy_draw_parent=PLAYER,
         use_bonfire_effect=False,
         reset_camera=False,

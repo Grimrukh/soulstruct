@@ -43,7 +43,7 @@ def Constructor():
         flag_10=78308,
         flag_11=78309,
     )
-    CommonFunc_90005300(0, flag=1042510300, character=Characters.Gargoyle, item_lot=1042510900, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1042510300, character=Characters.Gargoyle, item_lot=1042510900, seconds=0.0, item_is_dropped=0)
     Event_1042512240(0, asset=Assets.AEG099_070_9000, entity=Assets.AEG099_071_9000, flag=62031)
 
 
@@ -75,7 +75,7 @@ def Event_1042512240(_, asset: uint, entity: uint, flag: uint):
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=200, model_point=803220)
+    CreateAssetVFX(asset, vfx_id=200, dummy_id=803220)
     
     MAIN.Await(FlagEnabled(flag))
     

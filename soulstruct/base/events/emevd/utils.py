@@ -27,6 +27,7 @@ from soulstruct.base.game_types import GameObjectInt, GAME_INT_TYPE
 from .exceptions import NoSkipOrReturnError, NoNegateError
 
 if tp.TYPE_CHECKING:
+    from .emedf import EMEDF_TYPING
     from soulstruct.utilities.binary import BinaryReader
 
 _LOGGER = logging.getLogger("soulstruct")
@@ -155,7 +156,7 @@ def get_byte_offset_from_struct(format_string: str) -> dict[int, tuple[int, str]
 
 
 def get_instruction_args(
-    reader: BinaryReader, category: int, index: int, first_arg_offset: int, event_args_size: int, emedf: dict
+    reader: BinaryReader, category: int, index: int, first_arg_offset: int, event_args_size: int, emedf: EMEDF_TYPING
 ) -> tuple[str, list[tp.Any]]:
     """Process instruction arguments (required and optional) from EMEVD reader.
 

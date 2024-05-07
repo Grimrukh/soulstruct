@@ -1206,7 +1206,7 @@ def Event_7000(_, character: int, obj: int, flag: int, flag_1: int):
     
     EnableObject(obj)
     EnableCharacter(character)
-    CreateTemporaryVFX(vfx_id=100330, anchor_entity=obj, model_point=100, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=100330, anchor_entity=obj, dummy_id=100, anchor_type=CoordEntityType.Object)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -1247,7 +1247,7 @@ def Event_7200(_, flag: int, anchor_entity: int, respawn_point_id: int):
     DisableFlag(flag)
     RotateToFaceEntity(PLAYER, anchor_entity, animation=101160)
     Wait(1.0)
-    CreateTemporaryVFX(vfx_id=100320, anchor_entity=anchor_entity, model_point=100, anchor_type=CoordEntityType.Object)
+    CreateTemporaryVFX(vfx_id=100320, anchor_entity=anchor_entity, dummy_id=100, anchor_type=CoordEntityType.Object)
     Wait(3.0)
     if FlagEnabled(9401):
         WarpPlayerToRespawnPoint(respawn_point_id)
@@ -1267,7 +1267,7 @@ def Event_7300(_, flag: int, warp_object_id: int):
     CreateTemporaryVFX(
         vfx_id=100321,
         anchor_entity=warp_object_id,
-        model_point=100,
+        dummy_id=100,
         anchor_type=CoordEntityType.Object,
     )
     InitializeWarpObject(warp_object_id=warp_object_id)

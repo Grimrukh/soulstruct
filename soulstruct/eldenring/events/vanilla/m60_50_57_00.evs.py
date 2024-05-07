@@ -37,7 +37,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005870(0, character=Characters.DeathRiteBird, name=904980600, npc_threat_level=24)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.DeathRiteBird, name=904980600, npc_threat_level=24)
     CommonFunc_90005860(
         0,
         flag=1050570800,
@@ -47,7 +47,7 @@ def Constructor():
         item_lot=30530,
         seconds=0.0,
     )
-    CommonFunc_90005870(0, character=Characters.PutridAvatar, name=904811600, npc_threat_level=18)
+    CommonFunc_FieldBattleHealthBar(0, boss=Characters.PutridAvatar, name=904811600, npc_threat_level=18)
     CommonFunc_90005860(
         0,
         flag=1050570850,
@@ -57,7 +57,7 @@ def Constructor():
         item_lot=30555,
         seconds=0.0,
     )
-    CommonFunc_90005872(0, character=Characters.PutridAvatar, npc_threat_level=18, right=0)
+    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.PutridAvatar, npc_threat_level=18, required_flag=0)
     Event_1050572320(0, character=Characters.GiantSkeletonTorso, destination=1051570320, special_effect=5030)
     Event_1050572330(0, character=Characters.GiantSkeletonTorso, special_effect=5021)
     Event_1050572340(0, character=Characters.GiantSkeletonTorso, region=1050572320, flag=1050572330)
@@ -70,7 +70,7 @@ def Constructor():
 def Event_1050572200(_, character: uint):
     """Event 1050572200"""
     DisableAnimations(character)
-    SetLockOnPoint(character=character, lock_on_model_point=220, state=False)
+    SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
     End()
 
 
@@ -88,7 +88,7 @@ def Event_1050572250():
         ShootProjectile(
             owner_entity=Characters.Dummy0,
             source_entity=1050572251,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802105000,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -98,7 +98,7 @@ def Event_1050572250():
         ShootProjectile(
             owner_entity=Characters.Dummy0,
             source_entity=1050572251,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802105010,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -108,7 +108,7 @@ def Event_1050572250():
         ShootProjectile(
             owner_entity=Characters.Dummy0,
             source_entity=1050572251,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802105020,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -118,7 +118,7 @@ def Event_1050572250():
         ShootProjectile(
             owner_entity=Characters.Dummy0,
             source_entity=1050572251,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802105030,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -128,7 +128,7 @@ def Event_1050572250():
         ShootProjectile(
             owner_entity=Characters.Dummy0,
             source_entity=1050572251,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802105040,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -138,7 +138,7 @@ def Event_1050572250():
         ShootProjectile(
             owner_entity=Characters.Dummy0,
             source_entity=1050572251,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802105050,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -148,7 +148,7 @@ def Event_1050572250():
         ShootProjectile(
             owner_entity=Characters.Dummy0,
             source_entity=1050572251,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802105060,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -158,7 +158,7 @@ def Event_1050572250():
         ShootProjectile(
             owner_entity=Characters.Dummy0,
             source_entity=1050572251,
-            model_point=900,
+            dummy_id=900,
             behavior_id=802105070,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -177,7 +177,7 @@ def Event_1050572320(_, character: uint, destination: uint, special_effect: int)
         character,
         destination=destination,
         destination_type=CoordEntityType.Asset,
-        model_point=90,
+        dummy_id=90,
         copy_draw_parent=character,
     )
     Wait(1.0)

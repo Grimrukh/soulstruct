@@ -1452,7 +1452,7 @@ def Event_13501803():
     
     MAIN.Await(FlagEnabled(13501800))
     
-    CreateObjectVFX(3501801, vfx_id=200, model_point=900201)
+    CreateObjectVFX(3501801, vfx_id=200, dummy_id=900201)
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=3500911, entity=3501801))
     
@@ -2529,7 +2529,7 @@ def Event_13505670(_, source_entity: int, behavior_id: int, frames: int, charact
     ShootProjectile(
         owner_entity=character,
         source_entity=source_entity,
-        model_point=200,
+        dummy_id=200,
         behavior_id=behavior_id,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -2972,7 +2972,7 @@ def Event_13501142():
     AND_1.Add(CharacterHuman(PLAYER))
     if not AND_1:
         return
-    CreateObjectVFX(3501104, vfx_id=200, model_point=900201)
+    CreateObjectVFX(3501104, vfx_id=200, dummy_id=900201)
     
     MAIN.Await(FlagEnabled(53502000))
 
@@ -4381,7 +4381,7 @@ def Event_13505800(_, region: int, entity: int, obj: int, source_entity: int, ch
         ShootProjectile(
             owner_entity=3500799,
             source_entity=source_entity,
-            model_point=200,
+            dummy_id=200,
             behavior_id=6350,
             launch_angle_x=0,
             launch_angle_y=0,
@@ -4391,7 +4391,7 @@ def Event_13505800(_, region: int, entity: int, obj: int, source_entity: int, ch
     ShootProjectile(
         owner_entity=3500799,
         source_entity=source_entity,
-        model_point=200,
+        dummy_id=200,
         behavior_id=6352,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4420,7 +4420,7 @@ def Event_13505810(_, region: int, entity: int, obj: int, source_entity: int, so
     ShootProjectile(
         owner_entity=3500799,
         source_entity=source_entity,
-        model_point=200,
+        dummy_id=200,
         behavior_id=6350,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4430,7 +4430,7 @@ def Event_13505810(_, region: int, entity: int, obj: int, source_entity: int, so
     ShootProjectile(
         owner_entity=3500799,
         source_entity=source_entity_1,
-        model_point=200,
+        dummy_id=200,
         behavior_id=6350,
         launch_angle_x=0,
         launch_angle_y=0,
@@ -4708,7 +4708,7 @@ def Event_13500945(_, character: int, obj: int, obj_1: int, obj_2: int, obj_3: i
     DisableBackread(character)
     if FlagEnabled(flag):
         return
-    CreateObjectVFX(obj, vfx_id=200, model_point=900201)
+    CreateObjectVFX(obj, vfx_id=200, dummy_id=900201)
     EnableObjectInvulnerability(obj_1)
     EnableObject(obj_2)
     EnableObjectInvulnerability(obj_2)
@@ -4743,7 +4743,7 @@ def Event_13500946(_, character: int, obj: int):
     
     MAIN.Await(FlagEnabled(1650))
     
-    CreateObjectVFX(obj, vfx_id=200, model_point=900201)
+    CreateObjectVFX(obj, vfx_id=200, dummy_id=900201)
 
 
 @ContinueOnRest(13500948)
@@ -5237,7 +5237,7 @@ def Event_13500994(
         character,
         destination=destination,
         destination_type=CoordEntityType.Character,
-        model_point=90,
+        dummy_id=90,
         short_move=True,
     )
     WaitFrames(frames=1)

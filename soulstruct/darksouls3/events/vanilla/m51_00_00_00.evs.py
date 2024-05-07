@@ -1818,7 +1818,7 @@ def Event_15105309():
     """Event 15105309"""
     DisableCharacterCollision(5100300)
     DisableGravity(5100300)
-    SetLockOnPoint(character=5100300, lock_on_model_point=221, state=False)
+    SetLockOnPoint(character=5100300, lock_on_dummy_id=221, state=False)
     SkipLinesIfClientTypeCountComparison(
         skip_lines=1,
         client_type=ClientType.Invader,
@@ -1828,7 +1828,7 @@ def Event_15105309():
     SetNetworkUpdateAuthority(5100300, authority_level=UpdateAuthority.Forced)
     DisableCharacterCollision(5100320)
     DisableGravity(5100320)
-    SetLockOnPoint(character=5100320, lock_on_model_point=221, state=False)
+    SetLockOnPoint(character=5100320, lock_on_dummy_id=221, state=False)
 
 
 @RestartOnRest(15105310)
@@ -1880,7 +1880,7 @@ def Event_15105315(_, character: int, character_1: int, special_effect: int, spe
         character_1,
         destination=PLAYER,
         destination_type=CoordEntityType.Character,
-        model_point=260,
+        dummy_id=260,
         copy_draw_parent=PLAYER,
     )
     Wait(0.800000011920929)
@@ -1892,7 +1892,7 @@ def Event_15105315(_, character: int, character_1: int, special_effect: int, spe
         character_1,
         destination=character,
         destination_type=CoordEntityType.Character,
-        model_point=260,
+        dummy_id=260,
         copy_draw_parent=character,
     )
     WaitFrames(frames=1)
@@ -2299,7 +2299,7 @@ def Event_15105505():
         return
     Wait(0.5)
     EnableObject(5101850)
-    CreateObjectVFX(5101850, vfx_id=101, model_point=2)
+    CreateObjectVFX(5101850, vfx_id=101, dummy_id=2)
     
     MAIN.Await(FlagEnabled(15100200))
     
@@ -2591,7 +2591,7 @@ def Event_15105811():
     
     EnableCharacter(5100801)
     EnableAnimations(5100801)
-    CreateTemporaryVFX(vfx_id=30340, anchor_entity=5100801, model_point=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=30340, anchor_entity=5100801, dummy_id=236, anchor_type=CoordEntityType.Character)
     ForceAnimation(5100801, 63010, unknown2=1.0)
     EnableAI(5100801)
 
@@ -2637,7 +2637,7 @@ def Event_15105812():
     )
     SetNetworkUpdateAuthority(5100800, authority_level=UpdateAuthority.Forced)
     Wait(1.0)
-    CreateTemporaryVFX(vfx_id=30340, anchor_entity=5100800, model_point=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=30340, anchor_entity=5100800, dummy_id=236, anchor_type=CoordEntityType.Character)
     EnableCharacter(5100800)
     EnableAnimations(5100800)
     SetNetworkUpdateRate(5100800, is_fixed=True, update_rate=CharacterUpdateRate.Always)
@@ -2783,7 +2783,7 @@ def Event_15105814():
     
     EnableFlag(15105802)
     Wait(2.4000000953674316)
-    CreateTemporaryVFX(vfx_id=30340, anchor_entity=5100803, model_point=236, anchor_type=CoordEntityType.Character)
+    CreateTemporaryVFX(vfx_id=30340, anchor_entity=5100803, dummy_id=236, anchor_type=CoordEntityType.Character)
     EnableCharacter(5100803)
     EnableAnimations(5100803)
     ForceAnimation(5100803, 63010, unknown2=1.0)
@@ -3286,9 +3286,9 @@ def Event_15105849():
             flag_4=15105802,
         )
     Event_15105844(0, flag=15100800, sound_id=5104801, sound_id_1=5104802, flag_1=15105802, flag_2=15105831)
-    CommonFunc_20005820(0, flag=15100800, obj=5101800, model_point=4, left=0)
-    CommonFunc_20005820(0, flag=15100800, obj=5101801, model_point=2, left=0)
-    CommonFunc_20005820(0, flag=15100800, obj=5101802, model_point=2, left=0)
+    CommonFunc_20005820(0, flag=15100800, obj=5101800, dummy_id=4, left=0)
+    CommonFunc_20005820(0, flag=15100800, obj=5101801, dummy_id=2, left=0)
+    CommonFunc_20005820(0, flag=15100800, obj=5101802, dummy_id=2, left=0)
     CommonFunc_20005810(0, flag=15100890, entity=5101800, target_entity=5102800, action_button_id=10000)
 
 
@@ -3457,7 +3457,7 @@ def Event_15105889():
             sound_id_1=5104852,
             flag_3=15105852,
         )
-    CommonFunc_20005820(0, flag=15100850, obj=5101850, model_point=2, left=15105851)
+    CommonFunc_20005820(0, flag=15100850, obj=5101850, dummy_id=2, left=15105851)
     CommonFunc_20005839(
         0,
         flag=15100850,
