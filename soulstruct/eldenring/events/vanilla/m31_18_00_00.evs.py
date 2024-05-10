@@ -213,12 +213,12 @@ def Event_31182200(_, character: uint, region: uint):
     if OR_15:
         return
     AddSpecialEffect(character, 8082)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     AND_2.Add(OR_1)
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=6.0))
@@ -294,12 +294,12 @@ def Event_31182402(_, character: uint, region: uint, radius: float, seconds: flo
     if ThisEventSlotFlagEnabled():
         return
     DisableAI(character)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     OR_15.Add(CharacterInsideRegion(character=PLAYER, region=region_1))
     OR_15.Add(CharacterInsideRegion(character=PLAYER, region=region))
     OR_3.Add(OR_15)
@@ -345,7 +345,7 @@ def Event_31182402(_, character: uint, region: uint, radius: float, seconds: flo
     MAIN.Await(OR_2)
     
     EnableThisNetworkSlotFlag()
-    GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
+    GotoIfLastConditionResultFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     OR_14.Add(CharacterInsideRegion(character=PLAYER, region=region_1))
     GotoIfConditionTrue(Label.L1, input_condition=OR_14)

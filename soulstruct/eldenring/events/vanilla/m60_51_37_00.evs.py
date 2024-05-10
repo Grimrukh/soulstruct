@@ -80,15 +80,15 @@ def Event_1051372598(
     
     MAIN.Await(OR_14)
     
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=AND_1)
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=AND_7)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=AND_7)
     DeleteAssetVFX(asset)
     Wait(1.0)
     Restart()
 
     # --- Label 3 --- #
     DefineLabel(3)
-    DisplayDialogAndSetFlags(
+    AwaitDialogResponse(
         message=4300,
         button_type=ButtonType.Yes_or_No,
         number_buttons=NumberButtons.TwoButton,

@@ -119,7 +119,8 @@ def build_numeric(numeric_string: str, event_class: type[Event]):
                         min_value, max_value = arg_type.get_type_min_max()
                         if arg_type == ArgType.u32 and parsed_arg == -1:
                             _LOGGER.warning(
-                                f"-1 given for unsigned integer. Converting to {max_value}."
+                                f"-1 given for unsigned integer in instruction {category}[{index}]. "
+                                f"Converting to {max_value}."
                             )
                             parsed_arg = max_value  # -1 is still acceptable for unsigned types
                         elif arg_type == ArgType.s32 and parsed_arg == 2 ** 32 - 1:

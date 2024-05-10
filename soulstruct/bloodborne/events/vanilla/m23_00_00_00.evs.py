@@ -1044,7 +1044,7 @@ def Event_12301801():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_1)
+    EndIfLastConditionResultTrue(input_condition=AND_1)
     PlaySoundEffect(2302800, 0, sound_type=SoundType.c_CharacterMotion)
 
 
@@ -1113,7 +1113,7 @@ def Event_12304810():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     RotateToFaceEntity(PLAYER, 2302800, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=2302801))
@@ -1124,7 +1124,7 @@ def Event_12304810():
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_5)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_5)
     EnableFlag(12304800)
     Restart()
 
@@ -1153,7 +1153,7 @@ def Event_12304811():
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_3)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_3)
     EnableFlag(12304801)
     Restart()
 
@@ -1432,7 +1432,7 @@ def Event_12301701():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_1)
+    EndIfLastConditionResultTrue(input_condition=AND_1)
     PlaySoundEffect(2302810, 0, sound_type=SoundType.c_CharacterMotion)
 
 
@@ -1509,7 +1509,7 @@ def Event_12304730():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     RotateToFaceEntity(PLAYER, 2302810, animation=101130, wait_for_completion=True)
     if ThisEventFlagDisabled():
         RotateToFaceEntity(2300810, PLAYER, animation=3008)
@@ -1522,7 +1522,7 @@ def Event_12304730():
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_5)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_5)
     EnableFlag(12304700)
     Restart()
 
@@ -1551,7 +1551,7 @@ def Event_12304731():
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_3)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_3)
     EnableFlag(12304701)
     Restart()
 
@@ -1747,7 +1747,7 @@ def Event_12304715(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     ChangeCharacterCloth(2300810, bit_count=10, state_id=2)
     CreateNPCPart(
         2300810,
@@ -2226,7 +2226,7 @@ def Event_12300110(_, action_button_id: int, anchor_entity: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_2)
     DisplayDialog(text=10010161, anchor_entity=anchor_entity, number_buttons=NumberButtons.OneButton)
     Wait(0.0)
     Restart()
@@ -2731,7 +2731,7 @@ def Event_12305023():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     ForceAnimation(2300730, 7000, loop=True)
     AND_3.Add(HasAIStatus(2300710, ai_status=AIStatusType.Normal))
     AND_4.Add(CharacterDead(2300710))
@@ -2740,7 +2740,7 @@ def Event_12305023():
     
     MAIN.Await(OR_2)
     
-    EndIfFinishedConditionTrue(input_condition=AND_4)
+    EndIfLastConditionResultTrue(input_condition=AND_4)
     ForceAnimation(2300730, 7001, wait_for_completion=True)
     Restart()
 
@@ -2787,7 +2787,7 @@ def Event_12305040(_, obj: int, owner_entity: int):
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
     ShootProjectile(
         owner_entity=owner_entity,
         source_entity=obj,
@@ -2908,7 +2908,7 @@ def Event_12305080():
     
     MAIN.Await(OR_3)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -3277,7 +3277,7 @@ def Event_12305480():
     
     MAIN.Await(OR_3)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
 
     # --- Label 0 --- #
     DefineLabel(0)

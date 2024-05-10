@@ -158,7 +158,7 @@ def Event_1037422610(
     
     MAIN.Await(AND_1)
     
-    DisplayDialogAndSetFlags(
+    AwaitDialogResponse(
         message=4300,
         button_type=ButtonType.Yes_or_No,
         number_buttons=NumberButtons.TwoButton,
@@ -305,7 +305,7 @@ def Event_1037423703(_, attacked_entity: uint, other_entity: uint):
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionFalse(Label.L7, input_condition=AND_2)
+    GotoIfLastConditionResultFalse(Label.L7, input_condition=AND_2)
     Wait(0.10000000149011612)
 
     # --- Label 3 --- #

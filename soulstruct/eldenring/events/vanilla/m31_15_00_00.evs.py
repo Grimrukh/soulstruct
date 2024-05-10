@@ -288,7 +288,7 @@ def Event_31152825(_, flag: uint, region: uint, character: uint, target_entity: 
     
     MAIN.Await(OR_14)
     
-    RestartIfFinishedConditionTrue(input_condition=OR_15)
+    RestartIfLastConditionResultTrue(input_condition=OR_15)
     if ValueNotEqual(left=animation, right=0):
         RotateToFaceEntity(character, target_entity, animation=animation, wait_for_completion=True)
     else:
@@ -299,7 +299,7 @@ def Event_31152825(_, flag: uint, region: uint, character: uint, target_entity: 
     
     MAIN.Await(OR_5)
     
-    RestartIfFinishedConditionTrue(input_condition=OR_4)
+    RestartIfLastConditionResultTrue(input_condition=OR_4)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.Always)

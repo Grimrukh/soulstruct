@@ -536,12 +536,12 @@ def Event_30102445():
     """Event 30102445"""
     if PlayerNotInOwnWorld():
         return
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=30102405))
     AND_1.Add(FlagDisabled(30102445))
     AND_1.Add(OR_1)
@@ -576,12 +576,12 @@ def Event_30102450():
     """Event 30102450"""
     if PlayerNotInOwnWorld():
         return
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=30102451))
     AND_1.Add(FlagDisabled(30102450))
     AND_1.Add(OR_1)
@@ -614,12 +614,12 @@ def Event_30102455():
     """Event 30102455"""
     if PlayerNotInOwnWorld():
         return
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=30102452))
     AND_1.Add(FlagDisabled(30102455))
     AND_1.Add(FlagDisabled(30100550))
@@ -673,12 +673,12 @@ def Event_30102460():
     MAIN.Await(AND_2)
     
     GotoIfFlagDisabled(Label.L0, flag=30100500)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=30102453))
     AND_1.Add(OR_1)
     

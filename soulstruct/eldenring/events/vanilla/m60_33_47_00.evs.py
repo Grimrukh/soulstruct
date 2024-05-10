@@ -160,7 +160,7 @@ def Event_1033472610(
     MAIN.Await(AND_1)
     
     GotoIfFlagEnabled(Label.L5, flag=1033470610)
-    DisplayDialogAndSetFlags(
+    AwaitDialogResponse(
         message=108186,
         button_type=ButtonType.Yes_or_No,
         number_buttons=NumberButtons.TwoButton,
@@ -178,7 +178,7 @@ def Event_1033472610(
     DefineLabel(1)
     AND_5.Add(PlayerHasGood(8186))
     SkipLinesIfConditionTrue(3, AND_5)
-    DisplayDialogAndSetFlags(
+    AwaitDialogResponse(
         message=308186,
         button_type=ButtonType.OK_or_Cancel,
         number_buttons=NumberButtons.NoButton,
@@ -191,7 +191,7 @@ def Event_1033472610(
     Wait(1.0)
     Restart()
     EnableFlag(1033470610)
-    DisplayDialogAndSetFlags(
+    AwaitDialogResponse(
         message=208186,
         button_type=ButtonType.OK_or_Cancel,
         number_buttons=NumberButtons.NoButton,
@@ -223,7 +223,7 @@ def Event_1033472611(_, flag: uint, destination: uint, left_flag: uint, cancel_f
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=9523, entity=destination))
     
-    DisplayDialogAndSetFlags(
+    AwaitDialogResponse(
         message=108186,
         button_type=ButtonType.Yes_or_No,
         number_buttons=NumberButtons.TwoButton,

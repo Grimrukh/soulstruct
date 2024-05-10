@@ -1243,7 +1243,7 @@ def Event_13105172():
     )
     DisplayBattlefieldMessage(10012200, display_location_index=1)
     SkipLines(5)
-    AND_1.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     SkipLinesIfConditionTrue(2, MAIN)
     DisplayBattlefieldMessage(10012220, display_location_index=1)
     SkipLines(1)
@@ -1503,7 +1503,7 @@ def Event_13105911():
     DisableAI(3100295)
     AND_1.Add(FlagEnabled(13105910))
     AND_1.Add(ObjectActivated(obj_act_id=3104231))
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -1597,8 +1597,8 @@ def Event_13105210(
     
     DisableObjectActivation(obj_1, obj_act_id=-1)
     DisableObjectActivation(obj_2, obj_act_id=-1)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_1)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=OR_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_1)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=OR_2)
     ForceAnimation(entity, 21, wait_for_completion=True, skip_transition=True, unknown2=1.0)
     Goto(Label.L2)
 
@@ -1650,8 +1650,8 @@ def Event_13105210(
     
     DisableObjectActivation(obj, obj_act_id=-1)
     DisableObjectActivation(obj_2, obj_act_id=-1)
-    GotoIfFinishedConditionTrue(Label.L4, input_condition=OR_7)
-    GotoIfFinishedConditionTrue(Label.L5, input_condition=OR_8)
+    GotoIfLastConditionResultTrue(Label.L4, input_condition=OR_7)
+    GotoIfLastConditionResultTrue(Label.L5, input_condition=OR_8)
     ForceAnimation(entity, 12, wait_for_completion=True, skip_transition=True, unknown2=1.0)
     Goto(Label.L6)
 
@@ -1697,7 +1697,7 @@ def Event_13105225(_, character: int, region: int, region_1: int):
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
     EnableAI(character)
     End()
 
@@ -1714,7 +1714,7 @@ def Event_13105230(_, character: int, animation_id: int, animation_id_1: int, re
         return
     DisableAnimations(character)
     ForceAnimation(character, animation_id, loop=True, unknown2=1.0)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -1886,15 +1886,15 @@ def Event_13105281(
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(5, input_condition=AND_3)
+    SkipLinesIfLastConditionResultTrue(5, input_condition=AND_3)
     Wait(2.799999952316284)
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_1)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_1)
     ForceAnimation(obj, 3, unknown2=1.0)
     SkipLines(1)
     ForceAnimation(obj_1, 3, unknown2=1.0)
     DisableObjectActivation(obj, obj_act_id=obj_act_id)
     DisableObjectActivation(obj_1, obj_act_id=obj_act_id)
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_3)
     GotoIfFlagEnabled(Label.L0, flag=flag)
     GotoIfFlagDisabled(Label.L1, flag=flag)
     GotoIfFlagEnabled(Label.L1, flag=flag)
@@ -2015,7 +2015,7 @@ def Event_13105300():
     if ThisEventSlotFlagEnabled():
         return
     DisableAI(3100353)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -2032,7 +2032,7 @@ def Event_13105300():
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
     EnableAI(3100353)
     End()
 
@@ -2067,9 +2067,9 @@ def Event_13105320():
     
     MAIN.Await(OR_4)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=OR_3)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_2)
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=OR_1)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=OR_3)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_2)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=OR_1)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -2159,7 +2159,7 @@ def Event_13105470(_, character: int, region: int, destination: int, seconds: fl
     DisableAI(character)
     DisableGravity(character)
     DisableCharacterCollision(character)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -2672,7 +2672,7 @@ def Event_13105825(
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
     AddSpecialEffect(3100800, 11452)
     Goto(Label.L1)
 
@@ -2764,7 +2764,7 @@ def Event_13105830(
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
     AddSpecialEffect(3100800, 11452)
     Goto(Label.L1)
 
@@ -2851,7 +2851,7 @@ def Event_13105835(
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
     AddSpecialEffect(3100800, 11452)
     Goto(Label.L1)
 
@@ -2968,7 +2968,7 @@ def Event_13105850(
     if ThisEventSlotFlagEnabled():
         return
     ForceAnimation(character, animation_id, loop=True, unknown2=1.0)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))

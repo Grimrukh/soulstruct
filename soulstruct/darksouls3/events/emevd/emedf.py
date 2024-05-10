@@ -145,6 +145,7 @@ EMEDF = {
             "IfConditionTrue": dict(state=True),
             "IfConditionFalse": dict(state=False),
         },
+        "get_evaluated_conditions": lambda kwargs: {kwargs["input_condition"]} if kwargs["condition"] == 0 else set(),
     },
     (0, 1): {
         "alias": "IfValueComparison",
@@ -339,7 +340,7 @@ EMEDF = {
                 "type": float,
                 "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 180.0,
             },
-            "dummy_id": MODEL_POINT,
+            "dummy_id": DUMMY_ID,
             "max_distance": {
                 "type": float,
                 "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 2.0,
@@ -507,7 +508,7 @@ EMEDF = {
                 "type": float,
                 "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 180.0,
             },
-            "dummy_id": MODEL_POINT,
+            "dummy_id": DUMMY_ID,
             "max_distance": {
                 "type": float,
                 "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 2.0,
@@ -603,7 +604,7 @@ EMEDF = {
                 "type": float,
                 "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 180.0,
             },
-            "dummy_id": MODEL_POINT,
+            "dummy_id": DUMMY_ID,
             "max_distance": {
                 "type": float,
                 "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 2.0,
@@ -644,7 +645,7 @@ EMEDF = {
                 "type": float,
                 "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 180.0,
             },
-            "dummy_id": MODEL_POINT,
+            "dummy_id": DUMMY_ID,
             "max_distance": {
                 "type": float,
                 "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 2.0,
@@ -753,7 +754,7 @@ EMEDF = {
         },
     },
     (4, 3): {
-        "alias": "IfCharacterType",
+        "alias": "IfCharacterIsType",
         "docstring": "TODO",
         "args": {
             "condition": CONDITION_GROUP | HIDE_NAME,
@@ -763,9 +764,9 @@ EMEDF = {
             "target_count": TARGET_COUNT_FLOAT,
         },
         "partials": {
-            "IfCharacterHuman": dict(character_type=CharacterType.Human),
-            "IfCharacterWhitePhantom": dict(character_type=CharacterType.WhitePhantom),
-            "IfCharacterHollow": dict(character_type=CharacterType.Hollow),
+            "IfCharacterIsHuman": dict(character_type=CharacterType.Human),
+            "IfCharacterIsWhitePhantom": dict(character_type=CharacterType.WhitePhantom),
+            "IfCharacterIsHollow": dict(character_type=CharacterType.Hollow),
         },
     },
     (4, 4): {
@@ -1000,12 +1001,13 @@ EMEDF = {
         "docstring": "Not sure if this is ever really used over `IfConditionState`.",
         "args": {
             "state": BOOL | HIDE_NAME,
-            "condition": CONDITION_GROUP | HIDE_NAME,
+            "input_condition": CONDITION_GROUP | HIDE_NAME,
         },
         "partials": {
             "AwaitConditionTrue": dict(state=True),
             "AwaitConditionFalse": dict(state=False),
         },
+        "get_evaluated_conditions": lambda kwargs: {kwargs["input_condition"]},
     },
     (1000, 1): {
         "alias": "SkipLinesIfConditionState",
@@ -1013,12 +1015,13 @@ EMEDF = {
         "args": {
             "line_count": INT | HIDE_NAME,
             "state": BOOL | HIDE_NAME,
-            "condition": CONDITION_GROUP | HIDE_NAME,
+            "input_condition": CONDITION_GROUP | HIDE_NAME,
         },
         "partials": {
             "SkipLinesIfConditionTrue": dict(state=True),
             "SkipLinesIfConditionFalse": dict(state=False),
         },
+        "get_evaluated_conditions": lambda kwargs: {kwargs["input_condition"]},
     },
     (1000, 2): {
         "alias": "ReturnIfConditionState",
@@ -1034,6 +1037,7 @@ EMEDF = {
             "RestartIfConditionTrue": dict(event_return_type=EventReturnType.Restart, state=True),
             "RestartIfConditionFalse": dict(event_return_type=EventReturnType.Restart, state=False),
         },
+        "get_evaluated_conditions": lambda kwargs: {kwargs["input_condition"]},
     },
     (1000, 3): {
         "alias": "SkipLines",
@@ -1134,12 +1138,9 @@ EMEDF = {
         },
     },
     (1000, 7): {
-        "alias": "SkipLinesIfFinishedConditionState",
+        "alias": "SkipLinesIfLastConditionResultState",
         "docstring": """
-            This command is used instead of 1000[01] when conditions are being checked *after* they have already been
-            uploaded into the MAIN condition. For example, you might want to continue MAIN if either AND(01) or AND(02) 
-            are true, but then afterwards, act conditionally on exactly which one of those two registers caused you to
-            continue.
+            Skip some number of lines if the last result of the given condition (without re-evaluating) is `state`.
         """,
         "args": {
             "line_count": INT | HIDE_NAME,
@@ -1147,23 +1148,23 @@ EMEDF = {
             "input_condition": CONDITION_GROUP,
         },
         "partials": {
-            "SkipLinesIfFinishedConditionTrue": dict(state=True),
-            "SkipLinesIfFinishedConditionFalse": dict(state=False),
+            "SkipLinesIfLastConditionResultTrue": dict(state=True),
+            "SkipLinesIfLastConditionResultFalse": dict(state=False),
         },
     },
     (1000, 8): {
-        "alias": "ReturnIfFinishedConditionState",
-        "docstring": "TODO",
+        "alias": "ReturnIfLastConditionResultState",
+        "docstring": "End or restart event if last condition result (without re-evaluating) is the given `state`.",
         "args": {
             "event_return_type": EVENT_RETURN_TYPE,
             "state": BOOL | HIDE_NAME,
             "input_condition": CONDITION_GROUP,
         },
         "partials": {
-            "EndIfFinishedConditionTrue": dict(event_return_type=EventReturnType.End, state=True),
-            "EndIfFinishedConditionFalse": dict(event_return_type=EventReturnType.End, state=False),
-            "RestartIfFinishedConditionTrue": dict(event_return_type=EventReturnType.Restart, state=True),
-            "RestartIfFinishedConditionFalse": dict(event_return_type=EventReturnType.Restart, state=False),
+            "EndIfLastConditionResultTrue": dict(event_return_type=EventReturnType.End, state=True),
+            "EndIfLastConditionResultFalse": dict(event_return_type=EventReturnType.End, state=False),
+            "RestartIfLastConditionResultTrue": dict(event_return_type=EventReturnType.Restart, state=True),
+            "RestartIfLastConditionResultFalse": dict(event_return_type=EventReturnType.Restart, state=False),
         },
     },
     (1000, 9): {
@@ -2208,7 +2209,7 @@ EMEDF = {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "destination_type": AUTO_COORD_ENTITY_TYPE("destination"),
             "destination": NO_DEFAULT(CoordEntityTyping),
-            "dummy_id": MODEL_POINT,
+            "dummy_id": DUMMY_ID,
         },
         "evs_args": {
             "character": {},
@@ -2711,7 +2712,7 @@ EMEDF = {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "destination_type": AUTO_COORD_ENTITY_TYPE("destination"),
             "destination": NO_DEFAULT(CoordEntityTyping),
-            "dummy_id": MODEL_POINT,
+            "dummy_id": DUMMY_ID,
             "set_draw_parent": {
                 "type": MapPartTyping,
                 "default": None,
@@ -2732,7 +2733,7 @@ EMEDF = {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "destination_type": AUTO_COORD_ENTITY_TYPE("destination"),
             "destination": NO_DEFAULT(CoordEntityTyping),
-            "dummy_id": MODEL_POINT,
+            "dummy_id": DUMMY_ID,
         },
         "evs_args": {
             "character": {},
@@ -2748,7 +2749,7 @@ EMEDF = {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "destination_type": AUTO_COORD_ENTITY_TYPE("destination"),
             "destination": NO_DEFAULT(CoordEntityTyping),
-            "dummy_id": MODEL_POINT,
+            "dummy_id": DUMMY_ID,
             "copy_draw_parent": NO_DEFAULT(AnimatedEntityTyping),
         },
         "evs_args": {
@@ -2980,7 +2981,7 @@ EMEDF = {
                 "default": None,
                 "internal_default": -1,
             },
-            "dummy_id": MODEL_POINT,
+            "dummy_id": DUMMY_ID,
         },
     },
     (2005, 12): {
@@ -3063,7 +3064,7 @@ EMEDF = {
         "args": {
             "anchor_type": AUTO_COORD_ENTITY_TYPE("anchor_entity", check_player=True),
             "anchor_entity": NO_DEFAULT(CoordEntityTyping),
-            "dummy_id": MODEL_POINT,
+            "dummy_id": DUMMY_ID,
             "vfx_id": INT,
         },
         "evs_args": {
@@ -3218,7 +3219,7 @@ EMEDF = {
             "vibration_id": INT,
             "anchor_type": AUTO_COORD_ENTITY_TYPE("anchor_entity"),
             "anchor_entity": NO_DEFAULT(CoordEntityTyping),
-            "dummy_id": MODEL_POINT,
+            "dummy_id": DUMMY_ID,
             "decay_start_distance": {
                 "type": float,
                 "default": 999.0,
@@ -3685,7 +3686,8 @@ EMEDF = {
         "partials": {
             "GotoIfConditionTrue": dict(required_state=True),
             "GotoIfConditionFalse": dict(required_state=False),
-        }
+        },
+        "get_evaluated_conditions": lambda kwargs: {kwargs["input_condition"]},
     },
     (1000, 103): {
         "alias": "Goto",
@@ -3707,9 +3709,9 @@ EMEDF = {
         },
     },
     (1000, 107): {
-        "alias": "GotoIfFinishedConditionState",
+        "alias": "GotoIfLastConditionResultState",
         "docstring": """
-            Finished version.
+            Go to label if the last result of the given condition (without re-evaluating) is `required_state`.
         """,
         "args": {
             "label": LABEL,
@@ -3717,8 +3719,8 @@ EMEDF = {
             "input_condition": CONDITION_GROUP,
         },
         "partials": {
-            "GotoIfFinishedConditionTrue": dict(required_state=True),
-            "GotoIfFinishedConditionFalse": dict(required_state=False),
+            "GotoIfLastConditionResultTrue": dict(required_state=True),
+            "GotoIfLastConditionResultFalse": dict(required_state=False),
         }
     },
     (1001, 4): {
@@ -4924,7 +4926,7 @@ EMEDF = {
         },
     },
     (2007, 10): {
-        "alias": "DisplayDialogAndSetFlags",
+        "alias": "AwaitDialogResponse",
         "docstring": """
             Displays a dialog and enables one of three flags, depending on the player's response. Very useful.
         """,

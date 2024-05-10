@@ -612,17 +612,17 @@ def Event_1039442343(
     
     MAIN.Await(OR_5)
     
-    GotoIfFinishedConditionFalse(Label.L2, input_condition=AND_2)
+    GotoIfLastConditionResultFalse(Label.L2, input_condition=AND_2)
     AddSpecialEffect(character, special_effect)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    GotoIfFinishedConditionFalse(Label.L3, input_condition=AND_3)
+    GotoIfLastConditionResultFalse(Label.L3, input_condition=AND_3)
     AddSpecialEffect(character, special_effect_1)
 
     # --- Label 3 --- #
     DefineLabel(3)
-    GotoIfFinishedConditionFalse(Label.L4, input_condition=AND_4)
+    GotoIfLastConditionResultFalse(Label.L4, input_condition=AND_4)
     AddSpecialEffect(character, special_effect_2)
 
     # --- Label 4 --- #

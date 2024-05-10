@@ -347,7 +347,7 @@ def Event_1045370714(_, character: uint):
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_2)
 
     # --- Label 0 --- #
     DefineLabel(0)

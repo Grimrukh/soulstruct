@@ -108,12 +108,12 @@ def Event_1043330050():
 def Event_1043332230(_, character: uint, region: uint):
     """Event 1043332230"""
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_4.Add(CharacterHasSpecialEffect(character, 481))
     AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))

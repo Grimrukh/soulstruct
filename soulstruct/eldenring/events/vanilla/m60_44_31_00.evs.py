@@ -58,12 +58,12 @@ def Event_1044312340():
     """Event 1044312340"""
     ReturnIfFlagState(EventReturnType.End, FlagSetting.On, FlagType.RelativeToThisEventSlot, 1044310200)
     DisableAI(1044310340)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=1044310340, radius=0.0))
     AND_1.Add(OR_1)
     OR_2.Add(AttackedWithDamageType(attacked_entity=1044310340))
@@ -73,7 +73,7 @@ def Event_1044312340():
     MAIN.Await(OR_2)
     
     SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 1044310200, state=FlagSetting.On)
-    GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
+    GotoIfLastConditionResultFalse(Label.L1, input_condition=AND_1)
     Wait(0.0)
     if ValueNotEqual(left=1700, right=-1):
         ForceAnimation(1044310340, 1700, loop=True)

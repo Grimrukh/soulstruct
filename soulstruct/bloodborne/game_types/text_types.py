@@ -53,6 +53,10 @@ class NPCName(Text):
 class PlaceName(Text):
     """Place name ID."""
     @classmethod
+    def get_event_arg_fmt(cls):
+        return "I"
+
+    @classmethod
     def get_text_category(cls):
         return "PlaceNames"
 

@@ -213,21 +213,21 @@ class MapModel(MapEntry, GameObjectInt):
 
 
 class MapPieceModel(MapModel):
-    """Map piece model (e.g. m0000). """
+    """Map piece model (e.g. m0000)."""
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
         return ("Models", "MapPieceModels") if pluralized_subtype else ("Models", "MapPieceModel")
 
 
 class ObjectModel(MapModel):
-    """Object model (e.g. o0000). """
+    """Object model (e.g. o0000). Only used prior to Elden Ring."""
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
         return ("Models", "ObjectModels") if pluralized_subtype else ("Models", "ObjectModel")
 
 
 class AssetModel(MapModel):
-    """Asset model (e.g. o0000). """
+    """Asset model (e.g. o0000). Used in Elden Ring onward."""
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
         return ("Models", "AssetModels") if pluralized_subtype else ("Models", "AssetModel")
@@ -251,14 +251,14 @@ class PlayerModel(MapModel):
 
 
 class CollisionModel(MapModel):
-    """Map piece model (e.g. h0000). """
+    """Map piece model (e.g. h0000)."""
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
         return ("Models", "CollisionModels") if pluralized_subtype else ("Models", "CollisionModel")
 
 
 class NavmeshModel(MapModel):
-    """Navmesh model (e.g. n0000). """
+    """Navmesh model (e.g. n0000)."""
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
         return ("Models", "NavmesheModels") if pluralized_subtype else ("Models", "NavmeshModel")
@@ -328,6 +328,9 @@ class TreasureEvent(MapEvent):
 
 class SpawnerEvent(MapEvent):
     """Spawner event (causes linked enemies to respawn) in MSB attached to a region. Can be enabled or disabled."""
+    @classmethod
+    def get_event_arg_fmt(cls) -> str:
+        return "i"
 
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):

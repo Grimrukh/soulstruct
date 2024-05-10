@@ -648,12 +648,12 @@ def Event_16002310(_, character: uint, radius: float, seconds: float, animation_
     """Event 16002310"""
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
     DisableAI(character)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
     AND_4.Add(CharacterHasSpecialEffect(character, 481))
     AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
@@ -696,7 +696,7 @@ def Event_16002310(_, character: uint, radius: float, seconds: float, animation_
     
     EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
-    GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
+    GotoIfLastConditionResultFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):
         ForceAnimation(character, animation_id, loop=True)
@@ -888,15 +888,15 @@ def Event_16002570(
     
     MAIN.Await(OR_14)
     
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=AND_1)
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=AND_7)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=AND_7)
     DeleteAssetVFX(asset)
     Wait(1.0)
     Restart()
 
     # --- Label 3 --- #
     DefineLabel(3)
-    DisplayDialogAndSetFlags(
+    AwaitDialogResponse(
         message=4300,
         button_type=ButtonType.Yes_or_No,
         number_buttons=NumberButtons.TwoButton,
@@ -1669,7 +1669,7 @@ def Event_16002846(
     
     if FlagEnabled(flag):
         return RESTART
-    RestartIfFinishedConditionTrue(input_condition=OR_4)
+    RestartIfLastConditionResultTrue(input_condition=OR_4)
     AND_8.Add(PlayerInOwnWorld())
     AND_8.Add(EntityWithinDistance(entity=Characters.GodDevouringSerpent1, other_entity=PLAYER, radius=40.0))
     
@@ -3187,7 +3187,7 @@ def Event_16003762(
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_2)
     DeleteAssetVFX(asset)
     AwardGesture(gesture_param_id=gesture_param_id)
     EnableNetworkFlag(first_flag)

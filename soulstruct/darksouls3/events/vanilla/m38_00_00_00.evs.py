@@ -918,7 +918,7 @@ def Event_13805272(_, character: int, region: int, region_1: int, region_2: int,
     """Event 13805272"""
     GotoIfThisEventSlotFlagEnabled(Label.L0)
     DisableAI(character)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -997,7 +997,7 @@ def Event_13805340(
     if ThisEventSlotFlagEnabled():
         return
     ForceAnimation(character, animation_id, loop=True, unknown2=1.0)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -1629,7 +1629,7 @@ def Event_13805440(
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_2)
     ForceAnimation(entity, 0, wait_for_completion=True, unknown2=1.0)
     Goto(Label.L1)
 
@@ -2034,7 +2034,7 @@ def Event_13805440(
             launch_angle_z=0,
         )
     Wait(3.0)
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=OR_2)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=OR_2)
     
     MAIN.Await(AllPlayersOutsideRegion(region=region))
     
@@ -3823,7 +3823,7 @@ def Event_13805809():
     DisableObjectActivation(3801561, obj_act_id=1000371)
     DisableAI(3805800)
     DisableAI(3800800)
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=4))
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=7))
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=21))
@@ -4415,7 +4415,7 @@ def Event_13805857(_, flag: int, entity: int, region: int, flag_1: int, action_b
     
     MAIN.Await(AND_2)
     
-    RestartIfFinishedConditionTrue(input_condition=OR_3)
+    RestartIfLastConditionResultTrue(input_condition=OR_3)
     
     MAIN.Await(FlagEnabled(13800831))
 

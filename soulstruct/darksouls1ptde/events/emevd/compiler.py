@@ -8,6 +8,8 @@ from this module or the (category, index) for EMEDF. When decompiling to EVS,
 Usually, these just simplify or pre-bake certain arguments (e.g., `Enable/Disable` variants, tuple `FlagRange` values)
 or combine multiple underlying EMEVD instructions into one (e.g., `IfActionButton`).
 """
+from __future__ import annotations
+
 __all__ = [
     "COMPILER",
     "compile_instruction",
@@ -36,12 +38,15 @@ __all__ = [
 import logging
 import typing as tp
 
-from soulstruct.base.events.emevd.compiler import base_compile_instruction, BooleanTestCompiler
+from soulstruct.base.events.evs.compiler import base_compile_instruction, BooleanTestCompiler
 from soulstruct.base.events.emevd.utils import get_coord_entity_type
 from soulstruct.darksouls1ptde.game_types import *
 
 from .enums import *
 from .emedf import EMEDF_ALIASES
+
+if tp.TYPE_CHECKING:
+    from soulstruct.base.events.evs.conditions import EVSConditionManager
 
 _LOGGER = logging.getLogger("soulstruct")
 
@@ -54,11 +59,16 @@ _LOGGER = logging.getLogger("soulstruct")
 COMPILER = {}
 
 
-def compile_instruction(instr_name: str, *args, **kwargs) -> list[str]:
-    """Compile instruction using `COMPILER` function if available, or fall back to `_auto_compile` below with EMEDF."""
+def compile_instruction(instr_name: str, *args, cond: EVSConditionManager = None, **kwargs) -> list[str]:
+    """Compile instruction using `COMPILER` function if available, or fall back to `base_compile_instruction`
+    that purely uses EMEDF.
+
+    `cond` can be passed in for `base_decompile_instruction` to manage conditions. However, to ease signatures, it is
+    never passed to decorated COMPILER functions, which are highly unlikely to ever need it.
+    """
     if instr_name in COMPILER:
         return COMPILER[instr_name](*args, **kwargs)
-    return base_compile_instruction(EMEDF_ALIASES, instr_name, *args, **kwargs)
+    return base_compile_instruction(EMEDF_ALIASES, instr_name, *args, cond=cond, **kwargs)
 
 
 def compile_game_object_test(

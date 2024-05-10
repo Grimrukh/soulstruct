@@ -10,7 +10,7 @@ __all__ = [
     "BOOL",
     "INT",
     "FLOAT",
-    "MODEL_POINT",
+    "DUMMY_ID",
     "BIT_COUNT",
     "SPECIAL_EFFECT",
     "NO_DEFAULT",
@@ -163,7 +163,7 @@ def build_emedf_aliases_tests(emedf: EMEDF_TYPING) -> tuple[dict, dict, dict]:
         for partial_name in partials:
             emedf_aliases[partial_name] = (category, index, v)
 
-        if v["alias"].endswith("IfConditionState") or v["alias"].endswith("IfFinishedConditionState"):
+        if v["alias"].endswith("IfConditionState") or v["alias"].endswith("IfLastConditionResultState"):
             continue  # condition tests are handled with `Condition` EVS object and `ConditionGroup` enum
 
         if v["alias"].startswith("If") and not v["alias"].startswith("If_Unknown"):
@@ -229,6 +229,8 @@ def build_emedf_aliases_tests(emedf: EMEDF_TYPING) -> tuple[dict, dict, dict]:
 HIDE_NAME = {
     "hide_name": True,
 }
+
+# Shortcuts for Python types with no default.
 BOOL = {  # boolean event arguments will be typed as integers
     "type": tp.Union[bool, int],
     "default": None,
@@ -242,7 +244,7 @@ FLOAT = {
     "default": None,
 }
 
-MODEL_POINT = {
+DUMMY_ID = {
     "type": int,
     "default": -1,
     "internal_default": -1,

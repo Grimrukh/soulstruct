@@ -499,8 +499,8 @@ def Event_13205310():
     
     if FlagEnabled(13205399):
         return
-    GotoIfFinishedConditionTrue(Label.L9, input_condition=OR_4)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=OR_5)
+    GotoIfLastConditionResultTrue(Label.L9, input_condition=OR_4)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=OR_5)
     SkipLinesIfClientTypeCountComparison(
         skip_lines=1,
         client_type=ClientType.Invader,
@@ -508,7 +508,7 @@ def Event_13205310():
         value=0,
     )
     SetNetworkConnectedFlagState(flag=13205398, state=FlagSetting.On)
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_2)
     Wait(1.0)
     ForceAnimation(3200300, 20004, wait_for_completion=True, skip_transition=True, unknown2=1.0)
     OR_6.Add(CharacterInsideRegion(character=PLAYER, region=3202300))
@@ -596,8 +596,8 @@ def Event_13205320():
     
     if FlagEnabled(13205399):
         return
-    GotoIfFinishedConditionTrue(Label.L9, input_condition=OR_4)
-    GotoIfFinishedConditionTrue(Label.L9, input_condition=OR_5)
+    GotoIfLastConditionResultTrue(Label.L9, input_condition=OR_4)
+    GotoIfLastConditionResultTrue(Label.L9, input_condition=OR_5)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -682,8 +682,8 @@ def Event_13205330():
     
     if FlagEnabled(13205399):
         return
-    GotoIfFinishedConditionTrue(Label.L9, input_condition=OR_4)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L9, input_condition=OR_4)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_2)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -783,9 +783,9 @@ def Event_13205340():
     
     if FlagEnabled(13205399):
         return
-    GotoIfFinishedConditionTrue(Label.L9, input_condition=OR_4)
-    GotoIfFinishedConditionTrue(Label.L9, input_condition=OR_5)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L9, input_condition=OR_4)
+    GotoIfLastConditionResultTrue(Label.L9, input_condition=OR_5)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_2)
     SkipLinesIfClientTypeCountComparison(
         skip_lines=1,
         client_type=ClientType.Invader,

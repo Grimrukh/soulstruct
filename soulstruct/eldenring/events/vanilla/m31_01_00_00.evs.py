@@ -108,12 +108,12 @@ def Event_31012207(_, character: uint, region: uint, radius: float, seconds: flo
     if ThisEventSlotFlagEnabled():
         return
     DisableAI(character)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     OR_5.Add(CharacterInsideRegion(character=PLAYER, region=region))
     OR_3.Add(OR_5)
     OR_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
@@ -159,7 +159,7 @@ def Event_31012207(_, character: uint, region: uint, radius: float, seconds: flo
     MAIN.Await(OR_2)
     
     EnableThisNetworkSlotFlag()
-    GotoIfFinishedConditionFalse(Label.L1, input_condition=OR_5)
+    GotoIfLastConditionResultFalse(Label.L1, input_condition=OR_5)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):
         ForceAnimation(character, animation_id, loop=True)
@@ -174,12 +174,12 @@ def Event_31012220(_, character: uint):
     """Event 31012220"""
     if ThisEventSlotFlagEnabled():
         return
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=1.5))
     AND_4.Add(CharacterHasSpecialEffect(character, 481))
     AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
@@ -231,12 +231,12 @@ def Event_31012230(_, character: uint):
         return
     AddSpecialEffect(character, 8081)
     AddSpecialEffect(character, 8082)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=7.0))
     OR_2.Add(AND_1)

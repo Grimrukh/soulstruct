@@ -251,7 +251,7 @@ def Event_11300090(_, obj: int, vfx_id: int, destination: int, destination_1: in
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     Move(PLAYER, destination=destination, destination_type=CoordEntityType.Region, short_move=True)
     SkipLines(1)
     Move(PLAYER, destination=destination_1, destination_type=CoordEntityType.Region, short_move=True)
@@ -575,19 +575,19 @@ def Event_11300882():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_1)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_1)
     EnableFlag(11305320)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_2)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_2)
     EnableFlag(11305321)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_3)
     EnableFlag(11305322)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_4)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_4)
     EnableFlag(11305323)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_5)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_5)
     EnableFlag(11305324)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_6)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_6)
     EnableFlag(11305325)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_7)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_7)
     EnableFlag(11305326)
     DisableFlag(11305329)
     Restart()
@@ -775,7 +775,7 @@ def Event_11305370(_, character: int, flag: int):
     MAIN.Await(OR_1)
     
     WaitForNetworkApproval(max_seconds=3.0)
-    SkipLinesIfFinishedConditionTrue(3, input_condition=AND_1)
+    SkipLinesIfLastConditionResultTrue(3, input_condition=AND_1)
     AICommand(character, command_id=1, command_slot=1)
     ReplanAI(character)
     
@@ -785,7 +785,7 @@ def Event_11305370(_, character: int, flag: int):
     ResetAnimation(character, disable_interpolation=True)
     DisableCharacter(character)
     DisableFlag(flag)
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     RestartEvent(event_id=11305250)
     if FlagDisabled(flag):
         return RESTART
@@ -1201,7 +1201,7 @@ def Event_11305030(_, flag: int, flag_1: int, flag_2: int, obj: int, obj_1: int,
     
     DisableFlag(flag_1)
     DisableFlag(flag_2)
-    SkipLinesIfFinishedConditionTrue(6, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(6, input_condition=AND_2)
     EnableFlag(flag)
     ForceAnimation(obj_1, 3)
     WaitFrames(frames=140)
@@ -1226,7 +1226,7 @@ def Event_11305032(_, obj_act_id: int, obj_act_id_1: int, flag: int, flag_1: int
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     EnableFlag(flag)
     Restart()
     EnableFlag(flag_1)
@@ -1558,7 +1558,7 @@ def Event_11305050(_, flag: int, character: int, region: int, radius: float):
         return
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(EntityWithinDistance(entity=character, other_entity=PLAYER, radius=radius))
-    AND_2.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_2.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_1.Add(not AND_2)
     
     MAIN.Await(AND_1)
@@ -1671,7 +1671,7 @@ def Event_11300510(_, character: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_3)
     DisableCharacter(character)
     
     MAIN.Await(FlagEnabled(703))
@@ -1728,7 +1728,7 @@ def Event_11300531(_, character: int, flag: int):
     
     DisableFlag(1627)
     EnableFlag(flag)
-    EndIfFinishedConditionFalse(input_condition=AND_3)
+    EndIfLastConditionResultFalse(input_condition=AND_3)
     DropMandatoryTreasure(character)
 
 

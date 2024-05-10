@@ -559,12 +559,12 @@ def Event_31212205():
     if ThisEventSlotFlagEnabled():
         return
     DisableAI(Characters.VulgarMilitia0)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     AND_2.Add(OR_1)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=31212205))
@@ -574,8 +574,8 @@ def Event_31212205():
     
     MAIN.Await(OR_5)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_1)
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=AND_2)
     Goto(Label.L10)
 
     # --- Label 1 --- #
@@ -629,12 +629,12 @@ def Event_31212250(
     AddSpecialEffect(character, 8081)
     AddSpecialEffect(character, 8082)
     ForceAnimation(character, animation_id, loop=True)
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_15)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     if UnsignedNotEqual(left=0, right=region):
         OR_3.Add(CharacterInsideRegion(character=PLAYER, region=region))
     OR_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
@@ -693,12 +693,12 @@ def Event_31212260(_, character: uint, region: uint, patrol_information_id: uint
         return
     AddSpecialEffect(character, 8081)
     AddSpecialEffect(character, 8082)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(FlagEnabled(31210600))
@@ -719,12 +719,12 @@ def Event_31212308(_, character: uint, region: uint):
     AddSpecialEffect(character, 8081)
     AddSpecialEffect(character, 8082)
     AddSpecialEffect(character, 5000)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     AND_1.Add(EntityWithinDistance(entity=character, other_entity=PLAYER, radius=2.0))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
@@ -906,7 +906,7 @@ def Event_31212815():
     
     if FlagEnabled(31210800):
         return RESTART
-    RestartIfFinishedConditionTrue(input_condition=OR_4)
+    RestartIfLastConditionResultTrue(input_condition=OR_4)
 
     # --- Label 1 --- #
     DefineLabel(1)

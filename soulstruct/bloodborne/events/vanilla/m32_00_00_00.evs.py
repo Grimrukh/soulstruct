@@ -674,7 +674,7 @@ def Event_13200020(_, action_button_id: int, action_button_id_1: int, entity: in
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     DisplayDialog(text=10010160, number_buttons=NumberButtons.OneButton)
     Restart()
 
@@ -722,7 +722,7 @@ def Event_13200050(_, action_button_id: int, entity: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_2)
     DisplayDialog(text=10010161, number_buttons=NumberButtons.OneButton)
     Restart()
 
@@ -746,7 +746,7 @@ def Event_13200055(_, action_button_id: int, entity: int, flag: int):
     
     MAIN.Await(OR_2)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_2)
     DisplayDialog(text=10010161, number_buttons=NumberButtons.OneButton)
     Wait(1.0)
     Restart()
@@ -783,7 +783,7 @@ def Event_13200060(
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_1)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_1)
     DisableObjectActivation(obj, obj_act_id=obj_act_id_2)
     SkipLines(1)
     DisableObjectActivation(obj, obj_act_id=obj_act_id_3)
@@ -875,7 +875,7 @@ def Event_13200103():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_2)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_2)
     EnableFlag(13200104)
     SetNest(3200101, region=3202852)
     AddSpecialEffect(3200101, 5327)
@@ -1199,7 +1199,7 @@ def Event_13201801():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_1)
+    EndIfLastConditionResultTrue(input_condition=AND_1)
     PlaySoundEffect(3202800, 0, sound_type=SoundType.c_CharacterMotion)
 
 
@@ -1257,9 +1257,9 @@ def Event_13201803():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(8, input_condition=AND_3)
-    SkipLinesIfFinishedConditionTrue(5, input_condition=AND_4)
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_5)
+    SkipLinesIfLastConditionResultTrue(8, input_condition=AND_3)
+    SkipLinesIfLastConditionResultTrue(5, input_condition=AND_4)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_5)
     Move(3200801, destination=3202815, destination_type=CoordEntityType.Region, short_move=True)
     Goto(Label.L1)
     Move(3200801, destination=3202816, destination_type=CoordEntityType.Region, short_move=True)
@@ -1400,7 +1400,7 @@ def Event_13204830():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     RotateToFaceEntity(PLAYER, 3202800, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=3202809))
@@ -1660,8 +1660,8 @@ def Event_13204808():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_3)
     ResetAnimation(3200800)
     ForceAnimation(3200800, 7000)
     SetNPCPartHealth(3200800, npc_part_id=3201, desired_health=50, overwrite_max=True)
@@ -1674,8 +1674,8 @@ def Event_13204808():
     
     MAIN.Await(OR_2)
     
-    EndIfFinishedConditionTrue(input_condition=AND_5)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_6)
+    EndIfLastConditionResultTrue(input_condition=AND_5)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_6)
     ResetAnimation(3200800)
     ForceAnimation(3200800, 7001)
     SetNPCPartHealth(3200800, npc_part_id=3201, desired_health=25, overwrite_max=True)
@@ -1688,8 +1688,8 @@ def Event_13204808():
     
     MAIN.Await(OR_3)
     
-    EndIfFinishedConditionTrue(input_condition=AND_8)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_9)
+    EndIfLastConditionResultTrue(input_condition=AND_8)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_9)
     ResetAnimation(3200800)
     ForceAnimation(3200800, 7002)
     CreateNPCPart(
@@ -1728,8 +1728,8 @@ def Event_13204809():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_3)
     ResetAnimation(3200800)
     ForceAnimation(3200800, 7005)
     SetNPCPartHealth(3200800, npc_part_id=3202, desired_health=50, overwrite_max=True)
@@ -1742,8 +1742,8 @@ def Event_13204809():
     
     MAIN.Await(OR_2)
     
-    EndIfFinishedConditionTrue(input_condition=AND_5)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_6)
+    EndIfLastConditionResultTrue(input_condition=AND_5)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_6)
     ResetAnimation(3200800)
     ForceAnimation(3200800, 7006)
     SetNPCPartHealth(3200800, npc_part_id=3202, desired_health=25, overwrite_max=True)
@@ -1756,8 +1756,8 @@ def Event_13204809():
     
     MAIN.Await(OR_3)
     
-    EndIfFinishedConditionTrue(input_condition=AND_8)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_9)
+    EndIfLastConditionResultTrue(input_condition=AND_8)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_9)
     ResetAnimation(3200800)
     ForceAnimation(3200800, 7007)
     CreateNPCPart(
@@ -1880,7 +1880,7 @@ def Event_13205040(_, character: int, region: int, radius: float, seconds: float
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionFalse(Label.L0, input_condition=AND_2)
+    GotoIfLastConditionResultFalse(Label.L0, input_condition=AND_2)
     EnableAI(character)
     End()
 
@@ -1995,8 +1995,8 @@ def Event_13205140(_, character: int, region: int):
     
     MAIN.Await(OR_3)
     
-    EndIfFinishedConditionTrue(input_condition=OR_1)
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=OR_1)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     RotateToFaceEntity(character, PLAYER, animation=3002)
 
 
@@ -2065,7 +2065,7 @@ def Event_13205600(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     if FlagDisabled(flag):
         SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=1, overwrite_max=False)
         Restart()

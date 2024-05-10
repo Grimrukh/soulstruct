@@ -30,12 +30,12 @@ def CommonFunc_90005200(
         DisableGravity(character)
         DisableCharacterCollision(character)
     ForceAnimation(character, animation_id, loop=True)
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_15)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(CharacterBackreadEnabled(character))
     OR_11.Add(CharacterHasSpecialEffect(character, 5080))
@@ -134,12 +134,12 @@ def CommonFunc_90005201(
         DisableGravity(character)
         DisableCharacterCollision(character)
     ForceAnimation(character, animation_id, loop=True)
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_15)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
     AND_1.Add(CharacterBackreadEnabled(character))
     OR_11.Add(CharacterHasSpecialEffect(character, 5080))
@@ -239,12 +239,12 @@ def CommonFunc_90005210(
         DisableGravity(character)
         DisableCharacterCollision(character)
     ForceAnimation(character, animation_id, loop=True)
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_15)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_3.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
     AND_1.Add(AND_3)
@@ -346,12 +346,12 @@ def CommonFunc_90005211(
         DisableGravity(character)
         DisableCharacterCollision(character)
     ForceAnimation(character, animation_id, loop=True)
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_15)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     if UnsignedNotEqual(left=0, right=region):
         OR_3.Add(CharacterInsideRegion(character=PLAYER, region=region))
     OR_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
@@ -456,12 +456,12 @@ def CommonFunc_90005213(
         DisableGravity(character)
         DisableCharacterCollision(character)
     ForceAnimation(character, animation_id, loop=True)
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_15)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     if UnsignedNotEqual(left=0, right=region):
         OR_3.Add(CharacterInsideRegion(character=PLAYER, region=region))
     OR_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
@@ -531,7 +531,7 @@ def CommonFunc_90005213(
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
     GotoIfConditionTrue(Label.L0, input_condition=AND_2)
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_11)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_11)
     Wait(seconds)
     SkipLines(1)
     Wait(seconds_1)
@@ -711,12 +711,12 @@ def CommonFunc_AITrigger_RegionOrHurt(_, character: uint, region: uint, seconds:
     if ThisEventSlotFlagEnabled():
         return
     DisableAI(character)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_4.Add(CharacterHasSpecialEffect(character, 481))
     AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
@@ -758,7 +758,7 @@ def CommonFunc_AITrigger_RegionOrHurt(_, character: uint, region: uint, seconds:
     MAIN.Await(OR_2)
     
     EnableThisNetworkSlotFlag()
-    GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
+    GotoIfLastConditionResultFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):
         ForceAnimation(character, animation_id, loop=True)
@@ -774,12 +774,12 @@ def CommonFunc_90005251(_, character: uint, radius: float, seconds: float, anima
     if ThisEventSlotFlagEnabled():
         return
     DisableAI(character)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
     AND_4.Add(CharacterHasSpecialEffect(character, 481))
     AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
@@ -821,7 +821,7 @@ def CommonFunc_90005251(_, character: uint, radius: float, seconds: float, anima
     MAIN.Await(OR_2)
     
     EnableThisNetworkSlotFlag()
-    GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
+    GotoIfLastConditionResultFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):
         ForceAnimation(character, animation_id, loop=True)
@@ -837,12 +837,12 @@ def CommonFunc_90005260(_, character: uint, region: uint, radius: float, seconds
     if ThisEventSlotFlagEnabled():
         return
     DisableAI(character)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_3.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
     AND_1.Add(AND_3)
@@ -886,7 +886,7 @@ def CommonFunc_90005260(_, character: uint, region: uint, radius: float, seconds
     MAIN.Await(OR_2)
     
     EnableThisNetworkSlotFlag()
-    GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
+    GotoIfLastConditionResultFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):
         ForceAnimation(character, animation_id, loop=True)
@@ -902,12 +902,12 @@ def CommonFunc_90005261(_, character: uint, region: uint, radius: float, seconds
     if ThisEventSlotFlagEnabled():
         return
     DisableAI(character)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_4.Add(CharacterHasSpecialEffect(character, 481))
     AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
     AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90110))
@@ -951,7 +951,7 @@ def CommonFunc_90005261(_, character: uint, region: uint, radius: float, seconds
     MAIN.Await(OR_2)
     
     EnableThisNetworkSlotFlag()
-    GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
+    GotoIfLastConditionResultFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):
         ForceAnimation(character, animation_id, loop=True)
@@ -1005,7 +1005,7 @@ def CommonFunc_90005271(_, character: uint, seconds: float, animation_id: int):
     MAIN.Await(OR_2)
     
     EnableThisNetworkSlotFlag()
-    GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
+    GotoIfLastConditionResultFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):
         ForceAnimation(character, animation_id, loop=True)
@@ -1444,13 +1444,13 @@ def CommonFunc_90005453(_, asset__character: uint, asset: uint, dummy_id: int, s
     if AssetDestroyed(asset):
         return
     AttachAssetToCharacter(character=asset__character, dummy_id=dummy_id, asset=asset)
-    OR_10.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_10.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_10.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
-    OR_10.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
-    OR_10.Add(CharacterType(PLAYER, character_type=CharacterType.Invader))
-    OR_10.Add(CharacterType(PLAYER, character_type=CharacterType.Invader2))
-    OR_10.Add(CharacterType(PLAYER, character_type=CharacterType.Invader3))
+    OR_10.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_10.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_10.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_10.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_10.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader))
+    OR_10.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader2))
+    OR_10.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader3))
     GotoIfConditionFalse(Label.L10, input_condition=OR_10)
     EnableAssetInvulnerability(asset)
 
@@ -1869,10 +1869,10 @@ def CommonFunc_90005470(_, character: uint):
     
     MAIN.Await(OR_9)
     
-    GotoIfFinishedConditionTrue(Label.L5, input_condition=OR_5)
-    GotoIfFinishedConditionTrue(Label.L4, input_condition=OR_4)
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=OR_3)
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=OR_2)
+    GotoIfLastConditionResultTrue(Label.L5, input_condition=OR_5)
+    GotoIfLastConditionResultTrue(Label.L4, input_condition=OR_4)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=OR_3)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=OR_2)
     Goto(Label.L9)
 
     # --- Label 2 --- #
@@ -2263,10 +2263,10 @@ def CommonFunc_90005480(_, character: uint):
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=AND_3)
-    GotoIfFinishedConditionTrue(Label.L4, input_condition=AND_4)
-    GotoIfFinishedConditionTrue(Label.L5, input_condition=AND_5)
-    GotoIfFinishedConditionTrue(Label.L6, input_condition=AND_6)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L4, input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L5, input_condition=AND_5)
+    GotoIfLastConditionResultTrue(Label.L6, input_condition=AND_6)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -2387,13 +2387,13 @@ def CommonFunc_90005490(
     EndOfAnimation(asset=asset, animation_id=0)
     if PlayerInOwnWorld():
         SetNetworkUpdateAuthority(character, authority_level=UpdateAuthority.Forced)
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_15.Add(AND_15)
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
     AND_1.Add(OR_15)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
@@ -2481,7 +2481,7 @@ def CommonFunc_90005500(
     EnableNetworkFlag(flag_2)
     DisableNetworkFlag(flag)
     DisableFlag(flag_1)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=OR_1)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=OR_1)
     GotoIfFlagEnabled(Label.L1, flag=flag_3)
     SkipLinesIfUnsignedEqual(29, left=left, right=10)
     SkipLinesIfUnsignedEqual(26, left=left, right=9)
@@ -2664,7 +2664,7 @@ def CommonFunc_90005500(
     EnableNetworkFlag(flag_2)
     EnableNetworkFlag(flag)
     EnableFlag(flag_1)
-    GotoIfFinishedConditionTrue(Label.L4, input_condition=OR_5)
+    GotoIfLastConditionResultTrue(Label.L4, input_condition=OR_5)
     GotoIfFlagEnabled(Label.L4, flag=flag_3)
     SkipLinesIfUnsignedEqual(29, left=left, right=10)
     SkipLinesIfUnsignedEqual(26, left=left, right=9)
@@ -2937,8 +2937,8 @@ def CommonFunc_90005502(_, flag: uint, asset: uint, region: uint):
         return
     WaitFrames(frames=2)
     DisableAssetActivation(asset, obj_act_id=-1)
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
     AND_13.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_13.Add(OR_15)
     OR_1.Add(AND_13)
@@ -2949,7 +2949,7 @@ def CommonFunc_90005502(_, flag: uint, asset: uint, region: uint):
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_1)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_1)
     if FlagEnabled(flag):
         return
     DisplayDialog(text=4000, anchor_entity=0, number_buttons=NumberButtons.OneButton)
@@ -2970,8 +2970,8 @@ def CommonFunc_90015502(_, flag: uint, asset: uint, region: uint):
         return
     WaitFrames(frames=2)
     DisableAssetActivation(asset, obj_act_id=-1)
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
     AND_13.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_13.Add(OR_15)
     AND_13.Add(HealthValue(PLAYER) != 0)
@@ -2983,7 +2983,7 @@ def CommonFunc_90015502(_, flag: uint, asset: uint, region: uint):
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_1)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_1)
     if FlagEnabled(flag):
         return
     DisplayDialog(text=4000, anchor_entity=0, number_buttons=NumberButtons.OneButton)
@@ -3126,7 +3126,7 @@ def CommonFunc_90005503(
     EnableNetworkFlag(flag_2)
     EnableNetworkFlag(flag)
     EnableFlag(flag_1)
-    GotoIfFinishedConditionTrue(Label.L4, input_condition=OR_5)
+    GotoIfLastConditionResultTrue(Label.L4, input_condition=OR_5)
     GotoIfFlagEnabled(Label.L4, flag=flag_3)
     SkipLinesIfUnsignedEqual(11, left=left, right=4)
     SkipLinesIfUnsignedEqual(8, left=left, right=3)
@@ -3318,8 +3318,8 @@ def CommonFunc_90005505(
         EnableNetworkFlag(flag_2)
         DisableNetworkFlag(flag)
     DisableFlag(flag_1)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_3)
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=OR_1)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=OR_1)
     GotoIfFlagEnabled(Label.L2, flag=flag_3)
     SkipLinesIfUnsignedEqual(5, left=left, right=2)
     SkipLinesIfUnsignedEqual(2, left=left, right=1)
@@ -3413,8 +3413,8 @@ def CommonFunc_90005505(
         EnableNetworkFlag(flag_2)
         EnableNetworkFlag(flag)
     EnableFlag(flag_1)
-    GotoIfFinishedConditionTrue(Label.L5, input_condition=AND_7)
-    GotoIfFinishedConditionTrue(Label.L6, input_condition=OR_5)
+    GotoIfLastConditionResultTrue(Label.L5, input_condition=AND_7)
+    GotoIfLastConditionResultTrue(Label.L6, input_condition=OR_5)
     GotoIfFlagEnabled(Label.L6, flag=flag_3)
     SkipLinesIfUnsignedEqual(5, left=left, right=2)
     SkipLinesIfUnsignedEqual(2, left=left, right=1)
@@ -3537,7 +3537,7 @@ def CommonFunc_90005507(
     EnableNetworkFlag(flag_2)
     DisableNetworkFlag(flag)
     DisableFlag(flag_1)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=OR_1)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=OR_1)
     GotoIfFlagEnabled(Label.L1, flag=flag_3)
     ForceAnimation(entity_1, 1, skip_transition=True)
     SkipLinesIfUnsignedEqual(29, left=left, right=10)
@@ -3717,7 +3717,7 @@ def CommonFunc_90005507(
     EnableNetworkFlag(flag_2)
     EnableNetworkFlag(flag)
     EnableFlag(flag_1)
-    GotoIfFinishedConditionTrue(Label.L4, input_condition=OR_5)
+    GotoIfLastConditionResultTrue(Label.L4, input_condition=OR_5)
     GotoIfFlagEnabled(Label.L4, flag=flag_3)
     ForceAnimation(entity, 1, skip_transition=True)
     SkipLinesIfUnsignedEqual(29, left=left, right=10)
@@ -4167,7 +4167,7 @@ def CommonFunc_900055278(
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_2)
     DisplayDialog(text=text, anchor_entity=flag, button_type=ButtonType.Yes_or_No)
     Wait(1.0)
     Restart()
@@ -4416,8 +4416,8 @@ def CommonFunc_90005605(
     
     MAIN.Await(OR_14)
     
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=AND_1)
-    GotoIfFinishedConditionFalse(Label.L2, input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=AND_1)
+    GotoIfLastConditionResultFalse(Label.L2, input_condition=AND_4)
     DeleteAssetVFX(asset)
     DisableFlag(flag)
 
@@ -4438,7 +4438,7 @@ def CommonFunc_90005605(
 
     # --- Label 4 --- #
     DefineLabel(4)
-    DisplayDialogAndSetFlags(
+    AwaitDialogResponse(
         message=4300,
         button_type=ButtonType.Yes_or_No,
         number_buttons=NumberButtons.TwoButton,
@@ -4540,7 +4540,7 @@ def CommonFunc_90005620(
     MAIN.Await(OR_1)
     
     GotoIfFlagEnabled(Label.L9, flag=flag)
-    DisplayDialogAndSetFlags(
+    AwaitDialogResponse(
         message=108000,
         button_type=ButtonType.Yes_or_No,
         number_buttons=NumberButtons.TwoButton,
@@ -4782,13 +4782,13 @@ def CommonFunc_90005636(
     Wait(0.20000000298023224)
     DisableCharacter(character)
     DisableAI(character)
-    GotoIfFinishedConditionFalse(Label.L2, input_condition=AND_3)
+    GotoIfLastConditionResultFalse(Label.L2, input_condition=AND_3)
     Move(character, destination=destination, destination_type=CoordEntityType.Region, copy_draw_parent=PLAYER)
     Wait(0.10000000149011612)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    GotoIfFinishedConditionFalse(Label.L3, input_condition=AND_4)
+    GotoIfLastConditionResultFalse(Label.L3, input_condition=AND_4)
 
     # --- Label 1 --- #
     DefineLabel(1)
@@ -4882,7 +4882,7 @@ def CommonFunc_90005645(
     
     MAIN.Await(AND_2)
     
-    DisplayDialogAndSetFlags(
+    AwaitDialogResponse(
         message=4100,
         button_type=ButtonType.Yes_or_No,
         number_buttons=NumberButtons.TwoButton,
@@ -4933,7 +4933,7 @@ def CommonFunc_90005646(
     
     MAIN.Await(AND_2)
     
-    DisplayDialogAndSetFlags(
+    AwaitDialogResponse(
         message=4100,
         button_type=ButtonType.Yes_or_No,
         number_buttons=NumberButtons.TwoButton,
@@ -5225,9 +5225,9 @@ def CommonFunc_90005670(
 ):
     """CommonFunc 90005670"""
     GotoIfFlagEnabled(Label.L0, flag=flag_1)
-    OR_9.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_9.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
-    OR_9.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_9)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(FlagDisabled(flag))
@@ -5269,9 +5269,9 @@ def CommonFunc_90005670(
 @ContinueOnRest(90005673)
 def CommonFunc_90005673(_, flag: uint, region: uint):
     """CommonFunc 90005673"""
-    OR_9.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_9.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_9.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
     AND_1.Add(OR_9)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     
@@ -5279,10 +5279,10 @@ def CommonFunc_90005673(_, flag: uint, region: uint):
     
     SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag)
-    OR_10.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
-    OR_10.Add(CharacterType(PLAYER, character_type=CharacterType.Invader))
-    OR_10.Add(CharacterType(PLAYER, character_type=CharacterType.Invader2))
-    OR_10.Add(CharacterType(PLAYER, character_type=CharacterType.Invader3))
+    OR_10.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_10.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader))
+    OR_10.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader2))
+    OR_10.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader3))
     AND_10.Add(OR_10)
     AND_10.Add(CharacterInsideRegion(character=PLAYER, region=region))
     OR_2.Add(AND_10)
@@ -5290,7 +5290,7 @@ def CommonFunc_90005673(_, flag: uint, region: uint):
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_10)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_10)
     Wait(1.0)
     SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableNetworkFlag(flag)
@@ -6251,7 +6251,7 @@ def CommonFunc_90005703(
     
     MAIN.Await(OR_4)
     
-    RestartIfFinishedConditionTrue(input_condition=OR_3)
+    RestartIfLastConditionResultTrue(input_condition=OR_3)
     SetTeamType(character, TeamType.HostileNPC)
     AddSpecialEffect(character, 9628)
     AddSpecialEffect(character, 9635)
@@ -6259,7 +6259,7 @@ def CommonFunc_90005703(
     if CharacterDoesNotHaveSpecialEffect(character=character, special_effect=445):
         AddSpecialEffect(character, 442)
     AddSpecialEffect(character, 9644)
-    GotoIfFinishedConditionTrue(Label.L9, input_condition=OR_5)
+    GotoIfLastConditionResultTrue(Label.L9, input_condition=OR_5)
     GotoIfValueComparison(Label.L1, comparison_type=ComparisonType.Equal, left=1, right=right)
     DisableNetworkConnectedFlagRange(flag_range=(first_flag, last_flag))
     EnableNetworkFlag(flag)
@@ -6299,7 +6299,7 @@ def CommonFunc_90005704(_, attacked_entity: uint, flag: uint, flag_1: uint, flag
     
     MAIN.Await(OR_2)
     
-    RestartIfFinishedConditionTrue(input_condition=OR_1)
+    RestartIfLastConditionResultTrue(input_condition=OR_1)
     WaitFrames(frames=1)
 
     # --- Label 4 --- #
@@ -6312,7 +6312,7 @@ def CommonFunc_90005704(_, attacked_entity: uint, flag: uint, flag_1: uint, flag
     
     MAIN.Await(OR_4)
     
-    RestartIfFinishedConditionTrue(input_condition=OR_3)
+    RestartIfLastConditionResultTrue(input_condition=OR_3)
     WaitFrames(frames=1)
 
     # --- Label 3 --- #
@@ -6325,7 +6325,7 @@ def CommonFunc_90005704(_, attacked_entity: uint, flag: uint, flag_1: uint, flag
     
     MAIN.Await(OR_6)
     
-    RestartIfFinishedConditionTrue(input_condition=OR_5)
+    RestartIfLastConditionResultTrue(input_condition=OR_5)
     WaitFrames(frames=1)
 
     # --- Label 2 --- #
@@ -6338,7 +6338,7 @@ def CommonFunc_90005704(_, attacked_entity: uint, flag: uint, flag_1: uint, flag
     
     MAIN.Await(OR_8)
     
-    RestartIfFinishedConditionTrue(input_condition=OR_7)
+    RestartIfLastConditionResultTrue(input_condition=OR_7)
     WaitFrames(frames=1)
 
     # --- Label 1 --- #
@@ -6351,7 +6351,7 @@ def CommonFunc_90005704(_, attacked_entity: uint, flag: uint, flag_1: uint, flag
     
     MAIN.Await(OR_10)
     
-    RestartIfFinishedConditionTrue(input_condition=OR_9)
+    RestartIfLastConditionResultTrue(input_condition=OR_9)
     EnableFlag(flag_2)
     Restart()
 
@@ -6460,8 +6460,8 @@ def CommonFunc_90005707(
     
     MAIN.Await(OR_4)
     
-    RestartIfFinishedConditionTrue(input_condition=OR_3)
-    GotoIfFinishedConditionTrue(Label.L9, input_condition=OR_5)
+    RestartIfLastConditionResultTrue(input_condition=OR_3)
+    GotoIfLastConditionResultTrue(Label.L9, input_condition=OR_5)
     GotoIfValueComparison(Label.L0, comparison_type=ComparisonType.Equal, left=1, right=right)
     DisableNetworkConnectedFlagRange(flag_range=(first_flag, last_flag))
     EnableNetworkFlag(flag)
@@ -6927,7 +6927,7 @@ def CommonFunc_90005730(_, flag: uint, seconds: float, flag_1: uint, flag_2: uin
     
     MAIN.Await(OR_1)
     
-    RestartIfFinishedConditionTrue(input_condition=OR_2)
+    RestartIfLastConditionResultTrue(input_condition=OR_2)
     EnableFlag(flag)
     Restart()
 
@@ -6943,7 +6943,7 @@ def CommonFunc_90005730(_, flag: uint, seconds: float, flag_1: uint, flag_2: uin
     
     MAIN.Await(OR_3)
     
-    RestartIfFinishedConditionTrue(input_condition=OR_4)
+    RestartIfLastConditionResultTrue(input_condition=OR_4)
     EnableFlag(flag)
     Restart()
 
@@ -7067,8 +7067,8 @@ def CommonFunc_90005740(
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L20, input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L19, input_condition=OR_2)
+    GotoIfLastConditionResultTrue(Label.L20, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L19, input_condition=OR_2)
 
     # --- Label 9 --- #
     DefineLabel(9)
@@ -7098,7 +7098,7 @@ def CommonFunc_90005740(
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L20, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L20, input_condition=AND_3)
     GotoIfValueComparison(Label.L18, comparison_type=ComparisonType.Equal, left=animation_id, right=-1)
     GotoIfValueComparison(Label.L10, comparison_type=ComparisonType.Equal, left=special_effect, right=-1)
     AND_4.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 9900))
@@ -7107,7 +7107,7 @@ def CommonFunc_90005740(
     
     MAIN.Await(OR_4)
     
-    GotoIfFinishedConditionTrue(Label.L20, input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L20, input_condition=AND_4)
 
     # --- Label 10 --- #
     DefineLabel(10)
@@ -7261,8 +7261,8 @@ def CommonFunc_90005742(
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L20, input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L19, input_condition=OR_2)
+    GotoIfLastConditionResultTrue(Label.L20, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L19, input_condition=OR_2)
 
     # --- Label 9 --- #
     DefineLabel(9)
@@ -7294,9 +7294,9 @@ def CommonFunc_90005742(
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L20, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L20, input_condition=AND_3)
     GotoIfValueComparison(Label.L18, comparison_type=ComparisonType.Equal, left=animation_id, right=-1)
-    GotoIfFinishedConditionTrue(Label.L20, input_condition=AND_15)
+    GotoIfLastConditionResultTrue(Label.L20, input_condition=AND_15)
     GotoIfValueComparison(Label.L10, comparison_type=ComparisonType.Equal, left=special_effect, right=-1)
     AND_4.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 9900))
     OR_4.Add(CharacterHasSpecialEffect(PLAYER, special_effect))
@@ -7304,7 +7304,7 @@ def CommonFunc_90005742(
     
     MAIN.Await(OR_4)
     
-    GotoIfFinishedConditionTrue(Label.L20, input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L20, input_condition=AND_4)
 
     # --- Label 10 --- #
     DefineLabel(10)
@@ -7383,7 +7383,7 @@ def CommonFunc_90005743(
     MAIN.Await(OR_1)
     
     GotoIfValueComparison(Label.L19, comparison_type=ComparisonType.Equal, left=animation_id, right=-1)
-    GotoIfFinishedConditionTrue(Label.L20, input_condition=AND_15)
+    GotoIfLastConditionResultTrue(Label.L20, input_condition=AND_15)
     DisableFlag(flag_1)
     ForceAnimation(character, animation_id, wait_for_completion=True)
     Wait(seconds)
@@ -7433,7 +7433,7 @@ def CommonFunc_90005750(
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_2)
     DeleteAssetVFX(asset)
     AwardItemLot(item_lot, host_only=True)
     EzstateAIRequest(PLAYER, command_id=60070, command_slot=0)
@@ -7477,7 +7477,7 @@ def CommonFunc_90005752(_, asset: uint, vfx_id: int, dummy_id: int, seconds: flo
     
     MAIN.Await(AND_1)
     
-    RestartIfFinishedConditionTrue(input_condition=AND_2)
+    RestartIfLastConditionResultTrue(input_condition=AND_2)
     DeleteAssetVFX(asset)
 
     # --- Label 0 --- #
@@ -7690,7 +7690,7 @@ def CommonFunc_90005782(
     
     MAIN.Await(OR_5)
     
-    RestartIfFinishedConditionTrue(input_condition=OR_4)
+    RestartIfLastConditionResultTrue(input_condition=OR_4)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.Always)
@@ -7722,7 +7722,7 @@ def CommonFunc_90005784(_, flag: uint, flag_1: uint, character: uint, region: ui
     
     MAIN.Await(OR_5)
     
-    RestartIfFinishedConditionTrue(input_condition=OR_4)
+    RestartIfLastConditionResultTrue(input_condition=OR_4)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.Always)
@@ -8004,10 +8004,10 @@ def CommonFunc_90005795(
     
     MAIN.Await(OR_3)
     
-    RestartIfFinishedConditionTrue(input_condition=OR_2)
+    RestartIfLastConditionResultTrue(input_condition=OR_2)
     if FlagDisabled(flag_2):
         return RESTART
-    DisplayDialogAndSetFlags(
+    AwaitDialogResponse(
         message=message,
         button_type=ButtonType.Yes_or_No,
         number_buttons=NumberButtons.TwoButton,
@@ -8131,7 +8131,7 @@ def CommonFunc_9005800(
     
     if FlagEnabled(flag):
         return RESTART
-    RestartIfFinishedConditionTrue(input_condition=OR_4)
+    RestartIfLastConditionResultTrue(input_condition=OR_4)
 
     # --- Label 1 --- #
     DefineLabel(1)
@@ -8173,14 +8173,14 @@ def CommonFunc_9005801(_, flag: uint, entity: uint, region: uint, flag_1: uint, 
         return
     AND_1.Add(FlagDisabled(flag))
     AND_1.Add(FlagEnabled(flag_1))
-    AND_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(ActionButtonParamActivated(action_button_id=action_button_id, entity=entity))
     
     MAIN.Await(AND_1)
     
     SuppressSoundForFogGate(duration=5.0)
     RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
-    AND_2.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_2.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
     OR_1.Add(TimeElapsed(seconds=3.0))
     OR_2.Add(OR_1)
@@ -8188,7 +8188,7 @@ def CommonFunc_9005801(_, flag: uint, entity: uint, region: uint, flag_1: uint, 
     
     MAIN.Await(AND_2)
     
-    RestartIfFinishedConditionTrue(input_condition=OR_1)
+    RestartIfLastConditionResultTrue(input_condition=OR_1)
     EnableFlag(flag_2)
     Restart()
 
@@ -8225,14 +8225,14 @@ def CommonFunc_9005811(_, flag: uint, asset: uint, dummy_id: int, right: uint):
     DisableNetworkSync()
     DisableAsset(asset)
     DeleteAssetVFX(asset)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Invader))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Invader2))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Invader3))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader2))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader3))
     AND_1.Add(OR_1)
     AND_1.Add(FlagDisabled(flag))
-    OR_2.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_2.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_2.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_2.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
     AND_2.Add(OR_2)
     AND_2.Add(FlagDisabled(flag))
     if UnsignedNotEqual(left=0, right=right):
@@ -8242,13 +8242,13 @@ def CommonFunc_9005811(_, flag: uint, asset: uint, dummy_id: int, right: uint):
     OR_4.Add(InvasionPending())
     AND_4.Add(OR_4)
     AND_4.Add(FlagEnabled(flag))
-    AND_7.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_7.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_4.Add(not AND_7)
     OR_5.Add(Invasion())
     OR_5.Add(InvasionPending())
     AND_5.Add(OR_5)
     AND_5.Add(FlagEnabled(flag))
-    AND_5.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_5.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_5.Add(EntityBeyondDistance(entity=PLAYER, other_entity=asset, radius=1.0))
     OR_8.Add(AND_1)
     OR_8.Add(AND_2)
@@ -8261,14 +8261,14 @@ def CommonFunc_9005811(_, flag: uint, asset: uint, dummy_id: int, right: uint):
     EnableAsset(asset)
     DeleteAssetVFX(asset)
     CreateAssetVFX(asset, vfx_id=101, dummy_id=dummy_id)
-    OR_11.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
-    OR_11.Add(CharacterType(PLAYER, character_type=CharacterType.Invader))
-    OR_11.Add(CharacterType(PLAYER, character_type=CharacterType.Invader2))
-    OR_11.Add(CharacterType(PLAYER, character_type=CharacterType.Invader3))
+    OR_11.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_11.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader))
+    OR_11.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader2))
+    OR_11.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader3))
     AND_11.Add(OR_11)
     AND_11.Add(FlagDisabled(flag))
-    OR_12.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_12.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_12.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_12.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
     AND_12.Add(OR_12)
     AND_12.Add(FlagDisabled(flag))
     if UnsignedNotEqual(left=0, right=right):
@@ -8278,13 +8278,13 @@ def CommonFunc_9005811(_, flag: uint, asset: uint, dummy_id: int, right: uint):
     OR_14.Add(InvasionPending())
     AND_14.Add(OR_14)
     AND_14.Add(FlagEnabled(flag))
-    OR_7.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_7.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_14.Add(not OR_7)
     OR_15.Add(Invasion())
     OR_15.Add(InvasionPending())
     AND_15.Add(OR_15)
     AND_15.Add(FlagEnabled(flag))
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_15.Add(EntityBeyondDistance(entity=PLAYER, other_entity=asset, radius=1.0))
     AND_9.Add(not AND_11)
     AND_9.Add(not AND_12)
@@ -8307,13 +8307,13 @@ def CommonFunc_9005812(_, flag: uint, asset: uint, dummy_id: int, right: uint, d
     if UnsignedNotEqual(left=0, right=right):
         AND_1.Add(FlagEnabled(right))
     AND_1.Add(FlagDisabled(flag))
-    OR_3.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_3.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_3.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_3.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
     AND_3.Add(OR_3)
-    OR_4.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
-    OR_4.Add(CharacterType(PLAYER, character_type=CharacterType.Invader))
-    OR_4.Add(CharacterType(PLAYER, character_type=CharacterType.Invader2))
-    OR_4.Add(CharacterType(PLAYER, character_type=CharacterType.Invader3))
+    OR_4.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_4.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader))
+    OR_4.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader2))
+    OR_4.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader3))
     AND_4.Add(OR_4)
     OR_5.Add(AND_1)
     OR_5.Add(AND_3)
@@ -8327,13 +8327,13 @@ def CommonFunc_9005812(_, flag: uint, asset: uint, dummy_id: int, right: uint, d
     if UnsignedNotEqual(left=0, right=right):
         AND_11.Add(FlagEnabled(right))
     AND_11.Add(FlagDisabled(flag))
-    OR_13.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_13.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_13.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_13.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
     AND_13.Add(OR_13)
-    OR_14.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
-    OR_14.Add(CharacterType(PLAYER, character_type=CharacterType.Invader))
-    OR_14.Add(CharacterType(PLAYER, character_type=CharacterType.Invader2))
-    OR_14.Add(CharacterType(PLAYER, character_type=CharacterType.Invader3))
+    OR_14.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_14.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader))
+    OR_14.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader2))
+    OR_14.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader3))
     AND_14.Add(OR_14)
     AND_15.Add(not AND_11)
     AND_15.Add(not AND_13)
@@ -8375,13 +8375,13 @@ def CommonFunc_9005813(_, flag: uint, asset: uint, dummy_id: int, right: uint, d
     if UnsignedNotEqual(left=0, right=right):
         AND_1.Add(FlagEnabled(right))
     AND_1.Add(FlagDisabled(flag))
-    OR_3.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_3.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_3.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_3.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
     AND_3.Add(OR_3)
-    OR_4.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
-    OR_4.Add(CharacterType(PLAYER, character_type=CharacterType.Invader))
-    OR_4.Add(CharacterType(PLAYER, character_type=CharacterType.Invader2))
-    OR_4.Add(CharacterType(PLAYER, character_type=CharacterType.Invader3))
+    OR_4.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_4.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader))
+    OR_4.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader2))
+    OR_4.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader3))
     AND_4.Add(OR_4)
     OR_5.Add(AND_1)
     OR_5.Add(AND_3)
@@ -8395,13 +8395,13 @@ def CommonFunc_9005813(_, flag: uint, asset: uint, dummy_id: int, right: uint, d
     if UnsignedNotEqual(left=0, right=right):
         AND_11.Add(FlagEnabled(right))
     AND_11.Add(FlagDisabled(flag))
-    OR_13.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_13.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_13.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_13.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
     AND_13.Add(OR_13)
-    OR_14.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
-    OR_14.Add(CharacterType(PLAYER, character_type=CharacterType.Invader))
-    OR_14.Add(CharacterType(PLAYER, character_type=CharacterType.Invader2))
-    OR_14.Add(CharacterType(PLAYER, character_type=CharacterType.Invader3))
+    OR_14.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_14.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader))
+    OR_14.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader2))
+    OR_14.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader3))
     AND_14.Add(OR_14)
     AND_15.Add(not AND_11)
     AND_15.Add(not AND_13)
@@ -8995,7 +8995,7 @@ def CommonFunc_90005881(
     
     MAIN.Await(AND_1)
     
-    DisplayDialogAndSetFlags(
+    AwaitDialogResponse(
         message=message,
         button_type=ButtonType.Yes_or_No,
         number_buttons=NumberButtons.TwoButton,
@@ -9818,7 +9818,7 @@ def CommonFunc_9005912(_, flag: uint, text: int):
     
     MAIN.Await(FlagEnabled(flag))
     
-    DisplaySubareaWelcomeMessage(text=text)
+    DisplaySubareaWelcomeMessage(place_name_id=text)
 
 
 @RestartOnRest(9005920)

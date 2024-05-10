@@ -87,12 +87,12 @@ def Event_31192210(_, character: uint, region: uint, radius: float, seconds: flo
     if ThisEventSlotFlagEnabled():
         return
     DisableAI(character)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     AND_2.Add(OR_1)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
@@ -120,7 +120,7 @@ def Event_31192210(_, character: uint, region: uint, radius: float, seconds: flo
     MAIN.Await(OR_5)
     
     EnableThisNetworkSlotFlag()
-    GotoIfFinishedConditionFalse(Label.L1, input_condition=OR_2)
+    GotoIfLastConditionResultFalse(Label.L1, input_condition=OR_2)
     Wait(seconds)
 
     # --- Label 1 --- #
@@ -150,12 +150,12 @@ def Event_35002250(
         DisableGravity(character)
         DisableCharacterCollision(character)
     ForceAnimation(character, animation_id, loop=True)
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_15)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     AND_2.Add(OR_1)
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
@@ -597,7 +597,7 @@ def Event_31192845(
     
     if FlagEnabled(flag):
         return RESTART
-    RestartIfFinishedConditionTrue(input_condition=OR_4)
+    RestartIfLastConditionResultTrue(input_condition=OR_4)
 
     # --- Label 1 --- #
     DefineLabel(1)

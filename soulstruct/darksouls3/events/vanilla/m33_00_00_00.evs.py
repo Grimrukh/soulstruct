@@ -1502,7 +1502,7 @@ def Event_13305171():
     
     MAIN.Await(AND_2)
     
-    DisplayDialogAndSetFlags(
+    AwaitDialogResponse(
         message=2120002,
         button_type=ButtonType.OK_or_Cancel,
         number_buttons=NumberButtons.TwoButton,
@@ -1828,7 +1828,7 @@ def Event_13305230():
     if ThisEventSlotFlagEnabled():
         return
     GotoIfFlagEnabled(Label.L0, flag=13304230)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -1843,7 +1843,7 @@ def Event_13305230():
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_2)
     End()
 
     # --- Label 0 --- #
@@ -1869,14 +1869,14 @@ def Event_13305300():
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     AND_4.Add(OR_1)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     AND_4.Add(not AND_9)
     
     MAIN.Await(AND_4)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_1)
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=AND_2)
     End()
 
     # --- Label 1 --- #
@@ -2326,7 +2326,7 @@ def Event_13305810():
     # --- Label 0 --- #
     DefineLabel(0)
     DisableAI(3300801)
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=7))
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=21))
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=4))
@@ -2417,7 +2417,7 @@ def Event_13305811():
     
     MAIN.Await(OR_3)
     
-    RestartIfFinishedConditionFalse(input_condition=OR_2)
+    RestartIfLastConditionResultFalse(input_condition=OR_2)
     Kill(3300802)
     End()
 
@@ -2460,7 +2460,7 @@ def Event_13305812():
     
     MAIN.Await(OR_3)
     
-    RestartIfFinishedConditionFalse(input_condition=OR_2)
+    RestartIfLastConditionResultFalse(input_condition=OR_2)
     Kill(3300803)
     End()
 
@@ -2688,7 +2688,7 @@ def Event_13305863(_, character: int, flag: int, flag_1: int, flag_2: int):
     MAIN.Await(OR_4)
     
     DisableCharacter(character)
-    GotoIfFinishedConditionFalse(Label.L9, input_condition=OR_3)
+    GotoIfLastConditionResultFalse(Label.L9, input_condition=OR_3)
     AND_9.Add(FlagEnabled(flag))
     AND_9.Add(FlagEnabled(flag_1))
     AND_9.Add(FlagEnabled(flag_2))
@@ -2815,7 +2815,7 @@ def Event_13305866(_, character: int, character_1: int, flag: int, flag_1: int):
     MAIN.Await(OR_1)
     
     WaitFrames(frames=1)
-    GotoIfFinishedConditionFalse(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultFalse(Label.L0, input_condition=AND_1)
     ForceAnimation(character, 3013, unknown2=1.0)
     
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=50))

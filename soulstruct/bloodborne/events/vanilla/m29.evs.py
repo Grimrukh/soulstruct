@@ -159,7 +159,7 @@ def Event_12900067(_, obj: int, obj_act_id: int, flag: int):
     WaitFrames(frames=10)
     DisableObjectActivation(obj, obj_act_id=-1)
     EnableTreasure(obj=obj)
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     EnableFlag(flag)
 
 
@@ -276,7 +276,7 @@ def Event_12900174(_, entity: int, obj_act_id: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_1)
     End()
 
     # --- Label 1 --- #
@@ -318,7 +318,7 @@ def Event_12900186(_, anchor_entity: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     DisplayDialog(text=10010160, anchor_entity=anchor_entity, number_buttons=NumberButtons.OneButton)
     Wait(1.0)
     Restart()
@@ -822,7 +822,7 @@ def Event_12900315(_, flag: int, obj: int, obj_1: int, obj_act_id: int, obj_2: i
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(4, input_condition=AND_1)
+    SkipLinesIfLastConditionResultTrue(4, input_condition=AND_1)
     EndOfAnimation(obj=obj, animation_id=12)
     DisableObjectActivation(obj_1, obj_act_id=obj_act_id)
     EnableObjectActivation(obj_2, obj_act_id=obj_act_id)
@@ -1783,7 +1783,7 @@ def Event_12901272(_, character: int, entity: int, character_1: int):
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionFalse(Label.L0, input_condition=AND_2)
+    GotoIfLastConditionResultFalse(Label.L0, input_condition=AND_2)
     DisableSpawner(entity=entity)
     Kill(character_1, award_souls=True)
 
@@ -1804,7 +1804,7 @@ def Event_12901347(_, region: int, entity: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_2)
     ForceAnimation(entity, 0, wait_for_completion=True)
     EnableFlag(flag)
     Wait(2.0999999046325684)
@@ -1827,7 +1827,7 @@ def Event_12901400(_, obj: int, flag: int):
     
     MAIN.Await(AND_3)
     
-    EndIfFinishedConditionFalse(input_condition=AND_1)
+    EndIfLastConditionResultFalse(input_condition=AND_1)
     CreatePlayLog(name=188)
     CreateTemporaryVFX(vfx_id=150005, anchor_entity=obj, dummy_id=101, anchor_type=CoordEntityType.Object)
     PlaySoundEffect(obj, 990100001, sound_type=SoundType.o_Object)
@@ -4591,9 +4591,9 @@ def Event_12904033(
     MAIN.Await(OR_1)
     
     Wait(2.0)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=AND_3)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -4645,9 +4645,9 @@ def Event_12904036(
     MAIN.Await(OR_1)
     
     Wait(2.0)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=AND_3)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -4721,7 +4721,7 @@ def Event_12904040(_, character: int, flag: int, flag_1: int, character_1: int, 
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionFalse(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultFalse(Label.L0, input_condition=AND_1)
     ForceAnimation(character, 7010, wait_for_completion=True)
     Goto(Label.L1)
 
@@ -5078,7 +5078,7 @@ def Event_12904338(_, obj: int, obj_act_id: int, character: int, flag: int):
     
     EnableFlag(flag)
     CreatePlayLog(name=806)
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_2)
     Wait(2.0)
     EnableCharacter(character)
     WaitFrames(frames=2)
@@ -5459,7 +5459,7 @@ def Event_12904373(_, character: int, region: int, radius: float, radius_1: floa
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfFinishedConditionTrue(6, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(6, input_condition=AND_2)
     DisableGravity(character)
     DisableCharacterCollision(character)
     ForceAnimation(character, animation_id, wait_for_completion=True)
@@ -5508,7 +5508,7 @@ def Event_12904382(_, character: int, obj: int, radius: float, region: int, regi
     
     MAIN.Await(OR_4)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_4)
     ActivateObjectWithSpecificCharacter(obj=obj, objact_id=9800, relative_index=-1, character=character)
 
     # --- Label 0 --- #
@@ -6019,7 +6019,7 @@ def Event_12904506(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -6077,7 +6077,7 @@ def Event_12904540(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     ResetAnimation(character)
     ForceAnimation(character, animation_id)
     SetCollisionMask(character, bit_index=bit_index, switch_type=OnOffChange.Off)
@@ -6261,7 +6261,7 @@ def Event_12904596(_, character: int, command_id: int, flag: int):
     
     MAIN.Await(OR_2)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     AND_3.Add(HasAIStatus(character, ai_status=AIStatusType.Normal))
@@ -6271,7 +6271,7 @@ def Event_12904596(_, character: int, command_id: int, flag: int):
     
     MAIN.Await(OR_3)
     
-    EndIfFinishedConditionTrue(input_condition=AND_4)
+    EndIfLastConditionResultTrue(input_condition=AND_4)
     AICommand(character, command_id=command_id, command_slot=0)
     ReplanAI(character)
     Restart()
@@ -6450,7 +6450,7 @@ def Event_12904736(_, attacker__character: int, region: int, radius: float):
     
     MAIN.Await(AND_2)
     
-    SkipLinesIfFinishedConditionFalse(6, input_condition=AND_1)
+    SkipLinesIfLastConditionResultFalse(6, input_condition=AND_1)
     ForceAnimation(attacker__character, 3007)
     WaitFrames(frames=50)
     RotateToFaceEntity(attacker__character, PLAYER, animation=3006)
@@ -6577,7 +6577,7 @@ def Event_12904759(_, character: int, region: int):
     
     MAIN.Await(AND_1)
     
-    EndIfFinishedConditionTrue(input_condition=OR_2)
+    EndIfLastConditionResultTrue(input_condition=OR_2)
     CreatePlayLog(name=1224)
     ForceAnimation(character, 3024, wait_for_completion=True)
 
@@ -7004,8 +7004,8 @@ def Event_12904869(_, character: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_3)
     ResetAnimation(character)
     ForceAnimation(character, 7000)
     SetNPCPartHealth(character, npc_part_id=2, desired_health=100, overwrite_max=True)
@@ -7018,8 +7018,8 @@ def Event_12904869(_, character: int):
     
     MAIN.Await(OR_2)
     
-    EndIfFinishedConditionTrue(input_condition=AND_5)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_6)
+    EndIfLastConditionResultTrue(input_condition=AND_5)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_6)
     ResetAnimation(character)
     ForceAnimation(character, 7001)
     SetNPCPartHealth(character, npc_part_id=2, desired_health=50, overwrite_max=True)
@@ -7032,8 +7032,8 @@ def Event_12904869(_, character: int):
     
     MAIN.Await(OR_3)
     
-    EndIfFinishedConditionTrue(input_condition=AND_8)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_9)
+    EndIfLastConditionResultTrue(input_condition=AND_8)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_9)
     ResetAnimation(character)
     ForceAnimation(character, 7002)
     CreateNPCPart(
@@ -7072,8 +7072,8 @@ def Event_12904870(_, character: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_3)
     ResetAnimation(character)
     ForceAnimation(character, 7005)
     SetNPCPartHealth(character, npc_part_id=3, desired_health=100, overwrite_max=True)
@@ -7086,8 +7086,8 @@ def Event_12904870(_, character: int):
     
     MAIN.Await(OR_2)
     
-    EndIfFinishedConditionTrue(input_condition=AND_5)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_6)
+    EndIfLastConditionResultTrue(input_condition=AND_5)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_6)
     ResetAnimation(character)
     ForceAnimation(character, 7006)
     SetNPCPartHealth(character, npc_part_id=3, desired_health=50, overwrite_max=True)
@@ -7100,8 +7100,8 @@ def Event_12904870(_, character: int):
     
     MAIN.Await(OR_3)
     
-    EndIfFinishedConditionTrue(input_condition=AND_8)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_9)
+    EndIfLastConditionResultTrue(input_condition=AND_8)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_9)
     ResetAnimation(character)
     ForceAnimation(character, 7007)
     CreateNPCPart(
@@ -7571,8 +7571,8 @@ def Event_12904896(
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_3)
-    EndIfFinishedConditionTrue(input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_4)
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=part_index, part_health=50)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=66, material_vfx_id=66)
     Restart()
@@ -7640,8 +7640,8 @@ def Event_12904897(
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_3)
-    EndIfFinishedConditionTrue(input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_4)
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=part_index, part_health=50)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=66, material_vfx_id=66)
     Restart()
@@ -7703,7 +7703,7 @@ def Event_12904898(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -7774,7 +7774,7 @@ def Event_12904899(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     ChangeCharacterCloth(character, bit_count=10, state_id=2)
     CreateNPCPart(
         character,
@@ -7832,7 +7832,7 @@ def Event_12904900(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -7911,7 +7911,7 @@ def Event_12904901(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -7982,7 +7982,7 @@ def Event_12904902(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     ChangeCharacterCloth(character, bit_count=10, state_id=2)
     CreateNPCPart(
         character,
@@ -8040,7 +8040,7 @@ def Event_12904903(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -8119,7 +8119,7 @@ def Event_12904904(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -8190,7 +8190,7 @@ def Event_12904905(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     ChangeCharacterCloth(character, bit_count=10, state_id=2)
     CreateNPCPart(
         character,
@@ -8248,7 +8248,7 @@ def Event_12904906(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -8327,7 +8327,7 @@ def Event_12904907(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -8398,7 +8398,7 @@ def Event_12904908(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     ChangeCharacterCloth(character, bit_count=10, state_id=2)
     CreateNPCPart(
         character,
@@ -8456,7 +8456,7 @@ def Event_12904909(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -8535,7 +8535,7 @@ def Event_12904910(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -8606,7 +8606,7 @@ def Event_12904913(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     ChangeCharacterCloth(character, bit_count=10, state_id=2)
     CreateNPCPart(
         character,
@@ -8664,7 +8664,7 @@ def Event_12904911(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -8818,7 +8818,7 @@ def Event_12904917(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     AND_7.Add(CharacterHasSpecialEffect(character, 420))
     SkipLinesIfConditionFalse(1, AND_7)
     AddSpecialEffect(character, special_effect, affect_npc_part_hp=True)
@@ -8847,7 +8847,7 @@ def Event_12904918(_, special_effect: int, animation_id: int, npc_part_id: int, 
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     ForceAnimation(character, animation_id, wait_for_completion=True)
     SkipLines(1)
     AddSpecialEffect(character, special_effect, affect_npc_part_hp=True)
@@ -10135,7 +10135,7 @@ def Event_12906400(_, obj: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(7, input_condition=OR_2)
+    SkipLinesIfLastConditionResultTrue(7, input_condition=OR_2)
     DestroyObject(obj)
     PlaySoundEffect(obj, 299961000, sound_type=SoundType.o_Object)
     WaitFrames(frames=10)
@@ -12084,9 +12084,9 @@ def Event_12906586(
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_5)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_4)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_2)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_5)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_2)
     SetAIParamID(character, ai_param_id=ai_param_id_1)
     ForceAnimation(character, animation_id_1, loop=True)
     AND_6.Add(HasAIStatus(character, ai_status=AIStatusType.Normal))
@@ -12105,8 +12105,8 @@ def Event_12906586(
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_10)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_4)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_10)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_4)
     Wait(3.0)
     Restart()
 
@@ -12424,7 +12424,7 @@ def Event_12906660(_, obj: int):
     
     MAIN.Await(OR_1)
     
-    RestartIfFinishedConditionFalse(input_condition=AND_2)
+    RestartIfLastConditionResultFalse(input_condition=AND_2)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -12453,7 +12453,7 @@ def Event_12906726(_, character: int, sound_id: int, radius: float):
     
     MAIN.Await(OR_2)
     
-    EndIfFinishedConditionTrue(input_condition=OR_1)
+    EndIfLastConditionResultTrue(input_condition=OR_1)
     Restart()
 
 
@@ -12588,7 +12588,7 @@ def Event_12906764(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -12640,7 +12640,7 @@ def Event_12906765(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -12774,7 +12774,7 @@ def Event_12906769(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -12853,7 +12853,7 @@ def Event_12906770(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -12932,7 +12932,7 @@ def Event_12906771(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -13011,7 +13011,7 @@ def Event_12906772(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -13090,7 +13090,7 @@ def Event_12906773(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -13169,7 +13169,7 @@ def Event_12906774(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -13248,7 +13248,7 @@ def Event_12906775(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -13327,7 +13327,7 @@ def Event_12906776(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -13406,7 +13406,7 @@ def Event_12906777(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -13485,7 +13485,7 @@ def Event_12906778(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -13564,7 +13564,7 @@ def Event_12906779(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -13643,7 +13643,7 @@ def Event_12906780(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -13722,7 +13722,7 @@ def Event_12906781(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -13801,7 +13801,7 @@ def Event_12906782(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -13880,7 +13880,7 @@ def Event_12906783(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -13959,7 +13959,7 @@ def Event_12906784(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -14038,7 +14038,7 @@ def Event_12906785(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -14117,7 +14117,7 @@ def Event_12906786(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -14196,7 +14196,7 @@ def Event_12906787(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -14275,7 +14275,7 @@ def Event_12906788(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id_1,
@@ -14347,7 +14347,7 @@ def Event_12906827(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -14404,7 +14404,7 @@ def Event_12906828(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     ResetAnimation(character)
     ForceAnimation(character, animation_id)
     AddSpecialEffect(character, 5667, affect_npc_part_hp=True)
@@ -14458,7 +14458,7 @@ def Event_12906789(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     RotateToFaceEntity(PLAYER, region, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     OR_2.Add(CharacterInsideRegion(PLAYER, region=region))
@@ -14471,7 +14471,7 @@ def Event_12906789(
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_5)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_5)
     EnableFlag(flag_2)
 
     # --- Label 1 --- #
@@ -14505,7 +14505,7 @@ def Event_12906790(_, region: int, entity: int, flag: int, flag_1: int, flag_2: 
     
     MAIN.Await(OR_2)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_3)
     EnableFlag(flag_3)
 
     # --- Label 0 --- #
@@ -14738,7 +14738,7 @@ def Event_12906796(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     RotateToFaceEntity(PLAYER, region, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     OR_2.Add(CharacterInsideRegion(PLAYER, region=region))
@@ -14751,7 +14751,7 @@ def Event_12906796(
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_5)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_5)
     EnableFlag(flag_2)
 
     # --- Label 1 --- #
@@ -14787,7 +14787,7 @@ def Event_12906800(_, region: int, obj: int, vfx_id: int, flag: int, flag_1: int
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     RotateToFaceEntity(PLAYER, region, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     OR_2.Add(CharacterInsideRegion(PLAYER, region=region))
@@ -14800,7 +14800,7 @@ def Event_12906800(_, region: int, obj: int, vfx_id: int, flag: int, flag_1: int
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_5)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_5)
     EnableFlag(flag_2)
 
     # --- Label 1 --- #
@@ -14834,7 +14834,7 @@ def Event_12906802(_, target_entity: int, entity: int, flag: int, flag_1: int, f
     
     MAIN.Await(OR_2)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_3)
     EnableFlag(flag_3)
 
     # --- Label 0 --- #
@@ -15119,7 +15119,7 @@ def Event_12906841(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -15162,7 +15162,7 @@ def Event_12906843(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -15205,7 +15205,7 @@ def Event_12906845(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -15248,7 +15248,7 @@ def Event_12906847(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -15291,7 +15291,7 @@ def Event_12906849(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -15353,7 +15353,7 @@ def Event_12906853(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -15396,7 +15396,7 @@ def Event_12906855(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -15439,7 +15439,7 @@ def Event_12906857(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -15482,7 +15482,7 @@ def Event_12906859(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -15525,7 +15525,7 @@ def Event_12906861(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -15568,7 +15568,7 @@ def Event_12906831(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -15611,7 +15611,7 @@ def Event_12906833(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -15654,7 +15654,7 @@ def Event_12906835(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -15697,7 +15697,7 @@ def Event_12906837(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -15740,7 +15740,7 @@ def Event_12906839(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -15910,7 +15910,7 @@ def Event_12906871(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -15964,7 +15964,7 @@ def Event_12906879(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -16012,7 +16012,7 @@ def Event_12906872(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -16060,7 +16060,7 @@ def Event_12906875(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -16108,7 +16108,7 @@ def Event_12906873(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -16156,7 +16156,7 @@ def Event_12906876(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -16204,7 +16204,7 @@ def Event_12906874(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -16252,7 +16252,7 @@ def Event_12906877(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -16300,7 +16300,7 @@ def Event_12906878(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -16354,7 +16354,7 @@ def Event_12906880(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -16408,7 +16408,7 @@ def Event_12906881(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -16481,7 +16481,7 @@ def Event_12904723(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     ChangeCharacterCloth(character, bit_count=10, state_id=2)
     CreateNPCPart(
         character,
@@ -16531,7 +16531,7 @@ def Event_12904724(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     ChangeCharacterCloth(character, bit_count=10, state_id=2)
     CreateNPCPart(
         character,
@@ -16581,7 +16581,7 @@ def Event_12904725(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     ChangeCharacterCloth(character, bit_count=10, state_id=2)
     CreateNPCPart(
         character,
@@ -16631,7 +16631,7 @@ def Event_12904726(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     ChangeCharacterCloth(character, bit_count=10, state_id=2)
     CreateNPCPart(
         character,
@@ -16681,7 +16681,7 @@ def Event_12904727(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     ChangeCharacterCloth(character, bit_count=10, state_id=2)
     CreateNPCPart(
         character,
@@ -16822,8 +16822,8 @@ def Event_12906864(_, character: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_3)
     ResetAnimation(character)
     ForceAnimation(character, 7000)
     SetNPCPartHealth(character, npc_part_id=2, desired_health=100, overwrite_max=True)
@@ -16836,8 +16836,8 @@ def Event_12906864(_, character: int):
     
     MAIN.Await(OR_2)
     
-    EndIfFinishedConditionTrue(input_condition=AND_5)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_6)
+    EndIfLastConditionResultTrue(input_condition=AND_5)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_6)
     ResetAnimation(character)
     ForceAnimation(character, 7001)
     SetNPCPartHealth(character, npc_part_id=2, desired_health=50, overwrite_max=True)
@@ -16850,8 +16850,8 @@ def Event_12906864(_, character: int):
     
     MAIN.Await(OR_3)
     
-    EndIfFinishedConditionTrue(input_condition=AND_8)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_9)
+    EndIfLastConditionResultTrue(input_condition=AND_8)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_9)
     ResetAnimation(character)
     ForceAnimation(character, 7002)
     CreateNPCPart(
@@ -16888,8 +16888,8 @@ def Event_12906867(_, character: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_3)
     ResetAnimation(character)
     ForceAnimation(character, 7005)
     SetNPCPartHealth(character, npc_part_id=3, desired_health=100, overwrite_max=True)
@@ -16902,8 +16902,8 @@ def Event_12906867(_, character: int):
     
     MAIN.Await(OR_2)
     
-    EndIfFinishedConditionTrue(input_condition=AND_5)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_6)
+    EndIfLastConditionResultTrue(input_condition=AND_5)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_6)
     ResetAnimation(character)
     ForceAnimation(character, 7006)
     SetNPCPartHealth(character, npc_part_id=3, desired_health=50, overwrite_max=True)
@@ -16916,8 +16916,8 @@ def Event_12906867(_, character: int):
     
     MAIN.Await(OR_3)
     
-    EndIfFinishedConditionTrue(input_condition=AND_8)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_9)
+    EndIfLastConditionResultTrue(input_condition=AND_8)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_9)
     ResetAnimation(character)
     ForceAnimation(character, 7007)
     CreateNPCPart(
@@ -16962,7 +16962,7 @@ def Event_12906868(_, character: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     Restart()
 
 
@@ -17116,7 +17116,7 @@ def Event_12904728(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -17164,7 +17164,7 @@ def Event_12904729(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -17212,7 +17212,7 @@ def Event_12904730(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -17260,7 +17260,7 @@ def Event_12904731(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -17308,7 +17308,7 @@ def Event_12904732(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         character,
         npc_part_id=npc_part_id,
@@ -17380,7 +17380,7 @@ def Event_12906960(_, character: int, flag: int, flag_1: int, character_1: int):
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionFalse(Label.L0, input_condition=OR_2)
+    GotoIfLastConditionResultFalse(Label.L0, input_condition=OR_2)
     WaitFrames(frames=1)
     ForceAnimation(character, 3020)
     WaitFrames(frames=65)
@@ -17639,7 +17639,7 @@ def Event_12907405(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     
     MAIN.Await(TimeElapsed(seconds=10.0))
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_4)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_4)
     DisplayBattlefieldMessage(109000, display_location_index=0)
     ForceAnimation(character, 7011)
     
@@ -17668,7 +17668,7 @@ def Event_12907409(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     
     EnableFlag(flag_1)
     DisableFlag(12907230)
-    GotoIfFinishedConditionFalse(Label.L0, input_condition=AND_2)
+    GotoIfLastConditionResultFalse(Label.L0, input_condition=AND_2)
     EnableFlag(flag_3)
     if FlagEnabled(12907231):
         return
@@ -17702,7 +17702,7 @@ def Event_12907413(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     
     EnableFlag(flag_1)
     DisableFlag(12907231)
-    GotoIfFinishedConditionFalse(Label.L0, input_condition=AND_2)
+    GotoIfLastConditionResultFalse(Label.L0, input_condition=AND_2)
     EnableFlag(flag_3)
     if FlagEnabled(12907230):
         return

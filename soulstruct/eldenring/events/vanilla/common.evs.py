@@ -1951,20 +1951,20 @@ def Event_950():
     
     MAIN.Await(OR_15)
     
-    EndIfFinishedConditionFalse(input_condition=AND_14)
+    EndIfLastConditionResultFalse(input_condition=AND_14)
     EnableFlag(9001)
     WaitFrames(frames=1)
     EnableFlag(951)
     EnableFlag(953)
     EnableFlag(9021)
-    GotoIfFinishedConditionTrue(Label.L8, input_condition=AND_8)
-    GotoIfFinishedConditionTrue(Label.L7, input_condition=AND_7)
-    GotoIfFinishedConditionTrue(Label.L6, input_condition=AND_6)
-    GotoIfFinishedConditionTrue(Label.L5, input_condition=AND_5)
-    GotoIfFinishedConditionTrue(Label.L4, input_condition=AND_4)
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=AND_3)
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L8, input_condition=AND_8)
+    GotoIfLastConditionResultTrue(Label.L7, input_condition=AND_7)
+    GotoIfLastConditionResultTrue(Label.L6, input_condition=AND_6)
+    GotoIfLastConditionResultTrue(Label.L5, input_condition=AND_5)
+    GotoIfLastConditionResultTrue(Label.L4, input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_1)
     Goto(Label.L10)
     End()
 
@@ -2435,8 +2435,8 @@ def Event_1040():
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_15)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_15)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_2)
     SetWindVFX(wind_vfx_id=808004)
     Wait(5.0)
     CreateAssetVFX(1060001500, vfx_id=200, dummy_id=806800)
@@ -2488,31 +2488,31 @@ def Event_1040():
     DefineLabel(2)
     AddSpecialEffect(PLAYER, 4200)
     AddSpecialEffect(PLAYER, 4201)
-    SkipLinesIfFinishedConditionFalse(2, input_condition=OR_2)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=OR_2)
     DisplayNetworkMessage(text=3000201, unk_4_5=False)
     Goto(Label.L15)
-    SkipLinesIfFinishedConditionFalse(2, input_condition=OR_3)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=OR_3)
     DisplayNetworkMessage(text=3000211, unk_4_5=False)
     Goto(Label.L15)
-    SkipLinesIfFinishedConditionFalse(2, input_condition=OR_4)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=OR_4)
     DisplayNetworkMessage(text=3000221, unk_4_5=False)
     Goto(Label.L15)
-    SkipLinesIfFinishedConditionFalse(2, input_condition=OR_5)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=OR_5)
     DisplayNetworkMessage(text=3000231, unk_4_5=False)
     Goto(Label.L15)
-    SkipLinesIfFinishedConditionFalse(2, input_condition=OR_6)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=OR_6)
     DisplayNetworkMessage(text=3000241, unk_4_5=False)
     Goto(Label.L15)
-    SkipLinesIfFinishedConditionFalse(2, input_condition=OR_7)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=OR_7)
     DisplayNetworkMessage(text=3000251, unk_4_5=False)
     Goto(Label.L15)
-    SkipLinesIfFinishedConditionFalse(2, input_condition=OR_8)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=OR_8)
     DisplayNetworkMessage(text=3000261, unk_4_5=False)
     Goto(Label.L15)
-    SkipLinesIfFinishedConditionFalse(2, input_condition=OR_9)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=OR_9)
     DisplayNetworkMessage(text=3000271, unk_4_5=False)
     Goto(Label.L15)
-    SkipLinesIfFinishedConditionFalse(2, input_condition=OR_10)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=OR_10)
     DisplayNetworkMessage(text=3000281, unk_4_5=False)
     Goto(Label.L15)
 
@@ -2539,7 +2539,7 @@ def Event_1050():
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=AND_2)
     AddSpecialEffect(20000, 503315)
     Wait(0.10000000149011612)
     AND_10.Add(FlagDisabled(7500))
@@ -2684,7 +2684,7 @@ def Event_1410(_, flag: uint, command_id__gesture_param_id: int, special_effect:
     AICommand(character, command_id=-1, command_slot=0)
     AICommand(character, command_id=-1, command_slot=1)
     ReplanAI(character)
-    EndIfFinishedConditionFalse(input_condition=AND_2)
+    EndIfLastConditionResultFalse(input_condition=AND_2)
     if FlagEnabled(flag):
         return
     AwardGesture(gesture_param_id=command_id__gesture_param_id)
@@ -2769,7 +2769,7 @@ def Event_1412(_, flag: uint, command_id__gesture_param_id: int, special_effect:
     AICommand(character, command_id=-1, command_slot=0)
     AICommand(character, command_id=-1, command_slot=1)
     ReplanAI(character)
-    EndIfFinishedConditionFalse(input_condition=AND_2)
+    EndIfLastConditionResultFalse(input_condition=AND_2)
     if FlagEnabled(flag):
         return
     AwardGesture(gesture_param_id=command_id__gesture_param_id)
@@ -3325,10 +3325,10 @@ def Event_1800():
     MAIN.Await(AND_9)
     
     EnableFlag(9420)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_1)
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=AND_3)
-    GotoIfFinishedConditionTrue(Label.L11, input_condition=AND_11)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L11, input_condition=AND_11)
 
     # --- Label 11 --- #
     DefineLabel(11)
@@ -4057,7 +4057,7 @@ def Event_3040():
     
     MAIN.Await(OR_4)
     
-    EndIfFinishedConditionTrue(input_condition=AND_5)
+    EndIfLastConditionResultTrue(input_condition=AND_5)
     EnableNetworkFlag(9413)
 
 
@@ -4182,23 +4182,23 @@ def Event_3049():
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
     EnableFlag(1034509403)
 
     # --- Label 0 --- #
     DefineLabel(0)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_2)
     EnableFlag(1034499202)
     EnableFlag(1034499204)
 
     # --- Label 1 --- #
     DefineLabel(1)
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=AND_3)
     EnableFlag(1034509302)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_4)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_4)
     EnableFlag(1045379209)
     AND_5.Add(FlagRangeAnyEnabled(flag_range=(3740, 3748)))
     AND_5.Add(FlagEnabled(3740))
@@ -4372,7 +4372,7 @@ def Event_3056():
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_1)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_1)
     Goto(Label.L1)
 
     # --- Label 0 --- #

@@ -339,12 +339,12 @@ def Event_1034472261(
     # --- Label 0 --- #
     DefineLabel(0)
     CreateAssetVFX(asset, vfx_id=200, dummy_id=803160)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=20000))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
@@ -392,12 +392,12 @@ def Event_1034472262(
         return
     EndIffSpecialStandbyEndedFlagEnabled(character=character_1)
     ForceAnimation(character_1, animation_id)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     OR_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=20000))
     OR_2.Add(AttackedWithDamageType(attacked_entity=character_1, attacker=20000))
     OR_2.Add(CharacterHasStateInfo(character=character_1, state_info=436))
@@ -462,7 +462,7 @@ def Event_1034472611(_, flag: uint, destination: uint, left_flag: uint, cancel_f
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=9523, entity=destination))
     
-    DisplayDialogAndSetFlags(
+    AwaitDialogResponse(
         message=108186,
         button_type=ButtonType.Yes_or_No,
         number_buttons=NumberButtons.TwoButton,

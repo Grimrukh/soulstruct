@@ -1,6 +1,6 @@
 __all__ = ["EVSParser"]
 
-from soulstruct.base.events.emevd.evs import EVSParser as _BaseEVSParser
+from soulstruct.base.events.evs import EVSParser as _BaseEVSParser
 from soulstruct.bloodborne import events, game_types
 from .compiler import COMPILER, compile_instruction, compile_game_object_test
 from .emedf import EMEDF_ALIASES, EMEDF_TESTS, EMEDF_COMPARISON_TESTS

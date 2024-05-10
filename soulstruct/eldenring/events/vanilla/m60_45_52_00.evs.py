@@ -202,7 +202,7 @@ def Event_1045522500():
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=AND_2)
     DisplayDialog(text=20003, anchor_entity=Assets.AEG099_002_9000, button_type=ButtonType.Yes_or_No)
     Wait(1.0)
     Restart()

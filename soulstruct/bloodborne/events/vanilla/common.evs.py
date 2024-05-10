@@ -1722,7 +1722,7 @@ def Event_9280(_, character: int, flag: int, flag_1: int, flag_2: int, flag_3: i
     MAIN.Await(AND_1)
     
     EnableFlag(flag_1)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_3)
     Wait(5.0)
     DisplayBattlefieldMessage(109001, display_location_index=0)
     End()
@@ -1818,7 +1818,7 @@ def Event_9360(_, flag: int, flag_1: int, flag_2: int, flag_3: int):
     
     MAIN.Await(OR_2)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     OR_3.Add(CharacterHuman(PLAYER))
     OR_3.Add(CharacterWhitePhantom(PLAYER))
     AND_3.Add(OR_3)
@@ -1946,7 +1946,7 @@ def Event_9480(_, flag: int, flag_1: int, flag_2: int, flag_3: int, flag_4: int)
     
     MAIN.Await(OR_2)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     OR_3.Add(CharacterHuman(PLAYER))
     OR_3.Add(CharacterWhitePhantom(PLAYER))
     AND_3.Add(OR_3)
@@ -2059,7 +2059,7 @@ def Event_9720():
     
     MAIN.Await(OR_4)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_3)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_3)
     EnableFlag(70002413)
     OR_5.Add(FlagEnabled(12410810))
     OR_5.Add(FlagEnabled(9467))

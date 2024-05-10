@@ -437,7 +437,7 @@ def Event_11410090(_, obj: int, vfx_id: int, destination: int, destination_1: in
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     Move(PLAYER, destination=destination, destination_type=CoordEntityType.Region, short_move=True)
     SkipLines(1)
     Move(PLAYER, destination=destination_1, destination_type=CoordEntityType.Region, short_move=True)
@@ -850,7 +850,7 @@ def Event_11415300():
     
     if FlagEnabled(10):
         return
-    SkipLinesIfFinishedConditionFalse(4, input_condition=AND_1)
+    SkipLinesIfLastConditionResultFalse(4, input_condition=AND_1)
     EnableFlag(11410291)
     DeleteVFX(1413400)
     DeleteVFX(1413410)
@@ -1224,7 +1224,7 @@ def Event_11415379():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     Kill(1410600, award_souls=True)
 
 
@@ -1511,7 +1511,7 @@ def Event_11415350(_, flag: int, npc_part_id: short, npc_part_id_1: int, part_he
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     EzstateAIRequest(1410700, command_id=1001, command_slot=0)
     
     MAIN.Await(CharacterHasTAEEvent(1410700, tae_event_id=400))
@@ -1560,7 +1560,7 @@ def Event_11415360(_, flag: int, npc_part_id: short, npc_part_id_1: int, part_he
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     EzstateAIRequest(1410700, command_id=1002, command_slot=0)
     
     MAIN.Await(CharacterHasTAEEvent(1410700, tae_event_id=400))
@@ -1707,8 +1707,8 @@ def Event_11410400():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_3)
-    SkipLinesIfFinishedConditionTrue(8, input_condition=AND_4)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_3)
+    SkipLinesIfLastConditionResultTrue(8, input_condition=AND_4)
     if FlagDisabled(11410401):
         EnableFlag(11410401)
         CreateObjectVFX(1411400, vfx_id=100, dummy_id=140002)
@@ -2054,7 +2054,7 @@ def Event_5200(_, character: int, flag: int, bit_index: uchar, bit_index_1: ucha
     
         MAIN.Await(OR_1)
     
-        EndIfFinishedConditionTrue(input_condition=AND_2)
+        EndIfLastConditionResultTrue(input_condition=AND_2)
     SetDisplayMask(character, bit_index=bit_index, switch_type=OnOffChange.On)
     SetDisplayMask(character, bit_index=bit_index_1, switch_type=OnOffChange.On)
 
@@ -2073,7 +2073,7 @@ def Event_5201(_, character: int, flag: int, obj: int, obj_1: int, dummy_id: sho
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     EnableObject(obj)
     EnableObject(obj_1)
     MoveObjectToCharacter(obj, character=character, dummy_id=dummy_id)
@@ -2096,7 +2096,7 @@ def Event_5202(_, character: int, flag: int, character_1: int, character_2: int,
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     ResetAnimation(character)
     Move(
         character_1,
@@ -2317,7 +2317,7 @@ def Event_11410510(_, character: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_3)
     DisableCharacter(character)
     
     MAIN.Await(FlagEnabled(703))
@@ -2361,7 +2361,7 @@ def Event_11410501(_, character: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_3)
     DisableCharacter(character)
     
     MAIN.Await(FlagEnabled(703))
@@ -2442,7 +2442,7 @@ def Event_11410533(_, character: int, first_flag: int, last_flag: int, flag: int
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_1)
+    EndIfLastConditionResultTrue(input_condition=AND_1)
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     DisableCharacter(character)
@@ -2575,7 +2575,7 @@ def Event_11410545(_, character: int, first_flag: int, last_flag: int, flag: int
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
-    SkipLinesIfFinishedConditionTrue(3, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(3, input_condition=AND_2)
     Kill(character, award_souls=True)
     RemoveSpecialEffect(character, 90111)
     End()

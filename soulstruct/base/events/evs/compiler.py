@@ -1,18 +1,33 @@
+from __future__ import annotations
 
 __all__ = ["base_compile_instruction", "BooleanTestCompiler"]
 
+import logging
 import typing as tp
 from enum import Enum
 
+from ..emevd.utils import EventArgumentData
 from .exceptions import NoNegateError, NoSkipOrReturnError
-from .utils import EventArgumentData, get_write_offset
+from .utils import get_write_offset
+
+if tp.TYPE_CHECKING:
+    from .conditions import EVSConditionManager
+
+_LOGGER = logging.getLogger("soulstruct")
 
 
-def base_compile_instruction(emedf_aliases: dict, instr_name: str, *args, arg_types="", **kwargs) -> list[str]:
+def base_compile_instruction(
+    emedf_aliases: dict, instr_name: str, *args, arg_types="", cond: EVSConditionManager = None, **kwargs
+) -> list[str]:
     """Compile instruction from EMEDF information.
+
+    Updates managed EVS condition groups in `cond` (if given) based on the instruction's condition arguments, including
+    deactivating all condition groups if the instruction is a 'frame-ending' instruction like `MAIN.Await()` / `Wait()`.
 
     If positional `args` are used, they must be ordered correctly for EMEDF and not repeated in `kwargs`, just like
     regular Python.
+
+    Returns a list of numeric instruction strings.
     """
     category, index, instr_info = emedf_aliases[instr_name]
     emedf_args_info = instr_info["args"]
@@ -44,6 +59,38 @@ def base_compile_instruction(emedf_aliases: dict, instr_name: str, *args, arg_ty
             f"Invalid keyword argument(s) for instruction ({category}, {index}) '{instr_name}': {list(kwargs)}\n"
             f"    Constructed kwargs: {evs_kwargs}"
         )
+
+    if cond:
+
+        # TODO: Obviously, there could be complex branching conditions in events that make it impossible to track the
+        #  actual state of condition groups without knowing the exact path through the event based on game state and
+        #  event arguments.
+
+        cond.just_awaited_main = False  # enabled below if appropriate
+
+        if (category, index) == (0, 0):
+            # Even if we're loading into MAIN, this final load might have relevance to EVS management at some point.
+            output_condition, input_condition = cond[evs_kwargs["condition"]], cond[evs_kwargs["input_condition"]]
+            output_condition.activate_with_child(input_condition)
+            if output_condition.index == 0:
+                # `MAIN.Await()` call deactivates all condition groups and makes active ones stale.
+                cond.deactivate_all()
+                cond.just_awaited_main = True
+        elif category < 1000:
+            # Test instruction categories that always have a first `condition` argument.
+            try:
+                output_condition = cond[evs_kwargs["condition"]]
+            except KeyError:
+                _LOGGER.warning(
+                    f"Could not find argument `condition` for instruction '{instr_name}'. This is unexpected. "
+                    f"Cannot track condition group usage."
+                )
+            else:
+                output_condition.activate()  # will disable `stale`
+        elif category == 1001:
+            # 'Wait' instruction that also resets condition groups.
+            # TODO: There are some other instructions that do this, like "AwaitDialogResponse" (2007, 10) in Elden Ring.
+            cond.deactivate_all()
 
     if is_partial:
         # Fill in baked keyword arguments and redirect name.

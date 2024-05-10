@@ -28,7 +28,7 @@ class EventArgStruct(BinaryStruct):
     write_from_byte: varuint
     read_from_byte: varuint
     bytes_to_write: int  # does NOT have variable size
-    unknown: int
+    unknown: int  # TODO: possibly type of argument?
 
 
 @dataclass(slots=True)
@@ -180,12 +180,12 @@ class Instruction(abc.ABC):
         """Calculate size of instruction arguments (aligned to 4 with '0i' suffix)."""
         return struct.calcsize(f"@{self.struct_args_fmt}0i")
 
-    def get_called_event(self) -> tp.Optional[int]:
+    def get_called_event(self) -> int | None:
         """Returns called event ID if instruction is `RunEvent` or `RunCommonEvent`. Returns `None` otherwise."""
         if self.category == 2000:
             if self.index == 0:
                 return self.args_list[1]
-            elif self.index == 6:  # no `slot` argument
+            elif self.index == 6:  # NOTE: no `slot` argument before Elden Ring
                 return self.args_list[0]
         return None
 
@@ -202,6 +202,11 @@ class Instruction(abc.ABC):
 
     def to_evs(self, enums_manager: GameEnumsManager, event_signatures: dict[int, EventSignature]) -> str:
         """Convert single event instruction to EVS."""
+
+        # Optional argument values should already be properly parsed from the events these instructions run. However, if
+        # `common_func_emevd` was not supplied, common event calls CANNOT be parsed properly and will still be unsigned
+        # integers. These will repack properly from a solitary EVS file, but if `common_func` is actually supplied as an
+        # EVS module AFTER an incorrect default parsing, the EVS will not compile!
         args, opt_args = self.get_required_and_optional_args()
 
         if (
@@ -291,6 +296,8 @@ class Instruction(abc.ABC):
 
             arg_info = self.EMEDF[self.category, self.index]["args"][evs_arg_name]
             arg_py_type = arg_info["type"]
+
+            # TODO: Still NO idea what `arg_r.unknown` is. Seems totally inconsistent but thankfully non-functional.
 
             if value_to_overwrite not in permitted and argument_byte_type != "s":
                 if value_to_overwrite != arg_info.get("internal_default", None):

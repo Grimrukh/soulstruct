@@ -40,3 +40,4 @@ class EMEVD(_BaseEMEVD):
     STRING_ENCODING: tp.ClassVar = "utf-8"
     ENTITY_ENUMS_MANAGER: tp.ClassVar = GameEnumsManager
     HEADER_VERSION_INFO: tp.ClassVar = (False, 0, 204)
+    LONG_VARINTS = False

@@ -493,7 +493,7 @@ def Event_12201801():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_1)
+    EndIfLastConditionResultTrue(input_condition=AND_1)
     PlaySoundEffect(2202800, 0, sound_type=SoundType.c_CharacterMotion)
 
 
@@ -597,7 +597,7 @@ def Event_12204890():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     RotateToFaceEntity(PLAYER, 2202800, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=2202801))
@@ -608,7 +608,7 @@ def Event_12204890():
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_5)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_5)
     EnableFlag(12204800)
     Restart()
 
@@ -637,7 +637,7 @@ def Event_12204891():
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_3)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_3)
     EnableFlag(12204801)
     Restart()
 
@@ -910,7 +910,7 @@ def Event_12204812(_, character: int, character_1: int, destination: int, flag: 
     
     MAIN.Await(OR_2)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_4)
     Wait(0.0)
     ResetAnimation(character)
     Wait(0.10000000149011612)
@@ -924,7 +924,7 @@ def Event_12204812(_, character: int, character_1: int, destination: int, flag: 
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_2)
     AddSpecialEffect(character, 5686)
     Wait(3.0)
     DisableCharacter(character)
@@ -1108,7 +1108,7 @@ def Event_12204838():
     
     MAIN.Await(OR_4)
     
-    GotoIfFinishedConditionFalse(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultFalse(Label.L0, input_condition=AND_1)
     EnableSpawner(entity=2205000)
     
     MAIN.Await(CharacterHasTAEEvent(2200810, tae_event_id=10))
@@ -1118,7 +1118,7 @@ def Event_12204838():
 
     # --- Label 0 --- #
     DefineLabel(0)
-    GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_2)
+    GotoIfLastConditionResultFalse(Label.L1, input_condition=AND_2)
     EnableSpawner(entity=2205001)
     
     MAIN.Await(CharacterHasTAEEvent(2200811, tae_event_id=10))
@@ -1198,9 +1198,9 @@ def Event_12204839():
 
     # --- Label 3 --- #
     DefineLabel(3)
-    GotoIfFinishedConditionTrue(Label.L4, input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L5, input_condition=OR_3)
-    GotoIfFinishedConditionTrue(Label.L6, input_condition=OR_5)
+    GotoIfLastConditionResultTrue(Label.L4, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L5, input_condition=OR_3)
+    GotoIfLastConditionResultTrue(Label.L6, input_condition=OR_5)
     WaitFrames(frames=65)
     ForceAnimation(2200811, 6200)
     EnableCharacter(2200811)
@@ -1264,7 +1264,7 @@ def Event_12204840():
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionFalse(Label.L0, input_condition=AND_2)
+    GotoIfLastConditionResultFalse(Label.L0, input_condition=AND_2)
     AND_3.Add(HealthValue(2200800) == 1)
     AND_4.Add(HealthValue(2200800) != 1)
     OR_2.Add(AND_3)
@@ -1272,7 +1272,7 @@ def Event_12204840():
     
     MAIN.Await(OR_2)
     
-    GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_3)
+    GotoIfLastConditionResultFalse(Label.L1, input_condition=AND_3)
     WaitRandomSeconds(min_seconds=5.0, max_seconds=15.0)
     AICommand(2200801, command_id=10, command_slot=2)
     ReplanAI(2200801)
@@ -1323,8 +1323,8 @@ def Event_12204841():
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_6)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_6)
     AND_4.Add(HealthValue(2200800) == 1)
     AND_5.Add(HealthValue(2200800) != 1)
     OR_2.Add(AND_4)
@@ -1332,7 +1332,7 @@ def Event_12204841():
     
     MAIN.Await(OR_2)
     
-    GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_4)
+    GotoIfLastConditionResultFalse(Label.L1, input_condition=AND_4)
     WaitRandomSeconds(min_seconds=10.0, max_seconds=20.0)
     AICommand(2200801, command_id=10, command_slot=2)
     ReplanAI(2200801)
@@ -1508,7 +1508,7 @@ def Event_12200111():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     DisplayDialog(text=10010160, anchor_entity=2201002, number_buttons=NumberButtons.OneButton)
     Wait(1.0)
     Restart()
@@ -1538,7 +1538,7 @@ def Event_12200120():
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
     EndOfAnimation(obj=2201210, animation_id=0)
     DisableObjectActivation(2201200, obj_act_id=100)
     EnableObjectActivation(2201201, obj_act_id=100)
@@ -2102,7 +2102,7 @@ def Event_12205030():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -2126,7 +2126,7 @@ def Event_12205031():
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_2)
     ResetAnimation(2200150)
     RotateToFaceEntity(2200150, PLAYER, animation=3001)
 
@@ -2158,7 +2158,7 @@ def Event_12205050():
     # --- Label 0 --- #
     DefineLabel(0)
     EnableAI(2200280)
-    EndIfFinishedConditionFalse(input_condition=AND_3)
+    EndIfLastConditionResultFalse(input_condition=AND_3)
     Wait(5.0)
     SetNest(2200280, region=2209005)
     AICommand(2200280, command_id=10, command_slot=0)
@@ -2241,7 +2241,7 @@ def Event_12205080():
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionFalse(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultFalse(Label.L0, input_condition=AND_1)
     RotateToFaceEntity(2200205, PLAYER, animation=3012)
 
     # --- Label 0 --- #
@@ -2293,7 +2293,7 @@ def Event_12205105(_, character: int, region: int, animation: int, radius: float
     
     MAIN.Await(OR_2)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_2)
     RotateToFaceEntity(character, PLAYER, animation=animation)
 
     # --- Label 1 --- #
@@ -2319,7 +2319,7 @@ def Event_12205110(_, character: int, region: int, radius: float, animation: int
     
     MAIN.Await(OR_2)
     
-    GotoIfFinishedConditionFalse(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultFalse(Label.L0, input_condition=AND_1)
     RotateToFaceEntity(character, PLAYER, animation=animation)
     EnableAI(character)
     End()
@@ -2416,7 +2416,7 @@ def Event_12205170(_, obj: int, owner_entity: int):
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
     ShootProjectile(
         owner_entity=owner_entity,
         source_entity=obj,
@@ -2548,7 +2548,7 @@ def Event_12205220(_, character: int, region: int, animation_id: int, region_1: 
     
     MAIN.Await(OR_3)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     ResetAnimation(character)
     ForceAnimation(character, animation_id)
     OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Search))
@@ -2562,8 +2562,8 @@ def Event_12205220(_, character: int, region: int, animation_id: int, region_1: 
     
     MAIN.Await(OR_2)
     
-    EndIfFinishedConditionTrue(input_condition=AND_4)
-    RestartIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_4)
+    RestartIfLastConditionResultTrue(input_condition=AND_2)
     ResetAnimation(character)
     ForceAnimation(character, 0, wait_for_completion=True)
     Restart()

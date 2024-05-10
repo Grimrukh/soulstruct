@@ -138,12 +138,12 @@ def Event_1045392280(_, attacker__character: uint, region: uint):
         return
     AddSpecialEffect(attacker__character, 4800)
     AddSpecialEffect(attacker__character, 5654)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=PLAYER))
     OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=35000))
@@ -170,10 +170,10 @@ def Event_1045392281(_, character: uint, region: uint, owner_entity: uint):
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
     DisableCharacter(character)
     CreateProjectileOwner(entity=owner_entity)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_4.Add(CharacterHasSpecialEffect(character, 481))
     AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
@@ -218,8 +218,8 @@ def Event_1045392281(_, character: uint, region: uint, owner_entity: uint):
     SetSpecialStandbyEndedFlag(character=character, state=True)
     PlaySoundEffect(region, 407008100, sound_type=SoundType.c_CharacterMotion)
     Wait(1.0)
-    OR_7.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_7.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_7.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_7.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_11.Add(CharacterOutsideRegion(character=PLAYER, region=region))
     AND_11.Add(OR_7)
     GotoIfConditionTrue(Label.L0, input_condition=AND_11)
@@ -392,17 +392,17 @@ def Event_1045392343(
     
     MAIN.Await(OR_5)
     
-    GotoIfFinishedConditionFalse(Label.L2, input_condition=AND_2)
+    GotoIfLastConditionResultFalse(Label.L2, input_condition=AND_2)
     AddSpecialEffect(character, special_effect)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    GotoIfFinishedConditionFalse(Label.L3, input_condition=AND_3)
+    GotoIfLastConditionResultFalse(Label.L3, input_condition=AND_3)
     AddSpecialEffect(character, special_effect_1)
 
     # --- Label 3 --- #
     DefineLabel(3)
-    GotoIfFinishedConditionFalse(Label.L4, input_condition=AND_4)
+    GotoIfLastConditionResultFalse(Label.L4, input_condition=AND_4)
     AddSpecialEffect(character, special_effect_2)
 
     # --- Label 4 --- #

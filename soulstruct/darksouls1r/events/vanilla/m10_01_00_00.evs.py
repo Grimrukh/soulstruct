@@ -373,7 +373,7 @@ def Event_11010090(_, obj: int, vfx_id: int, destination: int, destination_1: in
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     Move(PLAYER, destination=destination, destination_type=CoordEntityType.Region, short_move=True)
     SkipLines(1)
     Move(PLAYER, destination=destination_1, destination_type=CoordEntityType.Region, short_move=True)
@@ -523,8 +523,8 @@ def Event_11010000():
     
     MAIN.Await(AND_1)
     
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Intruder))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Intruder))
     if OR_1:
         return
     SkipLinesIfMultiplayer(2)
@@ -632,7 +632,7 @@ def Event_11010001():
     MAIN.Await(AND_3)
     
     EnableFlag(3)
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_1)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_1)
     PlaySoundEffect(1010800, 777777777, sound_type=SoundType.s_SFX)
     SkipLines(1)
     PlaySoundEffect(1010801, 777777777, sound_type=SoundType.s_SFX)
@@ -716,7 +716,7 @@ def Event_11015397(_, character: int, npc_part_id: short, npc_part_id_1: int, ch
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     Move(
         character_1,
         destination=character,
@@ -887,7 +887,7 @@ def Event_11015386():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     Move(1010700, destination=1012741, destination_type=CoordEntityType.Region, short_move=True)
     SkipLines(1)
     Move(1010700, destination=1012740, destination_type=CoordEntityType.Region, short_move=True)
@@ -1068,7 +1068,7 @@ def Event_11015110():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_2)
     ForceAnimation(1010102, 3000, wait_for_completion=True)
     EnableAI(1010102)
 
@@ -1088,7 +1088,7 @@ def Event_11015111():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_1)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_1)
     ForceAnimation(1010110, 13005, wait_for_completion=True)
     EnableAI(1010110)
 
@@ -1124,7 +1124,7 @@ def Event_11015112():
     MAIN.Await(OR_1)
     
     EnableAI(1010111)
-    EndIfFinishedConditionTrue(input_condition=AND_1)
+    EndIfLastConditionResultTrue(input_condition=AND_1)
     SetNest(1010111, region=1012120)
     AICommand(1010111, command_id=10, command_slot=0)
     ReplanAI(1010111)
@@ -1194,7 +1194,7 @@ def Event_11010111():
     
     EnableFlag(11010111)
     EnableAI(1010130)
-    EndIfFinishedConditionTrue(input_condition=AND_1)
+    EndIfLastConditionResultTrue(input_condition=AND_1)
     DisableObjectActivation(1011318, obj_act_id=-1, relative_index=0)
     DisableObjectActivation(1011318, obj_act_id=-1, relative_index=1)
     DisableObjectActivation(1011318, obj_act_id=-1, relative_index=2)
@@ -1523,7 +1523,7 @@ def Event_11015185():
     MAIN.Await(OR_1)
     
     EnableFlag(11015180)
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     EnableFlag(11015181)
     Restart()
     EnableFlag(11015182)
@@ -1557,7 +1557,7 @@ def Event_11010600():
     DisableFlag(11015180)
     DisableFlag(11015181)
     DisableFlag(11015182)
-    SkipLinesIfFinishedConditionTrue(9, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(9, input_condition=AND_2)
     if FlagDisabled(61010610):
         Event_11010611()
         Restart()
@@ -1840,11 +1840,11 @@ def Event_11010900():
     MAIN.Await(OR_1)
     
     EnableFlag(11015310)
-    SkipLinesIfFinishedConditionFalse(3, input_condition=AND_1)
+    SkipLinesIfLastConditionResultFalse(3, input_condition=AND_1)
     ForceAnimation(1010300, 7001, wait_for_completion=True)
     DisableCharacter(1010300)
     End()
-    SkipLinesIfFinishedConditionFalse(3, input_condition=AND_2)
+    SkipLinesIfLastConditionResultFalse(3, input_condition=AND_2)
     ForceAnimation(1010300, 7007, wait_for_completion=True)
     DisableCharacter(1010300)
     End()
@@ -1886,7 +1886,7 @@ def Event_11010791():
     AND_1.Add(HealthRatio(1010300) >= 0.10000000149011612)
     AND_1.Add(CharacterInsideRegion(PLAYER, region=1012305))
     AND_1.Add(AllPlayersOutsideRegion(region=1012337))
-    AND_2.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_2.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_1.Add(not AND_2)
     
     MAIN.Await(AND_1)
@@ -1952,7 +1952,7 @@ def Event_11015301():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     if FlagDisabled(11015311):
         ForceAnimation(1010300, 8000)
     else:
@@ -2014,16 +2014,16 @@ def Event_11015302():
     MAIN.Await(OR_1)
     
     EnableFlag(11015310)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_2)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_2)
     EnableFlag(11015350)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_3)
     EnableFlag(11015351)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_4)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_4)
     EnableFlag(11015352)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_5)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_5)
     EnableFlag(11015353)
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_6)
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_7)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_6)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_7)
     SkipLines(1)
     EnableFlag(11015354)
     DisableFlagRange((11015320, 11015339))
@@ -2135,19 +2135,19 @@ def Event_11010890(_, flag: int, flag_1: int, flag_2: int, flag_3: int, flag_4: 
     MAIN.Await(OR_7)
     
     DisableFlag(11015313)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_1)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_1)
     EnableFlag(flag)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_2)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_2)
     EnableFlag(flag_1)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_3)
     EnableFlag(flag_2)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_4)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_4)
     EnableFlag(flag_3)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_5)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_5)
     EnableFlag(flag_4)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_6)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_6)
     EnableFlag(flag_5)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_7)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_7)
     EnableFlag(flag_6)
     Restart()
 
@@ -2174,7 +2174,7 @@ def Event_11015303():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     EnableFlag(11015306)
     Restart()
     DisableFlag(11015306)
@@ -2227,7 +2227,7 @@ def Event_11010851():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     EnableFlag(11015316)
     Restart()
     DisableFlag(11015316)
@@ -2299,7 +2299,7 @@ def Event_11015308():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(5, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(5, input_condition=AND_2)
     EnableFlag(11015309)
     AICommand(1010300, command_id=1, command_slot=1)
     ClearTargetList(1010300)
@@ -2319,7 +2319,7 @@ def Event_11010782():
     AND_1.Add(FlagEnabled(11010790))
     AND_1.Add(FlagEnabled(11010791))
     AND_1.Add(FlagDisabled(11015311))
-    AND_7.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_7.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_1.Add(not AND_7)
     AND_1.Add(CharacterInsideRegion(PLAYER, region=1012337))
     
@@ -2394,7 +2394,7 @@ def Event_11010510(_, character: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_3)
     DisableCharacter(character)
     
     MAIN.Await(FlagEnabled(703))
@@ -2538,7 +2538,7 @@ def Event_11010534(_, character: int, first_flag: int, last_flag: int, flag: int
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_1)
+    EndIfLastConditionResultTrue(input_condition=AND_1)
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     DisableCharacter(character)
@@ -2562,7 +2562,7 @@ def Event_11010535(_, character: int, first_flag: int, last_flag: int, flag: int
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
-    EndIfFinishedConditionTrue(input_condition=AND_1)
+    EndIfLastConditionResultTrue(input_condition=AND_1)
     DropMandatoryTreasure(character)
 
 
@@ -2590,8 +2590,8 @@ def Event_11010537(_, character: int, first_flag: int, last_flag: int, flag: int
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(8, input_condition=AND_3)
-    SkipLinesIfFinishedConditionFalse(9, input_condition=AND_1)
+    SkipLinesIfLastConditionResultTrue(8, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(9, input_condition=AND_1)
     EnableFlag(11010599)
     SkipLinesIfClient(3)
     EnableFlag(50006070)
@@ -2601,7 +2601,7 @@ def Event_11010537(_, character: int, first_flag: int, last_flag: int, flag: int
     EnableFlag(flag)
     DropMandatoryTreasure(character)
     End()
-    SkipLinesIfFinishedConditionFalse(3, input_condition=AND_2)
+    SkipLinesIfLastConditionResultFalse(3, input_condition=AND_2)
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     End()
@@ -2756,7 +2756,7 @@ def Event_11010580():
     MAIN.Await(OR_1)
     
     WaitForNetworkApproval(max_seconds=3.0)
-    SkipLinesIfFinishedConditionFalse(9, input_condition=AND_1)
+    SkipLinesIfLastConditionResultFalse(9, input_condition=AND_1)
     AddSpecialEffect(PLAYER, 4170)
     SkipLinesIfClient(1)
     RotateToFaceEntity(PLAYER, target_entity=6480)

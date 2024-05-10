@@ -1,7 +1,8 @@
-"""AUTOMATICALLY GENERATED. Do not edit this module.
+"""AUTOMATICALLY GENERATED. Do not edit this module manually.
 
 Import this into any EVS script to have full access to instructions.
 Make sure you also do `from soulstruct.{game}.events import *` to get all enums, constants, and tests.
+You will likely also want `from soulstruct.{game}.game_types import *`.
 """
 
 __all__ = [
@@ -12,25 +13,28 @@ __all__ = [
     "EVENTS",
     "Condition",
     "HeldCondition",
+    "LastResult",
+    "Await",
     "END",
     "RESTART",
-    "Await",
-    "MAIN",
-    "OR_1",
-    "OR_2",
-    "OR_3",
-    "OR_4",
-    "OR_5",
-    "OR_6",
-    "OR_7",
-    "OR_8",
-    "OR_9",
-    "OR_10",
-    "OR_11",
-    "OR_12",
-    "OR_13",
-    "OR_14",
+    "RunEvent",
+    # Condition groups:
     "OR_15",
+    "OR_14",
+    "OR_13",
+    "OR_12",
+    "OR_11",
+    "OR_10",
+    "OR_9",
+    "OR_8",
+    "OR_7",
+    "OR_6",
+    "OR_5",
+    "OR_4",
+    "OR_3",
+    "OR_2",
+    "OR_1",
+    "MAIN",
     "AND_1",
     "AND_2",
     "AND_3",
@@ -47,6 +51,7 @@ __all__ = [
     "AND_14",
     "AND_15",
     # Built-in instructions:
+    "RunCommonEvent",
     "IfConditionState",  # 0[0]
     "IfConditionTrue",
     "IfConditionFalse",
@@ -86,7 +91,6 @@ __all__ = [
     "IfEntityWithinDistance",
     "IfEntityBeyondDistance",
     "IfPlayerItemStateExcludingStorage",  # 3[4]
-    "IfActionButtonBasic",  # 3[5]
     "IfMultiplayerState",  # 3[6]
     "IfHost",
     "IfClient",
@@ -116,7 +120,6 @@ __all__ = [
     "IfEventValueLessThan",
     "IfEventValueGreaterThanOrEqual",
     "IfEventValueLessThanOrEqual",
-    "IfActionButtonBoss",  # 3[13]
     "IfAnyItemDroppedInRegion",  # 3[14]
     "IfItemDropped",  # 3[15]
     "IfPlayerItemStateIncludingStorage",  # 3[16]
@@ -127,19 +130,13 @@ __all__ = [
     "IfNewGameCycleLessThan",
     "IfNewGameCycleGreaterThanOrEqual",
     "IfNewGameCycleLessThanOrEqual",
-    "IfActionButtonBasicLineIntersect",  # 3[18]
-    "IfActionButtonBossLineIntersect",  # 3[19]
     "IfEventsComparison",  # 3[20]
-    "IfDLCState",  # 3[21]
-    "IfDLCOwned",
-    "IfDLCNotOwned",
     "IfOnlineState",  # 3[22]
     "IfOnline",
     "IfOffline",
     "IfCharacterDeathState",  # 4[0]
     "IfCharacterDead",
     "IfCharacterAlive",
-    "IfAttacked",  # 4[1]
     "IfHealthRatioComparison",  # 4[2]
     "IfHealthRatioEqual",
     "IfHealthRatioNotEqual",
@@ -147,7 +144,7 @@ __all__ = [
     "IfHealthRatioLessThan",
     "IfHealthRatioGreaterThanOrEqual",
     "IfHealthRatioLessThanOrEqual",
-    "IfCharacterType",  # 4[3]
+    "IfCharacterIsType",  # 4[3]
     "IfCharacterTargetingState",  # 4[4]
     "IfCharacterTargeting",
     "IfCharacterNotTargeting",
@@ -231,15 +228,14 @@ __all__ = [
     "RestartIfValueLessThan",
     "RestartIfValueGreaterThanOrEqual",
     "RestartIfValueLessThanOrEqual",
-    "SkipLinesIfFinishedConditionState",  # 1000[7]
-    "SkipLinesIfFinishedConditionTrue",
-    "SkipLinesIfFinishedConditionFalse",
-    "ReturnIfFinishedConditionState",  # 1000[8]
-    "EndIfFinishedConditionTrue",
-    "EndIfFinishedConditionFalse",
-    "RestartIfFinishedConditionTrue",
-    "RestartIfFinishedConditionFalse",
-    "WaitForNetworkApproval",  # 1000[9]
+    "SkipLinesIfLastConditionResultState",  # 1000[7]
+    "SkipLinesIfLastConditionResultTrue",
+    "SkipLinesIfLastConditionResultFalse",
+    "ReturnIfLastConditionResultState",  # 1000[8]
+    "EndIfLastConditionResultTrue",
+    "EndIfLastConditionResultFalse",
+    "RestartIfLastConditionResultTrue",
+    "RestartIfLastConditionResultFalse",
     "Wait",  # 1001[0]
     "WaitFrames",  # 1001[1]
     "WaitRandomSeconds",  # 1001[2]
@@ -301,22 +297,34 @@ __all__ = [
     "EndIfAssetNotDestroyed",
     "RestartIfAssetDestroyed",
     "RestartIfAssetNotDestroyed",
-    "TerminateEvent",  # 2000[1]
     "SetNetworkSyncState",  # 2000[2]
     "EnableNetworkSync",
     "DisableNetworkSync",
     "ClearMainCondition",  # 2000[3]
-    "IssuePrefetchRequest",  # 2000[4]
     "SaveRequest",  # 2000[5]
     "StartPS5Activity",  # 2000[7]
     "EndPS5Activity",  # 2000[8]
     "PlayCutsceneToAll",  # 2002[1]
     "PlayCutsceneToPlayer",  # 2002[3]
+    "PlayCutsceneToPlayer_Unknown_2002_04",  # 2002[4]
+    "PlayCutsceneToPlayer_Unknown_2002_09",  # 2002[9]
     "SetSpawnerState",  # 2003[3]
     "EnableSpawner",
     "DisableSpawner",
     "AwardItemLotToAllPlayers",  # 2003[4]
     "ShootProjectile",  # 2003[5]
+    "SetMapCollisionState_2003_06",  # 2003[6]
+    "EnableMapCollision_2003_06",
+    "DisableMapCollision_2003_06",
+    "SetMapVisibilityState",  # 2003[7]
+    "EnableMapVisibility",
+    "DisableMapVisibility",
+    "SetEventSlotState",  # 2003[8]
+    "EndEventSlot",
+    "EndEvent",
+    "RestartEventSlot",
+    "RestartEvent",
+    "InvertFlag",  # 2003[9]
     "SetBossHealthBarState",  # 2003[11]
     "EnableBossHealthBar",
     "DisableBossHealthBar",
@@ -326,12 +334,14 @@ __all__ = [
     "DisableNavmeshType",
     "ToggleNavmeshType",
     "WarpToMap",  # 2003[14]
+    "HandleMinibossDefeat",  # 2003[15]
     "TriggerMultiplayerEvent",  # 2003[16]
     "SetRandomFlagInRange",  # 2003[17]
     "EnableRandomFlagInRange",
     "DisableRandomFlagInRange",
     "ToggleRandomFlagInRange",
     "ForceAnimation",  # 2003[18]
+    "IncrementNewGameCycle",  # 2003[21]
     "SetFlagRangeState",  # 2003[22]
     "EnableFlagRange",
     "DisableFlagRange",
@@ -340,9 +350,12 @@ __all__ = [
     "RemoveItemFromPlayer",  # 2003[24]
     "RemoveWeaponFromPlayer",
     "RemoveArmorFromPlayer",
-    "RemoveRingFromPlayer",
+    "RemoveTalismanFromPlayer",
     "RemoveGoodFromPlayer",
     "PlaceSummonSign",  # 2003[25]
+    "SetSoapstoneMessageState",  # 2003[26]
+    "EnableSoapstoneMessage",
+    "DisableSoapstoneMessage",
     "AwardAchievement",  # 2003[28]
     "IncrementEventValue",  # 2003[31]
     "ClearEventValue",  # 2003[32]
@@ -353,7 +366,6 @@ __all__ = [
     "EnableAI",
     "DisableAI",
     "SetTeamType",  # 2004[2]
-    "MoveToEntity",  # 2004[3]
     "Kill",  # 2004[4]
     "SetCharacterState",  # 2004[5]
     "EnableCharacter",
@@ -361,8 +373,6 @@ __all__ = [
     "EzstateAIRequest",  # 2004[6]
     "CreateProjectileOwner",  # 2004[7]
     "AddSpecialEffect",  # 2004[8]
-    "SetStandbyAnimationSettings",  # 2004[9]
-    "ResetStandbyAnimationSettings",
     "SetGravityState",  # 2004[10]
     "EnableGravity",
     "DisableGravity",
@@ -397,11 +407,11 @@ __all__ = [
     "SetCharacterCollisionState",  # 2004[31]
     "EnableCharacterCollision",
     "DisableCharacterCollision",
-    "AIEvent",  # 2004[32]
     "ReferDamageToEntity",  # 2004[33]
     "SetNetworkUpdateRate",  # 2004[34]
     "SetBackreadStateAlternate",  # 2004[35]
     "DropMandatoryTreasure",  # 2004[37]
+    "BetrayCurrentCovenant",  # 2004[38]
     "SetAnimationsState",  # 2004[39]
     "EnableAnimations",
     "DisableAnimations",
@@ -409,7 +419,6 @@ __all__ = [
     "ShortMove",  # 2004[41]
     "MoveAndCopyDrawParent",  # 2004[42]
     "ResetAnimation",  # 2004[43]
-    "SetTeamTypeAndExitStandbyAnimation",  # 2004[44]
     "EqualRecovery",  # 2004[47]
     "DestroyAsset",  # 2005[1]
     "RestoreAsset",  # 2005[2]
@@ -490,7 +499,13 @@ __all__ = [
     "IfWeatherLotActive",
     "IfWeatherLotInactive",
     "IfPlayerGender",  # 3[38]
-    "IfAllyPhantomCountComparison",  # 3[39]
+    "IfArenaMatchReadyState",  # 3[39]
+    "IfArenaSoloResult",  # 3[40]
+    "IfArenaSoloScoreComparison",  # 3[41]
+    "IfArenaTeamResults",  # 3[42]
+    "IfArenaTeamScoreComparison",  # 3[43]
+    "IfArenaMatchType",  # 3[44]
+    "IfPlayerRespawnedInArena",  # 3[45]
     "IfCharacterProportionDeathState",  # 4[15]
     "IfCharacterProportionDead",
     "IfCharacterProportionAlive",
@@ -538,9 +553,9 @@ __all__ = [
     "GotoIfConditionFalse",
     "Goto",  # 1000[103]
     "GotoIfValueComparison",  # 1000[105]
-    "GotoIfFinishedConditionState",  # 1000[107]
-    "GotoIfFinishedConditionTrue",
-    "GotoIfFinishedConditionFalse",
+    "GotoIfLastConditionResultState",  # 1000[107]
+    "GotoIfLastConditionResultTrue",
+    "GotoIfLastConditionResultFalse",
     "GotoIfUnsignedComparison",  # 1000[108]
     "GotoIfUnsignedEqual",
     "GotoIfUnsignedNotEqual",
@@ -548,8 +563,9 @@ __all__ = [
     "GotoIfUnsignedLessThan",
     "GotoIfUnsignedGreaterThanOrEqual",
     "GotoIfUnsignedLessThanOrEqual",
-    "WaitUntilRandomTimeOfDay",  # 1001[5]
-    "WaitFramesAfterCutscene",  # 1001[6]
+    "WaitUntilTimeOfDayInRange",  # 1001[5]
+    "WaitRealFrames",  # 1001[6]
+    "WaitUntilArenaHalfTime",  # 1001[8]
     "SkipLinesIfMultiplayerState",  # 1003[5]
     "SkipLinesIfHost",
     "SkipLinesIfClient",
@@ -653,6 +669,11 @@ __all__ = [
     "EndIfCeremonyInactive",
     "RestartIfCeremonyActive",
     "RestartIfCeremonyInactive",
+    "SkipLinesIfArenaMatchType",  # 1003[212]
+    "GotoLinesIfArenaMatchType",  # 1003[213]
+    "ReturnIfArenaMatchType",  # 1003[214]
+    "EndIfArenaMatchType",
+    "RestartIfArenaMatchType",
     "SkipLinesIfCharacterSpecialEffectState",  # 1004[0]
     "SkipLinesIfPlayerHasSpecialEffect",
     "SkipLinesIfPlayerDoesNotHaveSpecialEffect",
@@ -720,15 +741,17 @@ __all__ = [
     "PlayCutsceneToPlayerAndWarpWithStablePositionUpdate",  # 2002[13]
     "StoreItemAmountSpecifiedByFlagValue",  # 2003[42]
     "GivePlayerItemAmountSpecifiedByFlagValue",  # 2003[43]
-    "WarpPlayerToRespawnPoint",  # 2003[49]
-    "StartEnemySpawner",  # 2003[50]
-    "SummonNPC",  # 2003[51]
+    "SetDirectionDisplay",  # 2003[44]
+    "EnableDirectionDisplay",
+    "DisableDirectionDisplay",
     "TriggerAISound",  # 2003[52]
     "ForceSpawnerToSpawn",  # 2003[54]
     "SetNetworkConnectedFlagRangeState",  # 2003[63]
     "EnableNetworkConnectedFlagRange",
     "DisableNetworkConnectedFlagRange",
     "ToggleNetworkConnectedFlagRange",
+    "SetOmissionModeCounts",  # 2003[64]
+    "ResetOmissionModeCountsToDefault",  # 2003[65]
     "SetFlagState",  # 2003[66]
     "EnableFlag",
     "DisableFlag",
@@ -761,9 +784,11 @@ __all__ = [
     "DisableLoadingScreenText",
     "RemoveGesture",  # 2003[81]
     "EraseNPCSummonSign",  # 2003[82]
+    "Unknown_2003_83",  # 2003[83]
     "ChangeCharacterCloth",  # 2004[48]
     "ChangePatrolBehavior",  # 2004[49]
     "SetLockOnPoint",  # 2004[50]
+    "ChangePlayerCharacterInitParam",  # 2004[52]
     "SetCharacterTalkRange",  # 2004[55]
     "ConnectCharacterToCaravan",  # 2004[60]
     "Unknown_2004_61",  # 2004[61]
@@ -786,10 +811,9 @@ __all__ = [
     "SetCharacterEnableDistanceWithUnknown",  # 2004[84]
     "AttachCaravanToController",  # 2005[17]
     "AttachAssetToAsset",  # 2005[18]
-    "DestroyAsset_NoSlot",  # 2005[19]
     "CreateBigHazardousAsset",  # 2005[20]
     "SetWindVFX",  # 2006[6]
-    "DisplayDialogAndSetFlags",  # 2007[10]
+    "AwaitDialogResponse",  # 2007[10]
     "DisplayFlashingMessageWithPriority",  # 2007[12]
     "DisplaySubareaWelcomeMessage",  # 2007[13]
     "DisplayAreaWelcomeMessage",  # 2007[14]
@@ -798,6 +822,7 @@ __all__ = [
     "SetCameraAngle",  # 2008[4]
     "BanishInvaders",  # 2009[8]
     "BanishPhantoms",  # 2009[11]
+    "BanishPhantomsAndUpdateServerPvPStats",  # 2009[12]
     "SuppressSoundEvent",  # 2010[7]
     "UnknownSound_2010_8",  # 2010[8]
     "SetBossMusic",  # 2010[10]
@@ -823,12 +848,12 @@ __all__ = [
     "IfPlayerHasItem",
     "IfPlayerHasWeapon",
     "IfPlayerHasArmor",
-    "IfPlayerHasRing",
+    "IfPlayerHasTalisman",
     "IfPlayerHasGood",
     "IfPlayerDoesNotHaveItem",
     "IfPlayerDoesNotHaveWeapon",
     "IfPlayerDoesNotHaveArmor",
-    "IfPlayerDoesNotHaveRing",
+    "IfPlayerDoesNotHaveTalisman",
     "IfPlayerDoesNotHaveGood",
     "IfActionButton",
     "DefineLabel",
@@ -869,7 +894,6 @@ __all__ = [
     "EntityWithinDistance",
     "EntityBeyondDistance",
     "PlayerItemStateExcludingStorage",
-    "ActionButtonBasic",
     "MultiplayerState",
     "Host",
     "Client",
@@ -899,7 +923,6 @@ __all__ = [
     "EventValueLessThan",
     "EventValueGreaterThanOrEqual",
     "EventValueLessThanOrEqual",
-    "ActionButtonBoss",
     "AnyItemDroppedInRegion",
     "ItemDropped",
     "PlayerItemStateIncludingStorage",
@@ -910,19 +933,13 @@ __all__ = [
     "NewGameCycleLessThan",
     "NewGameCycleGreaterThanOrEqual",
     "NewGameCycleLessThanOrEqual",
-    "ActionButtonBasicLineIntersect",
-    "ActionButtonBossLineIntersect",
     "EventsComparison",
-    "DLCState",
-    "DLCOwned",
-    "DLCNotOwned",
     "OnlineState",
     "Online",
     "Offline",
     "CharacterDeathState",
     "CharacterDead",
     "CharacterAlive",
-    "Attacked",
     "HealthRatioComparison",
     "HealthRatioEqual",
     "HealthRatioNotEqual",
@@ -930,7 +947,7 @@ __all__ = [
     "HealthRatioLessThan",
     "HealthRatioGreaterThanOrEqual",
     "HealthRatioLessThanOrEqual",
-    "CharacterType",
+    "CharacterIsType",
     "CharacterTargetingState",
     "CharacterTargeting",
     "CharacterNotTargeting",
@@ -1011,7 +1028,13 @@ __all__ = [
     "WeatherLotActive",
     "WeatherLotInactive",
     "PlayerGender",
-    "AllyPhantomCountComparison",
+    "ArenaMatchReadyState",
+    "ArenaSoloResult",
+    "ArenaSoloScoreComparison",
+    "ArenaTeamResults",
+    "ArenaTeamScoreComparison",
+    "ArenaMatchType",
+    "PlayerRespawnedInArena",
     "CharacterProportionDeathState",
     "CharacterProportionDead",
     "CharacterProportionAlive",
@@ -1037,11 +1060,11 @@ __all__ = [
     "ActionButton",
     "PlayerHasWeapon",
     "PlayerHasArmor",
-    "PlayerHasRing",
+    "PlayerHasTalisman",
     "PlayerHasGood",
     "PlayerDoesNotHaveWeapon",
     "PlayerDoesNotHaveArmor",
-    "PlayerDoesNotHaveRing",
+    "PlayerDoesNotHaveTalisman",
     "PlayerDoesNotHaveGood",
     "EnabledFlagCount",
     "EventValue",
@@ -1050,7 +1073,6 @@ __all__ = [
     "PlayerLevel",
     "HealthValue",
     "AssetHealthValue",
-    "AllyPhantomCount",
 ]
 
 import typing as tp
@@ -1067,36 +1089,63 @@ def EndOnRest(event_id_or_func: tp.Union[tp.Callable, int]): ...
 # Dummy enum for accessing event flags defined by events.
 class EVENTS(Flag): ...
 
-# Dummy class for creating conditions.
+
 class Condition:
+    """
+    Create a condition group for use in `Await` or `If` instructions.
+    
+    If `hold = True`, the EVS parser will NOT permit the internal condition group slot assigned to this `Condition` to
+    be automatically re-used once it is evaluated by the game engine and marked as OLD (e.g. by a `Main.AWAIT()` call).    
+    """
     def __init__(self, condition, hold: bool = False): ...
 
+
 class HeldCondition:
+    """
+    Alternative syntax for `Condition(condition, hold=True)`. (See above.)
+    """
     def __init__(self, condition): ...
 
-# Terminators.
-END = ...
-RESTART = ...
 
-# The Await function. Equivalent to using the 'await' built-in Python keyword or `MAIN.Await()`.
-def Await(condition): ...
+def LastResult(condition_group: ConditionGroup):
+    """
+    Wrap a naked condition group like `AND_1` with this to tell EVS/EMEVD that you want to check the LAST RESULT of
+    this condition group rather than actively re-evaluating it.
+    """    
 
-MAIN = ConditionGroup.MAIN
-OR_1 = ConditionGroup.OR_1
-OR_2 = ConditionGroup.OR_2
-OR_3 = ConditionGroup.OR_3
-OR_4 = ConditionGroup.OR_4
-OR_5 = ConditionGroup.OR_5
-OR_6 = ConditionGroup.OR_6
-OR_7 = ConditionGroup.OR_7
-OR_8 = ConditionGroup.OR_8
-OR_9 = ConditionGroup.OR_9
-OR_10 = ConditionGroup.OR_10
-OR_11 = ConditionGroup.OR_11
-OR_12 = ConditionGroup.OR_12
-OR_13 = ConditionGroup.OR_13
-OR_14 = ConditionGroup.OR_14
+
+def Await(condition):
+    """
+    The Await function. Equivalent to `MAIN.Await()`, which the EVS decompiler will prefer.
+    
+    You can also use the built-in 'await' Python keyword, but Python linters might complain about this (e.g. because
+    you haven't declared your function with `async def` or because of the type being passed to `await`).
+    """
+    ...
+
+
+# Terminators that can be returned by events as cleaner syntax.
+END = ...  # use with `return END`, identical to `return` or `End()`
+RESTART = ...  # use with `return RESTART`, identical to `Restart()`
+
+
+# Condition groups:
 OR_15 = ConditionGroup.OR_15
+OR_14 = ConditionGroup.OR_14
+OR_13 = ConditionGroup.OR_13
+OR_12 = ConditionGroup.OR_12
+OR_11 = ConditionGroup.OR_11
+OR_10 = ConditionGroup.OR_10
+OR_9 = ConditionGroup.OR_9
+OR_8 = ConditionGroup.OR_8
+OR_7 = ConditionGroup.OR_7
+OR_6 = ConditionGroup.OR_6
+OR_5 = ConditionGroup.OR_5
+OR_4 = ConditionGroup.OR_4
+OR_3 = ConditionGroup.OR_3
+OR_2 = ConditionGroup.OR_2
+OR_1 = ConditionGroup.OR_1
+MAIN = ConditionGroup.MAIN
 AND_1 = ConditionGroup.AND_1
 AND_2 = ConditionGroup.AND_2
 AND_3 = ConditionGroup.AND_3
@@ -1112,6 +1161,20 @@ AND_12 = ConditionGroup.AND_12
 AND_13 = ConditionGroup.AND_13
 AND_14 = ConditionGroup.AND_14
 AND_15 = ConditionGroup.AND_15
+
+
+def RunEvent(event_id: int | tp.Callable, slot: int = 0, args = (0,), arg_types = "", event_layers=()):
+    """Run an event by its ID or function. This should NOT be an event defined in `common_func`."""
+    ...
+
+
+def RunCommonEvent(event_id: int | tp.Callable, slot: int = 0, args = (0,), arg_types = "", event_layers=()):
+    """
+     Run a common event by its ID or function. Also accepts slot, though the purpose of it is unclear. 
+
+    This event is typically defined in `common_func` but may also be local.
+    """
+    ...
 
 
 def IfConditionState(
@@ -1444,27 +1507,6 @@ def IfPlayerItemStateExcludingStorage(
     """
 
 
-def IfActionButtonBasic(
-    condition: ConditionGroup | int,
-    prompt_text: EventText | int,
-    anchor_entity: Asset | Character | Region | int,
-    anchor_type: CoordEntityType | int = None,
-    facing_angle: float = None,
-    dummy_id: int = -1,
-    max_distance: float = None,
-    trigger_attribute: TriggerAttribute | int = 48,
-    button: int = 0,
-    event_layers=(),
-):
-    """
-    Generates an 'action button' prompt and waits for the player to activate it.
-    
-    Basic (not "boss") version with no line intersection check.
-    
-    anchor_type: Auto-detected from `anchor_entity` type by default.
-    """
-
-
 def IfMultiplayerState(condition: ConditionGroup | int, state: MultiplayerState | int, event_layers=()):
     """
     TODO
@@ -1724,27 +1766,6 @@ def IfEventValueLessThanOrEqual(
     """
 
 
-def IfActionButtonBoss(
-    condition: ConditionGroup | int,
-    prompt_text: EventText | int,
-    anchor_entity: Asset | Character | Region | int,
-    anchor_type: CoordEntityType | int = None,
-    facing_angle: float = None,
-    dummy_id: int = -1,
-    max_distance: float = None,
-    trigger_attribute: TriggerAttribute | int = 48,
-    button: int = 0,
-    event_layers=(),
-):
-    """
-    Generates an 'action button' prompt and waits for the player to activate it.
-    
-    Boss (not "basic") version with no line intersection check.
-    
-    anchor_type: Auto-detected from `anchor_entity` type by default.
-    """
-
-
 def IfAnyItemDroppedInRegion(condition: ConditionGroup | int, region: Region | int, event_layers=()):
     """
     Check if any item has been dropped in the specified region. Not sensitive to what the item is.
@@ -1823,50 +1844,6 @@ def IfNewGameCycleLessThanOrEqual(condition: ConditionGroup | int, completion_co
     """
 
 
-def IfActionButtonBasicLineIntersect(
-    condition: ConditionGroup | int,
-    prompt_text: EventText | int,
-    anchor_entity: Asset | Character | Region | int,
-    line_intersects: int,
-    anchor_type: CoordEntityType | int = None,
-    facing_angle: float = None,
-    dummy_id: int = -1,
-    max_distance: float = None,
-    trigger_attribute: TriggerAttribute | int = 48,
-    button: int = 0,
-    event_layers=(),
-):
-    """
-    Generates an 'action button' prompt and waits for the player to activate it.
-    
-    Basic (not "boss") version with a line intersection check.
-    
-    anchor_type: Auto-detected from `anchor_entity` type by default.
-    """
-
-
-def IfActionButtonBossLineIntersect(
-    condition: ConditionGroup | int,
-    prompt_text: EventText | int,
-    anchor_entity: Asset | Character | Region | int,
-    line_intersects: int,
-    anchor_type: CoordEntityType | int = None,
-    facing_angle: float = None,
-    dummy_id: int = -1,
-    max_distance: float = None,
-    trigger_attribute: TriggerAttribute | int = 48,
-    button: int = 0,
-    event_layers=(),
-):
-    """
-    Generates an 'action button' prompt and waits for the player to activate it.
-    
-    Boss (not "basic") version with a line intersection check.
-    
-    anchor_type: Auto-detected from `anchor_entity` type by default.
-    """
-
-
 def IfEventsComparison(
     condition: ConditionGroup | int,
     left_flag: Flag | int,
@@ -1878,24 +1855,6 @@ def IfEventsComparison(
 ):
     """
     Check comparison of two event flag values. Haven't bothered adding shortcut functions for this.
-    """
-
-
-def IfDLCState(condition: ConditionGroup | int, is_owned: bool | int, event_layers=()):
-    """
-    TODO
-    """
-
-
-def IfDLCOwned(condition: ConditionGroup | int, event_layers=()):
-    """
-    Calls `IfDLCState` with `is_owned=True`.
-    """
-
-
-def IfDLCNotOwned(condition: ConditionGroup | int, event_layers=()):
-    """
-    Calls `IfDLCState` with `is_owned=False`.
     """
 
 
@@ -1951,17 +1910,6 @@ def IfCharacterAlive(
 ):
     """
     Calls `IfCharacterDeathState` with `is_dead=False`.
-    """
-
-
-def IfAttacked(
-    condition: ConditionGroup | int,
-    attacked_entity: Character | int,
-    attacker: Character | int,
-    event_layers=(),
-):
-    """
-    TODO
     """
 
 
@@ -2057,7 +2005,7 @@ def IfHealthRatioLessThanOrEqual(
     """
 
 
-def IfCharacterType(
+def IfCharacterIsType(
     condition: ConditionGroup | int,
     character: Character | int,
     character_type: CharacterType | int,
@@ -2494,6 +2442,8 @@ def IfAssetHealthValueComparison(
     asset: Asset | int,
     comparison_type: ComparisonType | int,
     value: int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
     event_layers=(),
 ):
     """
@@ -2501,25 +2451,53 @@ def IfAssetHealthValueComparison(
     """
 
 
-def IfAssetHealthValueEqual(condition: ConditionGroup | int, asset: Asset | int, value: int, event_layers=()):
+def IfAssetHealthValueEqual(
+    condition: ConditionGroup | int,
+    asset: Asset | int,
+    value: int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
+    event_layers=(),
+):
     """
     Calls `IfAssetHealthValueComparison` with `comparison_type=0`.
     """
 
 
-def IfAssetHealthValueNotEqual(condition: ConditionGroup | int, asset: Asset | int, value: int, event_layers=()):
+def IfAssetHealthValueNotEqual(
+    condition: ConditionGroup | int,
+    asset: Asset | int,
+    value: int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
+    event_layers=(),
+):
     """
     Calls `IfAssetHealthValueComparison` with `comparison_type=1`.
     """
 
 
-def IfAssetHealthValueGreaterThan(condition: ConditionGroup | int, asset: Asset | int, value: int, event_layers=()):
+def IfAssetHealthValueGreaterThan(
+    condition: ConditionGroup | int,
+    asset: Asset | int,
+    value: int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
+    event_layers=(),
+):
     """
     Calls `IfAssetHealthValueComparison` with `comparison_type=2`.
     """
 
 
-def IfAssetHealthValueLessThan(condition: ConditionGroup | int, asset: Asset | int, value: int, event_layers=()):
+def IfAssetHealthValueLessThan(
+    condition: ConditionGroup | int,
+    asset: Asset | int,
+    value: int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
+    event_layers=(),
+):
     """
     Calls `IfAssetHealthValueComparison` with `comparison_type=3`.
     """
@@ -2529,6 +2507,8 @@ def IfAssetHealthValueGreaterThanOrEqual(
     condition: ConditionGroup | int,
     asset: Asset | int,
     value: int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
     event_layers=(),
 ):
     """
@@ -2536,7 +2516,14 @@ def IfAssetHealthValueGreaterThanOrEqual(
     """
 
 
-def IfAssetHealthValueLessThanOrEqual(condition: ConditionGroup | int, asset: Asset | int, value: int, event_layers=()):
+def IfAssetHealthValueLessThanOrEqual(
+    condition: ConditionGroup | int,
+    asset: Asset | int,
+    value: int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
+    event_layers=(),
+):
     """
     Calls `IfAssetHealthValueComparison` with `comparison_type=5`.
     """
@@ -2560,37 +2547,42 @@ def IfPlayerStandingOnCollision(condition: ConditionGroup | int, collision: Coll
     """
 
 
-def AwaitConditionState(state: bool | int, condition: ConditionGroup | int, event_layers=()):
+def AwaitConditionState(state: bool | int, input_condition: ConditionGroup | int, event_layers=()):
     """
     Not sure if this is ever really used over `IfConditionState`.
     """
 
 
-def AwaitConditionTrue(condition: ConditionGroup | int, event_layers=()):
+def AwaitConditionTrue(input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `AwaitConditionState` with `state=True`.
     """
 
 
-def AwaitConditionFalse(condition: ConditionGroup | int, event_layers=()):
+def AwaitConditionFalse(input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `AwaitConditionState` with `state=False`.
     """
 
 
-def SkipLinesIfConditionState(line_count: int, state: bool | int, condition: ConditionGroup | int, event_layers=()):
+def SkipLinesIfConditionState(
+    line_count: int,
+    state: bool | int,
+    input_condition: ConditionGroup | int,
+    event_layers=(),
+):
     """
     TODO
     """
 
 
-def SkipLinesIfConditionTrue(line_count: int, condition: ConditionGroup | int, event_layers=()):
+def SkipLinesIfConditionTrue(line_count: int, input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `SkipLinesIfConditionState` with `state=True`.
     """
 
 
-def SkipLinesIfConditionFalse(line_count: int, condition: ConditionGroup | int, event_layers=()):
+def SkipLinesIfConditionFalse(line_count: int, input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `SkipLinesIfConditionState` with `state=False`.
     """
@@ -2787,70 +2779,61 @@ def RestartIfValueLessThanOrEqual(left: int, right: int, event_layers=()):
     """
 
 
-def SkipLinesIfFinishedConditionState(
+def SkipLinesIfLastConditionResultState(
     line_count: int,
     state: bool | int,
     input_condition: ConditionGroup | int,
     event_layers=(),
 ):
     """
-    This command is used instead of 1000[01] when conditions are being checked *after* they have already been
-    uploaded into the MAIN condition. For example, you might want to continue MAIN if either AND(01) or AND(02)
-    are true, but then afterwards, act conditionally on exactly which one of those two registers caused you to
-    continue.
+    Skip some number of lines if the last result of the given condition (without re-evaluating) is `state`.
     """
 
 
-def SkipLinesIfFinishedConditionTrue(line_count: int, input_condition: ConditionGroup | int, event_layers=()):
+def SkipLinesIfLastConditionResultTrue(line_count: int, input_condition: ConditionGroup | int, event_layers=()):
     """
-    Calls `SkipLinesIfFinishedConditionState` with `state=True`.
-    """
-
-
-def SkipLinesIfFinishedConditionFalse(line_count: int, input_condition: ConditionGroup | int, event_layers=()):
-    """
-    Calls `SkipLinesIfFinishedConditionState` with `state=False`.
+    Calls `SkipLinesIfLastConditionResultState` with `state=True`.
     """
 
 
-def ReturnIfFinishedConditionState(
+def SkipLinesIfLastConditionResultFalse(line_count: int, input_condition: ConditionGroup | int, event_layers=()):
+    """
+    Calls `SkipLinesIfLastConditionResultState` with `state=False`.
+    """
+
+
+def ReturnIfLastConditionResultState(
     event_return_type: EventReturnType | int,
     state: bool | int,
     input_condition: ConditionGroup | int,
     event_layers=(),
 ):
     """
-    TODO
+    End or restart event if last condition result (without re-evaluating) is the given `state`.
     """
 
 
-def EndIfFinishedConditionTrue(input_condition: ConditionGroup | int, event_layers=()):
+def EndIfLastConditionResultTrue(input_condition: ConditionGroup | int, event_layers=()):
     """
-    Calls `ReturnIfFinishedConditionState` with `event_return_type=0`, `state=True`.
-    """
-
-
-def EndIfFinishedConditionFalse(input_condition: ConditionGroup | int, event_layers=()):
-    """
-    Calls `ReturnIfFinishedConditionState` with `event_return_type=0`, `state=False`.
+    Calls `ReturnIfLastConditionResultState` with `event_return_type=0`, `state=True`.
     """
 
 
-def RestartIfFinishedConditionTrue(input_condition: ConditionGroup | int, event_layers=()):
+def EndIfLastConditionResultFalse(input_condition: ConditionGroup | int, event_layers=()):
     """
-    Calls `ReturnIfFinishedConditionState` with `event_return_type=1`, `state=True`.
-    """
-
-
-def RestartIfFinishedConditionFalse(input_condition: ConditionGroup | int, event_layers=()):
-    """
-    Calls `ReturnIfFinishedConditionState` with `event_return_type=1`, `state=False`.
+    Calls `ReturnIfLastConditionResultState` with `event_return_type=0`, `state=False`.
     """
 
 
-def WaitForNetworkApproval(max_seconds: float, event_layers=()):
+def RestartIfLastConditionResultTrue(input_condition: ConditionGroup | int, event_layers=()):
     """
-    Wait for network to approve event (up to `max_seconds` seconds).
+    Calls `ReturnIfLastConditionResultState` with `event_return_type=1`, `state=True`.
+    """
+
+
+def RestartIfLastConditionResultFalse(input_condition: ConditionGroup | int, event_layers=()):
+    """
+    Calls `ReturnIfLastConditionResultState` with `event_return_type=1`, `state=False`.
     """
 
 
@@ -3304,12 +3287,6 @@ def RestartIfAssetNotDestroyed(
 # Instruction `RunEvent` is manually defined in the `compiler` module.
 
 
-def TerminateEvent(event_slot: int, event_id: int, event_layers=()):
-    """
-    Delete an instance (slot) of an event script.
-    """
-
-
 def SetNetworkSyncState(state: bool | int, event_layers=()):
     """
     TODO
@@ -3331,12 +3308,6 @@ def DisableNetworkSync(event_layers=()):
 def ClearMainCondition(dummy: int = 0, event_layers=()):
     """
     Likely clears all conditions currently loaded into the main condition (0).
-    """
-
-
-def IssuePrefetchRequest(request_id: int, event_layers=()):
-    """
-    No idea what this does.
     """
 
 
@@ -3368,6 +3339,41 @@ def PlayCutsceneToAll(cutscene_id: int, cutscene_flags: CutsceneFlags | int, eve
 
 
 def PlayCutsceneToPlayer(cutscene_id: int, cutscene_flags: CutsceneFlags | int, player_id: int, event_layers=()):
+    """
+    TODO
+    """
+
+
+def PlayCutsceneToPlayer_Unknown_2002_04(
+    cutscene_id: int,
+    cutscene_flags: CutsceneFlags | int,
+    region: Region | int,
+    unk_12_16: int,
+    player_id: int,
+    unk_20_24: int,
+    event_layers=(),
+):
+    """
+    TODO
+    """
+
+
+def PlayCutsceneToPlayer_Unknown_2002_09(
+    cutscene_id: int,
+    cutscene_flags: CutsceneFlags | int,
+    unk_8_12: int,
+    unk_12_16: int,
+    player_id: int,
+    unk_20_24: int,
+    unk_24_25: bool | int,
+    unk_25_26: bool | int,
+    unk_28_32: float,
+    unk_33_34: bool | int,
+    unk_34_35: bool | int,
+    unk_35_36: bool | int,
+    unk_36_37: bool | int,
+    event_layers=(),
+):
     """
     TODO
     """
@@ -3413,6 +3419,78 @@ def ShootProjectile(
     You can use this to directly spawn bullets by setting `source_entity` to `owner_entity`.
     
     Note that the angle arguments are all integers.
+    """
+
+
+def SetMapCollisionState_2003_06(collision: Collision | int, state: bool | int, event_layers=()):
+    """
+    TODO: Unsure how this differs from `SetMapCollisionState`.
+    """
+
+
+def EnableMapCollision_2003_06(collision: Collision | int, event_layers=()):
+    """
+    Calls `SetMapCollisionState_2003_06` with `state=True`.
+    """
+
+
+def DisableMapCollision_2003_06(collision: Collision | int, event_layers=()):
+    """
+    Calls `SetMapCollisionState_2003_06` with `state=False`.
+    """
+
+
+def SetMapVisibilityState(map_piece: MapPiece | int, state: bool | int, event_layers=()):
+    """
+    TODO
+    """
+
+
+def EnableMapVisibility(map_piece: MapPiece | int, event_layers=()):
+    """
+    Calls `SetMapVisibilityState` with `state=True`.
+    """
+
+
+def DisableMapVisibility(map_piece: MapPiece | int, event_layers=()):
+    """
+    Calls `SetMapVisibilityState` with `state=False`.
+    """
+
+
+def SetEventSlotState(event_id: int, slot: int, event_return_type: bool | int, event_layers=()):
+    """
+    Use to manually END or RESTART a given event ID and slot.
+    """
+
+
+def EndEventSlot(event_id: int, slot: int, event_layers=()):
+    """
+    Calls `SetEventSlotState` with `event_return_type=0`.
+    """
+
+
+def EndEvent(event_id: int, event_layers=()):
+    """
+    Calls `SetEventSlotState` with `slot=0`, `event_return_type=0`.
+    """
+
+
+def RestartEventSlot(event_id: int, slot: int, event_layers=()):
+    """
+    Calls `SetEventSlotState` with `event_return_type=1`.
+    """
+
+
+def RestartEvent(event_id: int, event_layers=()):
+    """
+    Calls `SetEventSlotState` with `slot=0`, `event_return_type=1`.
+    """
+
+
+def InvertFlag(flag: Flag | int, event_layers=()):
+    """
+    Unclear how this differs from calling `ToggleFlag` (which calls `SetEventFlag` with `FlagSetting.Change`).
     """
 
 
@@ -3495,6 +3573,12 @@ def WarpToMap(
     """
 
 
+def HandleMinibossDefeat(character: Character | int, event_layers=()):
+    """
+    TODO
+    """
+
+
 def TriggerMultiplayerEvent(event_id: int, event_layers=()):
     """
     Used to make the Bell of Awakening sounds, for example.
@@ -3526,7 +3610,7 @@ def ToggleRandomFlagInRange(flag_range: FlagRange | tuple | list, event_layers=(
 
 
 def ForceAnimation(
-    entity: Character | Asset | int,
+    entity: Asset | Character | int,
     animation_id: int,
     loop: bool | int = False,
     wait_for_completion: bool | int = False,
@@ -3537,6 +3621,12 @@ def ForceAnimation(
 ):
     """
     Used a lot. Standard way to make a Character or Asset perform an animation.
+    """
+
+
+def IncrementNewGameCycle(dummy: int = 0, event_layers=()):
+    """
+    Increase NG+ level by one.
     """
 
 
@@ -3599,7 +3689,7 @@ def RemoveArmorFromPlayer(item: BaseItemParam | int, quantity: int = 0, event_la
     """
 
 
-def RemoveRingFromPlayer(item: BaseItemParam | int, quantity: int = 0, event_layers=()):
+def RemoveTalismanFromPlayer(item: BaseItemParam | int, quantity: int = 0, event_layers=()):
     """
     Calls `RemoveItemFromPlayer` with `item_type=2`.
     """
@@ -3624,6 +3714,24 @@ def PlaceSummonSign(
     If you set a black summon sign, the specified NPC will try to invade automatically.
     
     New unknown argument in Elden Ring.
+    """
+
+
+def SetSoapstoneMessageState(message_id: int, state: bool | int, event_layers=()):
+    """
+    Enable or disable developer message. Technically not a 'Soapstone' message anymore, but keeping the name.
+    """
+
+
+def EnableSoapstoneMessage(message_id: int, event_layers=()):
+    """
+    Calls `SetSoapstoneMessageState` with `state=True`.
+    """
+
+
+def DisableSoapstoneMessage(message_id: int, event_layers=()):
+    """
+    Calls `SetSoapstoneMessageState` with `state=False`.
     """
 
 
@@ -3708,19 +3816,6 @@ def SetTeamType(character: Character | int, new_team: TeamType | int, event_laye
     """
 
 
-def MoveToEntity(
-    character: Character | int,
-    destination: Asset | Character | Region | int,
-    dummy_id: int = -1,
-    destination_type: CoordEntityType | int = None,
-    event_layers=(),
-):
-    """
-    Basic move. I recommend you use the combined `Move` function.
-    destination_type: Auto-detected from `destination` type by default.
-    """
-
-
 def Kill(character: Character | int, award_runes: bool | int = False, event_layers=()):
     """
     Technically a kill 'request.'
@@ -3760,27 +3855,6 @@ def CreateProjectileOwner(entity: Asset | Character | Region | int, event_layers
 def AddSpecialEffect(character: Character | int, special_effect: int, event_layers=()):
     """
     'Special effect' as in a buff/debuff, not graphical effects (though they may come with one).
-    """
-
-
-def SetStandbyAnimationSettings(
-    character: Character | int,
-    standby_animation: int = -1,
-    damage_animation: int = -1,
-    cancel_animation: int = -1,
-    death_animation: int = -1,
-    standby_exit_animation: int = -1,
-    event_layers=(),
-):
-    """
-    Sets entity's default standby animations. -1 is default for each category.
-    """
-
-
-def ResetStandbyAnimationSettings(character: Character | int, event_layers=()):
-    """
-    Calls `SetStandbyAnimationSettings` with `standby_animation=-1`, `damage_animation=-1`, `cancel_animation=-1`,
-    `death_animation=-1`, `standby_exit_animation=1`.
     """
 
 
@@ -4039,19 +4113,6 @@ def DisableCharacterCollision(character: Character | int, event_layers=()):
     """
 
 
-def AIEvent(
-    character: Character | int,
-    command_id: int,
-    command_slot: int,
-    first_event_flag: Flag | int,
-    last_event_flag: Flag | int,
-    event_layers=(),
-):
-    """
-    I have no idea what this does.
-    """
-
-
 def ReferDamageToEntity(character: Character | int, target_entity: Character | int, event_layers=()):
     """
     All damage dealt to the first character will *also* (not *only*) be dealt to the target entity. I'm not 100%
@@ -4085,19 +4146,25 @@ def DropMandatoryTreasure(character: Character | int, event_layers=()):
     """
 
 
-def SetAnimationsState(entity: Character | Asset | int, state: bool | int, event_layers=()):
+def BetrayCurrentCovenant(dummy: int = 0, event_layers=()):
+    """
+    Dummy argument does nothing.
+    """
+
+
+def SetAnimationsState(entity: Asset | Character | int, state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
-def EnableAnimations(entity: Character | Asset | int, event_layers=()):
+def EnableAnimations(entity: Asset | Character | int, event_layers=()):
     """
     Calls `SetAnimationsState` with `state=True`.
     """
 
 
-def DisableAnimations(entity: Character | Asset | int, event_layers=()):
+def DisableAnimations(entity: Asset | Character | int, event_layers=()):
     """
     Calls `SetAnimationsState` with `state=False`.
     """
@@ -4133,7 +4200,7 @@ def ShortMove(
 def MoveAndCopyDrawParent(
     character: Character | int,
     destination: Asset | Character | Region | int,
-    copy_draw_parent: Character | Asset | int,
+    copy_draw_parent: Asset | Character | int,
     dummy_id: int = -1,
     destination_type: CoordEntityType | int = None,
     event_layers=(),
@@ -4147,12 +4214,6 @@ def MoveAndCopyDrawParent(
 def ResetAnimation(character: Character | int, disable_interpolation: bool | int = False, event_layers=()):
     """
     Cancels an animation. Note the inverted bool for controlling interpolation.
-    """
-
-
-def SetTeamTypeAndExitStandbyAnimation(character: Character | int, team_type: TeamType | int, event_layers=()):
-    """
-    Two for the price of one. Often used when NPCs with resting animations become hostile.
     """
 
 
@@ -4806,15 +4867,60 @@ def IfPlayerGender(condition: ConditionGroup | int, gender: Gender | int, event_
     """
 
 
-def IfAllyPhantomCountComparison(
+def IfArenaMatchReadyState(condition: ConditionGroup | int, ready: bool | int, event_layers=()):
+    """
+    TODO
+    """
+
+
+def IfArenaSoloResult(condition: ConditionGroup | int, result: ArenaResult | int, event_layers=()):
+    """
+    TODO
+    """
+
+
+def IfArenaSoloScoreComparison(
     condition: ConditionGroup | int,
-    comparison_state: bool | int,
     comparison_type: ComparisonType | int,
-    value: int,
+    score: int,
     event_layers=(),
 ):
     """
-    Note that there's a 'comparison_state' bool that can be used to invert the operation (kind of pointless).
+    TODO
+    """
+
+
+def IfArenaTeamResults(condition: ConditionGroup | int, result: ArenaResult | int, event_layers=()):
+    """
+    TODO
+    """
+
+
+def IfArenaTeamScoreComparison(
+    condition: ConditionGroup | int,
+    comparison_type: ComparisonType | int,
+    score: int,
+    event_layers=(),
+):
+    """
+    TODO
+    """
+
+
+def IfArenaMatchType(
+    condition: ConditionGroup | int,
+    match_type: ArenaMatchType | int,
+    has_spirit_summon: bool | int,
+    event_layers=(),
+):
+    """
+    TODO
+    """
+
+
+def IfPlayerRespawnedInArena(condition: ConditionGroup | int, event_layers=()):
+    """
+    TODO
     """
 
 
@@ -5243,26 +5349,26 @@ def GotoIfValueComparison(
     """
 
 
-def GotoIfFinishedConditionState(
+def GotoIfLastConditionResultState(
     label: Label | int,
     required_state: bool | int,
     input_condition: ConditionGroup | int,
     event_layers=(),
 ):
     """
-    Finished version.
+    Go to label if the last result of the given condition (without re-evaluating) is `required_state`.
     """
 
 
-def GotoIfFinishedConditionTrue(label: Label | int, input_condition: ConditionGroup | int, event_layers=()):
+def GotoIfLastConditionResultTrue(label: Label | int, input_condition: ConditionGroup | int, event_layers=()):
     """
-    Calls `GotoIfFinishedConditionState` with `required_state=True`.
+    Calls `GotoIfLastConditionResultState` with `required_state=True`.
     """
 
 
-def GotoIfFinishedConditionFalse(label: Label | int, input_condition: ConditionGroup | int, event_layers=()):
+def GotoIfLastConditionResultFalse(label: Label | int, input_condition: ConditionGroup | int, event_layers=()):
     """
-    Calls `GotoIfFinishedConditionState` with `required_state=False`.
+    Calls `GotoIfLastConditionResultState` with `required_state=False`.
     """
 
 
@@ -5314,15 +5420,21 @@ def GotoIfUnsignedLessThanOrEqual(label: Label | int, left: int, right: int, eve
     """
 
 
-def WaitUntilRandomTimeOfDay(earliest: tuple, latest: tuple, event_layers=()):
+def WaitUntilTimeOfDayInRange(earliest: tuple, latest: tuple, event_layers=()):
     """
-    Pause event script until a random time of day chosen between the given earliest/latest times.
+    Pause event script until time of day is between the given earliest/latest times.
     """
 
 
-def WaitFramesAfterCutscene(frames: int, event_layers=()):
+def WaitRealFrames(frames: int, event_layers=()):
     """
-    Always used after cutscene instructions with argument `frames=1`.
+    Wait a given number of real frames. Always used after cutscene instructions with argument `frames=1`.
+    """
+
+
+def WaitUntilArenaHalfTime(match_type: ArenaMatchType | int, is_second_half: bool | int, event_layers=()):
+    """
+    TODO
     """
 
 
@@ -6087,6 +6199,51 @@ def RestartIfCeremonyInactive(ceremony: int, event_layers=()):
     """
 
 
+def SkipLinesIfArenaMatchType(
+    line_count: int,
+    match_type: ArenaMatchType | int,
+    has_spirit_summon: bool | int,
+    event_layers=(),
+):
+    """
+    Skip some number of lines if the current arena match type is the given type.
+    """
+
+
+def GotoLinesIfArenaMatchType(
+    label: Label | int,
+    match_type: ArenaMatchType | int,
+    has_spirit_summon: bool | int,
+    event_layers=(),
+):
+    """
+    Go to label if the current arena match type is the given type.
+    """
+
+
+def ReturnIfArenaMatchType(
+    event_return_type: EventReturnType | int,
+    match_type: ArenaMatchType | int,
+    has_spirit_summon: bool | int,
+    event_layers=(),
+):
+    """
+    End or restart if the current arena match type is the given type.
+    """
+
+
+def EndIfArenaMatchType(match_type: ArenaMatchType | int, has_spirit_summon: bool | int, event_layers=()):
+    """
+    Calls `ReturnIfArenaMatchType` with `event_return_type=0`.
+    """
+
+
+def RestartIfArenaMatchType(match_type: ArenaMatchType | int, has_spirit_summon: bool | int, event_layers=()):
+    """
+    Calls `ReturnIfArenaMatchType` with `event_return_type=1`.
+    """
+
+
 def SkipLinesIfCharacterSpecialEffectState(
     line_count: int,
     character: Character | int,
@@ -6724,28 +6881,21 @@ def GivePlayerItemAmountSpecifiedByFlagValue(
     """
 
 
-def WarpPlayerToRespawnPoint(respawn_point_id: int, event_layers=()):
+def SetDirectionDisplay(state: bool | int, event_layers=()):
     """
-    Not used in vanilla Elden Ring events, but keeping in case it still works (seems useful).
-    """
-
-
-def StartEnemySpawner(spawner_id: int, event_layers=()):
-    """
-    Not used in vanilla Elden Ring events, but keeping in case it still works (seems useful).
+    TODO
     """
 
 
-def SummonNPC(
-    sign_type: SingleplayerSummonSignType | int,
-    character: Character | int,
-    region: Region | int,
-    summon_flag: Flag | int,
-    dismissal_flag: Flag | int,
-    event_layers=(),
-):
+def EnableDirectionDisplay(event_layers=()):
     """
-    Not used in vanilla Elden Ring events, but keeping in case it still works (seems useful).
+    Calls `SetDirectionDisplay` with `state=True`.
+    """
+
+
+def DisableDirectionDisplay(event_layers=()):
+    """
+    Calls `SetDirectionDisplay` with `state=False`.
     """
 
 
@@ -6787,6 +6937,18 @@ def DisableNetworkConnectedFlagRange(flag_range: FlagRange | tuple | list, event
 def ToggleNetworkConnectedFlagRange(flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `SetNetworkConnectedFlagRangeState` with `state=2`.
+    """
+
+
+def SetOmissionModeCounts(level_1_count: int, level_2_count: int, event_layers=()):
+    """
+    TODO
+    """
+
+
+def ResetOmissionModeCountsToDefault(event_layers=()):
+    """
+    TODO
     """
 
 
@@ -6996,6 +7158,12 @@ def EraseNPCSummonSign(character: Character | int, event_layers=()):
     """
 
 
+def Unknown_2003_83(unk_0_1: bool | int, event_layers=()):
+    """
+    TODO
+    """
+
+
 def ChangeCharacterCloth(character: Character | int, bit_count: int, state_id: int, event_layers=()):
     """
     TODO
@@ -7011,6 +7179,12 @@ def ChangePatrolBehavior(character: Character | int, patrol_information_id: int,
 def SetLockOnPoint(character: Character | int, lock_on_dummy_id: int, state: bool | int, event_layers=()):
     """
     Presumably changes the point that is locked on to by the player.
+    """
+
+
+def ChangePlayerCharacterInitParam(character_init_param: int, event_layers=()):
+    """
+    I assume this affects the player.
     """
 
 
@@ -7171,20 +7345,9 @@ def AttachCaravanToController(caravan_asset: Asset | int, character: Character |
     """
 
 
-def AttachAssetToAsset(
-    child_asset: Asset | int,
-    parent_asset: Asset | int,
-    parent_dummy_id: int = -1,
-    event_layers=(),
-):
+def AttachAssetToAsset(child_asset: Asset | int, parent_asset: Asset | int, parent_dummy_id: int = -1, event_layers=()):
     """
     TODO
-    """
-
-
-def DestroyAsset_NoSlot(asset: Asset | int, event_layers=()):
-    """
-    No 'slot' argument here.
     """
 
 
@@ -7211,7 +7374,7 @@ def SetWindVFX(wind_vfx_id: int, event_layers=()):
     """
 
 
-def DisplayDialogAndSetFlags(
+def AwaitDialogResponse(
     message: EventText | int,
     button_type: ButtonType | int,
     number_buttons: NumberButtons | int,
@@ -7223,7 +7386,10 @@ def DisplayDialogAndSetFlags(
     event_layers=(),
 ):
     """
-    Displays a dialog and enables one of three flags, depending on the player's response. Very useful.
+    Displays a dialog and enables one of three flags, depending on the player's response. Very useful. `right`
+    and `cancel` flags are often identical.
+    
+    Halts execution until the player responds.
     """
 
 
@@ -7238,15 +7404,15 @@ def DisplayFlashingMessageWithPriority(
     """
 
 
-def DisplaySubareaWelcomeMessage(text: EventText | int, event_layers=()):
+def DisplaySubareaWelcomeMessage(place_name_id: PlaceName | int, event_layers=()):
     """
-    TODO
+    Uses PlaceName FMG.
     """
 
 
-def DisplayAreaWelcomeMessage(text: EventText | int, event_layers=()):
+def DisplayAreaWelcomeMessage(place_name_id: PlaceName | int, event_layers=()):
     """
-    TODO
+    Uses PlaceName FMG.
     """
 
 
@@ -7275,6 +7441,12 @@ def BanishInvaders(unknown: int, event_layers=()):
 
 
 def BanishPhantoms(unknown: int, event_layers=()):
+    """
+    TODO
+    """
+
+
+def BanishPhantomsAndUpdateServerPvPStats(unknown: int, event_layers=()):
     """
     TODO
     """
@@ -7551,20 +7723,6 @@ def PlayerItemStateExcludingStorage(
     ...
 
 
-def ActionButtonBasic(
-    prompt_text: EventText | int,
-    anchor_entity: Asset | Character | Region | int,
-    anchor_type: CoordEntityType | int = None,
-    facing_angle: float = None,
-    dummy_id: int = -1,
-    max_distance: float = None,
-    trigger_attribute: TriggerAttribute | int = 48,
-    button: int = 0,
-    event_layers=(),
-) -> bool:
-    ...
-
-
 def MultiplayerState(state: MultiplayerState | int, event_layers=()) -> bool:
     ...
 
@@ -7723,20 +7881,6 @@ def EventValueLessThanOrEqual(flag: Flag | int, bit_count: int, value: int, even
     ...
 
 
-def ActionButtonBoss(
-    prompt_text: EventText | int,
-    anchor_entity: Asset | Character | Region | int,
-    anchor_type: CoordEntityType | int = None,
-    facing_angle: float = None,
-    dummy_id: int = -1,
-    max_distance: float = None,
-    trigger_attribute: TriggerAttribute | int = 48,
-    button: int = 0,
-    event_layers=(),
-) -> bool:
-    ...
-
-
 def AnyItemDroppedInRegion(region: Region | int, event_layers=()) -> bool:
     ...
 
@@ -7782,36 +7926,6 @@ def NewGameCycleLessThanOrEqual(completion_count: int, event_layers=()) -> bool:
     ...
 
 
-def ActionButtonBasicLineIntersect(
-    prompt_text: EventText | int,
-    anchor_entity: Asset | Character | Region | int,
-    line_intersects: int,
-    anchor_type: CoordEntityType | int = None,
-    facing_angle: float = None,
-    dummy_id: int = -1,
-    max_distance: float = None,
-    trigger_attribute: TriggerAttribute | int = 48,
-    button: int = 0,
-    event_layers=(),
-) -> bool:
-    ...
-
-
-def ActionButtonBossLineIntersect(
-    prompt_text: EventText | int,
-    anchor_entity: Asset | Character | Region | int,
-    line_intersects: int,
-    anchor_type: CoordEntityType | int = None,
-    facing_angle: float = None,
-    dummy_id: int = -1,
-    max_distance: float = None,
-    trigger_attribute: TriggerAttribute | int = 48,
-    button: int = 0,
-    event_layers=(),
-) -> bool:
-    ...
-
-
 def EventsComparison(
     left_flag: Flag | int,
     left_bit_count: int,
@@ -7820,18 +7934,6 @@ def EventsComparison(
     right_bit_count: int,
     event_layers=(),
 ) -> bool:
-    ...
-
-
-def DLCState(is_owned: bool | int, event_layers=()) -> bool:
-    ...
-
-
-def DLCOwned(event_layers=()) -> bool:
-    ...
-
-
-def DLCNotOwned(event_layers=()) -> bool:
     ...
 
 
@@ -7872,10 +7974,6 @@ def CharacterAlive(
     target_count: float = 1.0,
     event_layers=(),
 ) -> bool:
-    ...
-
-
-def Attacked(attacked_entity: Character | int, attacker: Character | int, event_layers=()) -> bool:
     ...
 
 
@@ -7950,7 +8048,7 @@ def HealthRatioLessThanOrEqual(
     ...
 
 
-def CharacterType(
+def CharacterIsType(
     character: Character | int,
     character_type: CharacterType | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
@@ -8270,32 +8368,70 @@ def AssetHealthValueComparison(
     asset: Asset | int,
     comparison_type: ComparisonType | int,
     value: int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
     event_layers=(),
 ) -> bool:
     ...
 
 
-def AssetHealthValueEqual(asset: Asset | int, value: int, event_layers=()) -> bool:
+def AssetHealthValueEqual(
+    asset: Asset | int,
+    value: int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
+    event_layers=(),
+) -> bool:
     ...
 
 
-def AssetHealthValueNotEqual(asset: Asset | int, value: int, event_layers=()) -> bool:
+def AssetHealthValueNotEqual(
+    asset: Asset | int,
+    value: int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
+    event_layers=(),
+) -> bool:
     ...
 
 
-def AssetHealthValueGreaterThan(asset: Asset | int, value: int, event_layers=()) -> bool:
+def AssetHealthValueGreaterThan(
+    asset: Asset | int,
+    value: int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
+    event_layers=(),
+) -> bool:
     ...
 
 
-def AssetHealthValueLessThan(asset: Asset | int, value: int, event_layers=()) -> bool:
+def AssetHealthValueLessThan(
+    asset: Asset | int,
+    value: int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
+    event_layers=(),
+) -> bool:
     ...
 
 
-def AssetHealthValueGreaterThanOrEqual(asset: Asset | int, value: int, event_layers=()) -> bool:
+def AssetHealthValueGreaterThanOrEqual(
+    asset: Asset | int,
+    value: int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
+    event_layers=(),
+) -> bool:
     ...
 
 
-def AssetHealthValueLessThanOrEqual(asset: Asset | int, value: int, event_layers=()) -> bool:
+def AssetHealthValueLessThanOrEqual(
+    asset: Asset | int,
+    value: int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
+    event_layers=(),
+) -> bool:
     ...
 
 
@@ -8449,12 +8585,31 @@ def PlayerGender(gender: Gender | int, event_layers=()) -> bool:
     ...
 
 
-def AllyPhantomCountComparison(
-    comparison_state: bool | int,
-    comparison_type: ComparisonType | int,
-    value: int,
-    event_layers=(),
-) -> bool:
+def ArenaMatchReadyState(ready: bool | int, event_layers=()) -> bool:
+    ...
+
+
+def ArenaSoloResult(result: ArenaResult | int, event_layers=()) -> bool:
+    ...
+
+
+def ArenaSoloScoreComparison(comparison_type: ComparisonType | int, score: int, event_layers=()) -> bool:
+    ...
+
+
+def ArenaTeamResults(result: ArenaResult | int, event_layers=()) -> bool:
+    ...
+
+
+def ArenaTeamScoreComparison(comparison_type: ComparisonType | int, score: int, event_layers=()) -> bool:
+    ...
+
+
+def ArenaMatchType(match_type: ArenaMatchType | int, has_spirit_summon: bool | int, event_layers=()) -> bool:
+    ...
+
+
+def PlayerRespawnedInArena(event_layers=()) -> bool:
     ...
 
 
@@ -8672,9 +8827,9 @@ def PlayerHasArmor(armor: ArmorParam | int, including_storage: bool = False, eve
     ...
 
 
-def PlayerHasRing(ring: AccessoryParam | int, including_storage: bool = False, event_layers=()) -> bool:
+def PlayerHasTalisman(ring: AccessoryParam | int, including_storage: bool = False, event_layers=()) -> bool:
     """
-    Calls `compiler.IfPlayerHasRing`.
+    Calls `compiler.IfPlayerHasTalisman`.
     """
     ...
 
@@ -8700,9 +8855,9 @@ def PlayerDoesNotHaveArmor(armor: ArmorParam | int, including_storage: bool = Fa
     ...
 
 
-def PlayerDoesNotHaveRing(ring: AccessoryParam | int, including_storage: bool = False, event_layers=()) -> bool:
+def PlayerDoesNotHaveTalisman(ring: AccessoryParam | int, including_storage: bool = False, event_layers=()) -> bool:
     """
-    Calls `compiler.IfPlayerDoesNotHaveRing`.
+    Calls `compiler.IfPlayerDoesNotHaveTalisman`.
     """
     ...
 
@@ -8766,15 +8921,13 @@ def HealthValue(
     ...
 
 
-def AssetHealthValue(asset: Asset | int, event_layers=()) -> int:
+def AssetHealthValue(
+    asset: Asset | int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
+    event_layers=(),
+) -> int:
     """
     Compare output to a value as a shortcut for calling `AssetHealthValueComparison(...)`.
-    """
-    ...
-
-
-def AllyPhantomCount(comparison_state: bool | int, event_layers=()) -> int:
-    """
-    Compare output to a value as a shortcut for calling `AllyPhantomCountComparison(...)`.
     """
     ...

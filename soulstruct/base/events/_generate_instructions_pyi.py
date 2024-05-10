@@ -6,6 +6,8 @@ dict. Only needs to be run whenever the EMEDF JSON or my EMEDF dictionary is upd
 Does NOT manage extra (real, not PYI) instructions in `instr_wrappers.py`, which must handle their own numeric output
 using arg types in EMEDF.
 """
+from __future__ import annotations
+
 import inspect
 import textwrap
 import typing as tp
@@ -20,6 +22,8 @@ _DEF_TEMPLATE_RET = "\n\ndef {alias}({args}) -> {ret_type}:"
 _MAX_LINE_WIDTH = 120
 
 
+# Shared EMEVD names defined in all games' `instructions.pyi` module.
+# Note that `MAIN` is not defined here, as it will appear in each game's condition enum.
 BASICS = """
 # Restart decorators. They can be used as names (not function calls) or have an event ID argument.
 def ContinueOnRest(event_id_or_func: tp.Union[tp.Callable, int]): ...
@@ -29,21 +33,45 @@ def EndOnRest(event_id_or_func: tp.Union[tp.Callable, int]): ...
 # Dummy enum for accessing event flags defined by events.
 class EVENTS(Flag): ...
 
-# Dummy class for creating conditions.
+
 class Condition:
+    \"\"\"
+    Create a condition group for use in `Await` or `If` instructions.
+    
+    If `hold = True`, the EVS parser will NOT permit the internal condition group slot assigned to this `Condition` to
+    be automatically re-used once it is evaluated by the game engine and marked as OLD (e.g. by a `Main.AWAIT()` call).    
+    \"\"\"
     def __init__(self, condition, hold: bool = False): ...
 
+
 class HeldCondition:
+    \"\"\"
+    Alternative syntax for `Condition(condition, hold=True)`. (See above.)
+    \"\"\"
     def __init__(self, condition): ...
 
-# Terminators.
-END = ...
-RESTART = ...
 
-# The Await function. Equivalent to using the 'await' built-in Python keyword or `MAIN.Await()`.
-def Await(condition): ...
+def LastResult(condition_group: ConditionGroup):
+    \"\"\"
+    Wrap a naked condition group like `AND_1` with this to tell EVS/EMEVD that you want to check the LAST RESULT of
+    this condition group rather than actively re-evaluating it.
+    \"\"\"    
 
-MAIN = ConditionGroup.MAIN
+
+def Await(condition):
+    \"\"\"
+    The Await function. Equivalent to `MAIN.Await()`, which the EVS decompiler will prefer.
+    
+    You can also use the built-in 'await' Python keyword, but Python linters might complain about this (e.g. because
+    you haven't declared your function with `async def` or because of the type being passed to `await`).
+    \"\"\"
+    ...
+
+
+# Terminators that can be returned by events as cleaner syntax.
+END = ...  # use with `return END`, identical to `return` or `End()`
+RESTART = ...  # use with `return RESTART`, identical to `Restart()`
+
 """
 
 
@@ -114,6 +142,17 @@ def format_docstring(docstring: str):
     return "    " + "\n    ".join(out_docstring_lines)  # lines are already indented
 
 
+_RUN_EVENT_TEMPLATE = "def Run{0}Event(event_id: int | tp.Callable, {1}args = (0,), arg_types = \"\"{2}):"
+
+
+def get_run_event_string(common=False, has_slot=True, has_event_layers=False):
+    return _RUN_EVENT_TEMPLATE.format(
+        "Common" if common else "",
+        "slot: int = 0, " if has_slot else "",
+        ", event_layers=()" if has_event_layers else "",
+    )
+
+
 def generate_instr_pyi(
     game_module_name: str,
     emedf_dict: dict,
@@ -124,17 +163,21 @@ def generate_instr_pyi(
     pyi_path: Path | str,
     compiler_module,
     has_event_layers: bool = False,
+    has_run_common_event=False,
+    run_common_event_takes_slot=False,
 ):
+    """Write Soulstruct `instructions.pyi` module for given game."""
     compiler_names = [
         name for name in compiler_module.__all__
         if name not in {"COMPILER", "compile_instruction", "get_compile_func", "BooleanTestCompiler"}
     ]
 
     pyi_docstring = (
-        "\"\"\"AUTOMATICALLY GENERATED. Do not edit this module.\n"
+        "\"\"\"AUTOMATICALLY GENERATED. Do not edit this module manually.\n"
         "\n"
         "Import this into any EVS script to have full access to instructions.\n"
         "Make sure you also do `from soulstruct.{game}.events import *` to get all enums, constants, and tests.\n"
+        "You will likely also want `from soulstruct.{game}.game_types import *`.\n"
         "\"\"\"\n\n")
     pyi_imports = (
         "import typing as tp\n\n"
@@ -151,19 +194,58 @@ def generate_instr_pyi(
         "\"EVENTS\",",
         "\"Condition\",",
         "\"HeldCondition\",",
+        "\"LastResult\",",
+        "\"Await\",",
         "\"END\",",
         "\"RESTART\",",
-        "\"Await\",",
-        "\"MAIN\",",
+        "\"RunEvent\",",
     ]
 
     pyi_funcs_str = BASICS
 
+    pyi_all_lines.append("# Condition groups:")
+    pyi_funcs_str += "\n# Condition groups:\n"
     for condition_group in condition_group_enum:
+        # Defined in enum order, which usually matches value (from highest OR through MAIN to highest AND).
         pyi_funcs_str += f"{condition_group.name} = {condition_group_enum.__name__}.{condition_group.name}\n"
         pyi_all_lines.append(f"\"{condition_group.name}\",")
 
     pyi_all_lines.append("# Built-in instructions:")
+
+    if game_module_name == "bloodborne":
+        # Bloodborne supports `common_func` event import, but still uses `RunEvent` for them and has no
+        # `RunCommonEvent` instruction. We also know it does NOT support event layers.
+        pyi_funcs_str += (
+            f"\n\n{get_run_event_string()}\n"
+            "    \"\"\"Run an event by its ID or function. "
+            "In Bloodborne, this could be a event defined in `common`.\"\"\"\n"
+            "    ...\n"
+        )
+    elif has_event_layers:
+        # We know that supporting event layers == supporting `common_func` and `RunCommonEvent`.
+        pyi_funcs_str += (
+            f"\n\n{get_run_event_string(has_event_layers=True)}\n"
+            "    \"\"\"Run an event by its ID or function. "
+            "This should NOT be an event defined in `common_func`.\"\"\"\n"
+            "    ...\n"
+        )
+    else:
+        pyi_funcs_str += (
+            f"\n\n{get_run_event_string()}\n"
+            "    \"\"\"Run an event by its ID or function. Use this for imported 'template' events as well.\"\"\"\n"
+            "    ...\n"
+        )
+
+    if has_run_common_event:
+        pyi_all_lines.append(f"\"RunCommonEvent\",")
+        pyi_funcs_str += "\n\n"
+        pyi_funcs_str += get_run_event_string(common=True, has_slot=run_common_event_takes_slot, has_event_layers=True)
+        pyi_funcs_str += (
+            f"\n    \"\"\"\n     Run a common event by its ID or function. "
+            f"{'Also accepts slot, though the purpose of it is unclear. ' if run_common_event_takes_slot else ''}\n\n"
+            f"    This event is typically defined in `common_func` but may also be local.\n    \"\"\"\n"
+            f"    ...\n"
+        )
 
     for (category, index), instr_info in emedf_dict.items():
         alias = instr_info["alias"]
@@ -230,9 +312,10 @@ def generate_instr_pyi(
             if if_instr_name in compiler_names:
                 test_func = getattr(compiler_module, if_instr_name)
                 parameters = inspect.signature(test_func).parameters
+                type_hints = tp.get_type_hints(test_func)  # `parameters` may contain strings instead of classes
                 test_args_dict = {
                     p.name: {
-                        "type": p.annotation if p.annotation != p.empty else type(p.default),
+                        "type": type_hints[name],
                         "default": (lambda: None) if p.default is None
                         else (p.default if p.default != p.empty else None)
                     }
@@ -369,6 +452,7 @@ def eldenring():
     from soulstruct.eldenring.events.emevd import compiler
     from soulstruct.eldenring.events.emevd.enums import ConditionGroup
     from soulstruct.eldenring.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS, EMEDF_COMPARISON_TESTS
+
     generate_instr_pyi(
         "eldenring",
         EMEDF,
@@ -379,6 +463,8 @@ def eldenring():
         PACKAGE_PATH("eldenring/events/instructions.pyi"),
         compiler,
         has_event_layers=True,
+        has_run_common_event=True,
+        run_common_event_takes_slot=True,
     )
 
 

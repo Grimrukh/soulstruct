@@ -19,6 +19,8 @@ __all__ = [
     "CLIENT_PLAYER_8",
     "CLIENT_PLAYER_9",
     "AIStatusType",
+    "ArenaMatchType",
+    "ArenaResult",
     "BitOperation",
     "BossMusicState",
     "ButtonType",
@@ -76,6 +78,21 @@ class AIStatusType(BaseEMEVDEnum):
     Unknown4 = 4
     Unknown5 = 5
     Unknown6 = 6
+
+
+class ArenaMatchType(BaseEMEVDEnum):
+    Duel = 0
+    TwoPlayerBrawl = 1
+    FourPlayerBrawl = 2
+    SixPlayerBrawl = 3
+    OneVersusOne = 4
+    TwoVersusTwo = 5
+    ThreeVersusThree = 6
+
+
+class ArenaResult(BaseEMEVDEnum):
+    Win = 0
+    Draw = 1
 
 
 class BitOperation(BaseEMEVDEnum):
@@ -392,6 +409,10 @@ class BannerType(BaseEMEVDEnum):
     DuelistVanquished = 28
     RecusantVanquished = 29
     InvaderVanquished = 30
+    Commence = 31
+    Statemate = 32
+    Victory = 33
+    Defeat = 34
 
 
 class CalculationType(IntEnum):
@@ -445,12 +466,28 @@ class ConditionGroup(IntEnum):
     def Await(self, condition: bool | int | ConditionGroup):
         """For EVS intellisense. Handled internally.
 
+        Continually evaluate the given condition until it is true, then continue with the next instruction.
+
         Only permitted for `MAIN`.
         """
         ...
 
     def Add(self, condition: bool | int | ConditionGroup):
-        """For EVS intellisense. Handled internally."""
+        """For EVS intellisense. Handled internally.
+
+        Add a condition to this condition group for evaluation.
+        """
+        ...
+
+    # noinspection PyPropertyDefinition
+    @property
+    def LastResult(self) -> bool:
+        """For EVS intellisense. Handled internally.
+
+        Retrieve the result of this condition group from its last evaluation for use in a simple, instantaneous test.
+        If the group has never been evaluted, this will be False, except for `MAIN`, which is always True (but you have
+        no reason to call this on `MAIN`).
+        """
         ...
 
 

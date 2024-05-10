@@ -475,7 +475,7 @@ def Event_13304730(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     MAIN.Await(AND_1)
     
     EnableFlag(flag_1)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_3)
     EnableFlag(flag_4)
     Wait(5.0)
     DisplayBattlefieldMessage(109001, display_location_index=0)
@@ -566,7 +566,7 @@ def Event_13301801():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_1)
+    EndIfLastConditionResultTrue(input_condition=AND_1)
     PlaySoundEffect(3302800, 0, sound_type=SoundType.c_CharacterMotion)
 
 
@@ -652,7 +652,7 @@ def Event_13304870():
     
     MAIN.Await(OR_2)
     
-    EndIfFinishedConditionTrue(input_condition=AND_4)
+    EndIfLastConditionResultTrue(input_condition=AND_4)
     RotateToFaceEntity(PLAYER, 3302800, animation=101130)
     AND_5.Add(CharacterHuman(PLAYER))
     AND_5.Add(CharacterInsideRegion(PLAYER, region=3302801))
@@ -663,7 +663,7 @@ def Event_13304870():
     
     MAIN.Await(OR_3)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_6)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_6)
     EnableFlag(13304800)
     Restart()
 
@@ -692,7 +692,7 @@ def Event_13304871():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_3)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_3)
     EnableFlag(13304801)
     Restart()
 
@@ -943,7 +943,7 @@ def Event_13304830(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         3300800,
         npc_part_id=npc_part_id,
@@ -992,7 +992,7 @@ def Event_13304840():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         3300800,
         npc_part_id=3300,
@@ -1043,7 +1043,7 @@ def Event_13300110():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(4, input_condition=AND_1)
+    SkipLinesIfLastConditionResultTrue(4, input_condition=AND_1)
     EndOfAnimation(obj=3301000, animation_id=6)
     DisableObjectActivation(3301010, obj_act_id=3300000)
     EnableObjectActivation(3301011, obj_act_id=3300000)
@@ -1296,8 +1296,8 @@ def Event_13305150(_, character: int, region: int, radius: float, frames: int):
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_3)
     WaitFrames(frames=frames)
 
     # --- Label 0 --- #
@@ -1345,7 +1345,7 @@ def Event_13305040():
     
     MAIN.Await(OR_1)
     
-    RestartIfFinishedConditionTrue(input_condition=AND_2)
+    RestartIfLastConditionResultTrue(input_condition=AND_2)
 
     # --- Label 0 --- #
     DefineLabel(0)

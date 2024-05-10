@@ -116,12 +116,12 @@ def Event_1038502400(_, character: uint, region: uint, seconds: float, animation
     if ThisEventSlotFlagEnabled():
         return
     DisableAI(character)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     OR_15.Add(FlagDisabled(1046367500))
     OR_15.Add(FlagDisabled(1051397900))
@@ -139,7 +139,7 @@ def Event_1038502400(_, character: uint, region: uint, seconds: float, animation
     MAIN.Await(OR_2)
     
     EnableThisNetworkSlotFlag()
-    GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
+    GotoIfLastConditionResultFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):
         ForceAnimation(character, animation_id, loop=True)
@@ -313,7 +313,7 @@ def Event_1038503702(_, attacked_entity: uint, other_entity: uint):
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionFalse(Label.L7, input_condition=AND_2)
+    GotoIfLastConditionResultFalse(Label.L7, input_condition=AND_2)
 
     # --- Label 3 --- #
     DefineLabel(3)

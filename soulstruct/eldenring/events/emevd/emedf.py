@@ -155,12 +155,6 @@ def AUTO_COORD_ENTITY_TYPE(arg_name: str, check_player=False):
     }
 
 
-# TODO:
-#  remaining partials
-#  PYI module
-#  vanilla test
-
-
 EMEDF = {
     (0, 0): {
         "alias": "IfConditionState",
@@ -174,6 +168,7 @@ EMEDF = {
             "IfConditionTrue": dict(state=True),
             "IfConditionFalse": dict(state=False),
         },
+        "get_evaluated_conditions": lambda kwargs: {kwargs["input_condition"]} if kwargs["condition"] == 0 else set(),
     },
     (0, 1): {
         "alias": "IfValueComparison",
@@ -394,45 +389,7 @@ EMEDF = {
             "item_type": {},
         },
     },
-    (3, 5): {
-        "alias": "IfActionButtonBasic",
-        "docstring": """
-            Generates an 'action button' prompt and waits for the player to activate it.
-
-            Basic (not "boss") version with no line intersection check.
-        """,
-        "args": {
-            "condition": CONDITION_GROUP | HIDE_NAME,
-            "anchor_type": AUTO_COORD_ENTITY_TYPE("anchor_entity"),
-            "anchor_entity": NO_DEFAULT(CoordEntityTyping),
-            "facing_angle": {
-                "type": float,
-                "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 180.0,
-            },
-            "dummy_id": MODEL_POINT,
-            "max_distance": {
-                "type": float,
-                "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 2.0,
-            },
-            "prompt_text": NO_DEFAULT(EventTextTyping),
-            "trigger_attribute": {
-                "type": TriggerAttribute,
-                "default": TriggerAttribute.Human | TriggerAttribute.Hollow,
-            },
-            "button": INT | {"default": 0},
-        },
-        "evs_args": {
-            "condition": {},
-            "prompt_text": {},
-            "anchor_entity": {},
-            "anchor_type": {},
-            "facing_angle": {},
-            "dummy_id": {},
-            "max_distance": {},
-            "trigger_attribute": {},
-            "button": {},
-        },
-    },
+    # (3, 5) removed (old "IfActionButton").
     (3, 6): {
         "alias": "IfMultiplayerState",
         "docstring": "TODO",
@@ -542,45 +499,7 @@ EMEDF = {
             "IfEventValueLessThanOrEqual": dict(comparison_type=ComparisonType.LessThanOrEqual),
         },
     },
-    (3, 13): {
-        "alias": "IfActionButtonBoss",
-        "docstring": """
-            Generates an 'action button' prompt and waits for the player to activate it.
-
-            Boss (not "basic") version with no line intersection check.
-        """,
-        "args": {
-            "condition": CONDITION_GROUP | HIDE_NAME,
-            "anchor_type": AUTO_COORD_ENTITY_TYPE("anchor_entity"),
-            "anchor_entity": NO_DEFAULT(CoordEntityTyping),
-            "facing_angle": {
-                "type": float,
-                "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 180.0,
-            },
-            "dummy_id": MODEL_POINT,
-            "max_distance": {
-                "type": float,
-                "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 2.0,
-            },
-            "prompt_text": NO_DEFAULT(EventTextTyping),
-            "trigger_attribute": {
-                "type": TriggerAttribute,
-                "default": TriggerAttribute.Human | TriggerAttribute.Hollow,
-            },
-            "button": INT | {"default": 0},
-        },
-        "evs_args": {
-            "condition": {},
-            "prompt_text": {},
-            "anchor_entity": {},
-            "anchor_type": {},
-            "facing_angle": {},
-            "dummy_id": {},
-            "max_distance": {},
-            "trigger_attribute": {},
-            "button": {},
-        },
-    },
+    # (3, 13) removed (old "IfActionButtonBoss").
     (3, 14): {
         "alias": "IfAnyItemDroppedInRegion",
         "docstring": """
@@ -638,88 +557,8 @@ EMEDF = {
             "IfNewGameCycleLessThanOrEqual": dict(comparison_type=ComparisonType.LessThanOrEqual),
         },
     },
-    (3, 18): {
-        "alias": "IfActionButtonBasicLineIntersect",
-        "docstring": """
-            Generates an 'action button' prompt and waits for the player to activate it.
-
-            Basic (not "boss") version with a line intersection check.
-        """,
-        "args": {
-            "condition": CONDITION_GROUP | HIDE_NAME,
-            "anchor_type": AUTO_COORD_ENTITY_TYPE("anchor_entity"),
-            "anchor_entity": NO_DEFAULT(CoordEntityTyping),
-            "facing_angle": {
-                "type": float,
-                "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 180.0,
-            },
-            "dummy_id": MODEL_POINT,
-            "max_distance": {
-                "type": float,
-                "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 2.0,
-            },
-            "prompt_text": NO_DEFAULT(EventTextTyping),
-            "trigger_attribute": {
-                "type": TriggerAttribute,
-                "default": TriggerAttribute.Human | TriggerAttribute.Hollow,
-            },
-            "button": INT | {"default": 0},
-            "line_intersects": INT,
-        },
-        "evs_args": {
-            "condition": {},
-            "prompt_text": {},
-            "anchor_entity": {},
-            "line_intersects": {},
-            "anchor_type": {},
-            "facing_angle": {},
-            "dummy_id": {},
-            "max_distance": {},
-            "trigger_attribute": {},
-            "button": {},
-        },
-    },
-    (3, 19): {
-        "alias": "IfActionButtonBossLineIntersect",
-        "docstring": """
-            Generates an 'action button' prompt and waits for the player to activate it.
-
-            Boss (not "basic") version with a line intersection check.
-        """,
-        "args": {
-            "condition": CONDITION_GROUP | HIDE_NAME,
-            "anchor_type": AUTO_COORD_ENTITY_TYPE("anchor_entity"),
-            "anchor_entity": NO_DEFAULT(CoordEntityTyping),
-            "facing_angle": {
-                "type": float,
-                "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 180.0,
-            },
-            "dummy_id": MODEL_POINT,
-            "max_distance": {
-                "type": float,
-                "default": lambda args: 0.0 if args["anchor_type"] == CoordEntityType.Region else 2.0,
-            },
-            "prompt_text": NO_DEFAULT(EventTextTyping),
-            "trigger_attribute": {
-                "type": TriggerAttribute,
-                "default": TriggerAttribute.Human | TriggerAttribute.Hollow,
-            },
-            "button": INT | {"default": 0},
-            "line_intersects": INT,
-        },
-        "evs_args": {
-            "condition": {},
-            "prompt_text": {},
-            "anchor_entity": {},
-            "line_intersects": {},
-            "anchor_type": {},
-            "facing_angle": {},
-            "dummy_id": {},
-            "max_distance": {},
-            "trigger_attribute": {},
-            "button": {},
-        },
-    },
+    # (3, 18) removed (old "IfActionButtonBasicLineIntersect").
+    # (3, 19) removed (old "IfActionButtonBossLineIntersect").
     (3, 20): {
         "alias": "IfEventsComparison",
         "docstring": """
@@ -734,18 +573,19 @@ EMEDF = {
             "right_bit_count": INT,
         },
     },
-    (3, 21): {
-        "alias": "IfDLCState",
-        "docstring": "TODO",
-        "args": {
-            "condition": CONDITION_GROUP | HIDE_NAME,
-            "is_owned": BOOL,
-        },
-        "partials": {
-            "IfDLCOwned": dict(is_owned=True),
-            "IfDLCNotOwned": dict(is_owned=False),
-        },
-    },
+    # TODO: (3, 21) not currently used in ER, but preserving in case it is used after DLC release (June 2024).
+    # (3, 21): {
+    #     "alias": "IfDLCState",
+    #     "docstring": "TODO",
+    #     "args": {
+    #         "condition": CONDITION_GROUP | HIDE_NAME,
+    #         "is_owned": BOOL,
+    #     },
+    #     "partials": {
+    #         "IfDLCOwned": dict(is_owned=True),
+    #         "IfDLCNotOwned": dict(is_owned=False),
+    #     },
+    # },
     (3, 22): {
         "alias": "IfOnlineState",
         "docstring": "TODO",
@@ -773,15 +613,7 @@ EMEDF = {
             "IfCharacterAlive": dict(is_dead=False),
         },
     },
-    (4, 1): {
-        "alias": "IfAttacked",
-        "docstring": "TODO",
-        "args": {
-            "condition": CONDITION_GROUP | HIDE_NAME,
-            "attacked_entity": NO_DEFAULT(CharacterTyping),
-            "attacker": NO_DEFAULT(CharacterTyping),
-        },
-    },
+    # (4, 1) removed (old "IfAttacked").
     (4, 2): {
         "alias": "IfHealthRatioComparison",
         "docstring": "Conditions upon a comparison to character health ratio (0-1).",
@@ -803,7 +635,7 @@ EMEDF = {
         },
     },
     (4, 3): {
-        "alias": "IfCharacterType",
+        "alias": "IfCharacterIsType",
         "docstring": "TODO",
         "args": {
             "condition": CONDITION_GROUP | HIDE_NAME,
@@ -996,6 +828,8 @@ EMEDF = {
             "asset": NO_DEFAULT(AssetTyping) | HIDE_NAME,
             "comparison_type": COMPARISON_TYPE | HIDE_NAME,
             "value": INT,
+            "target_comparison_type": TARGET_COMPARISON_TYPE,
+            "target_count": TARGET_COUNT_FLOAT,
         },
         "partials": {
             "IfAssetHealthValueEqual": dict(comparison_type=ComparisonType.Equal),
@@ -1035,12 +869,13 @@ EMEDF = {
         "docstring": "Not sure if this is ever really used over `IfConditionState`.",
         "args": {
             "state": BOOL | HIDE_NAME,
-            "condition": CONDITION_GROUP | HIDE_NAME,
+            "input_condition": CONDITION_GROUP | HIDE_NAME,
         },
         "partials": {
             "AwaitConditionTrue": dict(state=True),
             "AwaitConditionFalse": dict(state=False),
         },
+        "get_evaluated_conditions": lambda kwargs: {kwargs["input_condition"]},
     },
     (1000, 1): {
         "alias": "SkipLinesIfConditionState",
@@ -1048,12 +883,13 @@ EMEDF = {
         "args": {
             "line_count": INT | HIDE_NAME,
             "state": BOOL | HIDE_NAME,
-            "condition": CONDITION_GROUP | HIDE_NAME,
+            "input_condition": CONDITION_GROUP | HIDE_NAME,
         },
         "partials": {
             "SkipLinesIfConditionTrue": dict(state=True),
             "SkipLinesIfConditionFalse": dict(state=False),
         },
+        "get_evaluated_conditions": lambda kwargs: {kwargs["input_condition"]},
     },
     (1000, 2): {
         "alias": "ReturnIfConditionState",
@@ -1069,6 +905,7 @@ EMEDF = {
             "RestartIfConditionTrue": dict(event_return_type=EventReturnType.Restart, state=True),
             "RestartIfConditionFalse": dict(event_return_type=EventReturnType.Restart, state=False),
         },
+        "get_evaluated_conditions": lambda kwargs: {kwargs["input_condition"]},
     },
     (1000, 3): {
         "alias": "SkipLines",
@@ -1169,12 +1006,9 @@ EMEDF = {
         },
     },
     (1000, 7): {
-        "alias": "SkipLinesIfFinishedConditionState",
+        "alias": "SkipLinesIfLastConditionResultState",
         "docstring": """
-            This command is used instead of 1000[01] when conditions are being checked *after* they have already been
-            uploaded into the MAIN condition. For example, you might want to continue MAIN if either AND(01) or AND(02) 
-            are true, but then afterwards, act conditionally on exactly which one of those two registers caused you to
-            continue.
+            Skip some number of lines if the last result of the given condition (without re-evaluating) is `state`.
         """,
         "args": {
             "line_count": INT | HIDE_NAME,
@@ -1182,34 +1016,26 @@ EMEDF = {
             "input_condition": CONDITION_GROUP,
         },
         "partials": {
-            "SkipLinesIfFinishedConditionTrue": dict(state=True),
-            "SkipLinesIfFinishedConditionFalse": dict(state=False),
+            "SkipLinesIfLastConditionResultTrue": dict(state=True),
+            "SkipLinesIfLastConditionResultFalse": dict(state=False),
         },
     },
     (1000, 8): {
-        "alias": "ReturnIfFinishedConditionState",
-        "docstring": "TODO",
+        "alias": "ReturnIfLastConditionResultState",
+        "docstring": "End or restart event if last condition result (without re-evaluating) is the given `state`.",
         "args": {
             "event_return_type": EVENT_RETURN_TYPE,
             "state": BOOL | HIDE_NAME,
             "input_condition": CONDITION_GROUP,
         },
         "partials": {
-            "EndIfFinishedConditionTrue": dict(event_return_type=EventReturnType.End, state=True),
-            "EndIfFinishedConditionFalse": dict(event_return_type=EventReturnType.End, state=False),
-            "RestartIfFinishedConditionTrue": dict(event_return_type=EventReturnType.Restart, state=True),
-            "RestartIfFinishedConditionFalse": dict(event_return_type=EventReturnType.Restart, state=False),
+            "EndIfLastConditionResultTrue": dict(event_return_type=EventReturnType.End, state=True),
+            "EndIfLastConditionResultFalse": dict(event_return_type=EventReturnType.End, state=False),
+            "RestartIfLastConditionResultTrue": dict(event_return_type=EventReturnType.Restart, state=True),
+            "RestartIfLastConditionResultFalse": dict(event_return_type=EventReturnType.Restart, state=False),
         },
     },
-    (1000, 9): {
-        "alias": "WaitForNetworkApproval",
-        "docstring": """
-            Wait for network to approve event (up to `max_seconds` seconds).
-        """,
-        "args": {
-            "max_seconds": FLOAT,
-        },
-    },
+    # (1000, 9) removed (old "WaitForNetworkApproval").
     (1001, 0): {
         "alias": "Wait",
         "docstring": """
@@ -1566,14 +1392,7 @@ EMEDF = {
             },
         },
     },
-    (2000, 1): {
-        "alias": "TerminateEvent",
-        "docstring": "Delete an instance (slot) of an event script.",
-        "args": {
-            "event_slot": INT,
-            "event_id": INT,
-        },
-    },
+    # (2000, 1) removed (old "TerminateEvent").
     (2000, 2): {
         "alias": "SetNetworkSyncState",
         "docstring": "TODO",
@@ -1594,15 +1413,7 @@ EMEDF = {
             "dummy": INT | {"default": 0},
         },
     },
-    (2000, 4): {
-        "alias": "IssuePrefetchRequest",
-        "docstring": """
-            No idea what this does.
-        """,
-        "args": {
-            "request_id": INT,
-        },
-    },
+    # (2000, 4) removed (old "IssuePrefetchRequest").
     (2000, 5): {
         "alias": "SaveRequest",
         "docstring": "Request the game to save player progress.",
@@ -1663,6 +1474,38 @@ EMEDF = {
             "player_id": INT,
         },
     },
+    (2002, 4): {
+        "alias": "PlayCutsceneToPlayer_Unknown_2002_04",
+        "docstring": "TODO",
+        "args": {
+            "cutscene_id": INT,
+            "cutscene_flags": CUTSCENE_FLAGS,
+            "region": NO_DEFAULT(RegionTyping),
+            "unk_12_16": INT,
+            "player_id": INT,
+            "unk_20_24": INT,
+        },
+    },
+    (2002, 9): {
+        "alias": "PlayCutsceneToPlayer_Unknown_2002_09",
+        "docstring": "TODO",
+        "args": {
+            "cutscene_id": INT,
+            "cutscene_flags": CUTSCENE_FLAGS,
+            "unk_8_12": INT,
+            "unk_12_16": INT,
+            "player_id": INT,
+            "unk_20_24": INT,
+            "unk_24_25": BOOL,
+            "unk_25_26": BOOL,
+            "unk_28_32": FLOAT,
+            "unk_33_34": BOOL,
+            "unk_34_35": BOOL,
+            "unk_35_36": BOOL,
+            "unk_36_37": BOOL,
+        },
+    },
+
     (2003, 3): {
         "alias": "SetSpawnerState",
         "docstring": """
@@ -1701,6 +1544,54 @@ EMEDF = {
             "launch_angle_x": INT,
             "launch_angle_y": INT,
             "launch_angle_z": INT,
+        },
+    },
+    (2003, 6): {
+        "alias": "SetMapCollisionState_2003_06",
+        "docstring": "TODO: Unsure how this differs from `SetMapCollisionState`.",
+        "args": {
+            "collision": NO_DEFAULT(CollisionTyping) | HIDE_NAME,
+            "state": BOOL | HIDE_NAME,
+        },
+        "partials": {
+            "EnableMapCollision_2003_06": dict(state=True),
+            "DisableMapCollision_2003_06": dict(state=False),
+        },
+    },
+    (2003, 7): {
+        "alias": "SetMapVisibilityState",
+        "docstring": "TODO",
+        "args": {
+            "map_piece": NO_DEFAULT(MapPieceTyping) | HIDE_NAME,
+            "state": BOOL | HIDE_NAME,
+        },
+        "partials": {
+            "EnableMapVisibility": dict(state=True),
+            "DisableMapVisibility": dict(state=False),
+        },
+    },
+    (2003, 8): {
+        "alias": "SetEventSlotState",
+        "docstring": "Use to manually END or RESTART a given event ID and slot.",
+        "args": {
+            "event_id": INT | HIDE_NAME,
+            "slot": INT | HIDE_NAME,
+            "event_return_type": BOOL | HIDE_NAME,
+        },
+        "partials": {
+            "EndEventSlot": dict(event_return_type=EventReturnType.End),
+            "EndEvent": dict(slot=0, event_return_type=EventReturnType.End),
+            "RestartEventSlot": dict(event_return_type=EventReturnType.Restart),
+            "RestartEvent": dict(slot=0, event_return_type=EventReturnType.Restart),
+        },
+    },
+    (2003, 9): {
+        "alias": "InvertFlag",
+        "docstring": """
+            Unclear how this differs from calling `ToggleFlag` (which calls `SetEventFlag` with `FlagSetting.Change`).
+        """,
+        "args": {
+            "flag": FLAG | HIDE_NAME,
         },
     },
     (2003, 11): {
@@ -1788,7 +1679,7 @@ EMEDF = {
             "player_start": {
                 "type": tp.Union[PlayerStart, int],
                 "default": -1,
-                "internal_default": -1,
+                "internal_default": 0,
             },
             "unk_8_12": INT | {"default": 0},  # weird -- values seen include `61000`, `-11100`, and `11000000`
         },
@@ -1796,6 +1687,13 @@ EMEDF = {
             "game_map": GAME_MAP_EVS,
             "player_start": {},
             "unk_8_12": {},
+        },
+    },
+    (2003, 15): {
+        "alias": "HandleMinibossDefeat",
+        "docstring": "TODO",
+        "args": {
+            "character": NO_DEFAULT(CharacterTyping),
         },
     },
     (2003, 16): {
@@ -1926,6 +1824,20 @@ EMEDF = {
             "unknown": INT,
         },
     },
+    (2003, 26): {
+        "alias": "SetSoapstoneMessageState",
+        "docstring": """
+            Enable or disable developer message. Technically not a 'Soapstone' message anymore, but keeping the name.
+        """,
+        "args": {
+            "message_id": INT | HIDE_NAME,
+            "state": BOOL | HIDE_NAME,
+        },
+        "partials": {
+            "EnableSoapstoneMessage": dict(state=True),
+            "DisableSoapstoneMessage": dict(state=False),
+        },
+    },
     (2003, 28): {
         "alias": "AwardAchievement",
         "docstring": """
@@ -1967,6 +1879,8 @@ EMEDF = {
             "bit_count": INT,
         },
     },
+    # (2003, 33) removed (old "SetNextSnugglyTrade").
+    # (2003, 34) removed (old "SnugglyItemDrop").
     (2003, 35): {
         "alias": "MoveRemains",
         "docstring": """
@@ -2027,22 +1941,7 @@ EMEDF = {
             },
         },
     },
-    (2004, 3): {
-        "alias": "MoveToEntity",
-        "docstring": "Basic move. I recommend you use the combined `Move` function.",
-        "args": {
-            "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
-            "destination_type": AUTO_COORD_ENTITY_TYPE("destination"),
-            "destination": NO_DEFAULT(CoordEntityTyping),
-            "dummy_id": MODEL_POINT,
-        },
-        "evs_args": {
-            "character": {},
-            "destination": {},
-            "dummy_id": {},
-            "destination_type": {},
-        },
-    },
+    # (2004, 3) removed (old "MoveToEntity").
     (2004, 4): {
         "alias": "Kill",
         "docstring": """
@@ -2095,49 +1994,7 @@ EMEDF = {
             "special_effect": INT | HIDE_NAME,
         },
     },
-    (2004, 9): {
-        "alias": "SetStandbyAnimationSettings",
-        "docstring": """
-            Sets entity's default standby animations. -1 is default for each category.
-        """,
-        "args": {
-            "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
-            "standby_animation": {
-                "type": int,
-                "default": -1,
-                "internal_default": -1,
-            },
-            "damage_animation": {
-                "type": int,
-                "default": -1,
-                "internal_default": -1,
-            },
-            "cancel_animation": {
-                "type": int,
-                "default": -1,
-                "internal_default": -1,
-            },
-            "death_animation": {
-                "type": int,
-                "default": -1,
-                "internal_default": -1,
-            },
-            "standby_exit_animation": {
-                "type": int,
-                "default": -1,
-                "internal_default": -1,
-            },
-        },
-        "partials": {
-            "ResetStandbyAnimationSettings": dict(
-                standby_animation=-1,
-                damage_animation=-1,
-                cancel_animation=-1,
-                death_animation=-1,
-                standby_exit_animation=1,
-            ),
-        },
-    },
+    # (2004, 9) removed (old "SetStandbyAnimationSettings").
     (2004, 10): {
         "alias": "SetGravityState",
         "docstring": """
@@ -2433,19 +2290,7 @@ EMEDF = {
             "DisableCharacterCollision": dict(state=False),
         },
     },
-    (2004, 32): {
-        "alias": "AIEvent",
-        "docstring": """
-            I have no idea what this does.
-        """,
-        "args": {
-            "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
-            "command_id": INT,
-            "command_slot": INT,
-            "first_event_flag": FLAG,
-            "last_event_flag": FLAG,
-        },
-    },
+    # (2004, 32) removed (old "AIEvent").
     (2004, 33): {
         "alias": "ReferDamageToEntity",
         "docstring": """
@@ -2496,6 +2341,15 @@ EMEDF = {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
         },
     },
+    (2004, 38): {
+        "alias": "BetrayCurrentCovenant",
+        "docstring": """
+            Dummy argument does nothing.
+        """,
+        "args": {
+            "dummy": INT | {"default": 0},
+        },
+    },
     (2004, 39): {
         "alias": "SetAnimationsState",
         "docstring": "TODO",
@@ -2515,7 +2369,7 @@ EMEDF = {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "destination_type": AUTO_COORD_ENTITY_TYPE("destination"),
             "destination": NO_DEFAULT(CoordEntityTyping),
-            "dummy_id": MODEL_POINT,
+            "dummy_id": DUMMY_ID,
             "set_draw_parent": {
                 "type": MapPartTyping,
                 "default": None,
@@ -2536,7 +2390,7 @@ EMEDF = {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "destination_type": AUTO_COORD_ENTITY_TYPE("destination"),
             "destination": NO_DEFAULT(CoordEntityTyping),
-            "dummy_id": MODEL_POINT,
+            "dummy_id": DUMMY_ID,
         },
         "evs_args": {
             "character": {},
@@ -2552,7 +2406,7 @@ EMEDF = {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "destination_type": AUTO_COORD_ENTITY_TYPE("destination"),
             "destination": NO_DEFAULT(CoordEntityTyping),
-            "dummy_id": MODEL_POINT,
+            "dummy_id": DUMMY_ID,
             "copy_draw_parent": NO_DEFAULT(AnimatedEntityTyping),
         },
         "evs_args": {
@@ -2573,19 +2427,7 @@ EMEDF = {
             "disable_interpolation": BOOL | {"default": False},
         },
     },
-    (2004, 44): {
-        "alias": "SetTeamTypeAndExitStandbyAnimation",
-        "docstring": """
-            Two for the price of one. Often used when NPCs with resting animations become hostile.
-        """,
-        "args": {
-            "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
-            "team_type": {
-                "type": TeamType,
-                "default": None,
-            },
-        },
-    },
+    # (2004, 44) removed (old "SetTeamTypeAndExitStandbyAnimation").
     (2004, 47): {
         "alias": "EqualRecovery",
         "docstring": """
@@ -2738,9 +2580,9 @@ EMEDF = {
             "character": {
                 "type": CharacterTyping,
                 "default": None,
-                "internal_default": -1,
+                "internal_default": 0,
             },
-            "dummy_id": MODEL_POINT,
+            "dummy_id": DUMMY_ID,
         },
     },
     (2005, 12): {
@@ -2823,7 +2665,7 @@ EMEDF = {
         "args": {
             "anchor_type": AUTO_COORD_ENTITY_TYPE("anchor_entity", check_player=True),
             "anchor_entity": NO_DEFAULT(CoordEntityTyping),
-            "dummy_id": MODEL_POINT,
+            "dummy_id": DUMMY_ID,
             "vfx_id": INT,
         },
         "evs_args": {
@@ -2949,7 +2791,7 @@ EMEDF = {
             "vibration_id": INT,
             "anchor_type": AUTO_COORD_ENTITY_TYPE("anchor_entity"),
             "anchor_entity": NO_DEFAULT(CoordEntityTyping),
-            "dummy_id": MODEL_POINT,
+            "dummy_id": DUMMY_ID,
             "decay_start_distance": {
                 "type": float,
                 "default": 999.0,
@@ -3130,7 +2972,7 @@ EMEDF = {
             "attacker": {
                 "type": CharacterTyping,
                 "default": 0,
-                "internal_default": -1,
+                "internal_default": 0,
             },
             "damage_type": {
                 "type": DamageType,
@@ -3275,16 +3117,63 @@ EMEDF = {
             "gender": NO_DEFAULT(Gender),
         },
     },
+    # Arena (Colosseum) instructions added in patch 1.08:
     (3, 39): {
-        "alias": "IfAllyPhantomCountComparison",
-        "docstring": """
-            Note that there's a 'comparison_state' bool that can be used to invert the operation (kind of pointless).
-        """,
+        "alias": "IfArenaMatchReadyState",
+        "docstring": "TODO",
         "args": {
             "condition": CONDITION_GROUP | HIDE_NAME,
-            "comparison_state": BOOL,
+            "ready": BOOL,
+        },
+    },
+    (3, 40): {
+        "alias": "IfArenaSoloResult",
+        "docstring": "TODO",
+        "args": {
+            "condition": CONDITION_GROUP | HIDE_NAME,
+            "result": NO_DEFAULT(ArenaResult),
+        },
+    },
+    (3, 41): {
+        "alias": "IfArenaSoloScoreComparison",
+        "docstring": "TODO",
+        "args": {
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "comparison_type": NO_DEFAULT(ComparisonType),
-            "value": INT,
+            "score": INT,
+        },
+    },
+    (3, 42): {
+        "alias": "IfArenaTeamResults",
+        "docstring": "TODO",
+        "args": {
+            "condition": CONDITION_GROUP | HIDE_NAME,
+            "result": NO_DEFAULT(ArenaResult),
+        },
+    },
+    (3, 43): {
+        "alias": "IfArenaTeamScoreComparison",
+        "docstring": "TODO",
+        "args": {
+            "condition": CONDITION_GROUP | HIDE_NAME,
+            "comparison_type": NO_DEFAULT(ComparisonType),
+            "score": INT,
+        },
+    },
+    (3, 44): {
+        "alias": "IfArenaMatchType",
+        "docstring": "TODO",
+        "args": {
+            "condition": CONDITION_GROUP | HIDE_NAME,
+            "match_type": NO_DEFAULT(ArenaMatchType),
+            "has_spirit_summon": BOOL,
+        },
+    },
+    (3, 45): {
+        "alias": "IfPlayerRespawnedInArena",
+        "docstring": "TODO",
+        "args": {
+            "condition": CONDITION_GROUP | HIDE_NAME,
         },
     },
     
@@ -3515,7 +3404,8 @@ EMEDF = {
         "partials": {
             "GotoIfConditionTrue": dict(required_state=True),
             "GotoIfConditionFalse": dict(required_state=False),
-        }
+        },
+        "get_evaluated_conditions": lambda kwargs: {kwargs["input_condition"]},
     },
     (1000, 103): {
         "alias": "Goto",
@@ -3537,9 +3427,9 @@ EMEDF = {
         },
     },
     (1000, 107): {
-        "alias": "GotoIfFinishedConditionState",
+        "alias": "GotoIfLastConditionResultState",
         "docstring": """
-            Finished version.
+            Go to label if the last result of the given condition (without re-evaluating) is `required_state`.
         """,
         "args": {
             "label": LABEL,
@@ -3547,8 +3437,8 @@ EMEDF = {
             "input_condition": CONDITION_GROUP,
         },
         "partials": {
-            "GotoIfFinishedConditionTrue": dict(required_state=True),
-            "GotoIfFinishedConditionFalse": dict(required_state=False),
+            "GotoIfLastConditionResultTrue": dict(required_state=True),
+            "GotoIfLastConditionResultFalse": dict(required_state=False),
         }
     },
     (1000, 108): {
@@ -3570,8 +3460,8 @@ EMEDF = {
         },
     },
     (1001, 5): {
-        "alias": "WaitUntilRandomTimeOfDay",
-        "docstring": "Pause event script until a random time of day chosen between the given earliest/latest times.",
+        "alias": "WaitUntilTimeOfDayInRange",
+        "docstring": "Pause event script until time of day is between the given earliest/latest times.",
         "args": {
             "earliest_hour": {
                 "type": int,
@@ -3618,10 +3508,20 @@ EMEDF = {
         },
     },
     (1001, 6): {
-        "alias": "WaitFramesAfterCutscene",
-        "docstring": """Always used after cutscene instructions with argument `frames=1`.""",
+        "alias": "WaitRealFrames",
+        "docstring": """
+            Wait a given number of real frames. Always used after cutscene instructions with argument `frames=1`.
+        """,
         "args": {
             "frames": INT,
+        },
+    },
+    (1001, 8): {
+        "alias": "WaitUntilArenaHalfTime",
+        "docstring": "TODO",
+        "args": {
+            "match_type": NO_DEFAULT(ArenaMatchType),
+            "is_second_half": BOOL,
         },
     },
     (1003, 5): {
@@ -4056,7 +3956,37 @@ EMEDF = {
             "RestartIfCeremonyInactive": dict(event_return_type=EventReturnType.Restart, state=False),
         },
     },
-
+    (1003, 212): {
+        "alias": "SkipLinesIfArenaMatchType",
+        "docstring": "Skip some number of lines if the current arena match type is the given type.",
+        "args": {
+            "line_count": INT | HIDE_NAME,
+            "match_type": NO_DEFAULT(ArenaMatchType),
+            "has_spirit_summon": BOOL,
+        },
+    },
+    (1003, 213): {
+        "alias": "GotoLinesIfArenaMatchType",
+        "docstring": "Go to label if the current arena match type is the given type.",
+        "args": {
+            "label": LABEL,
+            "match_type": NO_DEFAULT(ArenaMatchType),
+            "has_spirit_summon": BOOL,
+        },
+    },
+    (1003, 214): {
+        "alias": "ReturnIfArenaMatchType",
+        "docstring": "End or restart if the current arena match type is the given type.",
+        "args": {
+            "event_return_type": EVENT_RETURN_TYPE,
+            "match_type": NO_DEFAULT(ArenaMatchType),
+            "has_spirit_summon": BOOL,
+        },
+        "partials": {
+            "EndIfArenaMatchType": dict(event_return_type=EventReturnType.End),
+            "RestartIfArenaMatchType": dict(event_return_type=EventReturnType.Restart),
+        },
+    },
     (1004, 0): {
         "alias": "SkipLinesIfCharacterSpecialEffectState",
         "docstring": "Note that the same instruction appeared in DS3 as 1003[112].",
@@ -4497,29 +4427,15 @@ EMEDF = {
             "bit_count": INT,
         },
     },
-    (2003, 49): {
-        "alias": "WarpPlayerToRespawnPoint",
-        "docstring": "Not used in vanilla Elden Ring events, but keeping in case it still works (seems useful).",
+    (2003, 44): {
+        "alias": "SetDirectionDisplay",
+        "docstring": "TODO",
         "args": {
-            "respawn_point_id": INT | HIDE_NAME,
+            "state": BOOL,
         },
-    },
-    (2003, 50): {
-        "alias": "StartEnemySpawner",
-        "docstring": "Not used in vanilla Elden Ring events, but keeping in case it still works (seems useful).",
-        "args": {
-            "spawner_id": INT | {"internal_default": -1},
-        },
-    },
-    (2003, 51): {
-        "alias": "SummonNPC",
-        "docstring": "Not used in vanilla Elden Ring events, but keeping in case it still works (seems useful).",
-        "args": {
-            "sign_type": NO_DEFAULT(SingleplayerSummonSignType) | HIDE_NAME,
-            "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
-            "region": NO_DEFAULT(RegionTyping),
-            "summon_flag": NO_DEFAULT(FlagTyping),
-            "dismissal_flag": NO_DEFAULT(FlagTyping),
+        "partials": {
+            "EnableDirectionDisplay": dict(state=True),
+            "DisableDirectionDisplay": dict(state=False),
         },
     },
     (2003, 52): {
@@ -4555,6 +4471,19 @@ EMEDF = {
             "DisableNetworkConnectedFlagRange": dict(state=FlagSetting.Off),
             "ToggleNetworkConnectedFlagRange": dict(state=FlagSetting.Change),
         },
+    },
+    (2003, 64): {
+        "alias": "SetOmissionModeCounts",
+        "docstring": "TODO",
+        "args": {
+            "level_1_count": INT,
+            "level_2_count": INT,
+        },
+    },
+    (2003, 65): {
+        "alias": "ResetOmissionModeCountsToDefault",
+        "docstring": "TODO",
+        "args": {},
     },
     (2003, 66): {
         "alias": "SetFlagState",
@@ -4656,7 +4585,7 @@ EMEDF = {
         "args": {
             "far_view_id": INT,
             "asset": NO_DEFAULT(AssetTyping),
-            "dummy_id": MODEL_POINT,
+            "dummy_id": DUMMY_ID,
         },
     },
     (2003, 76): {
@@ -4729,6 +4658,13 @@ EMEDF = {
             "character": NO_DEFAULT(CharacterTyping),
         },
     },
+    (2003, 83): {
+        "alias": "Unknown_2003_83",
+        "docstring": "TODO",
+        "args": {
+            "unk_0_1": BOOL,
+        },
+    },
 
     (2004, 48): {
         "alias": "ChangeCharacterCloth",
@@ -4746,7 +4682,7 @@ EMEDF = {
         """,
         "args": {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
-            "patrol_information_id": INT | {"internal_default": -1},
+            "patrol_information_id": INT | {"internal_default": 0},
         },
     },
     (2004, 50): {
@@ -4758,6 +4694,15 @@ EMEDF = {
             "character": NO_DEFAULT(CharacterTyping),
             "lock_on_dummy_id": INT,
             "state": BOOL,
+        },
+    },
+    (2004, 52): {
+        "alias": "ChangePlayerCharacterInitParam",
+        "docstring": """
+            I assume this affects the player.
+        """,
+        "args": {
+            "character_init_param": INT,
         },
     },
     (2004, 55): {
@@ -4851,7 +4796,7 @@ EMEDF = {
             "character": NO_DEFAULT(CharacterTyping),
             "destination_type": NO_DEFAULT(CoordEntityType),
             "destination": NO_DEFAULT(CoordEntityTyping),
-            "dummy_id": MODEL_POINT | {"default": None},
+            "dummy_id": DUMMY_ID | {"default": None},
             "copy_draw_parent": NO_DEFAULT(CoordEntityTyping),
             "use_bonfire_effect": BOOL,
             "reset_camera": BOOL,
@@ -4947,18 +4892,10 @@ EMEDF = {
         "args": {
             "child_asset": NO_DEFAULT(AssetTyping),
             "parent_asset": NO_DEFAULT(AssetTyping),
-            "parent_dummy_id": MODEL_POINT,
+            "parent_dummy_id": DUMMY_ID,
         },
     },
-    (2005, 19): {
-        "alias": "DestroyAsset_NoSlot",
-        "docstring": """
-            No 'slot' argument here.
-        """,
-        "args": {
-            "asset": NO_DEFAULT(AssetTyping),
-        },
-    },
+    # (2005, 19) removed (old "DestroyObject_NoSlot", no "Asset" version).
     (2005, 20): {
         "alias": "CreateBigHazardousAsset",
         "docstring": "TODO",
@@ -4984,15 +4921,18 @@ EMEDF = {
     },
 
     (2007, 10): {
-        "alias": "DisplayDialogAndSetFlags",
+        "alias": "AwaitDialogResponse",
         "docstring": """
-            Displays a dialog and enables one of three flags, depending on the player's response. Very useful.
+            Displays a dialog and enables one of three flags, depending on the player's response. Very useful. `right`
+            and `cancel` flags are often identical.
+            
+            Halts execution until the player responds.
         """,
         "args": {
             "message": NO_DEFAULT(EventTextTyping),
             "button_type": NO_DEFAULT(ButtonType),
             "number_buttons": NO_DEFAULT(NumberButtons),
-            "anchor_entity": NO_DEFAULT(CoordEntityTyping) | {"internal_default": -1},
+            "anchor_entity": NO_DEFAULT(CoordEntityTyping) | {"internal_default": 0},
             "display_distance": FLOAT,
             "left_flag": FLAG,
             "right_flag": FLAG,
@@ -5010,16 +4950,16 @@ EMEDF = {
     },
     (2007, 13): {
         "alias": "DisplaySubareaWelcomeMessage",
-        "docstring": "TODO",
+        "docstring": "Uses PlaceName FMG.",
         "args": {
-            "text": NO_DEFAULT(EventTextTyping),  # TODO: Could be PlaceName
+            "place_name_id": NO_DEFAULT(PlaceNameTyping),
         },
     },
     (2007, 14): {
         "alias": "DisplayAreaWelcomeMessage",
-        "docstring": "TODO",
+        "docstring": "Uses PlaceName FMG.",
         "args": {
-            "text": NO_DEFAULT(EventTextTyping),  # TODO: Could be PlaceName
+            "place_name_id": NO_DEFAULT(PlaceNameTyping),
         },
     },
     (2007, 15): {
@@ -5058,6 +4998,13 @@ EMEDF = {
     },
     (2009, 11): {
         "alias": "BanishPhantoms",
+        "docstring": "TODO",
+        "args": {
+            "unknown": INT,
+        },
+    },
+    (2009, 12): {
+        "alias": "BanishPhantomsAndUpdateServerPvPStats",
         "docstring": "TODO",
         "args": {
             "unknown": INT,
@@ -5147,8 +5094,8 @@ EMEDF_TESTS |= {
     "PlayerHasArmor": {
         "if": "IfPlayerHasArmor",
     },
-    "PlayerHasRing": {
-        "if": "IfPlayerHasRing",
+    "PlayerHasTalisman": {
+        "if": "IfPlayerHasTalisman",
     },
     "PlayerHasGood": {
         "if": "IfPlayerHasGood",
@@ -5159,8 +5106,8 @@ EMEDF_TESTS |= {
     "PlayerDoesNotHaveArmor": {
         "if": "IfPlayerDoesNotHaveArmor",
     },
-    "PlayerDoesNotHaveRing": {
-        "if": "IfPlayerDoesNotHaveRing",
+    "PlayerDoesNotHaveTalisman": {
+        "if": "IfPlayerDoesNotHaveTalisman",
     },
     "PlayerDoesNotHaveGood": {
         "if": "IfPlayerDoesNotHaveGood",

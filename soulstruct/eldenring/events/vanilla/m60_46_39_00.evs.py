@@ -120,8 +120,8 @@ def Event_1035472200(
     
     MAIN.Await(OR_14)
     
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=AND_1)
-    GotoIfFinishedConditionFalse(Label.L2, input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=AND_1)
+    GotoIfLastConditionResultFalse(Label.L2, input_condition=AND_4)
     DeleteAssetVFX(asset)
     DisableFlag(flag)
 
@@ -142,7 +142,7 @@ def Event_1035472200(
 
     # --- Label 4 --- #
     DefineLabel(4)
-    DisplayDialogAndSetFlags(
+    AwaitDialogResponse(
         message=4300,
         button_type=ButtonType.Yes_or_No,
         number_buttons=NumberButtons.TwoButton,

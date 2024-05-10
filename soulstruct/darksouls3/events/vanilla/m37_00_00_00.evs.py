@@ -1716,7 +1716,7 @@ def Event_13705360(_, character: int, animation_id: int, animation_id_1: int, re
     DisableGravity(character)
     DisableCharacterCollision(character)
     ForceAnimation(character, animation_id, loop=True, skip_transition=True, unknown2=1.0)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -1937,9 +1937,9 @@ def Event_13705511(
     SetNetworkConnectedFlagState(flag=flag_2, state=FlagSetting.On)
     SetNetworkConnectedFlagState(flag=flag, state=FlagSetting.On)
     EnableFlag(flag_1)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_1)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_1)
     GotoIfFlagEnabled(Label.L0, flag=flag_3)
-    SkipLinesIfFinishedConditionTrue(3, input_condition=OR_2)
+    SkipLinesIfLastConditionResultTrue(3, input_condition=OR_2)
     Move(PLAYER, destination=obj, destination_type=CoordEntityType.Object, dummy_id=103, short_move=True)
     ForceAnimation(PLAYER, 60231, unknown2=1.0)
     ForceAnimation(obj, 221, wait_for_completion=True, skip_transition=True, unknown2=1.0)
@@ -2004,9 +2004,9 @@ def Event_13705511(
     SetNetworkConnectedFlagState(flag=flag_2, state=FlagSetting.On)
     SetNetworkConnectedFlagState(flag=flag, state=FlagSetting.Off)
     DisableFlag(flag_1)
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=OR_5)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=OR_5)
     GotoIfFlagEnabled(Label.L3, flag=flag_3)
-    SkipLinesIfFinishedConditionTrue(3, input_condition=OR_6)
+    SkipLinesIfLastConditionResultTrue(3, input_condition=OR_6)
     Move(PLAYER, destination=obj, destination_type=CoordEntityType.Object, dummy_id=101, short_move=True)
     ForceAnimation(PLAYER, 60230, unknown2=1.0)
     ForceAnimation(obj, 212, wait_for_completion=True, skip_transition=True, unknown2=1.0)
@@ -2692,7 +2692,7 @@ def Event_13705887():
     
     MAIN.Await(AND_1)
     
-    GotoIfFinishedConditionTrue(Label.L20, input_condition=OR_1)
+    GotoIfLastConditionResultTrue(Label.L20, input_condition=OR_1)
     SetNetworkConnectedFlagState(flag=13705888, state=FlagSetting.On)
 
     # --- Label 20 --- #
@@ -2833,10 +2833,10 @@ def Event_13705622(_, region: int, flag: int, flag_1: int, target_entity: int, a
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_2)
     DisableFlag(flag)
     Restart()
-    SkipLinesIfFinishedConditionFalse(3, input_condition=OR_2)
+    SkipLinesIfLastConditionResultFalse(3, input_condition=OR_2)
     ForceAnimation(PLAYER, 0, unknown2=1.0)
     DisableFlag(flag)
     Restart()
@@ -2851,7 +2851,7 @@ def Event_13705622(_, region: int, flag: int, flag_1: int, target_entity: int, a
     
     MAIN.Await(OR_3)
     
-    SkipLinesIfFinishedConditionFalse(3, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(3, input_condition=AND_3)
     DisableFlag(flag)
     DisableFlag(flag_1)
     Restart()
@@ -3714,7 +3714,7 @@ def Event_13705647(_, character: int, animation_id: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    RestartIfFinishedConditionTrue(input_condition=OR_2)
+    RestartIfLastConditionResultTrue(input_condition=OR_2)
     AwardItemLot(63010, host_only=False)
     
     MAIN.Await(CharacterDoesNotHaveSpecialEffect(character, 152))

@@ -1324,8 +1324,8 @@ def Event_13005480():
     
     MAIN.Await(OR_2)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_4)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_5)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_5)
     Move(3000850, destination=3002600, destination_type=CoordEntityType.Region, short_move=True)
     EnableCharacter(3000850)
     SetNetworkUpdateRate(3000850, is_fixed=True, update_rate=CharacterUpdateRate.Always)
@@ -1356,7 +1356,7 @@ def Event_13005481():
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_2)
     GotoIfPlayerNotInOwnWorld(Label.L0)
     AwardItemLot(31410000, host_only=False)
 
@@ -1384,7 +1384,7 @@ def Event_13005485():
     GotoIfFlagEnabled(Label.L0, flag=13000480)
     if ThisEventSlotFlagEnabled():
         return
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -1417,7 +1417,7 @@ def Event_13005486():
         return
     if FlagEnabled(9420):
         return
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -1441,7 +1441,7 @@ def Event_13005487():
         return
     if FlagEnabled(9420):
         return
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -1466,7 +1466,7 @@ def Event_13005488():
         return
     if FlagEnabled(9420):
         return
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -1491,7 +1491,7 @@ def Event_13005489():
         return
     if FlagEnabled(9420):
         return
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -1515,7 +1515,7 @@ def Event_13005490():
         return
     if FlagEnabled(9420):
         return
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -1607,7 +1607,7 @@ def Event_13005535():
     if ThisEventSlotFlagEnabled():
         return
     DisableAI(3000488)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -1833,7 +1833,7 @@ def Event_13005810():
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=4))
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=7))
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=21))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     if OR_15:
         return
 
@@ -2062,7 +2062,7 @@ def Event_13005826(
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_2)
     AICommand(character, command_id=10, command_slot=0)
     ReplanAI(character)
     AND_2.Add(CharacterInsideRegion(character=character, region=region_2))
@@ -2077,7 +2077,7 @@ def Event_13005826(
     
     MAIN.Await(OR_10)
     
-    RestartIfFinishedConditionTrue(input_condition=OR_11)
+    RestartIfLastConditionResultTrue(input_condition=OR_11)
     AICommand(character, command_id=-1, command_slot=0)
     AICommand(character, command_id=50, command_slot=3)
     ReplanAI(character)
@@ -2100,7 +2100,7 @@ def Event_13005826(
     
     MAIN.Await(OR_12)
     
-    RestartIfFinishedConditionTrue(input_condition=OR_13)
+    RestartIfLastConditionResultTrue(input_condition=OR_13)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.Always)
@@ -2133,7 +2133,7 @@ def Event_13005830():
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=4))
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=7))
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=21))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     if OR_15:
         return
     GotoIfFlagEnabled(Label.L1, flag=13000838)
@@ -2379,7 +2379,7 @@ def Event_13005889():
     """Event 13005889"""
     if FlagEnabled(13000890):
         return
-    AND_1.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     if AND_1:
         return
     WaitFrames(frames=1)
@@ -2450,7 +2450,7 @@ def Event_13005890():
         value=0,
     )
     BanishInvaders(unknown=0)
-    AND_2.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_2.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     if AND_2:
         return
     Wait(1.0)
@@ -2498,7 +2498,7 @@ def Event_13005890():
     )
     NotifyBossBattleStart()
     BanishInvaders(unknown=0)
-    AND_3.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_3.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     if AND_3:
         return
 
@@ -2636,7 +2636,7 @@ def Event_13005899():
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=4))
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=7))
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=21))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     if OR_15:
         return
     SkipLinesIfTryingToCreateSession(2)

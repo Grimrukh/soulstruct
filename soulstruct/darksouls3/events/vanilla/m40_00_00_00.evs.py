@@ -693,7 +693,7 @@ def Event_14005101():
     
     MAIN.Await(OR_1)
     
-    RestartIfFinishedConditionTrue(input_condition=AND_1)
+    RestartIfLastConditionResultTrue(input_condition=AND_1)
     Move(PLAYER, destination=4001950, destination_type=CoordEntityType.Object, dummy_id=1, short_move=True)
     ForceAnimation(4001950, 60430, unknown2=1.0)
     EnableBonfireWarping(bonfire_obj=4001950, animation=60430)
@@ -725,7 +725,7 @@ def Event_14005102():
     CreateObjectVFX(4001102, vfx_id=101, dummy_id=4)
     AND_1.Add(FlagDisabled(2051))
     AND_1.Add(LeavingSession())
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_10)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_10)
     AND_1.Add(PlayerStandingOnCollision(4004101))
     
     MAIN.Await(AND_1)
@@ -736,7 +736,7 @@ def Event_14005102():
     AND_2.Add(TimeElapsed(seconds=18.0))
     SkipLines(1)
     AND_2.Add(TimeElapsed(seconds=20.0))
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_10)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_10)
     AND_3.Add(PlayerStandingOnCollision(4004100))
     SkipLines(1)
     AND_3.Add(FlagEnabled(2051))
@@ -745,11 +745,11 @@ def Event_14005102():
     
     MAIN.Await(OR_1)
     
-    RestartIfFinishedConditionTrue(input_condition=AND_3)
+    RestartIfLastConditionResultTrue(input_condition=AND_3)
     DeleteObjectVFX(4001101)
     DeleteObjectVFX(4001102)
     AND_4.Add(TimeElapsed(seconds=2.0))
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_10)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_10)
     AND_5.Add(PlayerStandingOnCollision(4004100))
     SkipLines(1)
     AND_5.Add(FlagEnabled(2051))
@@ -758,7 +758,7 @@ def Event_14005102():
     
     MAIN.Await(OR_2)
     
-    RestartIfFinishedConditionTrue(input_condition=AND_5)
+    RestartIfLastConditionResultTrue(input_condition=AND_5)
     DisableObject(4001101)
     DisableObject(4001102)
     Restart()
@@ -809,7 +809,7 @@ def Event_14005110():
     
     MAIN.Await(OR_2)
     
-    RestartIfFinishedConditionTrue(input_condition=AND_15)
+    RestartIfLastConditionResultTrue(input_condition=AND_15)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -1281,7 +1281,7 @@ def Event_14005450():
     
     MAIN.Await(OR_3)
     
-    RestartIfFinishedConditionFalse(input_condition=AND_2)
+    RestartIfLastConditionResultFalse(input_condition=AND_2)
     DisableSoundEventWithFade(sound_id=4004450, fade_duration=5.0)
     DisableSoundEventWithFade(sound_id=4004460, fade_duration=5.0)
     Wait(3.0)
@@ -4522,10 +4522,10 @@ def Event_14005725():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_2)
     DisableFlag(0)
     Restart()
-    SkipLinesIfFinishedConditionFalse(3, input_condition=OR_2)
+    SkipLinesIfLastConditionResultFalse(3, input_condition=OR_2)
     ForceAnimation(PLAYER, 0, unknown2=1.0)
     DisableFlag(0)
     Restart()
@@ -4541,7 +4541,7 @@ def Event_14005725():
     
     MAIN.Await(OR_3)
     
-    SkipLinesIfFinishedConditionFalse(3, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(3, input_condition=AND_3)
     DisableFlag(0)
     DisableFlag(0)
     Restart()

@@ -179,7 +179,7 @@ def Event_1043362221(_, character: uint, flag: uint, flag_1: uint, animation_id:
     if FlagEnabled(flag):
         return
     GotoIfPlayerNotInOwnWorld(Label.L0)
-    AND_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    AND_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
     AND_1.Add(EntityWithinDistance(entity=character, other_entity=PLAYER, radius=7.0))
     AND_1.Add(FlagEnabled(flag_1))
     
@@ -210,12 +210,12 @@ def Event_1043362340(_, character: uint, region: uint, destination: uint):
     ForceAnimation(character, 30005, loop=True)
     AND_1.Add(FlagDisabled(1043360340))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_15)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     
     MAIN.Await(AND_1)

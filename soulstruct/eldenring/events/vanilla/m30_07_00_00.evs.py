@@ -744,7 +744,7 @@ def Event_30072520(_, flag: uint, asset: uint, flag_1: uint):
 def Event_30072341(_, character: uint, seconds: float, region: uint, flag: uint, region_1: uint):
     """Event 30072341"""
     GotoIfFlagEnabled(Label.L0, flag=flag)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     OR_1.Add(PlayerInOwnWorld())
     AND_1.Add(OR_1)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region_1))
@@ -759,7 +759,7 @@ def Event_30072341(_, character: uint, seconds: float, region: uint, flag: uint,
     DefineLabel(0)
     DisableCharacter(character)
     DisableAnimations(character)
-    OR_2.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_2.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     OR_2.Add(PlayerInOwnWorld())
     AND_2.Add(OR_2)
     AND_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
@@ -777,12 +777,12 @@ def Event_30072500():
     """Event 30072500"""
     if ThisEventSlotFlagEnabled():
         return
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_15)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=30072215))
     AND_1.Add(CharacterBackreadEnabled(Characters.Imp6))
     AND_1.Add(OR_1)
@@ -798,12 +798,12 @@ def Event_30072501():
     """Event 30072501"""
     if ThisEventSlotFlagEnabled():
         return
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_15)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=30072216))
     AND_1.Add(CharacterBackreadEnabled(Characters.Imp6))
     AND_1.Add(FlagEnabled(30072500))
@@ -950,9 +950,9 @@ def Event_30072505(_, flag: uint, asset_flag: uint, asset: uint, region: uint, s
 def Event_30072510():
     """Event 30072510"""
     GotoIfFlagEnabled(Label.L0, flag=30070510)
-    OR_9.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_9.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
-    OR_9.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_9)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=30072510))
     

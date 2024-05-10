@@ -1433,12 +1433,12 @@ def Event_13000519():
 @RestartOnRest(13002236)
 def Event_13002236(_, region: uint, character: uint):
     """Event 13002236"""
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     
@@ -1460,12 +1460,12 @@ def Event_13002490(_, character: uint, region: uint, animation_id: int, flag: ui
     DefineLabel(0)
     DisableCharacter(character)
     DisableAnimations(character)
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_15)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     
@@ -1480,12 +1480,12 @@ def Event_13002490(_, character: uint, region: uint, animation_id: int, flag: ui
 def Event_13002493(_, character: uint, region: uint, region_1: uint):
     """Event 13002493"""
     RemoveSpecialEffect(character, 18941)
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_15)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(CharacterInsideRegion(character=character, region=region_1))
@@ -1863,11 +1863,11 @@ def Event_13002834():
 
     # --- Label 0 --- #
     DefineLabel(0)
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.Invader))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.Invader2))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.Invader3))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader2))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader3))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
     if OR_15:
         return
     GotoIfThisEventSlotFlagEnabled(Label.L0)
@@ -2021,7 +2021,7 @@ def Event_13002846(_, flag: uint, flag_1: uint, flag_2: uint):
         return
     AND_1.Add(FlagDisabled(flag))
     AND_1.Add(FlagEnabled(flag_1))
-    AND_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     
     MAIN.Await(AND_1)
     
@@ -2093,7 +2093,7 @@ def Event_13002859():
     
     MAIN.Await(OR_5)
     
-    RestartIfFinishedConditionTrue(input_condition=OR_4)
+    RestartIfLastConditionResultTrue(input_condition=OR_4)
     AICommand(Characters.RecusantBernahl1, command_id=-1, command_slot=0)
     ReplanAI(Characters.RecusantBernahl1)
     SetNetworkUpdateRate(Characters.RecusantBernahl1, is_fixed=True, update_rate=CharacterUpdateRate.Always)
@@ -2114,7 +2114,7 @@ def Event_13002859():
     
     MAIN.Await(OR_5)
     
-    RestartIfFinishedConditionTrue(input_condition=OR_4)
+    RestartIfLastConditionResultTrue(input_condition=OR_4)
     AICommand(Characters.RecusantBernahl1, command_id=-1, command_slot=0)
     ReplanAI(Characters.RecusantBernahl1)
     SetNetworkUpdateRate(Characters.RecusantBernahl1, is_fixed=True, update_rate=CharacterUpdateRate.Always)
@@ -2402,12 +2402,12 @@ def Event_13002610():
     OR_2.Add(FlagEnabled(13000495))
     if OR_2:
         return
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=13002619))
     AND_1.Add(OR_1)
     
@@ -3044,7 +3044,7 @@ def Event_13003721():
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=OR_1)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=OR_1)
     Goto(Label.L2)
 
     # --- Label 1 --- #

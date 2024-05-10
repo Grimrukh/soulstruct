@@ -435,7 +435,7 @@ def Event_11800101():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     DisplayDialog(text=10010174, anchor_entity=1801960)
     Restart()
 
@@ -462,16 +462,16 @@ def Event_11800200():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_1)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_1)
     EnableFlag(11800201)
     RemoveGoodFromPlayer(item=2500)
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_2)
     EnableFlag(11800202)
     RemoveGoodFromPlayer(item=2501)
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_3)
     EnableFlag(11800203)
     RemoveGoodFromPlayer(item=2502)
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_4)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_4)
     EnableFlag(11800204)
     RemoveGoodFromPlayer(item=2503)
     EnableFlag(11805111)
@@ -516,13 +516,13 @@ def Event_11800210():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_2)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_2)
     CreateObjectVFX(1801960, vfx_id=100, dummy_id=180005)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_3)
     CreateObjectVFX(1801960, vfx_id=100, dummy_id=180006)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_4)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_4)
     CreateObjectVFX(1801960, vfx_id=100, dummy_id=180007)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_5)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_5)
     CreateObjectVFX(1801960, vfx_id=100, dummy_id=180008)
     if ThisEventFlagEnabled():
         EndOfAnimation(obj=1801101, animation_id=1)
@@ -560,7 +560,7 @@ def Event_11800220():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     DisplayDialog(text=10010160, anchor_entity=1801101)
     SkipLines(2)
     DisableFlag(11805110)
@@ -613,7 +613,7 @@ def Event_11800510(_, character: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_3)
     DisableCharacter(character)
     
     MAIN.Await(FlagEnabled(703))
@@ -743,7 +743,7 @@ def Event_11800539(_, character: int, first_flag: int, last_flag: int, flag: int
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(3, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(3, input_condition=AND_2)
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     ForceAnimation(character, 7009, wait_for_completion=True)
@@ -769,7 +769,7 @@ def Event_11800540(_, character: int, first_flag: int, last_flag: int, flag: int
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(3, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(3, input_condition=AND_2)
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     ForceAnimation(character, 7005, wait_for_completion=True)
@@ -924,7 +924,7 @@ def Event_11805200():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     RequestAnimation(1800999, animation_id=1750, wait_for_completion=True)
     Restart()
     RequestAnimation(1800999, animation_id=2000, wait_for_completion=True)

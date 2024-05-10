@@ -8,14 +8,16 @@ __all__ = [
     "base_decompile_run_event",
     "base_decompile_run_common_event",
     "Variable",
+    "high_level_evs_decompile",
 ]
 
 import logging
+import re
 import struct
 import typing as tp
 
-from soulstruct.base.game_types.game_enums_manager import GameEnumsManager
 from soulstruct.base.events.emevd.enums import BaseEMEVDFlags
+from soulstruct.base.game_types.game_enums_manager import GameEnumsManager
 from soulstruct.base.game_types import GameObjectInt
 
 if tp.TYPE_CHECKING:
@@ -32,7 +34,7 @@ def reprocess_opt_args(integer_args, arg_type_string):
 
 
 def looks_like_entity_id(value: int, event_id: int = None):
-    """Guesses if `value` is an entity ID. Used with `RunEvent{Common}` calls.
+    """Guesses if `value` is an entity ID. Used with `Run{Common}Event` calls.
 
     TODO: Currently blindly converting seven-digit integers in event calls, under the probably safe
      assumption that there will be no false positives. Also including four-digit integers starting with 6
@@ -196,7 +198,7 @@ def base_decompiler_instruction(
     enums_manager: GameEnumsManager = None,
 ) -> str:
     """
-    Shared code (for all games) for decompiling a single EMEVD `Instruction` inside an `Event`.
+    Shared code (for all games) for decompiling a single EMEVD `Instruction` inside an `Event` into an EVS string.
 
     Args:
         emedf: EMEDF dictionary for caller's game. Used to look up instruction information, including more advanced
@@ -361,9 +363,16 @@ def base_decompile_run_common_event(
         if slot is None or slot == 0:
             if event_id in enums_manager.all_common_event_ids:
                 return f"CommonFunc_{event_id}()"  # default slot
+            elif event_id in enums_manager.all_event_ids:
+                # Happens sometimes: local event is run as a 'common' event. We accept the function itself as a first
+                # argument in this case for easier code navigation.
+                return f"RunCommonEvent(Event_{event_id})"
             return f"RunCommonEvent({event_id})"  # default slot
         if event_id in enums_manager.all_common_event_ids:
             return f"CommonFunc_{event_id}({slot=})"
+        elif event_id in enums_manager.all_event_ids:
+            # See above. We allow the function as a first argument rather than the ID.
+            return f"RunCommonEvent(Event_{event_id}, {slot=})"
         return f"RunCommonEvent({event_id}, {slot=})"
 
     event_args = (first_arg, *opt_args)

@@ -1,7 +1,8 @@
-"""AUTOMATICALLY GENERATED. Do not edit this module.
+"""AUTOMATICALLY GENERATED. Do not edit this module manually.
 
 Import this into any EVS script to have full access to instructions.
 Make sure you also do `from soulstruct.{game}.events import *` to get all enums, constants, and tests.
+You will likely also want `from soulstruct.{game}.game_types import *`.
 """
 
 __all__ = [
@@ -12,17 +13,20 @@ __all__ = [
     "EVENTS",
     "Condition",
     "HeldCondition",
+    "LastResult",
+    "Await",
     "END",
     "RESTART",
-    "Await",
-    "MAIN",
-    "OR_1",
-    "OR_2",
-    "OR_3",
-    "OR_4",
-    "OR_5",
-    "OR_6",
+    "RunEvent",
+    # Condition groups:
     "OR_7",
+    "OR_6",
+    "OR_5",
+    "OR_4",
+    "OR_3",
+    "OR_2",
+    "OR_1",
+    "MAIN",
     "AND_1",
     "AND_2",
     "AND_3",
@@ -131,10 +135,10 @@ __all__ = [
     "IfHealthRatioLessThan",
     "IfHealthRatioGreaterThanOrEqual",
     "IfHealthRatioLessThanOrEqual",
-    "IfCharacterType",  # 4[3]
-    "IfCharacterHuman",
-    "IfCharacterWhitePhantom",
-    "IfCharacterHollow",
+    "IfCharacterIsType",  # 4[3]
+    "IfCharacterIsHuman",
+    "IfCharacterIsWhitePhantom",
+    "IfCharacterIsHollow",
     "IfCharacterTargetingState",  # 4[4]
     "IfCharacterTargeting",
     "IfCharacterNotTargeting",
@@ -215,14 +219,14 @@ __all__ = [
     "RestartIfValueLessThan",
     "RestartIfValueGreaterThanOrEqual",
     "RestartIfValueLessThanOrEqual",
-    "SkipLinesIfFinishedConditionState",  # 1000[7]
-    "SkipLinesIfFinishedConditionTrue",
-    "SkipLinesIfFinishedConditionFalse",
-    "ReturnIfFinishedConditionState",  # 1000[8]
-    "EndIfFinishedConditionTrue",
-    "EndIfFinishedConditionFalse",
-    "RestartIfFinishedConditionTrue",
-    "RestartIfFinishedConditionFalse",
+    "SkipLinesIfLastConditionResultState",  # 1000[7]
+    "SkipLinesIfLastConditionResultTrue",
+    "SkipLinesIfLastConditionResultFalse",
+    "ReturnIfLastConditionResultState",  # 1000[8]
+    "EndIfLastConditionResultTrue",
+    "EndIfLastConditionResultFalse",
+    "RestartIfLastConditionResultTrue",
+    "RestartIfLastConditionResultFalse",
     "WaitForNetworkApproval",  # 1000[9]
     "Wait",  # 1001[0]
     "WaitFrames",  # 1001[1]
@@ -619,10 +623,10 @@ __all__ = [
     "HealthRatioLessThan",
     "HealthRatioGreaterThanOrEqual",
     "HealthRatioLessThanOrEqual",
-    "CharacterType",
-    "CharacterHuman",
-    "CharacterWhitePhantom",
-    "CharacterHollow",
+    "CharacterIsType",
+    "CharacterIsHuman",
+    "CharacterIsWhitePhantom",
+    "CharacterIsHollow",
     "CharacterTargetingState",
     "CharacterTargeting",
     "CharacterNotTargeting",
@@ -701,28 +705,55 @@ def EndOnRest(event_id_or_func: tp.Union[tp.Callable, int]): ...
 # Dummy enum for accessing event flags defined by events.
 class EVENTS(Flag): ...
 
-# Dummy class for creating conditions.
+
 class Condition:
+    """
+    Create a condition group for use in `Await` or `If` instructions.
+    
+    If `hold = True`, the EVS parser will NOT permit the internal condition group slot assigned to this `Condition` to
+    be automatically re-used once it is evaluated by the game engine and marked as OLD (e.g. by a `Main.AWAIT()` call).    
+    """
     def __init__(self, condition, hold: bool = False): ...
 
+
 class HeldCondition:
+    """
+    Alternative syntax for `Condition(condition, hold=True)`. (See above.)
+    """
     def __init__(self, condition): ...
 
-# Terminators.
-END = ...
-RESTART = ...
 
-# The Await function. Equivalent to using the 'await' built-in Python keyword or `MAIN.Await()`.
-def Await(condition): ...
+def LastResult(condition_group: ConditionGroup):
+    """
+    Wrap a naked condition group like `AND_1` with this to tell EVS/EMEVD that you want to check the LAST RESULT of
+    this condition group rather than actively re-evaluating it.
+    """    
 
-MAIN = ConditionGroup.MAIN
-OR_1 = ConditionGroup.OR_1
-OR_2 = ConditionGroup.OR_2
-OR_3 = ConditionGroup.OR_3
-OR_4 = ConditionGroup.OR_4
-OR_5 = ConditionGroup.OR_5
-OR_6 = ConditionGroup.OR_6
+
+def Await(condition):
+    """
+    The Await function. Equivalent to `MAIN.Await()`, which the EVS decompiler will prefer.
+    
+    You can also use the built-in 'await' Python keyword, but Python linters might complain about this (e.g. because
+    you haven't declared your function with `async def` or because of the type being passed to `await`).
+    """
+    ...
+
+
+# Terminators that can be returned by events as cleaner syntax.
+END = ...  # use with `return END`, identical to `return` or `End()`
+RESTART = ...  # use with `return RESTART`, identical to `Restart()`
+
+
+# Condition groups:
 OR_7 = ConditionGroup.OR_7
+OR_6 = ConditionGroup.OR_6
+OR_5 = ConditionGroup.OR_5
+OR_4 = ConditionGroup.OR_4
+OR_3 = ConditionGroup.OR_3
+OR_2 = ConditionGroup.OR_2
+OR_1 = ConditionGroup.OR_1
+MAIN = ConditionGroup.MAIN
 AND_1 = ConditionGroup.AND_1
 AND_2 = ConditionGroup.AND_2
 AND_3 = ConditionGroup.AND_3
@@ -730,6 +761,11 @@ AND_4 = ConditionGroup.AND_4
 AND_5 = ConditionGroup.AND_5
 AND_6 = ConditionGroup.AND_6
 AND_7 = ConditionGroup.AND_7
+
+
+def RunEvent(event_id: int | tp.Callable, slot: int = 0, args = (0,), arg_types = ""):
+    """Run an event by its ID or function. Use this for imported 'template' events as well."""
+    ...
 
 
 def IfConditionState(condition: ConditionGroup | int, state: bool | int, input_condition: ConditionGroup | int):
@@ -896,7 +932,7 @@ def IfFlagRangeAnyDisabled(condition: ConditionGroup | int, flag_range: FlagRang
 def IfCharacterRegionState(
     condition: ConditionGroup | int,
     state: bool | int,
-    character: Character | Object | int,
+    character: Object | Character | int,
     region: Region | int,
 ):
     """
@@ -916,7 +952,7 @@ def IfPlayerOutsideRegion(condition: ConditionGroup | int, region: Region | int)
     """
 
 
-def IfCharacterInsideRegion(condition: ConditionGroup | int, character: Character | Object | int, region: Region | int):
+def IfCharacterInsideRegion(condition: ConditionGroup | int, character: Object | Character | int, region: Region | int):
     """
     Calls `IfCharacterRegionState` with `state=True`.
     """
@@ -924,7 +960,7 @@ def IfCharacterInsideRegion(condition: ConditionGroup | int, character: Characte
 
 def IfCharacterOutsideRegion(
     condition: ConditionGroup | int,
-    character: Character | Object | int,
+    character: Object | Character | int,
     region: Region | int,
 ):
     """
@@ -1504,27 +1540,27 @@ def IfHealthRatioLessThanOrEqual(condition: ConditionGroup | int, character: Cha
     """
 
 
-def IfCharacterType(condition: ConditionGroup | int, character: Character | int, character_type: CharacterType | int):
+def IfCharacterIsType(condition: ConditionGroup | int, character: Character | int, character_type: CharacterType | int):
     """
     TODO
     """
 
 
-def IfCharacterHuman(condition: ConditionGroup | int, character: Character | int):
+def IfCharacterIsHuman(condition: ConditionGroup | int, character: Character | int):
     """
-    Calls `IfCharacterType` with `character_type=0`.
-    """
-
-
-def IfCharacterWhitePhantom(condition: ConditionGroup | int, character: Character | int):
-    """
-    Calls `IfCharacterType` with `character_type=1`.
+    Calls `IfCharacterIsType` with `character_type=0`.
     """
 
 
-def IfCharacterHollow(condition: ConditionGroup | int, character: Character | int):
+def IfCharacterIsWhitePhantom(condition: ConditionGroup | int, character: Character | int):
     """
-    Calls `IfCharacterType` with `character_type=8`.
+    Calls `IfCharacterIsType` with `character_type=1`.
+    """
+
+
+def IfCharacterIsHollow(condition: ConditionGroup | int, character: Character | int):
+    """
+    Calls `IfCharacterIsType` with `character_type=8`.
     """
 
 
@@ -1846,37 +1882,37 @@ def IfPlayerStandingOnCollision(condition: ConditionGroup | int, collision: Coll
     """
 
 
-def AwaitConditionState(state: bool | int, condition: ConditionGroup | int):
+def AwaitConditionState(state: bool | int, input_condition: ConditionGroup | int):
     """
     Not sure if this is ever really used over `IfConditionState`.
     """
 
 
-def AwaitConditionTrue(condition: ConditionGroup | int):
+def AwaitConditionTrue(input_condition: ConditionGroup | int):
     """
     Calls `AwaitConditionState` with `state=True`.
     """
 
 
-def AwaitConditionFalse(condition: ConditionGroup | int):
+def AwaitConditionFalse(input_condition: ConditionGroup | int):
     """
     Calls `AwaitConditionState` with `state=False`.
     """
 
 
-def SkipLinesIfConditionState(line_count: int, state: bool | int, condition: ConditionGroup | int):
+def SkipLinesIfConditionState(line_count: int, state: bool | int, input_condition: ConditionGroup | int):
     """
     TODO
     """
 
 
-def SkipLinesIfConditionTrue(line_count: int, condition: ConditionGroup | int):
+def SkipLinesIfConditionTrue(line_count: int, input_condition: ConditionGroup | int):
     """
     Calls `SkipLinesIfConditionState` with `state=True`.
     """
 
 
-def SkipLinesIfConditionFalse(line_count: int, condition: ConditionGroup | int):
+def SkipLinesIfConditionFalse(line_count: int, input_condition: ConditionGroup | int):
     """
     Calls `SkipLinesIfConditionState` with `state=False`.
     """
@@ -2065,58 +2101,55 @@ def RestartIfValueLessThanOrEqual(left: int, right: int):
     """
 
 
-def SkipLinesIfFinishedConditionState(line_count: int, state: bool | int, input_condition: ConditionGroup | int):
+def SkipLinesIfLastConditionResultState(line_count: int, state: bool | int, input_condition: ConditionGroup | int):
     """
-    This command is used instead of 1000[01] when conditions are being checked *after* they have already been
-    uploaded into the MAIN condition. For example, you might want to continue MAIN if either AND(01) or AND(02)
-    are true, but then afterwards, act conditionally on exactly which one of those two registers caused you to
-    continue.
+    Skip some number of lines if the last result of the given condition (without re-evaluating) is `state`.
     """
 
 
-def SkipLinesIfFinishedConditionTrue(line_count: int, input_condition: ConditionGroup | int):
+def SkipLinesIfLastConditionResultTrue(line_count: int, input_condition: ConditionGroup | int):
     """
-    Calls `SkipLinesIfFinishedConditionState` with `state=True`.
-    """
-
-
-def SkipLinesIfFinishedConditionFalse(line_count: int, input_condition: ConditionGroup | int):
-    """
-    Calls `SkipLinesIfFinishedConditionState` with `state=False`.
+    Calls `SkipLinesIfLastConditionResultState` with `state=True`.
     """
 
 
-def ReturnIfFinishedConditionState(
+def SkipLinesIfLastConditionResultFalse(line_count: int, input_condition: ConditionGroup | int):
+    """
+    Calls `SkipLinesIfLastConditionResultState` with `state=False`.
+    """
+
+
+def ReturnIfLastConditionResultState(
     event_return_type: EventReturnType | int,
     state: bool | int,
     input_condition: ConditionGroup | int,
 ):
     """
-    TODO
+    End or restart event if last condition result (without re-evaluating) is the given `state`.
     """
 
 
-def EndIfFinishedConditionTrue(input_condition: ConditionGroup | int):
+def EndIfLastConditionResultTrue(input_condition: ConditionGroup | int):
     """
-    Calls `ReturnIfFinishedConditionState` with `event_return_type=0`, `state=True`.
-    """
-
-
-def EndIfFinishedConditionFalse(input_condition: ConditionGroup | int):
-    """
-    Calls `ReturnIfFinishedConditionState` with `event_return_type=0`, `state=False`.
+    Calls `ReturnIfLastConditionResultState` with `event_return_type=0`, `state=True`.
     """
 
 
-def RestartIfFinishedConditionTrue(input_condition: ConditionGroup | int):
+def EndIfLastConditionResultFalse(input_condition: ConditionGroup | int):
     """
-    Calls `ReturnIfFinishedConditionState` with `event_return_type=1`, `state=True`.
+    Calls `ReturnIfLastConditionResultState` with `event_return_type=0`, `state=False`.
     """
 
 
-def RestartIfFinishedConditionFalse(input_condition: ConditionGroup | int):
+def RestartIfLastConditionResultTrue(input_condition: ConditionGroup | int):
     """
-    Calls `ReturnIfFinishedConditionState` with `event_return_type=1`, `state=False`.
+    Calls `ReturnIfLastConditionResultState` with `event_return_type=1`, `state=True`.
+    """
+
+
+def RestartIfLastConditionResultFalse(input_condition: ConditionGroup | int):
+    """
+    Calls `ReturnIfLastConditionResultState` with `event_return_type=1`, `state=False`.
     """
 
 
@@ -2705,7 +2738,7 @@ def PlayCutsceneAndRotatePlayer(
 
 
 def RequestAnimation(
-    entity: Character | Object | int,
+    entity: Object | Character | int,
     animation_id: int,
     loop: bool | int = False,
     wait_for_completion: bool | int = False,
@@ -2916,7 +2949,7 @@ def ToggleRandomFlagInRange(flag_range: FlagRange | tuple | list):
 
 
 def ForceAnimation(
-    entity: Character | Object | int,
+    entity: Object | Character | int,
     animation_id: int,
     loop: bool | int = False,
     wait_for_completion: bool | int = False,
@@ -3526,19 +3559,19 @@ def BetrayCurrentCovenant(dummy: int = 0):
     """
 
 
-def SetAnimationsState(entity: Character | Object | int, state: bool | int):
+def SetAnimationsState(entity: Object | Character | int, state: bool | int):
     """
     TODO
     """
 
 
-def EnableAnimations(entity: Character | Object | int):
+def EnableAnimations(entity: Object | Character | int):
     """
     Calls `SetAnimationsState` with `state=True`.
     """
 
 
-def DisableAnimations(entity: Character | Object | int):
+def DisableAnimations(entity: Object | Character | int):
     """
     Calls `SetAnimationsState` with `state=False`.
     """
@@ -3572,7 +3605,7 @@ def ShortMove(
 def MoveAndCopyDrawParent(
     character: Character | int,
     destination: Object | Character | Region | int,
-    copy_draw_parent: Character | Object | int,
+    copy_draw_parent: Object | Character | int,
     dummy_id: int = -1,
     destination_type: CoordEntityType | int = None,
 ):
@@ -4174,7 +4207,7 @@ def FlagRangeAnyDisabled(flag_range: FlagRange | tuple | list) -> bool:
     ...
 
 
-def CharacterRegionState(state: bool | int, character: Character | Object | int, region: Region | int) -> bool:
+def CharacterRegionState(state: bool | int, character: Object | Character | int, region: Region | int) -> bool:
     ...
 
 
@@ -4186,11 +4219,11 @@ def PlayerOutsideRegion(region: Region | int) -> bool:
     ...
 
 
-def CharacterInsideRegion(character: Character | Object | int, region: Region | int) -> bool:
+def CharacterInsideRegion(character: Object | Character | int, region: Region | int) -> bool:
     ...
 
 
-def CharacterOutsideRegion(character: Character | Object | int, region: Region | int) -> bool:
+def CharacterOutsideRegion(character: Object | Character | int, region: Region | int) -> bool:
     ...
 
 
@@ -4536,19 +4569,19 @@ def HealthRatioLessThanOrEqual(character: Character | int, value: float) -> bool
     ...
 
 
-def CharacterType(character: Character | int, character_type: CharacterType | int) -> bool:
+def CharacterIsType(character: Character | int, character_type: CharacterType | int) -> bool:
     ...
 
 
-def CharacterHuman(character: Character | int) -> bool:
+def CharacterIsHuman(character: Character | int) -> bool:
     ...
 
 
-def CharacterWhitePhantom(character: Character | int) -> bool:
+def CharacterIsWhitePhantom(character: Character | int) -> bool:
     ...
 
 
-def CharacterHollow(character: Character | int) -> bool:
+def CharacterIsHollow(character: Character | int) -> bool:
     ...
 
 

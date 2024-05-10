@@ -358,7 +358,7 @@ def Event_30009570(_, flag: uint, destination: uint, left_flag: uint, cancel_fla
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=9220, entity=destination))
     
-    DisplayDialogAndSetFlags(
+    AwaitDialogResponse(
         message=108000,
         button_type=ButtonType.Yes_or_No,
         number_buttons=NumberButtons.TwoButton,

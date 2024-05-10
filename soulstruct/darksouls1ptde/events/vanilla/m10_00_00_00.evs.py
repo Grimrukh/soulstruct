@@ -156,7 +156,7 @@ def Event_11000090(_, obj: int, vfx_id: int, destination: int, destination_1: in
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     Move(PLAYER, destination=destination, destination_type=CoordEntityType.Region, short_move=True)
     SkipLines(1)
     Move(PLAYER, destination=destination_1, destination_type=CoordEntityType.Region, short_move=True)
@@ -695,7 +695,7 @@ def Event_11005070():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_1)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_1)
     ForceAnimation(1000090, 500)
     EnableAI(1000090)
 
@@ -746,7 +746,7 @@ def Event_11005150(_, character: int, obj: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(5, input_condition=AND_1)
+    SkipLinesIfLastConditionResultFalse(5, input_condition=AND_1)
     DestroyObject(obj)
     PlaySoundEffect(obj, 132200000, sound_type=SoundType.o_Object)
     EnableCharacter(character)
@@ -800,7 +800,7 @@ def Event_11000510(_, character: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_3)
     DisableCharacter(character)
     
     MAIN.Await(FlagEnabled(703))

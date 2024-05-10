@@ -117,7 +117,7 @@ def Event_14100100():
     
     MAIN.Await(AND_2)
     
-    DisplayDialogAndSetFlags(
+    AwaitDialogResponse(
         message=10012020,
         button_type=ButtonType.Yes_or_No,
         number_buttons=NumberButtons.TwoButton,
@@ -168,10 +168,10 @@ def Event_14100100():
     
     MAIN.Await(OR_3)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=OR_2)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=OR_2)
     EnableFlag(74100100)
     AddSpecialEffect(PLAYER, 4902)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_2)
     Wait(4.199999809265137)
     AwardAchievement(achievement_id=2)
     DisableLoadingScreenTips()
@@ -218,7 +218,7 @@ def Event_14100101():
     
     MAIN.Await(AND_2)
     
-    DisplayDialogAndSetFlags(
+    AwaitDialogResponse(
         message=10012021,
         button_type=ButtonType.Yes_or_No,
         number_buttons=NumberButtons.TwoButton,

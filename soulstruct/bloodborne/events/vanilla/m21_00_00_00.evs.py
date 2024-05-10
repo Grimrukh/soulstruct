@@ -1012,8 +1012,8 @@ def Event_12100117():
     
     MAIN.Await(AND_1)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_4)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_3)
     RotateToFaceEntity(2100700, PLAYER, animation=7001)
     WaitFrames(frames=1)
     Restart()
@@ -1841,7 +1841,7 @@ def Event_12101801():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_1)
+    EndIfLastConditionResultTrue(input_condition=AND_1)
     PlaySoundEffect(2102800, 0, sound_type=SoundType.c_CharacterMotion)
 
 
@@ -1913,7 +1913,7 @@ def Event_12104810():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     RotateToFaceEntity(PLAYER, 2102800, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=2102801))
@@ -1924,7 +1924,7 @@ def Event_12104810():
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_5)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_5)
     EnableFlag(12104800)
     Restart()
 
@@ -1953,7 +1953,7 @@ def Event_12104811():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_3)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_3)
     EnableFlag(12104801)
     Restart()
 
@@ -2183,7 +2183,7 @@ def Event_12101851():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_1)
+    EndIfLastConditionResultTrue(input_condition=AND_1)
     PlaySoundEffect(2102800, 0, sound_type=SoundType.c_CharacterMotion)
 
 
@@ -2299,7 +2299,7 @@ def Event_12104880():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     RotateToFaceEntity(PLAYER, 2102800, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=2102801))
@@ -2310,7 +2310,7 @@ def Event_12104880():
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_5)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_5)
     EnableFlag(12104850)
     Restart()
 
@@ -2339,7 +2339,7 @@ def Event_12104881():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_3)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_3)
     EnableFlag(12104851)
     Restart()
 
@@ -2488,7 +2488,7 @@ def Event_12104860(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         2100810,
         npc_part_id=npc_part_id,
@@ -2638,15 +2638,15 @@ def Event_12105010():
     
     WaitFrames(frames=31)
     CreateTemporaryVFX(vfx_id=350, anchor_entity=2100954, dummy_id=200, anchor_type=CoordEntityType.Character)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_3)
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=AND_4)
-    GotoIfFinishedConditionTrue(Label.L4, input_condition=AND_5)
-    GotoIfFinishedConditionTrue(Label.L5, input_condition=AND_6)
-    GotoIfFinishedConditionTrue(Label.L6, input_condition=AND_7)
-    GotoIfFinishedConditionTrue(Label.L7, input_condition=AND_8)
-    GotoIfFinishedConditionTrue(Label.L8, input_condition=AND_9)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L4, input_condition=AND_5)
+    GotoIfLastConditionResultTrue(Label.L5, input_condition=AND_6)
+    GotoIfLastConditionResultTrue(Label.L6, input_condition=AND_7)
+    GotoIfLastConditionResultTrue(Label.L7, input_condition=AND_8)
+    GotoIfLastConditionResultTrue(Label.L8, input_condition=AND_9)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -2777,15 +2777,15 @@ def Event_12105011():
     
     WaitFrames(frames=31)
     CreateTemporaryVFX(vfx_id=350, anchor_entity=2100955, dummy_id=200, anchor_type=CoordEntityType.Character)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_3)
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=AND_4)
-    GotoIfFinishedConditionTrue(Label.L4, input_condition=AND_5)
-    GotoIfFinishedConditionTrue(Label.L5, input_condition=AND_6)
-    GotoIfFinishedConditionTrue(Label.L6, input_condition=AND_7)
-    GotoIfFinishedConditionTrue(Label.L7, input_condition=AND_8)
-    GotoIfFinishedConditionTrue(Label.L8, input_condition=AND_9)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L4, input_condition=AND_5)
+    GotoIfLastConditionResultTrue(Label.L5, input_condition=AND_6)
+    GotoIfLastConditionResultTrue(Label.L6, input_condition=AND_7)
+    GotoIfLastConditionResultTrue(Label.L7, input_condition=AND_8)
+    GotoIfLastConditionResultTrue(Label.L8, input_condition=AND_9)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -2934,15 +2934,15 @@ def Event_12105012():
     
     WaitFrames(frames=31)
     CreateTemporaryVFX(vfx_id=350, anchor_entity=2100956, dummy_id=200, anchor_type=CoordEntityType.Character)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_3)
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=AND_4)
-    GotoIfFinishedConditionTrue(Label.L4, input_condition=AND_5)
-    GotoIfFinishedConditionTrue(Label.L5, input_condition=AND_6)
-    GotoIfFinishedConditionTrue(Label.L6, input_condition=AND_7)
-    GotoIfFinishedConditionTrue(Label.L7, input_condition=AND_8)
-    GotoIfFinishedConditionTrue(Label.L8, input_condition=AND_9)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L4, input_condition=AND_5)
+    GotoIfLastConditionResultTrue(Label.L5, input_condition=AND_6)
+    GotoIfLastConditionResultTrue(Label.L6, input_condition=AND_7)
+    GotoIfLastConditionResultTrue(Label.L7, input_condition=AND_8)
+    GotoIfLastConditionResultTrue(Label.L8, input_condition=AND_9)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -3091,15 +3091,15 @@ def Event_12105013():
     
     WaitFrames(frames=31)
     CreateTemporaryVFX(vfx_id=350, anchor_entity=2100957, dummy_id=200, anchor_type=CoordEntityType.Character)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_3)
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=AND_4)
-    GotoIfFinishedConditionTrue(Label.L4, input_condition=AND_5)
-    GotoIfFinishedConditionTrue(Label.L5, input_condition=AND_6)
-    GotoIfFinishedConditionTrue(Label.L6, input_condition=AND_7)
-    GotoIfFinishedConditionTrue(Label.L7, input_condition=AND_8)
-    GotoIfFinishedConditionTrue(Label.L8, input_condition=AND_9)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L4, input_condition=AND_5)
+    GotoIfLastConditionResultTrue(Label.L5, input_condition=AND_6)
+    GotoIfLastConditionResultTrue(Label.L6, input_condition=AND_7)
+    GotoIfLastConditionResultTrue(Label.L7, input_condition=AND_8)
+    GotoIfLastConditionResultTrue(Label.L8, input_condition=AND_9)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -3248,15 +3248,15 @@ def Event_12105014():
     
     WaitFrames(frames=31)
     CreateTemporaryVFX(vfx_id=350, anchor_entity=2100958, dummy_id=200, anchor_type=CoordEntityType.Character)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_3)
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=AND_4)
-    GotoIfFinishedConditionTrue(Label.L4, input_condition=AND_5)
-    GotoIfFinishedConditionTrue(Label.L5, input_condition=AND_6)
-    GotoIfFinishedConditionTrue(Label.L6, input_condition=AND_7)
-    GotoIfFinishedConditionTrue(Label.L7, input_condition=AND_8)
-    GotoIfFinishedConditionTrue(Label.L8, input_condition=AND_9)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L4, input_condition=AND_5)
+    GotoIfLastConditionResultTrue(Label.L5, input_condition=AND_6)
+    GotoIfLastConditionResultTrue(Label.L6, input_condition=AND_7)
+    GotoIfLastConditionResultTrue(Label.L7, input_condition=AND_8)
+    GotoIfLastConditionResultTrue(Label.L8, input_condition=AND_9)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -3405,15 +3405,15 @@ def Event_12105015():
     
     WaitFrames(frames=31)
     CreateTemporaryVFX(vfx_id=350, anchor_entity=2100959, dummy_id=200, anchor_type=CoordEntityType.Character)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_3)
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=AND_4)
-    GotoIfFinishedConditionTrue(Label.L4, input_condition=AND_5)
-    GotoIfFinishedConditionTrue(Label.L5, input_condition=AND_6)
-    GotoIfFinishedConditionTrue(Label.L6, input_condition=AND_7)
-    GotoIfFinishedConditionTrue(Label.L7, input_condition=AND_8)
-    GotoIfFinishedConditionTrue(Label.L8, input_condition=AND_9)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L4, input_condition=AND_5)
+    GotoIfLastConditionResultTrue(Label.L5, input_condition=AND_6)
+    GotoIfLastConditionResultTrue(Label.L6, input_condition=AND_7)
+    GotoIfLastConditionResultTrue(Label.L7, input_condition=AND_8)
+    GotoIfLastConditionResultTrue(Label.L8, input_condition=AND_9)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -3562,15 +3562,15 @@ def Event_12105016():
     
     WaitFrames(frames=31)
     CreateTemporaryVFX(vfx_id=350, anchor_entity=2100960, dummy_id=200, anchor_type=CoordEntityType.Character)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_3)
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=AND_4)
-    GotoIfFinishedConditionTrue(Label.L4, input_condition=AND_5)
-    GotoIfFinishedConditionTrue(Label.L5, input_condition=AND_6)
-    GotoIfFinishedConditionTrue(Label.L6, input_condition=AND_7)
-    GotoIfFinishedConditionTrue(Label.L7, input_condition=AND_8)
-    GotoIfFinishedConditionTrue(Label.L8, input_condition=AND_9)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L4, input_condition=AND_5)
+    GotoIfLastConditionResultTrue(Label.L5, input_condition=AND_6)
+    GotoIfLastConditionResultTrue(Label.L6, input_condition=AND_7)
+    GotoIfLastConditionResultTrue(Label.L7, input_condition=AND_8)
+    GotoIfLastConditionResultTrue(Label.L8, input_condition=AND_9)
 
     # --- Label 0 --- #
     DefineLabel(0)

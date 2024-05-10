@@ -1894,7 +1894,7 @@ def Event_13415350(_, character: int):
     if FlagEnabled(13410200):
         return
     GotoIfThisEventSlotFlagEnabled(Label.L0)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -1965,7 +1965,7 @@ def Event_13415351(
     AND_7.Add(CharacterInsideRegion(character=character, region=region_3))
     AND_8.Add(AttackedWithDamageType(attacked_entity=character, attacker=PLAYER))
     AND_8.Add(CharacterInsideRegion(character=character, region=region_4))
-    AND_14.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_14.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_14.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_3.Add(AND_14)
     OR_3.Add(CharacterHuman(PLAYER))
@@ -1999,7 +1999,7 @@ def Event_13415351(
     
     MAIN.Await(OR_5)
     
-    RestartIfFinishedConditionTrue(input_condition=AND_10)
+    RestartIfLastConditionResultTrue(input_condition=AND_10)
     SetNetworkConnectedFlagState(flag=13415433, state=FlagSetting.On)
 
     # --- Label 11 --- #
@@ -2013,14 +2013,14 @@ def Event_13415351(
 
     # --- Label 12 --- #
     DefineLabel(12)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_3)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_4)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_5)
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=AND_6)
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=AND_7)
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_8)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_5)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=AND_6)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=AND_7)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=AND_8)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -2193,7 +2193,7 @@ def Event_13415450(_, character: int, animation_id: int, seconds: float):
         return
     DisableGravity(character)
     DisableAI(character)
-    AND_14.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_14.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_14.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_14)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -2236,7 +2236,7 @@ def Event_13417500(
     ForceAnimation(obj_1, animation_id, loop=True, unknown2=1.0)
     GotoIfObjectDestroyed(Label.L1, obj=obj)
     GotoIfFlagEnabled(Label.L0, flag=flag)
-    AND_14.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_14.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_14.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_2.Add(AND_14)
     OR_2.Add(CharacterHuman(PLAYER))
@@ -2306,7 +2306,7 @@ def Event_13417600(
     ForceAnimation(obj_1, animation_id, loop=True, unknown2=1.0)
     GotoIfObjectDestroyed(Label.L1, obj=obj)
     GotoIfFlagEnabled(Label.L0, flag=flag)
-    AND_14.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_14.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_14.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_2.Add(AND_14)
     OR_2.Add(CharacterHuman(PLAYER))
@@ -2466,7 +2466,7 @@ def Event_13415830():
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=4))
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=7))
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=21))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     if OR_15:
         return
     SkipLinesIfFlagEnabled(7, 13410831)
@@ -2581,7 +2581,7 @@ def Event_13410832():
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_2)
     ForceAnimation(3410830, 20001, skip_transition=True, unknown2=1.0)
     Wait(7.5)
     Goto(Label.L2)

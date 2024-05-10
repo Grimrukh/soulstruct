@@ -256,10 +256,10 @@ def Event_1043372250(_, character: uint, region: uint, owner_entity: uint):
         return
     DisableCharacter(character)
     CreateProjectileOwner(entity=owner_entity)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(OR_1)
     OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=PLAYER))
@@ -628,8 +628,8 @@ def Event_1043373707(
     
     MAIN.Await(OR_5)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_2)
-    GotoIfFinishedConditionTrue(Label.L5, input_condition=OR_4)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_2)
+    GotoIfLastConditionResultTrue(Label.L5, input_condition=OR_4)
 
     # --- Label 0 --- #
     DefineLabel(0)

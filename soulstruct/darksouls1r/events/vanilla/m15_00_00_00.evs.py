@@ -317,7 +317,7 @@ def Event_11500090(_, obj: int, vfx_id: int, destination: int, destination_1: in
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     Move(PLAYER, destination=destination, destination_type=CoordEntityType.Region, short_move=True)
     SkipLines(1)
     Move(PLAYER, destination=destination_1, destination_type=CoordEntityType.Region, short_move=True)
@@ -841,11 +841,11 @@ def Event_11505353():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_1)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_1)
     DisableMapCollision(collision=1503000)
     SkipLines(1)
     EnableMapCollision(collision=1503000)
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     AND_4.Add(CharacterDoesNotHaveTAEEvent(1500800, tae_event_id=400))
     AND_4.Add(CharacterDoesNotHaveTAEEvent(1500800, tae_event_id=300))
     
@@ -1393,7 +1393,7 @@ def Event_11500850():
     EnableFlag(11505250)
     DisableFlag(11505251)
     DisableFlag(11505252)
-    SkipLinesIfFinishedConditionFalse(23, input_condition=AND_1)
+    SkipLinesIfLastConditionResultFalse(23, input_condition=AND_1)
     Move(PLAYER, destination=1501790, destination_type=CoordEntityType.Object, dummy_id=101, short_move=True)
     ForceAnimation(PLAYER, 8020)
     CreateTemporaryVFX(vfx_id=150001, anchor_entity=1501790, anchor_type=CoordEntityType.Object)
@@ -1417,7 +1417,7 @@ def Event_11500850():
         EnableFlag(11500806)
         ForceAnimation(1501790, 0, wait_for_completion=True)
         Restart()
-    RestartIfFinishedConditionFalse(input_condition=AND_2)
+    RestartIfLastConditionResultFalse(input_condition=AND_2)
     Move(PLAYER, destination=1501790, destination_type=CoordEntityType.Object, dummy_id=103, short_move=True)
     ForceAnimation(PLAYER, 8021)
     CreateTemporaryVFX(vfx_id=150001, anchor_entity=1501790, anchor_type=CoordEntityType.Object)
@@ -1465,7 +1465,7 @@ def Event_11505255():
     
     WaitForNetworkApproval(max_seconds=3.0)
     EnableFlag(11505250)
-    SkipLinesIfFinishedConditionTrue(19, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(19, input_condition=AND_2)
     EnableFlag(11505251)
     DisableFlag(11505252)
     if FlagDisabled(11500803):
@@ -1534,7 +1534,7 @@ def Event_11500841(_, flag: int):
     MAIN.Await(OR_1)
     
     DisableFlag(11505240)
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     DisableFlag(flag)
     SkipLines(1)
     EnableFlag(flag)
@@ -1555,7 +1555,7 @@ def Event_11500835():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_2)
     Wait(3.0)
     if FlagDisabled(11500803):
         EndOfAnimation(obj=1501790, animation_id=3)
@@ -1597,7 +1597,7 @@ def Event_11500100():
     EnableNavmeshType(navmesh_id=1503101, navmesh_type=NavmeshType.Disable)
     EnableNavmeshType(navmesh_id=1503102, navmesh_type=NavmeshType.Disable)
     EnableNavmeshType(navmesh_id=1503103, navmesh_type=NavmeshType.Disable)
-    SkipLinesIfFinishedConditionFalse(16, input_condition=AND_1)
+    SkipLinesIfLastConditionResultFalse(16, input_condition=AND_1)
     EnableFlag(11500100)
     ForceAnimation(1501011, 0, wait_for_completion=True)
     DisableNavmeshType(navmesh_id=1503100, navmesh_type=NavmeshType.Disable)
@@ -1616,8 +1616,8 @@ def Event_11500100():
     MAIN.Await(AllPlayersOutsideRegion(region=1502062))
     
     Restart()
-    SkipLinesIfFinishedConditionTrue(27, input_condition=AND_4)
-    SkipLinesIfFinishedConditionTrue(26, input_condition=AND_5)
+    SkipLinesIfLastConditionResultTrue(27, input_condition=AND_4)
+    SkipLinesIfLastConditionResultTrue(26, input_condition=AND_5)
     EnableFlag(11500101)
     DisableNavmeshType(navmesh_id=1503100, navmesh_type=NavmeshType.Drop)
     DisableNavmeshType(navmesh_id=1503110, navmesh_type=NavmeshType.DropAdjacent)
@@ -1994,7 +1994,7 @@ def Event_11505051():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_1)
+    EndIfLastConditionResultTrue(input_condition=AND_1)
     Move(1500101, destination=1502100, destination_type=CoordEntityType.Region, short_move=True)
     ForceAnimation(1500101, 9001, wait_for_completion=True)
     DisableFlag(11505052)
@@ -2049,7 +2049,7 @@ def Event_11505110():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(8, input_condition=AND_6)
+    SkipLinesIfLastConditionResultFalse(8, input_condition=AND_6)
     ShootProjectile(
         owner_entity=1500200,
         source_entity=1500100,
@@ -2066,7 +2066,7 @@ def Event_11505110():
     Wait(1.0)
     DisableFlag(11505100)
     Restart()
-    SkipLinesIfFinishedConditionFalse(8, input_condition=AND_5)
+    SkipLinesIfLastConditionResultFalse(8, input_condition=AND_5)
     ShootProjectile(
         owner_entity=1500200,
         source_entity=1500100,
@@ -2083,7 +2083,7 @@ def Event_11505110():
     Wait(1.0)
     DisableFlag(11505100)
     Restart()
-    SkipLinesIfFinishedConditionFalse(8, input_condition=AND_4)
+    SkipLinesIfLastConditionResultFalse(8, input_condition=AND_4)
     ShootProjectile(
         owner_entity=1500200,
         source_entity=1500100,
@@ -2100,7 +2100,7 @@ def Event_11505110():
     Wait(1.0)
     DisableFlag(11505100)
     Restart()
-    SkipLinesIfFinishedConditionFalse(8, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(8, input_condition=AND_3)
     ShootProjectile(
         owner_entity=1500200,
         source_entity=1500100,
@@ -2117,7 +2117,7 @@ def Event_11505110():
     Wait(1.0)
     DisableFlag(11505100)
     Restart()
-    SkipLinesIfFinishedConditionFalse(8, input_condition=AND_2)
+    SkipLinesIfLastConditionResultFalse(8, input_condition=AND_2)
     ShootProjectile(
         owner_entity=1500200,
         source_entity=1500100,
@@ -2134,7 +2134,7 @@ def Event_11505110():
     Wait(1.0)
     DisableFlag(11505100)
     Restart()
-    SkipLinesIfFinishedConditionFalse(8, input_condition=AND_1)
+    SkipLinesIfLastConditionResultFalse(8, input_condition=AND_1)
     ShootProjectile(
         owner_entity=1500200,
         source_entity=1500100,
@@ -2270,7 +2270,7 @@ def Event_11505010():
     AND_1.Add(CharacterAlive(1500010))
     AND_1.Add(CharacterBackreadEnabled(1500010))
     AND_1.Add(CharacterHasSpecialEffect(1500010, 5421))
-    AND_2.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_2.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_1.Add(not AND_2)
     AND_1.Add(ActionButton(
         prompt_text=10010400,
@@ -2342,7 +2342,7 @@ def Event_11505012():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(5, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(5, input_condition=AND_2)
     AICommand(1500010, command_id=200, command_slot=0)
     ReplanAI(1500010)
     Wait(0.10000000149011612)
@@ -2374,7 +2374,7 @@ def Event_11505013():
     
     RemoveSpecialEffect(1500010, 3150)
     RemoveSpecialEffect(1500010, 3151)
-    SkipLinesIfFinishedConditionTrue(5, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(5, input_condition=AND_2)
     AICommand(1500010, command_id=201, command_slot=0)
     ReplanAI(1500010)
     Wait(0.10000000149011612)
@@ -2512,7 +2512,7 @@ def Event_11500510(_, character: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_3)
     DisableCharacter(character)
     
     MAIN.Await(FlagEnabled(703))
@@ -2575,7 +2575,7 @@ def Event_11500532(_, character: int, first_flag: int, last_flag: int, flag: int
     
     MAIN.Await(AND_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_1)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_1)
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     DisableCharacter(character)

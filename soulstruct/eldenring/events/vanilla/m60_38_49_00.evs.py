@@ -108,7 +108,7 @@ def Event_1038492300():
 def Event_1038492301():
     """Event 1038492301"""
     EnableNetworkSync()
-    OR_2.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_2.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     OR_2.Add(CharacterInvadeType(character=PLAYER, invade_type=CharacterType.Unknown7))
     if OR_2:
         return

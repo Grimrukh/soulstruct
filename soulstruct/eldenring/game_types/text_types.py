@@ -25,6 +25,7 @@ __all__ = [
     "StringOffset",
     "EventTextTyping",
     "NPCNameTyping",
+    "PlaceNameTyping",
     "SubtitleTyping",
     "StringOffsetTyping",
 ]
@@ -52,6 +53,10 @@ class NPCName(Text):
 
 class PlaceName(Text):
     """Place name ID."""
+    @classmethod
+    def get_event_arg_fmt(cls):
+        return "I"
+
     @classmethod
     def get_text_category(cls):
         return "PlaceNames"
@@ -242,5 +247,6 @@ class StringOffset(GameObjectInt):
 TextTyping = tp.Union[Text, int]
 EventTextTyping = tp.Union[EventText, int]
 NPCNameTyping = tp.Union[NPCName, int]
+PlaceNameTyping = tp.Union[PlaceName, int]
 SubtitleTyping = tp.Union[Subtitle, int]
 StringOffsetTyping = tp.Union[StringOffset, int]

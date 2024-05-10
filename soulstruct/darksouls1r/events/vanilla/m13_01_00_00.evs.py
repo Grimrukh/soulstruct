@@ -156,7 +156,7 @@ def Event_11310090(_, obj: int, vfx_id: int, destination: int, destination_1: in
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     Move(PLAYER, destination=destination, destination_type=CoordEntityType.Region, short_move=True)
     SkipLines(1)
     Move(PLAYER, destination=destination_1, destination_type=CoordEntityType.Region, short_move=True)
@@ -635,7 +635,7 @@ def Event_11315370(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     SkipLinesIfFlagEnabled(5, 11315370)
     SetCollisionMask(1310800, bit_index=1, switch_type=OnOffChange.Off)
     SetDisplayMask(1310800, bit_index=1, switch_type=OnOffChange.On)
@@ -855,7 +855,7 @@ def Event_11315080():
     MAIN.Await(OR_1)
     
     EnableAI(1310250)
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     SetStandbyAnimationSettings(1310250, standby_animation=9000)
     ForceAnimation(1310250, 9070, wait_for_completion=True)
     Move(1310250, destination=1312250, destination_type=CoordEntityType.Region, short_move=True)
@@ -995,7 +995,7 @@ def Event_11310510(_, character: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_3)
     DisableCharacter(character)
     
     MAIN.Await(FlagEnabled(703))
@@ -1180,7 +1180,7 @@ def Event_11310533(_, character: int, first_flag: int, last_flag: int, flag: int
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
-    EndIfFinishedConditionFalse(input_condition=AND_2)
+    EndIfLastConditionResultFalse(input_condition=AND_2)
     DropMandatoryTreasure(character)
 
 
@@ -1202,7 +1202,7 @@ def Event_11310534(_, character: int, first_flag: int, last_flag: int, flag: int
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
-    EndIfFinishedConditionFalse(input_condition=AND_2)
+    EndIfLastConditionResultFalse(input_condition=AND_2)
     DropMandatoryTreasure(character)
 
 
@@ -1260,7 +1260,7 @@ def Event_11310542(_, character: int, flag: int):
     DisableFlag(1625)
     DisableFlag(1627)
     EnableFlag(flag)
-    EndIfFinishedConditionFalse(input_condition=AND_3)
+    EndIfLastConditionResultFalse(input_condition=AND_3)
     DropMandatoryTreasure(character)
 
 
@@ -1355,7 +1355,7 @@ def Event_11310002():
     MAIN.Await(OR_1)
     
     SkipLinesIfMultiplayer(7)
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     PlayCutscene(130111, cutscene_flags=0, player_id=10000, move_to_region=1312120, game_map=TOMB_OF_THE_GIANTS)
     SkipLines(1)
     PlayCutscene(130110, cutscene_flags=0, player_id=10000, move_to_region=1312120, game_map=TOMB_OF_THE_GIANTS)
@@ -1363,7 +1363,7 @@ def Event_11310002():
     MoveToEntity(6321, destination=1312121, destination_type=CoordEntityType.Region)
     End()
     SkipLinesIfClient(7)
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     PlayCutscene(
         130111,
         cutscene_flags=CutsceneFlags.Unskippable,
@@ -1382,7 +1382,7 @@ def Event_11310002():
     WaitFrames(frames=1)
     MoveToEntity(6321, destination=1312121, destination_type=CoordEntityType.Region)
     End()
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     PlayCutscene(130111, cutscene_flags=CutsceneFlags.Unskippable, player_id=10000)
     SkipLines(1)
     PlayCutscene(130110, cutscene_flags=CutsceneFlags.Unskippable, player_id=10000)

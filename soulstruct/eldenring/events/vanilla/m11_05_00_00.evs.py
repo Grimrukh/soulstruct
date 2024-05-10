@@ -378,7 +378,7 @@ def Event_11052500():
     EnableFlag(11050500)
     ForceAnimation(PLAYER, 0)
     Wait(1.0)
-    DisplayAreaWelcomeMessage(text=11050)
+    DisplayAreaWelcomeMessage(place_name_id=11050)
 
 
 @ContinueOnRest(11052510)
@@ -509,11 +509,11 @@ def Event_11052810():
     DisableAnimations(Characters.HoarahLoux)
     EnableImmortality(Characters.Godfrey)
     DisableAnimations(Characters.Godfrey)
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.Invader))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.Invader2))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.Invader3))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader2))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader3))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
     if OR_15:
         return
     GotoIfFlagEnabled(Label.L1, flag=11050801)
@@ -1084,7 +1084,7 @@ def Event_11053708(
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_2)
     DeleteAssetVFX(asset)
     AwardItemLot(item_lot, host_only=True)
     EzstateAIRequest(PLAYER, command_id=60070, command_slot=0)

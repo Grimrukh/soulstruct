@@ -1872,11 +1872,11 @@ def Event_15002810():
     DisableAnimations(Characters.Malenia5)
     SetLockOnPoint(character=Characters.Malenia5, lock_on_dummy_id=220, state=True)
     DisableTreasure(asset=15001810)
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.Invader))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.Invader2))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.Invader3))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader2))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader3))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
     if OR_15:
         return
     GotoIfFlagEnabled(Label.L1, flag=15000801)

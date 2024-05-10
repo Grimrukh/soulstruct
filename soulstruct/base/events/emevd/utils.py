@@ -1,13 +1,8 @@
 from __future__ import annotations
 
 __all__ = [
-    "COMPARISON_NODES",
-    "NEG_COMPARISON_NODES",
-    "no_skip_or_negate_or_return",
-    "negate_only",
-    "skip_and_negate_and_return",
-    "get_coord_entity_type",
     "EventArgumentData",
+    "get_coord_entity_type",
     "boolify",
     "get_write_offset",
     "get_instruction_args",
@@ -15,16 +10,12 @@ __all__ = [
     "format_event_layers",
 ]
 
-import ast
 import logging
 import struct
 import typing as tp
 from enum import IntEnum
-from functools import wraps
 
 from soulstruct.base.game_types import GameObjectInt, GAME_INT_TYPE
-
-from .exceptions import NoSkipOrReturnError, NoNegateError
 
 if tp.TYPE_CHECKING:
     from .emedf import EMEDF_TYPING
@@ -32,68 +23,7 @@ if tp.TYPE_CHECKING:
 
 _LOGGER = logging.getLogger("soulstruct")
 
-COMPARISON_NODES = {ast.Eq: 0, ast.NotEq: 1, ast.Gt: 2, ast.Lt: 3, ast.GtE: 4, ast.LtE: 5}
-NEG_COMPARISON_NODES = {ast.Eq: 1, ast.NotEq: 0, ast.Gt: 5, ast.Lt: 4, ast.GtE: 3, ast.LtE: 2}
-
 _OPTIONAL_ARGS_ALLOWED = ((2000, 0), (2000, 6))
-
-
-def no_skip_or_negate_or_return(func):
-    @wraps(func)
-    def decorated(*args, condition=None, negate=False, skip_lines=0, end_event=False, restart_event=False, **kwargs):
-        if skip_lines != 0:
-            raise NoSkipOrReturnError
-        if negate:
-            raise NoNegateError
-        if end_event or restart_event:
-            raise NoSkipOrReturnError
-        if condition is None:
-            raise ValueError("Condition index must be specified.")
-        return func(*args, condition=condition, **kwargs)
-
-    return decorated
-
-
-def negate_only(func):
-    @wraps(func)
-    def decorated(*args, condition=None, negate=False, skip_lines=0, end_event=False, restart_event=False, **kwargs):
-        if skip_lines != 0:
-            raise NoSkipOrReturnError
-        if end_event or restart_event:
-            raise NoSkipOrReturnError
-        if condition is None:
-            raise ValueError("Condition index must be specified.")
-        return func(*args, condition=condition, negate=negate, **kwargs)
-
-    return decorated
-
-
-def skip_and_negate_and_return(func):
-    @wraps(func)
-    def decorated(*args, condition=None, negate=False, skip_lines=0, end_event=False, restart_event=False, **kwargs):
-        if skip_lines > 0:
-            if condition is not None or end_event or restart_event:
-                raise ValueError("You cannot use more than one of: condition, skip_lines, end_event, restart_event.")
-            return func(*args, skip_lines=skip_lines, negate=negate, **kwargs)
-        elif skip_lines < 0:
-            raise ValueError("You cannot skip a negative number of lines.")
-
-        if condition is not None:
-            if end_event or restart_event:
-                raise ValueError("You cannot use more than one of: condition, skip_lines, end_event, restart_event.")
-            return func(*args, condition=condition, negate=negate, **kwargs)
-
-        if end_event:
-            if restart_event:
-                raise ValueError("You cannot use more than one of: condition, skip_lines, end_event, restart_event.")
-            return func(*args, end_event=True, negate=negate, **kwargs)
-
-        if restart_event:
-            return func(*args, restart_event=True, negate=negate, **kwargs)
-
-        raise ValueError("Must specify one condition outcome (condition, skip, end, restart).")
-
-    return decorated
 
 
 class EventArgumentData:
@@ -189,9 +119,10 @@ def get_instruction_args(
     reader.seek(first_arg_offset)
     args = reader.unpack(struct_args_format)
 
-    # Additional arguments may appear for the instruction 2000[00], 'RunEvent'. These instructions are tightly packed
-    # and are always aligned to 4. We read them here as unsigned integers and must actually parse the called event ID to
-    # interpret them properly (done at `EMEVD` class level).
+    # Additional arguments may appear for the instruction 2000[00], 'RunEvent', and from DS3 onward, 2000[06],
+    # 'RunCommonEvent'. These instructions are tightly packed and are always aligned to 4. We read them here as
+    # unsigned integers and must actually parse the called event ID (or `common_func` event ID) to interpret them
+    # properly (done at `EMEVD` class level).
 
     extra_size = event_args_size - required_args_size
 

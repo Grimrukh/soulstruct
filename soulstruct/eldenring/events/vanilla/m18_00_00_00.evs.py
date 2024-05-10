@@ -451,7 +451,7 @@ def Event_18000050():
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionFalse(Label.L0, input_condition=OR_2)
+    GotoIfLastConditionResultFalse(Label.L0, input_condition=OR_2)
     DisplayFullScreenMessage(text=2000)
     Wait(1.0)
     if FlagDisabled(2030):

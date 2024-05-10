@@ -159,7 +159,7 @@ def Event_1042332575(
     
     MAIN.Await(AND_1)
     
-    DisplayDialogAndSetFlags(
+    AwaitDialogResponse(
         message=message,
         button_type=ButtonType.Yes_or_No,
         number_buttons=NumberButtons.TwoButton,

@@ -661,7 +661,7 @@ def Event_12022609():
 
     # --- Label 10 --- #
     DefineLabel(10)
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     if AND_15:
         return
     
@@ -805,7 +805,7 @@ def Event_12022629():
 
     # --- Label 10 --- #
     DefineLabel(10)
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     if AND_15:
         return
     
@@ -847,7 +847,7 @@ def Event_12022670():
     
     MAIN.Await(AND_1)
     
-    DisplayDialogAndSetFlags(
+    AwaitDialogResponse(
         message=4300,
         button_type=ButtonType.Yes_or_No,
         number_buttons=NumberButtons.TwoButton,
@@ -917,12 +917,12 @@ def Event_12022200(_, region: uint, character: uint, special_effect: int):
     """Event 12022200"""
     if ThisEventSlotFlagEnabled():
         return
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_15)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_4.Add(OR_1)
     AND_4.Add(CharacterInsideRegion(character=PLAYER, region=region))
     
@@ -953,12 +953,12 @@ def Event_12022300(_, character: uint, region: uint, seconds: float):
         EnableCharacter(character)
         End()
     DisableCharacter(character)
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_15)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_4.Add(OR_1)
     AND_4.Add(CharacterInsideRegion(character=PLAYER, region=region))
     
@@ -1015,12 +1015,12 @@ def Event_12022370():
 def Event_12022371():
     """Event 12022371"""
     EndIffSpecialStandbyEndedFlagEnabled(character=12020390)
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_15)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=12020390, radius=6.0))
     AND_1.Add(CharacterBackreadEnabled(12020390))
     OR_11.Add(CharacterHasSpecialEffect(12020390, 5080))
@@ -1084,12 +1084,12 @@ def Event_12022372():
     """Event 12022372"""
     EndIffSpecialStandbyEndedFlagEnabled(character=Characters.AncestralFollowerShaman0)
     ForceAnimation(Characters.AncestralFollowerShaman0, 30003, loop=True)
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_15)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=Characters.AncestralFollowerShaman0, radius=6.0))
     AND_1.Add(CharacterBackreadEnabled(Characters.AncestralFollowerShaman0))
     OR_11.Add(CharacterHasSpecialEffect(Characters.AncestralFollowerShaman0, 5080))
@@ -1157,12 +1157,12 @@ def Event_12022373():
     """Event 12022373"""
     EndIffSpecialStandbyEndedFlagEnabled(character=Characters.AncestralFollowerShaman1)
     ForceAnimation(Characters.AncestralFollowerShaman1, 30003, loop=True)
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_15)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=Characters.AncestralFollowerShaman1, radius=6.0))
     AND_1.Add(CharacterBackreadEnabled(Characters.AncestralFollowerShaman1))
     OR_11.Add(CharacterHasSpecialEffect(Characters.AncestralFollowerShaman1, 5080))
@@ -1347,7 +1347,7 @@ def Event_12022502():
     PlayCutscene(12020001, cutscene_flags=CutsceneFlags.Unknown16, player_id=10000)
     WaitFrames(frames=1)
     Wait(1.0)
-    DisplayAreaWelcomeMessage(text=12030)
+    DisplayAreaWelcomeMessage(place_name_id=12030)
 
 
 @ContinueOnRest(12022503)
@@ -1634,7 +1634,7 @@ def Event_12022869(
     
     if FlagEnabled(flag):
         return RESTART
-    RestartIfFinishedConditionTrue(input_condition=OR_4)
+    RestartIfLastConditionResultTrue(input_condition=OR_4)
 
     # --- Label 1 --- #
     DefineLabel(1)

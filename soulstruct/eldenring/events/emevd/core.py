@@ -23,7 +23,7 @@ class Instruction(_BaseInstruction):
         if self.category == 2000:
             if self.index == 0:
                 return self.args_list[1]
-            elif self.index == 6:  # now has a first argument, like 2000[00]
+            elif self.index == 6:  # now has a `slot` argument, like 2000[00]
                 return self.args_list[1]
         return None
 
@@ -33,7 +33,7 @@ class Event(_BaseEvent):
     INSTRUCTION_CLASS: tp.ClassVar = Instruction
     EMEDF_TESTS: tp.ClassVar = EMEDF_TESTS
     EMEDF_COMPARISON_TESTS: tp.ClassVar = EMEDF_COMPARISON_TESTS
-    USE_HIGH_LEVEL_LANGUAGE: tp.ClassVar = True
+    USE_ADVANCED_DECOMPILER: tp.ClassVar = True
 
 
 @dataclass(slots=True)
@@ -46,3 +46,4 @@ class EMEVD(_BaseEMEVD):
     ENTITY_ENUMS_MANAGER: tp.ClassVar = GameEnumsManager
     STRING_ENCODING: tp.ClassVar = "utf-16le"
     HEADER_VERSION_INFO: tp.ClassVar = (True, -1, 205)  # TODO: Sekiro uses this too.
+    LONG_VARINTS = True

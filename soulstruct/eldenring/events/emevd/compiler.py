@@ -7,6 +7,8 @@ from this module or the (category, index) for EMEDF. When decompiling to EVS,
 
 Usually, these just combine multiple underlying EMEVD instructions into one (e.g., `IfActionButton`).
 """
+from __future__ import annotations
+
 __all__ = [
     "COMPILER",
     "compile_instruction",
@@ -37,12 +39,15 @@ __all__ = [
 import logging
 import typing as tp
 
-from soulstruct.base.events.emevd.compiler import base_compile_instruction, BooleanTestCompiler
+from soulstruct.base.events.evs.compiler import base_compile_instruction, BooleanTestCompiler
 from soulstruct.base.events.emevd.utils import get_coord_entity_type
 from soulstruct.eldenring.game_types import *
 
 from .emedf import EMEDF_ALIASES
 from .enums import *
+
+if tp.TYPE_CHECKING:
+    from soulstruct.base.events.evs.conditions import EVSConditionManager
 
 _LOGGER = logging.getLogger("soulstruct")
 
@@ -55,11 +60,16 @@ _LOGGER = logging.getLogger("soulstruct")
 COMPILER = {}
 
 
-def compile_instruction(instr_name: str, *args, **kwargs) -> list[str]:
-    """Compile instruction using `COMPILER` function if available, or fall back to `_auto_compile` below with EMEDF."""
+def compile_instruction(instr_name: str, *args, cond: EVSConditionManager = None, **kwargs) -> list[str]:
+    """Compile instruction using `COMPILER` function if available, or fall back to `base_compile_instruction`
+    that purely uses EMEDF.
+
+    `cond` can be passed in for `base_decompile_instruction` to manage conditions. However, to ease signatures, it is
+    never passed to decorated COMPILER functions, which are highly unlikely to ever need it.
+    """
     if instr_name in COMPILER:
         return COMPILER[instr_name](*args, **kwargs)
-    return base_compile_instruction(EMEDF_ALIASES, instr_name, *args, **kwargs)
+    return base_compile_instruction(EMEDF_ALIASES, instr_name, *args, cond=cond, **kwargs)
 
 
 def compile_game_object_test(
@@ -75,11 +85,12 @@ def compile_game_object_test(
 
     if issubclass(game_object_int_type, Flag):
         test.set_all("FlagEnabled", "FlagDisabled")
-    elif issubclass(game_object_int_type, RegionVolume):
-        test.if_true = "IfPlayerInsideRegion"
-        test.if_false = "IfPlayerOutsideRegion"
-    elif issubclass(game_object_int_type, Region):
-        raise TypeError(f"Only `RegionVolume` subclasses can be used as direct booleans, not just `Region`.")
+    # TODO: Regions are directly tied to Events in Elden Ring. Need better MSB support!
+    # elif issubclass(game_object_int_type, RegionVolume):
+    #     test.if_true = "IfPlayerInsideRegion"
+    #     test.if_false = "IfPlayerOutsideRegion"
+    # elif issubclass(game_object_int_type, Region):
+    #     raise TypeError(f"Only `RegionVolume` subclasses can be used as direct booleans, not just `Region`.")
     elif issubclass(game_object_int_type, Asset):
         test.set_all("AssetNotDestroyed", "AssetDestroyed")  # True == asset NOT destroyed
     elif issubclass(game_object_int_type, Character):
@@ -88,7 +99,10 @@ def compile_game_object_test(
     elif issubclass(game_object_int_type, ObjActEvent):
         test.if_true = "IfAssetActivated"
     else:
-        raise TypeError(f"Type `{game_object_int_type.__name__}` cannot be used as a boolean directly in EVS script.")
+        raise TypeError(
+            f"Type `{game_object_int_type.__name__}` cannot be used as a boolean directly in EVS script.\n"
+            f"Note that Elden Ring EVS does not yet support using any MSB Region/Event as a boolean."
+        )
 
     return test.compile_object(
         game_object,
@@ -137,15 +151,25 @@ def RunEvent(event_id, slot=0, args=(0,), arg_types="", event_layers=None):
 # noinspection PyUnusedLocal
 @_compile
 def RunCommonEvent(event_id, slot=0, args=(0,), arg_types="", event_layers=None):
-    """Run the given `event_id`, which must be defined in `common_func.emevd`.
+    """Run the given `event_id` as a common function.
 
-    You can omit `arg_types` if all the arguments are unsigned integers (which is usually the case).
+    Typically, these `event_id` values are defined in the `common_func` EMEVD file. However, occasionally, this
+    instruction is used to initialize LOCAL map events as 'common' events. I'm not sure if this has any purpose, or if
+    it's just an artifact of FromSoft copy-pasting between EMEVD files and forgetting to change the Run call.
 
-    Note that you can also call the name of the event directly and pass in the given arguments normally.
+    You can omit `arg_types` if all the arguments are signed integers 'i' or if the only argument is zero ('I').
+
+    You can also call the name of the event directly and pass in the given arguments normally.
 
     Note that `event_layers` is supported as an argument here for intellisense purposes, as this is the instruction
     it will most commonly be used with, but it can be used with any instruction. The EVS parser handles this keyword
     argument separately, so it will never actually be passed to an instruction function like this one.
+
+    WARNING: Float arguments are difficult to detect without the signature of the called event -- for example, if you
+    are calling a `common_func` event without the EVS module to inspect. This is fine if you NEVER have that module
+    available, as the unsigned integer version of the float will be repacked to the same bytes, but if you add the
+    `common_func` EMEVD *afterward* and give the float argument an unsigned integer, you will instead end up calling it
+    with a (probably high magnitude) float!
     """
     if not arg_types:
         # Assume all signed integers, unless the only argument is zero.

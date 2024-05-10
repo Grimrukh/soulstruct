@@ -86,7 +86,7 @@ def compare_binary_data(
         row2 = data2[offset : offset + row_size]
         if row1 != row2:
             if offset != 0 and offset - last_diff_row_offset > row_size:
-                print(f"...    | {'...':<{pad}} | {'...':<{pad}} ")
+                print(f"...    | {'...':<{pad}}  | {'...':<{pad}} ")
             for row_offset, r1, r2 in last_rows:
                 # Print out last `context_rows` rows. All guaranteed to be identical.
                 if with_ascii:

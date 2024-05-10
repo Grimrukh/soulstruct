@@ -934,12 +934,12 @@ def Event_10002281(_, character: uint, region: uint, seconds: float, animation_i
     DisableAI(character)
     EnableInvincibility(character)
     AddSpecialEffect(character, 16296)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(OR_1)
     OR_2.Add(AttackedWithDamageType(attacked_entity=character))
@@ -948,7 +948,7 @@ def Event_10002281(_, character: uint, region: uint, seconds: float, animation_i
     MAIN.Await(OR_2)
     
     EnableThisNetworkSlotFlag()
-    GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
+    GotoIfLastConditionResultFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):
         ForceAnimation(character, animation_id, loop=True)
@@ -1122,12 +1122,12 @@ def Event_10002240(
         DisableGravity(character)
         DisableCharacterCollision(character)
     ForceAnimation(character, animation_id, loop=True)
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_15)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
     AND_1.Add(CharacterBackreadEnabled(character))
     OR_11.Add(CharacterHasSpecialEffect(character, 5080))
@@ -1206,12 +1206,12 @@ def Event_11002291(_, character: uint, region: uint, seconds: float):
     if ThisEventSlotFlagEnabled():
         return
     ForceAnimation(character, 30002)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_3.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(AND_3)
     AND_1.Add(OR_1)
@@ -1226,7 +1226,7 @@ def Event_11002291(_, character: uint, region: uint, seconds: float):
     MAIN.Await(OR_2)
     
     EnableThisNetworkSlotFlag()
-    GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
+    GotoIfLastConditionResultFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
 
     # --- Label 1 --- #
@@ -1272,12 +1272,12 @@ def Event_10002311(
         DisableGravity(character)
         DisableCharacterCollision(character)
     ForceAnimation(character, animation_id, loop=True)
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_15)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     OR_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
     OR_3.Add(CharacterHasSpecialEffect(PLAYER, 10000))
     AND_3.Add(OR_3)
@@ -1340,12 +1340,12 @@ def Event_10002320():
         return
     DisableCharacter(10000294)
     DisableAI(10000294)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=10002294))
     AND_1.Add(OR_1)
     OR_2.Add(AttackedWithDamageType(attacked_entity=10000294))
@@ -1404,12 +1404,12 @@ def Event_10002350(_, character: uint, region: uint, seconds: float, flag: uint)
         return
     AddSpecialEffect(character, 8081)
     AddSpecialEffect(character, 8082)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(OR_1)
     OR_2.Add(AttackedWithDamageType(attacked_entity=character))
@@ -1439,7 +1439,7 @@ def Event_10002460():
     MAIN.Await(TimeOfDayInRange(earliest=(19, 0, 0), latest=(5, 59, 0)))
     
     AddSpecialEffect(10005460, 10930)
-    WaitUntilRandomTimeOfDay(earliest=(6, 0, 0), latest=(18, 59, 0))
+    WaitUntilTimeOfDayInRange(earliest=(6, 0, 0), latest=(18, 59, 0))
     RemoveSpecialEffect(10005460, 10930)
     Restart()
 
@@ -1725,11 +1725,11 @@ def Event_10002810():
     DefineLabel(0)
     DisableAssetActivation(Assets.AEG219_001_0500, obj_act_id=219001)
     DisableAI(Characters.GodricktheGrafted)
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.Invader))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.Invader2))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.Invader3))
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader2))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader3))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
     if OR_15:
         return
     GotoIfFlagEnabled(Label.L1, flag=10000801)
@@ -2045,7 +2045,7 @@ def Event_10002860():
     DisableAI(Characters.Margit)
     if PlayerInOwnWorld():
         DisableThisSlotFlag()
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=CharacterType.Unknown7))
     if OR_15:
         return
@@ -2568,10 +2568,10 @@ def Event_10003724():
     
     MAIN.Await(OR_15)
     
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=OR_1)
-    GotoIfFinishedConditionTrue(Label.L4, input_condition=OR_2)
-    GotoIfFinishedConditionTrue(Label.L5, input_condition=OR_3)
-    GotoIfFinishedConditionTrue(Label.L6, input_condition=OR_4)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=OR_1)
+    GotoIfLastConditionResultTrue(Label.L4, input_condition=OR_2)
+    GotoIfLastConditionResultTrue(Label.L5, input_condition=OR_3)
+    GotoIfLastConditionResultTrue(Label.L6, input_condition=OR_4)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -2678,8 +2678,8 @@ def Event_10003731():
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=OR_1)
-    EndIfFinishedConditionTrue(input_condition=OR_2)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=OR_1)
+    EndIfLastConditionResultTrue(input_condition=OR_2)
     End()
 
     # --- Label 1 --- #
@@ -2730,7 +2730,7 @@ def Event_10003731():
     DisableNetworkFlag(10008562)
     EndOfAnimation(asset=Assets.AEG219_000_0501, animation_id=1)
     AND_5.Add(CharacterOutsideRegion(character=PLAYER, region=10002711))
-    AND_5.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    AND_5.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
     OR_5.Add(CharacterDead(Characters.BanishedKnight1))
     OR_5.Add(AND_5)
     
@@ -2773,8 +2773,8 @@ def Event_10003732():
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=OR_1)
-    EndIfFinishedConditionTrue(input_condition=OR_2)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=OR_1)
+    EndIfLastConditionResultTrue(input_condition=OR_2)
     End()
 
     # --- Label 2 --- #
@@ -2820,7 +2820,7 @@ def Event_10003733():
     
     MAIN.Await(OR_5)
     
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=OR_1)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=OR_1)
     Goto(Label.L1)
 
     # --- Label 1 --- #
@@ -2831,7 +2831,7 @@ def Event_10003733():
     # --- Label 2 --- #
     DefineLabel(2)
     AND_6.Add(CharacterOutsideRegion(character=PLAYER, region=10002711))
-    AND_6.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    AND_6.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
     OR_6.Add(CharacterDead(Characters.BanishedKnight1))
     OR_6.Add(AND_6)
     
@@ -2862,7 +2862,7 @@ def Event_10003734():
     AND_1.Add(FlagDisabled(10009374))
     AND_1.Add(CharacterDead(10000651, target_comparison_type=ComparisonType.NotEqual))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=10002710))
-    AND_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    AND_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
     AND_1.Add(FlagDisabled(10009377))
     
     MAIN.Await(AND_1)
@@ -2930,10 +2930,10 @@ def Event_10003736():
     
     MAIN.Await(OR_4)
     
-    SkipLinesIfFinishedConditionFalse(2, input_condition=OR_2)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=OR_2)
     MultiplyBloodstainSouls(multiplier=0.0, bloodstain_save_slot_id=-1)
     End()
-    SkipLinesIfFinishedConditionFalse(2, input_condition=OR_3)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=OR_3)
     MultiplyBloodstainSouls(multiplier=0.0, bloodstain_save_slot_id=-1)
     Restart()
     MultiplyBloodstainSouls(multiplier=0.30000001192092896, bloodstain_save_slot_id=0)
@@ -2951,7 +2951,7 @@ def Event_10003736():
     MAIN.Await(OR_8)
     
     MultiplyBloodstainSouls(multiplier=0.0, bloodstain_save_slot_id=-1)
-    EndIfFinishedConditionTrue(input_condition=OR_6)
+    EndIfLastConditionResultTrue(input_condition=OR_6)
     Restart()
 
 
@@ -3005,7 +3005,7 @@ def Event_10003738():
     EnableAsset(Assets.AEG099_003_9000)
     CreateAssetVFX(Assets.AEG099_003_9000, vfx_id=101, dummy_id=3)
     AND_5.Add(CharacterOutsideRegion(character=PLAYER, region=10002711))
-    AND_5.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    AND_5.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
     AND_6.Add(FlagEnabled(10009377))
     AND_6.Add(AND_5)
     

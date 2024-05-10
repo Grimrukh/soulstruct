@@ -5,7 +5,7 @@ __all__ = ["DECOMPILER", "OPT_ARGS_DECOMPILER", "decompile_instruction"]
 import logging
 import typing as tp
 
-from soulstruct.base.events.emevd.decompiler import (
+from soulstruct.base.events.evs.decompiler import (
     base_decompiler_instruction,
     assemble_arg_string,
     base_decompile_run_event,

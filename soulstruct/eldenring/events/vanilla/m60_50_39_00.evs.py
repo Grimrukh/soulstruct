@@ -125,12 +125,12 @@ def Event_1050392210(_, character: uint, asset: uint, region: uint):
     if AND_3:
         return
     DisableHealthBar(character)
-    AND_1.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_1.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_1)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_2.Add(OR_1)
     

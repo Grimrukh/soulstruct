@@ -492,7 +492,7 @@ def Event_30192201():
     ClearTargetList(Characters.ErdtreeBurialWatchdog0)
     ForceAnimation(Characters.ErdtreeBurialWatchdog0, 3025, loop=True)
     EnableThisNetworkSlotFlag()
-    GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
+    GotoIfLastConditionResultFalse(Label.L1, input_condition=AND_1)
     if ValueNotEqual(left=3025, right=-1):
         ForceAnimation(Characters.ErdtreeBurialWatchdog0, 3025, loop=True)
 

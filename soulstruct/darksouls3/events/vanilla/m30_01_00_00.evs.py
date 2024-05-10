@@ -428,7 +428,7 @@ def Event_13015201(
     SetNetworkConnectedFlagState(flag=flag_2, state=FlagSetting.On)
     SetNetworkConnectedFlagState(flag=flag, state=FlagSetting.On)
     EnableFlag(flag_1)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_1)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_1)
     GotoIfFlagEnabled(Label.L0, flag=flag_3)
     ForceAnimation(obj, 1, wait_for_completion=True, skip_transition=True, unknown2=1.0)
     Goto(Label.L1)
@@ -488,7 +488,7 @@ def Event_13015201(
     SetNetworkConnectedFlagState(flag=flag_2, state=FlagSetting.On)
     SetNetworkConnectedFlagState(flag=flag, state=FlagSetting.Off)
     DisableFlag(flag_1)
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=OR_5)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=OR_5)
     GotoIfFlagEnabled(Label.L3, flag=flag_3)
     EnableFlag(flag_4)
     ForceAnimation(obj, 3, wait_for_completion=True, skip_transition=True, unknown2=1.0)
@@ -673,8 +673,8 @@ def Event_13015220(
     
     DisableObjectActivation(obj_1, obj_act_id=-1)
     DisableObjectActivation(obj_2, obj_act_id=-1)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_1)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=OR_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_1)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=OR_2)
     ForceAnimation(entity, 21, wait_for_completion=True, skip_transition=True, unknown2=1.0)
     Goto(Label.L2)
 
@@ -726,8 +726,8 @@ def Event_13015220(
     
     DisableObjectActivation(obj, obj_act_id=-1)
     DisableObjectActivation(obj_2, obj_act_id=-1)
-    GotoIfFinishedConditionTrue(Label.L4, input_condition=OR_7)
-    GotoIfFinishedConditionTrue(Label.L5, input_condition=OR_8)
+    GotoIfLastConditionResultTrue(Label.L4, input_condition=OR_7)
+    GotoIfLastConditionResultTrue(Label.L5, input_condition=OR_8)
     ForceAnimation(entity, 12, wait_for_completion=True, skip_transition=True, unknown2=1.0)
     Goto(Label.L6)
 
@@ -783,7 +783,7 @@ def Event_13015230():
     """Event 13015230"""
     if ThisEventSlotFlagEnabled():
         return
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -813,7 +813,7 @@ def Event_13015310(_, character: int, animation_id: int, animation_id_1: int):
     if ThisEventSlotFlagEnabled():
         return
     ForceAnimation(character, animation_id, loop=True, unknown2=1.0)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -1215,7 +1215,7 @@ def Event_13015580():
     """Event 13015580"""
     if FlagEnabled(13010890):
         return
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -1256,7 +1256,7 @@ def Event_13015585():
     """Event 13015585"""
     if FlagEnabled(13010890):
         return
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))

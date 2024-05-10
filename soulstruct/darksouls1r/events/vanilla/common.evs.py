@@ -412,7 +412,7 @@ def Event_290():
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     DisableFlag(287)
     End()
     DisableFlag(288)

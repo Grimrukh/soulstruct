@@ -468,8 +468,8 @@ def Event_12032500():
     
     MAIN.Await(OR_14)
     
-    GotoIfFinishedConditionTrue(Label.L3, input_condition=AND_1)
-    GotoIfFinishedConditionFalse(Label.L2, input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L3, input_condition=AND_1)
+    GotoIfLastConditionResultFalse(Label.L2, input_condition=AND_4)
     DeleteAssetVFX(Assets.AEG099_510_9000)
     DisableFlag(12032503)
 
@@ -500,7 +500,7 @@ def Event_12032500():
 
     # --- Label 5 --- #
     DefineLabel(5)
-    DisplayDialogAndSetFlags(
+    AwaitDialogResponse(
         message=4300,
         button_type=ButtonType.Yes_or_No,
         number_buttons=NumberButtons.TwoButton,
@@ -581,7 +581,7 @@ def Event_12032504():
     WaitFramesAfterCutscene(frames=1)
     AddSpecialEffect(PLAYER, 191)
     Wait(1.0)
-    DisplayAreaWelcomeMessage(text=12010)
+    DisplayAreaWelcomeMessage(place_name_id=12010)
 
 
 @ContinueOnRest(12032509)
@@ -611,7 +611,7 @@ def Event_12032509():
     PlayCutscene(12020001, cutscene_flags=CutsceneFlags.Unknown16, player_id=10000)
     WaitFrames(frames=1)
     Wait(1.0)
-    DisplayAreaWelcomeMessage(text=12030)
+    DisplayAreaWelcomeMessage(place_name_id=12030)
 
 
 @RestartOnRest(12032300)
@@ -1129,7 +1129,7 @@ def Event_12032830(
     
     if FlagEnabled(flag):
         return RESTART
-    RestartIfFinishedConditionTrue(input_condition=OR_4)
+    RestartIfLastConditionResultTrue(input_condition=OR_4)
 
     # --- Label 1 --- #
     DefineLabel(1)
@@ -1172,14 +1172,14 @@ def Event_12032840():
         return
     AND_1.Add(FlagDisabled(12030800))
     AND_1.Add(FlagEnabled(12032805))
-    AND_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(ActionButtonParamActivated(action_button_id=10000, entity=Assets.AEG099_002_9000))
     
     MAIN.Await(AND_1)
     
     SuppressSoundForFogGate(duration=5.0)
     RotateToFaceEntity(PLAYER, 12032800, animation=60060, wait_for_completion=True)
-    AND_2.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_2.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=12032800))
     OR_1.Add(TimeElapsed(seconds=3.0))
     OR_2.Add(OR_1)
@@ -1188,7 +1188,7 @@ def Event_12032840():
     MAIN.Await(AND_2)
     
     Wait(1.0)
-    RestartIfFinishedConditionTrue(input_condition=OR_1)
+    RestartIfLastConditionResultTrue(input_condition=OR_1)
     EnableFlag(12032806)
     DisplayNetworkMessage(text=2920000, unk_4_5=False)
     Wait(4.0)
@@ -1227,14 +1227,14 @@ def Event_12032842(_, flag: uint, asset: uint, dummy_id: int, right: uint):
     DisableNetworkSync()
     DisableAsset(asset)
     DeleteAssetVFX(asset)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Invader))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Invader2))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Invader3))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader2))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader3))
     AND_1.Add(OR_1)
     AND_1.Add(FlagDisabled(flag))
-    OR_2.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_2.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_2.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_2.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
     AND_2.Add(OR_2)
     AND_2.Add(FlagDisabled(flag))
     if UnsignedNotEqual(left=0, right=right):
@@ -1244,13 +1244,13 @@ def Event_12032842(_, flag: uint, asset: uint, dummy_id: int, right: uint):
     OR_4.Add(InvasionPending())
     AND_4.Add(OR_4)
     AND_4.Add(FlagEnabled(flag))
-    AND_7.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_7.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_4.Add(not AND_7)
     OR_5.Add(Invasion())
     OR_5.Add(InvasionPending())
     AND_5.Add(OR_5)
     AND_5.Add(FlagEnabled(flag))
-    AND_5.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_5.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_5.Add(EntityBeyondDistance(entity=PLAYER, other_entity=asset, radius=1.0))
     OR_8.Add(AND_1)
     OR_8.Add(AND_2)
@@ -1264,14 +1264,14 @@ def Event_12032842(_, flag: uint, asset: uint, dummy_id: int, right: uint):
         EnableAsset(asset)
         DeleteAssetVFX(asset)
         CreateAssetVFX(asset, vfx_id=101, dummy_id=dummy_id)
-    OR_11.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
-    OR_11.Add(CharacterType(PLAYER, character_type=CharacterType.Invader))
-    OR_11.Add(CharacterType(PLAYER, character_type=CharacterType.Invader2))
-    OR_11.Add(CharacterType(PLAYER, character_type=CharacterType.Invader3))
+    OR_11.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_11.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader))
+    OR_11.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader2))
+    OR_11.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader3))
     AND_11.Add(OR_11)
     AND_11.Add(FlagDisabled(flag))
-    OR_12.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_12.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_12.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_12.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
     AND_12.Add(OR_12)
     AND_12.Add(FlagDisabled(flag))
     if UnsignedNotEqual(left=0, right=right):
@@ -1281,13 +1281,13 @@ def Event_12032842(_, flag: uint, asset: uint, dummy_id: int, right: uint):
     OR_14.Add(InvasionPending())
     AND_14.Add(OR_14)
     AND_14.Add(FlagEnabled(flag))
-    OR_7.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_7.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_14.Add(not OR_7)
     OR_15.Add(Invasion())
     OR_15.Add(InvasionPending())
     AND_15.Add(OR_15)
     AND_15.Add(FlagEnabled(flag))
-    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_15.Add(EntityBeyondDistance(entity=PLAYER, other_entity=asset, radius=1.0))
     AND_9.Add(not AND_11)
     AND_9.Add(not AND_12)
@@ -1462,7 +1462,7 @@ def Event_12032896(_, flag: uint, flag_1: uint, flag_2: uint):
         return
     AND_1.Add(FlagDisabled(flag))
     AND_1.Add(FlagEnabled(flag_1))
-    AND_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     
     MAIN.Await(AND_1)
     

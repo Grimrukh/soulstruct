@@ -234,7 +234,7 @@ def Event_11600090(_, obj: int, vfx_id: int, destination: int, destination_1: in
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     Move(PLAYER, destination=destination, destination_type=CoordEntityType.Region, short_move=True)
     SkipLines(1)
     Move(PLAYER, destination=destination_1, destination_type=CoordEntityType.Region, short_move=True)
@@ -621,7 +621,7 @@ def Event_11605398():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(5, input_condition=AND_1)
+    SkipLinesIfLastConditionResultTrue(5, input_condition=AND_1)
     DisableCharacterCollision(PLAYER)
     
     MAIN.Await(CharacterDead(PLAYER))
@@ -684,7 +684,7 @@ def Event_11605350(_, character: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(3, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(3, input_condition=AND_2)
     DisableImmortality(character)
     Kill(character)
     Restart()
@@ -1095,8 +1095,8 @@ def Event_11600200():
     
     WaitForNetworkApproval(max_seconds=3.0)
     EnableFlag(11605120)
-    SkipLinesIfFinishedConditionTrue(10, input_condition=AND_2)
-    SkipLinesIfFinishedConditionTrue(9, input_condition=AND_3)
+    SkipLinesIfLastConditionResultTrue(10, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(9, input_condition=AND_3)
     EnableFlag(11600201)
     DisableObjectActivation(1601202, obj_act_id=6101)
     ForceAnimation(1601200, 11, wait_for_completion=True)
@@ -1210,8 +1210,8 @@ def Event_11600210():
     
     WaitForNetworkApproval(max_seconds=3.0)
     EnableFlag(11605121)
-    SkipLinesIfFinishedConditionTrue(10, input_condition=AND_2)
-    SkipLinesIfFinishedConditionTrue(9, input_condition=AND_4)
+    SkipLinesIfLastConditionResultTrue(10, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(9, input_condition=AND_4)
     EnableFlag(11600211)
     DisableObjectActivation(1601211, obj_act_id=6101)
     ForceAnimation(1601210, 10, wait_for_completion=True)
@@ -1310,8 +1310,8 @@ def Event_11600220():
     
     WaitForNetworkApproval(max_seconds=3.0)
     EnableFlag(11605122)
-    SkipLinesIfFinishedConditionTrue(10, input_condition=AND_2)
-    SkipLinesIfFinishedConditionTrue(9, input_condition=AND_4)
+    SkipLinesIfLastConditionResultTrue(10, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(9, input_condition=AND_4)
     EnableFlag(11600221)
     DisableObjectActivation(1601221, obj_act_id=6101)
     ForceAnimation(1601220, 10, wait_for_completion=True)
@@ -1406,8 +1406,8 @@ def Event_11600230():
     
     WaitForNetworkApproval(max_seconds=3.0)
     EnableFlag(11605123)
-    SkipLinesIfFinishedConditionTrue(10, input_condition=AND_2)
-    SkipLinesIfFinishedConditionTrue(9, input_condition=AND_4)
+    SkipLinesIfLastConditionResultTrue(10, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(9, input_condition=AND_4)
     EnableFlag(11600231)
     DisableObjectActivation(1601231, obj_act_id=6101)
     ForceAnimation(1601230, 10, wait_for_completion=True)
@@ -1496,7 +1496,7 @@ def Event_11605001(_, character: int, radius: float, cancel_animation: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_1)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_1)
     SetStandbyAnimationSettings(character)
     SkipLines(1)
     SetStandbyAnimationSettings(character, cancel_animation=cancel_animation)
@@ -1521,7 +1521,7 @@ def Event_11605050(_, character: int, region: int, cancel_animation: int, left: 
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_1)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_1)
     SetStandbyAnimationSettings(character)
     SkipLines(1)
     SetStandbyAnimationSettings(character, cancel_animation=cancel_animation)
@@ -1678,7 +1678,7 @@ def Event_11600510(_, character: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_3)
     DisableCharacter(character)
     
     MAIN.Await(FlagEnabled(703))

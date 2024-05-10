@@ -504,6 +504,8 @@ __all__ = [
     "CLIENT_PLAYER_8",
     "CLIENT_PLAYER_9",
     "AIStatusType",
+    "ArenaMatchType",
+    "ArenaResult",
     "BitOperation",
     "BossMusicState",
     "ButtonType",

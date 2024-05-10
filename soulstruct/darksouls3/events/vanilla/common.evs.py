@@ -603,7 +603,7 @@ def Event_710():
     
     MAIN.Await(OR_2)
     
-    GotoIfFinishedConditionTrue(Label.L20, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L20, input_condition=AND_2)
 
     # --- Label 19 --- #
     DefineLabel(19)
@@ -962,17 +962,17 @@ def Event_9540(_, gesture_id: ushort, item_id: int, flag: int):
     
     MAIN.Await(AND_4)
     
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_1)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_1)
     AICommand(3800196, command_id=99, command_slot=2)
     ReplanAI(3800196)
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_2)
     AICommand(3800198, command_id=99, command_slot=2)
     ReplanAI(3800198)
     Wait(1.0)
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_1)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_1)
     AICommand(3800196, command_id=-1, command_slot=2)
     ReplanAI(3800196)
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_2)
     AICommand(3800198, command_id=-1, command_slot=2)
     ReplanAI(3800198)
     if FlagEnabled(flag):
@@ -1392,7 +1392,7 @@ def Event_9011(_, flag: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(2, input_condition=OR_2)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=OR_2)
     DisableFlag(flag)
     Restart()
     EnableFlag(flag)

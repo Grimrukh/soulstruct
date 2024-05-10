@@ -328,7 +328,7 @@ def Event_11200090(_, obj: int, vfx_id: int, destination: int, destination_1: in
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     Move(PLAYER, destination=destination, destination_type=CoordEntityType.Region, short_move=True)
     SkipLines(1)
     Move(PLAYER, destination=destination_1, destination_type=CoordEntityType.Region, short_move=True)
@@ -476,7 +476,7 @@ def Event_11200000():
     EnableFlag(11205390)
     EnableFlag(11205391)
     EnableFlag(11205393)
-    AND_2.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_2.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     SkipLinesIfConditionFalse(1, AND_2)
     
     MAIN.Await(FlagEnabled(703))
@@ -524,7 +524,7 @@ def Event_11200002():
     EnableFlag(11205390)
     EnableFlag(11205391)
     EnableFlag(11205393)
-    AND_2.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_2.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     SkipLinesIfConditionFalse(1, AND_2)
     
     MAIN.Await(FlagEnabled(703))
@@ -605,7 +605,7 @@ def Event_11205393():
     
         MAIN.Await(OR_1)
     
-        EndIfFinishedConditionTrue(input_condition=AND_2)
+        EndIfLastConditionResultTrue(input_condition=AND_2)
     SkipLinesIfClient(1)
     NotifyBossBattleStart()
     ActivateMultiplayerBuffs(1200800)
@@ -1012,7 +1012,7 @@ def Event_11205230(_, character: int, radius: float):
     
     EnableCharacterCollision(character)
     EnableGravity(character)
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     SetStandbyAnimationSettings(character, cancel_animation=9063)
 
 
@@ -1141,7 +1141,7 @@ def Event_11205300(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     ResetAnimation(1200010)
     Move(
         character,
@@ -1250,7 +1250,7 @@ def Event_11200510(_, character: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_3)
     DisableCharacter(character)
     
     MAIN.Await(FlagEnabled(703))
@@ -1301,7 +1301,7 @@ def Event_11200501(_, character: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(4, input_condition=AND_4)
+    SkipLinesIfLastConditionResultTrue(4, input_condition=AND_4)
     if FlagDisabled(1604):
         EnableFlag(flag)
     if FlagDisabled(1764):
@@ -1626,13 +1626,13 @@ def Event_11205054():
     MAIN.Await(OR_1)
     
     EnableFlag(11205055)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_1)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_1)
     EnableFlag(11205051)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_2)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_2)
     EnableFlag(11205051)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_3)
     EnableFlag(11205052)
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_4)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_4)
     EnableFlag(11205052)
     Restart()
 
@@ -1656,7 +1656,7 @@ def Event_11205056():
     
     DisableFlag(11205051)
     DisableFlag(11205053)
-    SkipLinesIfFinishedConditionTrue(9, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(9, input_condition=AND_2)
     OR_6.Add(CharacterHuman(PLAYER))
     OR_6.Add(CharacterHollow(PLAYER))
     SkipLinesIfConditionFalse(3, OR_6)

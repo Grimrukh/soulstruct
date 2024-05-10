@@ -69,12 +69,12 @@ def Event_1051432200(_, character: uint, radius: float, seconds: float, animatio
     if ThisEventSlotFlagEnabled():
         return
     DisableAI(character)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
     AND_1.Add(FlagDisabled(1051430210))
     AND_1.Add(OR_1)
@@ -89,7 +89,7 @@ def Event_1051432200(_, character: uint, radius: float, seconds: float, animatio
     MAIN.Await(OR_2)
     
     EnableThisNetworkSlotFlag()
-    GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
+    GotoIfLastConditionResultFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):
         ForceAnimation(character, animation_id, loop=True)
@@ -303,7 +303,7 @@ def Event_1051430701(
     
     MAIN.Await(OR_4)
     
-    RestartIfFinishedConditionTrue(input_condition=OR_3)
+    RestartIfLastConditionResultTrue(input_condition=OR_3)
     SetTeamType(character, TeamType.HostileNPC)
     ForceAnimation(character, 20034)
     GotoIfValueComparison(Label.L0, comparison_type=ComparisonType.Equal, left=1, right=right)

@@ -160,7 +160,7 @@ def Event_1041522300(_, character: uint):
     GotoIfFlagEnabled(Label.L1, flag=1041522810)
     DisableCharacter(character)
     DisableAnimations(character)
-    AND_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    AND_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=1041522800))
     
     MAIN.Await(AND_1)

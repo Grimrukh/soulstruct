@@ -12,6 +12,7 @@ from pathlib import Path
 from soulstruct.base.game_file import GameFile
 from soulstruct.dcx import DCXType
 from soulstruct.utilities.binary import *
+from soulstruct.utilities.conversion import floatify
 
 from .event import Event as BaseEvent, EventSignature
 from .event_layers import EventLayers
@@ -19,7 +20,7 @@ from .exceptions import EMEVDError
 from .numeric import build_numeric
 
 if tp.TYPE_CHECKING:
-    from soulstruct.base.events.emevd.evs import EVSParser
+    from soulstruct.base.events.evs import EVSParser
     from soulstruct.base.game_types.game_enums_manager import GameEnumsManager
 
 try:
@@ -88,6 +89,7 @@ class EMEVD(GameFile, abc.ABC):
     EVS_PARSER: tp.ClassVar[type[EVSParser]]
     STRING_ENCODING: tp.ClassVar[str]
     HEADER_VERSION_INFO: tp.ClassVar[tuple[bool, int, int]] = (False, 0, 204)  # DS1 default
+    LONG_VARINTS: tp.ClassVar[bool]
 
     events: dict[int, BaseEvent] = field(default_factory=dict)
     packed_strings: bytes = b""
@@ -98,8 +100,10 @@ class EMEVD(GameFile, abc.ABC):
 
     # Internal usage.
     byte_order: ByteOrder = field(repr=False, default=ByteOrder.LittleEndian)
-    long_varints: bool = field(repr=False, default=False)
     event_signatures: dict[int, EventSignature] = field(repr=False, default=dict)
+    # `EMEVD` used to reprocess common event calls. Usually called 'common_func.emevd', but in Bloodborne, was merged
+    # with 'common.emevd'. Can be added manually with `apply_common_func()` or supplied with `to_evs` or `write_evs`.
+    _common_func: EMEVD | None = field(repr=False, default=None)
 
     # region Numeric/EVS Read Methods
 
@@ -120,22 +124,41 @@ class EMEVD(GameFile, abc.ABC):
         return cls.from_numeric_string(evs_parser.numeric_emevd, evs_parser.map_name)
 
     @classmethod
-    def from_evs_string(cls, evs_string: str, map_name: str = None, script_directory: Path | str = None) -> Self:
+    def from_evs_string(
+        cls,
+        evs_string: str,
+        map_name: str = None,
+        script_directory: Path | str = None,
+        common_func_evs: EVSParser | None = None,
+    ) -> Self:
         try:
-            parser = cls.EVS_PARSER(evs_string, map_name=map_name, script_directory=script_directory)
+            parser = cls.EVS_PARSER(
+                evs_string, map_name=map_name, script_directory=script_directory, common_func_evs=common_func_evs
+            )
         except Exception as ex:
             raise EMEVDError(f"Error occurred while parsing EVS string: {ex}")
         return cls.from_evs_parser(parser)
 
     @classmethod
-    def from_evs_path(cls, evs_path: Path | str, map_name: str = None, script_directory: Path | str = None) -> Self:
+    def from_evs_path(
+        cls,
+        evs_path: Path | str,
+        map_name: str = None,
+        script_directory: Path | str = None,
+        common_func_evs: EVSParser | None = None,
+    ) -> Self:
         evs_path = Path(evs_path)
         if script_directory is None:
             script_directory = evs_path.parent
         try:
             if map_name is None:
                 map_name = evs_path.name.split(".")[0]
-            emevd = cls.from_evs_string(evs_path.read_text(), map_name=map_name, script_directory=script_directory)
+            emevd = cls.from_evs_string(
+                evs_path.read_text(),
+                map_name=map_name,
+                script_directory=script_directory,
+                common_func_evs=common_func_evs,
+            )
         except Exception as ex:
             raise EMEVDError(f"Error while parsing EVS file: {evs_path}.\n  Error: {ex}")
         emevd.map_name = evs_path.name.split(".")[0]
@@ -158,9 +181,8 @@ class EMEVD(GameFile, abc.ABC):
     @classmethod
     def from_reader(cls, reader: BinaryReader) -> Self:
         byte_order = ByteOrder.from_reader_peek(reader, 1, 4, b"\01", b"\00")
-        long_varints = long_varints_from_reader_peek(reader, 1, 5, b"\xFF", b"\00")
         reader.default_byte_order = byte_order
-        reader.long_varints = long_varints
+        reader.long_varints = cls.LONG_VARINTS
 
         header = EMEVDHeaderStruct.from_bytes(reader)
         # NOTE: 32-bit EMEVD files have four pad bytes at the end, but we're about to start seeking anyway.
@@ -210,9 +232,18 @@ class EMEVD(GameFile, abc.ABC):
 
         emevd = cls(events=event_dict, packed_strings=packed_strings, linked_file_offsets=linked_file_offsets)
         emevd.byte_order = byte_order
-        emevd.long_varints = long_varints
         emevd.event_signatures = event_signatures
         return emevd
+
+    def apply_common_func(self, common_func: EMEVD):
+        """Apply a `common_func` EMEVD to this EMEVD, allowing for reprocessing of common event calls."""
+        self._common_func = common_func
+        self.regenerate_signatures()
+        for event in self.events.values():
+            event.update_run_event_instructions(
+                self.event_signatures,
+                common_signatures=common_func.event_signatures,
+            )
 
     def load_dict(self, data: dict, clear_old_data=True):
         if clear_old_data:
@@ -268,10 +299,7 @@ class EMEVD(GameFile, abc.ABC):
         }
 
     def to_numeric(self):
-        for event in self.events.values():
-            event.process_all_event_arg_replacements()
-            event.update_signature()
-
+        self.regenerate_signatures()
         numeric_output = "\n\n".join([event.to_numeric() for event in self.events.values()])
         numeric_output += "\n\nlinked:\n" + "\n".join(str(offset) for offset in self.linked_file_offsets)
         numeric_output += "\n\nstrings:\n" + "\n".join(s[0] + ": " + s[1] for s in self.unpack_strings())
@@ -320,17 +348,20 @@ class EMEVD(GameFile, abc.ABC):
         any of the given enums modules will cause a warning to be logged and a TO-DO comment to be written at the end
         of that line. Entity IDs that appear multiple times in the given modules will always raise a `ValueError`.
         """
+        if common_func_emevd:
+            self.apply_common_func(common_func_emevd)
+        else:
+            self.regenerate_signatures()
+
         enums_manager = self.ENTITY_ENUMS_MANAGER(
             list(enums_star_module_paths) + list(enums_non_star_module_paths), list(self.events)
         )
         star_module_names = [Path(path).name.split(".")[0] for path in enums_star_module_paths]
         enums_manager.star_module_names = star_module_names
 
-        if common_func_emevd:
+        if self._common_func:
             # Add common event IDs to `GameEnumsManager`.
-            enums_manager.all_common_event_ids = list(common_func_emevd.events)
-
-        self.regenerate_signatures()
+            enums_manager.all_common_event_ids = list(self._common_func.events)
 
         docstring = self.get_evs_docstring(docstring)
         game = self.get_game()
@@ -344,9 +375,9 @@ class EMEVD(GameFile, abc.ABC):
 
         # TODO: Does not catch calls that are already multi-line.
         for i in range(len(evs_events)):
-            evs_events[i] = self.add_event_call_keywords(evs_events[i], enums_manager, common_func_emevd)
+            evs_events[i] = self.add_event_call_keywords(evs_events[i], enums_manager, self._common_func)
 
-        if common_func_emevd and any("CommonFunc_" in event_string for event_string in evs_events):
+        if self._common_func and any("CommonFunc_" in event_string for event_string in evs_events):
             # TODO: pass real path (or attach to common EMEVD) rather than guessing `common_func`.
             # Import written first to avoid 'unused' warnings for standard imports.
             imports = f"# [COMMON_FUNC]\nfrom .common_func import *\n" + imports
@@ -388,12 +419,14 @@ class EMEVD(GameFile, abc.ABC):
             call_name = match.group(2)  # 'Event' or 'CommonFunc'
             event_id = int(match.group(3))
             end = match.group(5)  # newline or empty
+            verify_fmt = False
             if call_name == "CommonFunc" and not common_func_emevd:
-                continue  # cannot parse common event calls
+                continue  # cannot parse common event calls without the EMEVD
             try:
                 if call_name == "CommonFunc":
                     event_args = common_func_emevd.event_signatures[event_id].event_args
                     arg_names = common_func_emevd.event_signatures[event_id].get_evs_arg_names()
+                    verify_fmt = True
                 else:  # standard local "Event"
                     event_args = self.event_signatures[event_id].event_args
                     arg_names = self.event_signatures[event_id].get_evs_arg_names()
@@ -405,6 +438,7 @@ class EMEVD(GameFile, abc.ABC):
                     args = args[:-1]
                 if len(args) != len(event_args) + 1:
                     if call_name == "CommonFunc":
+                        # TODO: This is just as bad as the local case below!
                         _LOGGER.warning(f"Mismatch in defined/called event arg count for common func event {event_id}.")
                     else:
                         _LOGGER.warning(
@@ -416,10 +450,23 @@ class EMEVD(GameFile, abc.ABC):
                 for j in range(1, len(args)):  # `j` offset by +1 to skip `_` slot argument
                     if not event_args[j - 1].py_types:
                         continue  # no Python type hints for this argument
+
                     try:
                         int_value = int(args[j])
                     except ValueError:
+                        # Nothing to be done with this argument (no integer value to convert and no enum to find).
                         continue
+
+                    if verify_fmt:
+                        if "f" in event_args[j - 1].fmts and "." not in args[j]:
+                            # Very likely a float incorrectly unpacked as an int. We correct it.
+                            args[j] = repr(floatify(int_value))
+                            continue  # no enum
+                        if "i" in event_args[j - 1].fmts and int_value > 2147483647:
+                            # Very likely a signed int incorrectly unpacked as an unsigned int. We correct it.
+                            args[j] = repr(int_value - 4294967296)
+                            continue  # no enum
+
                     game_types = event_args[j - 1].combined_game_types
                     if game_types:
                         try:
@@ -444,11 +491,11 @@ class EMEVD(GameFile, abc.ABC):
 
         self.regenerate_signatures()
 
-        writer = BinaryWriter(byte_order=self.byte_order, long_varints=self.long_varints)
+        writer = BinaryWriter(byte_order=self.byte_order, long_varints=self.LONG_VARINTS)
 
         header = EMEVDHeaderStruct(
             big_endian=self.byte_order == ByteOrder.BigEndian,
-            varint_size_check=-1 if self.long_varints else 0,
+            varint_size_check=-1 if self.LONG_VARINTS else 0,
             version_unk_1=self.HEADER_VERSION_INFO[0],
             version_unk_2=self.HEADER_VERSION_INFO[1],
             version=self.HEADER_VERSION_INFO[2],
@@ -471,7 +518,7 @@ class EMEVD(GameFile, abc.ABC):
         )
         header.to_writer(writer, reserve_obj=self)
 
-        if not self.long_varints:
+        if not self.LONG_VARINTS:
             writer.pad(4)
 
         # Write event headers.
@@ -505,7 +552,6 @@ class EMEVD(GameFile, abc.ABC):
         for event in self.events.values():
             event.pack_instruction_base_args(writer, base_args_start)
         writer.pad_align(16)
-        # Pad or alignment after base args, depending on `long_varints`.
         writer.fill("base_arg_data_size", writer.position - base_args_start, obj=self)
 
         # Write event arg replacements.

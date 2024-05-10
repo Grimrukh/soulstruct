@@ -561,10 +561,10 @@ def Event_30132205(_, flag: uint, region: uint):
     """Event 30132205"""
     GotoIfCharacterHasSpecialEffect(Label.L0, character=PLAYER, special_effect=4170)
     AND_1.Add(FlagEnabled(flag))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     

@@ -1110,7 +1110,7 @@ def Event_12500220(_, attacker__character: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_1)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_1)
     DisableFlag(flag)
     Restart()
 
@@ -1196,7 +1196,7 @@ def Event_12500435(_, attacked_entity: int, region: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     ForceAnimation(attacked_entity, 7012)
 
 
@@ -1243,7 +1243,7 @@ def Event_12500454(
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(7, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(7, input_condition=AND_2)
     ForceAnimation(character, animation_id_1)
     if ValueEqual(left=region, right=2502021):
         SetNest(character, region=region)
@@ -1266,7 +1266,7 @@ def Event_12500458(_, character: int, animation_id: int, region: int, frames: in
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(3, input_condition=AND_1)
+    SkipLinesIfLastConditionResultTrue(3, input_condition=AND_1)
     OR_2.Add(CharacterInsideRegion(PLAYER, region=region))
     OR_2.Add(TimeElapsed(seconds=10.0))
     
@@ -1369,7 +1369,7 @@ def Event_12500620(_, attacked_entity: int, animation_id: int, animation_id_1: i
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_1)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_1)
     ForceAnimation(attacked_entity, animation_id_1, wait_for_completion=True, skip_transition=True)
     End()
     if FlagEnabled(flag):
@@ -1728,7 +1728,7 @@ def Event_12501801():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_1)
+    EndIfLastConditionResultTrue(input_condition=AND_1)
     PlaySoundEffect(2502800, 0, sound_type=SoundType.c_CharacterMotion)
 
 
@@ -1749,7 +1749,7 @@ def Event_12501802():
     SkipLinesIfClient(1)
     NotifyBossBattleStart()
     EnableFlag(12504223)
-    AND_2.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_2.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     if AND_2:
         return
     EnableFlag(9180)
@@ -1849,7 +1849,7 @@ def Event_12504810():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     RotateToFaceEntity(PLAYER, 2502800, animation=101130, wait_for_completion=True)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=2502801))
@@ -1860,7 +1860,7 @@ def Event_12504810():
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_5)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_5)
     EnableFlag(12504800)
     Restart()
 
@@ -1889,7 +1889,7 @@ def Event_12504811():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_3)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_3)
     EnableFlag(12504801)
     Restart()
 

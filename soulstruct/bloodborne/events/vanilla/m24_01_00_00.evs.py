@@ -1006,7 +1006,7 @@ def Event_12415080(
     MAIN.Await(OR_3)
     
     EnableGravity(character)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_3)
     WaitRandomFrames(min_frames=20, max_frames=100)
     AND_4.Add(HealthRatio(character) < 1.0)
     GotoIfConditionTrue(Label.L1, input_condition=AND_4)
@@ -1071,7 +1071,7 @@ def Event_12410100(_, action_button_id: int, anchor_entity: int, flag: int, text
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_2)
     DisplayDialog(text=text, anchor_entity=anchor_entity, number_buttons=NumberButtons.OneButton)
     Wait(1.0)
     Restart()
@@ -1280,7 +1280,7 @@ def Event_12415430(_, character: int, region: int, seconds: float, radius: float
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_2)
     Wait(seconds)
     EnableAI(character)
 
@@ -1339,7 +1339,7 @@ def Event_12415460(
     
     EnableGravity(character)
     ForceAnimation(entity, 1)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_3)
     ForceAnimation(character, animation_id_1, wait_for_completion=True)
 
     # --- Label 1 --- #
@@ -1359,7 +1359,7 @@ def Event_12415461(_, entity: int, animation_id: int, animation_id_1: int):
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_1)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -1390,7 +1390,7 @@ def Event_12415470(_, character: int, region: int, command_id: int):
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_1)
+    SkipLinesIfLastConditionResultFalse(1, input_condition=AND_1)
     Wait(10.0)
     EnableAI(character)
     WaitFrames(frames=10)
@@ -1427,10 +1427,10 @@ def Event_12415475(_, character: int, animation_id: int, animation_id_1: int, re
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_2)
     ForceAnimation(2411202, 0, loop=True)
     ForceAnimation(character, animation_id_1, wait_for_completion=True)
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_3)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_3)
     End()
     SetNest(character, region=2412051)
 
@@ -1478,7 +1478,7 @@ def Event_12415478(_, character: int):
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_2)
     SetObjectDamageShieldState(obj=2411202, state=True)
     ForceAnimation(2411202, 1, loop=True, skip_transition=True)
     Restart()
@@ -1529,7 +1529,7 @@ def Event_12415480(_, character: int, animation_id: int, animation_id_1: int, ai
     MAIN.Await(OR_1)
     
     EnableGravity(character)
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_1)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_1)
     WaitRandomFrames(min_frames=20, max_frames=100)
     ForceAnimation(character, animation_id_1, wait_for_completion=True)
     SetAIParamID(character, ai_param_id=ai_param_id_1)
@@ -1552,7 +1552,7 @@ def Event_12415498(_, character: int, behavior_id: int):
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_1)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_1)
     ShootProjectile(
         owner_entity=character,
         source_entity=character,
@@ -1716,7 +1716,7 @@ def Event_12411701():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_1)
+    EndIfLastConditionResultTrue(input_condition=AND_1)
     PlaySoundEffect(2412800, 500099999, sound_type=SoundType.c_CharacterMotion)
 
 
@@ -1798,7 +1798,7 @@ def Event_12414730():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     RotateToFaceEntity(PLAYER, 2412800, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=2412801))
@@ -1809,7 +1809,7 @@ def Event_12414730():
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_5)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_5)
     EnableFlag(12414700)
     EnableFlag(12414223)
     Restart()
@@ -1839,7 +1839,7 @@ def Event_12414731():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_3)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_3)
     EnableFlag(12414701)
     Restart()
 
@@ -2045,7 +2045,7 @@ def Event_12414710(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     CreateNPCPart(
         2410800,
         npc_part_id=npc_part_id,
@@ -2124,7 +2124,7 @@ def Event_12411800():
     DeleteVFX(2413810)
     SetLockedCameraSlot(game_map=CENTRAL_YHARNAM, camera_slot=0)
     Wait(3.0)
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     KillBoss(game_area_param_id=2410810)
     SkipLines(1)
     KillBoss(game_area_param_id=2410811)
@@ -2191,7 +2191,7 @@ def Event_12411801():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_1)
+    EndIfLastConditionResultTrue(input_condition=AND_1)
     PlaySoundEffect(2412810, 500099999, sound_type=SoundType.c_CharacterMotion)
 
 
@@ -2213,7 +2213,7 @@ def Event_12411802():
     SkipLinesIfClient(1)
     NotifyBossBattleStart()
     EnableFlag(12414223)
-    AND_2.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_2.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     if AND_2:
         return
     EnableFlag(9180)
@@ -2276,7 +2276,7 @@ def Event_12414810():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     RotateToFaceEntity(PLAYER, 2412810, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=2412811))
@@ -2287,7 +2287,7 @@ def Event_12414810():
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_5)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_5)
     EnableFlag(12414800)
     Restart()
 
@@ -2316,7 +2316,7 @@ def Event_12414811():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_3)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_3)
     EnableFlag(12414801)
     Restart()
 
@@ -2523,7 +2523,7 @@ def Event_12414807():
     MAIN.Await(OR_1)
     
     AICommand(2410810, command_id=40, command_slot=0)
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_2)
     
     MAIN.Await(CharacterHasTAEEvent(2410810, tae_event_id=30))
     
@@ -2623,7 +2623,7 @@ def Event_12415225(_, character: int, animation_id: int, radius: float):
     
     MAIN.Await(OR_2)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     ForceAnimation(character, animation_id)
 
 
@@ -2641,7 +2641,7 @@ def Event_12415228(_, character: int, animation_id: int, radius: float):
     MAIN.Await(OR_2)
     
     EnableAI(character)
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     ForceAnimation(character, animation_id)
 
 
@@ -2692,7 +2692,7 @@ def Event_12415234(_, character: int, character_1: int, character_2: int):
     
     MAIN.Await(AND_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     
     MAIN.Await(EntityWithinDistance(entity=PLAYER, other_entity=0, radius=0.0))
     
@@ -2803,7 +2803,7 @@ def Event_12415255(_, character: int):
     
     MAIN.Await(OR_2)
     
-    RestartIfFinishedConditionTrue(input_condition=AND_1)
+    RestartIfLastConditionResultTrue(input_condition=AND_1)
     AICommand(character, command_id=20, command_slot=0)
     ReplanAI(character)
     Restart()
@@ -2849,7 +2849,7 @@ def Event_12415260(
     
     MAIN.Await(AND_2)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_2)
     AICommand(character, command_id=-1, command_slot=0)
     OR_4.Add(CharacterHuman(PLAYER))
     OR_4.Add(CharacterWhitePhantom(PLAYER))
@@ -3066,9 +3066,9 @@ def Event_12415330(_, character: int, region: int, region_1: int, radius: float,
     
     MAIN.Await(AND_1)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_4)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_5)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_5)
     Wait(10.0)
 
     # --- Label 1 --- #
@@ -3120,8 +3120,8 @@ def Event_12415340(_, character: int, region: int, radius: float, region_1: int)
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_3)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_4)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_4)
     AICommand(character, command_id=20, command_slot=0)
 
     # --- Label 1 --- #
@@ -3471,7 +3471,7 @@ def Event_12415100(_, character: int):
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     WaitRandomSeconds(min_seconds=1.0, max_seconds=3.0)
     ForceAnimation(character, 7002)
     EnableAI(character)
@@ -3529,7 +3529,7 @@ def Event_12410030(
     MAIN.Await(OR_3)
     
     EnableGravity(character)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
     ForceAnimation(character_1, 3021)
     WaitRandomFrames(min_frames=20, max_frames=70)
 
@@ -3561,7 +3561,7 @@ def Event_12410040(
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_2)
     ForceAnimation(character_1, animation_id, wait_for_completion=True)
     AND_1.Add(HealthRatio(character_1) == 1.0)
     AND_2.Add(HealthRatio(character_1) < 1.0)
@@ -3570,7 +3570,7 @@ def Event_12410040(
     
     MAIN.Await(OR_4)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_2)
     SetAIParamID(character, ai_param_id=ai_param_id_1)
     WaitFrames(frames=100)
 
@@ -3939,8 +3939,8 @@ def Event_12410659():
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_3)
     Move(2410710, destination=2412172, destination_type=CoordEntityType.Region, set_draw_parent=0)
     SetNest(2410710, region=2412172)
     EnableFlag(72410337)
@@ -3984,7 +3984,7 @@ def Event_12410662(_, flag: int, flag_1: int, flag_2: int):
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionFalse(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultFalse(Label.L0, input_condition=AND_1)
     IncrementEventValue(12410646, bit_count=4, max_value=10)
     EnableFlag(flag_2)
     DisableFlagRange((72410331, 72410332))
@@ -4470,7 +4470,7 @@ def Event_12410731():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionFalse(input_condition=AND_1)
+    EndIfLastConditionResultFalse(input_condition=AND_1)
     DisableFlagRange((1120, 1124))
     EnableFlag(1122)
 
@@ -4493,7 +4493,7 @@ def Event_12410732():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionFalse(input_condition=AND_1)
+    EndIfLastConditionResultFalse(input_condition=AND_1)
     DisableBackread(2410702)
     DisableFlagRange((1120, 1124))
     EnableFlag(1123)
@@ -4541,7 +4541,7 @@ def Event_12410736():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     DisableFlag(72410301)
 
 
@@ -4604,7 +4604,7 @@ def Event_12410739():
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionFalse(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultFalse(Label.L0, input_condition=AND_1)
     EnableBackread(2410290)
     Restart()
 
@@ -5767,9 +5767,9 @@ def Event_12410156(_, character: int, character_1: int, character_2: int):
     
     MAIN.Await(OR_15)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_2)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=AND_3)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -6005,7 +6005,7 @@ def Event_12410460(
     MAIN.Await(OR_1)
     
     EnableGravity(character)
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     WaitRandomFrames(min_frames=20, max_frames=100)
     ForceAnimation(character, animation_id_1, wait_for_completion=True)
     SetAIParamID(character, ai_param_id=ai_param_id_1)
@@ -6271,7 +6271,7 @@ def Event_12414500():
     
     MAIN.Await(AND_1)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_3)
     Move(2410740, destination=2412720, destination_type=CoordEntityType.Region, set_draw_parent=0)
     Goto(Label.L2)
 
@@ -6449,7 +6449,7 @@ def Event_12414600():
     
     MAIN.Await(AND_1)
     
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_3)
     Move(2410158, destination=2412702, destination_type=CoordEntityType.Region, set_draw_parent=2414020)
     Goto(Label.L2)
 
@@ -6854,7 +6854,7 @@ def Event_12410370():
     MAIN.Await(OR_2)
     
     EnableFlag(12415371)
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=AND_3)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=AND_3)
     OR_3.Add(EntityWithinDistance(entity=2411220, other_entity=PLAYER, radius=10.0))
     OR_3.Add(RandomTimeElapsed(min_seconds=4.0, max_seconds=12.0))
     OR_3.Add(Attacked(attacked_entity=2410028, attacker=PLAYER))

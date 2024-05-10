@@ -422,3 +422,8 @@ class OtherRegion(Region):
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
         return ("Regions", "Others") if pluralized_subtype else ("Region", "Other")
+
+
+# `Object` replaced with `Asset` in these typings.
+AnimatedEntityTyping = tp.Union[Asset, Character, int]
+CoordEntityTyping = tp.Union[Asset, Character, Region, int]

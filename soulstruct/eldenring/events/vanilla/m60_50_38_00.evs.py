@@ -279,7 +279,7 @@ def Event_1050383703(_, character: uint):
     OR_3.Add(AND_1)
     OR_3.Add(AND_2)
     AwaitConditionTrue(OR_3)
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_1)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_1)
     Kill(Characters.SageGowry0, award_runes=True)
     SkipLines(1)
     Kill(Characters.SageGowry1, award_runes=True)

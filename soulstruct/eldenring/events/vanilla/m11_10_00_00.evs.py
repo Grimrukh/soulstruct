@@ -461,7 +461,7 @@ def Event_11102620(
     
     MAIN.Await(AND_2)
     
-    DisplayDialogAndSetFlags(
+    AwaitDialogResponse(
         message=4100,
         button_type=ButtonType.Yes_or_No,
         number_buttons=NumberButtons.TwoButton,
@@ -1949,7 +1949,7 @@ def Event_11103775():
     
     MAIN.Await(OR_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
     DisableFlag(11109785)
     DisplayDialog(text=30120, anchor_entity=0, display_distance=5.0, number_buttons=NumberButtons.OneButton)
     End()

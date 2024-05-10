@@ -1189,7 +1189,7 @@ def Event_13604730(
     MAIN.Await(AND_1)
     
     EnableFlag(flag_1)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_2)
     EnableFlag(flag_4)
     Wait(5.0)
     DisplayBattlefieldMessage(109001, display_location_index=0)
@@ -1625,7 +1625,7 @@ def Event_13601210(_, action_button_id: int, entity: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     DisplayDialog(text=10010161, number_buttons=NumberButtons.OneButton)
     Restart()
 
@@ -1661,7 +1661,7 @@ def Event_13604400(_, obj: int):
     
     MAIN.Await(OR_3)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
     ShootProjectile(
         owner_entity=3600799,
         source_entity=obj,
@@ -1727,7 +1727,7 @@ def Event_13601800():
     DeleteVFX(3603801)
     SetLockedCameraSlot(game_map=FISHING_HAMLET, camera_slot=0)
     Wait(3.0)
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     KillBoss(game_area_param_id=3600800)
     SkipLines(1)
     KillBoss(game_area_param_id=3600801)
@@ -1792,7 +1792,7 @@ def Event_13604811():
     SkipLinesIfClient(1)
     NotifyBossBattleStart()
     EnableFlag(13604810)
-    AND_2.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_2.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     if AND_2:
         return
     DeleteVFX(3603860)
@@ -1806,7 +1806,7 @@ def Event_13601801():
         return
     if ThisEventFlagEnabled():
         return
-    AND_1.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     GotoIfConditionTrue(Label.L0, input_condition=AND_1)
     AND_2.Add(FlagDisabled(13601800))
     AND_2.Add(ThisEventFlagDisabled())
@@ -1984,7 +1984,7 @@ def Event_13604800():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     RotateToFaceEntity(PLAYER, 3602800, animation=101130, wait_for_completion=True)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=3602801))
@@ -1995,7 +1995,7 @@ def Event_13604800():
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_5)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_5)
     EnableFlag(13604808)
     Restart()
 
@@ -2023,7 +2023,7 @@ def Event_13604801():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_3)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_3)
     EnableFlag(13604809)
     Restart()
 
@@ -2594,7 +2594,7 @@ def Event_13605605():
     
     MAIN.Await(OR_1)
     
-    RestartIfFinishedConditionTrue(input_condition=AND_3)
+    RestartIfLastConditionResultTrue(input_condition=AND_3)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -2660,7 +2660,7 @@ def Event_13605720(_, character: int):
 def Event_13605730():
     """Event 13605730"""
     DisableNetworkSync()
-    AND_1.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     if AND_1:
         return
     
@@ -2700,7 +2700,7 @@ def Event_13605740(_, character: int, region: int, entity: int, radius: float):
     
     MAIN.Await(AND_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_3)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_3)
     SetCharacterEventTarget(character, entity=entity)
     AICommand(character, command_id=100, command_slot=0)
     EnableAI(character)
@@ -3012,7 +3012,7 @@ def Event_13605921(
     
     MAIN.Await(AND_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_3)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_3)
     Move(character, destination=destination, destination_type=CoordEntityType.Region, set_draw_parent=3604027)
     SkipLines(1)
     Move(character, destination=3602917, destination_type=CoordEntityType.Region, set_draw_parent=3604027)

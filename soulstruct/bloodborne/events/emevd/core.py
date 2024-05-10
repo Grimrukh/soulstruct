@@ -36,7 +36,8 @@ class EMEVD(_BaseEMEVD):
     events: dict[int, Event] = field(default_factory=dict)
 
     EVENT_CLASS: tp.ClassVar = Event
-    ENTITY_ENUMS_MANAGER: tp.ClassVar = GameEnumsManager
     EVS_PARSER: tp.ClassVar = EVSParser
     STRING_ENCODING: tp.ClassVar = "utf-16le"
+    ENTITY_ENUMS_MANAGER: tp.ClassVar = GameEnumsManager
     HEADER_VERSION_INFO: tp.ClassVar = (False, 0, 204)
+    LONG_VARINTS = True

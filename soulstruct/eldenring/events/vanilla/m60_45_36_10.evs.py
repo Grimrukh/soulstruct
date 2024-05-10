@@ -489,8 +489,8 @@ def Event_1045363707(
     
     MAIN.Await(OR_5)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_2)
-    GotoIfFinishedConditionTrue(Label.L5, input_condition=OR_4)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_2)
+    GotoIfLastConditionResultTrue(Label.L5, input_condition=OR_4)
 
     # --- Label 0 --- #
     DefineLabel(0)

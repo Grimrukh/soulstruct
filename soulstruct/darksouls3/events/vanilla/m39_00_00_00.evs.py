@@ -494,7 +494,7 @@ def Event_13905220(_, character: int, region: int, flag: int):
     """Event 13905220"""
     if ThisEventSlotFlagEnabled():
         return
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -519,7 +519,7 @@ def Event_13905225(_, character: int, region: int, flag: int):
     """Event 13905225"""
     if ThisEventSlotFlagEnabled():
         return
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -565,7 +565,7 @@ def Event_13905251():
     if ThisEventSlotFlagEnabled():
         return
     ForceAnimation(3900251, 702, loop=True, unknown2=1.0)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -609,7 +609,7 @@ def Event_13905255(
     RestoreObject(obj_3)
     RestoreObject(obj_4)
     ForceAnimation(character, animation_id, loop=True, unknown2=1.0)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -659,7 +659,7 @@ def Event_13905320(_, character: int, flag: int):
         return
     GotoIfFlagEnabled(Label.L0, flag=flag)
     DisableAI(character)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -694,7 +694,7 @@ def Event_13905360():
     DisableGravity(3900360)
     DisableCharacterCollision(3900360)
     ForceAnimation(3900360, 30001, loop=True, unknown2=1.0)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -728,7 +728,7 @@ def Event_13905361():
     DisableGravity(3900361)
     DisableCharacterCollision(3900361)
     ForceAnimation(3900361, 30001, loop=True, unknown2=1.0)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -763,7 +763,7 @@ def Event_13905363():
     DisableGravity(3900363)
     DisableCharacterCollision(3900363)
     ForceAnimation(3900363, 30001, loop=True, unknown2=1.0)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -809,7 +809,7 @@ def Event_13905364():
     DisableGravity(3900364)
     DisableCharacterCollision(3900364)
     ForceAnimation(3900364, 30001, loop=True, unknown2=1.0)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -1609,7 +1609,7 @@ def Event_13905810():
     OR_1.Add(CharacterInvadeType(character=PLAYER, invade_type=4))
     OR_1.Add(CharacterInvadeType(character=PLAYER, invade_type=7))
     OR_1.Add(CharacterInvadeType(character=PLAYER, invade_type=21))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     if OR_1:
         return
     AND_2.Add(FlagEnabled(1388))
@@ -1849,7 +1849,7 @@ def Event_13905860():
     
     MAIN.Await(AND_1)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_2)
     OR_4.Add(CharacterHuman(PLAYER))
     OR_4.Add(CharacterHollow(PLAYER))
     GotoIfConditionTrue(Label.L1, input_condition=OR_4)

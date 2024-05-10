@@ -155,7 +155,7 @@ def Event_11100090(_, obj: int, vfx_id: int, destination: int, destination_1: in
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     Move(PLAYER, destination=destination, destination_type=CoordEntityType.Region, short_move=True)
     SkipLines(1)
     Move(PLAYER, destination=destination_1, destination_type=CoordEntityType.Region, short_move=True)
@@ -462,7 +462,7 @@ def Event_11105396():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     ResetAnimation(1100160)
     ForceAnimation(1100160, 8000)
     
@@ -714,7 +714,7 @@ def Event_11105370():
     if FlagEnabled(11100410):
         SetStandbyAnimationSettings(1100170)
         End()
-    AND_3.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_3.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_1.Add(not AND_3)
     AND_1.Add(CharacterInsideRegion(PLAYER, region=1102070))
     AND_2.Add(not AND_3)
@@ -1453,7 +1453,7 @@ def Event_11105190(_, character: int, animation_id: int, animation_id_1: int, fl
     EnableCharacterCollision(character)
     EnableGravity(character)
     SetStandbyAnimationSettings(character)
-    SkipLinesIfFinishedConditionFalse(5, input_condition=AND_1)
+    SkipLinesIfLastConditionResultFalse(5, input_condition=AND_1)
     ForceAnimation(character, animation_id, wait_for_completion=True)
     RemoveSpecialEffect(character, 4160)
     SetNest(character, region=1102020)
@@ -1512,28 +1512,28 @@ def Event_11105200(
     
     EnableFlag(flag_1)
     RestartEvent(event_id=11105220, event_slot=event_slot)
-    SkipLinesIfFinishedConditionFalse(6, input_condition=AND_1)
+    SkipLinesIfLastConditionResultFalse(6, input_condition=AND_1)
     if FlagEnabled(flag_3):
         RestartEvent(event_id=event_id, event_slot=3)
     if FlagEnabled(flag_4):
         RestartEvent(event_id=event_id, event_slot=1)
     if FlagEnabled(flag_5):
         RestartEvent(event_id=event_id, event_slot=5)
-    SkipLinesIfFinishedConditionFalse(6, input_condition=AND_2)
+    SkipLinesIfLastConditionResultFalse(6, input_condition=AND_2)
     if FlagEnabled(flag_2):
         RestartEvent(event_id=event_id, event_slot=2)
     if FlagEnabled(flag_4):
         RestartEvent(event_id=event_id, event_slot=1)
     if FlagEnabled(flag_5):
         RestartEvent(event_id=event_id, event_slot=5)
-    SkipLinesIfFinishedConditionFalse(6, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(6, input_condition=AND_3)
     if FlagEnabled(flag_2):
         RestartEvent(event_id=event_id)
     if FlagEnabled(flag_3):
         RestartEvent(event_id=event_id, event_slot=3)
     if FlagEnabled(flag_5):
         RestartEvent(event_id=event_id, event_slot=5)
-    SkipLinesIfFinishedConditionFalse(6, input_condition=AND_4)
+    SkipLinesIfLastConditionResultFalse(6, input_condition=AND_4)
     if FlagEnabled(flag_2):
         RestartEvent(event_id=event_id)
     if FlagEnabled(flag_3):
@@ -1720,7 +1720,7 @@ def Event_11100510(_, character: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_3)
     DisableCharacter(character)
     
     MAIN.Await(FlagEnabled(703))

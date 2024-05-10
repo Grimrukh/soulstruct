@@ -376,7 +376,7 @@ def Event_1051563704(_, character: uint):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     AND_6.Add(CharacterHasSpecialEffect(character, 14200))
     AND_7.Add(TimeElapsed(seconds=10.0))
     OR_6.Add(AND_6)
@@ -384,7 +384,7 @@ def Event_1051563704(_, character: uint):
     
     MAIN.Await(OR_6)
     
-    RestartIfFinishedConditionTrue(input_condition=AND_7)
+    RestartIfLastConditionResultTrue(input_condition=AND_7)
     
     MAIN.Await(CharacterHasSpecialEffect(character, 14201))
     

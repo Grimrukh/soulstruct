@@ -153,7 +153,7 @@ def Event12900067(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     WaitFrames(10)
     DisableObjectActivation(arg_0_3, obj_act_id=-1)
     EnableTreasure(arg_0_3)
-    EndIfFinishedConditionTrue(2)
+    EndIfLastConditionResultTrue(2)
     EnableFlag(arg_8_11)
 
 
@@ -257,7 +257,7 @@ def Event12900174(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=1)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=1)
     End()
 
     # --- 1 --- #
@@ -298,7 +298,7 @@ def Event12900186(_, arg_0_3: int, arg_4_7: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     DisplayDialog(
         10010160,
         anchor_entity=arg_0_3,
@@ -695,8 +695,8 @@ def Event12900260(_, arg_0_3: int):
     IfCharacterHasSpecialEffect(1, PLAYER, 6100)
     IfCharacterDead(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
-    IfCharacterHuman(-1, PLAYER)
-    IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsHuman(-1, PLAYER)
+    IfCharacterIsType(-1, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(2, input_condition=-1)
     EndIfConditionFalse(2)
     AwardItemLot(5530, host_only=True)
@@ -767,7 +767,7 @@ def Event12900315(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
-    SkipLinesIfFinishedConditionTrue(4, 1)
+    SkipLinesIfLastConditionResultTrue(4, 1)
     EndOfAnimation(arg_4_7, 12)
     DisableObjectActivation(arg_8_11, obj_act_id=arg_12_15)
     EnableObjectActivation(arg_16_19, obj_act_id=arg_12_15)
@@ -1648,7 +1648,7 @@ def Event12901272(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
-    GotoIfFinishedConditionFalse(Label.L0, input_condition=2)
+    GotoIfLastConditionResultFalse(Label.L0, input_condition=2)
     DisableSpawner(arg_4_7)
     Kill(arg_8_11, award_souls=True)
 
@@ -1666,7 +1666,7 @@ def Event12901347(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=2)
     ForceAnimation(arg_4_7, 0, wait_for_completion=True)
     EnableFlag(arg_8_11)
     Wait(2.0999999046325684)
@@ -1686,7 +1686,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     IfConditionTrue(3, input_condition=1)
     IfConditionTrue(3, input_condition=2)
     IfConditionTrue(0, input_condition=3)
-    EndIfFinishedConditionFalse(1)
+    EndIfLastConditionResultFalse(1)
     CreatePlayLog(188)
     CreateTemporaryVFX(150005, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Object, dummy_id=101)
     PlaySoundEffect(anchor_entity=arg_0_3, sound_type=SoundType.o_Object, sound_id=990100001)
@@ -2073,7 +2073,7 @@ def Event12901532(_, arg_0_3: int, arg_4_7: int):
 
     # --- 0 --- #
     DefineLabel(0)
-    IfCharacterHuman(1, PLAYER)
+    IfCharacterIsHuman(1, PLAYER)
     SkipLinesIfClient(1)
     IfFlagEnabled(1, arg_4_7)
     IfConditionTrue(0, input_condition=1)
@@ -2132,7 +2132,7 @@ def Event12901588(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     DeleteVFX(arg_8_11, erase_root_only=True)
     DeleteVFX(arg_20_23, erase_root_only=True)
     Wait(3.0)
-    IfCharacterHuman(0, PLAYER)
+    IfCharacterIsHuman(0, PLAYER)
     AddSpecialEffect(PLAYER, 4680, affect_npc_part_hp=False)
     AddSpecialEffect(PLAYER, 4680, affect_npc_part_hp=False)
     KillBoss(arg_0_3)
@@ -2185,7 +2185,7 @@ def Event12901589(
     DeleteVFX(arg_8_11, erase_root_only=True)
     DeleteVFX(arg_20_23, erase_root_only=True)
     Wait(3.0)
-    IfCharacterHuman(0, PLAYER)
+    IfCharacterIsHuman(0, PLAYER)
     AddSpecialEffect(PLAYER, 4680, affect_npc_part_hp=False)
     AddSpecialEffect(PLAYER, 4680, affect_npc_part_hp=False)
     KillBoss(arg_0_3)
@@ -2268,7 +2268,7 @@ def Event12901591(
     DeleteVFX(arg_8_11, erase_root_only=True)
     DeleteVFX(arg_20_23, erase_root_only=True)
     Wait(3.0)
-    IfCharacterHuman(0, PLAYER)
+    IfCharacterIsHuman(0, PLAYER)
     AddSpecialEffect(PLAYER, 4680, affect_npc_part_hp=False)
     AddSpecialEffect(PLAYER, 4680, affect_npc_part_hp=False)
     KillBoss(arg_0_3)
@@ -2846,7 +2846,7 @@ def Event12901697(
     IfObjectActivated(0, obj_act_id=arg_28_31)
     IfFlagDisabled(1, arg_16_19)
     IfThisEventSlotFlagDisabled(1)
-    IfCharacterHuman(1, PLAYER)
+    IfCharacterIsHuman(1, PLAYER)
     IfCharacterInsideRegion(-1, PLAYER, region=arg_4_7)
     IfCharacterHasTAEEvent(-1, PLAYER, tae_event_id=700)
     IfConditionTrue(1, input_condition=-1)
@@ -2864,7 +2864,7 @@ def Event12901701(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfObjectActivated(0, obj_act_id=arg_20_23)
     IfFlagDisabled(1, arg_8_11)
     IfFlagDisabled(1, arg_16_19)
-    IfCharacterHuman(1, PLAYER)
+    IfCharacterIsHuman(1, PLAYER)
     IfCharacterInsideRegion(-1, PLAYER, region=arg_4_7)
     IfCharacterHasTAEEvent(-1, PLAYER, tae_event_id=700)
     IfConditionTrue(1, input_condition=-1)
@@ -2894,7 +2894,7 @@ def Event12901705(
     IfObjectActivated(0, obj_act_id=arg_28_31)
     IfFlagDisabled(1, arg_16_19)
     IfThisEventSlotFlagDisabled(1)
-    IfCharacterHuman(1, PLAYER)
+    IfCharacterIsHuman(1, PLAYER)
     IfCharacterInsideRegion(-1, PLAYER, region=arg_4_7)
     IfCharacterHasTAEEvent(-1, PLAYER, tae_event_id=700)
     IfConditionTrue(1, input_condition=-1)
@@ -2912,7 +2912,7 @@ def Event12901706(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfObjectActivated(0, obj_act_id=arg_20_23)
     IfFlagDisabled(1, arg_8_11)
     IfFlagDisabled(1, arg_16_19)
-    IfCharacterHuman(1, PLAYER)
+    IfCharacterIsHuman(1, PLAYER)
     IfCharacterInsideRegion(-1, PLAYER, region=arg_4_7)
     IfCharacterHasTAEEvent(-1, PLAYER, tae_event_id=700)
     IfConditionTrue(1, input_condition=-1)
@@ -2944,7 +2944,7 @@ def Event12901707(
     IfObjectActivated(0, obj_act_id=arg_28_31)
     IfFlagDisabled(1, arg_8_11)
     IfFlagDisabled(1, arg_16_19)
-    IfCharacterHuman(1, PLAYER)
+    IfCharacterIsHuman(1, PLAYER)
     IfCharacterInsideRegion(-1, PLAYER, region=arg_4_7)
     IfCharacterHasTAEEvent(-1, PLAYER, tae_event_id=700)
     IfConditionTrue(1, input_condition=-1)
@@ -3678,9 +3678,9 @@ def Event12904033(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     Wait(2.0)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=1)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=2)
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=3)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=1)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=2)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=3)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -3728,9 +3728,9 @@ def Event12904036(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     Wait(2.0)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=1)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=2)
-    GotoIfFinishedConditionTrue(Label.L2, input_condition=3)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=1)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=2)
+    GotoIfLastConditionResultTrue(Label.L2, input_condition=3)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -3794,7 +3794,7 @@ def Event12904040(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    GotoIfFinishedConditionFalse(Label.L0, input_condition=1)
+    GotoIfLastConditionResultFalse(Label.L0, input_condition=1)
     ForceAnimation(arg_0_3, 7010, wait_for_completion=True)
     Goto(Label.L1)
 
@@ -3848,8 +3848,8 @@ def Event12904043(_, arg_0_3: int, arg_4_7: int):
     DisableGravity(arg_0_3)
     IfCharacterInsideRegion(-1, PLAYER, region=arg_4_7)
     IfAttacked(-1, arg_0_3, attacker=PLAYER)
-    IfCharacterHuman(-2, PLAYER)
-    IfCharacterType(-2, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsHuman(-2, PLAYER)
+    IfCharacterIsType(-2, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(1, input_condition=-2)
     IfConditionTrue(0, input_condition=1)
@@ -4069,7 +4069,7 @@ def Event12904338(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfConditionTrue(0, input_condition=-1)
     EnableFlag(arg_12_15)
     CreatePlayLog(806)
-    SkipLinesIfFinishedConditionTrue(1, 2)
+    SkipLinesIfLastConditionResultTrue(1, 2)
     Wait(2.0)
     EnableCharacter(arg_8_11)
     WaitFrames(2)
@@ -4423,7 +4423,7 @@ def Event12904373(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: flo
     IfConditionTrue(-2, input_condition=-1)
     IfConditionTrue(2, input_condition=-1)
     IfConditionTrue(0, input_condition=-2)
-    SkipLinesIfFinishedConditionTrue(6, 2)
+    SkipLinesIfLastConditionResultTrue(6, 2)
     DisableGravity(arg_0_3)
     DisableCharacterCollision(arg_0_3)
     ForceAnimation(arg_0_3, arg_16_19, wait_for_completion=True)
@@ -4453,8 +4453,8 @@ def Event12904382(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Battle)
     IfConditionTrue(1, input_condition=-1)
     IfEntityWithinDistance(1, arg_0_3, arg_4_7, radius=arg_8_11)
-    IfCharacterHuman(-2, PLAYER)
-    IfCharacterType(-2, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsHuman(-2, PLAYER)
+    IfCharacterIsType(-2, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(2, input_condition=-2)
     IfCharacterInsideRegion(-3, PLAYER, region=arg_12_15)
     IfCharacterInsideRegion(-3, PLAYER, region=arg_16_19)
@@ -4465,7 +4465,7 @@ def Event12904382(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int
     IfConditionTrue(-4, input_condition=3)
     IfConditionTrue(-4, input_condition=4)
     IfConditionTrue(0, input_condition=-4)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=4)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=4)
     ActivateObjectWithSpecificCharacter(arg_4_7, objact_id=9800, relative_index=-1, character=arg_0_3)
 
     # --- 0 --- #
@@ -4825,8 +4825,8 @@ def Event12904410(_, arg_0_3: int):
     DisableGravity(arg_0_3)
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Search)
     IfAttacked(-1, arg_0_3, attacker=PLAYER)
-    IfCharacterHuman(-2, PLAYER)
-    IfCharacterType(-2, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsHuman(-2, PLAYER)
+    IfCharacterIsType(-2, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(1, input_condition=-2)
     IfConditionTrue(0, input_condition=1)
@@ -4850,8 +4850,8 @@ def Event12904426(_, arg_0_3: int, arg_4_7: int):
     DisableGravity(arg_0_3)
     IfCharacterInsideRegion(-1, PLAYER, region=arg_4_7)
     IfAttacked(-1, arg_0_3, attacker=PLAYER)
-    IfCharacterHuman(-2, PLAYER)
-    IfCharacterType(-2, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsHuman(-2, PLAYER)
+    IfCharacterIsType(-2, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(1, input_condition=-2)
     IfConditionTrue(0, input_condition=1)
@@ -4874,8 +4874,8 @@ def Event12904466(_, arg_0_3: int, arg_4_7: int):
     DisableGravity(arg_0_3)
     IfCharacterInsideRegion(-1, PLAYER, region=arg_4_7)
     IfAttacked(-1, arg_0_3, attacker=PLAYER)
-    IfCharacterHuman(-2, PLAYER)
-    IfCharacterType(-2, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsHuman(-2, PLAYER)
+    IfCharacterIsType(-2, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(1, input_condition=-2)
     IfConditionTrue(0, input_condition=1)
@@ -4949,7 +4949,7 @@ def Event12904506(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_12_13,
@@ -5008,7 +5008,7 @@ def Event12904540(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, arg_20_23)
     SetCollisionMask(arg_0_3, bit_index=arg_24_24, switch_type=OnOffChange.Off)
@@ -5033,8 +5033,8 @@ def Event12904568(_, arg_0_3: int, arg_4_7: int):
     IfEntityWithinDistance(1, arg_0_3, PLAYER, radius=4.0)
     IfConditionTrue(-1, input_condition=1)
     IfObjectDestroyed(-1, arg_4_7)
-    IfCharacterHuman(-2, PLAYER)
-    IfCharacterType(-2, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsHuman(-2, PLAYER)
+    IfCharacterIsType(-2, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(2, input_condition=-1)
     IfConditionTrue(2, input_condition=-2)
     IfConditionTrue(0, input_condition=2)
@@ -5061,8 +5061,8 @@ def Event12904579(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfEntityWithinDistance(1, arg_0_3, PLAYER, radius=arg_16_19)
     IfConditionTrue(-1, input_condition=1)
     IfObjectDestroyed(-1, arg_4_7)
-    IfCharacterHuman(-2, PLAYER)
-    IfCharacterType(-2, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsHuman(-2, PLAYER)
+    IfCharacterIsType(-2, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(2, input_condition=-1)
     IfConditionTrue(2, input_condition=-2)
     IfConditionTrue(0, input_condition=2)
@@ -5088,8 +5088,8 @@ def Event12904584(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfCharacterInsideRegion(1, PLAYER, region=arg_16_19)
     IfConditionTrue(-1, input_condition=1)
     IfObjectDestroyed(-1, arg_4_7)
-    IfCharacterHuman(-2, PLAYER)
-    IfCharacterType(-2, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsHuman(-2, PLAYER)
+    IfCharacterIsType(-2, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(2, input_condition=-1)
     IfConditionTrue(2, input_condition=-2)
     IfConditionTrue(0, input_condition=2)
@@ -5112,8 +5112,8 @@ def Event12904594(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     """ 12904594: Event 12904594 """
     EndIfFlagEnabled(arg_16_19)
     GotoIfThisEventSlotFlagEnabled(Label.L0)
-    IfCharacterHuman(-1, PLAYER)
-    IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsHuman(-1, PLAYER)
+    IfCharacterIsType(-1, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(1, input_condition=-1)
     IfCharacterInsideRegion(1, PLAYER, region=arg_4_7)
     IfConditionTrue(0, input_condition=1)
@@ -5130,8 +5130,8 @@ def Event12904595(_, arg_0_3: int, arg_4_7: int):
     """ 12904595: Event 12904595 """
     GotoIfThisEventSlotFlagEnabled(Label.L0)
     IfCharacterInsideRegion(1, arg_0_3, region=arg_4_7)
-    IfCharacterHuman(-1, PLAYER)
-    IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsHuman(-1, PLAYER)
+    IfCharacterIsType(-1, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(2, input_condition=-1)
     IfEntityWithinDistance(2, PLAYER, arg_0_3, radius=3.0)
     IfAttackedWithDamageType(3, attacked_entity=arg_0_3, attacker=-1)
@@ -5158,7 +5158,7 @@ def Event12904596(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfConditionTrue(-2, input_condition=1)
     IfConditionTrue(-2, input_condition=2)
     IfConditionTrue(0, input_condition=-2)
-    EndIfFinishedConditionTrue(2)
+    EndIfLastConditionResultTrue(2)
     AICommand(arg_0_3, command_id=-1, slot=0)
     ReplanAI(arg_0_3)
     IfHasAIStatus(3, arg_0_3, ai_status=AIStatusType.Normal)
@@ -5166,7 +5166,7 @@ def Event12904596(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfConditionTrue(-3, input_condition=3)
     IfConditionTrue(-3, input_condition=4)
     IfConditionTrue(0, input_condition=-3)
-    EndIfFinishedConditionTrue(4)
+    EndIfLastConditionResultTrue(4)
     AICommand(arg_0_3, command_id=arg_4_7, slot=0)
     ReplanAI(arg_0_3)
     Restart()
@@ -5306,12 +5306,12 @@ def Event12904736(_, arg_0_3: int, arg_4_7: int, arg_8_11: float):
     IfConditionTrue(-1, input_condition=1)
     IfEntityWithinDistance(-1, PLAYER, arg_0_3, radius=arg_8_11)
     IfAttacked(-1, PLAYER, attacker=arg_0_3)
-    IfCharacterHuman(-2, PLAYER)
-    IfCharacterType(-2, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsHuman(-2, PLAYER)
+    IfCharacterIsType(-2, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(2, input_condition=-1)
     IfConditionTrue(2, input_condition=-2)
     IfConditionTrue(0, input_condition=2)
-    SkipLinesIfFinishedConditionFalse(6, 1)
+    SkipLinesIfLastConditionResultFalse(6, 1)
     ForceAnimation(arg_0_3, 3007)
     WaitFrames(50)
     RotateToFaceEntity(arg_0_3, PLAYER, animation=3006, wait_for_completion=False)
@@ -5418,12 +5418,12 @@ def Event12904759(_, arg_0_3: int, arg_4_7: int):
     IfHasAIStatus(-2, arg_0_3, ai_status=AIStatusType.Search)
     IfHasAIStatus(-2, arg_0_3, ai_status=AIStatusType.Battle)
     IfConditionTrue(-1, input_condition=-2)
-    IfCharacterHuman(-3, PLAYER)
-    IfCharacterType(-3, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsHuman(-3, PLAYER)
+    IfCharacterIsType(-3, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(1, input_condition=-3)
     IfConditionTrue(0, input_condition=1)
-    EndIfFinishedConditionTrue(-2)
+    EndIfLastConditionResultTrue(-2)
     CreatePlayLog(1224)
     ForceAnimation(arg_0_3, 3024, wait_for_completion=True)
 
@@ -5433,8 +5433,8 @@ def Event12904772(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     EndIfThisEventSlotFlagEnabled()
     IfCharacterInsideRegion(1, PLAYER, region=arg_0_3)
     IfObjectNotDestroyed(1, arg_4_7)
-    IfCharacterHuman(-1, PLAYER)
-    IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsHuman(-1, PLAYER)
+    IfCharacterIsType(-1, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(0, input_condition=1)
     SetCharacterEventTarget(arg_8_11, arg_12_15)
@@ -5470,7 +5470,7 @@ def Event12904775(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12904775: Event 12904775 """
     IfFlagDisabled(1, arg_12_15)
     IfFlagEnabled(1, arg_8_11)
-    IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsType(1, PLAYER, CharacterType.WhitePhantom)
     IfActionButtonParamActivated(1, action_button_id=2900010, entity=arg_4_7)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
@@ -5771,8 +5771,8 @@ def Event12904869(_, arg_0_3: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(2)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=3)
+    EndIfLastConditionResultTrue(2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=3)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 7000)
     SetNPCPartHealth(arg_0_3, npc_part_id=2, desired_health=100, overwrite_max=True)
@@ -5783,8 +5783,8 @@ def Event12904869(_, arg_0_3: int):
     IfConditionTrue(-2, input_condition=5)
     IfConditionTrue(-2, input_condition=6)
     IfConditionTrue(0, input_condition=-2)
-    EndIfFinishedConditionTrue(5)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=6)
+    EndIfLastConditionResultTrue(5)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=6)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 7001)
     SetNPCPartHealth(arg_0_3, npc_part_id=2, desired_health=50, overwrite_max=True)
@@ -5795,8 +5795,8 @@ def Event12904869(_, arg_0_3: int):
     IfConditionTrue(-3, input_condition=8)
     IfConditionTrue(-3, input_condition=9)
     IfConditionTrue(0, input_condition=-3)
-    EndIfFinishedConditionTrue(8)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=9)
+    EndIfLastConditionResultTrue(8)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=9)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 7002)
     CreateNPCPart(
@@ -5842,8 +5842,8 @@ def Event12904870(_, arg_0_3: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(2)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=3)
+    EndIfLastConditionResultTrue(2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=3)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 7005)
     SetNPCPartHealth(arg_0_3, npc_part_id=3, desired_health=100, overwrite_max=True)
@@ -5854,8 +5854,8 @@ def Event12904870(_, arg_0_3: int):
     IfConditionTrue(-2, input_condition=5)
     IfConditionTrue(-2, input_condition=6)
     IfConditionTrue(0, input_condition=-2)
-    EndIfFinishedConditionTrue(5)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=6)
+    EndIfLastConditionResultTrue(5)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=6)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 7006)
     SetNPCPartHealth(arg_0_3, npc_part_id=3, desired_health=50, overwrite_max=True)
@@ -5866,8 +5866,8 @@ def Event12904870(_, arg_0_3: int):
     IfConditionTrue(-3, input_condition=8)
     IfConditionTrue(-3, input_condition=9)
     IfConditionTrue(0, input_condition=-3)
-    EndIfFinishedConditionTrue(8)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=9)
+    EndIfLastConditionResultTrue(8)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=9)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 7007)
     CreateNPCPart(
@@ -6014,7 +6014,7 @@ def Event12904880(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12904880: Event 12904880 """
     IfFlagDisabled(1, arg_12_15)
     IfFlagEnabled(1, arg_8_11)
-    IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsType(1, PLAYER, CharacterType.WhitePhantom)
     IfActionButtonParamActivated(1, action_button_id=2900010, entity=arg_4_7)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
@@ -6275,8 +6275,8 @@ def Event12904896(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(-1, input_condition=4)
     IfConditionTrue(0, input_condition=-1)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=3)
-    EndIfFinishedConditionTrue(4)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=3)
+    EndIfLastConditionResultTrue(4)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -6355,8 +6355,8 @@ def Event12904897(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(-1, input_condition=4)
     IfConditionTrue(0, input_condition=-1)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=3)
-    EndIfFinishedConditionTrue(4)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=3)
+    EndIfLastConditionResultTrue(4)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -6430,7 +6430,7 @@ def Event12904898(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -6486,7 +6486,7 @@ def Event12904899(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=2)
     CreateNPCPart(
         arg_0_3,
@@ -6549,7 +6549,7 @@ def Event12904900(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -6614,7 +6614,7 @@ def Event12904901(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -6670,7 +6670,7 @@ def Event12904902(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=2)
     CreateNPCPart(
         arg_0_3,
@@ -6733,7 +6733,7 @@ def Event12904903(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -6798,7 +6798,7 @@ def Event12904904(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -6854,7 +6854,7 @@ def Event12904905(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=2)
     CreateNPCPart(
         arg_0_3,
@@ -6917,7 +6917,7 @@ def Event12904906(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -6982,7 +6982,7 @@ def Event12904907(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -7038,7 +7038,7 @@ def Event12904908(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=2)
     CreateNPCPart(
         arg_0_3,
@@ -7101,7 +7101,7 @@ def Event12904909(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -7166,7 +7166,7 @@ def Event12904910(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -7222,7 +7222,7 @@ def Event12904913(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=2)
     CreateNPCPart(
         arg_0_3,
@@ -7285,7 +7285,7 @@ def Event12904911(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -7393,7 +7393,7 @@ def Event12904917(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: in
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(2)
+    EndIfLastConditionResultTrue(2)
     IfCharacterHasSpecialEffect(7, arg_20_23, 420)
     SkipLinesIfConditionFalse(1, 7)
     AddSpecialEffect(arg_20_23, arg_12_15, affect_npc_part_hp=True)
@@ -7416,7 +7416,7 @@ def Event12904918(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
-    SkipLinesIfFinishedConditionTrue(2, 2)
+    SkipLinesIfLastConditionResultTrue(2, 2)
     ForceAnimation(arg_16_19, arg_4_7, wait_for_completion=True)
     SkipLines(1)
     AddSpecialEffect(arg_16_19, arg_0_3, affect_npc_part_hp=True)
@@ -8598,7 +8598,7 @@ def Event12905406(_, arg_0_3: int, arg_4_7: int):
     DisableCharacter(arg_0_3)
     End()
     IfPlayerInsightAmountGreaterThanOrEqual(1, 10)
-    IfCharacterHuman(1, PLAYER)
+    IfCharacterIsHuman(1, PLAYER)
     IfEntityWithinDistance(1, PLAYER, arg_0_3, radius=10.0)
     IfConditionTrue(0, input_condition=1)
     EnableCharacter(arg_0_3)
@@ -8629,7 +8629,7 @@ def Event12906400(_, arg_0_3: int):
     IfConditionTrue(-1, input_condition=2)
     IfObjectHealthValueComparison(-1, arg_0_3, ComparisonType.LessThan, 999)
     IfConditionTrue(0, input_condition=-1)
-    SkipLinesIfFinishedConditionTrue(7, -2)
+    SkipLinesIfLastConditionResultTrue(7, -2)
     DestroyObject(arg_0_3)
     PlaySoundEffect(anchor_entity=arg_0_3, sound_type=SoundType.o_Object, sound_id=299961000)
     WaitFrames(10)
@@ -10427,9 +10427,9 @@ def Event12906586(
     IfConditionTrue(-2, input_condition=3)
     IfConditionTrue(-2, input_condition=4)
     IfConditionTrue(0, input_condition=-1)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=5)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=4)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=-2)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=5)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=4)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=-2)
     SetAIParamID(arg_0_3, arg_16_19)
     ForceAnimation(arg_0_3, arg_8_11, loop=True)
     IfHasAIStatus(6, arg_0_3, ai_status=AIStatusType.Normal)
@@ -10446,8 +10446,8 @@ def Event12906586(
     IfConditionTrue(-4, input_condition=8)
     IfConditionTrue(-4, input_condition=9)
     IfConditionTrue(0, input_condition=-3)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=10)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=-4)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=10)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=-4)
     Wait(3.0)
     Restart()
 
@@ -10744,7 +10744,7 @@ def Event12906660(_, arg_0_3: int):
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
-    RestartIfFinishedConditionFalse(2)
+    RestartIfLastConditionResultFalse(2)
 
     # --- 3 --- #
     DefineLabel(3)
@@ -10757,8 +10757,8 @@ def Event12906660(_, arg_0_3: int):
 def Event12906726(_, arg_0_3: int, arg_4_7: int, arg_8_11: float):
     """ 12906726: Event 12906726 """
     IfCharacterBackreadEnabled(0, arg_0_3)
-    IfCharacterHuman(-3, PLAYER)
-    IfCharacterType(-3, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsHuman(-3, PLAYER)
+    IfCharacterIsType(-3, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(0, input_condition=-3)
     PlaySoundEffect(anchor_entity=arg_0_3, sound_type=SoundType.c_CharacterMotion, sound_id=arg_4_7)
     IfCharacterDead(-1, arg_0_3)
@@ -10766,7 +10766,7 @@ def Event12906726(_, arg_0_3: int, arg_4_7: int, arg_8_11: float):
     IfFramesElapsed(-2, 120)
     IfConditionTrue(-2, input_condition=-1)
     IfConditionTrue(0, input_condition=-2)
-    EndIfFinishedConditionTrue(-1)
+    EndIfLastConditionResultTrue(-1)
     Restart()
 
 
@@ -10877,7 +10877,7 @@ def Event12906764(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -10935,7 +10935,7 @@ def Event12906765(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -11051,7 +11051,7 @@ def Event12906769(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -11116,7 +11116,7 @@ def Event12906770(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -11181,7 +11181,7 @@ def Event12906771(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -11246,7 +11246,7 @@ def Event12906772(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -11311,7 +11311,7 @@ def Event12906773(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -11376,7 +11376,7 @@ def Event12906774(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -11441,7 +11441,7 @@ def Event12906775(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -11506,7 +11506,7 @@ def Event12906776(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -11571,7 +11571,7 @@ def Event12906777(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -11636,7 +11636,7 @@ def Event12906778(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -11701,7 +11701,7 @@ def Event12906779(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -11766,7 +11766,7 @@ def Event12906780(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -11831,7 +11831,7 @@ def Event12906781(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -11896,7 +11896,7 @@ def Event12906782(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -11961,7 +11961,7 @@ def Event12906783(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -12026,7 +12026,7 @@ def Event12906784(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -12091,7 +12091,7 @@ def Event12906785(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -12156,7 +12156,7 @@ def Event12906786(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -12221,7 +12221,7 @@ def Event12906787(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -12286,7 +12286,7 @@ def Event12906788(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_24_25,
@@ -12338,7 +12338,7 @@ def Event12906827(_, arg_0_3: int, arg_4_5: short, arg_6_7: short, arg_8_11: int
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_6_7,
@@ -12391,7 +12391,7 @@ def Event12906828(
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(2)
+    EndIfLastConditionResultTrue(2)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, arg_12_15)
     AddSpecialEffect(arg_0_3, 5667, affect_npc_part_hp=True)
@@ -12433,24 +12433,24 @@ def Event12906789(
     # --- 0 --- #
     DefineLabel(0)
     IfFlagDisabled(2, arg_20_23)
-    IfCharacterHuman(2, PLAYER)
+    IfCharacterIsHuman(2, PLAYER)
     IfActionButtonParamActivated(2, action_button_id=2900010, entity=arg_4_7)
     IfFlagEnabled(3, arg_20_23)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     RotateToFaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
-    IfCharacterHuman(4, PLAYER)
+    IfCharacterIsHuman(4, PLAYER)
     IfCharacterInsideRegion(-2, PLAYER, region=arg_0_3)
     IfCharacterHasTAEEvent(-2, PLAYER, tae_event_id=700)
     IfConditionTrue(4, input_condition=-2)
     IfTimeElapsed(5, 4.0)
-    IfCharacterHuman(5, PLAYER)
+    IfCharacterIsHuman(5, PLAYER)
     IfConditionTrue(-3, input_condition=4)
     IfConditionTrue(-3, input_condition=5)
     IfConditionTrue(0, input_condition=-3)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=5)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=5)
     EnableFlag(arg_28_31)
 
     # --- 1 --- #
@@ -12465,20 +12465,20 @@ def Event12906790(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfFlagDisabled(1, arg_8_11)
     IfFlagEnabled(1, arg_12_15)
     IfFlagEnabled(1, arg_16_19)
-    IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsType(1, PLAYER, CharacterType.WhitePhantom)
     IfActionButtonParamActivated(1, action_button_id=2900010, entity=arg_4_7)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
-    IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsType(2, PLAYER, CharacterType.WhitePhantom)
     IfCharacterInsideRegion(-1, PLAYER, region=arg_0_3)
     IfCharacterHasTAEEvent(-1, PLAYER, tae_event_id=700)
     IfConditionTrue(2, input_condition=-1)
     IfTimeElapsed(3, 4.0)
-    IfCharacterType(3, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsType(3, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(-2, input_condition=2)
     IfConditionTrue(-2, input_condition=3)
     IfConditionTrue(0, input_condition=-2)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=3)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=3)
     EnableFlag(arg_20_23)
 
     # --- 0 --- #
@@ -12683,24 +12683,24 @@ def Event12906796(
     # --- 0 --- #
     DefineLabel(0)
     IfFlagDisabled(2, arg_20_23)
-    IfCharacterHuman(2, PLAYER)
+    IfCharacterIsHuman(2, PLAYER)
     IfActionButtonParamActivated(2, action_button_id=2900010, entity=arg_4_7)
     IfFlagEnabled(3, arg_20_23)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     RotateToFaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
-    IfCharacterHuman(4, PLAYER)
+    IfCharacterIsHuman(4, PLAYER)
     IfCharacterInsideRegion(-2, PLAYER, region=arg_0_3)
     IfCharacterHasTAEEvent(-2, PLAYER, tae_event_id=700)
     IfConditionTrue(4, input_condition=-2)
     IfTimeElapsed(5, 4.0)
-    IfCharacterHuman(5, PLAYER)
+    IfCharacterIsHuman(5, PLAYER)
     IfConditionTrue(-3, input_condition=4)
     IfConditionTrue(-3, input_condition=5)
     IfConditionTrue(0, input_condition=-3)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=5)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=5)
     EnableFlag(arg_28_31)
 
     # --- 1 --- #
@@ -12724,24 +12724,24 @@ def Event12906800(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     # --- 0 --- #
     DefineLabel(0)
     IfFlagDisabled(2, arg_12_15)
-    IfCharacterHuman(2, PLAYER)
+    IfCharacterIsHuman(2, PLAYER)
     IfActionButtonParamActivated(2, action_button_id=2900010, entity=arg_4_7)
     IfFlagEnabled(3, arg_12_15)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     RotateToFaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
-    IfCharacterHuman(4, PLAYER)
+    IfCharacterIsHuman(4, PLAYER)
     IfCharacterInsideRegion(-2, PLAYER, region=arg_0_3)
     IfCharacterHasTAEEvent(-2, PLAYER, tae_event_id=700)
     IfConditionTrue(4, input_condition=-2)
     IfTimeElapsed(5, 4.0)
-    IfCharacterHuman(5, PLAYER)
+    IfCharacterIsHuman(5, PLAYER)
     IfConditionTrue(-3, input_condition=4)
     IfConditionTrue(-3, input_condition=5)
     IfConditionTrue(0, input_condition=-3)
-    GotoIfFinishedConditionTrue(Label.L1, input_condition=5)
+    GotoIfLastConditionResultTrue(Label.L1, input_condition=5)
     EnableFlag(arg_20_23)
 
     # --- 1 --- #
@@ -12756,20 +12756,20 @@ def Event12906802(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfFlagDisabled(1, arg_8_11)
     IfFlagEnabled(1, arg_12_15)
     IfFlagEnabled(1, arg_16_19)
-    IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsType(1, PLAYER, CharacterType.WhitePhantom)
     IfActionButtonParamActivated(1, action_button_id=2900010, entity=arg_4_7)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
-    IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsType(2, PLAYER, CharacterType.WhitePhantom)
     IfCharacterInsideRegion(-1, PLAYER, region=2412801)
     IfCharacterHasTAEEvent(-1, PLAYER, tae_event_id=700)
     IfConditionTrue(2, input_condition=-1)
     IfTimeElapsed(3, 4.0)
-    IfCharacterType(3, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsType(3, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(-2, input_condition=2)
     IfConditionTrue(-2, input_condition=3)
     IfConditionTrue(0, input_condition=-2)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=3)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=3)
     EnableFlag(arg_20_23)
 
     # --- 0 --- #
@@ -13018,7 +13018,7 @@ def Event12906841(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -13067,7 +13067,7 @@ def Event12906843(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -13116,7 +13116,7 @@ def Event12906845(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -13165,7 +13165,7 @@ def Event12906847(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -13214,7 +13214,7 @@ def Event12906849(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -13275,7 +13275,7 @@ def Event12906853(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -13324,7 +13324,7 @@ def Event12906855(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -13373,7 +13373,7 @@ def Event12906857(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -13422,7 +13422,7 @@ def Event12906859(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -13471,7 +13471,7 @@ def Event12906861(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -13520,7 +13520,7 @@ def Event12906831(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -13569,7 +13569,7 @@ def Event12906833(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -13618,7 +13618,7 @@ def Event12906835(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -13667,7 +13667,7 @@ def Event12906837(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -13716,7 +13716,7 @@ def Event12906839(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -13853,7 +13853,7 @@ def Event12906871(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -13905,7 +13905,7 @@ def Event12906879(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -13957,7 +13957,7 @@ def Event12906872(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -14009,7 +14009,7 @@ def Event12906875(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -14061,7 +14061,7 @@ def Event12906873(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -14113,7 +14113,7 @@ def Event12906876(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -14165,7 +14165,7 @@ def Event12906874(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -14217,7 +14217,7 @@ def Event12906877(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -14269,7 +14269,7 @@ def Event12906878(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -14321,7 +14321,7 @@ def Event12906880(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -14373,7 +14373,7 @@ def Event12906881(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -14446,7 +14446,7 @@ def Event12904723(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=2)
     CreateNPCPart(
         arg_0_3,
@@ -14501,7 +14501,7 @@ def Event12904724(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=2)
     CreateNPCPart(
         arg_0_3,
@@ -14556,7 +14556,7 @@ def Event12904725(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=2)
     CreateNPCPart(
         arg_0_3,
@@ -14611,7 +14611,7 @@ def Event12904726(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=2)
     CreateNPCPart(
         arg_0_3,
@@ -14666,7 +14666,7 @@ def Event12904727(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=2)
     CreateNPCPart(
         arg_0_3,
@@ -14710,7 +14710,7 @@ def Event12906882(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfFlagEnabled(2, arg_8_11)
     IfRandomTimeElapsed(-1, min_seconds=0.0, max_seconds=1.0)
     IfTimeElapsed(3, 1.0)
-    IfCharacterType(3, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsType(3, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(2, input_condition=-1)
     IfConditionTrue(0, input_condition=2)
@@ -14796,8 +14796,8 @@ def Event12906864(_, arg_0_3: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(2)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=3)
+    EndIfLastConditionResultTrue(2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=3)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 7000)
     SetNPCPartHealth(arg_0_3, npc_part_id=2, desired_health=100, overwrite_max=True)
@@ -14808,8 +14808,8 @@ def Event12906864(_, arg_0_3: int):
     IfConditionTrue(-2, input_condition=5)
     IfConditionTrue(-2, input_condition=6)
     IfConditionTrue(0, input_condition=-2)
-    EndIfFinishedConditionTrue(5)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=6)
+    EndIfLastConditionResultTrue(5)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=6)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 7001)
     SetNPCPartHealth(arg_0_3, npc_part_id=2, desired_health=50, overwrite_max=True)
@@ -14820,8 +14820,8 @@ def Event12906864(_, arg_0_3: int):
     IfConditionTrue(-3, input_condition=8)
     IfConditionTrue(-3, input_condition=9)
     IfConditionTrue(0, input_condition=-3)
-    EndIfFinishedConditionTrue(8)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=9)
+    EndIfLastConditionResultTrue(8)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=9)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 7002)
     CreateNPCPart(
@@ -14866,8 +14866,8 @@ def Event12906867(_, arg_0_3: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(2)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=3)
+    EndIfLastConditionResultTrue(2)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=3)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 7005)
     SetNPCPartHealth(arg_0_3, npc_part_id=3, desired_health=100, overwrite_max=True)
@@ -14878,8 +14878,8 @@ def Event12906867(_, arg_0_3: int):
     IfConditionTrue(-2, input_condition=5)
     IfConditionTrue(-2, input_condition=6)
     IfConditionTrue(0, input_condition=-2)
-    EndIfFinishedConditionTrue(5)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=6)
+    EndIfLastConditionResultTrue(5)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=6)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 7006)
     SetNPCPartHealth(arg_0_3, npc_part_id=3, desired_health=50, overwrite_max=True)
@@ -14890,8 +14890,8 @@ def Event12906867(_, arg_0_3: int):
     IfConditionTrue(-3, input_condition=8)
     IfConditionTrue(-3, input_condition=9)
     IfConditionTrue(0, input_condition=-3)
-    EndIfFinishedConditionTrue(8)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=9)
+    EndIfLastConditionResultTrue(8)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=9)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 7007)
     CreateNPCPart(
@@ -14936,7 +14936,7 @@ def Event12906868(_, arg_0_3: int):
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(2)
+    EndIfLastConditionResultTrue(2)
     Restart()
 
 
@@ -15063,7 +15063,7 @@ def Event12904728(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -15116,7 +15116,7 @@ def Event12904729(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -15169,7 +15169,7 @@ def Event12904730(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -15222,7 +15222,7 @@ def Event12904731(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -15275,7 +15275,7 @@ def Event12904732(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    EndIfLastConditionResultTrue(3)
     CreateNPCPart(
         arg_0_3,
         npc_part_id=arg_4_5,
@@ -15340,7 +15340,7 @@ def Event12906960(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfConditionTrue(-1, input_condition=-2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    GotoIfFinishedConditionFalse(Label.L0, input_condition=-2)
+    GotoIfLastConditionResultFalse(Label.L0, input_condition=-2)
     WaitFrames(1)
     ForceAnimation(arg_0_3, 3020)
     WaitFrames(65)
@@ -15447,7 +15447,7 @@ def Event12907400():
     IfConditionTrue(-2, input_condition=2)
     AwaitConditionTrue(-2)
     IfTimeElapsed(7, 10.0)
-    IfCharacterHuman(7, PLAYER)
+    IfCharacterIsHuman(7, PLAYER)
     IfConditionTrue(0, input_condition=7)
     AddSpecialEffect(PLAYER, 9020, affect_npc_part_hp=False)
     DisplayBattlefieldMessage(100002, display_location_index=0)
@@ -15467,7 +15467,7 @@ def Event12907400():
     IfConditionTrue(-3, input_condition=5)
     IfConditionTrue(-3, input_condition=6)
     AwaitConditionTrue(-3)
-    IfCharacterHuman(0, PLAYER)
+    IfCharacterIsHuman(0, PLAYER)
     RemoveSpecialEffect(PLAYER, 9020)
     Restart()
 
@@ -15492,7 +15492,7 @@ def Event12907401(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     DisableAI(arg_0_3)
     ForceAnimation(arg_0_3, 7010, loop=True)
     IfOnline(1)
-    IfCharacterHuman(2, PLAYER)
+    IfCharacterIsHuman(2, PLAYER)
     IfPlayerLevelGreaterThanOrEqual(2, 30)
     SkipLinesIfFlagDisabled(1, arg_16_19)
     IfClientTypeCountComparison(2, ClientType.Coop, ComparisonType.GreaterThanOrEqual, value=1)
@@ -15529,7 +15529,7 @@ def Event12907405(
     DisableAI(arg_0_3)
     ForceAnimation(arg_0_3, 7010, loop=True)
     IfOnline(1)
-    IfCharacterHuman(2, PLAYER)
+    IfCharacterIsHuman(2, PLAYER)
     IfPlayerLevelGreaterThanOrEqual(2, 30)
     IfFlagDisabled(4, arg_16_19)
     IfFlagEnabled(4, arg_24_27)
@@ -15544,7 +15544,7 @@ def Event12907405(
     IfFlagEnabled(1, arg_20_23)
     IfConditionTrue(0, input_condition=1)
     IfTimeElapsed(0, 10.0)
-    SkipLinesIfFinishedConditionTrue(1, 4)
+    SkipLinesIfLastConditionResultTrue(1, 4)
     DisplayBattlefieldMessage(109000, display_location_index=0)
     ForceAnimation(arg_0_3, 7011)
     IfFramesElapsed(0, 59)
@@ -15567,7 +15567,7 @@ def Event12907409(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfConditionTrue(0, input_condition=1)
     EnableFlag(arg_8_11)
     DisableFlag(12907230)
-    GotoIfFinishedConditionFalse(Label.L0, input_condition=2)
+    GotoIfLastConditionResultFalse(Label.L0, input_condition=2)
     EnableFlag(arg_16_19)
     EndIfFlagEnabled(12907231)
     Wait(5.0)
@@ -15596,7 +15596,7 @@ def Event12907413(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfConditionTrue(0, input_condition=1)
     EnableFlag(arg_8_11)
     DisableFlag(12907231)
-    GotoIfFinishedConditionFalse(Label.L0, input_condition=2)
+    GotoIfLastConditionResultFalse(Label.L0, input_condition=2)
     EnableFlag(arg_16_19)
     EndIfFlagEnabled(12907230)
     Wait(5.0)
@@ -15634,7 +15634,7 @@ def Event12907420(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     AddSpecialEffect(PLAYER, arg_0_3, affect_npc_part_hp=False)
     End()
     IfCharacterHasSpecialEffect(1, PLAYER, 6142)
-    IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
+    IfCharacterIsType(1, PLAYER, CharacterType.WhitePhantom)
     SkipLinesIfConditionTrue(2, 1)
     AddSpecialEffect(PLAYER, arg_8_11, affect_npc_part_hp=False)
     End()
@@ -15833,7 +15833,7 @@ def Event12907610(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 @RestartOnRest
 def Event12907620(_, arg_0_3: int, arg_4_7: int):
     """ 12907620: Event 12907620 """
-    IfCharacterHuman(1, PLAYER)
+    IfCharacterIsHuman(1, PLAYER)
     IfFlagEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
     EndIfHost()
@@ -15844,7 +15844,7 @@ def Event12907620(_, arg_0_3: int, arg_4_7: int):
 @RestartOnRest
 def Event12907625(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12907625: Event 12907625 """
-    IfCharacterHuman(1, PLAYER)
+    IfCharacterIsHuman(1, PLAYER)
     IfFlagEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
     EndIfHost()
@@ -15857,7 +15857,7 @@ def Event12907625(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 @RestartOnRest
 def Event12907630(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
     """ 12907630: Event 12907630 """
-    IfCharacterHuman(1, PLAYER)
+    IfCharacterIsHuman(1, PLAYER)
     IfFlagEnabled(1, arg_0_3)
     IfConditionTrue(0, input_condition=1)
     EndIfHost()

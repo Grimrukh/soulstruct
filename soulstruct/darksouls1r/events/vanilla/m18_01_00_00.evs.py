@@ -202,7 +202,7 @@ def Event_11810090(_, obj: int, vfx_id: int, destination: int, destination_1: in
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(2, input_condition=AND_2)
     Move(PLAYER, destination=destination, destination_type=CoordEntityType.Region, short_move=True)
     SkipLines(1)
     Move(PLAYER, destination=destination_1, destination_type=CoordEntityType.Region, short_move=True)
@@ -580,7 +580,7 @@ def Event_11810150():
     MAIN.Await(OR_1)
     
     SetStandbyAnimationSettings(PLAYER)
-    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_2)
+    SkipLinesIfLastConditionResultTrue(1, input_condition=AND_2)
     ForceAnimation(PLAYER, 7817, wait_for_completion=True)
     Restart()
 
@@ -948,13 +948,13 @@ def Event_11810600():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(5, input_condition=AND_1)
+    SkipLinesIfLastConditionResultFalse(5, input_condition=AND_1)
     EnableFlag(11815100)
     DisableFlag(11815101)
     DisableFlag(11815102)
     DisableFlagRange((11815200, 11815202))
     Restart()
-    SkipLinesIfFinishedConditionFalse(6, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(6, input_condition=AND_3)
     DisableFlag(11815100)
     DisableFlag(11815101)
     EnableFlag(11815102)
@@ -1031,7 +1031,7 @@ def Event_11810510(_, character: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_3)
+    SkipLinesIfLastConditionResultFalse(2, input_condition=AND_3)
     DisableCharacter(character)
     
     MAIN.Await(FlagEnabled(703))
@@ -1072,7 +1072,7 @@ def Event_11810530(_, character: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=AND_2)
+    EndIfLastConditionResultTrue(input_condition=AND_2)
     Kill(character, award_souls=True)
 
 

@@ -525,12 +525,28 @@ class ConditionGroup(IntEnum):
     def Await(self, condition: bool | int | ConditionGroup):
         """For EVS intellisense. Handled internally.
 
+        Continually evaluate the given condition until it is true, then continue with the next instruction.
+
         Only permitted for `MAIN`.
         """
         ...
 
     def Add(self, condition: bool | int | ConditionGroup):
-        """For EVS intellisense. Handled internally."""
+        """For EVS intellisense. Handled internally.
+
+        Add a condition to this condition group for evaluation.
+        """
+        ...
+
+    # noinspection PyPropertyDefinition
+    @property
+    def LastResult(self) -> bool:
+        """For EVS intellisense. Handled internally.
+
+        Retrieve the result of this condition group from its last evaluation for use in a simple, instantaneous test.
+        If the group has never been evaluted, this will be False, except for `MAIN`, which is always True (but you have
+        no reason to call this on `MAIN`).
+        """
         ...
 
 

@@ -88,12 +88,12 @@ def Event_1045332220():
     """Event 1045332220"""
     if ThisEventSlotFlagEnabled():
         return
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=Characters.WolfPackLeader, radius=30.0))
     AND_1.Add(AND_3)
     AND_1.Add(OR_1)
@@ -224,7 +224,7 @@ def Event_1045332260(_, vfx_id: uint, earliest_hour: uchar, earliest_minute: uch
     DisableNetworkFlag(flag)
     if FlagEnabled(1045330900):
         return
-    WaitUntilRandomTimeOfDay(earliest=(earliest_hour, earliest_minute, 0), latest=(1, 0, 0))
+    WaitUntilTimeOfDayInRange(earliest=(earliest_hour, earliest_minute, 0), latest=(1, 0, 0))
     EnableNetworkFlag(flag)
     CreateVFX(vfx_id)
     AND_1.Add(TimeOfDayInRange(earliest=(1, 0, 1), latest=(20, 59, 59)))

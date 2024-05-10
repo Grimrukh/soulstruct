@@ -1607,7 +1607,7 @@ def Event_15105280(
     if ThisEventSlotFlagEnabled():
         return
     ForceAnimation(character, animation_id, loop=True, unknown2=1.0)
-    AND_1.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_1.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_1)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -1759,7 +1759,7 @@ def Event_15105305():
 @RestartOnRest(15105306)
 def Event_15105306(_, character: int, special_effect: int, region: int, region_1: int, region_2: int, region_3: int):
     """Event 15105306"""
-    AND_1.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_1.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_1)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -1796,7 +1796,7 @@ def Event_15105306(_, character: int, special_effect: int, region: int, region_1
 @RestartOnRest(15105308)
 def Event_15105308():
     """Event 15105308"""
-    AND_1.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_1.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_1)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -1852,7 +1852,7 @@ def Event_15105310(_, character: int, character_1: int):
 def Event_15105315(_, character: int, character_1: int, special_effect: int, special_effect_1: int):
     """Event 15105315"""
     RemoveSpecialEffect(PLAYER, special_effect)
-    AND_8.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_8.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_8.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_8.Add(AND_8)
     OR_8.Add(CharacterHuman(PLAYER))
@@ -1875,7 +1875,7 @@ def Event_15105315(_, character: int, character_1: int, special_effect: int, spe
     MAIN.Await(AND_9)
     
     SetCharacterEventTarget(character_1, entity=character)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
     Move(
         character_1,
         destination=PLAYER,
@@ -1987,7 +1987,7 @@ def Event_15105350(
     
     MAIN.Await(OR_2)
     
-    RestartIfFinishedConditionTrue(input_condition=AND_2)
+    RestartIfLastConditionResultTrue(input_condition=AND_2)
     EnableFlag(flag)
     Restart()
 
@@ -2006,7 +2006,7 @@ def Event_15105350(
     
     MAIN.Await(OR_3)
     
-    RestartIfFinishedConditionFalse(input_condition=AND_3)
+    RestartIfLastConditionResultFalse(input_condition=AND_3)
     DisableFlag(flag)
     Restart()
 
@@ -2068,7 +2068,7 @@ def Event_15105420(
     if ThisEventSlotFlagEnabled():
         return
     ForceAnimation(character, animation_id, loop=True, unknown2=1.0)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -2115,7 +2115,7 @@ def Event_15105450(_, character: int, animation_id: int, animation_id_1: int, ra
     if ThisEventSlotFlagEnabled():
         return
     ForceAnimation(character, animation_id, loop=True, unknown2=1.0)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -2224,7 +2224,7 @@ def Event_15105480(_, character: int, radius: float, attacked_entity: int, radiu
     if ThisEventSlotFlagEnabled():
         return
     DisableAI(character)
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterHuman(PLAYER))
@@ -2532,7 +2532,7 @@ def Event_15105810():
         value=0,
     )
     SetNetworkUpdateAuthority(5100810, authority_level=UpdateAuthority.Forced)
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=7))
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=21))
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=4))
@@ -3323,7 +3323,7 @@ def Event_15105860():
     DefineLabel(0)
     DisableAI(5100850)
     ForceAnimation(5100850, 700, loop=True, unknown2=1.0)
-    OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    OR_15.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=7))
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=21))
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=4))
@@ -3993,7 +3993,7 @@ def Event_15105717(_, character: int, obj: int):
     
     MAIN.Await(OR_1)
     
-    RestartIfFinishedConditionTrue(input_condition=AND_4)
+    RestartIfLastConditionResultTrue(input_condition=AND_4)
 
     # --- Label 0 --- #
     DefineLabel(0)

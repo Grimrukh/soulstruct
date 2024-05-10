@@ -127,12 +127,12 @@ def Preconstructor():
 @RestartOnRest(1043392600)
 def Event_1043392600(_, attacked_entity: uint, region: uint):
     """Event 1043392600"""
-    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
-    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(OR_1)
     OR_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity))
@@ -505,8 +505,8 @@ def Event_1043393707(
     
     MAIN.Await(OR_5)
     
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_2)
-    GotoIfFinishedConditionTrue(Label.L5, input_condition=OR_4)
+    GotoIfLastConditionResultTrue(Label.L0, input_condition=OR_2)
+    GotoIfLastConditionResultTrue(Label.L5, input_condition=OR_4)
 
     # --- Label 0 --- #
     DefineLabel(0)

@@ -116,7 +116,7 @@ def Event_10010030():
     SetRespawnPoint(respawn_point=18002020)
     SaveRequest()
     DisableLoadingScreenText()
-    EndIfFinishedConditionTrue(input_condition=AND_3)
+    EndIfLastConditionResultTrue(input_condition=AND_3)
     if ThisEventSlotFlagDisabled():
         Wait(1.0)
     AddSpecialEffect(PLAYER, 4790)
@@ -207,7 +207,7 @@ def Event_10012502():
     MAIN.Await(AND_1)
     
     SetAreaWelcomeMessageState(state=True)
-    DisplayAreaWelcomeMessage(text=10010)
+    DisplayAreaWelcomeMessage(place_name_id=10010)
     EnableFlag(10010502)
 
 
