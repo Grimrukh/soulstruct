@@ -1432,7 +1432,7 @@ def Event_13501802():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, 3501802, animation=101340)
+    FaceEntity(PLAYER, 3501802, animation=101340)
     WaitFrames(frames=120)
     PlaySoundEffect(PLAYER, 350000012, sound_type=SoundType.a_Ambient)
     WaitFrames(frames=60)
@@ -1554,7 +1554,7 @@ def Event_13504800():
     MAIN.Await(OR_1)
     
     EndIfLastConditionResultTrue(input_condition=AND_3)
-    RotateToFaceEntity(PLAYER, 3502800, animation=101130)
+    FaceEntity(PLAYER, 3502800, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=3502801))
     AND_5.Add(CharacterHuman(PLAYER))
@@ -1583,7 +1583,7 @@ def Event_13504801():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, 3502800, animation=101130)
+    FaceEntity(PLAYER, 3502800, animation=101130)
     AND_2.Add(CharacterWhitePhantom(PLAYER))
     AND_2.Add(CharacterInsideRegion(PLAYER, region=3502801))
     AND_3.Add(CharacterWhitePhantom(PLAYER))
@@ -1935,7 +1935,7 @@ def Event_13504850():
     MAIN.Await(OR_1)
     
     EndIfLastConditionResultTrue(input_condition=AND_3)
-    RotateToFaceEntity(PLAYER, 3502810, animation=101130)
+    FaceEntity(PLAYER, 3502810, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=3502811))
     AND_5.Add(CharacterHuman(PLAYER))
@@ -1964,7 +1964,7 @@ def Event_13504851():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, 3502810, animation=101130)
+    FaceEntity(PLAYER, 3502810, animation=101130)
     AND_2.Add(CharacterWhitePhantom(PLAYER))
     AND_2.Add(CharacterInsideRegion(PLAYER, region=3502811))
     AND_3.Add(CharacterWhitePhantom(PLAYER))
@@ -5677,7 +5677,7 @@ def Event_13504460(
     MAIN.Await(AND_1)
     
     ResetAnimation(character)
-    RotateToFaceEntity(character, region_1, animation=animation, wait_for_completion=True)
+    FaceEntity(character, region_1, animation=animation, wait_for_completion=True)
     AND_2.Add(CharacterInsideRegion(character, region=region_2))
     if not AND_2:
         return RESTART

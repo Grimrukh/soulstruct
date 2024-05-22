@@ -1330,7 +1330,7 @@ def Event_13505370(_, flag: int, flag_1: int, character: int, region: int, regio
     
     SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Wait(0.5)
-    RotateToFaceEntity(character, region, animation=60060, wait_for_completion=True)
+    FaceEntity(character, region, animation=60060, wait_for_completion=True)
     OR_2.Add(CharacterInsideRegion(character=character, region=region))
     OR_1.Add(TimeElapsed(seconds=3.0))
     OR_2.Add(OR_1)
@@ -1650,7 +1650,7 @@ def Event_13500490():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, 3501490, animation=60210)
+    FaceEntity(PLAYER, 3501490, animation=60210)
     Wait(0.009999999776482582)
     ForceAnimation(3501490, 1, wait_for_completion=True, unknown2=1.0)
     RegisterLadder(start_climbing_flag=13500484, stop_climbing_flag=13500485, obj=3501490)

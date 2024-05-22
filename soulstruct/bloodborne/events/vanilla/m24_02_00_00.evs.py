@@ -475,7 +475,7 @@ def Event_12421802():
         return
     GotoIfThisEventFlagDisabled(Label.L0)
     Move(2420800, destination=2422800, destination_type=CoordEntityType.Region, short_move=True)
-    RotateToFaceEntity(2420800, 2422804)
+    FaceEntity(2420800, 2422804)
     End()
 
     # --- Label 0 --- #
@@ -543,7 +543,7 @@ def Event_12424810():
     MAIN.Await(OR_1)
     
     EndIfLastConditionResultTrue(input_condition=AND_3)
-    RotateToFaceEntity(PLAYER, 2422800, animation=101130)
+    FaceEntity(PLAYER, 2422800, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=2422801))
     AND_5.Add(CharacterHuman(PLAYER))
@@ -572,7 +572,7 @@ def Event_12424811():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, 2422800, animation=101130)
+    FaceEntity(PLAYER, 2422800, animation=101130)
     AND_2.Add(CharacterWhitePhantom(PLAYER))
     AND_2.Add(CharacterInsideRegion(PLAYER, region=2422801))
     AND_3.Add(CharacterWhitePhantom(PLAYER))
@@ -1108,7 +1108,7 @@ def Event_12424710():
     MAIN.Await(OR_1)
     
     EndIfLastConditionResultTrue(input_condition=AND_3)
-    RotateToFaceEntity(PLAYER, 2422810, animation=101130)
+    FaceEntity(PLAYER, 2422810, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=2422811))
     AND_5.Add(CharacterHuman(PLAYER))
@@ -1136,7 +1136,7 @@ def Event_12424711():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, 2422810, animation=101130)
+    FaceEntity(PLAYER, 2422810, animation=101130)
     AND_2.Add(CharacterWhitePhantom(PLAYER))
     AND_2.Add(CharacterInsideRegion(PLAYER, region=2422811))
     AND_3.Add(CharacterWhitePhantom(PLAYER))
@@ -2598,7 +2598,7 @@ def Event_12424460(
     MAIN.Await(AND_1)
     
     ResetAnimation(character)
-    RotateToFaceEntity(character, region_1, animation=animation, wait_for_completion=True)
+    FaceEntity(character, region_1, animation=animation, wait_for_completion=True)
     AND_2.Add(CharacterInsideRegion(character, region=region_2))
     if not AND_2:
         return RESTART

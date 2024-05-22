@@ -365,7 +365,7 @@ def Event_11605390():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1602997)
+    FaceEntity(PLAYER, target_entity=1602997)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -386,7 +386,7 @@ def Event_11605391():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1602997)
+    FaceEntity(PLAYER, target_entity=1602997)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -720,7 +720,7 @@ def Event_11605380():
     
     SkipLinesIfClient(1)
     NotifyBossBattleStart()
-    RotateToFaceEntity(PLAYER, target_entity=1602897)
+    FaceEntity(PLAYER, target_entity=1602897)
     ForceAnimation(PLAYER, 7410, wait_for_completion=True)
     ActivateMultiplayerBuffs(1600810)
     Restart()
@@ -742,7 +742,7 @@ def Event_11605381():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1602897)
+    FaceEntity(PLAYER, target_entity=1602897)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -1956,7 +1956,7 @@ def Event_11605032():
     
     MAIN.Await(CharacterInsideRegion(6520, region=1602998))
     
-    RotateToFaceEntity(6520, target_entity=1602997)
+    FaceEntity(6520, target_entity=1602997)
     ForceAnimation(6520, 7410)
     AICommand(6520, command_id=-1, command_slot=0)
     ReplanAI(6520)
@@ -1993,7 +1993,7 @@ def Event_11605843(_, flag: int, line_intersects: int, anchor_entity: int, targe
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=target_entity)
+    FaceEntity(PLAYER, target_entity=target_entity)
     ForceAnimation(PLAYER, 7410, wait_for_completion=True)
     Unknown_2003_47()
     Restart()

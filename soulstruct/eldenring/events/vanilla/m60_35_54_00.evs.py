@@ -395,7 +395,7 @@ def Event_1035542230():
 @RestartOnRest(1035542236)
 def Event_1035542236(_, character: uint):
     """Event 1035542236"""
-    RotateToFaceEntity(character, 1035542200, animation=5002)
+    FaceEntity(character, 1035542200, animation=5002)
     WaitFrames(frames=7)
     Kill(character)
     End()

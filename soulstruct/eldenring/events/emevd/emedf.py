@@ -10,7 +10,7 @@ from soulstruct.base.events.emevd.emedf import *
 from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.maps.constants import get_map_variable_name
 from soulstruct.utilities.files import PACKAGE_PATH
-from .enums import *
+from ..enums import *
 
 __all__ = ["EMEDF", "EMEDF_ALIASES", "EMEDF_TESTS", "EMEDF_COMPARISON_TESTS"]
 
@@ -1576,7 +1576,7 @@ EMEDF = {
         "args": {
             "event_id": INT | HIDE_NAME,
             "slot": INT | HIDE_NAME,
-            "event_return_type": BOOL | HIDE_NAME,
+            "event_return_type": EVENT_RETURN_TYPE | HIDE_NAME,
         },
         "partials": {
             "EndEventSlot": dict(event_return_type=EventReturnType.End),
@@ -1678,7 +1678,7 @@ EMEDF = {
             "dd_id": DD_ID,
             "player_start": {
                 "type": tp.Union[PlayerStart, int],
-                "default": -1,
+                "default": 0,  # must be unsigned
                 "internal_default": 0,
             },
             "unk_8_12": INT | {"default": 0},  # weird -- values seen include `61000`, `-11100`, and `11000000`
@@ -2045,14 +2045,11 @@ EMEDF = {
         },
     },
     (2004, 14): {
-        "alias": "RotateToFaceEntity",
+        "alias": "FaceEntityAndForceAnimation",
         "docstring": """
-            Rotate a character to face a target map entity of any type.
-            WARNING: This instruction will crash its event script (silently) if used on a disabled character! (In DS1 at
-            least.)
+            Rotate a character to face a target map entity of any type, then optionally force an animation.
 
-            The Bloodborne+ version allows you to force an animation at the same time (post-rotation) and optionally 
-            wait until that animation is completed. (I assume a value of -1 avoids it.)
+            WARNING: This may crash an event script if `character` is currently disabled!
         """,
         "args": {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
@@ -2680,8 +2677,8 @@ EMEDF = {
         "docstring": "TODO",
         "args": {
             "asset": NO_DEFAULT(AssetTyping) | HIDE_NAME,
-            "vfx_id": INT,
             "dummy_id": INT,
+            "vfx_id": INT,
         },
     },
     (2006, 5): {
@@ -2720,8 +2717,8 @@ EMEDF = {
             },
             "anchor_entity": {
                 "type": CoordEntityTyping,
-                "default": 2 ** 32 - 1,
-                "internal_default": 2 ** 32 - 1,
+                "default": 0,
+                "internal_default": 0,
             },
             "display_distance": {
                 "type": float,
@@ -3230,7 +3227,7 @@ EMEDF = {
             "condition": CONDITION_GROUP | HIDE_NAME,
             "character": NO_DEFAULT(CharacterTyping),
             "npc_part_id": INT,
-            "attacker": NO_DEFAULT(CharacterTyping) | {"default": -1},
+            "attacker": NO_DEFAULT(CharacterTyping) | {"default": 0},
             "damage_type": NO_DEFAULT(DamageType) | {"default": DamageType.Unspecified},
         },
     },
@@ -4813,7 +4810,11 @@ EMEDF = {
     },
     (2004, 76): {
         "alias": "Unknown_2004_76",
-        "docstring": "TODO",
+        "docstring": """
+            Unknown. `flag` appears to be a boss death flag and `item_lot` the reward for that boss.
+            
+            Called on the first line of boss-despawning common event 90005860 if an item lot was passed in.
+        """,
         "args": {
             "flag": FLAG,
             "item_lot": INT,

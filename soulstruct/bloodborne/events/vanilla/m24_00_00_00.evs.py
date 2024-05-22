@@ -1474,7 +1474,7 @@ def Event_12400760():
     # --- Label 2 --- #
     DefineLabel(2)
     DisableObjectActivation(2401014, obj_act_id=2400000)
-    RotateToFaceEntity(PLAYER, 2401014, animation=101310)
+    FaceEntity(PLAYER, 2401014, animation=101310)
     Wait(1.0)
     ForceAnimation(2400650, 7023)
     ForceAnimation(2401014, 1)
@@ -6649,7 +6649,7 @@ def Event_12404840():
     MAIN.Await(OR_1)
     
     EndIfLastConditionResultTrue(input_condition=AND_3)
-    RotateToFaceEntity(PLAYER, 2402800, animation=101130)
+    FaceEntity(PLAYER, 2402800, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=2402801))
     AND_5.Add(CharacterHuman(PLAYER))
@@ -6678,7 +6678,7 @@ def Event_12404841():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, 2402800, animation=101130)
+    FaceEntity(PLAYER, 2402800, animation=101130)
     AND_2.Add(CharacterWhitePhantom(PLAYER))
     AND_2.Add(CharacterInsideRegion(PLAYER, region=2402801))
     AND_3.Add(CharacterWhitePhantom(PLAYER))
@@ -7216,7 +7216,7 @@ def Event_12404460(
     MAIN.Await(AND_1)
     
     ResetAnimation(character)
-    RotateToFaceEntity(character, region_1, animation=animation, wait_for_completion=True)
+    FaceEntity(character, region_1, animation=animation, wait_for_completion=True)
     AND_2.Add(CharacterInsideRegion(character, region=region_2))
     if not AND_2:
         return RESTART

@@ -2063,7 +2063,7 @@ def Event_13404800():
     MAIN.Await(OR_1)
     
     EndIfLastConditionResultTrue(input_condition=AND_3)
-    RotateToFaceEntity(PLAYER, 3402800, animation=101130, wait_for_completion=True)
+    FaceEntity(PLAYER, 3402800, animation=101130, wait_for_completion=True)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=3402801))
     AND_5.Add(CharacterHuman(PLAYER))
@@ -2092,7 +2092,7 @@ def Event_13404801():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, 3402800, animation=101130, wait_for_completion=True)
+    FaceEntity(PLAYER, 3402800, animation=101130, wait_for_completion=True)
     AND_2.Add(CharacterWhitePhantom(PLAYER))
     AND_2.Add(CharacterInsideRegion(PLAYER, region=3402801))
     AND_3.Add(TimeElapsed(seconds=2.0))
@@ -2797,7 +2797,7 @@ def Event_13404850():
     MAIN.Await(OR_2)
     
     EndIfLastConditionResultTrue(input_condition=AND_4)
-    RotateToFaceEntity(PLAYER, 3402850, animation=101130)
+    FaceEntity(PLAYER, 3402850, animation=101130)
     AND_5.Add(CharacterHuman(PLAYER))
     AND_5.Add(CharacterInsideRegion(PLAYER, region=3402851))
     AND_6.Add(CharacterHuman(PLAYER))
@@ -2826,7 +2826,7 @@ def Event_13404851():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, 3402850, animation=101130)
+    FaceEntity(PLAYER, 3402850, animation=101130)
     AND_2.Add(CharacterWhitePhantom(PLAYER))
     AND_2.Add(CharacterInsideRegion(PLAYER, region=3402851))
     AND_3.Add(CharacterWhitePhantom(PLAYER))
@@ -3861,7 +3861,7 @@ def Event_13405220(
     
     GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_2)
     WaitRandomSeconds(min_seconds=min_seconds, max_seconds=max_seconds)
-    RotateToFaceEntity(character, PLAYER, animation=animation)
+    FaceEntity(character, PLAYER, animation=animation)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -4014,7 +4014,7 @@ def Event_13405550(
     MAIN.Await(EventValue(flag=13405500, bit_count=4) >= 2)
     
     WaitRandomSeconds(min_seconds=min_seconds, max_seconds=max_seconds)
-    RotateToFaceEntity(character, PLAYER, animation=animation)
+    FaceEntity(character, PLAYER, animation=animation)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -4084,7 +4084,7 @@ def Event_13405640(
     MAIN.Await(EventValue(flag=13405600, bit_count=4) >= 1)
     
     WaitRandomSeconds(min_seconds=min_seconds, max_seconds=max_seconds)
-    RotateToFaceEntity(character, PLAYER, animation=animation)
+    FaceEntity(character, PLAYER, animation=animation)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -4113,7 +4113,7 @@ def Event_13405650(
     MAIN.Await(EventValue(flag=13405600, bit_count=4) >= 2)
     
     WaitRandomSeconds(min_seconds=min_seconds, max_seconds=max_seconds)
-    RotateToFaceEntity(character, PLAYER, animation=animation)
+    FaceEntity(character, PLAYER, animation=animation)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -5035,7 +5035,7 @@ def Event_13404460(
     MAIN.Await(AND_1)
     
     ResetAnimation(character)
-    RotateToFaceEntity(character, region_1, animation=animation, wait_for_completion=True)
+    FaceEntity(character, region_1, animation=animation, wait_for_completion=True)
     AND_2.Add(CharacterInsideRegion(character, region=region_2))
     if not AND_2:
         return RESTART

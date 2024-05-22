@@ -600,7 +600,7 @@ def Event_11320580():
     """Event 11320580"""
     MAIN.Await(FlagEnabled(11325030))
     
-    RotateToFaceEntity(PLAYER, target_entity=1320800)
+    FaceEntity(PLAYER, target_entity=1320800)
     ForceAnimation(PLAYER, 7910, wait_for_completion=True)
     ForceAnimation(PLAYER, 7911, loop=True)
     

@@ -396,7 +396,7 @@ def Event_11405390():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1402997)
+    FaceEntity(PLAYER, target_entity=1402997)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -417,7 +417,7 @@ def Event_11405391():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1402997)
+    FaceEntity(PLAYER, target_entity=1402997)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -1676,7 +1676,7 @@ def Event_11405032():
     
     MAIN.Await(CharacterInsideRegion(6531, region=1402998))
     
-    RotateToFaceEntity(6531, target_entity=1402997)
+    FaceEntity(6531, target_entity=1402997)
     ForceAnimation(6531, 7410)
     AICommand(6531, command_id=-1, command_slot=0)
     ReplanAI(6531)
@@ -1744,7 +1744,7 @@ def Event_11405843(_, flag: int, line_intersects: int, anchor_entity: int, targe
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=target_entity)
+    FaceEntity(PLAYER, target_entity=target_entity)
     ForceAnimation(PLAYER, 7410, wait_for_completion=True)
     Unknown_2003_47()
     Restart()

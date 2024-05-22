@@ -87,7 +87,7 @@ def Event_1036472600(
 
     # --- Label 1 --- #
     DefineLabel(1)
-    RotateToFaceEntity(PLAYER, target_entity, animation=animation)
+    FaceEntity(PLAYER, target_entity, animation=animation)
     Wait(2.5)
     EnableFlag(flag)
     WarpToMap(game_map=(area_id, block_id, cc_id, dd_id), player_start=player_start)
@@ -102,7 +102,7 @@ def Event_1036472605(_, flag: uint, target_entity: uint, animation: int):
     MAIN.Await(FlagEnabled(flag))
     
     WaitFrames(frames=1)
-    RotateToFaceEntity(PLAYER, target_entity, animation=animation)
+    FaceEntity(PLAYER, target_entity, animation=animation)
     DisableFlag(flag)
 
 

@@ -13,9 +13,9 @@ from types import GenericAlias
 from soulstruct.base.game_types import GAME_INT_TYPE, Flag, GameObjectInt, GameEnumsManager
 from soulstruct.utilities.binary import *
 
-from .enums import OnRestBehavior
 from .instruction import Instruction, EventArgRepl
 from .event_layers import EventLayers
+from ..enums import OnRestBehavior
 from ..evs.adv_decompiler import AdvancedDecompiler
 
 try:

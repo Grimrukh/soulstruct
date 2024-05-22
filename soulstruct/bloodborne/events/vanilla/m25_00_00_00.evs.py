@@ -603,7 +603,7 @@ def Event_12500012():
     
     MAIN.Await(FlagEnabled(72500329))
     
-    RotateToFaceEntity(PLAYER, 2500600, animation=101260)
+    FaceEntity(PLAYER, 2500600, animation=101260)
     
     MAIN.Await(FlagDisabled(72500329))
     
@@ -1850,7 +1850,7 @@ def Event_12504810():
     MAIN.Await(OR_1)
     
     EndIfLastConditionResultTrue(input_condition=AND_3)
-    RotateToFaceEntity(PLAYER, 2502800, animation=101130, wait_for_completion=True)
+    FaceEntity(PLAYER, 2502800, animation=101130, wait_for_completion=True)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=2502801))
     AND_5.Add(CharacterHuman(PLAYER))
@@ -1879,7 +1879,7 @@ def Event_12504811():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, 2502500, animation=101130, wait_for_completion=True)
+    FaceEntity(PLAYER, 2502500, animation=101130, wait_for_completion=True)
     AND_2.Add(CharacterWhitePhantom(PLAYER))
     AND_2.Add(CharacterInsideRegion(PLAYER, region=2502801))
     AND_3.Add(CharacterWhitePhantom(PLAYER))

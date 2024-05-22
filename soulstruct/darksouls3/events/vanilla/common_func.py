@@ -3110,7 +3110,7 @@ def CommonFunc_20005510(
         comparison_type=ComparisonType.Equal,
         value=0,
     )
-    RotateToFaceEntity(PLAYER, obj, animation=60800)
+    FaceEntity(PLAYER, obj, animation=60800)
     Wait(2.0999999046325684)
     DeleteObjectVFX(obj)
     CreateTemporaryVFX(vfx_id=84, anchor_entity=obj, dummy_id=10, anchor_type=CoordEntityType.Object)
@@ -3169,7 +3169,7 @@ def CommonFunc_20005511(
         comparison_type=ComparisonType.Equal,
         value=0,
     )
-    RotateToFaceEntity(PLAYER, obj, animation=60800)
+    FaceEntity(PLAYER, obj, animation=60800)
     Wait(2.0999999046325684)
     DeleteObjectVFX(obj)
     CreateTemporaryVFX(vfx_id=vfx_id, anchor_entity=obj, dummy_id=10, anchor_type=CoordEntityType.Object)
@@ -4462,7 +4462,7 @@ def CommonFunc_20005640(_, flag: int, obj: int, start_climbing_flag: int, stop_c
         comparison_type=ComparisonType.Equal,
         value=0,
     )
-    RotateToFaceEntity(PLAYER, obj, animation=60210)
+    FaceEntity(PLAYER, obj, animation=60210)
     ForceAnimation(obj, 1, wait_for_completion=True, unknown2=1.0)
     RegisterLadder(start_climbing_flag=start_climbing_flag, stop_climbing_flag=stop_climbing_flag, obj=obj)
 
@@ -4649,7 +4649,7 @@ def CommonFunc_20005710(_, flag: int, flag_1: int, character: int, region: int, 
     
     MAIN.Await(CharacterInsideRegion(character=character, region=region_1))
     
-    RotateToFaceEntity(character, region, animation=60060, wait_for_completion=True)
+    FaceEntity(character, region, animation=60060, wait_for_completion=True)
     OR_2.Add(CharacterInsideRegion(character=character, region=region))
     OR_1.Add(TimeElapsed(seconds=3.0))
     OR_2.Add(OR_1)
@@ -4679,7 +4679,7 @@ def CommonFunc_20005711(_, flag: int, flag_1: int, character: int, region: int, 
     
     MAIN.Await(AND_2)
     
-    RotateToFaceEntity(character, region, animation=60060, wait_for_completion=True)
+    FaceEntity(character, region, animation=60060, wait_for_completion=True)
     OR_2.Add(CharacterInsideRegion(character=character, region=region))
     OR_1.Add(TimeElapsed(seconds=3.0))
     OR_2.Add(OR_1)
@@ -4710,7 +4710,7 @@ def CommonFunc_20005716(_, flag: int, flag_1: int, character: int, region: int, 
     
     SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Wait(0.5)
-    RotateToFaceEntity(character, region, animation=60060, wait_for_completion=True)
+    FaceEntity(character, region, animation=60060, wait_for_completion=True)
     OR_2.Add(CharacterInsideRegion(character=character, region=region))
     OR_1.Add(TimeElapsed(seconds=3.0))
     OR_2.Add(OR_1)
@@ -4755,7 +4755,7 @@ def CommonFunc_20005712(
     
     MAIN.Await(AND_2)
     
-    RotateToFaceEntity(character, region, animation=60060, wait_for_completion=True)
+    FaceEntity(character, region, animation=60060, wait_for_completion=True)
     OR_2.Add(CharacterInsideRegion(character=character, region=region))
     OR_1.Add(TimeElapsed(seconds=3.0))
     OR_2.Add(OR_1)
@@ -5178,7 +5178,7 @@ def CommonFunc_20005800(
     MAIN.Await(AND_1)
     
     GotoIfPlayerNotInOwnWorld(Label.L2)
-    RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -5224,7 +5224,7 @@ def CommonFunc_20005810(_, flag: int, entity: int, target_entity: int, action_bu
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity, animation=60060, wait_for_completion=True)
+    FaceEntity(PLAYER, target_entity, animation=60060, wait_for_completion=True)
     BanishPhantoms(unknown=0)
     Restart()
 
@@ -5249,7 +5249,7 @@ def CommonFunc_20005801(_, flag: int, entity: int, region: int, flag_1: int, act
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
     AND_2.Add(CharacterWhitePhantom(PLAYER))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
     OR_1.Add(TimeElapsed(seconds=3.0))
@@ -6505,7 +6505,7 @@ def CommonFunc_20006005(
     GotoIfValueComparison(Label.L0, comparison_type=ComparisonType.NotEqual, left=region, right=0)
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=target_entity, radius=radius))
     GotoIfConditionTrue(Label.L9, input_condition=AND_1)
-    RotateToFaceEntity(PLAYER, target_entity, animation=69070)
+    FaceEntity(PLAYER, target_entity, animation=69070)
     WaitFrames(frames=1)
     OR_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=target_entity, radius=radius))
     Goto(Label.L8)
@@ -6514,7 +6514,7 @@ def CommonFunc_20006005(
     DefineLabel(0)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     GotoIfConditionTrue(Label.L9, input_condition=AND_1)
-    RotateToFaceEntity(PLAYER, region, animation=69070)
+    FaceEntity(PLAYER, region, animation=69070)
     WaitFrames(frames=1)
     OR_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     Goto(Label.L8)
@@ -6534,7 +6534,7 @@ def CommonFunc_20006005(
 
     # --- Label 9 --- #
     DefineLabel(9)
-    RotateToFaceEntity(PLAYER, target_entity, animation=animation, wait_for_completion=True)
+    FaceEntity(PLAYER, target_entity, animation=animation, wait_for_completion=True)
     WaitFrames(frames=1)
     EnableFlag(flag_1)
     OR_3.Add(FlagDisabled(flag))
@@ -6597,7 +6597,7 @@ def CommonFunc_20006006(
 
     # --- Label 0 --- #
     DefineLabel(0)
-    RotateToFaceEntity(character, PLAYER, animation=animation__animation_id, wait_for_completion=True)
+    FaceEntity(character, PLAYER, animation=animation__animation_id, wait_for_completion=True)
 
     # --- Label 20 --- #
     DefineLabel(20)
@@ -6637,7 +6637,7 @@ def CommonFunc_20006007(
     
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=target_entity, radius=radius))
     GotoIfConditionTrue(Label.L20, input_condition=AND_1)
-    RotateToFaceEntity(PLAYER, target_entity, animation=69070)
+    FaceEntity(PLAYER, target_entity, animation=69070)
     WaitFrames(frames=1)
     OR_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=target_entity, radius=radius))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 150))
@@ -6658,7 +6658,7 @@ def CommonFunc_20006007(
 
     # --- Label 20 --- #
     DefineLabel(20)
-    RotateToFaceEntity(PLAYER, target_entity, animation=animation, wait_for_completion=True)
+    FaceEntity(PLAYER, target_entity, animation=animation, wait_for_completion=True)
     WaitFrames(frames=1)
     EnableFlag(flag_1)
     OR_3.Add(FlagDisabled(flag))
@@ -6687,7 +6687,7 @@ def CommonFunc_20006008(_, region: int, flag: int, flag_1: int, target_entity: i
     
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     GotoIfConditionTrue(Label.L20, input_condition=AND_1)
-    RotateToFaceEntity(PLAYER, region, animation=69070)
+    FaceEntity(PLAYER, region, animation=69070)
     WaitFrames(frames=1)
     OR_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 150))
@@ -6708,7 +6708,7 @@ def CommonFunc_20006008(_, region: int, flag: int, flag_1: int, target_entity: i
 
     # --- Label 20 --- #
     DefineLabel(20)
-    RotateToFaceEntity(PLAYER, target_entity, animation=animation, wait_for_completion=True)
+    FaceEntity(PLAYER, target_entity, animation=animation, wait_for_completion=True)
     WaitFrames(frames=1)
     EnableFlag(flag_1)
     OR_3.Add(FlagDisabled(flag))

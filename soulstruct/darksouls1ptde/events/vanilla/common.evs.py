@@ -1451,7 +1451,7 @@ def Event_840(_, flag: int, animation_id: int, target_entity: int, animation_id_
     
     SkipLinesIfFlagEnabled(2, 844)
     SkipLinesIfFlagEnabled(1, 847)
-    RotateToFaceEntity(PLAYER, target_entity=target_entity)
+    FaceEntity(PLAYER, target_entity=target_entity)
     ForceAnimation(PLAYER, animation_id)
     Wait(1.0)
     PlaySoundEffect(PLAYER, 123456789, sound_type=SoundType.s_SFX)

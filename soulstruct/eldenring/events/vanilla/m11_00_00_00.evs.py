@@ -2139,7 +2139,7 @@ def Event_11002503():
     
     MAIN.Await(AND_10)
     
-    RotateToFaceEntity(PLAYER, 11002800, animation=60060, wait_for_completion=True)
+    FaceEntity(PLAYER, 11002800, animation=60060, wait_for_completion=True)
     BanishInvaders(unknown=0)
     Restart()
 

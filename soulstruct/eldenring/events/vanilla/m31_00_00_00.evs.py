@@ -686,7 +686,7 @@ def Event_31002831(_, flag: uint, entity: uint, region: uint, flag_1: uint, flag
     MAIN.Await(AND_1)
     
     SuppressSoundForFogGate(duration=5.0)
-    RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
     AND_2.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
     OR_1.Add(TimeElapsed(seconds=3.0))
@@ -749,9 +749,9 @@ def Event_31002830(
         return RESTART
     SuppressSoundForFogGate(duration=5.0)
     if CharacterDoesNotHaveSpecialEffect(character=PLAYER, special_effect=4250):
-        RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+        FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
     else:
-        RotateToFaceEntity(PLAYER, region, animation=60060)
+        FaceEntity(PLAYER, region, animation=60060)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -798,7 +798,7 @@ def Event_31002830(
     
     MAIN.Await(AND_10)
     
-    RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
     BanishInvaders(unknown=0)
     Restart()
 
@@ -933,9 +933,9 @@ def Event_31002833(
     # --- Label 1 --- #
     DefineLabel(1)
     if ValueNotEqual(left=left_1, right=1):
-        SetBossMusic(bgm_boss_conv_param_id=bgm_boss_conv_param_id, state=BossMusicState.Stop2)
+        SetBossMusic(bgm_boss_conv_param_id=bgm_boss_conv_param_id, state=BossMusicState.LongFadeOut)
         End()
-    SetBossMusic(bgm_boss_conv_param_id=bgm_boss_conv_param_id, state=BossMusicState.Stop1)
+    SetBossMusic(bgm_boss_conv_param_id=bgm_boss_conv_param_id, state=BossMusicState.NormalFadeOut)
 
 
 @RestartOnRest(31002899)
@@ -1147,9 +1147,9 @@ def Event_31002870(
         return RESTART
     SuppressSoundForFogGate(duration=5.0)
     if CharacterDoesNotHaveSpecialEffect(character=PLAYER, special_effect=4250):
-        RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+        FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
     else:
-        RotateToFaceEntity(PLAYER, region, animation=60060)
+        FaceEntity(PLAYER, region, animation=60060)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -1196,7 +1196,7 @@ def Event_31002870(
     
     MAIN.Await(AND_10)
     
-    RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
     BanishInvaders(unknown=0)
     Restart()
 
@@ -1331,9 +1331,9 @@ def Event_31002873(
     # --- Label 1 --- #
     DefineLabel(1)
     if ValueNotEqual(left=left_1, right=1):
-        SetBossMusic(bgm_boss_conv_param_id=bgm_boss_conv_param_id, state=BossMusicState.Stop2)
+        SetBossMusic(bgm_boss_conv_param_id=bgm_boss_conv_param_id, state=BossMusicState.LongFadeOut)
         End()
-    SetBossMusic(bgm_boss_conv_param_id=bgm_boss_conv_param_id, state=BossMusicState.Stop1)
+    SetBossMusic(bgm_boss_conv_param_id=bgm_boss_conv_param_id, state=BossMusicState.NormalFadeOut)
 
 
 @RestartOnRest(31002845)

@@ -520,7 +520,7 @@ def Event_12032500():
     OR_15.Add(MultiplayerPending())
     if OR_15:
         return RESTART
-    RotateToFaceEntity(PLAYER, Assets.AEG099_510_9000, wait_for_completion=True)
+    FaceEntity(PLAYER, Assets.AEG099_510_9000, wait_for_completion=True)
     ForceAnimation(PLAYER, 60490)
     EnableFlag(11000600)
     EnableFlag(11000603)
@@ -1158,7 +1158,7 @@ def Event_12032830(
     
     MAIN.Await(AND_10)
     
-    RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
     BanishInvaders(unknown=0)
     Restart()
     Wait(seconds)
@@ -1178,7 +1178,7 @@ def Event_12032840():
     MAIN.Await(AND_1)
     
     SuppressSoundForFogGate(duration=5.0)
-    RotateToFaceEntity(PLAYER, 12032800, animation=60060, wait_for_completion=True)
+    FaceEntity(PLAYER, 12032800, animation=60060, wait_for_completion=True)
     AND_2.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=12032800))
     OR_1.Add(TimeElapsed(seconds=3.0))

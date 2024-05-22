@@ -121,7 +121,7 @@ def Event_10010030():
         Wait(1.0)
     AddSpecialEffect(PLAYER, 4790)
     EnableFlag(9021)
-    SetBossMusic(bgm_boss_conv_param_id=920900, state=BossMusicState.Stop2)
+    SetBossMusic(bgm_boss_conv_param_id=920900, state=BossMusicState.LongFadeOut)
     PlayCutsceneToPlayerAndWarpWithWeatherAndTime(
         cutscene_id=10010000,
         cutscene_flags=0,

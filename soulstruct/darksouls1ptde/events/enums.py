@@ -56,7 +56,7 @@ __all__ = [
 
 from enum import IntEnum
 
-from soulstruct.base.events.emevd.enums import *
+from soulstruct.base.events.enums import *
 
 
 # Basic obvious booleans are omitted:

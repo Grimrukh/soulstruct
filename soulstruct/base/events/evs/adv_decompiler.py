@@ -30,10 +30,10 @@ _IF_COMPARISON_RE = re.compile(
     r"\((?P<condition>(MAIN|((AND|OR)_\d+)))(?P<pre_args>.*?), value=(?P<value>[\w_.]+)(?P<post_args>, .*?)?\)$"
 )
 _IF_OTHER_TEST_RE = re.compile(
-    r"^(?P<indent> *)If(?P<test>.*)\((?P<condition>(MAIN|((AND|OR)_\d+)))(?P<args>.*?)\)$"
+    r"^(?P<indent> *)If(?P<test>.*?)\((?P<condition>(MAIN|((AND|OR)_\d+)))(?P<args>.*?)\)$"
 )
 _SKIP_TEST_RE = re.compile(
-    r"^(?P<indent> *)SkipLinesIf(?P<test>.*)\((?P<line_count>\d+)(?P<args>.*?)\)$"
+    r"^(?P<indent> *)SkipLinesIf(?P<test>.*?)\((?P<line_count>\d+)(?P<args>.*?)\)$"
 )
 # Checked WITHIN identified skip tests to find effective `else` blocks.
 _UNCONDITIONAL_SKIP_RE = re.compile(

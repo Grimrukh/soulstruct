@@ -703,7 +703,7 @@ def Event_16002310(_, character: uint, radius: float, seconds: float, animation_
 
     # --- Label 1 --- #
     DefineLabel(1)
-    RotateToFaceEntity(character, 16002310, wait_for_completion=True)
+    FaceEntity(character, 16002310, wait_for_completion=True)
     EnableAI(character)
 
 
@@ -926,7 +926,7 @@ def Event_16002570(
     OR_4.Add(Invasion())
     if OR_4:
         return RESTART
-    RotateToFaceEntity(PLAYER, asset, wait_for_completion=True)
+    FaceEntity(PLAYER, asset, wait_for_completion=True)
     ForceAnimation(PLAYER, 60490)
     Wait(3.0)
     MoveCharacterAndCopyDrawParentWithFadeout(
@@ -1649,9 +1649,9 @@ def Event_16002846(
         return RESTART
     SuppressSoundForFogGate(duration=5.0)
     if CharacterDoesNotHaveSpecialEffect(character=PLAYER, special_effect=4250):
-        RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+        FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
     else:
-        RotateToFaceEntity(PLAYER, region, animation=60060)
+        FaceEntity(PLAYER, region, animation=60060)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -1702,7 +1702,7 @@ def Event_16002846(
     
     MAIN.Await(AND_10)
     
-    RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
     BanishInvaders(unknown=0)
     Restart()
 

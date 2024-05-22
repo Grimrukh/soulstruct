@@ -16,7 +16,7 @@ import re
 import struct
 import typing as tp
 
-from soulstruct.base.events.emevd.enums import BaseEMEVDFlags
+from soulstruct.base.events.enums import BaseEMEVDFlags
 from soulstruct.base.game_types.game_enums_manager import GameEnumsManager
 from soulstruct.base.game_types import GameObjectInt
 

@@ -2086,7 +2086,7 @@ def Event_13002859():
     
     MAIN.Await(CharacterInsideRegion(character=Characters.RecusantBernahl1, region=13002859))
     
-    RotateToFaceEntity(Characters.RecusantBernahl1, 13002850, animation=60060, wait_for_completion=True)
+    FaceEntity(Characters.RecusantBernahl1, 13002850, animation=60060, wait_for_completion=True)
     OR_4.Add(TimeElapsed(seconds=3.0))
     OR_5.Add(OR_4)
     OR_5.Add(CharacterInsideRegion(character=Characters.RecusantBernahl1, region=13002850))
@@ -2107,7 +2107,7 @@ def Event_13002859():
     
     MAIN.Await(CharacterInsideRegion(character=Characters.RecusantBernahl1, region=13002859))
     
-    RotateToFaceEntity(Characters.RecusantBernahl1, 13002852, animation=60060, wait_for_completion=True)
+    FaceEntity(Characters.RecusantBernahl1, 13002852, animation=60060, wait_for_completion=True)
     OR_4.Add(TimeElapsed(seconds=3.0))
     OR_5.Add(OR_4)
     OR_5.Add(CharacterInsideRegion(character=Characters.RecusantBernahl1, region=13002852))

@@ -2822,7 +2822,7 @@ def Event_13705622(_, region: int, flag: int, flag_1: int, target_entity: int, a
     
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     GotoIfConditionTrue(Label.L20, input_condition=AND_1)
-    RotateToFaceEntity(PLAYER, region, animation=69070)
+    FaceEntity(PLAYER, region, animation=69070)
     WaitFrames(frames=1)
     OR_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 150))
@@ -2843,7 +2843,7 @@ def Event_13705622(_, region: int, flag: int, flag_1: int, target_entity: int, a
 
     # --- Label 20 --- #
     DefineLabel(20)
-    RotateToFaceEntity(PLAYER, target_entity, animation=animation, wait_for_completion=True)
+    FaceEntity(PLAYER, target_entity, animation=animation, wait_for_completion=True)
     EnableFlag(flag_1)
     OR_3.Add(FlagDisabled(flag))
     AND_3.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 150))

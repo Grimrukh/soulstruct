@@ -564,7 +564,7 @@ def Event_11705380():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1702897)
+    FaceEntity(PLAYER, target_entity=1702897)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -585,7 +585,7 @@ def Event_11705381():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1702897)
+    FaceEntity(PLAYER, target_entity=1702897)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -618,7 +618,7 @@ def Event_11705382():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1702894)
+    FaceEntity(PLAYER, target_entity=1702894)
     ForceAnimation(PLAYER, 7410, wait_for_completion=True)
     DisableBossHealthBar(1700700, name=5290)
     Restart()
@@ -696,7 +696,7 @@ def Event_11705390():
     
     SkipLinesIfClient(1)
     NotifyBossBattleStart()
-    RotateToFaceEntity(PLAYER, target_entity=1702997)
+    FaceEntity(PLAYER, target_entity=1702997)
     ForceAnimation(PLAYER, 7410, wait_for_completion=True)
     ActivateMultiplayerBuffs(1700800)
     Restart()
@@ -719,7 +719,7 @@ def Event_11705391():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1702997)
+    FaceEntity(PLAYER, target_entity=1702997)
     ForceAnimation(PLAYER, 7410)
     Restart()
 

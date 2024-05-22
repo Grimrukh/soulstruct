@@ -3387,8 +3387,8 @@ def Event_1252382820():
         dummy_id=900,
         copy_draw_parent=PLAYER,
     )
-    RotateToFaceEntity(Characters.Human0, 1052382299, wait_for_completion=True)
-    RotateToFaceEntity(Characters.Human0, 1052382299, wait_for_completion=True)
+    FaceEntity(Characters.Human0, 1052382299, wait_for_completion=True)
+    FaceEntity(Characters.Human0, 1052382299, wait_for_completion=True)
     Wait(1.0)
     Move(
         Characters.StarscourgeRadahn,

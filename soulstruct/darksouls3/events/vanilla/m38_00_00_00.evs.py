@@ -4401,7 +4401,7 @@ def Event_13805857(_, flag: int, entity: int, region: int, flag_1: int, action_b
     MAIN.Await(AND_1)
     
     GotoIfPlayerNotInOwnWorld(Label.L2)
-    RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
 
     # --- Label 3 --- #
     DefineLabel(3)

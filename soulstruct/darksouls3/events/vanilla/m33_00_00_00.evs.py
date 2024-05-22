@@ -3713,4 +3713,4 @@ def Event_13305763(_, character: int):
     WaitFrames(frames=1)
     AND_2.Add(HasAIStatus(character, ai_status=AIStatusType.Normal))
     SkipLinesIfConditionFalse(1, AND_2)
-    RotateToFaceEntity(character, PLAYER)
+    FaceEntity(character, PLAYER)

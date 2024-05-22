@@ -21,7 +21,6 @@ import abc
 import typing as tp
 from dataclasses import dataclass, field
 
-from soulstruct.darksouls1ptde.events.emevd.enums import SoundType
 from soulstruct.darksouls1ptde.game_types import *
 from soulstruct.base.maps.msb.events import BaseMSBEvent
 from soulstruct.base.maps.msb import MSBEntry

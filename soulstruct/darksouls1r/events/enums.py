@@ -54,8 +54,8 @@ __all__ = [
 
 from enum import IntEnum
 
-from soulstruct.base.events.emevd.enums import *
-from soulstruct.darksouls1ptde.events.emevd.enums import *
+from soulstruct.base.events.enums import *
+from soulstruct.darksouls1ptde.events.enums import *
 
 
 # DSR extends three enums:

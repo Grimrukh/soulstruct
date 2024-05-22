@@ -163,7 +163,7 @@ def Event_1035472200(
     if OR_15:
         return RESTART
     EnableFlag(1051430210)
-    RotateToFaceEntity(PLAYER, asset, wait_for_completion=True)
+    FaceEntity(PLAYER, asset, wait_for_completion=True)
     ForceAnimation(PLAYER, 60490)
     Wait(3.0)
     WarpToMap(game_map=(area_id, block_id, cc_id, dd_id), player_start=player_start, unk_8_12=unk_8_12)

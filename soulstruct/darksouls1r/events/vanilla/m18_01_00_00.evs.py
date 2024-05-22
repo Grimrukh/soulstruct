@@ -246,7 +246,7 @@ def Event_11815390():
     MAIN.Await(AND_1)
     
     Move(1810800, destination=1812301, destination_type=CoordEntityType.Region, short_move=True)
-    RotateToFaceEntity(PLAYER, target_entity=1812997)
+    FaceEntity(PLAYER, target_entity=1812997)
     ForceAnimation(PLAYER, 7410)
     DisableSoapstoneMessage(1813210)
     ForceAnimation(1811115, 3)
@@ -456,7 +456,7 @@ def Event_11815380():
     
     SkipLinesIfClient(1)
     NotifyBossBattleStart()
-    RotateToFaceEntity(PLAYER, target_entity=1812897)
+    FaceEntity(PLAYER, target_entity=1812897)
     ForceAnimation(PLAYER, 7410, wait_for_completion=True)
     ActivateMultiplayerBuffs(1810810)
     Restart()

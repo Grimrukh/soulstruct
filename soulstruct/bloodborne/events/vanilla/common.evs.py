@@ -1223,7 +1223,7 @@ def Event_7100(_, flag: int, warp_object_id: int):
     
     MAIN.Await(FlagEnabled(flag))
     
-    RotateToFaceEntity(PLAYER, warp_object_id, animation=101170)
+    FaceEntity(PLAYER, warp_object_id, animation=101170)
     WaitFrames(frames=32)
     InitializeWarpObject(warp_object_id=warp_object_id)
     if FlagEnabled(6715):
@@ -1245,7 +1245,7 @@ def Event_7200(_, flag: int, anchor_entity: int, respawn_point_id: int):
     MAIN.Await(FlagEnabled(flag))
     
     DisableFlag(flag)
-    RotateToFaceEntity(PLAYER, anchor_entity, animation=101160)
+    FaceEntity(PLAYER, anchor_entity, animation=101160)
     Wait(1.0)
     CreateTemporaryVFX(vfx_id=100320, anchor_entity=anchor_entity, dummy_id=100, anchor_type=CoordEntityType.Object)
     Wait(3.0)

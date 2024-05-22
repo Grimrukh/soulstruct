@@ -14,8 +14,8 @@ from soulstruct.base.events.evs.decompiler import (
 from soulstruct.eldenring.game_types.game_enums_manager import GameEnumsManager
 from soulstruct.eldenring.game_types.map_types import *
 
-from . import enums
-from .enums import *
+from .. import enums
+from ..enums import *
 from .emedf import EMEDF
 
 _LOGGER = logging.getLogger("soulstruct")

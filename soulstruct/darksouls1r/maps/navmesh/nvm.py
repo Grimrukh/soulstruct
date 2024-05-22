@@ -8,7 +8,7 @@ from collections import deque
 from dataclasses import dataclass, field
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.darksouls1r.events.emevd.enums import NavmeshType
+from soulstruct.darksouls1r.events.enums import NavmeshType
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3, Matrix3
 

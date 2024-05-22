@@ -118,7 +118,7 @@ def Event_1051372598(
     OR_4.Add(Invasion())
     if OR_4:
         return RESTART
-    RotateToFaceEntity(PLAYER, asset, wait_for_completion=True)
+    FaceEntity(PLAYER, asset, wait_for_completion=True)
     ForceAnimation(PLAYER, 60490)
     Wait(3.0)
     EnableNetworkFlag(1052382602)

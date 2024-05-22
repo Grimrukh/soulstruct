@@ -2070,7 +2070,7 @@ def Event_13005826(
     
     MAIN.Await(AND_2)
     
-    RotateToFaceEntity(character, region, animation=60060, wait_for_completion=True)
+    FaceEntity(character, region, animation=60060, wait_for_completion=True)
     OR_10.Add(CharacterInsideRegion(character=character, region=region))
     OR_11.Add(TimeElapsed(seconds=3.0))
     OR_10.Add(OR_11)
@@ -2093,7 +2093,7 @@ def Event_13005826(
     
     MAIN.Await(AND_2)
     
-    RotateToFaceEntity(character, region_1, animation=60060, wait_for_completion=True)
+    FaceEntity(character, region_1, animation=60060, wait_for_completion=True)
     OR_12.Add(CharacterInsideRegion(character=character, region=region_1))
     OR_13.Add(TimeElapsed(seconds=3.0))
     OR_12.Add(OR_13)
@@ -2482,7 +2482,7 @@ def Event_13005890():
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=3001890, entity=3001890))
     
-    RotateToFaceEntity(PLAYER, 3002896, animation=60060, wait_for_completion=True)
+    FaceEntity(PLAYER, 3002896, animation=60060, wait_for_completion=True)
 
     # --- Label 2 --- #
     DefineLabel(2)
@@ -2577,7 +2577,7 @@ def Event_13005893():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, 3002896, animation=60060, wait_for_completion=True)
+    FaceEntity(PLAYER, 3002896, animation=60060, wait_for_completion=True)
     EnableBossMusic(sound_id=3002899)
     EnableBossHealthBar(3000899, name=905270)
     SetNetworkUpdateRate(3000899, is_fixed=True, update_rate=CharacterUpdateRate.Always)

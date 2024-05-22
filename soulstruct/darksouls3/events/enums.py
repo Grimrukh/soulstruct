@@ -26,7 +26,6 @@ __all__ = [
     "CharacterUpdateRate",
     "ClassType",
     "ComparisonType",
-    "Covenant",
     "CutsceneFlags",
     "DamageTargetType",
     "EventReturnType",
@@ -46,12 +45,13 @@ __all__ = [
     "TriggerAttribute",
     "WorldTendencyType",
     "UpdateAuthority",
-    # Enums in Bloodborne only
+    # Enums in Dark Souls 3 only
     "ArmorType",
     "BannerType",
     "CalculationType",
     "ClientType",
     "ConditionGroup",
+    "Covenant",
     "DamageType",
     "DeleteOrAdd",
     "DialogResult",
@@ -66,14 +66,13 @@ __all__ = [
     "PlayerPlayLogParameter",
     "SingleplayerSummonSignType",
     "TeamType",
+    "HollowArenaMatchType",
+    "HollowArenaResult",
 ]
 
 from enum import IntEnum
-from soulstruct.base.events.emevd.enums import *
 
-
-# Basic obvious booleans are omitted:
-# ENUM_ON_OFF, ENUM_CONTAINED, ENUM_OWN_STATE, ENUM_BOOL, ENUM_CONDITION_STATE, ENUM_DEATH_STATUS, ENUM_ENABLE_STATE
+from soulstruct.base.events.enums import *
 
 
 class AIStatusType(BaseEMEVDEnum):
@@ -107,6 +106,7 @@ class CharacterUpdateRate(BaseEMEVDEnum):
     Always = 0
     EveryTwoFrames = 2
     EveryFiveFrames = 5
+    Unknown105 = 105  # TODO: Move to `eldenring`
 
 
 class ClassType(BaseEMEVDEnum):
@@ -220,7 +220,7 @@ class InterpolationState(BaseNegatableEMEVDEnum):
 class ItemType(BaseEMEVDEnum):
     Weapon = 0
     Armor = 1
-    GemOrRune = 2
+    Ring = 2
     Good = 3
 
 
@@ -448,19 +448,6 @@ class InvadeType(IntEnum):
     ColiseumBrD = 18
 
 
-class Covenant(IntEnum):
-    NoCovenant = 0
-    WayOfWhite = 1
-    PrincessGuard = 2
-    WarriorOfSunlight = 3
-    Darkwraith = 4
-    PathOfTheDragon = 5
-    GravelordServant = 6
-    ForestHunter = 7
-    DarkmoonBlade = 8
-    ChaosServant = 9
-
-
 class ArmorType(IntEnum):
     Head = 0
     Body = 1
@@ -469,7 +456,7 @@ class ArmorType(IntEnum):
 
 
 class BannerType(IntEnum):
-    PreySlaughtered = 1
+    HeirOfFireDestroyed = 1
     YouDied = 2
     Revival = 3
     SoulRecovery = 4
@@ -477,10 +464,14 @@ class BannerType(IntEnum):
     PhantomDeath = 6  # Phantom version of "YOU DIED"
     BlackPhantomDestroyed = 7
     AreaName = 8  # Name determined by current floor Collision.
-    Congratulations = 12  # Not sure if this is still bugged from DS1.
-    YouWin = 15
-    YouLose = 16
-    NightmareSlain = 17
+    BeginMatch = 12
+    HollowArenaDraw = 14
+    HollowArenaWin = 15
+    HollowArenaLoss = 16
+    Unknown = 17
+    DutyFulfilled = 18
+    LordOfCinderFallen = 19
+    UnknownBossDefeat = 22  # Used for Lords of Cinder (including last boss); probably the actual version of the above.
 
 
 class CalculationType(IntEnum):
@@ -559,6 +550,11 @@ class ConditionGroup(IntEnum):
         ...
 
 
+class Covenant(IntEnum):
+    # TODO
+    pass
+
+
 class DamageType(IntEnum):
     Unspecified = 0
     Fire = 1
@@ -596,8 +592,8 @@ class DoorState(IntEnum):
 
 
 class Gender(IntEnum):
-    Female = 0
-    Male = 1
+    Male = 0
+    Female = 1
 
 
 class Label(IntEnum):
@@ -611,14 +607,26 @@ class Label(IntEnum):
     L7 = 7
     L8 = 8
     L9 = 9
+    L10 = 10
+    L11 = 11
+    L12 = 12
+    L13 = 13
+    L14 = 14
+    L15 = 15
+    L16 = 16
+    L17 = 17
+    L18 = 18
+    L19 = 19
+    L20 = 20
 
 
 class MultiplayerState(IntEnum):
     Host = 0
     Client = 1
-    Multiplayer = 2
-    ConnectingMultiplayer = 3
-    Singleplayer = 4
+    TryingToCreateSession = 2
+    TryingToJoinSession = 3
+    LeavingSession = 4
+    FailedToCreateSession = 5
 
 
 class NPCPartType(IntEnum):
@@ -702,7 +710,7 @@ class TeamType(IntEnum):
     Neutral = 14
     Charm = 15
 
-    # Types 19+ are BB only (maybe DS3).
+    # Types 19+ are BB and DS3.
     Host = 19
     Coop = 20
     Hostile = 21
@@ -715,3 +723,22 @@ class TeamType(IntEnum):
     CoopNPC = 28
     Indiscriminate = 29
     Object = 30
+
+    # Types 31+ are DS3 only.
+    WhiteBerserker = 31
+    RedBerserker = 32
+    ArchEnemyTeam = 33
+
+
+class HollowArenaMatchType(IntEnum):
+    Duel = 0
+    TwoPlayerBrawl = 1
+    FourPlayerBrawl = 2
+    SixPlayerBrawl = 3
+    TwoVsTwo = 4
+    ThreeVsThree = 5
+
+
+class HollowArenaResult(IntEnum):
+    Win = 0
+    Draw = 1

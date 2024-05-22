@@ -596,7 +596,7 @@ def Event_12022601(_, flag: uint, asset: uint, asset_1: uint):
     MAIN.Await(AND_2)
     
     DisableAnimations(PLAYER)
-    RotateToFaceEntity(PLAYER, asset, wait_for_completion=True)
+    FaceEntity(PLAYER, asset, wait_for_completion=True)
     ForceAnimation(PLAYER, 60010)
     Wait(1.2999999523162842)
     EnableNetworkFlag(flag)
@@ -635,7 +635,7 @@ def Event_12022609():
     MAIN.Await(AND_2)
     
     EnableNetworkFlag(12022610)
-    RotateToFaceEntity(PLAYER, Assets.AEG237_062_1000, wait_for_completion=True)
+    FaceEntity(PLAYER, Assets.AEG237_062_1000, wait_for_completion=True)
     ForceAnimation(PLAYER, 60010)
     Wait(0.4000000059604645)
     BanishInvaders(unknown=0)
@@ -735,7 +735,7 @@ def Event_12022621(_, flag: uint, asset: uint, asset_1: uint):
     
     MAIN.Await(AND_2)
     
-    RotateToFaceEntity(PLAYER, asset, wait_for_completion=True)
+    FaceEntity(PLAYER, asset, wait_for_completion=True)
     ForceAnimation(PLAYER, 60010)
     DisableAnimations(PLAYER)
     Wait(1.2999999523162842)
@@ -774,7 +774,7 @@ def Event_12022629():
     
     MAIN.Await(AND_2)
     
-    RotateToFaceEntity(PLAYER, Assets.AEG237_062_3000, wait_for_completion=True)
+    FaceEntity(PLAYER, Assets.AEG237_062_3000, wait_for_completion=True)
     ForceAnimation(PLAYER, 60010)
     EnableNetworkFlag(12022630)
     Wait(0.4000000059604645)
@@ -865,7 +865,7 @@ def Event_12022670():
     DefineLabel(6)
     EnableNetworkFlag(12022670)
     BanishInvaders(unknown=0)
-    RotateToFaceEntity(PLAYER, Assets.AEG099_510_9000, wait_for_completion=True)
+    FaceEntity(PLAYER, Assets.AEG099_510_9000, wait_for_completion=True)
     ForceAnimation(PLAYER, 60490)
     Wait(3.0)
     MoveCharacterAndCopyDrawParentWithFadeout(
@@ -1614,9 +1614,9 @@ def Event_12022869(
     if FlagEnabled(flag):
         return RESTART
     if CharacterDoesNotHaveSpecialEffect(character=PLAYER, special_effect=4250):
-        RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+        FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
     else:
-        RotateToFaceEntity(PLAYER, region, animation=60060)
+        FaceEntity(PLAYER, region, animation=60060)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -1662,7 +1662,7 @@ def Event_12022869(
     
     MAIN.Await(AND_10)
     
-    RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
     BanishInvaders(unknown=0)
     Restart()
 

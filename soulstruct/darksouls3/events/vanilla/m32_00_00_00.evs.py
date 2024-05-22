@@ -642,7 +642,7 @@ def Event_13205320():
         SetNetworkConnectedFlagState(flag=13205399, state=FlagSetting.On)
         Wait(1.0)
         DisableAI(3200300)
-        RotateToFaceEntity(3200300, 3202350, animation=5002, wait_for_completion=True)
+        FaceEntity(3200300, 3202350, animation=5002, wait_for_completion=True)
         ForceAnimation(3200300, 20014, skip_transition=True, unknown2=1.0)
         AND_5.Add(CharacterHasTAEEvent(3200300, tae_event_id=60))
         AND_5.Add(CharacterAlive(3200300))
@@ -1711,7 +1711,7 @@ def Event_13205930():
     # --- Label 0 --- #
     DefineLabel(0)
     EnableInvincibility(3200190)
-    RotateToFaceEntity(3200190, 3202932, animation=60060, wait_for_completion=True)
+    FaceEntity(3200190, 3202932, animation=60060, wait_for_completion=True)
     ForceAnimation(3200190, 91050, wait_for_completion=True, unknown2=1.0)
     Wait(5.0)
     ForceAnimation(3200190, 91052, unknown2=1.0)

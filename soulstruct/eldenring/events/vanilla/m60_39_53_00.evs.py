@@ -237,7 +237,7 @@ def Event_1039532660():
     
     EnableNetworkFlag(1039530655)
     DisableAsset(Assets.AEG003_316_9001)
-    RotateToFaceEntity(PLAYER, Assets.AEG003_316_9001, wait_for_completion=True)
+    FaceEntity(PLAYER, Assets.AEG003_316_9001, wait_for_completion=True)
     ForceAnimation(PLAYER, 60010)
     Wait(1.0)
     PlaySoundEffect(1039532650, 806855, sound_type=SoundType.s_SFX)

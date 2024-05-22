@@ -10,7 +10,7 @@ from soulstruct.base.events.emevd.emedf import *
 from soulstruct.darksouls1ptde.maps.constants import get_map_variable_name
 from soulstruct.darksouls1ptde.game_types import *
 from soulstruct.utilities.files import PACKAGE_PATH
-from .enums import *
+from ..enums import *
 
 __all__ = ["EMEDF", "EMEDF_ALIASES", "EMEDF_TESTS", "EMEDF_COMPARISON_TESTS"]
 
@@ -1877,7 +1877,7 @@ EMEDF = {
             "block_id": BLOCK_ID,
             "player_start": {
                 "type": tp.Union[PlayerStart, int],
-                "default": -1,
+                "default": 0,  # unsigned
                 "internal_default": -1,
             },
         },
@@ -2372,7 +2372,7 @@ EMEDF = {
         },
     },
     (2004, 14): {
-        "alias": "RotateToFaceEntity",
+        "alias": "FaceEntity",
         "docstring": """
             Rotate a character to face a target map entity of any type.
             WARNING: This instruction will crash its event script (silently) if used on a disabled character! (In DS1 at 

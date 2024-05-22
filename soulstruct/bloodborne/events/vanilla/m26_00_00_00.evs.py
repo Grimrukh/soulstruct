@@ -1108,7 +1108,7 @@ def Event_12604845():
     MAIN.Await(OR_1)
     
     EndIfLastConditionResultTrue(input_condition=AND_3)
-    RotateToFaceEntity(PLAYER, 2602800, animation=101130, wait_for_completion=True)
+    FaceEntity(PLAYER, 2602800, animation=101130, wait_for_completion=True)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=2602801))
     AND_5.Add(CharacterHuman(PLAYER))
@@ -1135,7 +1135,7 @@ def Event_12604846():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, 2602800, animation=101130, wait_for_completion=True)
+    FaceEntity(PLAYER, 2602800, animation=101130, wait_for_completion=True)
     AND_2.Add(CharacterWhitePhantom(PLAYER))
     AND_2.Add(CharacterInsideRegion(PLAYER, region=2602801))
     AND_3.Add(CharacterWhitePhantom(PLAYER))
@@ -1728,7 +1728,7 @@ def Event_12604860():
     MAIN.Await(OR_1)
     
     EndIfLastConditionResultTrue(input_condition=AND_3)
-    RotateToFaceEntity(PLAYER, 2602850, animation=101130, wait_for_completion=True)
+    FaceEntity(PLAYER, 2602850, animation=101130, wait_for_completion=True)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=2602851))
     AND_5.Add(CharacterHuman(PLAYER))
@@ -1757,7 +1757,7 @@ def Event_12604861():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, 2602850, animation=101130, wait_for_completion=True)
+    FaceEntity(PLAYER, 2602850, animation=101130, wait_for_completion=True)
     AND_2.Add(CharacterWhitePhantom(PLAYER))
     AND_2.Add(CharacterInsideRegion(PLAYER, region=2602851))
     AND_3.Add(CharacterWhitePhantom(PLAYER))

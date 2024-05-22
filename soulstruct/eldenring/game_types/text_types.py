@@ -37,7 +37,7 @@ from soulstruct.base.game_types import GameObjectInt, Text
 from .map_types import CoordEntityTyping
 
 if tp.TYPE_CHECKING:
-    from soulstruct.darksouls1ptde.events.emevd.enums import *
+    from soulstruct.darksouls1ptde.events.enums import *
 
 
 class NPCName(Text):
@@ -80,7 +80,7 @@ class EventText(Text):
         number_buttons: NumberButtons = None,
     ):
         """Display single line of text in a small dialog box at the bottom of the game window."""
-        from ..events.emevd.enums import PLAYER, ButtonType, NumberButtons
+        from ..events.enums import PLAYER, ButtonType, NumberButtons
         from ..events.emevd.compiler import compile_instruction
         if anchor_entity is None:
             anchor_entity = PLAYER

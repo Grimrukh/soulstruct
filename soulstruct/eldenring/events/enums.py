@@ -18,6 +18,9 @@ __all__ = [
     "CLIENT_PLAYER_7",
     "CLIENT_PLAYER_8",
     "CLIENT_PLAYER_9",
+    "ALL_PLAYERS",
+    "ALL_SPIRIT_SUMMONS",
+    "TORRENT",
     "AIStatusType",
     "ArenaMatchType",
     "ArenaResult",
@@ -67,7 +70,12 @@ __all__ = [
 
 from enum import IntEnum
 
-from soulstruct.base.events.emevd.enums import *
+from soulstruct.base.events.enums import *
+
+
+ALL_PLAYERS = 20000  # I strongly suspect
+ALL_SPIRIT_SUMMONS = 35000
+TORRENT = 40000
 
 
 class AIStatusType(BaseEMEVDEnum):
@@ -102,8 +110,8 @@ class BitOperation(BaseEMEVDEnum):
 
 
 class BossMusicState(BaseEMEVDEnum):
-    Stop1 = -2
-    Stop2 = -1
+    NormalFadeOut = -2
+    LongFadeOut = -1
     Start = 0
     HeatUp = 1
 
@@ -336,6 +344,7 @@ class SummonSignType(BaseEMEVDEnum):
 
 class SoundType(BaseEMEVDEnum):
     # The initial letter is prefixed to the sound ID to find the sound file in the FEV.
+    # TODO: Used outside EMEVD in MSB, so should be removed from here.
     a_Ambient = 0
     c_CharacterMotion = 1
     f_MenuEffect = 2
@@ -347,7 +356,7 @@ class SoundType(BaseEMEVDEnum):
     x_FloorMaterialDependent = 8
     b_ArmorMaterialDependent = 9
     g_Ghost = 10
-    Unknown14 = 14
+    unk_GeometrySet = 14
 
 
 class StatueType(BaseEMEVDEnum):
@@ -410,7 +419,7 @@ class BannerType(BaseEMEVDEnum):
     RecusantVanquished = 29
     InvaderVanquished = 30
     Commence = 31
-    Statemate = 32
+    Stalemate = 32
     Victory = 33
     Defeat = 34
 

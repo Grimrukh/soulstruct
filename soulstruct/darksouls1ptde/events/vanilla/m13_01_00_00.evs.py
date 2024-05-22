@@ -322,7 +322,7 @@ def Event_11315390():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1312997)
+    FaceEntity(PLAYER, target_entity=1312997)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -343,7 +343,7 @@ def Event_11315391():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1312997)
+    FaceEntity(PLAYER, target_entity=1312997)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -899,7 +899,7 @@ def Event_11310053():
     """Event 11310053"""
     MAIN.Await(FlagEnabled(11315020))
     
-    RotateToFaceEntity(PLAYER, target_entity=1310810)
+    FaceEntity(PLAYER, target_entity=1310810)
     ForceAnimation(PLAYER, 7910, wait_for_completion=True)
     ForceAnimation(PLAYER, 7911, loop=True)
     

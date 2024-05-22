@@ -800,7 +800,7 @@ def Event_12100112():
     AND_1.Add(CharacterHuman(PLAYER))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=2100700, radius=1.0))
     GotoIfConditionTrue(Label.L2, input_condition=AND_1)
-    RotateToFaceEntity(PLAYER, 2100700, animation=101290)
+    FaceEntity(PLAYER, 2100700, animation=101290)
     AND_2.Add(CharacterHuman(PLAYER))
     AND_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=2100700, radius=1.0))
     OR_1.Add(AND_2)
@@ -810,7 +810,7 @@ def Event_12100112():
 
     # --- Label 2 --- #
     DefineLabel(2)
-    RotateToFaceEntity(PLAYER, 2100700, animation=101270)
+    FaceEntity(PLAYER, 2100700, animation=101270)
     WaitFrames(frames=0)
     EnableFlag(72100101)
     WaitFrames(frames=54)
@@ -827,7 +827,7 @@ def Event_12100112():
     AND_3.Add(CharacterHuman(PLAYER))
     AND_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=2100700, radius=1.5))
     GotoIfConditionTrue(Label.L3, input_condition=AND_3)
-    RotateToFaceEntity(PLAYER, 2100700, animation=101290)
+    FaceEntity(PLAYER, 2100700, animation=101290)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(EntityWithinDistance(entity=PLAYER, other_entity=2100700, radius=1.5))
     OR_2.Add(AND_4)
@@ -837,7 +837,7 @@ def Event_12100112():
 
     # --- Label 3 --- #
     DefineLabel(3)
-    RotateToFaceEntity(PLAYER, 2100700, animation=101280)
+    FaceEntity(PLAYER, 2100700, animation=101280)
     WaitFrames(frames=0)
     EnableFlag(72100101)
     WaitFrames(frames=54)
@@ -854,7 +854,7 @@ def Event_12100112():
     AND_5.Add(CharacterHuman(PLAYER))
     AND_5.Add(EntityWithinDistance(entity=PLAYER, other_entity=2100700, radius=2.0))
     GotoIfConditionTrue(Label.L4, input_condition=AND_5)
-    RotateToFaceEntity(PLAYER, 2100700, animation=101290)
+    FaceEntity(PLAYER, 2100700, animation=101290)
     AND_6.Add(CharacterHuman(PLAYER))
     AND_6.Add(EntityWithinDistance(entity=PLAYER, other_entity=2100700, radius=2.0))
     
@@ -862,7 +862,7 @@ def Event_12100112():
 
     # --- Label 4 --- #
     DefineLabel(4)
-    RotateToFaceEntity(PLAYER, 2100700, animation=101270)
+    FaceEntity(PLAYER, 2100700, animation=101270)
     WaitFrames(frames=0)
     EnableFlag(72100101)
     WaitFrames(frames=54)
@@ -894,7 +894,7 @@ def Event_12100113():
     
     MAIN.Await(FlagEnabled(72100100))
     
-    RotateToFaceEntity(2100700, PLAYER, animation=7021)
+    FaceEntity(2100700, PLAYER, animation=7021)
     WaitFrames(frames=0)
     EnableFlag(72100102)
     WaitFrames(frames=89)
@@ -943,11 +943,11 @@ def Event_12100115():
         return
     AND_2.Add(CharacterHasSpecialEffect(2100700, 151))
     GotoIfConditionFalse(Label.L0, input_condition=AND_2)
-    RotateToFaceEntity(2100700, PLAYER, animation=7010)
+    FaceEntity(2100700, PLAYER, animation=7010)
     WaitFrames(frames=89)
     AND_3.Add(CharacterHasSpecialEffect(2100700, 152))
     GotoIfConditionFalse(Label.L0, input_condition=AND_3)
-    RotateToFaceEntity(2100700, PLAYER, animation=7012)
+    FaceEntity(2100700, PLAYER, animation=7012)
     WaitFrames(frames=0)
 
     # --- Label 0 --- #
@@ -968,7 +968,7 @@ def Event_12100116():
     DisableFlag(72100108)
     AND_1.Add(CharacterHasSpecialEffect(2100700, 151))
     GotoIfConditionFalse(Label.L0, input_condition=AND_1)
-    RotateToFaceEntity(2100700, PLAYER, animation=7011)
+    FaceEntity(2100700, PLAYER, animation=7011)
     WaitFrames(frames=89)
     End()
 
@@ -976,7 +976,7 @@ def Event_12100116():
     DefineLabel(0)
     AND_2.Add(CharacterHasSpecialEffect(2100700, 152))
     GotoIfConditionFalse(Label.L1, input_condition=AND_2)
-    RotateToFaceEntity(2100700, PLAYER, animation=7013)
+    FaceEntity(2100700, PLAYER, animation=7013)
     WaitFrames(frames=0)
     End()
 
@@ -984,7 +984,7 @@ def Event_12100116():
     DefineLabel(1)
     AND_3.Add(CharacterHasSpecialEffect(2100700, 153))
     GotoIfConditionFalse(Label.L2, input_condition=AND_3)
-    RotateToFaceEntity(2100700, PLAYER, animation=7019)
+    FaceEntity(2100700, PLAYER, animation=7019)
     WaitFrames(frames=89)
 
     # --- Label 2 --- #
@@ -1014,21 +1014,21 @@ def Event_12100117():
     
     GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_4)
     GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_3)
-    RotateToFaceEntity(2100700, PLAYER, animation=7001)
+    FaceEntity(2100700, PLAYER, animation=7001)
     WaitFrames(frames=1)
     Restart()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    RotateToFaceEntity(2100700, PLAYER, animation=7000)
+    FaceEntity(2100700, PLAYER, animation=7000)
     WaitFrames(frames=1)
     Restart()
 
     # --- Label 1 --- #
     DefineLabel(1)
-    RotateToFaceEntity(2100700, PLAYER, animation=7026)
+    FaceEntity(2100700, PLAYER, animation=7026)
     WaitFrames(frames=39)
-    RotateToFaceEntity(2100700, PLAYER, animation=7025)
+    FaceEntity(2100700, PLAYER, animation=7025)
     Restart()
 
 
@@ -1914,7 +1914,7 @@ def Event_12104810():
     MAIN.Await(OR_1)
     
     EndIfLastConditionResultTrue(input_condition=AND_3)
-    RotateToFaceEntity(PLAYER, 2102800, animation=101130)
+    FaceEntity(PLAYER, 2102800, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=2102801))
     AND_5.Add(CharacterHuman(PLAYER))
@@ -1943,7 +1943,7 @@ def Event_12104811():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, 2102800, animation=101130)
+    FaceEntity(PLAYER, 2102800, animation=101130)
     AND_2.Add(CharacterWhitePhantom(PLAYER))
     AND_2.Add(CharacterInsideRegion(PLAYER, region=2102801))
     AND_3.Add(CharacterWhitePhantom(PLAYER))
@@ -2300,7 +2300,7 @@ def Event_12104880():
     MAIN.Await(OR_1)
     
     EndIfLastConditionResultTrue(input_condition=AND_3)
-    RotateToFaceEntity(PLAYER, 2102800, animation=101130)
+    FaceEntity(PLAYER, 2102800, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=2102801))
     AND_5.Add(CharacterHuman(PLAYER))
@@ -2329,7 +2329,7 @@ def Event_12104881():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, 2102800, animation=101130)
+    FaceEntity(PLAYER, 2102800, animation=101130)
     AND_2.Add(CharacterWhitePhantom(PLAYER))
     AND_2.Add(CharacterInsideRegion(PLAYER, region=2102801))
     AND_3.Add(CharacterWhitePhantom(PLAYER))
@@ -4178,7 +4178,7 @@ def Event_12105060():
     EnableFlag(12105061)
     DisableFlag(72100140)
     DisableFlagRange((6011, 6025))
-    RotateToFaceEntity(PLAYER, 2100218, animation=101310)
+    FaceEntity(PLAYER, 2100218, animation=101310)
     Wait(1.0)
     ForceAnimation(2100218, 7003)
     WaitFrames(frames=39)
@@ -4338,7 +4338,7 @@ def Event_12105070(_, flag: int, flag_1: int, bit_index: uchar):
     EnableFlag(12105061)
     DisableFlag(flag)
     DisableFlagRange((6011, 6025))
-    RotateToFaceEntity(PLAYER, 2100218, animation=101310)
+    FaceEntity(PLAYER, 2100218, animation=101310)
     Wait(1.0)
     ForceAnimation(2100218, 7003)
     WaitFrames(frames=39)
@@ -4449,7 +4449,7 @@ def Event_12107000(_, flag: int, target_entity: int, respawn_point_id: int):
     
     MAIN.Await(FlagEnabled(flag))
     
-    RotateToFaceEntity(PLAYER, target_entity, animation=101164)
+    FaceEntity(PLAYER, target_entity, animation=101164)
     Wait(4.0)
     WarpPlayerToRespawnPoint(respawn_point_id)
 
@@ -4473,7 +4473,7 @@ def Event_12107100(_, flag: int, target_entity: int, flag_1: int):
     EnableFlag(flag_1)
     DisableFlag(flag)
     End()
-    RotateToFaceEntity(PLAYER, target_entity, animation=101164)
+    FaceEntity(PLAYER, target_entity, animation=101164)
 
 
 @ContinueOnRest(12107200)

@@ -37,7 +37,7 @@ __all__ = [
     "Collision",
     "PlayerStart",
     "Navmesh",
-    "UnusedObject",
+    "UnusedAsset",
     "UnusedCharacter",
     "MapConnection",
 

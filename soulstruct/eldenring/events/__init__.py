@@ -503,6 +503,9 @@ __all__ = [
     "CLIENT_PLAYER_7",
     "CLIENT_PLAYER_8",
     "CLIENT_PLAYER_9",
+    "ALL_PLAYERS",
+    "ALL_SPIRIT_SUMMONS",
+    "TORRENT",
     "AIStatusType",
     "ArenaMatchType",
     "ArenaResult",
@@ -552,7 +555,8 @@ __all__ = [
 
 from ..maps import constants
 from ..maps.constants import *
-from .emevd import EMEVD, decompiler, enums
-from .emevd.enums import *
+from .emevd import EMEVD, decompiler
+from . import enums
+from .enums import *
 from .event_directory import EventDirectory
 from .utilities import convert_events, compare_events

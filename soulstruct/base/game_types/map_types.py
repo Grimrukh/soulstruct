@@ -48,6 +48,7 @@ __all__ = [
     "PlayerStart",
     "Navmesh",
     "UnusedObject",
+    "UnusedAsset",
     "UnusedCharacter",
     "MapConnection",
 
@@ -540,23 +541,22 @@ class Navmesh(MapPart):
         return ("Parts", "Navmeshes") if pluralized_subtype else ("Parts", "Navmesh")
 
 
-class UnusedObject(MapPart):
+class UnusedObject(Object):
     """Unused (or cutscene-only) object in MSB."""
-    @classmethod
-    def get_event_arg_fmt(cls):
-        return None  # not valid
-
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
         return ("Parts", "UnusedObjects") if pluralized_subtype else ("Parts", "UnusedObject")
 
 
-class UnusedCharacter(MapPart):
-    """Unused (or cutscene-only) character in MSB."""
+class UnusedAsset(Asset):
+    """Unused (or cutscene-only) asset in MSB."""
     @classmethod
-    def get_event_arg_fmt(cls):
-        return None  # not valid
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Parts", "UnusedObjects") if pluralized_subtype else ("Parts", "UnusedObject")
 
+
+class UnusedCharacter(Character):
+    """Unused (or cutscene-only) character in MSB."""
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
         return ("Parts", "UnusedCharacters") if pluralized_subtype else ("Parts", "UnusedCharacter")

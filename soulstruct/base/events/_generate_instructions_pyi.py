@@ -17,7 +17,7 @@ from pathlib import Path
 from soulstruct.utilities.files import PACKAGE_PATH
 
 
-_DEF_TEMPLATE = "\n\ndef {alias}({args}):"
+_DEF_TEMPLATE = "\n\n# ({category}, {index})\ndef {alias}({args}):"
 _DEF_TEMPLATE_RET = "\n\ndef {alias}({args}) -> {ret_type}:"
 _MAX_LINE_WIDTH = 120
 
@@ -183,7 +183,7 @@ def generate_instr_pyi(
         "import typing as tp\n\n"
         f"from soulstruct.{game_module_name}.game_types import *\n"
         "from .emevd.compiler import *\n"  # custom instructions
-        "from .emevd.enums import *\n"
+        "from .enums import *\n"
     )
 
     pyi_all_lines = [
@@ -252,13 +252,13 @@ def generate_instr_pyi(
         if alias in compiler_names:
             # Default function is overridden in `compiler`. Omit def AND partials from PYI.
             # Should only really occur for `RunEvent` and its kin.
-            pyi_funcs_str += f"\n\n# Instruction `{alias}` is manually defined in the `compiler` module.\n"
+            pyi_funcs_str += f"\n\n# Instruction `{alias}` ({category}, {index}) is defined in the `compiler` module.\n"
             continue
         args_dict = {}
         for evs_arg_name, evs_arg_info in instr_info.get("evs_args", instr_info["args"]).items():
             args_dict[evs_arg_name] = instr_info["args"][evs_arg_name] if not evs_arg_info else evs_arg_info
         args = get_arg_string(args_dict, len(alias), add_event_layers=has_event_layers)
-        pyi_funcs_str += _DEF_TEMPLATE.format(alias=alias, args=args) + "\n"
+        pyi_funcs_str += _DEF_TEMPLATE.format(category=category, index=index, alias=alias, args=args) + "\n"
         docstring = instr_info.get("docstring", "TODO")
         for arg_name, arg_info in args_dict.items():
             if "comment" in arg_info:
@@ -272,7 +272,8 @@ def generate_instr_pyi(
                 if arg_name not in partial_kwargs
             }
             partial_args = get_arg_string(partial_args_dict, len(partial_name), add_event_layers=has_event_layers)
-            pyi_funcs_str += _DEF_TEMPLATE.format(alias=partial_name, args=partial_args) + "\n"
+            pyi_funcs_str += _DEF_TEMPLATE.format(
+                category=category, index=index, alias=partial_name, args=partial_args) + "\n"
             partial_kwargs_str = ", ".join(f"`{k}={v}`" for k, v in partial_kwargs.items() if k != "__docstring")
             partial_docstring = f"Calls `{alias}` with {partial_kwargs_str}."
             if "__docstring" in partial_kwargs:
@@ -385,7 +386,7 @@ def generate_instr_pyi(
 
 def darksouls1ptde():
     from soulstruct.darksouls1ptde.events.emevd import compiler
-    from soulstruct.darksouls1ptde.events.emevd.enums import ConditionGroup
+    from soulstruct.darksouls1ptde.events.enums import ConditionGroup
     from soulstruct.darksouls1ptde.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS, EMEDF_COMPARISON_TESTS
     generate_instr_pyi(
         "darksouls1ptde",
@@ -401,7 +402,7 @@ def darksouls1ptde():
 
 def darksouls1r():
     from soulstruct.darksouls1r.events.emevd import compiler
-    from soulstruct.darksouls1r.events.emevd.enums import ConditionGroup
+    from soulstruct.darksouls1r.events.enums import ConditionGroup
     from soulstruct.darksouls1r.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS, EMEDF_COMPARISON_TESTS
     generate_instr_pyi(
         "darksouls1r",
@@ -417,7 +418,7 @@ def darksouls1r():
 
 def bloodborne():
     from soulstruct.bloodborne.events.emevd import compiler
-    from soulstruct.bloodborne.events.emevd.enums import ConditionGroup
+    from soulstruct.bloodborne.events.enums import ConditionGroup
     from soulstruct.bloodborne.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS, EMEDF_COMPARISON_TESTS
     generate_instr_pyi(
         "bloodborne",
@@ -433,7 +434,7 @@ def bloodborne():
 
 def darksouls3():
     from soulstruct.darksouls3.events.emevd import compiler
-    from soulstruct.darksouls3.events.emevd.enums import ConditionGroup
+    from soulstruct.darksouls3.events.enums import ConditionGroup
     from soulstruct.darksouls3.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS, EMEDF_COMPARISON_TESTS
     generate_instr_pyi(
         "darksouls3",
@@ -450,7 +451,7 @@ def darksouls3():
 
 def eldenring():
     from soulstruct.eldenring.events.emevd import compiler
-    from soulstruct.eldenring.events.emevd.enums import ConditionGroup
+    from soulstruct.eldenring.events.enums import ConditionGroup
     from soulstruct.eldenring.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS, EMEDF_COMPARISON_TESTS
 
     generate_instr_pyi(

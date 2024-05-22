@@ -298,7 +298,7 @@ def Event_11105390():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1102997)
+    FaceEntity(PLAYER, target_entity=1102997)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -319,7 +319,7 @@ def Event_11105391():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1102997)
+    FaceEntity(PLAYER, target_entity=1102997)
     ForceAnimation(PLAYER, 7410)
     Restart()
 

@@ -1324,7 +1324,7 @@ def Event_13204000(_, character: int, flag: int):
     MAIN.Await(AND_1)
     
     EnableAI(character)
-    RotateToFaceEntity(character, PLAYER, animation=7000, wait_for_completion=True)
+    FaceEntity(character, PLAYER, animation=7000, wait_for_completion=True)
     EnableGravity(character)
 
 
@@ -1401,7 +1401,7 @@ def Event_13204830():
     MAIN.Await(OR_1)
     
     EndIfLastConditionResultTrue(input_condition=AND_3)
-    RotateToFaceEntity(PLAYER, 3202800, animation=101130)
+    FaceEntity(PLAYER, 3202800, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=3202809))
     AND_5.Add(CharacterHuman(PLAYER))
@@ -1428,7 +1428,7 @@ def Event_13204831():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, 3202800, animation=101130)
+    FaceEntity(PLAYER, 3202800, animation=101130)
     AND_2.Add(CharacterWhitePhantom(PLAYER))
     AND_2.Add(CharacterInsideRegion(PLAYER, region=3202801))
     AND_3.Add(CharacterWhitePhantom(PLAYER))
@@ -1974,7 +1974,7 @@ def Event_13205100(_, character: int, region: int):
     
     ForceAnimation(character, 7005)
     WaitFrames(frames=59)
-    RotateToFaceEntity(character, PLAYER, animation=3011)
+    FaceEntity(character, PLAYER, animation=3011)
 
 
 @RestartOnRest(13205140)
@@ -1997,7 +1997,7 @@ def Event_13205140(_, character: int, region: int):
     
     EndIfLastConditionResultTrue(input_condition=OR_1)
     EndIfLastConditionResultTrue(input_condition=AND_2)
-    RotateToFaceEntity(character, PLAYER, animation=3002)
+    FaceEntity(character, PLAYER, animation=3002)
 
 
 @RestartOnRest(13205200)
@@ -2416,7 +2416,7 @@ def Event_13204460(
     MAIN.Await(AND_1)
     
     ResetAnimation(character)
-    RotateToFaceEntity(character, region_1, animation=animation, wait_for_completion=True)
+    FaceEntity(character, region_1, animation=animation, wait_for_completion=True)
     AND_2.Add(CharacterInsideRegion(character, region=region_2))
     if not AND_2:
         return RESTART

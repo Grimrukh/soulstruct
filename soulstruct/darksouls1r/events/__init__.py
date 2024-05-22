@@ -85,7 +85,8 @@ __all__ = [
 
 from soulstruct.darksouls1ptde.maps import constants
 from soulstruct.darksouls1ptde.maps.constants import *
-from .emevd import EMEVD, decompiler, enums
-from .emevd.enums import *
+from .emevd import EMEVD, decompiler
+from . import enums
+from .enums import *
 from .event_directory import EventDirectory
 from .utilities import convert_events, compare_events

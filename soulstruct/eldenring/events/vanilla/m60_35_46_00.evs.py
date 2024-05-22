@@ -304,7 +304,7 @@ def Event_1035462600(
 
     # --- Label 1 --- #
     DefineLabel(1)
-    RotateToFaceEntity(PLAYER, target_entity, wait_for_completion=True)
+    FaceEntity(PLAYER, target_entity, wait_for_completion=True)
     ForceAnimation(PLAYER, animation_id)
     Wait(2.5)
     EnableFlag(flag)
@@ -320,5 +320,5 @@ def Event_1035462605(_, flag: uint, target_entity: uint, animation: int):
     MAIN.Await(FlagEnabled(flag))
     
     WaitFrames(frames=1)
-    RotateToFaceEntity(PLAYER, target_entity, animation=animation)
+    FaceEntity(PLAYER, target_entity, animation=animation)
     DisableFlag(flag)

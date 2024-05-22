@@ -14,8 +14,8 @@ from soulstruct.bloodborne.game_types.game_enums_manager import GameEnumsManager
 from soulstruct.bloodborne.game_types.map_types import *
 from soulstruct.bloodborne.maps.constants import get_map_variable_name
 
-from . import enums
-from .enums import *
+from .. import enums
+from ..enums import *
 from .emedf import EMEDF
 
 _LOGGER = logging.getLogger("soulstruct")

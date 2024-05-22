@@ -106,7 +106,7 @@ class MSBPart(BaseMSBPart, abc.ABC):
 
     @dataclass(slots=True)
     class SUPERTYPE_HEADER_STRUCT(BinaryStruct):
-        description_offset: long
+        description_offset: long  # only game with descriptions!
         name_offset: long
         _instance_index: int  # TK says "Unknown; appears to count up with each instance of a model added."
         _subtype_int: int

@@ -4116,7 +4116,7 @@ def CommonFunc_90005520(_, flag: uint, asset: uint, start_climbing_flag: uint, s
     
     EnableNetworkFlag(flag)
     if PlayerInOwnWorld():
-        RotateToFaceEntity(PLAYER, asset, animation=60210)
+        FaceEntity(PLAYER, asset, animation=60210)
     ForceAnimation(asset, 1, wait_for_completion=True)
     RegisterLadder(start_climbing_flag=start_climbing_flag, stop_climbing_flag=stop_climbing_flag, asset=asset)
 
@@ -4458,7 +4458,7 @@ def CommonFunc_90005605(
     OR_15.Add(MultiplayerPending())
     if OR_15:
         return RESTART
-    RotateToFaceEntity(PLAYER, asset, wait_for_completion=True)
+    FaceEntity(PLAYER, asset, wait_for_completion=True)
     ForceAnimation(PLAYER, 60490)
     Wait(3.0)
     WarpToMap(game_map=(area_id, block_id, cc_id, dd_id), player_start=player_start, unk_8_12=unk_8_12)
@@ -4646,8 +4646,8 @@ def CommonFunc_90005630(_, far_view_id: uint, asset: uint, dummy_id: int):
     MAIN.Await(AND_1)
     
     UseFarViewCamera(far_view_id=far_view_id, asset=asset, dummy_id=dummy_id)
-    RotateToFaceEntity(PLAYER, asset, wait_for_completion=True)
-    RotateToFaceEntity(PLAYER, asset, animation=60480)
+    FaceEntity(PLAYER, asset, wait_for_completion=True)
+    FaceEntity(PLAYER, asset, animation=60480)
     Wait(1.0)
     Restart()
 
@@ -7039,16 +7039,16 @@ def CommonFunc_90005740(
     AND_15.Add(EntityWithinDistance(entity=PLAYER, other_entity=asset, radius=radius_1))
     AND_15.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius_1))
     GotoIfConditionTrue(Label.L9, input_condition=AND_15)
-    RotateToFaceEntity(PLAYER, asset, wait_for_completion=True)
-    RotateToFaceEntity(PLAYER, asset, animation=90006)
+    FaceEntity(PLAYER, asset, wait_for_completion=True)
+    FaceEntity(PLAYER, asset, animation=90006)
     Goto(Label.L8)
 
     # --- Label 0 --- #
     DefineLabel(0)
-    RotateToFaceEntity(PLAYER, character, wait_for_completion=True)
+    FaceEntity(PLAYER, character, wait_for_completion=True)
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
     GotoIfConditionTrue(Label.L9, input_condition=AND_1)
-    RotateToFaceEntity(PLAYER, character, animation=90006)
+    FaceEntity(PLAYER, character, animation=90006)
     Goto(Label.L8)
 
     # --- Label 8 --- #
@@ -7084,9 +7084,9 @@ def CommonFunc_90005740(
             short_move=True,
         )
     if ValueNotEqual(left=special_effect, right=-1):
-        RotateToFaceEntity(PLAYER, character, animation=animation)
+        FaceEntity(PLAYER, character, animation=animation)
     else:
-        RotateToFaceEntity(PLAYER, character, animation=animation, wait_for_completion=True)
+        FaceEntity(PLAYER, character, animation=animation, wait_for_completion=True)
     Goto(Label.L8)
 
     # --- Label 8 --- #
@@ -7168,9 +7168,9 @@ def CommonFunc_90005741(
     # --- Label 0 --- #
     DefineLabel(0)
     if ValueNotEqual(left=special_effect, right=-1):
-        RotateToFaceEntity(character, PLAYER, animation=animation__animation_id)
+        FaceEntity(character, PLAYER, animation=animation__animation_id)
     else:
-        RotateToFaceEntity(character, PLAYER, animation=animation__animation_id, wait_for_completion=True)
+        FaceEntity(character, PLAYER, animation=animation__animation_id, wait_for_completion=True)
     Goto(Label.L10)
 
     # --- Label 10 --- #
@@ -7233,16 +7233,16 @@ def CommonFunc_90005742(
     AND_15.Add(EntityWithinDistance(entity=PLAYER, other_entity=asset, radius=radius_1))
     AND_15.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius_1))
     GotoIfConditionTrue(Label.L9, input_condition=AND_15)
-    RotateToFaceEntity(PLAYER, asset, wait_for_completion=True)
-    RotateToFaceEntity(PLAYER, asset, animation=90006)
+    FaceEntity(PLAYER, asset, wait_for_completion=True)
+    FaceEntity(PLAYER, asset, animation=90006)
     Goto(Label.L8)
 
     # --- Label 0 --- #
     DefineLabel(0)
-    RotateToFaceEntity(PLAYER, character, wait_for_completion=True)
+    FaceEntity(PLAYER, character, wait_for_completion=True)
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
     GotoIfConditionTrue(Label.L9, input_condition=AND_1)
-    RotateToFaceEntity(PLAYER, character, animation=90006)
+    FaceEntity(PLAYER, character, animation=90006)
     Goto(Label.L8)
 
     # --- Label 8 --- #
@@ -7278,9 +7278,9 @@ def CommonFunc_90005742(
             short_move=True,
         )
     if ValueNotEqual(left=special_effect, right=-1):
-        RotateToFaceEntity(PLAYER, character, animation=animation)
+        FaceEntity(PLAYER, character, animation=animation)
     else:
-        RotateToFaceEntity(PLAYER, character, animation=animation, wait_for_completion=True)
+        FaceEntity(PLAYER, character, animation=animation, wait_for_completion=True)
     Goto(Label.L8)
 
     # --- Label 8 --- #
@@ -7366,9 +7366,9 @@ def CommonFunc_90005743(
     # --- Label 0 --- #
     DefineLabel(0)
     if ValueNotEqual(left=special_effect, right=-1):
-        RotateToFaceEntity(character, PLAYER, animation=animation__animation_id)
+        FaceEntity(character, PLAYER, animation=animation__animation_id)
     else:
-        RotateToFaceEntity(character, PLAYER, animation=animation__animation_id, wait_for_completion=True)
+        FaceEntity(character, PLAYER, animation=animation__animation_id, wait_for_completion=True)
     Goto(Label.L10)
 
     # --- Label 10 --- #
@@ -7681,9 +7681,9 @@ def CommonFunc_90005782(
     MAIN.Await(CharacterInsideRegion(character=character, region=region_1))
     
     if ValueNotEqual(left=animation, right=0):
-        RotateToFaceEntity(character, target_entity, animation=animation, wait_for_completion=True)
+        FaceEntity(character, target_entity, animation=animation, wait_for_completion=True)
     else:
-        RotateToFaceEntity(character, target_entity, animation=60060, wait_for_completion=True)
+        FaceEntity(character, target_entity, animation=60060, wait_for_completion=True)
     OR_4.Add(TimeElapsed(seconds=3.0))
     OR_5.Add(OR_4)
     OR_5.Add(CharacterInsideRegion(character=character, region=region))
@@ -7713,9 +7713,9 @@ def CommonFunc_90005784(_, flag: uint, flag_1: uint, character: uint, region: ui
     MAIN.Await(CharacterInsideRegion(character=character, region=region_1))
     
     if ValueNotEqual(left=animation, right=0):
-        RotateToFaceEntity(character, region, animation=animation, wait_for_completion=True)
+        FaceEntity(character, region, animation=animation, wait_for_completion=True)
     else:
-        RotateToFaceEntity(character, region, animation=60060, wait_for_completion=True)
+        FaceEntity(character, region, animation=60060, wait_for_completion=True)
     OR_4.Add(TimeElapsed(seconds=3.0))
     OR_5.Add(OR_4)
     OR_5.Add(CharacterInsideRegion(character=character, region=region))
@@ -8111,9 +8111,9 @@ def CommonFunc_9005800(
         return RESTART
     SuppressSoundForFogGate(duration=5.0)
     if CharacterDoesNotHaveSpecialEffect(character=PLAYER, special_effect=4250):
-        RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+        FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
     else:
-        RotateToFaceEntity(PLAYER, region, animation=60060)
+        FaceEntity(PLAYER, region, animation=60060)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -8160,7 +8160,7 @@ def CommonFunc_9005800(
     
     MAIN.Await(AND_10)
     
-    RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
     BanishInvaders(unknown=0)
     Restart()
 
@@ -8179,7 +8179,7 @@ def CommonFunc_9005801(_, flag: uint, entity: uint, region: uint, flag_1: uint, 
     MAIN.Await(AND_1)
     
     SuppressSoundForFogGate(duration=5.0)
-    RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
     AND_2.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
     OR_1.Add(TimeElapsed(seconds=3.0))
@@ -8483,9 +8483,9 @@ def CommonFunc_9005822(
     # --- Label 1 --- #
     DefineLabel(1)
     if ValueNotEqual(left=left_1, right=1):
-        SetBossMusic(bgm_boss_conv_param_id=bgm_boss_conv_param_id, state=BossMusicState.Stop2)
+        SetBossMusic(bgm_boss_conv_param_id=bgm_boss_conv_param_id, state=BossMusicState.LongFadeOut)
         End()
-    SetBossMusic(bgm_boss_conv_param_id=bgm_boss_conv_param_id, state=BossMusicState.Stop1)
+    SetBossMusic(bgm_boss_conv_param_id=bgm_boss_conv_param_id, state=BossMusicState.NormalFadeOut)
 
 
 @RestartOnRest(9005823)
@@ -8547,9 +8547,9 @@ def CommonFunc_9005823(
     # --- Label 2 --- #
     DefineLabel(2)
     if ValueNotEqual(left=left_1, right=1):
-        SetBossMusic(bgm_boss_conv_param_id=bgm_boss_conv_param_id, state=BossMusicState.Stop2)
+        SetBossMusic(bgm_boss_conv_param_id=bgm_boss_conv_param_id, state=BossMusicState.LongFadeOut)
         End()
-    SetBossMusic(bgm_boss_conv_param_id=bgm_boss_conv_param_id, state=BossMusicState.Stop1)
+    SetBossMusic(bgm_boss_conv_param_id=bgm_boss_conv_param_id, state=BossMusicState.NormalFadeOut)
 
 
 @RestartOnRest(90005830)
@@ -9200,14 +9200,14 @@ def CommonFunc_90005885(_, flag: uint, bgm_boss_conv_param_id: int, flag_1: uint
     DefineLabel(1)
     SkipLinesIfValueEqual(5, left=left_1, right=1)
     SkipLinesIfValueEqual(2, left=0, right=bgm_boss_conv_param_id)
-    SetBossMusic(bgm_boss_conv_param_id=bgm_boss_conv_param_id, state=BossMusicState.Stop2)
+    SetBossMusic(bgm_boss_conv_param_id=bgm_boss_conv_param_id, state=BossMusicState.LongFadeOut)
     SkipLines(1)
-    SetBossMusic(bgm_boss_conv_param_id=925000, state=BossMusicState.Stop2)
+    SetBossMusic(bgm_boss_conv_param_id=925000, state=BossMusicState.LongFadeOut)
     End()
     if ValueNotEqual(left=0, right=bgm_boss_conv_param_id):
-        SetBossMusic(bgm_boss_conv_param_id=bgm_boss_conv_param_id, state=BossMusicState.Stop1)
+        SetBossMusic(bgm_boss_conv_param_id=bgm_boss_conv_param_id, state=BossMusicState.NormalFadeOut)
     else:
-        SetBossMusic(bgm_boss_conv_param_id=925000, state=BossMusicState.Stop1)
+        SetBossMusic(bgm_boss_conv_param_id=925000, state=BossMusicState.NormalFadeOut)
 
 
 @RestartOnRest(91005600)
@@ -9752,7 +9752,7 @@ def CommonFunc_90005110(
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, asset, wait_for_completion=True)
+    FaceEntity(PLAYER, asset, wait_for_completion=True)
     ForceAnimation(PLAYER, animation_id)
     DeleteAssetVFX(asset)
     Wait(4.0)

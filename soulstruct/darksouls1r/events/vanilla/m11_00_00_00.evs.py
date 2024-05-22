@@ -300,7 +300,7 @@ def Event_11105390():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1102997)
+    FaceEntity(PLAYER, target_entity=1102997)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -321,7 +321,7 @@ def Event_11105391():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1102997)
+    FaceEntity(PLAYER, target_entity=1102997)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -1947,7 +1947,7 @@ def Event_11105843(_, flag: int, line_intersects: int, anchor_entity: int, targe
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=target_entity)
+    FaceEntity(PLAYER, target_entity=target_entity)
     ForceAnimation(PLAYER, 7410, wait_for_completion=True)
     Unknown_2003_47()
     Restart()

@@ -42,7 +42,7 @@ from soulstruct.base.events.evs.compiler import base_compile_instruction, Boolea
 from soulstruct.base.events.emevd.utils import get_coord_entity_type
 from soulstruct.darksouls1ptde.game_types import *
 
-from .enums import *
+from ..enums import *
 from .emedf import EMEDF_ALIASES
 
 if tp.TYPE_CHECKING:

@@ -947,9 +947,9 @@ def Event_30052825(_, flag: uint, region: uint, character: uint, target_entity: 
     
     RestartIfLastConditionResultTrue(input_condition=OR_15)
     if ValueNotEqual(left=animation, right=0):
-        RotateToFaceEntity(character, target_entity, animation=animation, wait_for_completion=True)
+        FaceEntity(character, target_entity, animation=animation, wait_for_completion=True)
     else:
-        RotateToFaceEntity(character, target_entity, animation=60060, wait_for_completion=True)
+        FaceEntity(character, target_entity, animation=60060, wait_for_completion=True)
     OR_4.Add(TimeElapsed(seconds=3.0))
     OR_5.Add(OR_4)
     OR_5.Add(CharacterInsideRegion(character=character, region=region))
@@ -1137,9 +1137,9 @@ def Event_30052870(
         return RESTART
     SuppressSoundForFogGate(duration=5.0)
     if CharacterDoesNotHaveSpecialEffect(character=PLAYER, special_effect=4250):
-        RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+        FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
     else:
-        RotateToFaceEntity(PLAYER, region, animation=60060)
+        FaceEntity(PLAYER, region, animation=60060)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -1186,7 +1186,7 @@ def Event_30052870(
     
     MAIN.Await(AND_10)
     
-    RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
     BanishPhantoms(unknown=0)
     BanishInvaders(unknown=0)
     Restart()

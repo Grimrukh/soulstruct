@@ -11,7 +11,7 @@ from soulstruct.darksouls1ptde.events.emevd.emedf import EMEDF as PTDE_EMEDF
 from soulstruct.bloodborne.maps.constants import get_map_variable_name
 from soulstruct.bloodborne.game_types import *
 from soulstruct.utilities.files import PACKAGE_PATH
-from .enums import *
+from ..enums import *
 
 __all__ = ["EMEDF", "EMEDF_ALIASES", "EMEDF_TESTS", "EMEDF_COMPARISON_TESTS"]
 
@@ -1877,7 +1877,7 @@ EMEDF = PTDE_EMEDF | {
             "block_id": BLOCK_ID,
             "player_start": {
                 "type": tp.Union[PlayerStart, int],
-                "default": -1,
+                "default": 0,  # unsigned
                 "internal_default": -1,
             },
         },
@@ -2378,14 +2378,11 @@ EMEDF = PTDE_EMEDF | {
         },
     },
     (2004, 14): {
-        "alias": "RotateToFaceEntity",
+        "alias": "FaceEntityAndForceAnimation",
         "docstring": """
-            Rotate a character to face a target map entity of any type.
-            WARNING: This instruction will crash its event script (silently) if used on a disabled character! (In DS1 at
-            least.)
+            Rotate a character to face a target map entity of any type, then optionally force an animation.
 
-            The Bloodborne+ version allows you to force an animation at the same time (post-rotation) and optionally 
-            wait until that animation is completed. (I assume a value of -1 avoids it.)
+            WARNING: This may crash an event script if `character` is currently disabled!
         """,
         "args": {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
@@ -3393,7 +3390,7 @@ EMEDF = PTDE_EMEDF | {
             "anchor_entity": NO_DEFAULT(CoordEntityTyping) | HIDE_NAME,
             "sound_type": {
                 "type": SoundType,
-                "default": lambda args: args["sound_id"].get_sound_enum(),
+                "default": lambda args: SoundType(args["sound_id"].get_sound_enum()),
             },
             "sound_id": INT | HIDE_NAME,
         },
@@ -4109,27 +4106,6 @@ EMEDF = PTDE_EMEDF | {
             "state": {},
             "name": {},
             "bar_slot": {},
-        },
-    },
-    (2003, 14): {
-        "alias": "WarpToMap",
-        "docstring": """
-            Warp the main player to the given player entity ID, which is in the Players tab of the MSB, in some map. By
-            default, this warps to the 'default position' in the map (-1), which is the same point you would spawn at if 
-            the game lost track of your stable footing (e.g. in 'wrong warp' glitches).
-        """,
-        "args": {
-            "area_id": AREA_ID,
-            "block_id": BLOCK_ID,
-            "player_start": {
-                "type": tp.Union[PlayerStart, int],
-                "default": -1,
-                "internal_default": -1,
-            },
-        },
-        "evs_args": {
-            "game_map": GAME_MAP_EVS,
-            "player_start": {},
         },
     },
     (2003, 27): {

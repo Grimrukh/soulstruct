@@ -405,7 +405,7 @@ __all__ = [
     "EnableImmortality",
     "DisableImmortality",
     "SetNest",  # 2004[13]
-    "RotateToFaceEntity",  # 2004[14]
+    "FaceEntityAndForceAnimation",  # 2004[14]
     "SetInvincibilityState",  # 2004[15]
     "EnableInvincibility",
     "DisableInvincibility",
@@ -984,7 +984,7 @@ import typing as tp
 
 from soulstruct.darksouls3.game_types import *
 from .emevd.compiler import *
-from .emevd.enums import *
+from .enums import *
 
 # Restart decorators. They can be used as names (not function calls) or have an event ID argument.
 def ContinueOnRest(event_id_or_func: tp.Union[tp.Callable, int]): ...
@@ -1073,6 +1073,7 @@ def RunEvent(event_id: int | tp.Callable, slot: int = 0, args = (0,), arg_types 
     ...
 
 
+# (0, 0)
 def IfConditionState(
     condition: ConditionGroup | int,
     state: bool | int,
@@ -1084,18 +1085,21 @@ def IfConditionState(
     """
 
 
+# (0, 0)
 def IfConditionTrue(condition: ConditionGroup | int, input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfConditionState` with `state=True`.
     """
 
 
+# (0, 0)
 def IfConditionFalse(condition: ConditionGroup | int, input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfConditionState` with `state=False`.
     """
 
 
+# (0, 1)
 def IfValueComparison(
     condition: ConditionGroup | int,
     comparison_type: ComparisonType | int,
@@ -1108,66 +1112,77 @@ def IfValueComparison(
     """
 
 
+# (0, 1)
 def IfValueEqual(condition: ConditionGroup | int, left: int, right: int, event_layers=()):
     """
     Calls `IfValueComparison` with `comparison_type=0`.
     """
 
 
+# (0, 1)
 def IfValueNotEqual(condition: ConditionGroup | int, left: int, right: int, event_layers=()):
     """
     Calls `IfValueComparison` with `comparison_type=1`.
     """
 
 
+# (0, 1)
 def IfValueGreaterThan(condition: ConditionGroup | int, left: int, right: int, event_layers=()):
     """
     Calls `IfValueComparison` with `comparison_type=2`.
     """
 
 
+# (0, 1)
 def IfValueLessThan(condition: ConditionGroup | int, left: int, right: int, event_layers=()):
     """
     Calls `IfValueComparison` with `comparison_type=3`.
     """
 
 
+# (0, 1)
 def IfValueGreaterThanOrEqual(condition: ConditionGroup | int, left: int, right: int, event_layers=()):
     """
     Calls `IfValueComparison` with `comparison_type=4`.
     """
 
 
+# (0, 1)
 def IfValueLessThanOrEqual(condition: ConditionGroup | int, left: int, right: int, event_layers=()):
     """
     Calls `IfValueComparison` with `comparison_type=5`.
     """
 
 
+# (1, 0)
 def IfTimeElapsed(condition: ConditionGroup | int, seconds: float, event_layers=()):
     """
     Time since event started.
     """
 
 
+# (1, 1)
 def IfFramesElapsed(condition: ConditionGroup | int, frames: int, event_layers=()):
     """
     Frames since event started.
     """
 
 
+# (1, 2)
 def IfRandomTimeElapsed(condition: ConditionGroup | int, min_seconds: float, max_seconds: float, event_layers=()):
     """
     Not used in vanilla DS1. Requires a random amount of time since event began.
     """
 
 
+# (1, 3)
 def IfRandomFramesElapsed(condition: ConditionGroup | int, min_frames: int, max_frames: int, event_layers=()):
     """
     Not used in vanilla DS1. Requires a random amount of frames since event began.
     """
 
 
+# (3, 0)
 def IfFlagState(
     condition: ConditionGroup | int,
     state: FlagSetting | int,
@@ -1180,42 +1195,49 @@ def IfFlagState(
     """
 
 
+# (3, 0)
 def IfFlagEnabled(condition: ConditionGroup | int, flag: Flag | int, event_layers=()):
     """
     Calls `IfFlagState` with `state=1`, `flag_type=0`.
     """
 
 
+# (3, 0)
 def IfFlagDisabled(condition: ConditionGroup | int, flag: Flag | int, event_layers=()):
     """
     Calls `IfFlagState` with `state=0`, `flag_type=0`.
     """
 
 
+# (3, 0)
 def IfThisEventFlagEnabled(condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfFlagState` with `state=1`, `flag_type=1`, `flag=0`.
     """
 
 
+# (3, 0)
 def IfThisEventFlagDisabled(condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfFlagState` with `state=0`, `flag_type=1`, `flag=0`.
     """
 
 
+# (3, 0)
 def IfThisEventSlotFlagEnabled(condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfFlagState` with `state=1`, `flag_type=2`, `flag=0`.
     """
 
 
+# (3, 0)
 def IfThisEventSlotFlagDisabled(condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfFlagState` with `state=0`, `flag_type=2`, `flag=0`.
     """
 
 
+# (3, 1)
 def IfFlagRangeState(
     condition: ConditionGroup | int,
     state: RangeState | int,
@@ -1228,30 +1250,35 @@ def IfFlagRangeState(
     """
 
 
+# (3, 1)
 def IfFlagRangeAllEnabled(condition: ConditionGroup | int, flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `IfFlagRangeState` with `state=0`, `flag_type=0`.
     """
 
 
+# (3, 1)
 def IfFlagRangeAllDisabled(condition: ConditionGroup | int, flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `IfFlagRangeState` with `state=1`, `flag_type=0`.
     """
 
 
+# (3, 1)
 def IfFlagRangeAnyEnabled(condition: ConditionGroup | int, flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `IfFlagRangeState` with `state=2`, `flag_type=0`.
     """
 
 
+# (3, 1)
 def IfFlagRangeAnyDisabled(condition: ConditionGroup | int, flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `IfFlagRangeState` with `state=3`, `flag_type=0`.
     """
 
 
+# (3, 2)
 def IfCharacterRegionState(
     condition: ConditionGroup | int,
     state: bool | int,
@@ -1265,6 +1292,7 @@ def IfCharacterRegionState(
     """
 
 
+# (3, 2)
 def IfPlayerInsideRegion(
     condition: ConditionGroup | int,
     region: Region | int,
@@ -1276,6 +1304,7 @@ def IfPlayerInsideRegion(
     """
 
 
+# (3, 2)
 def IfPlayerOutsideRegion(
     condition: ConditionGroup | int,
     region: Region | int,
@@ -1287,6 +1316,7 @@ def IfPlayerOutsideRegion(
     """
 
 
+# (3, 2)
 def IfCharacterInsideRegion(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -1299,6 +1329,7 @@ def IfCharacterInsideRegion(
     """
 
 
+# (3, 2)
 def IfCharacterOutsideRegion(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -1311,6 +1342,7 @@ def IfCharacterOutsideRegion(
     """
 
 
+# (3, 3)
 def IfEntityDistanceState(
     condition: ConditionGroup | int,
     state: bool | int,
@@ -1325,6 +1357,7 @@ def IfEntityDistanceState(
     """
 
 
+# (3, 3)
 def IfPlayerWithinDistance(
     condition: ConditionGroup | int,
     other_entity: Object | Character | Region | int,
@@ -1337,6 +1370,7 @@ def IfPlayerWithinDistance(
     """
 
 
+# (3, 3)
 def IfPlayerBeyondDistance(
     condition: ConditionGroup | int,
     other_entity: Object | Character | Region | int,
@@ -1349,6 +1383,7 @@ def IfPlayerBeyondDistance(
     """
 
 
+# (3, 3)
 def IfEntityWithinDistance(
     condition: ConditionGroup | int,
     entity: Object | Character | Region | int,
@@ -1362,6 +1397,7 @@ def IfEntityWithinDistance(
     """
 
 
+# (3, 3)
 def IfEntityBeyondDistance(
     condition: ConditionGroup | int,
     entity: Object | Character | Region | int,
@@ -1375,6 +1411,7 @@ def IfEntityBeyondDistance(
     """
 
 
+# (3, 4)
 def IfPlayerItemStateExcludingStorage(
     condition: ConditionGroup | int,
     item: BaseItemParam | int,
@@ -1388,6 +1425,7 @@ def IfPlayerItemStateExcludingStorage(
     """
 
 
+# (3, 5)
 def IfActionButtonBasic(
     condition: ConditionGroup | int,
     prompt_text: EventText | int,
@@ -1409,66 +1447,77 @@ def IfActionButtonBasic(
     """
 
 
+# (3, 6)
 def IfMultiplayerState(condition: ConditionGroup | int, state: MultiplayerState | int, event_layers=()):
     """
     TODO
     """
 
 
+# (3, 6)
 def IfHost(condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfMultiplayerState` with `state=0`.
     """
 
 
+# (3, 6)
 def IfClient(condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfMultiplayerState` with `state=1`.
     """
 
 
+# (3, 6)
 def IfTryingToCreateSession(condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfMultiplayerState` with `state=2`.
     """
 
 
+# (3, 6)
 def IfTryingToJoinSession(condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfMultiplayerState` with `state=3`.
     """
 
 
+# (3, 6)
 def IfLeavingSession(condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfMultiplayerState` with `state=4`.
     """
 
 
+# (3, 6)
 def IfFailedToCreateSession(condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfMultiplayerState` with `state=5`.
     """
 
 
+# (3, 7)
 def IfAllPlayersRegionState(condition: ConditionGroup | int, state: bool | int, region: Region | int, event_layers=()):
     """
     TODO
     """
 
 
+# (3, 7)
 def IfAllPlayersInsideRegion(condition: ConditionGroup | int, region: Region | int, event_layers=()):
     """
     Calls `IfAllPlayersRegionState` with `state=True`.
     """
 
 
+# (3, 7)
 def IfAllPlayersOutsideRegion(condition: ConditionGroup | int, region: Region | int, event_layers=()):
     """
     Calls `IfAllPlayersRegionState` with `state=False`.
     """
 
 
+# (3, 8)
 def IfMapPresenceState(
     condition: ConditionGroup | int,
     state: bool | int,
@@ -1480,24 +1529,28 @@ def IfMapPresenceState(
     """
 
 
+# (3, 8)
 def IfInsideMap(condition: ConditionGroup | int, game_map: Map | tuple | list, event_layers=()):
     """
     Calls `IfMapPresenceState` with `state=True`.
     """
 
 
+# (3, 8)
 def IfOutsideMap(condition: ConditionGroup | int, game_map: Map | tuple | list, event_layers=()):
     """
     Calls `IfMapPresenceState` with `state=False`.
     """
 
 
+# (3, 9)
 def IfMultiplayerEvent(condition: ConditionGroup | int, event_id: int, event_layers=()):
     """
     TODO
     """
 
 
+# (3, 10)
 def IfEnabledFlagCountComparison(
     condition: ConditionGroup | int,
     flag_type: FlagType | int,
@@ -1511,6 +1564,7 @@ def IfEnabledFlagCountComparison(
     """
 
 
+# (3, 10)
 def IfEnabledFlagCountEqual(
     condition: ConditionGroup | int,
     flag_type: FlagType | int,
@@ -1523,6 +1577,7 @@ def IfEnabledFlagCountEqual(
     """
 
 
+# (3, 10)
 def IfEnabledFlagCountNotEqual(
     condition: ConditionGroup | int,
     flag_type: FlagType | int,
@@ -1535,6 +1590,7 @@ def IfEnabledFlagCountNotEqual(
     """
 
 
+# (3, 10)
 def IfEnabledFlagCountGreaterThan(
     condition: ConditionGroup | int,
     flag_type: FlagType | int,
@@ -1547,6 +1603,7 @@ def IfEnabledFlagCountGreaterThan(
     """
 
 
+# (3, 10)
 def IfEnabledFlagCountLessThan(
     condition: ConditionGroup | int,
     flag_type: FlagType | int,
@@ -1559,6 +1616,7 @@ def IfEnabledFlagCountLessThan(
     """
 
 
+# (3, 10)
 def IfEnabledFlagCountGreaterThanOrEqual(
     condition: ConditionGroup | int,
     flag_type: FlagType | int,
@@ -1571,6 +1629,7 @@ def IfEnabledFlagCountGreaterThanOrEqual(
     """
 
 
+# (3, 10)
 def IfEnabledFlagCountLessThanOrEqual(
     condition: ConditionGroup | int,
     flag_type: FlagType | int,
@@ -1583,6 +1642,7 @@ def IfEnabledFlagCountLessThanOrEqual(
     """
 
 
+# (3, 11)
 def IfWorldTendencyComparison(
     condition: ConditionGroup | int,
     world_tendency_type: WorldTendencyType | int,
@@ -1595,6 +1655,7 @@ def IfWorldTendencyComparison(
     """
 
 
+# (3, 11)
 def IfWhiteWorldTendencyComparison(
     condition: ConditionGroup | int,
     comparison_type: ComparisonType | int,
@@ -1606,6 +1667,7 @@ def IfWhiteWorldTendencyComparison(
     """
 
 
+# (3, 11)
 def IfBlackWorldTendencyComparison(
     condition: ConditionGroup | int,
     comparison_type: ComparisonType | int,
@@ -1617,18 +1679,21 @@ def IfBlackWorldTendencyComparison(
     """
 
 
+# (3, 11)
 def IfWhiteWorldTendencyGreaterThan(condition: ConditionGroup | int, value: int, event_layers=()):
     """
     Calls `IfWorldTendencyComparison` with `world_tendency_type=0`, `comparison_type=2`.
     """
 
 
+# (3, 11)
 def IfBlackWorldTendencyGreaterThan(condition: ConditionGroup | int, value: int, event_layers=()):
     """
     Calls `IfWorldTendencyComparison` with `world_tendency_type=1`, `comparison_type=2`.
     """
 
 
+# (3, 12)
 def IfEventValueComparison(
     condition: ConditionGroup | int,
     flag: Flag | int,
@@ -1642,12 +1707,14 @@ def IfEventValueComparison(
     """
 
 
+# (3, 12)
 def IfEventValueEqual(condition: ConditionGroup | int, flag: Flag | int, bit_count: int, value: int, event_layers=()):
     """
     Calls `IfEventValueComparison` with `comparison_type=0`.
     """
 
 
+# (3, 12)
 def IfEventValueNotEqual(
     condition: ConditionGroup | int,
     flag: Flag | int,
@@ -1660,6 +1727,7 @@ def IfEventValueNotEqual(
     """
 
 
+# (3, 12)
 def IfEventValueGreaterThan(
     condition: ConditionGroup | int,
     flag: Flag | int,
@@ -1672,6 +1740,7 @@ def IfEventValueGreaterThan(
     """
 
 
+# (3, 12)
 def IfEventValueLessThan(
     condition: ConditionGroup | int,
     flag: Flag | int,
@@ -1684,6 +1753,7 @@ def IfEventValueLessThan(
     """
 
 
+# (3, 12)
 def IfEventValueGreaterThanOrEqual(
     condition: ConditionGroup | int,
     flag: Flag | int,
@@ -1696,6 +1766,7 @@ def IfEventValueGreaterThanOrEqual(
     """
 
 
+# (3, 12)
 def IfEventValueLessThanOrEqual(
     condition: ConditionGroup | int,
     flag: Flag | int,
@@ -1708,6 +1779,7 @@ def IfEventValueLessThanOrEqual(
     """
 
 
+# (3, 13)
 def IfActionButtonBoss(
     condition: ConditionGroup | int,
     prompt_text: EventText | int,
@@ -1729,12 +1801,14 @@ def IfActionButtonBoss(
     """
 
 
+# (3, 14)
 def IfAnyItemDroppedInRegion(condition: ConditionGroup | int, region: Region | int, event_layers=()):
     """
     Check if any item has been dropped in the specified region. Not sensitive to what the item is.
     """
 
 
+# (3, 15)
 def IfItemDropped(
     condition: ConditionGroup | int,
     item: BaseItemParam | int,
@@ -1747,6 +1821,7 @@ def IfItemDropped(
     """
 
 
+# (3, 16)
 def IfPlayerItemStateIncludingStorage(
     condition: ConditionGroup | int,
     item: BaseItemParam | int,
@@ -1760,6 +1835,7 @@ def IfPlayerItemStateIncludingStorage(
     """
 
 
+# (3, 17)
 def IfNewGameCycleComparison(
     condition: ConditionGroup | int,
     comparison_type: ComparisonType | int,
@@ -1771,42 +1847,49 @@ def IfNewGameCycleComparison(
     """
 
 
+# (3, 17)
 def IfNewGameCycleEqual(condition: ConditionGroup | int, completion_count: int, event_layers=()):
     """
     Calls `IfNewGameCycleComparison` with `comparison_type=0`.
     """
 
 
+# (3, 17)
 def IfNewGameCycleNotEqual(condition: ConditionGroup | int, completion_count: int, event_layers=()):
     """
     Calls `IfNewGameCycleComparison` with `comparison_type=1`.
     """
 
 
+# (3, 17)
 def IfNewGameCycleGreaterThan(condition: ConditionGroup | int, completion_count: int, event_layers=()):
     """
     Calls `IfNewGameCycleComparison` with `comparison_type=2`.
     """
 
 
+# (3, 17)
 def IfNewGameCycleLessThan(condition: ConditionGroup | int, completion_count: int, event_layers=()):
     """
     Calls `IfNewGameCycleComparison` with `comparison_type=3`.
     """
 
 
+# (3, 17)
 def IfNewGameCycleGreaterThanOrEqual(condition: ConditionGroup | int, completion_count: int, event_layers=()):
     """
     Calls `IfNewGameCycleComparison` with `comparison_type=4`.
     """
 
 
+# (3, 17)
 def IfNewGameCycleLessThanOrEqual(condition: ConditionGroup | int, completion_count: int, event_layers=()):
     """
     Calls `IfNewGameCycleComparison` with `comparison_type=5`.
     """
 
 
+# (3, 18)
 def IfActionButtonBasicLineIntersect(
     condition: ConditionGroup | int,
     prompt_text: EventText | int,
@@ -1829,6 +1912,7 @@ def IfActionButtonBasicLineIntersect(
     """
 
 
+# (3, 19)
 def IfActionButtonBossLineIntersect(
     condition: ConditionGroup | int,
     prompt_text: EventText | int,
@@ -1851,6 +1935,7 @@ def IfActionButtonBossLineIntersect(
     """
 
 
+# (3, 20)
 def IfEventsComparison(
     condition: ConditionGroup | int,
     left_flag: Flag | int,
@@ -1865,42 +1950,49 @@ def IfEventsComparison(
     """
 
 
+# (3, 21)
 def IfDLCState(condition: ConditionGroup | int, is_owned: bool | int, event_layers=()):
     """
     TODO
     """
 
 
+# (3, 21)
 def IfDLCOwned(condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfDLCState` with `is_owned=True`.
     """
 
 
+# (3, 21)
 def IfDLCNotOwned(condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfDLCState` with `is_owned=False`.
     """
 
 
+# (3, 22)
 def IfOnlineState(condition: ConditionGroup | int, state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
+# (3, 22)
 def IfOnline(condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfOnlineState` with `state=True`.
     """
 
 
+# (3, 22)
 def IfOffline(condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfOnlineState` with `state=False`.
     """
 
 
+# (4, 0)
 def IfCharacterDeathState(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -1914,6 +2006,7 @@ def IfCharacterDeathState(
     """
 
 
+# (4, 0)
 def IfCharacterDead(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -1926,6 +2019,7 @@ def IfCharacterDead(
     """
 
 
+# (4, 0)
 def IfCharacterAlive(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -1938,6 +2032,7 @@ def IfCharacterAlive(
     """
 
 
+# (4, 1)
 def IfAttacked(
     condition: ConditionGroup | int,
     attacked_entity: Character | int,
@@ -1949,6 +2044,7 @@ def IfAttacked(
     """
 
 
+# (4, 2)
 def IfHealthRatioComparison(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -1963,6 +2059,7 @@ def IfHealthRatioComparison(
     """
 
 
+# (4, 2)
 def IfHealthRatioEqual(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -1976,6 +2073,7 @@ def IfHealthRatioEqual(
     """
 
 
+# (4, 2)
 def IfHealthRatioNotEqual(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -1989,6 +2087,7 @@ def IfHealthRatioNotEqual(
     """
 
 
+# (4, 2)
 def IfHealthRatioGreaterThan(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2002,6 +2101,7 @@ def IfHealthRatioGreaterThan(
     """
 
 
+# (4, 2)
 def IfHealthRatioLessThan(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2015,6 +2115,7 @@ def IfHealthRatioLessThan(
     """
 
 
+# (4, 2)
 def IfHealthRatioGreaterThanOrEqual(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2028,6 +2129,7 @@ def IfHealthRatioGreaterThanOrEqual(
     """
 
 
+# (4, 2)
 def IfHealthRatioLessThanOrEqual(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2041,6 +2143,7 @@ def IfHealthRatioLessThanOrEqual(
     """
 
 
+# (4, 3)
 def IfCharacterIsType(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2054,6 +2157,7 @@ def IfCharacterIsType(
     """
 
 
+# (4, 3)
 def IfCharacterIsHuman(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2066,6 +2170,7 @@ def IfCharacterIsHuman(
     """
 
 
+# (4, 3)
 def IfCharacterIsWhitePhantom(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2078,6 +2183,7 @@ def IfCharacterIsWhitePhantom(
     """
 
 
+# (4, 3)
 def IfCharacterIsHollow(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2090,6 +2196,7 @@ def IfCharacterIsHollow(
     """
 
 
+# (4, 4)
 def IfCharacterTargetingState(
     condition: ConditionGroup | int,
     targeting_character: Character | int,
@@ -2102,6 +2209,7 @@ def IfCharacterTargetingState(
     """
 
 
+# (4, 4)
 def IfCharacterTargeting(
     condition: ConditionGroup | int,
     targeting_character: Character | int,
@@ -2113,6 +2221,7 @@ def IfCharacterTargeting(
     """
 
 
+# (4, 4)
 def IfCharacterNotTargeting(
     condition: ConditionGroup | int,
     targeting_character: Character | int,
@@ -2124,6 +2233,7 @@ def IfCharacterNotTargeting(
     """
 
 
+# (4, 5)
 def IfCharacterSpecialEffectState(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2138,6 +2248,7 @@ def IfCharacterSpecialEffectState(
     """
 
 
+# (4, 5)
 def IfPlayerHasSpecialEffect(
     condition: ConditionGroup | int,
     special_effect: int,
@@ -2150,6 +2261,7 @@ def IfPlayerHasSpecialEffect(
     """
 
 
+# (4, 5)
 def IfPlayerDoesNotHaveSpecialEffect(
     condition: ConditionGroup | int,
     special_effect: int,
@@ -2162,6 +2274,7 @@ def IfPlayerDoesNotHaveSpecialEffect(
     """
 
 
+# (4, 5)
 def IfCharacterHasSpecialEffect(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2175,6 +2288,7 @@ def IfCharacterHasSpecialEffect(
     """
 
 
+# (4, 5)
 def IfCharacterDoesNotHaveSpecialEffect(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2188,6 +2302,7 @@ def IfCharacterDoesNotHaveSpecialEffect(
     """
 
 
+# (4, 6)
 def IfCharacterPartHealthComparison(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2201,6 +2316,7 @@ def IfCharacterPartHealthComparison(
     """
 
 
+# (4, 6)
 def IfCharacterPartHealthLessThanOrEqual(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2213,6 +2329,7 @@ def IfCharacterPartHealthLessThanOrEqual(
     """
 
 
+# (4, 7)
 def IfCharacterBackreadState(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2226,6 +2343,7 @@ def IfCharacterBackreadState(
     """
 
 
+# (4, 7)
 def IfCharacterBackreadEnabled(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2238,6 +2356,7 @@ def IfCharacterBackreadEnabled(
     """
 
 
+# (4, 7)
 def IfCharacterBackreadDisabled(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2250,6 +2369,7 @@ def IfCharacterBackreadDisabled(
     """
 
 
+# (4, 8)
 def IfCharacterTAEEventState(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2264,6 +2384,7 @@ def IfCharacterTAEEventState(
     """
 
 
+# (4, 8)
 def IfCharacterHasTAEEvent(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2277,6 +2398,7 @@ def IfCharacterHasTAEEvent(
     """
 
 
+# (4, 8)
 def IfCharacterDoesNotHaveTAEEvent(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2290,6 +2412,7 @@ def IfCharacterDoesNotHaveTAEEvent(
     """
 
 
+# (4, 9)
 def IfHasAIStatus(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2303,36 +2426,42 @@ def IfHasAIStatus(
     """
 
 
+# (4, 10)
 def IfSkullLanternState(condition: ConditionGroup | int, state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
+# (4, 10)
 def IfSkullLanternActive(condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfSkullLanternState` with `state=True`.
     """
 
 
+# (4, 10)
 def IfSkullLanternInactive(condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfSkullLanternState` with `state=False`.
     """
 
 
+# (4, 11)
 def IfPlayerClass(condition: ConditionGroup | int, class_type: ClassType | int, event_layers=()):
     """
     TODO
     """
 
 
+# (4, 12)
 def IfPlayerCovenant(condition: ConditionGroup | int, covenant: Covenant | int, event_layers=()):
     """
     TODO
     """
 
 
+# (4, 13)
 def IfPlayerLevelComparison(
     condition: ConditionGroup | int,
     comparison_type: ComparisonType | int,
@@ -2344,42 +2473,49 @@ def IfPlayerLevelComparison(
     """
 
 
+# (4, 13)
 def IfPlayerLevelEqual(condition: ConditionGroup | int, value: int, event_layers=()):
     """
     Calls `IfPlayerLevelComparison` with `comparison_type=0`.
     """
 
 
+# (4, 13)
 def IfPlayerLevelNotEqual(condition: ConditionGroup | int, value: int, event_layers=()):
     """
     Calls `IfPlayerLevelComparison` with `comparison_type=1`.
     """
 
 
+# (4, 13)
 def IfPlayerLevelGreaterThan(condition: ConditionGroup | int, value: int, event_layers=()):
     """
     Calls `IfPlayerLevelComparison` with `comparison_type=2`.
     """
 
 
+# (4, 13)
 def IfPlayerLevelLessThan(condition: ConditionGroup | int, value: int, event_layers=()):
     """
     Calls `IfPlayerLevelComparison` with `comparison_type=3`.
     """
 
 
+# (4, 13)
 def IfPlayerLevelGreaterThanOrEqual(condition: ConditionGroup | int, value: int, event_layers=()):
     """
     Calls `IfPlayerLevelComparison` with `comparison_type=4`.
     """
 
 
+# (4, 13)
 def IfPlayerLevelLessThanOrEqual(condition: ConditionGroup | int, value: int, event_layers=()):
     """
     Calls `IfPlayerLevelComparison` with `comparison_type=5`.
     """
 
 
+# (4, 14)
 def IfHealthValueComparison(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2394,6 +2530,7 @@ def IfHealthValueComparison(
     """
 
 
+# (4, 14)
 def IfHealthValueEqual(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2407,6 +2544,7 @@ def IfHealthValueEqual(
     """
 
 
+# (4, 14)
 def IfHealthValueNotEqual(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2420,6 +2558,7 @@ def IfHealthValueNotEqual(
     """
 
 
+# (4, 14)
 def IfHealthValueGreaterThan(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2433,6 +2572,7 @@ def IfHealthValueGreaterThan(
     """
 
 
+# (4, 14)
 def IfHealthValueLessThan(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2446,6 +2586,7 @@ def IfHealthValueLessThan(
     """
 
 
+# (4, 14)
 def IfHealthValueGreaterThanOrEqual(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2459,6 +2600,7 @@ def IfHealthValueGreaterThanOrEqual(
     """
 
 
+# (4, 14)
 def IfHealthValueLessThanOrEqual(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -2472,6 +2614,7 @@ def IfHealthValueLessThanOrEqual(
     """
 
 
+# (5, 0)
 def IfObjectDestructionState(
     condition: ConditionGroup | int,
     state: bool | int,
@@ -2485,6 +2628,7 @@ def IfObjectDestructionState(
     """
 
 
+# (5, 0)
 def IfObjectDestroyed(
     condition: ConditionGroup | int,
     obj: Object | int,
@@ -2497,6 +2641,7 @@ def IfObjectDestroyed(
     """
 
 
+# (5, 0)
 def IfObjectNotDestroyed(
     condition: ConditionGroup | int,
     obj: Object | int,
@@ -2509,18 +2654,21 @@ def IfObjectNotDestroyed(
     """
 
 
+# (5, 1)
 def IfObjectDamaged(condition: ConditionGroup | int, obj: Object | int, attacker: Character | int, event_layers=()):
     """
     TODO
     """
 
 
+# (5, 2)
 def IfObjectActivated(condition: ConditionGroup | int, obj_act_id: int, event_layers=()):
     """
     TODO
     """
 
 
+# (5, 3)
 def IfObjectHealthValueComparison(
     condition: ConditionGroup | int,
     obj: Object | int,
@@ -2533,42 +2681,49 @@ def IfObjectHealthValueComparison(
     """
 
 
+# (11, 0)
 def IfPlayerMovingOnCollision(condition: ConditionGroup | int, collision: Collision | int, event_layers=()):
     """
     TODO
     """
 
 
+# (11, 1)
 def IfPlayerRunningOnCollision(condition: ConditionGroup | int, collision: Collision | int, event_layers=()):
     """
     TODO
     """
 
 
+# (11, 2)
 def IfPlayerStandingOnCollision(condition: ConditionGroup | int, collision: Collision | int, event_layers=()):
     """
     TODO
     """
 
 
+# (1000, 0)
 def AwaitConditionState(state: bool | int, input_condition: ConditionGroup | int, event_layers=()):
     """
     Not sure if this is ever really used over `IfConditionState`.
     """
 
 
+# (1000, 0)
 def AwaitConditionTrue(input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `AwaitConditionState` with `state=True`.
     """
 
 
+# (1000, 0)
 def AwaitConditionFalse(input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `AwaitConditionState` with `state=False`.
     """
 
 
+# (1000, 1)
 def SkipLinesIfConditionState(
     line_count: int,
     state: bool | int,
@@ -2580,18 +2735,21 @@ def SkipLinesIfConditionState(
     """
 
 
+# (1000, 1)
 def SkipLinesIfConditionTrue(line_count: int, input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `SkipLinesIfConditionState` with `state=True`.
     """
 
 
+# (1000, 1)
 def SkipLinesIfConditionFalse(line_count: int, input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `SkipLinesIfConditionState` with `state=False`.
     """
 
 
+# (1000, 2)
 def ReturnIfConditionState(
     event_return_type: EventReturnType | int,
     state: bool | int,
@@ -2603,54 +2761,63 @@ def ReturnIfConditionState(
     """
 
 
+# (1000, 2)
 def EndIfConditionTrue(input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `ReturnIfConditionState` with `event_return_type=0`, `state=True`.
     """
 
 
+# (1000, 2)
 def EndIfConditionFalse(input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `ReturnIfConditionState` with `event_return_type=0`, `state=False`.
     """
 
 
+# (1000, 2)
 def RestartIfConditionTrue(input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `ReturnIfConditionState` with `event_return_type=1`, `state=True`.
     """
 
 
+# (1000, 2)
 def RestartIfConditionFalse(input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `ReturnIfConditionState` with `event_return_type=1`, `state=False`.
     """
 
 
+# (1000, 3)
 def SkipLines(line_count: int, event_layers=()):
     """
     Unconditional line skip.
     """
 
 
+# (1000, 4)
 def Return(event_return_type: EventReturnType | int, event_layers=()):
     """
     TODO
     """
 
 
+# (1000, 4)
 def End(event_layers=()):
     """
     Calls `Return` with `event_return_type=0`.
     """
 
 
+# (1000, 4)
 def Restart(event_layers=()):
     """
     Calls `Return` with `event_return_type=1`.
     """
 
 
+# (1000, 5)
 def SkipLinesIfValueComparison(
     line_count: int,
     comparison_type: ComparisonType | int,
@@ -2663,42 +2830,49 @@ def SkipLinesIfValueComparison(
     """
 
 
+# (1000, 5)
 def SkipLinesIfValueEqual(line_count: int, left: int, right: int, event_layers=()):
     """
     Calls `SkipLinesIfValueComparison` with `comparison_type=0`.
     """
 
 
+# (1000, 5)
 def SkipLinesIfValueNotEqual(line_count: int, left: int, right: int, event_layers=()):
     """
     Calls `SkipLinesIfValueComparison` with `comparison_type=1`.
     """
 
 
+# (1000, 5)
 def SkipLinesIfValueGreaterThan(line_count: int, left: int, right: int, event_layers=()):
     """
     Calls `SkipLinesIfValueComparison` with `comparison_type=2`.
     """
 
 
+# (1000, 5)
 def SkipLinesIfValueLessThan(line_count: int, left: int, right: int, event_layers=()):
     """
     Calls `SkipLinesIfValueComparison` with `comparison_type=3`.
     """
 
 
+# (1000, 5)
 def SkipLinesIfValueGreaterThanOrEqual(line_count: int, left: int, right: int, event_layers=()):
     """
     Calls `SkipLinesIfValueComparison` with `comparison_type=4`.
     """
 
 
+# (1000, 5)
 def SkipLinesIfValueLessThanOrEqual(line_count: int, left: int, right: int, event_layers=()):
     """
     Calls `SkipLinesIfValueComparison` with `comparison_type=5`.
     """
 
 
+# (1000, 6)
 def ReturnIfValueComparison(
     event_return_type: EventReturnType | int,
     comparison_type: ComparisonType | int,
@@ -2711,78 +2885,91 @@ def ReturnIfValueComparison(
     """
 
 
+# (1000, 6)
 def EndIfValueEqual(left: int, right: int, event_layers=()):
     """
     Calls `ReturnIfValueComparison` with `event_return_type=0`, `comparison_type=0`.
     """
 
 
+# (1000, 6)
 def EndIfValueNotEqual(left: int, right: int, event_layers=()):
     """
     Calls `ReturnIfValueComparison` with `event_return_type=0`, `comparison_type=1`.
     """
 
 
+# (1000, 6)
 def EndIfValueGreaterThan(left: int, right: int, event_layers=()):
     """
     Calls `ReturnIfValueComparison` with `event_return_type=0`, `comparison_type=2`.
     """
 
 
+# (1000, 6)
 def EndIfValueLessThan(left: int, right: int, event_layers=()):
     """
     Calls `ReturnIfValueComparison` with `event_return_type=0`, `comparison_type=3`.
     """
 
 
+# (1000, 6)
 def EndIfValueGreaterThanOrEqual(left: int, right: int, event_layers=()):
     """
     Calls `ReturnIfValueComparison` with `event_return_type=0`, `comparison_type=4`.
     """
 
 
+# (1000, 6)
 def EndIfValueLessThanOrEqual(left: int, right: int, event_layers=()):
     """
     Calls `ReturnIfValueComparison` with `event_return_type=0`, `comparison_type=5`.
     """
 
 
+# (1000, 6)
 def RestartIfValueEqual(left: int, right: int, event_layers=()):
     """
     Calls `ReturnIfValueComparison` with `event_return_type=1`, `comparison_type=0`.
     """
 
 
+# (1000, 6)
 def RestartIfValueNotEqual(left: int, right: int, event_layers=()):
     """
     Calls `ReturnIfValueComparison` with `event_return_type=1`, `comparison_type=1`.
     """
 
 
+# (1000, 6)
 def RestartIfValueGreaterThan(left: int, right: int, event_layers=()):
     """
     Calls `ReturnIfValueComparison` with `event_return_type=1`, `comparison_type=2`.
     """
 
 
+# (1000, 6)
 def RestartIfValueLessThan(left: int, right: int, event_layers=()):
     """
     Calls `ReturnIfValueComparison` with `event_return_type=1`, `comparison_type=3`.
     """
 
 
+# (1000, 6)
 def RestartIfValueGreaterThanOrEqual(left: int, right: int, event_layers=()):
     """
     Calls `ReturnIfValueComparison` with `event_return_type=1`, `comparison_type=4`.
     """
 
 
+# (1000, 6)
 def RestartIfValueLessThanOrEqual(left: int, right: int, event_layers=()):
     """
     Calls `ReturnIfValueComparison` with `event_return_type=1`, `comparison_type=5`.
     """
 
 
+# (1000, 7)
 def SkipLinesIfLastConditionResultState(
     line_count: int,
     state: bool | int,
@@ -2794,18 +2981,21 @@ def SkipLinesIfLastConditionResultState(
     """
 
 
+# (1000, 7)
 def SkipLinesIfLastConditionResultTrue(line_count: int, input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `SkipLinesIfLastConditionResultState` with `state=True`.
     """
 
 
+# (1000, 7)
 def SkipLinesIfLastConditionResultFalse(line_count: int, input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `SkipLinesIfLastConditionResultState` with `state=False`.
     """
 
 
+# (1000, 8)
 def ReturnIfLastConditionResultState(
     event_return_type: EventReturnType | int,
     state: bool | int,
@@ -2817,102 +3007,119 @@ def ReturnIfLastConditionResultState(
     """
 
 
+# (1000, 8)
 def EndIfLastConditionResultTrue(input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `ReturnIfLastConditionResultState` with `event_return_type=0`, `state=True`.
     """
 
 
+# (1000, 8)
 def EndIfLastConditionResultFalse(input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `ReturnIfLastConditionResultState` with `event_return_type=0`, `state=False`.
     """
 
 
+# (1000, 8)
 def RestartIfLastConditionResultTrue(input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `ReturnIfLastConditionResultState` with `event_return_type=1`, `state=True`.
     """
 
 
+# (1000, 8)
 def RestartIfLastConditionResultFalse(input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `ReturnIfLastConditionResultState` with `event_return_type=1`, `state=False`.
     """
 
 
+# (1000, 9)
 def WaitForNetworkApproval(max_seconds: float, event_layers=()):
     """
     Wait for network to approve event (up to `max_seconds` seconds).
     """
 
 
+# (1001, 0)
 def Wait(seconds: float, event_layers=()):
     """
     Wait for some number of seconds.
     """
 
 
+# (1001, 1)
 def WaitFrames(frames: int, event_layers=()):
     """
     Wait for some number of frames.
     """
 
 
+# (1001, 2)
 def WaitRandomSeconds(min_seconds: float, max_seconds: float, event_layers=()):
     """
     Wait for a random number of seconds between min and max. I assume the distribution is inclusive and uniform.
     """
 
 
+# (1001, 3)
 def WaitRandomFrames(min_frames: int, max_frames: int, event_layers=()):
     """
     Wait for a random number of seconds between min and max. I assume the distribution is inclusive and uniform.
     """
 
 
+# (1003, 0)
 def AwaitFlagState(state: FlagSetting | int, flag_type: FlagType | int, flag: Flag | int, event_layers=()):
     """
     Not sure if this is really used rather than `IfFlagState` with MAIN condition (0).
     """
 
 
+# (1003, 0)
 def AwaitFlagEnabled(flag: Flag | int, event_layers=()):
     """
     Calls `AwaitFlagState` with `state=1`, `flag_type=0`.
     """
 
 
+# (1003, 0)
 def AwaitFlagDisabled(flag: Flag | int, event_layers=()):
     """
     Calls `AwaitFlagState` with `state=0`, `flag_type=0`.
     """
 
 
+# (1003, 0)
 def AwaitThisEventOn(event_layers=()):
     """
     Calls `AwaitFlagState` with `state=1`, `flag_type=1`, `flag=0`.
     """
 
 
+# (1003, 0)
 def AwaitThisEventOff(event_layers=()):
     """
     Calls `AwaitFlagState` with `state=0`, `flag_type=1`, `flag=0`.
     """
 
 
+# (1003, 0)
 def AwaitThisEventSlotOn(event_layers=()):
     """
     Calls `AwaitFlagState` with `state=1`, `flag_type=2`, `flag=0`.
     """
 
 
+# (1003, 0)
 def AwaitThisEventSlotOff(event_layers=()):
     """
     Calls `AwaitFlagState` with `state=0`, `flag_type=2`, `flag=0`.
     """
 
 
+# (1003, 1)
 def SkipLinesIfFlagState(
     line_count: int,
     state: FlagSetting | int,
@@ -2926,42 +3133,49 @@ def SkipLinesIfFlagState(
     """
 
 
+# (1003, 1)
 def SkipLinesIfFlagEnabled(line_count: int, flag: Flag | int, event_layers=()):
     """
     Calls `SkipLinesIfFlagState` with `state=1`, `flag_type=0`.
     """
 
 
+# (1003, 1)
 def SkipLinesIfFlagDisabled(line_count: int, flag: Flag | int, event_layers=()):
     """
     Calls `SkipLinesIfFlagState` with `state=0`, `flag_type=0`.
     """
 
 
+# (1003, 1)
 def SkipLinesIfThisEventFlagEnabled(line_count: int, event_layers=()):
     """
     Calls `SkipLinesIfFlagState` with `state=1`, `flag_type=1`, `flag=0`.
     """
 
 
+# (1003, 1)
 def SkipLinesIfThisEventFlagDisabled(line_count: int, event_layers=()):
     """
     Calls `SkipLinesIfFlagState` with `state=0`, `flag_type=1`, `flag=0`.
     """
 
 
+# (1003, 1)
 def SkipLinesIfThisEventSlotFlagEnabled(line_count: int, event_layers=()):
     """
     Calls `SkipLinesIfFlagState` with `state=1`, `flag_type=2`, `flag=0`.
     """
 
 
+# (1003, 1)
 def SkipLinesIfThisEventSlotFlagDisabled(line_count: int, event_layers=()):
     """
     Calls `SkipLinesIfFlagState` with `state=0`, `flag_type=2`, `flag=0`.
     """
 
 
+# (1003, 2)
 def ReturnIfFlagState(
     event_return_type: EventReturnType | int,
     state: FlagSetting | int,
@@ -2974,78 +3188,91 @@ def ReturnIfFlagState(
     """
 
 
+# (1003, 2)
 def EndIfFlagEnabled(flag: Flag | int, event_layers=()):
     """
     Calls `ReturnIfFlagState` with `event_return_type=0`, `state=1`, `flag_type=0`.
     """
 
 
+# (1003, 2)
 def EndIfFlagDisabled(flag: Flag | int, event_layers=()):
     """
     Calls `ReturnIfFlagState` with `event_return_type=0`, `state=0`, `flag_type=0`.
     """
 
 
+# (1003, 2)
 def EndIfThisEventFlagEnabled(event_layers=()):
     """
     Calls `ReturnIfFlagState` with `event_return_type=0`, `state=1`, `flag_type=1`, `flag=0`.
     """
 
 
+# (1003, 2)
 def EndIfThisEventFlagDisabled(event_layers=()):
     """
     Calls `ReturnIfFlagState` with `event_return_type=0`, `state=0`, `flag_type=1`, `flag=0`.
     """
 
 
+# (1003, 2)
 def EndIfThisEventSlotFlagEnabled(event_layers=()):
     """
     Calls `ReturnIfFlagState` with `event_return_type=0`, `state=1`, `flag_type=2`, `flag=0`.
     """
 
 
+# (1003, 2)
 def EndIfThisEventSlotFlagDisabled(event_layers=()):
     """
     Calls `ReturnIfFlagState` with `event_return_type=0`, `state=0`, `flag_type=2`, `flag=0`.
     """
 
 
+# (1003, 2)
 def RestartIfFlagEnabled(flag: Flag | int, event_layers=()):
     """
     Calls `ReturnIfFlagState` with `event_return_type=1`, `state=1`, `flag_type=0`.
     """
 
 
+# (1003, 2)
 def RestartIfFlagDisabled(flag: Flag | int, event_layers=()):
     """
     Calls `ReturnIfFlagState` with `event_return_type=1`, `state=0`, `flag_type=0`.
     """
 
 
+# (1003, 2)
 def RestartIfThisEventFlagEnabled(event_layers=()):
     """
     Calls `ReturnIfFlagState` with `event_return_type=1`, `state=1`, `flag_type=1`, `flag=0`.
     """
 
 
+# (1003, 2)
 def RestartIfThisEventFlagDisabled(event_layers=()):
     """
     Calls `ReturnIfFlagState` with `event_return_type=1`, `state=0`, `flag_type=1`, `flag=0`.
     """
 
 
+# (1003, 2)
 def RestartIfThisEventSlotFlagEnabled(event_layers=()):
     """
     Calls `ReturnIfFlagState` with `event_return_type=1`, `state=1`, `flag_type=2`, `flag=0`.
     """
 
 
+# (1003, 2)
 def RestartIfThisEventSlotFlagDisabled(event_layers=()):
     """
     Calls `ReturnIfFlagState` with `event_return_type=1`, `state=0`, `flag_type=2`, `flag=0`.
     """
 
 
+# (1003, 3)
 def SkipLinesIfFlagRangeState(
     line_count: int,
     state: RangeState | int,
@@ -3058,30 +3285,35 @@ def SkipLinesIfFlagRangeState(
     """
 
 
+# (1003, 3)
 def SkipLinesIfFlagRangeAllEnabled(line_count: int, flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `SkipLinesIfFlagRangeState` with `state=0`, `flag_type=0`.
     """
 
 
+# (1003, 3)
 def SkipLinesIfFlagRangeAllDisabled(line_count: int, flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `SkipLinesIfFlagRangeState` with `state=1`, `flag_type=0`.
     """
 
 
+# (1003, 3)
 def SkipLinesIfFlagRangeAnyEnabled(line_count: int, flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `SkipLinesIfFlagRangeState` with `state=2`, `flag_type=0`.
     """
 
 
+# (1003, 3)
 def SkipLinesIfFlagRangeAnyDisabled(line_count: int, flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `SkipLinesIfFlagRangeState` with `state=3`, `flag_type=0`.
     """
 
 
+# (1003, 4)
 def ReturnIfFlagRangeState(
     event_return_type: EventReturnType | int,
     state: RangeState | int,
@@ -3094,72 +3326,84 @@ def ReturnIfFlagRangeState(
     """
 
 
+# (1003, 4)
 def EndIfFlagRangeAllEnabled(flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `ReturnIfFlagRangeState` with `event_return_type=0`, `state=0`, `flag_type=0`.
     """
 
 
+# (1003, 4)
 def EndIfFlagRangeAllDisabled(flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `ReturnIfFlagRangeState` with `event_return_type=0`, `state=1`, `flag_type=0`.
     """
 
 
+# (1003, 4)
 def EndIfFlagRangeAnyEnabled(flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `ReturnIfFlagRangeState` with `event_return_type=0`, `state=2`, `flag_type=0`.
     """
 
 
+# (1003, 4)
 def EndIfFlagRangeAnyDisabled(flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `ReturnIfFlagRangeState` with `event_return_type=0`, `state=3`, `flag_type=0`.
     """
 
 
+# (1003, 4)
 def RestartIfFlagRangeAllEnabled(flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `ReturnIfFlagRangeState` with `event_return_type=1`, `state=0`, `flag_type=0`.
     """
 
 
+# (1003, 4)
 def RestartIfFlagRangeAllDisabled(flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `ReturnIfFlagRangeState` with `event_return_type=1`, `state=1`, `flag_type=0`.
     """
 
 
+# (1003, 4)
 def RestartIfFlagRangeAnyEnabled(flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `ReturnIfFlagRangeState` with `event_return_type=1`, `state=2`, `flag_type=0`.
     """
 
 
+# (1003, 4)
 def RestartIfFlagRangeAnyDisabled(flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `ReturnIfFlagRangeState` with `event_return_type=1`, `state=3`, `flag_type=0`.
     """
 
 
+# (1003, 7)
 def SkipLinesIfMapPresenceState(line_count: int, state: bool | int, game_map: Map | tuple | list, event_layers=()):
     """
     TODO
     """
 
 
+# (1003, 7)
 def SkipLinesIfInsideMap(line_count: int, game_map: Map | tuple | list, event_layers=()):
     """
     Calls `SkipLinesIfMapPresenceState` with `state=True`.
     """
 
 
+# (1003, 7)
 def SkipLinesIfOutsideMap(line_count: int, game_map: Map | tuple | list, event_layers=()):
     """
     Calls `SkipLinesIfMapPresenceState` with `state=False`.
     """
 
 
+# (1003, 8)
 def ReturnIfMapPresenceState(
     event_return_type: EventReturnType | int,
     state: bool | int,
@@ -3171,48 +3415,56 @@ def ReturnIfMapPresenceState(
     """
 
 
+# (1003, 8)
 def EndIfInsideMap(game_map: Map | tuple | list, event_layers=()):
     """
     Calls `ReturnIfMapPresenceState` with `event_return_type=0`, `state=True`.
     """
 
 
+# (1003, 8)
 def EndIfOutsideMap(game_map: Map | tuple | list, event_layers=()):
     """
     Calls `ReturnIfMapPresenceState` with `event_return_type=0`, `state=False`.
     """
 
 
+# (1003, 8)
 def RestartIfInsideMap(game_map: Map | tuple | list, event_layers=()):
     """
     Calls `ReturnIfMapPresenceState` with `event_return_type=1`, `state=True`.
     """
 
 
+# (1003, 8)
 def RestartIfOutsideMap(game_map: Map | tuple | list, event_layers=()):
     """
     Calls `ReturnIfMapPresenceState` with `event_return_type=1`, `state=False`.
     """
 
 
+# (1005, 0)
 def AwaitObjectDestructionState(state: bool | int, obj: Object | int, event_layers=()):
     """
     TODO
     """
 
 
+# (1005, 0)
 def AwaitObjectDestroyed(obj: Object | int, event_layers=()):
     """
     Calls `AwaitObjectDestructionState` with `state=True`.
     """
 
 
+# (1005, 0)
 def AwaitObjectNotDestroyed(obj: Object | int, event_layers=()):
     """
     Calls `AwaitObjectDestructionState` with `state=False`.
     """
 
 
+# (1005, 1)
 def SkipLinesIfObjectDestructionState(
     line_count: int,
     state: bool | int,
@@ -3226,6 +3478,7 @@ def SkipLinesIfObjectDestructionState(
     """
 
 
+# (1005, 1)
 def SkipLinesIfObjectDestroyed(
     line_count: int,
     obj: Object | int,
@@ -3238,6 +3491,7 @@ def SkipLinesIfObjectDestroyed(
     """
 
 
+# (1005, 1)
 def SkipLinesIfObjectNotDestroyed(
     line_count: int,
     obj: Object | int,
@@ -3250,6 +3504,7 @@ def SkipLinesIfObjectNotDestroyed(
     """
 
 
+# (1005, 2)
 def ReturnIfObjectDestructionState(
     event_return_type: EventReturnType | int,
     state: bool | int,
@@ -3263,6 +3518,7 @@ def ReturnIfObjectDestructionState(
     """
 
 
+# (1005, 2)
 def EndIfObjectDestroyed(
     obj: Object | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
@@ -3274,6 +3530,7 @@ def EndIfObjectDestroyed(
     """
 
 
+# (1005, 2)
 def EndIfObjectNotDestroyed(
     obj: Object | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
@@ -3285,6 +3542,7 @@ def EndIfObjectNotDestroyed(
     """
 
 
+# (1005, 2)
 def RestartIfObjectDestroyed(
     obj: Object | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
@@ -3296,6 +3554,7 @@ def RestartIfObjectDestroyed(
     """
 
 
+# (1005, 2)
 def RestartIfObjectNotDestroyed(
     obj: Object | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
@@ -3307,63 +3566,73 @@ def RestartIfObjectNotDestroyed(
     """
 
 
-# Instruction `RunEvent` is manually defined in the `compiler` module.
+# Instruction `RunEvent` (2000, 0) is defined in the `compiler` module.
 
 
+# (2000, 1)
 def TerminateEvent(event_slot: int, event_id: int, event_layers=()):
     """
     Delete an instance (slot) of an event script.
     """
 
 
+# (2000, 2)
 def SetNetworkSyncState(state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2000, 2)
 def EnableNetworkSync(event_layers=()):
     """
     Calls `SetNetworkSyncState` with `state=True`.
     """
 
 
+# (2000, 2)
 def DisableNetworkSync(event_layers=()):
     """
     Calls `SetNetworkSyncState` with `state=False`.
     """
 
 
+# (2000, 3)
 def ClearMainCondition(dummy: int = 0, event_layers=()):
     """
     Likely clears all conditions currently loaded into the main condition (0).
     """
 
 
+# (2000, 4)
 def IssuePrefetchRequest(request_id: int, event_layers=()):
     """
     No idea what this does.
     """
 
 
+# (2000, 5)
 def SaveRequest(dummy: int = 0, event_layers=()):
     """
     Request the game to save player progress.
     """
 
 
+# (2000, 6)
 def RunCommonEvent(event_id: int, args: tuple = (0,), arg_types: str = "", event_layers=()):
     """
     Initialize an instance of an event script from `common_func` with the given arguments.
     """
 
 
+# (2002, 1)
 def PlayCutsceneToAll(cutscene_id: int, cutscene_flags: CutsceneFlags | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2002, 2)
 def PlayCutsceneAndMovePlayer(
     cutscene_id: int,
     cutscene_flags: CutsceneFlags | int,
@@ -3376,12 +3645,14 @@ def PlayCutsceneAndMovePlayer(
     """
 
 
+# (2002, 3)
 def PlayCutsceneToPlayer(cutscene_id: int, cutscene_flags: CutsceneFlags | int, player_id: int, event_layers=()):
     """
     TODO
     """
 
 
+# (2002, 4)
 def PlayCutsceneAndMoveSpecificPlayer(
     cutscene_id: int,
     cutscene_flags: CutsceneFlags | int,
@@ -3395,6 +3666,7 @@ def PlayCutsceneAndMoveSpecificPlayer(
     """
 
 
+# (2002, 5)
 def PlayCutsceneAndRotatePlayer(
     cutscene_id: int,
     cutscene_flags: CutsceneFlags | int,
@@ -3410,6 +3682,7 @@ def PlayCutsceneAndRotatePlayer(
     """
 
 
+# (2003, 1)
 def RequestAnimation(
     entity: Object | Character | int,
     animation_id: int,
@@ -3422,54 +3695,63 @@ def RequestAnimation(
     """
 
 
+# (2003, 2)
 def SetFlagState(flag: Flag | int, state: FlagSetting | int, event_layers=()):
     """
     Enable, disable, or toggle (change) a binary flag.
     """
 
 
+# (2003, 2)
 def EnableFlag(flag: Flag | int, event_layers=()):
     """
     Calls `SetFlagState` with `state=1`.
     """
 
 
+# (2003, 2)
 def DisableFlag(flag: Flag | int, event_layers=()):
     """
     Calls `SetFlagState` with `state=0`.
     """
 
 
+# (2003, 2)
 def ToggleFlag(flag: Flag | int, event_layers=()):
     """
     Calls `SetFlagState` with `state=2`.
     """
 
 
+# (2003, 3)
 def SetSpawnerState(entity: Object | Character | Region | int, state: bool | int, event_layers=()):
     """
     e.g. the baby skeletons in Tomb of the Giants.
     """
 
 
+# (2003, 3)
 def EnableSpawner(entity: Object | Character | Region | int, event_layers=()):
     """
     Calls `SetSpawnerState` with `state=True`.
     """
 
 
+# (2003, 3)
 def DisableSpawner(entity: Object | Character | Region | int, event_layers=()):
     """
     Calls `SetSpawnerState` with `state=False`.
     """
 
 
+# (2003, 4)
 def AwardItemLotToAllPlayers(item_lot: int, event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 5)
 def ShootProjectile(
     owner_entity: Object | Character | Region | int,
     source_entity: Object | Character | Region | int,
@@ -3489,6 +3771,7 @@ def ShootProjectile(
     """
 
 
+# (2003, 8)
 def SetEventState(event_id: int, event_return_type: EventReturnType | int, event_slot: int = 0, event_layers=()):
     """
     Stop or restart a particular slot (default of 0) of the given event ID. Note that you cannot restart events
@@ -3496,6 +3779,7 @@ def SetEventState(event_id: int, event_return_type: EventReturnType | int, event
     """
 
 
+# (2003, 8)
 def StopEvent(event_id: int, event_slot: int = 0, event_layers=()):
     """
     Calls `SetEventState` with `event_return_type=0`.
@@ -3503,6 +3787,7 @@ def StopEvent(event_id: int, event_slot: int = 0, event_layers=()):
     """
 
 
+# (2003, 8)
 def RestartEvent(event_id: int, event_slot: int = 0, event_layers=()):
     """
     Calls `SetEventState` with `event_return_type=1`.
@@ -3513,6 +3798,7 @@ def RestartEvent(event_id: int, event_slot: int = 0, event_layers=()):
     """
 
 
+# (2003, 11)
 def SetBossHealthBarState(
     character: Character | int,
     state: bool | int,
@@ -3525,6 +3811,7 @@ def SetBossHealthBarState(
     """
 
 
+# (2003, 11)
 def EnableBossHealthBar(character: Character | int, name: NPCName | int = 0, bar_slot: int = 0, event_layers=()):
     """
     Calls `SetBossHealthBarState` with `state=True`.
@@ -3532,6 +3819,7 @@ def EnableBossHealthBar(character: Character | int, name: NPCName | int = 0, bar
     """
 
 
+# (2003, 11)
 def DisableBossHealthBar(character: Character | int, name: NPCName | int = 0, bar_slot: int = 0, event_layers=()):
     """
     Calls `SetBossHealthBarState` with `state=False`.
@@ -3544,6 +3832,7 @@ def DisableBossHealthBar(character: Character | int, name: NPCName | int = 0, ba
     """
 
 
+# (2003, 12)
 def KillBoss(game_area_param_id: int, event_layers=()):
     """
     The name is slightly misleading, as this doesn't actually kill any entity. Instead, it marks that you have
@@ -3559,6 +3848,7 @@ def KillBoss(game_area_param_id: int, event_layers=()):
     """
 
 
+# (2003, 13)
 def SetNavmeshType(
     navmesh_id: NavigationEvent | int,
     navmesh_type: NavmeshType | int,
@@ -3570,24 +3860,28 @@ def SetNavmeshType(
     """
 
 
+# (2003, 13)
 def EnableNavmeshType(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType | int, event_layers=()):
     """
     Calls `SetNavmeshType` with `operation=0`.
     """
 
 
+# (2003, 13)
 def DisableNavmeshType(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType | int, event_layers=()):
     """
     Calls `SetNavmeshType` with `operation=1`.
     """
 
 
+# (2003, 13)
 def ToggleNavmeshType(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType | int, event_layers=()):
     """
     Calls `SetNavmeshType` with `operation=2`.
     """
 
 
+# (2003, 14)
 def WarpToMap(game_map: Map | tuple | list, player_start: PlayerStart | int = -1, event_layers=()):
     """
     Warp the main player to the given player entity ID, which is in the Players tab of the MSB, in some map. By
@@ -3596,6 +3890,7 @@ def WarpToMap(game_map: Map | tuple | list, player_start: PlayerStart | int = -1
     """
 
 
+# (2003, 15)
 def HandleMinibossDefeat(miniboss_id: int, event_layers=()):
     """
     Called instead of `KillBoss` for bosses that aren't the final boss of the area.
@@ -3605,36 +3900,42 @@ def HandleMinibossDefeat(miniboss_id: int, event_layers=()):
     """
 
 
+# (2003, 16)
 def TriggerMultiplayerEvent(event_id: int, event_layers=()):
     """
     Used to make the Bell of Awakening sounds, for example.
     """
 
 
+# (2003, 17)
 def SetRandomFlagInRange(flag_range: FlagRange | tuple | list, state: FlagSetting | int, event_layers=()):
     """
     Set the state of a random flag from a given range (inclusive).
     """
 
 
+# (2003, 17)
 def EnableRandomFlagInRange(flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `SetRandomFlagInRange` with `state=1`.
     """
 
 
+# (2003, 17)
 def DisableRandomFlagInRange(flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `SetRandomFlagInRange` with `state=0`.
     """
 
 
+# (2003, 17)
 def ToggleRandomFlagInRange(flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `SetRandomFlagInRange` with `state=2`.
     """
 
 
+# (2003, 18)
 def ForceAnimation(
     entity: Object | Character | int,
     animation_id: int,
@@ -3650,6 +3951,7 @@ def ForceAnimation(
     """
 
 
+# (2003, 19)
 def SetMapDrawParamSlot(map_area_id: int, draw_param_slot: int, event_layers=()):
     """
     Each map area (NOT each map) can have two sets of DrawParams (0 and 1), and this can be used to switch
@@ -3660,6 +3962,7 @@ def SetMapDrawParamSlot(map_area_id: int, draw_param_slot: int, event_layers=())
     """
 
 
+# (2003, 21)
 def IncrementNewGameCycle(dummy_arg: int, event_layers=()):
     """
     This is manually called at the end of the game. You can call it anytime, but note that there is no way to
@@ -3669,36 +3972,42 @@ def IncrementNewGameCycle(dummy_arg: int, event_layers=()):
     """
 
 
+# (2003, 22)
 def SetFlagRangeState(flag_range: FlagRange | tuple | list, state: FlagSetting | int, event_layers=()):
     """
     Set the state of an entire flag range (inclusive).
     """
 
 
+# (2003, 22)
 def EnableFlagRange(flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `SetFlagRangeState` with `state=1`.
     """
 
 
+# (2003, 22)
 def DisableFlagRange(flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `SetFlagRangeState` with `state=0`.
     """
 
 
+# (2003, 22)
 def ToggleFlagRange(flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `SetFlagRangeState` with `state=2`.
     """
 
 
+# (2003, 23)
 def SetRespawnPoint(respawn_point: int, event_layers=()):
     """
     Respawn point is an event set in the MSB.
     """
 
 
+# (2003, 24)
 def RemoveItemFromPlayer(
     item: BaseItemParam | int,
     quantity: int = 0,
@@ -3716,30 +4025,35 @@ def RemoveItemFromPlayer(
     """
 
 
+# (2003, 24)
 def RemoveWeaponFromPlayer(item: BaseItemParam | int, quantity: int = 0, event_layers=()):
     """
     Calls `RemoveItemFromPlayer` with `item_type=0`.
     """
 
 
+# (2003, 24)
 def RemoveArmorFromPlayer(item: BaseItemParam | int, quantity: int = 0, event_layers=()):
     """
     Calls `RemoveItemFromPlayer` with `item_type=1`.
     """
 
 
+# (2003, 24)
 def RemoveRingFromPlayer(item: BaseItemParam | int, quantity: int = 0, event_layers=()):
     """
     Calls `RemoveItemFromPlayer` with `item_type=2`.
     """
 
 
+# (2003, 24)
 def RemoveGoodFromPlayer(item: BaseItemParam | int, quantity: int = 0, event_layers=()):
     """
     Calls `RemoveItemFromPlayer` with `item_type=3`.
     """
 
 
+# (2003, 25)
 def PlaceSummonSign(
     sign_type: SummonSignType | int,
     character: Character | int,
@@ -3753,24 +4067,28 @@ def PlaceSummonSign(
     """
 
 
+# (2003, 26)
 def SetSoapstoneMessageState(message_id: int, state: bool | int, event_layers=()):
     """
     Enable or disable developer message.
     """
 
 
+# (2003, 26)
 def EnableSoapstoneMessage(message_id: int, event_layers=()):
     """
     Calls `SetSoapstoneMessageState` with `state=True`.
     """
 
 
+# (2003, 26)
 def DisableSoapstoneMessage(message_id: int, event_layers=()):
     """
     Calls `SetSoapstoneMessageState` with `state=False`.
     """
 
 
+# (2003, 28)
 def AwardAchievement(achievement_id: int, event_layers=()):
     """
     For obvious reasons, I *highly* discourage you from abusing this, except in the interest of maintaining the
@@ -3778,24 +4096,28 @@ def AwardAchievement(achievement_id: int, event_layers=()):
     """
 
 
+# (2003, 30)
 def SetVagrantSpawningState(spawning_disabled: bool | int, event_layers=()):
     """
     Note inverted bool.
     """
 
 
+# (2003, 30)
 def EnableVagrantSpawning(event_layers=()):
     """
     Calls `SetVagrantSpawningState` with `spawning_disabled=False`.
     """
 
 
+# (2003, 30)
 def DisableVagrantSpawning(event_layers=()):
     """
     Calls `SetVagrantSpawningState` with `spawning_disabled=True`.
     """
 
 
+# (2003, 31)
 def IncrementEventValue(flag: Flag | int, bit_count: int, max_value: int, event_layers=()):
     """
     You can use a contiguous array of flags as a single value. Use this to increment that value by 1.
@@ -3811,6 +4133,7 @@ def IncrementEventValue(flag: Flag | int, bit_count: int, max_value: int, event_
     """
 
 
+# (2003, 32)
 def ClearEventValue(flag: Flag | int, bit_count: int, event_layers=()):
     """
     Clears the given multi-flag. This is basically like disabling `bit_count` flags in a row, starting at
@@ -3818,12 +4141,14 @@ def ClearEventValue(flag: Flag | int, bit_count: int, event_layers=()):
     """
 
 
+# (2003, 33)
 def SetNextSnugglyTrade(flag: Flag | int, event_layers=()):
     """
     Sets the flag for the next drop based on the item you deposit into the nest.
     """
 
 
+# (2003, 34)
 def SnugglyItemDrop(
     item_lot: ItemLotParam | int,
     region: Region | int,
@@ -3837,6 +4162,7 @@ def SnugglyItemDrop(
     """
 
 
+# (2003, 35)
 def MoveRemains(source_region: Region | int, destination_region: Region | int, event_layers=()):
     """
     Move all bloodstains and dropped items from one region to another (I assume). Used to move your
@@ -3844,6 +4170,7 @@ def MoveRemains(source_region: Region | int, destination_region: Region | int, e
     """
 
 
+# (2003, 36)
 def AwardItemLotToHostOnly(item_lot: int, event_layers=()):
     """
     You can simply call AwardItemLot() with the same argument, which will redirect here, as you'll almost never
@@ -3851,30 +4178,35 @@ def AwardItemLotToHostOnly(item_lot: int, event_layers=()):
     """
 
 
+# (2003, 37)
 def ArenaRankingRequest1v1(event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 38)
 def ArenaRankingRequest2v2(event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 39)
 def ArenaRankingRequestFFA(event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 40)
 def ArenaExitRequest(event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 41)
 def EventValueOperation(
     source_flag: Flag | int,
     source_flag_bit_count: int,
@@ -3889,30 +4221,35 @@ def EventValueOperation(
     """
 
 
+# (2004, 1)
 def SetAIState(character: Character | int, state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2004, 1)
 def EnableAI(character: Character | int, event_layers=()):
     """
     Calls `SetAIState` with `state=True`.
     """
 
 
+# (2004, 1)
 def DisableAI(character: Character | int, event_layers=()):
     """
     Calls `SetAIState` with `state=False`.
     """
 
 
+# (2004, 2)
 def SetTeamType(character: Character | int, new_team: TeamType | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2004, 3)
 def MoveToEntity(
     character: Character | int,
     destination: Object | Character | Region | int,
@@ -3926,48 +4263,56 @@ def MoveToEntity(
     """
 
 
+# (2004, 4)
 def Kill(character: Character | int, award_souls: bool | int = False, event_layers=()):
     """
     Technically a kill 'request.'
     """
 
 
+# (2004, 5)
 def SetCharacterState(character: Character | int, state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2004, 5)
 def EnableCharacter(character: Character | int, event_layers=()):
     """
     Calls `SetCharacterState` with `state=True`.
     """
 
 
+# (2004, 5)
 def DisableCharacter(character: Character | int, event_layers=()):
     """
     Calls `SetCharacterState` with `state=False`.
     """
 
 
+# (2004, 6)
 def EzstateAIRequest(character: Character | int, command_id: int, command_slot: int, event_layers=()):
     """
     Slot number ranges from 0 to 3.
     """
 
 
+# (2004, 7)
 def CreateProjectileOwner(entity: Object | Character | Region | int, event_layers=()):
     """
     A 'bullet owner' that will spawn things according to the Spawner section of the MSB.
     """
 
 
+# (2004, 8)
 def AddSpecialEffect(character: Character | int, special_effect: int, event_layers=()):
     """
     'Special effect' as in a buff/debuff, not graphical effects (though they may come with one).
     """
 
 
+# (2004, 9)
 def SetStandbyAnimationSettings(
     character: Character | int,
     standby_animation: int = -1,
@@ -3982,6 +4327,7 @@ def SetStandbyAnimationSettings(
     """
 
 
+# (2004, 9)
 def ResetStandbyAnimationSettings(character: Character | int, event_layers=()):
     """
     Calls `SetStandbyAnimationSettings` with `standby_animation=-1`, `damage_animation=-1`, `cancel_animation=-1`,
@@ -3989,6 +4335,7 @@ def ResetStandbyAnimationSettings(character: Character | int, event_layers=()):
     """
 
 
+# (2004, 10)
 def SetGravityState(character: Character | int, state: bool | int, event_layers=()):
     """
     Simply determines if the character loses height as it moves around. They will still gain height by running
@@ -3996,49 +4343,57 @@ def SetGravityState(character: Character | int, state: bool | int, event_layers=
     """
 
 
+# (2004, 10)
 def EnableGravity(character: Character | int, event_layers=()):
     """
     Calls `SetGravityState` with `state=True`.
     """
 
 
+# (2004, 10)
 def DisableGravity(character: Character | int, event_layers=()):
     """
     Calls `SetGravityState` with `state=False`.
     """
 
 
+# (2004, 11)
 def SetCharacterEventTarget(character: Character | int, entity: Object | Character | Region | int, event_layers=()):
     """
     Likely refers to patrolling behavior.
     """
 
 
+# (2004, 12)
 def SetImmortalityState(character: Character | int, state: bool | int, event_layers=()):
     """
     Character will take damage, but not die (i.e. cannot go below 1 HP).
     """
 
 
+# (2004, 12)
 def EnableImmortality(character: Character | int, event_layers=()):
     """
     Calls `SetImmortalityState` with `state=True`.
     """
 
 
+# (2004, 12)
 def DisableImmortality(character: Character | int, event_layers=()):
     """
     Calls `SetImmortalityState` with `state=False`.
     """
 
 
+# (2004, 13)
 def SetNest(character: Character | int, region: Region | int, event_layers=()):
     """
     Home point for entity AI.
     """
 
 
-def RotateToFaceEntity(
+# (2004, 14)
+def FaceEntityAndForceAnimation(
     character: Character | int,
     target_entity: Object | Character | Region | int,
     animation: int = -1,
@@ -4046,69 +4401,76 @@ def RotateToFaceEntity(
     event_layers=(),
 ):
     """
-    Rotate a character to face a target map entity of any type.
-    WARNING: This instruction will crash its event script (silently) if used on a disabled character! (In DS1 at
-    least.)
+    Rotate a character to face a target map entity of any type, then optionally force an animation.
     
-    The Bloodborne+ version allows you to force an animation at the same time (post-rotation) and optionally
-    wait until that animation is completed. (I assume a value of -1 avoids it.)
+    WARNING: This may crash an event script if `character` is currently disabled!
     """
 
 
+# (2004, 15)
 def SetInvincibilityState(character: Character | int, state: bool | int, event_layers=()):
     """
     Character cannot take damage or die.
     """
 
 
+# (2004, 15)
 def EnableInvincibility(character: Character | int, event_layers=()):
     """
     Calls `SetInvincibilityState` with `state=True`.
     """
 
 
+# (2004, 15)
 def DisableInvincibility(character: Character | int, event_layers=()):
     """
     Calls `SetInvincibilityState` with `state=False`.
     """
 
 
+# (2004, 16)
 def ClearTargetList(character: Character | int, event_layers=()):
     """
     Clear list of targets from character AI.
     """
 
 
+# (2004, 17)
 def AICommand(character: Character | int, command_id: int, command_slot: int, event_layers=()):
     """
     The given `command_id` can be accessed in AI Lua scripts with `ai:GetEventRequest(slot)`.
     """
 
 
+# (2004, 18)
 def SetEventPoint(character: Character | int, region: Region | int, reaction_range: float, event_layers=()):
     """
     Not sure what the usage of this is, but it is likely used to change patrol behavior.
     """
 
 
+# (2004, 19)
 def SetAIParamID(character: Character | int, ai_param_id: int, event_layers=()):
     """
     Change character's AI parameter index.
     """
 
 
+# (2004, 20)
 def ReplanAI(character: Character | int, event_layers=()):
     """
     Clear current AI goal list and force character to replan it.
     """
 
 
+# (2004, 21)
 def RemoveSpecialEffect(character: Character | int, special_effect: int, event_layers=()):
     """
     'Special effect' as in a buff/debuff, not graphical effects (though they may come with one).
     """
 
 
+# (2004, 22)
 def CreateNPCPart(
     character: Character | int,
     npc_part_id: int,
@@ -4127,6 +4489,7 @@ def CreateNPCPart(
     """
 
 
+# (2004, 23)
 def SetNPCPartHealth(
     character: Character | int,
     npc_part_id: int,
@@ -4139,6 +4502,7 @@ def SetNPCPartHealth(
     """
 
 
+# (2004, 24)
 def SetNPCPartEffects(
     character: Character | int,
     npc_part_id: int,
@@ -4151,6 +4515,7 @@ def SetNPCPartEffects(
     """
 
 
+# (2004, 25)
 def SetNPCPartBulletDamageScaling(
     character: Character | int,
     npc_part_id: int,
@@ -4162,6 +4527,7 @@ def SetNPCPartBulletDamageScaling(
     """
 
 
+# (2004, 26)
 def SetDisplayMask(character: Character | int, bit_index: int, switch_type: OnOffChange | int, event_layers=()):
     """
     Different bits correspond to different parts of the character model. You can see the initial values for
@@ -4171,18 +4537,21 @@ def SetDisplayMask(character: Character | int, bit_index: int, switch_type: OnOf
     """
 
 
+# (2004, 27)
 def SetCollisionMask(character: Character | int, bit_index: int, switch_type: OnOffChange | int, event_layers=()):
     """
     See above. This affects the NPC's Collision, not appearance.
     """
 
 
+# (2004, 28)
 def SetNetworkUpdateAuthority(character: Character | int, authority_level: UpdateAuthority | int, event_layers=()):
     """
     Complex; look at existing usage. Authority level must be 'Normal' or 'Forced'.
     """
 
 
+# (2004, 29)
 def SetBackreadState(character: Character | int, remove: bool | int, event_layers=()):
     """
     I'm not 100% certain how this differs from the standard Enable(), but I imagine controlling the 'backread'
@@ -4193,54 +4562,63 @@ def SetBackreadState(character: Character | int, remove: bool | int, event_layer
     """
 
 
+# (2004, 29)
 def EnableBackread(character: Character | int, event_layers=()):
     """
     Calls `SetBackreadState` with `remove=False`.
     """
 
 
+# (2004, 29)
 def DisableBackread(character: Character | int, event_layers=()):
     """
     Calls `SetBackreadState` with `remove=True`.
     """
 
 
+# (2004, 30)
 def SetHealthBarState(character: Character | int, state: bool | int, event_layers=()):
     """
     Normal health bar that appears above character.
     """
 
 
+# (2004, 30)
 def EnableHealthBar(character: Character | int, event_layers=()):
     """
     Calls `SetHealthBarState` with `state=True`.
     """
 
 
+# (2004, 30)
 def DisableHealthBar(character: Character | int, event_layers=()):
     """
     Calls `SetHealthBarState` with `state=False`.
     """
 
 
+# (2004, 31)
 def SetCharacterCollisionState(character: Character | int, is_disabled: bool | int, event_layers=()):
     """
     Note that the bool is inverted from what you might expect.
     """
 
 
+# (2004, 31)
 def EnableCharacterCollision(character: Character | int, event_layers=()):
     """
     Calls `SetCharacterCollisionState` with `is_disabled=False`.
     """
 
 
+# (2004, 31)
 def DisableCharacterCollision(character: Character | int, event_layers=()):
     """
     Calls `SetCharacterCollisionState` with `is_disabled=True`.
     """
 
 
+# (2004, 32)
 def AIEvent(
     character: Character | int,
     command_id: int,
@@ -4254,6 +4632,7 @@ def AIEvent(
     """
 
 
+# (2004, 33)
 def ReferDamageToEntity(character: Character | int, target_entity: Character | int, event_layers=()):
     """
     All damage dealt to the first character will *also* (not *only*) be dealt to the target entity. I'm not 100%
@@ -4263,6 +4642,7 @@ def ReferDamageToEntity(character: Character | int, target_entity: Character | i
     """
 
 
+# (2004, 34)
 def SetNetworkUpdateRate(
     character: Character | int,
     is_fixed: bool | int,
@@ -4274,12 +4654,14 @@ def SetNetworkUpdateRate(
     """
 
 
+# (2004, 35)
 def SetBackreadStateAlternate(character: Character | int, state: bool | int, event_layers=()):
     """
     I have no idea how this differs from the standard backread function above.
     """
 
 
+# (2004, 36)
 def HellkiteBreathControl(character: Character | int, obj: Object | int, animation_id: int, event_layers=()):
     """
     I don't recommend you mess with this. It seems to be used to create the fire VFX and damaging effect when
@@ -4291,6 +4673,7 @@ def HellkiteBreathControl(character: Character | int, obj: Object | int, animati
     """
 
 
+# (2004, 37)
 def DropMandatoryTreasure(character: Character | int, event_layers=()):
     """
     This will disable the character and spawn any treasure they would drop. It's possible that it only spawns
@@ -4298,30 +4681,35 @@ def DropMandatoryTreasure(character: Character | int, event_layers=()):
     """
 
 
+# (2004, 38)
 def BetrayCurrentCovenant(dummy: int = 0, event_layers=()):
     """
     Dummy argument does nothing.
     """
 
 
+# (2004, 39)
 def SetAnimationsState(entity: Object | Character | int, state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2004, 39)
 def EnableAnimations(entity: Object | Character | int, event_layers=()):
     """
     Calls `SetAnimationsState` with `state=True`.
     """
 
 
+# (2004, 39)
 def DisableAnimations(entity: Object | Character | int, event_layers=()):
     """
     Calls `SetAnimationsState` with `state=False`.
     """
 
 
+# (2004, 40)
 def MoveAndSetDrawParent(
     character: Character | int,
     destination: Object | Character | Region | int,
@@ -4336,6 +4724,7 @@ def MoveAndSetDrawParent(
     """
 
 
+# (2004, 41)
 def ShortMove(
     character: Character | int,
     destination: Object | Character | Region | int,
@@ -4349,6 +4738,7 @@ def ShortMove(
     """
 
 
+# (2004, 42)
 def MoveAndCopyDrawParent(
     character: Character | int,
     destination: Object | Character | Region | int,
@@ -4363,18 +4753,21 @@ def MoveAndCopyDrawParent(
     """
 
 
+# (2004, 43)
 def ResetAnimation(character: Character | int, disable_interpolation: bool | int = False, event_layers=()):
     """
     Cancels an animation. Note the inverted bool for controlling interpolation.
     """
 
 
+# (2004, 44)
 def SetTeamTypeAndExitStandbyAnimation(character: Character | int, team_type: TeamType | int, event_layers=()):
     """
     Two for the price of one. Often used when NPCs with resting animations become hostile.
     """
 
 
+# (2004, 45)
 def HumanityRegistration(character: Character | int, event_flag: Flag | int, event_layers=()):
     """
     I believe this designates the first event flag in a range of eight, which tracks how much humanity an NPC
@@ -4386,54 +4779,63 @@ def HumanityRegistration(character: Character | int, event_flag: Flag | int, eve
     """
 
 
+# (2004, 46)
 def IncrementPvPSin(dummy: int = 0, event_layers=()):
     """
     Normally only happens when you kill an NPC.
     """
 
 
+# (2004, 47)
 def EqualRecovery(event_layers=()):
     """
     Unknown effect. Only used in Battle of Stoicism, so likely useless to you.
     """
 
 
+# (2005, 1)
 def DestroyObject(obj: Object | int, request_slot: int = 1, event_layers=()):
     """
     Technically 'requests' the object's destruction. No idea what the slot number does.
     """
 
 
+# (2005, 2)
 def RestoreObject(obj: Object | int, event_layers=()):
     """
     The opposite of destruction. Restores it to its original MSB coordinates.
     """
 
 
+# (2005, 3)
 def SetObjectState(obj: Object | int, state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2005, 3)
 def EnableObject(obj: Object | int, event_layers=()):
     """
     Calls `SetObjectState` with `state=True`.
     """
 
 
+# (2005, 3)
 def DisableObject(obj: Object | int, event_layers=()):
     """
     Calls `SetObjectState` with `state=False`.
     """
 
 
+# (2005, 4)
 def SetTreasureState(obj: Object | int, state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2005, 4)
 def EnableTreasure(obj: Object | int, event_layers=()):
     """
     Calls `SetTreasureState` with `state=True`.
@@ -4441,6 +4843,7 @@ def EnableTreasure(obj: Object | int, event_layers=()):
     """
 
 
+# (2005, 4)
 def DisableTreasure(obj: Object | int, event_layers=()):
     """
     Calls `SetTreasureState` with `state=False`.
@@ -4452,6 +4855,7 @@ def DisableTreasure(obj: Object | int, event_layers=()):
     """
 
 
+# (2005, 5)
 def ActivateObject(obj: Object | int, obj_act_id: int, relative_index: int, event_layers=()):
     """
     Manually call a specific ObjAct event attached to this object. I believe 'relative_index' refers to the
@@ -4462,12 +4866,14 @@ def ActivateObject(obj: Object | int, obj_act_id: int, relative_index: int, even
     """
 
 
+# (2005, 6)
 def SetObjectActivation(obj: Object | int, obj_act_id: int, state: bool | int, event_layers=()):
     """
     Sets whether the object can be activated (1) or not activated (0).
     """
 
 
+# (2005, 7)
 def EndOfAnimation(obj: Object | int, animation_id: int, event_layers=()):
     """
     Sets entity to whatever state it would have after the given animation. Used often to open doors that have
@@ -4476,6 +4882,7 @@ def EndOfAnimation(obj: Object | int, animation_id: int, event_layers=()):
     """
 
 
+# (2005, 8)
 def PostDestruction(obj: Object | int, request_slot: int = 1, event_layers=()):
     """
     Sets the object to whatever appearance it would have after being destroyed. Again, not sure what 'slot'
@@ -4484,6 +4891,7 @@ def PostDestruction(obj: Object | int, request_slot: int = 1, event_layers=()):
     """
 
 
+# (2005, 9)
 def CreateHazard(
     obj_flag: Flag | int,
     obj: Object | int,
@@ -4506,42 +4914,49 @@ def CreateHazard(
     """
 
 
+# (2005, 10)
 def RegisterStatue(obj: Object | int, game_map: Map | tuple | list, statue_type: StatueType | int, event_layers=()):
     """
     Creates a petrified or crystallized statue. I believe this is so it can be seen by other players online.
     """
 
 
+# (2005, 11)
 def MoveObjectToCharacter(obj: Object | int, character: Character | int, dummy_id: int = -1, event_layers=()):
     """
     Move an object to a character.
     """
 
 
+# (2005, 12)
 def RemoveObjectFlag(obj_flag: Flag | int, event_layers=()):
     """
     No idea what this does. I believe it might undo the CreateHazard instruction, at least.
     """
 
 
+# (2005, 13)
 def SetObjectInvulnerabilityState(obj: Object | int, state: bool | int, event_layers=()):
     """
     1 = invulnerable.
     """
 
 
+# (2005, 13)
 def EnableObjectInvulnerability(obj: Object | int, event_layers=()):
     """
     Calls `SetObjectInvulnerabilityState` with `state=True`.
     """
 
 
+# (2005, 13)
 def DisableObjectInvulnerability(obj: Object | int, event_layers=()):
     """
     Calls `SetObjectInvulnerabilityState` with `state=False`.
     """
 
 
+# (2005, 14)
 def SetObjectActivationWithIdx(
     obj: Object | int,
     obj_act_id: int,
@@ -4554,6 +4969,7 @@ def SetObjectActivationWithIdx(
     """
 
 
+# (2005, 15)
 def EnableTreasureCollection(obj: Object | int, event_layers=()):
     """
     Forces an object to spawn its treasure, even if the treasure's ItemLot flag is already enabled.
@@ -4563,6 +4979,7 @@ def EnableTreasureCollection(obj: Object | int, event_layers=()):
     """
 
 
+# (2006, 1)
 def DeleteVFX(vfx_id: VFXEvent | int, erase_root_only: bool = True, event_layers=()):
     """
     Delete visual VFX. If 'erase_root_only' is True (default), effect particles already emitted will live out
@@ -4570,12 +4987,14 @@ def DeleteVFX(vfx_id: VFXEvent | int, erase_root_only: bool = True, event_layers
     """
 
 
+# (2006, 2)
 def CreateVFX(vfx_id: VFXEvent | int, event_layers=()):
     """
     Create visual VFX. The ID is given in the MSB (e.g. fog effect for boss gates and checkpoints).
     """
 
 
+# (2006, 3)
 def CreateTemporaryVFX(
     vfx_id: int,
     anchor_entity: Object | Character | Region | int,
@@ -4591,18 +5010,21 @@ def CreateTemporaryVFX(
     """
 
 
+# (2006, 4)
 def CreateObjectVFX(obj: Object | int, vfx_id: int, dummy_id: int, event_layers=()):
     """
     TODO
     """
 
 
+# (2006, 5)
 def DeleteObjectVFX(obj: Object | int, erase_root: bool = True, event_layers=()):
     """
     Note `erase_root` vs. `erase_root_only` for map SFX.
     """
 
 
+# (2007, 1)
 def DisplayDialog(
     text: EventText | int,
     anchor_entity: Object | Character | Region | int = -1,
@@ -4622,12 +5044,14 @@ def DisplayDialog(
     """
 
 
+# (2007, 2)
 def DisplayBanner(banner_type: BannerType | int, event_layers=()):
     """
     Display a pre-rendered banner. You'll have to change the textures (in menu_local.tpf) to change them.
     """
 
 
+# (2007, 3)
 def DisplayStatus(text: EventText | int, pad_enabled: bool = True, event_layers=()):
     """
     Displays a large message that appears at the top of the screen, such as the message that tells you how to
@@ -4636,48 +5060,56 @@ def DisplayStatus(text: EventText | int, pad_enabled: bool = True, event_layers=
     """
 
 
+# (2007, 4)
 def DisplayBattlefieldMessage(text: EventText | int, display_location_index: int, event_layers=()):
     """
     Displays a flashing messages at the bottom of the screen that does not block player input.
     """
 
 
+# (2007, 5)
 def ArenaSetNametag1(player_id: int, event_layers=()):
     """
     TODO
     """
 
 
+# (2007, 6)
 def ArenaSetNametag2(player_id: int, event_layers=()):
     """
     TODO
     """
 
 
+# (2007, 7)
 def ArenaSetNametag3(player_id: int, event_layers=()):
     """
     TODO
     """
 
 
+# (2007, 8)
 def ArenaSetNametag4(player_id: int, event_layers=()):
     """
     TODO
     """
 
 
+# (2007, 9)
 def DisplayArenaDissolutionMessage(text: EventText | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2008, 1)
 def ChangeCamera(normal_camera_id: int, locked_camera_id: int, event_layers=()):
     """
     TODO
     """
 
 
+# (2008, 2)
 def SetCameraVibration(
     vibration_id: int,
     anchor_entity: Object | Character | Region | int,
@@ -4693,12 +5125,14 @@ def SetCameraVibration(
     """
 
 
+# (2008, 3)
 def SetLockedCameraSlot(game_map: Map | tuple | list, camera_slot: int, event_layers=()):
     """
     Switch between one of two camera slots associated with the player's current collision in the MSB.
     """
 
 
+# (2009, 0)
 def RegisterLadder(start_climbing_flag: Flag | int, stop_climbing_flag: Flag | int, obj: Object | int, event_layers=()):
     """
     Don't mess with these flags, generally; you can just delay when this is called after map load to disable
@@ -4706,6 +5140,7 @@ def RegisterLadder(start_climbing_flag: Flag | int, stop_climbing_flag: Flag | i
     """
 
 
+# (2009, 1)
 def InitializeWanderingDemon(
     flag: Flag | int,
     demon_entity: Character | int,
@@ -4717,6 +5152,7 @@ def InitializeWanderingDemon(
     """
 
 
+# (2009, 2)
 def RegisterWanderingDemon(
     flag: Flag | int,
     demon_entity: Character | int,
@@ -4728,6 +5164,7 @@ def RegisterWanderingDemon(
     """
 
 
+# (2009, 3)
 def RegisterBonfire(
     bonfire_flag: Flag | int,
     obj: Object | int,
@@ -4753,6 +5190,7 @@ def RegisterBonfire(
     """
 
 
+# (2009, 4)
 def ActivateMultiplayerBuffs(character: Character | int, event_layers=()):
     """
     Used to strengthen bosses based on the number of summons you have. Not sure if it works for every NPC. It
@@ -4760,6 +5198,7 @@ def ActivateMultiplayerBuffs(character: Character | int, event_layers=()):
     """
 
 
+# (2009, 5)
 def RegisterHealingFountain(
     flag: Flag | int,
     obj: Object | int,
@@ -4774,12 +5213,14 @@ def RegisterHealingFountain(
     """
 
 
+# (2009, 6)
 def NotifyBossBattleStart(dummy: int = 0, event_layers=()):
     """
     Sends the message to all summons that the host has challenged the boss.
     """
 
 
+# (2010, 1)
 def SetBackgroundMusic(
     state: bool | int,
     music_slot: int,
@@ -4793,6 +5234,7 @@ def SetBackgroundMusic(
     """
 
 
+# (2010, 2)
 def PlaySoundEffect(
     anchor_entity: Object | Character | Region | int,
     sound_id: int,
@@ -4804,24 +5246,28 @@ def PlaySoundEffect(
     """
 
 
+# (2010, 3)
 def SetSoundEventState(sound_id: SoundEvent | int, state: bool | int, event_layers=()):
     """
     The sound ID is in the MSB. Includes boss music, which is obviously the most common use, and ambiance.
     """
 
 
+# (2010, 3)
 def EnableSoundEvent(sound_id: SoundEvent | int, event_layers=()):
     """
     Calls `SetSoundEventState` with `state=True`.
     """
 
 
+# (2010, 3)
 def DisableSoundEvent(sound_id: SoundEvent | int, event_layers=()):
     """
     Calls `SetSoundEventState` with `state=False`.
     """
 
 
+# (2011, 1)
 def SetMapCollisionState(collision: Collision | int, state: bool | int, event_layers=()):
     """
     Enable or disable a map collision (HKX). The ID is specified in the MSB. Note that a Collision doesn't have
@@ -4830,54 +5276,63 @@ def SetMapCollisionState(collision: Collision | int, state: bool | int, event_la
     """
 
 
+# (2011, 1)
 def EnableMapCollision(collision: Collision | int, event_layers=()):
     """
     Calls `SetMapCollisionState` with `state=True`.
     """
 
 
+# (2011, 1)
 def DisableMapCollision(collision: Collision | int, event_layers=()):
     """
     Calls `SetMapCollisionState` with `state=False`.
     """
 
 
+# (2011, 2)
 def SetMapCollisionBackreadMaskState(collision: Collision | int, state: bool | int, event_layers=()):
     """
     Unused.
     """
 
 
+# (2011, 2)
 def EnableMapCollisionBackreadMask(collision: Collision | int, event_layers=()):
     """
     Calls `SetMapCollisionBackreadMaskState` with `state=True`.
     """
 
 
+# (2011, 2)
 def DisableMapCollisionBackreadMask(collision: Collision | int, event_layers=()):
     """
     Calls `SetMapCollisionBackreadMaskState` with `state=False`.
     """
 
 
+# (2012, 1)
 def SetMapPieceState(map_piece_id: MapPiece | int, state: bool | int, event_layers=()):
     """
     Set the visibility of individual map pieces (e.g. all the crystals in Seath's tower).
     """
 
 
+# (2012, 1)
 def EnableMapPiece(map_piece_id: MapPiece | int, event_layers=()):
     """
     Calls `SetMapPieceState` with `state=True`.
     """
 
 
+# (2012, 1)
 def DisableMapPiece(map_piece_id: MapPiece | int, event_layers=()):
     """
     Calls `SetMapPieceState` with `state=False`.
     """
 
 
+# (3, 23)
 def IfAttackedWithDamageType(
     condition: ConditionGroup | int,
     attacked_entity: Character | int,
@@ -4890,6 +5345,7 @@ def IfAttackedWithDamageType(
     """
 
 
+# (3, 24)
 def IfActionButtonParamActivated(
     condition: ConditionGroup | int,
     action_button_id: int,
@@ -4901,24 +5357,28 @@ def IfActionButtonParamActivated(
     """
 
 
+# (3, 26)
 def IfPlayerOwnWorldState(condition: ConditionGroup | int, not_in_own_world: bool | int, event_layers=()):
     """
     Excluding Arena.
     """
 
 
+# (3, 26)
 def IfPlayerInOwnWorld(condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfPlayerOwnWorldState` with `not_in_own_world=False`.
     """
 
 
+# (3, 26)
 def IfPlayerNotInOwnWorld(condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfPlayerOwnWorldState` with `not_in_own_world=True`.
     """
 
 
+# (3, 28)
 def IfMapCeremonyState(
     condition: ConditionGroup | int,
     state: bool | int,
@@ -4931,12 +5391,14 @@ def IfMapCeremonyState(
     """
 
 
+# (3, 28)
 def IfMapInCeremony(condition: ConditionGroup | int, game_map: Map | tuple | list, ceremony_id: int, event_layers=()):
     """
     Calls `IfMapCeremonyState` with `state=True`.
     """
 
 
+# (3, 28)
 def IfMapNotInCeremony(
     condition: ConditionGroup | int,
     game_map: Map | tuple | list,
@@ -4948,36 +5410,42 @@ def IfMapNotInCeremony(
     """
 
 
+# (3, 29)
 def IfMultiplayerNetworkPenalized(condition: ConditionGroup | int, event_layers=()):
     """
     TODO
     """
 
 
+# (3, 30)
 def IfPlayerGender(condition: ConditionGroup | int, gender: Gender | int, event_layers=()):
     """
     Note that this condition version of the gender test was absent in Bloodborne.
     """
 
 
+# (3, 31)
 def IfOngoingCutsceneFinished(condition: ConditionGroup | int, cutscene_id: int, event_layers=()):
     """
     TODO
     """
 
 
+# (3, 32)
 def IfHollowArenaMatchReadyState(condition: ConditionGroup | int, is_ready: bool | int, event_layers=()):
     """
     TODO
     """
 
 
+# (3, 33)
 def IfHollowArenaSoloResults(condition: ConditionGroup | int, result: HollowArenaResult | int, event_layers=()):
     """
     TODO
     """
 
 
+# (3, 34)
 def IfHollowArenaSoloScoreComparison(
     condition: ConditionGroup | int,
     comparison_type: ComparisonType | int,
@@ -4990,18 +5458,21 @@ def IfHollowArenaSoloScoreComparison(
     """
 
 
+# (3, 35)
 def IfHollowArenaTeamResults(condition: ConditionGroup | int, result: HollowArenaResult | int, event_layers=()):
     """
     TODO
     """
 
 
+# (3, 38)
 def IfSteamConnectionState(condition: ConditionGroup | int, is_disconnected: bool | int, event_layers=()):
     """
     TODO
     """
 
 
+# (3, 39)
 def IfAllyPhantomCountComparison(
     condition: ConditionGroup | int,
     comparison_state: bool | int,
@@ -5014,6 +5485,7 @@ def IfAllyPhantomCountComparison(
     """
 
 
+# (4, 15)
 def IfCharacterDrawGroupState(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -5027,6 +5499,7 @@ def IfCharacterDrawGroupState(
     """
 
 
+# (4, 15)
 def IfCharacterDrawGroupEnabled(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -5039,6 +5512,7 @@ def IfCharacterDrawGroupEnabled(
     """
 
 
+# (4, 15)
 def IfCharacterDrawGroupDisabled(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -5051,6 +5525,7 @@ def IfCharacterDrawGroupDisabled(
     """
 
 
+# (4, 26)
 def IfPlayerRemainingYoelLevelComparison(
     condition: ConditionGroup | int,
     comparison_type: ComparisonType | int,
@@ -5062,6 +5537,7 @@ def IfPlayerRemainingYoelLevelComparison(
     """
 
 
+# (4, 27)
 def IfCharacterInvadeType(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -5075,6 +5551,7 @@ def IfCharacterInvadeType(
     """
 
 
+# (4, 28)
 def IfCharacterChameleonState(
     condition: ConditionGroup | int,
     character: Character | int,
@@ -5087,6 +5564,7 @@ def IfCharacterChameleonState(
     """
 
 
+# (5, 9)
 def IfObjectBurnState(
     condition: ConditionGroup | int,
     obj: Object | int,
@@ -5104,6 +5582,7 @@ def IfObjectBurnState(
     """
 
 
+# (5, 10)
 def IfObjectBackreadState(
     condition: ConditionGroup | int,
     obj: Object | int,
@@ -5117,6 +5596,7 @@ def IfObjectBackreadState(
     """
 
 
+# (5, 10)
 def IfObjectBackreadEnabled(
     condition: ConditionGroup | int,
     obj: Object | int,
@@ -5129,6 +5609,7 @@ def IfObjectBackreadEnabled(
     """
 
 
+# (5, 10)
 def IfObjectBackreadDisabled(
     condition: ConditionGroup | int,
     obj: Object | int,
@@ -5141,6 +5622,7 @@ def IfObjectBackreadDisabled(
     """
 
 
+# (5, 11)
 def IfObjectBackreadState_Alternate(
     condition: ConditionGroup | int,
     obj: Object | int,
@@ -5155,6 +5637,7 @@ def IfObjectBackreadState_Alternate(
     """
 
 
+# (1000, 101)
 def GotoIfConditionState(
     label: Label | int,
     required_state: bool | int,
@@ -5166,24 +5649,28 @@ def GotoIfConditionState(
     """
 
 
+# (1000, 101)
 def GotoIfConditionTrue(label: Label | int, input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `GotoIfConditionState` with `required_state=True`.
     """
 
 
+# (1000, 101)
 def GotoIfConditionFalse(label: Label | int, input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `GotoIfConditionState` with `required_state=False`.
     """
 
 
+# (1000, 103)
 def Goto(label: Label | int, event_layers=()):
     """
     Unconditional GOTO.
     """
 
 
+# (1000, 105)
 def GotoIfValueComparison(
     label: Label | int,
     comparison_type: ComparisonType | int,
@@ -5196,6 +5683,7 @@ def GotoIfValueComparison(
     """
 
 
+# (1000, 107)
 def GotoIfLastConditionResultState(
     label: Label | int,
     required_state: bool | int,
@@ -5207,144 +5695,168 @@ def GotoIfLastConditionResultState(
     """
 
 
+# (1000, 107)
 def GotoIfLastConditionResultTrue(label: Label | int, input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `GotoIfLastConditionResultState` with `required_state=True`.
     """
 
 
+# (1000, 107)
 def GotoIfLastConditionResultFalse(label: Label | int, input_condition: ConditionGroup | int, event_layers=()):
     """
     Calls `GotoIfLastConditionResultState` with `required_state=False`.
     """
 
 
+# (1001, 4)
 def WaitHollowArenaHalftime(match_type: HollowArenaMatchType | int, is_second_half: bool | int, event_layers=()):
     """
     'StayParam lookup'.
     """
 
 
+# (1003, 5)
 def SkipLinesIfMultiplayerState(line_count: int, state: MultiplayerState | int, event_layers=()):
     """
     TODO
     """
 
 
+# (1003, 5)
 def SkipLinesIfHost(line_count: int, event_layers=()):
     """
     Calls `SkipLinesIfMultiplayerState` with `state=0`.
     """
 
 
+# (1003, 5)
 def SkipLinesIfClient(line_count: int, event_layers=()):
     """
     Calls `SkipLinesIfMultiplayerState` with `state=1`.
     """
 
 
+# (1003, 5)
 def SkipLinesIfTryingToCreateSession(line_count: int, event_layers=()):
     """
     Calls `SkipLinesIfMultiplayerState` with `state=2`.
     """
 
 
+# (1003, 5)
 def SkipLinesIfTryingToJoinSession(line_count: int, event_layers=()):
     """
     Calls `SkipLinesIfMultiplayerState` with `state=3`.
     """
 
 
+# (1003, 5)
 def SkipLinesIfLeavingSession(line_count: int, event_layers=()):
     """
     Calls `SkipLinesIfMultiplayerState` with `state=4`.
     """
 
 
+# (1003, 5)
 def SkipLinesIfFailedToCreateSession(line_count: int, event_layers=()):
     """
     Calls `SkipLinesIfMultiplayerState` with `state=5`.
     """
 
 
+# (1003, 6)
 def ReturnIfMultiplayerState(event_return_type: EventReturnType | int, state: MultiplayerState | int, event_layers=()):
     """
     TODO
     """
 
 
+# (1003, 6)
 def EndIfHost(event_layers=()):
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=0`, `state=0`.
     """
 
 
+# (1003, 6)
 def EndIfClient(event_layers=()):
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=0`, `state=1`.
     """
 
 
+# (1003, 6)
 def EndIfTryingToCreateSession(event_layers=()):
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=0`, `state=2`.
     """
 
 
+# (1003, 6)
 def EndIfTryingToJoinSession(event_layers=()):
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=0`, `state=3`.
     """
 
 
+# (1003, 6)
 def EndIfLeavingSession(event_layers=()):
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=0`, `state=4`.
     """
 
 
+# (1003, 6)
 def EndIfFailedToCreateSession(event_layers=()):
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=0`, `state=5`.
     """
 
 
+# (1003, 6)
 def RestartIfHost(event_layers=()):
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=1`, `state=0`.
     """
 
 
+# (1003, 6)
 def RestartIfClient(event_layers=()):
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=1`, `state=1`.
     """
 
 
+# (1003, 6)
 def RestartIfTryingToCreateSession(event_layers=()):
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=1`, `state=2`.
     """
 
 
+# (1003, 6)
 def RestartIfTryingToJoinSession(event_layers=()):
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=1`, `state=3`.
     """
 
 
+# (1003, 6)
 def RestartIfLeavingSession(event_layers=()):
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=1`, `state=4`.
     """
 
 
+# (1003, 6)
 def RestartIfFailedToCreateSession(event_layers=()):
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=1`, `state=5`.
     """
 
 
+# (1003, 9)
 def SkipLinesIfCoopClientCountComparison(
     skip_lines: int,
     comparison_type: ComparisonType | int,
@@ -5356,6 +5868,7 @@ def SkipLinesIfCoopClientCountComparison(
     """
 
 
+# (1003, 10)
 def ReturnIfCoopClientCountComparison(
     event_return_type: EventReturnType | int,
     comparison_type: ComparisonType | int,
@@ -5367,18 +5880,21 @@ def ReturnIfCoopClientCountComparison(
     """
 
 
+# (1003, 10)
 def EndIfCoopClientCountComparison(comparison_type: ComparisonType | int, value: int, event_layers=()):
     """
     Calls `ReturnIfCoopClientCountComparison` with `event_return_type=0`.
     """
 
 
+# (1003, 10)
 def RestartIfCoopClientCountComparison(comparison_type: ComparisonType | int, value: int, event_layers=()):
     """
     Calls `ReturnIfCoopClientCountComparison` with `event_return_type=1`.
     """
 
 
+# (1003, 11)
 def GotoIfCharacterSpecialEffectState(
     label: Label | int,
     character: Character | int,
@@ -5393,6 +5909,7 @@ def GotoIfCharacterSpecialEffectState(
     """
 
 
+# (1003, 11)
 def GotoIfPlayerHasSpecialEffect(
     label: Label | int,
     special_effect: int,
@@ -5405,6 +5922,7 @@ def GotoIfPlayerHasSpecialEffect(
     """
 
 
+# (1003, 11)
 def GotoIfPlayerDoesNotHaveSpecialEffect(
     label: Label | int,
     special_effect: int,
@@ -5417,6 +5935,7 @@ def GotoIfPlayerDoesNotHaveSpecialEffect(
     """
 
 
+# (1003, 11)
 def GotoIfCharacterHasSpecialEffect(
     label: Label | int,
     character: Character | int,
@@ -5430,6 +5949,7 @@ def GotoIfCharacterHasSpecialEffect(
     """
 
 
+# (1003, 11)
 def GotoIfCharacterDoesNotHaveSpecialEffect(
     label: Label | int,
     character: Character | int,
@@ -5443,24 +5963,28 @@ def GotoIfCharacterDoesNotHaveSpecialEffect(
     """
 
 
+# (1003, 12)
 def GotoIfPlayerOwnWorldState(label: Label | int, not_in_own_world: bool | int, event_layers=()):
     """
     TODO
     """
 
 
+# (1003, 12)
 def GotoIfPlayerInOwnWorld(label: Label | int, event_layers=()):
     """
     Calls `GotoIfPlayerOwnWorldState` with `not_in_own_world=False`.
     """
 
 
+# (1003, 12)
 def GotoIfPlayerNotInOwnWorld(label: Label | int, event_layers=()):
     """
     Calls `GotoIfPlayerOwnWorldState` with `not_in_own_world=True`.
     """
 
 
+# (1003, 13)
 def ReturnIfPlayerOwnWorldState(
     event_return_type: EventReturnType | int,
     not_in_own_world: bool | int,
@@ -5471,30 +5995,35 @@ def ReturnIfPlayerOwnWorldState(
     """
 
 
+# (1003, 13)
 def EndIfPlayerInOwnWorld(event_layers=()):
     """
     Calls `ReturnIfPlayerOwnWorldState` with `event_return_type=0`, `not_in_own_world=False`.
     """
 
 
+# (1003, 13)
 def EndIfPlayerNotInOwnWorld(event_layers=()):
     """
     Calls `ReturnIfPlayerOwnWorldState` with `event_return_type=0`, `not_in_own_world=True`.
     """
 
 
+# (1003, 13)
 def RestartIfPlayerInOwnWorld(event_layers=()):
     """
     Calls `ReturnIfPlayerOwnWorldState` with `event_return_type=1`, `not_in_own_world=False`.
     """
 
 
+# (1003, 13)
 def RestartIfPlayerNotInOwnWorld(event_layers=()):
     """
     Calls `ReturnIfPlayerOwnWorldState` with `event_return_type=1`, `not_in_own_world=True`.
     """
 
 
+# (1003, 14)
 def SkipLinesIfClientTypeCountComparison(
     skip_lines: int,
     client_type: ClientType | int,
@@ -5507,6 +6036,7 @@ def SkipLinesIfClientTypeCountComparison(
     """
 
 
+# (1003, 15)
 def GotoIfClientTypeCountComparison(
     label: Label | int,
     client_type: ClientType | int,
@@ -5519,6 +6049,7 @@ def GotoIfClientTypeCountComparison(
     """
 
 
+# (1003, 16)
 def ReturnIfClientTypeCountComparison(
     event_return_type: EventReturnType | int,
     client_type: ClientType | int,
@@ -5531,6 +6062,7 @@ def ReturnIfClientTypeCountComparison(
     """
 
 
+# (1003, 16)
 def EndIfClientTypeCountComparison(
     client_type: ClientType | int,
     comparison_type: ComparisonType | int,
@@ -5542,6 +6074,7 @@ def EndIfClientTypeCountComparison(
     """
 
 
+# (1003, 16)
 def RestartIfClientTypeCountComparison(
     client_type: ClientType | int,
     comparison_type: ComparisonType | int,
@@ -5553,6 +6086,7 @@ def RestartIfClientTypeCountComparison(
     """
 
 
+# (1003, 101)
 def GotoIfFlagState(
     label: Label | int,
     state: bool | int,
@@ -5565,42 +6099,49 @@ def GotoIfFlagState(
     """
 
 
+# (1003, 101)
 def GotoIfThisEventFlagEnabled(label: Label | int, event_layers=()):
     """
     Calls `GotoIfFlagState` with `state=True`, `flag_type=1`, `flag=0`.
     """
 
 
+# (1003, 101)
 def GotoIfThisEventFlagDisabled(label: Label | int, event_layers=()):
     """
     Calls `GotoIfFlagState` with `state=False`, `flag_type=1`, `flag=0`.
     """
 
 
+# (1003, 101)
 def GotoIfThisEventSlotFlagEnabled(label: Label | int, event_layers=()):
     """
     Calls `GotoIfFlagState` with `state=True`, `flag_type=2`, `flag=0`.
     """
 
 
+# (1003, 101)
 def GotoIfThisEventSlotFlagDisabled(label: Label | int, event_layers=()):
     """
     Calls `GotoIfFlagState` with `state=False`, `flag_type=2`, `flag=0`.
     """
 
 
+# (1003, 101)
 def GotoIfFlagEnabled(label: Label | int, flag: Flag | int, event_layers=()):
     """
     Calls `GotoIfFlagState` with `state=True`, `flag_type=0`.
     """
 
 
+# (1003, 101)
 def GotoIfFlagDisabled(label: Label | int, flag: Flag | int, event_layers=()):
     """
     Calls `GotoIfFlagState` with `state=False`, `flag_type=0`.
     """
 
 
+# (1003, 103)
 def GotoIfFlagRangeState(
     label: Label | int,
     state: RangeState | int,
@@ -5613,90 +6154,105 @@ def GotoIfFlagRangeState(
     """
 
 
+# (1003, 103)
 def GotoIfFlagRangeAllEnabled(label: Label | int, flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `GotoIfFlagRangeState` with `state=0`, `flag_type=0`.
     """
 
 
+# (1003, 103)
 def GotoIfFlagRangeAllDisabled(label: Label | int, flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `GotoIfFlagRangeState` with `state=1`, `flag_type=0`.
     """
 
 
+# (1003, 103)
 def GotoIfFlagRangeAnyEnabled(label: Label | int, flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `GotoIfFlagRangeState` with `state=2`, `flag_type=0`.
     """
 
 
+# (1003, 103)
 def GotoIfFlagRangeAnyDisabled(label: Label | int, flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `GotoIfFlagRangeState` with `state=3`, `flag_type=0`.
     """
 
 
+# (1003, 105)
 def GotoIfMultiplayerState(label: Label | int, state: MultiplayerState | int, event_layers=()):
     """
     TODO
     """
 
 
+# (1003, 105)
 def GotoIfHost(label: Label | int, event_layers=()):
     """
     Calls `GotoIfMultiplayerState` with `state=0`.
     """
 
 
+# (1003, 105)
 def GotoIfClient(label: Label | int, event_layers=()):
     """
     Calls `GotoIfMultiplayerState` with `state=1`.
     """
 
 
+# (1003, 105)
 def GotoIfTryingToCreateSession(label: Label | int, event_layers=()):
     """
     Calls `GotoIfMultiplayerState` with `state=2`.
     """
 
 
+# (1003, 105)
 def GotoIfTryingToJoinSession(label: Label | int, event_layers=()):
     """
     Calls `GotoIfMultiplayerState` with `state=3`.
     """
 
 
+# (1003, 105)
 def GotoIfLeavingSession(label: Label | int, event_layers=()):
     """
     Calls `GotoIfMultiplayerState` with `state=4`.
     """
 
 
+# (1003, 105)
 def GotoIfFailedToCreateSession(label: Label | int, event_layers=()):
     """
     Calls `GotoIfMultiplayerState` with `state=5`.
     """
 
 
+# (1003, 107)
 def GotoIfMapPresenceState(label: Label | int, state: bool | int, game_map: Map | tuple | list, event_layers=()):
     """
     TODO
     """
 
 
+# (1003, 107)
 def GotoIfInsideMap(label: Label | int, game_map: Map | tuple | list, event_layers=()):
     """
     Calls `GotoIfMapPresenceState` with `state=True`.
     """
 
 
+# (1003, 107)
 def GotoIfOutsideMap(label: Label | int, game_map: Map | tuple | list, event_layers=()):
     """
     Calls `GotoIfMapPresenceState` with `state=False`.
     """
 
 
+# (1003, 109)
 def GotoIfCoopClientCountComparison(
     label: Label | int,
     comparison_type: ComparisonType | int,
@@ -5708,6 +6264,7 @@ def GotoIfCoopClientCountComparison(
     """
 
 
+# (1003, 111)
 def ReturnIfCharacterSpecialEffectState(
     event_return_type: EventReturnType | int,
     character: Character | int,
@@ -5722,6 +6279,7 @@ def ReturnIfCharacterSpecialEffectState(
     """
 
 
+# (1003, 111)
 def EndIfPlayerHasSpecialEffect(
     special_effect: int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
@@ -5733,6 +6291,7 @@ def EndIfPlayerHasSpecialEffect(
     """
 
 
+# (1003, 111)
 def EndIfPlayerDoesNotHaveSpecialEffect(
     special_effect: int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
@@ -5744,6 +6303,7 @@ def EndIfPlayerDoesNotHaveSpecialEffect(
     """
 
 
+# (1003, 111)
 def RestartIfPlayerHasSpecialEffect(
     special_effect: int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
@@ -5755,6 +6315,7 @@ def RestartIfPlayerHasSpecialEffect(
     """
 
 
+# (1003, 111)
 def RestartIfPlayerDoesNotHaveSpecialEffect(
     special_effect: int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
@@ -5766,6 +6327,7 @@ def RestartIfPlayerDoesNotHaveSpecialEffect(
     """
 
 
+# (1003, 111)
 def EndIfCharacterHasSpecialEffect(
     character: Character | int,
     special_effect: int,
@@ -5778,6 +6340,7 @@ def EndIfCharacterHasSpecialEffect(
     """
 
 
+# (1003, 111)
 def EndIfCharacterDoesNotHaveSpecialEffect(
     character: Character | int,
     special_effect: int,
@@ -5790,6 +6353,7 @@ def EndIfCharacterDoesNotHaveSpecialEffect(
     """
 
 
+# (1003, 111)
 def RestartIfCharacterHasSpecialEffect(
     character: Character | int,
     special_effect: int,
@@ -5802,6 +6366,7 @@ def RestartIfCharacterHasSpecialEffect(
     """
 
 
+# (1003, 111)
 def RestartIfCharacterDoesNotHaveSpecialEffect(
     character: Character | int,
     special_effect: int,
@@ -5814,6 +6379,7 @@ def RestartIfCharacterDoesNotHaveSpecialEffect(
     """
 
 
+# (1003, 112)
 def SkipLinesIfCharacterSpecialEffectState(
     line_count: int,
     character: Character | int,
@@ -5828,6 +6394,7 @@ def SkipLinesIfCharacterSpecialEffectState(
     """
 
 
+# (1003, 112)
 def SkipLinesIfPlayerHasSpecialEffect(
     line_count: int,
     special_effect: int,
@@ -5840,6 +6407,7 @@ def SkipLinesIfPlayerHasSpecialEffect(
     """
 
 
+# (1003, 112)
 def SkipLinesIfPlayerDoesNotHaveSpecialEffect(
     line_count: int,
     special_effect: int,
@@ -5852,6 +6420,7 @@ def SkipLinesIfPlayerDoesNotHaveSpecialEffect(
     """
 
 
+# (1003, 112)
 def SkipLinesIfCharacterHasSpecialEffect(
     line_count: int,
     character: Character | int,
@@ -5865,6 +6434,7 @@ def SkipLinesIfCharacterHasSpecialEffect(
     """
 
 
+# (1003, 112)
 def SkipLinesIfCharacterDoesNotHaveSpecialEffect(
     line_count: int,
     character: Character | int,
@@ -5878,6 +6448,7 @@ def SkipLinesIfCharacterDoesNotHaveSpecialEffect(
     """
 
 
+# (1003, 200)
 def GotoIfCharacterRegionState(
     label: Label | int,
     state: bool | int,
@@ -5891,18 +6462,21 @@ def GotoIfCharacterRegionState(
     """
 
 
+# (1003, 200)
 def GotoIfPlayerInsideRegion(label: Label | int, region: Region | int, min_target_count: int = 1, event_layers=()):
     """
     Calls `GotoIfCharacterRegionState` with `character=10000`, `state=True`.
     """
 
 
+# (1003, 200)
 def GotoIfPlayerOutsideRegion(label: Label | int, region: Region | int, min_target_count: int = 1, event_layers=()):
     """
     Calls `GotoIfCharacterRegionState` with `character=10000`, `state=False`.
     """
 
 
+# (1003, 200)
 def GotoIfCharacterInsideRegion(
     label: Label | int,
     character: Character | int,
@@ -5915,6 +6489,7 @@ def GotoIfCharacterInsideRegion(
     """
 
 
+# (1003, 200)
 def GotoIfCharacterOutsideRegion(
     label: Label | int,
     character: Character | int,
@@ -5927,6 +6502,7 @@ def GotoIfCharacterOutsideRegion(
     """
 
 
+# (1003, 201)
 def ReturnIfCharacterRegionState(
     event_return_type: EventReturnType | int,
     state: bool | int,
@@ -5940,30 +6516,35 @@ def ReturnIfCharacterRegionState(
     """
 
 
+# (1003, 201)
 def EndIfPlayerInsideRegion(region: Region | int, min_target_count: int = 1, event_layers=()):
     """
     Calls `ReturnIfCharacterRegionState` with `event_return_type=0`, `character=10000`, `state=True`.
     """
 
 
+# (1003, 201)
 def EndIfPlayerOutsideRegion(region: Region | int, min_target_count: int = 1, event_layers=()):
     """
     Calls `ReturnIfCharacterRegionState` with `event_return_type=0`, `character=10000`, `state=False`.
     """
 
 
+# (1003, 201)
 def RestartIfPlayerInsideRegion(region: Region | int, min_target_count: int = 1, event_layers=()):
     """
     Calls `ReturnIfCharacterRegionState` with `event_return_type=1`, `character=10000`, `state=True`.
     """
 
 
+# (1003, 201)
 def RestartIfPlayerOutsideRegion(region: Region | int, min_target_count: int = 1, event_layers=()):
     """
     Calls `ReturnIfCharacterRegionState` with `event_return_type=1`, `character=10000`, `state=False`.
     """
 
 
+# (1003, 201)
 def EndIfCharacterInsideRegion(
     character: Character | int,
     region: Region | int,
@@ -5975,6 +6556,7 @@ def EndIfCharacterInsideRegion(
     """
 
 
+# (1003, 201)
 def EndIfCharacterOutsideRegion(
     character: Character | int,
     region: Region | int,
@@ -5986,6 +6568,7 @@ def EndIfCharacterOutsideRegion(
     """
 
 
+# (1003, 201)
 def RestartIfCharacterInsideRegion(
     character: Character | int,
     region: Region | int,
@@ -5997,6 +6580,7 @@ def RestartIfCharacterInsideRegion(
     """
 
 
+# (1003, 201)
 def RestartIfCharacterOutsideRegion(
     character: Character | int,
     region: Region | int,
@@ -6008,6 +6592,7 @@ def RestartIfCharacterOutsideRegion(
     """
 
 
+# (1003, 202)
 def SkipLinesIfCharacterRegionState(
     line_count: int,
     state: bool | int,
@@ -6021,18 +6606,21 @@ def SkipLinesIfCharacterRegionState(
     """
 
 
+# (1003, 202)
 def SkipLinesIfPlayerInsideRegion(line_count: int, region: Region | int, min_target_count: int = 1, event_layers=()):
     """
     Calls `SkipLinesIfCharacterRegionState` with `state=True`, `character=10000`.
     """
 
 
+# (1003, 202)
 def SkipLinesIfPlayerOutsideRegion(line_count: int, region: Region | int, min_target_count: int = 1, event_layers=()):
     """
     Calls `SkipLinesIfCharacterRegionState` with `state=False`, `character=10000`.
     """
 
 
+# (1003, 202)
 def SkipLinesIfCharacterInsideRegion(
     line_count: int,
     character: Character | int,
@@ -6045,6 +6633,7 @@ def SkipLinesIfCharacterInsideRegion(
     """
 
 
+# (1003, 202)
 def SkipLinesIfCharacterOutsideRegion(
     line_count: int,
     character: Character | int,
@@ -6057,12 +6646,14 @@ def SkipLinesIfCharacterOutsideRegion(
     """
 
 
+# (1003, 211)
 def GotoIfHollowArenaMatchType(label: Label | int, match_type: HollowArenaMatchType | int, event_layers=()):
     """
     TODO
     """
 
 
+# (1005, 101)
 def GotoIfObjectDestructionState(
     label: Label | int,
     state: bool | int,
@@ -6076,6 +6667,7 @@ def GotoIfObjectDestructionState(
     """
 
 
+# (1005, 101)
 def GotoIfObjectDestroyed(
     label: Label | int,
     obj: Object | int,
@@ -6088,6 +6680,7 @@ def GotoIfObjectDestroyed(
     """
 
 
+# (1005, 101)
 def GotoIfObjectNotDestroyed(
     label: Label | int,
     obj: Object | int,
@@ -6100,132 +6693,154 @@ def GotoIfObjectNotDestroyed(
     """
 
 
+# (1014, 0)
 def DefineLabel_0(event_layers=()):
     """
     Define position of label 0 for Goto instructions.
     """
 
 
+# (1014, 1)
 def DefineLabel_1(event_layers=()):
     """
     Define position of label 1 for Goto instructions.
     """
 
 
+# (1014, 2)
 def DefineLabel_2(event_layers=()):
     """
     Define position of label 2 for Goto instructions.
     """
 
 
+# (1014, 3)
 def DefineLabel_3(event_layers=()):
     """
     Define position of label 3 for Goto instructions.
     """
 
 
+# (1014, 4)
 def DefineLabel_4(event_layers=()):
     """
     Define position of label 4 for Goto instructions.
     """
 
 
+# (1014, 5)
 def DefineLabel_5(event_layers=()):
     """
     Define position of label 5 for Goto instructions.
     """
 
 
+# (1014, 6)
 def DefineLabel_6(event_layers=()):
     """
     Define position of label 6 for Goto instructions.
     """
 
 
+# (1014, 7)
 def DefineLabel_7(event_layers=()):
     """
     Define position of label 7 for Goto instructions.
     """
 
 
+# (1014, 8)
 def DefineLabel_8(event_layers=()):
     """
     Define position of label 8 for Goto instructions.
     """
 
 
+# (1014, 9)
 def DefineLabel_9(event_layers=()):
     """
     Define position of label 9 for Goto instructions.
     """
 
 
+# (1014, 10)
 def DefineLabel_10(event_layers=()):
     """
     Define position of label 10 for Goto instructions.
     """
 
 
+# (1014, 11)
 def DefineLabel_11(event_layers=()):
     """
     Define position of label 11 for Goto instructions.
     """
 
 
+# (1014, 12)
 def DefineLabel_12(event_layers=()):
     """
     Define position of label 12 for Goto instructions.
     """
 
 
+# (1014, 13)
 def DefineLabel_13(event_layers=()):
     """
     Define position of label 13 for Goto instructions.
     """
 
 
+# (1014, 14)
 def DefineLabel_14(event_layers=()):
     """
     Define position of label 14 for Goto instructions.
     """
 
 
+# (1014, 15)
 def DefineLabel_15(event_layers=()):
     """
     Define position of label 15 for Goto instructions.
     """
 
 
+# (1014, 16)
 def DefineLabel_16(event_layers=()):
     """
     Define position of label 16 for Goto instructions.
     """
 
 
+# (1014, 17)
 def DefineLabel_17(event_layers=()):
     """
     Define position of label 17 for Goto instructions.
     """
 
 
+# (1014, 18)
 def DefineLabel_18(event_layers=()):
     """
     Define position of label 18 for Goto instructions.
     """
 
 
+# (1014, 19)
 def DefineLabel_19(event_layers=()):
     """
     Define position of label 19 for Goto instructions.
     """
 
 
+# (1014, 20)
 def DefineLabel_20(event_layers=()):
     """
     Define position of label 20 for Goto instructions.
     """
 
 
+# (2002, 6)
 def PlayCutsceneAndMovePlayerAndSetTimePeriod(
     cutscene: int,
     cutscene_flags: CutsceneFlags | int,
@@ -6245,6 +6860,7 @@ def PlayCutsceneAndMovePlayerAndSetTimePeriod(
     """
 
 
+# (2002, 7)
 def PlayCutsceneAndSetTimePeriod(
     cutscene: int,
     cutscene_flags: CutsceneFlags | int,
@@ -6257,12 +6873,14 @@ def PlayCutsceneAndSetTimePeriod(
     """
 
 
+# (2002, 8)
 def PlayCutsceneAndMovePlayer_Dummy(move_to_region: Region | int, game_map: Map | tuple | list, event_layers=()):
     """
     Likely not used, doesn't even take a cutscene ID argument.
     """
 
 
+# (2002, 9)
 def PlayCutsceneAndMovePlayerAndSetMapCeremony(
     cutscene: int,
     cutscene_flags: CutsceneFlags | int,
@@ -6280,6 +6898,7 @@ def PlayCutsceneAndMovePlayerAndSetMapCeremony(
     """
 
 
+# (2002, 10)
 def PlayCutsceneAndSetMapCeremony(
     cutscene: int,
     cutscene_flags: CutsceneFlags | int,
@@ -6293,6 +6912,7 @@ def PlayCutsceneAndSetMapCeremony(
     """
 
 
+# (2002, 11)
 def PlayCutsceneAndMoveSpecificPlayer_WithUnknowns(
     cutscene_id: int,
     cutscene_flags: CutsceneFlags | int,
@@ -6308,6 +6928,7 @@ def PlayCutsceneAndMoveSpecificPlayer_WithUnknowns(
     """
 
 
+# (2002, 12)
 def PlayCutsceneAndMoveSpecificPlayer_WithOtherRegion(
     cutscene_id: int,
     cutscene_flags: CutsceneFlags | int,
@@ -6322,6 +6943,7 @@ def PlayCutsceneAndMoveSpecificPlayer_WithOtherRegion(
     """
 
 
+# (2003, 27)
 def Unknown_2003_27(arg1: int, event_layers=()):
     """
     No information. Used exactly once, after the cutscene that played when Ludwig's first phase was defeated
@@ -6329,6 +6951,7 @@ def Unknown_2003_27(arg1: int, event_layers=()):
     """
 
 
+# (2003, 42)
 def StoreItemAmountSpecifiedByFlagValue(
     item_type: ItemType | int,
     item: BaseItemParam | int,
@@ -6341,6 +6964,7 @@ def StoreItemAmountSpecifiedByFlagValue(
     """
 
 
+# (2003, 43)
 def GivePlayerItemAmountSpecifiedByFlagValue(
     item_type: ItemType | int,
     item: BaseItemParam | int,
@@ -6354,24 +6978,28 @@ def GivePlayerItemAmountSpecifiedByFlagValue(
     """
 
 
+# (2003, 44)
 def SetDirectionDisplayState(state: bool | int, event_layers=()):
     """
     Not sure what this is.
     """
 
 
+# (2003, 44)
 def EnableDirectionDisplayState(event_layers=()):
     """
     Calls `SetDirectionDisplayState` with `state=True`.
     """
 
 
+# (2003, 44)
 def DisableDirectionDisplayState(event_layers=()):
     """
     Calls `SetDirectionDisplayState` with `state=False`.
     """
 
 
+# (2003, 45)
 def SetMapHitGridCorrespondence(
     collision: Collision | int,
     level: int,
@@ -6385,6 +7013,7 @@ def SetMapHitGridCorrespondence(
     """
 
 
+# (2003, 45)
 def EnableMapHitGridCorrespondence(
     collision: Collision | int,
     level: int,
@@ -6397,6 +7026,7 @@ def EnableMapHitGridCorrespondence(
     """
 
 
+# (2003, 45)
 def DisableMapHitGridCorrespondence(
     collision: Collision | int,
     level: int,
@@ -6409,36 +7039,42 @@ def DisableMapHitGridCorrespondence(
     """
 
 
+# (2003, 46)
 def SetMapContentImageDisplayState(content_image_part_id: int, state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 47)
 def SetMapBoundariesDisplay(hierarchy: int, grid_coord_x: int, grid_coord_y: int, state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 48)
 def SetAreaWind(region: Region | int, state: bool | int, duration: float, wind_parameter_id: int, event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 49)
 def WarpPlayerToRespawnPoint(respawn_point_id: int, event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 50)
 def StartEnemySpawner(spawner_id: int, event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 51)
 def SummonNPC(
     sign_type: SingleplayerSummonSignType | int,
     character: Character | int,
@@ -6452,78 +7088,91 @@ def SummonNPC(
     """
 
 
+# (2003, 52)
 def InitializeWarpObject(warp_object_id: int, event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 54)
 def ForceSpawnerToSpawn(spawner: SpawnerEvent | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 57)
 def SetCurrentMapCeremony(ceremony_id: int, event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 59)
 def SetMapCeremony(game_map: Map | tuple | list, ceremony_id: int, event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 61)
 def DisplayEpitaphMessage(message: EventText | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 62)
 def SetNetworkConnectedFlagState(flag: Flag | int, state: FlagSetting | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 63)
 def SetNetworkConnectedFlagRangeState(flag_range: FlagRange | tuple | list, state: FlagSetting | int, event_layers=()):
     """
     Network-synchronized variant of `SetFlagRangeState` (2003[22]).
     """
 
 
+# (2003, 63)
 def EnableNetworkConnectedFlagRange(flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `SetNetworkConnectedFlagRangeState` with `state=1`.
     """
 
 
+# (2003, 63)
 def DisableNetworkConnectedFlagRange(flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `SetNetworkConnectedFlagRangeState` with `state=0`.
     """
 
 
+# (2003, 63)
 def ToggleNetworkConnectedFlagRange(flag_range: FlagRange | tuple | list, event_layers=()):
     """
     Calls `SetNetworkConnectedFlagRangeState` with `state=2`.
     """
 
 
+# (2003, 64)
 def SetOmissionModeCounts(level_1_count: int, level_2_count: int, event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 65)
 def ResetOmissionModeCountsToDefault(event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 66)
 def InitializeCrowTrade(
     item_type: ItemType | int,
     item_id: BaseItemParam | int,
@@ -6537,90 +7186,105 @@ def InitializeCrowTrade(
     """
 
 
+# (2003, 67)
 def InitializeCrowTradeRegion(region: Region | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 70)
 def SetNetworkInteractionState(state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 71)
 def SetHUDVisibilityState(is_invisible: bool | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 71)
 def EnableHUDVisibility(event_layers=()):
     """
     Calls `SetHUDVisibilityState` with `is_invisible=False`.
     """
 
 
+# (2003, 71)
 def DisableHUDVisibility(event_layers=()):
     """
     Calls `SetHUDVisibilityState` with `is_invisible=True`.
     """
 
 
+# (2003, 72)
 def SetBonfireWarpingState(bonfire_obj: Object | int, animation: int, state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 72)
 def EnableBonfireWarping(bonfire_obj: Object | int, animation: int, event_layers=()):
     """
     Calls `SetBonfireWarpingState` with `state=True`.
     """
 
 
+# (2003, 72)
 def DisableBonfireWarping(bonfire_obj: Object | int, animation: int, event_layers=()):
     """
     Calls `SetBonfireWarpingState` with `state=False`.
     """
 
 
+# (2003, 73)
 def SetAutogeneratedEventSpecificFlag_1(unknown1: int, unknown2: int, event_layers=()):
     """
     No idea, but probably relates to setting the flag whose ID matches the event ID.
     """
 
 
+# (2003, 74)
 def HandleBossDefeatAndDisplayBanner(boss: int, banner: BannerType | int, event_layers=()):
     """
     Not sure if the 'boss' is a GameAreaParam or just Character.
     """
 
 
+# (2003, 75)
 def SetAutogeneratedEventSpecificFlag_2(unknown1: int, unknown2: int, event_layers=()):
     """
     No idea, but probably relates to setting the flag whose ID matches the event ID.
     """
 
 
+# (2003, 76)
 def SetLoadingScreenTipsState(tips_disabled: bool | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 76)
 def EnableLoadingScreenTips(event_layers=()):
     """
     Calls `SetLoadingScreenTipsState` with `tips_disabled=False`.
     """
 
 
+# (2003, 76)
 def DisableLoadingScreenTips(event_layers=()):
     """
     Calls `SetLoadingScreenTipsState` with `tips_disabled=True`.
     """
 
 
+# (2003, 77)
 def AwardGestureItem(gesture_id: int, item_type: ItemType | int, item_id: int, event_layers=()):
     """
     Not sure if this awards an actual gesture (then why multiple args?) or awards it based on a gesture (but
@@ -6628,18 +7292,21 @@ def AwardGestureItem(gesture_id: int, item_type: ItemType | int, item_id: int, e
     """
 
 
+# (2003, 78)
 def SendNPCSummonHome(character: Character | int, event_layers=()):
     """
     Identical to Bloodborne version, but with different index.
     """
 
 
+# (2003, 79)
 def Unknown_2003_79(unknown1: int, event_layers=()):
     """
     TODO
     """
 
 
+# (2003, 80)
 def SetDecoratedBossHealthBarState(
     state: bool | int,
     character: Character | int,
@@ -6654,6 +7321,7 @@ def SetDecoratedBossHealthBarState(
     """
 
 
+# (2003, 81)
 def PlaceNPCSummonSign_WithoutEmber(
     sign_type: SummonSignType | int,
     character: Character | int,
@@ -6667,24 +7335,28 @@ def PlaceNPCSummonSign_WithoutEmber(
     """
 
 
+# (2004, 48)
 def ChangeCharacterCloth(character: Character | int, bit_count: int, state_id: int, event_layers=()):
     """
     TODO
     """
 
 
+# (2004, 49)
 def ChangePatrolBehavior(character: Character | int, patrol_information_id: int, event_layers=()):
     """
     I don't know what a 'patrol_information_id' actually is.
     """
 
 
+# (2004, 50)
 def SetLockOnPoint(character: Character | int, lock_on_dummy_id: int, state: bool | int, event_layers=()):
     """
     Presumably changes the point that is locked on to by the player.
     """
 
 
+# (2004, 51)
 def Test_RequestRagdollRestraint(
     recipient_character: Character | int,
     recipient_target_rigid_index: int,
@@ -6699,30 +7371,35 @@ def Test_RequestRagdollRestraint(
     """
 
 
+# (2004, 52)
 def ChangePlayerCharacterInitParam(character_init_param: int, event_layers=()):
     """
     I assume this affects the player.
     """
 
 
+# (2004, 53)
 def AdaptSpecialEffectHealthChangeToNPCPart(character: Character | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2004, 54)
 def ImmediateActivate(character: Character | int, state: bool | int, event_layers=()):
     """
     Not sure. Sets draw state *really* quickly?
     """
 
 
+# (2004, 55)
 def SetCharacterTalkRange(character: Character | int, distance: float, event_layers=()):
     """
     TODO
     """
 
 
+# (2004, 57)
 def IncrementCharacterNewGameCycle(character: Character | int, event_layers=()):
     """
     Interesting - apparently you can increase the NG+ level of a specific character. (No reset function, but it
@@ -6730,42 +7407,49 @@ def IncrementCharacterNewGameCycle(character: Character | int, event_layers=()):
     """
 
 
+# (2004, 58)
 def SetMultiplayerBuffs_NonBoss(character: Character | int, state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2004, 59)
 def Unknown_2004_59(character: Character | int, state: bool | int, event_layers=()):
     """
     Examine usage.
     """
 
 
+# (2004, 60)
 def SetPlayerRemainingYoelLevels(level_count: int, event_layers=()):
     """
     TODO
     """
 
 
+# (2005, 16)
 def ExtinguishBurningObjects(event_layers=()):
     """
     TODO
     """
 
 
+# (2005, 17)
 def ShowObjectByMapCeremony(obj: Object | int, ceremony_id: int, unknown: int, event_layers=()):
     """
     TODO
     """
 
 
+# (2005, 19)
 def DestroyObject_NoSlot(obj: Object | int, event_layers=()):
     """
     No 'slot' argument here.
     """
 
 
+# (2007, 10)
 def AwaitDialogResponse(
     message: EventText | int,
     button_type: ButtonType | int,
@@ -6782,36 +7466,42 @@ def AwaitDialogResponse(
     """
 
 
+# (2007, 11)
 def DisplayAreaWelcomeMessage(message: EventText | int, event_layers=()):
     """
     Not sure what this looks like exactly.
     """
 
 
+# (2007, 12)
 def DisplayHollowArenaMessage(message: EventText | int, unknown: int, pad_enabled: bool | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2009, 8)
 def BanishInvaders(unknown: int, event_layers=()):
     """
     TODO
     """
 
 
+# (2009, 10)
 def BanishPhantomsAndUpdateServerPvPStats(unknown: int, event_layers=()):
     """
     TODO
     """
 
 
+# (2009, 11)
 def BanishPhantoms(unknown: int, event_layers=()):
     """
     TODO
     """
 
 
+# (2010, 4)
 def SetBossMusicState(sound_id: SoundEvent | int, state: bool | int, event_layers=()):
     """
     Not sure how this differs from the standard map sound instructions, but my guess is that it fades the music
@@ -6822,84 +7512,98 @@ def SetBossMusicState(sound_id: SoundEvent | int, state: bool | int, event_layer
     """
 
 
+# (2010, 4)
 def EnableBossMusic(sound_id: SoundEvent | int, event_layers=()):
     """
     Calls `SetBossMusicState` with `state=True`.
     """
 
 
+# (2010, 4)
 def DisableBossMusic(sound_id: SoundEvent | int, event_layers=()):
     """
     Calls `SetBossMusicState` with `state=False`.
     """
 
 
+# (2010, 5)
 def NotifyDoorEventSoundDampening(obj: Object | int, state: DoorState | int, event_layers=()):
     """
     No idea what this is or what entity the first argument is. Probably the door object.
     """
 
 
+# (2010, 6)
 def SetSoundEventWithFade(sound_id: SoundEvent | int, state: bool | int, fade_duration: float, event_layers=()):
     """
     TODO
     """
 
 
+# (2010, 6)
 def EnableSoundEventWithFade(sound_id: SoundEvent | int, fade_duration: float, event_layers=()):
     """
     Calls `SetSoundEventWithFade` with `state=True`.
     """
 
 
+# (2010, 6)
 def DisableSoundEventWithFade(sound_id: SoundEvent | int, fade_duration: float, event_layers=()):
     """
     Calls `SetSoundEventWithFade` with `state=False`.
     """
 
 
+# (2010, 7)
 def Unknown_2010_07(sound_id: SoundEvent | int, event_layers=()):
     """
     Unknown SoundEvent instruction.
     """
 
 
+# (2011, 3)
 def SetCollisionResState(collision: Collision | int, state: bool | int, event_layers=()):
     """
     No idea what this is.
     """
 
 
+# (2011, 4)
 def ActivateCollisionAndCreateNavmesh(collision: Collision | int, state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2012, 8)
 def SetAreaWelcomeMessageState(state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2013, 1)
 def CreatePlayLog(name: StringOffset | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2013, 2)
 def StartPlayLogMeasurement(measurement_id: int, name: StringOffset | int, overwrite: bool | int, event_layers=()):
     """
     TODO
     """
 
 
+# (2013, 3)
 def StopPlayLogMeasurement(measurement_id: int, event_layers=()):
     """
     TODO
     """
 
 
+# (2013, 4)
 def PlayLogParameterOutput(
     category: PlayerPlayLogParameter | int,
     name: StringOffset | int,

@@ -543,7 +543,7 @@ def Event_11215000():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1212887)
+    FaceEntity(PLAYER, target_entity=1212887)
     ForceAnimation(PLAYER, 7410, wait_for_completion=True)
     Restart()
 
@@ -564,7 +564,7 @@ def Event_11215001():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1212887)
+    FaceEntity(PLAYER, target_entity=1212887)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -807,7 +807,7 @@ def Event_11215010():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1212897)
+    FaceEntity(PLAYER, target_entity=1212897)
     ForceAnimation(PLAYER, 7410, wait_for_completion=True)
     Restart()
 
@@ -828,7 +828,7 @@ def Event_11215011():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1212897)
+    FaceEntity(PLAYER, target_entity=1212897)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -982,7 +982,7 @@ def Event_11215020():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1212997)
+    FaceEntity(PLAYER, target_entity=1212997)
     ForceAnimation(PLAYER, 7410, wait_for_completion=True)
     Restart()
 
@@ -1003,7 +1003,7 @@ def Event_11215021():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1212997)
+    FaceEntity(PLAYER, target_entity=1212997)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -1171,7 +1171,7 @@ def Event_11215060():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1212907)
+    FaceEntity(PLAYER, target_entity=1212907)
     ForceAnimation(PLAYER, 7410, wait_for_completion=True)
     Restart()
 
@@ -1193,7 +1193,7 @@ def Event_11215061():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1212907)
+    FaceEntity(PLAYER, target_entity=1212907)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -3749,7 +3749,7 @@ def Event_11210710(_, anchor_entity: int, player_start: int, prompt_text: int, r
     
     EnableFlag(11215341)
     EnableFlag(11210709)
-    RotateToFaceEntity(PLAYER, target_entity=anchor_entity)
+    FaceEntity(PLAYER, target_entity=anchor_entity)
     ForceAnimation(PLAYER, 7114)
     Wait(0.699999988079071)
     CreateTemporaryVFX(vfx_id=90021, anchor_entity=PLAYER, dummy_id=17, anchor_type=CoordEntityType.Character)

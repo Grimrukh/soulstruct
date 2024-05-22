@@ -389,9 +389,10 @@ class EMEVD(GameFile, abc.ABC):
                 missing_done = set()
                 for game_types, value in enums_manager.get_sorted_missing_items():
                     if "Flag" in game_types:
+                        # We warn about the total number of missing flags, but not each one (generally many).
                         missing_flag_count += 1
                         continue
-                    if (game_types, value) in missing_done:
+                    if (game_types, value) in missing_done or value == 0:
                         continue
                     _LOGGER.warning(
                         f"{self.map_name}: Missing '{game_types}' entity ID: {value}"

@@ -13,6 +13,8 @@ class GameEnumsManager(_BaseGameEnumsManager):
         Character,
         PlayerStart,
         Collision,
+        UnusedCharacter,
+        UnusedObject,
         SoundEvent,
         VFXEvent,
         SpawnerEvent,
@@ -30,3 +32,16 @@ class GameEnumsManager(_BaseGameEnumsManager):
         AccessoryParam,
         Animation,
     )
+
+    RESERVED_GLOBAL_IDS = {
+        10000: "PLAYER",
+        10001: "CLIENT_PLAYER_1",
+        10002: "CLIENT_PLAYER_2",
+        10003: "CLIENT_PLAYER_3",
+        10004: "CLIENT_PLAYER_4",
+        10005: "CLIENT_PLAYER_5",
+        10006: "CLIENT_PLAYER_6",
+        10007: "CLIENT_PLAYER_7",
+        10008: "CLIENT_PLAYER_8",
+        10009: "CLIENT_PLAYER_9",
+    }

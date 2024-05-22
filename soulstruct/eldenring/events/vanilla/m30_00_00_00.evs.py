@@ -386,7 +386,7 @@ def Event_30009570(_, flag: uint, destination: uint, left_flag: uint, cancel_fla
     # --- Label 2 --- #
     DefineLabel(2)
     Move(PLAYER, destination=destination, destination_type=CoordEntityType.Asset, dummy_id=191, short_move=True)
-    RotateToFaceEntity(PLAYER, destination, animation=60010)
+    FaceEntity(PLAYER, destination, animation=60010)
     Wait(seconds)
     DisplayDialog(text=208000, anchor_entity=destination)
     RemoveGoodFromPlayer(item=8000, quantity=1)

@@ -394,7 +394,7 @@ def Event_11305390():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1302997)
+    FaceEntity(PLAYER, target_entity=1302997)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -415,7 +415,7 @@ def Event_11305391():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1302997)
+    FaceEntity(PLAYER, target_entity=1302997)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -1800,7 +1800,7 @@ def Event_11305027():
     
     MAIN.Await(CharacterInsideRegion(6550, region=1302998))
     
-    RotateToFaceEntity(6550, target_entity=1302997)
+    FaceEntity(6550, target_entity=1302997)
     ForceAnimation(6550, 7410)
     AICommand(6550, command_id=-1, command_slot=0)
     ReplanAI(6550)

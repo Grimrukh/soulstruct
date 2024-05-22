@@ -542,7 +542,7 @@ def Event_11052810():
     WaitFramesAfterCutscene(frames=1)
     EnableNetworkFlag(11050801)
     if PlayerNotInOwnWorld():
-        SetBossMusic(bgm_boss_conv_param_id=472000, state=BossMusicState.Stop2)
+        SetBossMusic(bgm_boss_conv_param_id=472000, state=BossMusicState.LongFadeOut)
     if PlayerInOwnWorld():
         SetCameraAngle(x_angle=7.5, y_angle=-37.15999984741211)
     DisableAsset(Assets.AEG228_076_3500)

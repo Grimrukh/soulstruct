@@ -9,7 +9,7 @@ from soulstruct.darksouls1ptde.events.emevd.emedf import EMEDF as PTDE_EMEDF
 from soulstruct.darksouls1r.maps.constants import get_map_variable_name
 from soulstruct.darksouls1r.game_types import *
 from soulstruct.utilities.files import PACKAGE_PATH
-from .enums import *
+from ..enums import *
 
 __all__ = ["EMEDF", "EMEDF_ALIASES", "EMEDF_TESTS", "EMEDF_COMPARISON_TESTS"]
 

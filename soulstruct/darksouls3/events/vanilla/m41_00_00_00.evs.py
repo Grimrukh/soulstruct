@@ -280,7 +280,7 @@ def Event_14105500():
     """Event 14105500"""
     MAIN.Await(ActionButtonParamActivated(action_button_id=9343, entity=4101101))
     
-    RotateToFaceEntity(PLAYER, 4101101, animation=91040)
+    FaceEntity(PLAYER, 4101101, animation=91040)
     Wait(3.0)
     WarpToMap(game_map=KILN_OF_THE_FIRST_FLAME, player_start=4100120)
 
@@ -304,7 +304,7 @@ def Event_14105510():
     MAIN.Await(AND_2)
     
     BanishPhantoms(unknown=0)
-    RotateToFaceEntity(PLAYER, 4101102, animation=91040)
+    FaceEntity(PLAYER, 4101102, animation=91040)
     Wait(3.0)
     WarpToMap(game_map=DREG_HEAP, player_start=5002110)
     EnableFlag(14100510)

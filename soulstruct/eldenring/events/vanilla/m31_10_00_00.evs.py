@@ -368,9 +368,9 @@ def Event_31102815():
         return RESTART
     SuppressSoundForFogGate(duration=5.0)
     if CharacterDoesNotHaveSpecialEffect(character=PLAYER, special_effect=4250):
-        RotateToFaceEntity(PLAYER, 31102800, animation=60060, wait_for_completion=True)
+        FaceEntity(PLAYER, 31102800, animation=60060, wait_for_completion=True)
     else:
-        RotateToFaceEntity(PLAYER, 31102800, animation=60060)
+        FaceEntity(PLAYER, 31102800, animation=60060)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -418,7 +418,7 @@ def Event_31102815():
     
     MAIN.Await(AND_10)
     
-    RotateToFaceEntity(PLAYER, 31102800, animation=60060, wait_for_completion=True)
+    FaceEntity(PLAYER, 31102800, animation=60060, wait_for_completion=True)
     BanishInvaders(unknown=0)
     Restart()
 

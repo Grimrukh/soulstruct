@@ -357,7 +357,7 @@ def Event_1049392302(_, asset: uint, flag: uint):
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, asset, wait_for_completion=True)
+    FaceEntity(PLAYER, asset, wait_for_completion=True)
     ForceAnimation(PLAYER, 60010)
     Wait(1.2999999523162842)
     EnableFlag(flag)
@@ -379,7 +379,7 @@ def Event_1049392303(_, asset: uint, flag: uint):
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, asset, wait_for_completion=True)
+    FaceEntity(PLAYER, asset, wait_for_completion=True)
     ForceAnimation(PLAYER, 60010)
     Wait(1.2999999523162842)
     EnableFlag(flag)

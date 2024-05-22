@@ -557,7 +557,7 @@ def Event_11215000():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1212887)
+    FaceEntity(PLAYER, target_entity=1212887)
     ForceAnimation(PLAYER, 7410, wait_for_completion=True)
     Restart()
 
@@ -578,7 +578,7 @@ def Event_11215001():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1212887)
+    FaceEntity(PLAYER, target_entity=1212887)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -821,7 +821,7 @@ def Event_11215010():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1212897)
+    FaceEntity(PLAYER, target_entity=1212897)
     ForceAnimation(PLAYER, 7410, wait_for_completion=True)
     Restart()
 
@@ -842,7 +842,7 @@ def Event_11215011():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1212897)
+    FaceEntity(PLAYER, target_entity=1212897)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -996,7 +996,7 @@ def Event_11215020():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1212997)
+    FaceEntity(PLAYER, target_entity=1212997)
     ForceAnimation(PLAYER, 7410, wait_for_completion=True)
     Restart()
 
@@ -1017,7 +1017,7 @@ def Event_11215021():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1212997)
+    FaceEntity(PLAYER, target_entity=1212997)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -1185,7 +1185,7 @@ def Event_11215060():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1212907)
+    FaceEntity(PLAYER, target_entity=1212907)
     ForceAnimation(PLAYER, 7410, wait_for_completion=True)
     Restart()
 
@@ -1207,7 +1207,7 @@ def Event_11215061():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1212907)
+    FaceEntity(PLAYER, target_entity=1212907)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -3500,7 +3500,7 @@ def Event_11219114():
     MAIN.Await(AND_1)
     
     Move(PLAYER, destination=1219001, destination_type=CoordEntityType.Region, short_move=True)
-    RotateToFaceEntity(PLAYER, target_entity=1212777)
+    FaceEntity(PLAYER, target_entity=1212777)
     ForceAnimation(PLAYER, 7410)
     DisableObject(1211900)
     DeleteVFX(1211901)
@@ -3586,7 +3586,7 @@ def Event_11215843(_, left: int, line_intersects: int, anchor_entity: int, targe
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=target_entity)
+    FaceEntity(PLAYER, target_entity=target_entity)
     ForceAnimation(PLAYER, 7410, wait_for_completion=True)
     Unknown_2003_47()
     Restart()
@@ -6548,7 +6548,7 @@ def Event_11219999():
     
     DisableAI(PLAYER)
     EnableFlag(11219898)
-    RotateToFaceEntity(PLAYER, target_entity=1212510)
+    FaceEntity(PLAYER, target_entity=1212510)
     Wait(10.0)
     EnableAI(PLAYER)
     Restart()

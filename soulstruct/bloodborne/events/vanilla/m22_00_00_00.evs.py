@@ -598,7 +598,7 @@ def Event_12204890():
     MAIN.Await(OR_1)
     
     EndIfLastConditionResultTrue(input_condition=AND_3)
-    RotateToFaceEntity(PLAYER, 2202800, animation=101130)
+    FaceEntity(PLAYER, 2202800, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=2202801))
     AND_5.Add(TimeElapsed(seconds=2.0))
@@ -627,7 +627,7 @@ def Event_12204891():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, 2202800, animation=101130)
+    FaceEntity(PLAYER, 2202800, animation=101130)
     AND_2.Add(CharacterWhitePhantom(PLAYER))
     AND_2.Add(CharacterInsideRegion(PLAYER, region=2202801))
     AND_3.Add(CharacterWhitePhantom(PLAYER))
@@ -2128,7 +2128,7 @@ def Event_12205031():
     
     GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_2)
     ResetAnimation(2200150)
-    RotateToFaceEntity(2200150, PLAYER, animation=3001)
+    FaceEntity(2200150, PLAYER, animation=3001)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -2242,7 +2242,7 @@ def Event_12205080():
     MAIN.Await(OR_1)
     
     GotoIfLastConditionResultFalse(Label.L0, input_condition=AND_1)
-    RotateToFaceEntity(2200205, PLAYER, animation=3012)
+    FaceEntity(2200205, PLAYER, animation=3012)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -2294,7 +2294,7 @@ def Event_12205105(_, character: int, region: int, animation: int, radius: float
     MAIN.Await(OR_2)
     
     GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_2)
-    RotateToFaceEntity(character, PLAYER, animation=animation)
+    FaceEntity(character, PLAYER, animation=animation)
 
     # --- Label 1 --- #
     DefineLabel(1)
@@ -2320,7 +2320,7 @@ def Event_12205110(_, character: int, region: int, radius: float, animation: int
     MAIN.Await(OR_2)
     
     GotoIfLastConditionResultFalse(Label.L0, input_condition=AND_1)
-    RotateToFaceEntity(character, PLAYER, animation=animation)
+    FaceEntity(character, PLAYER, animation=animation)
     EnableAI(character)
     End()
     EnableAI(character)

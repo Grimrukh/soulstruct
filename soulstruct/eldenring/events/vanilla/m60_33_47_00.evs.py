@@ -205,7 +205,7 @@ def Event_1033472610(
 
     # --- Label 5 --- #
     DefineLabel(5)
-    RotateToFaceEntity(PLAYER, anchor_entity, wait_for_completion=True)
+    FaceEntity(PLAYER, anchor_entity, wait_for_completion=True)
     ForceAnimation(PLAYER, 60490)
     Wait(3.0)
     WarpToMap(game_map=(area_id, block_id, cc_id, dd_id), player_start=player_start)

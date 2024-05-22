@@ -1799,7 +1799,7 @@ def Event_12414730():
     MAIN.Await(OR_1)
     
     EndIfLastConditionResultTrue(input_condition=AND_3)
-    RotateToFaceEntity(PLAYER, 2412800, animation=101130)
+    FaceEntity(PLAYER, 2412800, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=2412801))
     AND_5.Add(CharacterHuman(PLAYER))
@@ -1829,7 +1829,7 @@ def Event_12414731():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, 2412800, animation=101130)
+    FaceEntity(PLAYER, 2412800, animation=101130)
     AND_2.Add(CharacterWhitePhantom(PLAYER))
     AND_2.Add(CharacterInsideRegion(PLAYER, region=2412801))
     AND_3.Add(CharacterWhitePhantom(PLAYER))
@@ -2277,7 +2277,7 @@ def Event_12414810():
     MAIN.Await(OR_1)
     
     EndIfLastConditionResultTrue(input_condition=AND_3)
-    RotateToFaceEntity(PLAYER, 2412810, animation=101130)
+    FaceEntity(PLAYER, 2412810, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=2412811))
     AND_5.Add(CharacterHuman(PLAYER))
@@ -2306,7 +2306,7 @@ def Event_12414811():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, 2412810, animation=101130)
+    FaceEntity(PLAYER, 2412810, animation=101130)
     AND_2.Add(CharacterWhitePhantom(PLAYER))
     AND_2.Add(CharacterInsideRegion(PLAYER, region=2412811))
     AND_3.Add(CharacterWhitePhantom(PLAYER))
@@ -6224,7 +6224,7 @@ def Event_12414460(
     MAIN.Await(AND_1)
     
     ResetAnimation(character)
-    RotateToFaceEntity(character, region_1, animation=animation, wait_for_completion=True)
+    FaceEntity(character, region_1, animation=animation, wait_for_completion=True)
     AND_2.Add(CharacterInsideRegion(character, region=region_2))
     if not AND_2:
         return RESTART
@@ -6384,7 +6384,7 @@ def Event_12414504():
     MAIN.Await(AND_1)
     
     ResetAnimation(2410740)
-    RotateToFaceEntity(2410740, 2412800, animation=101130, wait_for_completion=True)
+    FaceEntity(2410740, 2412800, animation=101130, wait_for_completion=True)
     AICommand(2410740, command_id=-1, command_slot=0)
     ReplanAI(2410740)
 
@@ -6561,7 +6561,7 @@ def Event_12414605():
     MAIN.Await(AND_1)
     
     ResetAnimation(2410158)
-    RotateToFaceEntity(2410158, 2412800, animation=7014, wait_for_completion=True)
+    FaceEntity(2410158, 2412800, animation=7014, wait_for_completion=True)
     AICommand(2410158, command_id=-1, command_slot=0)
     ReplanAI(2410158)
 

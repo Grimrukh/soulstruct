@@ -290,9 +290,9 @@ def Event_31152825(_, flag: uint, region: uint, character: uint, target_entity: 
     
     RestartIfLastConditionResultTrue(input_condition=OR_15)
     if ValueNotEqual(left=animation, right=0):
-        RotateToFaceEntity(character, target_entity, animation=animation, wait_for_completion=True)
+        FaceEntity(character, target_entity, animation=animation, wait_for_completion=True)
     else:
-        RotateToFaceEntity(character, target_entity, animation=60060, wait_for_completion=True)
+        FaceEntity(character, target_entity, animation=60060, wait_for_completion=True)
     OR_4.Add(TimeElapsed(seconds=3.0))
     OR_5.Add(OR_4)
     OR_5.Add(CharacterInsideRegion(character=character, region=region))

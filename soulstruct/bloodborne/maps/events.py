@@ -24,7 +24,7 @@ import abc
 import typing as tp
 from dataclasses import dataclass, field
 
-from soulstruct.bloodborne.events.emevd.enums import SoundType
+from soulstruct.bloodborne.events.enums import SoundType
 from soulstruct.bloodborne.game_types import *
 from soulstruct.base.maps.msb.events import BaseMSBEvent
 from soulstruct.base.maps.msb import MSBEntry

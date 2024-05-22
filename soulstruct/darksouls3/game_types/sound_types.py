@@ -22,7 +22,7 @@ class MusicSound(Sound):
 
     @classmethod
     def get_sound_enum(cls):
-        from ..events.emevd.enums import SoundType
+        from ..events.enums import SoundType
         return SoundType.m_Music
 
 
@@ -31,7 +31,7 @@ class SFXSound(Sound):
 
     @classmethod
     def get_sound_enum(cls):
-        from ..events.emevd.enums import SoundType
+        from ..events.enums import SoundType
         return SoundType.s_SFX
 
 
@@ -40,7 +40,7 @@ class ObjectSound(Sound):
 
     @classmethod
     def get_sound_enum(cls):
-        from ..events.emevd.enums import SoundType
+        from ..events.enums import SoundType
         return SoundType.o_Object
 
 
@@ -49,7 +49,7 @@ class VoiceSound(Sound):
 
     @classmethod
     def get_sound_enum(cls):
-        from ..events.emevd.enums import SoundType
+        from ..events.enums import SoundType
         return SoundType.v_Voice
 
 
@@ -58,7 +58,7 @@ class CharacterMotionSound(Sound):
 
     @classmethod
     def get_sound_enum(cls):
-        from ..events.emevd.enums import SoundType
+        from ..events.enums import SoundType
         return SoundType.c_CharacterMotion
 
 

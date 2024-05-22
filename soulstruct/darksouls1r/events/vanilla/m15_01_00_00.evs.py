@@ -470,7 +470,7 @@ def Event_11515380():
     MAIN.Await(AND_1)
     
     EnableFlag(743)
-    RotateToFaceEntity(PLAYER, target_entity=1512897)
+    FaceEntity(PLAYER, target_entity=1512897)
     ForceAnimation(PLAYER, 7410, wait_for_completion=True)
     Restart()
 
@@ -493,7 +493,7 @@ def Event_11515381():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1512897)
+    FaceEntity(PLAYER, target_entity=1512897)
     if FlagDisabled(11510400):
         PlayCutscene(
             150151,
@@ -725,7 +725,7 @@ def Event_11515390():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1512997)
+    FaceEntity(PLAYER, target_entity=1512997)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -746,7 +746,7 @@ def Event_11515391():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1512997)
+    FaceEntity(PLAYER, target_entity=1512997)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -2251,7 +2251,7 @@ def Event_11510460():
     SkipLinesIfLastConditionResultFalse(10, input_condition=AND_1)
     AddSpecialEffect(PLAYER, 4170)
     SkipLinesIfClient(1)
-    RotateToFaceEntity(PLAYER, target_entity=1512897)
+    FaceEntity(PLAYER, target_entity=1512897)
     EnableFlag(11515350)
     SkipLinesIfHost(1)
     if ThisEventFlagEnabled():
@@ -2302,7 +2302,7 @@ def Event_11510461():
     MAIN.Await(FlagEnabled(11515351))
     
     AddSpecialEffect(PLAYER, 4170)
-    RotateToFaceEntity(PLAYER, target_entity=1510600)
+    FaceEntity(PLAYER, target_entity=1510600)
     ForceAnimation(PLAYER, 7895, wait_for_completion=True)
     ForceAnimation(PLAYER, 7896, loop=True)
     
@@ -3010,7 +3010,7 @@ def Event_11515032():
     
     MAIN.Await(CharacterInsideRegion(6543, region=1512998))
     
-    RotateToFaceEntity(6543, target_entity=1512997)
+    FaceEntity(6543, target_entity=1512997)
     ForceAnimation(6543, 7410)
     AICommand(6543, command_id=-1, command_slot=0)
     ReplanAI(6543)
@@ -3053,7 +3053,7 @@ def Event_11515843(_, flag: int, line_intersects: int, anchor_entity: int, targe
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=target_entity)
+    FaceEntity(PLAYER, target_entity=target_entity)
     ForceAnimation(PLAYER, 7410, wait_for_completion=True)
     Unknown_2003_47()
     Restart()

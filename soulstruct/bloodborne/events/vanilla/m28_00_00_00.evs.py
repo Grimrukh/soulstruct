@@ -1266,7 +1266,7 @@ def Event_12805600(
     if ValueNotEqual(left=left, right=1):
         ForceAnimation(character, animation__animation_id)
     else:
-        RotateToFaceEntity(character, PLAYER, animation=animation__animation_id)
+        FaceEntity(character, PLAYER, animation=animation__animation_id)
     Goto(Label.L0)
 
     # --- Label 1 --- #
@@ -2470,7 +2470,7 @@ def Event_12804880():
     MAIN.Await(OR_1)
     
     EndIfLastConditionResultTrue(input_condition=AND_3)
-    RotateToFaceEntity(PLAYER, 2802800, animation=101130, wait_for_completion=True)
+    FaceEntity(PLAYER, 2802800, animation=101130, wait_for_completion=True)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=2802801))
     AND_5.Add(CharacterHuman(PLAYER))
@@ -2499,7 +2499,7 @@ def Event_12804881():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, 2802800, animation=101130, wait_for_completion=True)
+    FaceEntity(PLAYER, 2802800, animation=101130, wait_for_completion=True)
     AND_2.Add(CharacterWhitePhantom(PLAYER))
     AND_2.Add(CharacterInsideRegion(PLAYER, region=2802801))
     AND_3.Add(TimeElapsed(seconds=2.0))
@@ -3559,7 +3559,7 @@ def Event_12804460(
     MAIN.Await(AND_1)
     
     ResetAnimation(character)
-    RotateToFaceEntity(character, region_1, animation=animation, wait_for_completion=True)
+    FaceEntity(character, region_1, animation=animation, wait_for_completion=True)
     AND_2.Add(CharacterInsideRegion(character, region=region_2))
     if not AND_2:
         return RESTART

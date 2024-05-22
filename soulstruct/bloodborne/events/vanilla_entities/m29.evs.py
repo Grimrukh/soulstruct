@@ -2456,7 +2456,7 @@ def Event12901599(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfCharacterBackreadEnabled(0, arg_0_3)
     ForceAnimation(arg_0_3, arg_8_11, loop=True, skip_transition=True)
     IfCharacterInsideRegion(0, PLAYER, region=arg_4_7)
-    RotateToFaceEntity(arg_0_3, PLAYER, animation=arg_12_15, wait_for_completion=False)
+    FaceEntity(arg_0_3, PLAYER, animation=arg_12_15, wait_for_completion=False)
 
 
 def Event12901600(_, arg_0_3: int, arg_4_7: int):
@@ -2851,7 +2851,7 @@ def Event12901697(
     IfCharacterHasTAEEvent(-1, PLAYER, tae_event_id=700)
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(0, input_condition=1)
-    RotateToFaceEntity(arg_0_3, PLAYER, animation=arg_12_15, wait_for_completion=False)
+    FaceEntity(arg_0_3, PLAYER, animation=arg_12_15, wait_for_completion=False)
     EnableFlag(arg_20_23)
     EnableFlag(arg_24_27)
 
@@ -2899,7 +2899,7 @@ def Event12901705(
     IfCharacterHasTAEEvent(-1, PLAYER, tae_event_id=700)
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(0, input_condition=1)
-    RotateToFaceEntity(arg_0_3, PLAYER, animation=arg_12_15, wait_for_completion=False)
+    FaceEntity(arg_0_3, PLAYER, animation=arg_12_15, wait_for_completion=False)
     EnableFlag(arg_20_23)
     EnableFlag(arg_24_27)
 
@@ -5046,7 +5046,7 @@ def Event12904568(_, arg_0_3: int, arg_4_7: int):
     PlaySoundEffect(anchor_entity=arg_4_7, sound_type=SoundType.o_Object, sound_id=43000000)
     EnableCharacter(arg_0_3)
     IfFramesElapsed(0, 3)
-    RotateToFaceEntity(arg_0_3, PLAYER, animation=3024, wait_for_completion=False)
+    FaceEntity(arg_0_3, PLAYER, animation=3024, wait_for_completion=False)
     IfFramesElapsed(0, 1)
     EnableAI(arg_0_3)
 
@@ -5074,7 +5074,7 @@ def Event12904579(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     PlaySoundEffect(anchor_entity=arg_4_7, sound_type=SoundType.o_Object, sound_id=43000000)
     EnableCharacter(arg_0_3)
     IfFramesElapsed(0, 3)
-    RotateToFaceEntity(arg_0_3, PLAYER, animation=arg_12_15, wait_for_completion=False)
+    FaceEntity(arg_0_3, PLAYER, animation=arg_12_15, wait_for_completion=False)
     IfFramesElapsed(0, 1)
     EnableAI(arg_0_3)
 
@@ -5102,7 +5102,7 @@ def Event12904584(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     EnableCharacter(arg_0_3)
     Move(arg_0_3, destination=arg_8_11, destination_type=CoordEntityType.Character, dummy_id=101, short_move=True)
     IfFramesElapsed(0, 3)
-    RotateToFaceEntity(arg_0_3, PLAYER, animation=arg_12_15, wait_for_completion=False)
+    FaceEntity(arg_0_3, PLAYER, animation=arg_12_15, wait_for_completion=False)
     IfFramesElapsed(0, 1)
     EnableAI(arg_0_3)
 
@@ -5314,7 +5314,7 @@ def Event12904736(_, arg_0_3: int, arg_4_7: int, arg_8_11: float):
     SkipLinesIfLastConditionResultFalse(6, 1)
     ForceAnimation(arg_0_3, 3007)
     WaitFrames(50)
-    RotateToFaceEntity(arg_0_3, PLAYER, animation=3006, wait_for_completion=False)
+    FaceEntity(arg_0_3, PLAYER, animation=3006, wait_for_completion=False)
     EnableAI(arg_0_3)
     ReplanAI(arg_0_3)
     End()
@@ -5451,7 +5451,7 @@ def Event12904773(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfFlagDisabled(1, arg_8_11)
     IfActionButtonParamActivated(1, action_button_id=2900010, entity=arg_4_7)
     IfConditionTrue(0, input_condition=1)
-    RotateToFaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
+    FaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     Restart()
 
 
@@ -5473,7 +5473,7 @@ def Event12904775(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfCharacterIsType(1, PLAYER, CharacterType.WhitePhantom)
     IfActionButtonParamActivated(1, action_button_id=2900010, entity=arg_4_7)
     IfConditionTrue(0, input_condition=1)
-    RotateToFaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
+    FaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     Restart()
 
 
@@ -5995,7 +5995,7 @@ def Event12904878(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfFlagDisabled(1, arg_8_11)
     IfActionButtonParamActivated(1, action_button_id=2900010, entity=arg_4_7)
     IfConditionTrue(0, input_condition=1)
-    RotateToFaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
+    FaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     Restart()
 
 
@@ -6017,7 +6017,7 @@ def Event12904880(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfCharacterIsType(1, PLAYER, CharacterType.WhitePhantom)
     IfActionButtonParamActivated(1, action_button_id=2900010, entity=arg_4_7)
     IfConditionTrue(0, input_condition=1)
-    RotateToFaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
+    FaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     Restart()
 
 
@@ -6050,7 +6050,7 @@ def Event12904881(
     SkipLinesIfFlagEnabled(2, arg_16_19)
     EnableObject(arg_24_27)
     CreateVFX(arg_8_11)
-    RotateToFaceEntity(arg_0_3, PLAYER, animation=7021, wait_for_completion=False)
+    FaceEntity(arg_0_3, PLAYER, animation=7021, wait_for_completion=False)
     GotoIfCoopClientCountComparison(Label.L1, ComparisonType.Equal, 0)
     GotoIfCoopClientCountComparison(Label.L2, ComparisonType.Equal, 1)
     GotoIfCoopClientCountComparison(Label.L3, ComparisonType.Equal, 2)
@@ -12440,7 +12440,7 @@ def Event12906789(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfLastConditionResultTrue(3)
-    RotateToFaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
+    FaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     IfCharacterIsHuman(4, PLAYER)
     IfCharacterInsideRegion(-2, PLAYER, region=arg_0_3)
     IfCharacterHasTAEEvent(-2, PLAYER, tae_event_id=700)
@@ -12468,7 +12468,7 @@ def Event12906790(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfCharacterIsType(1, PLAYER, CharacterType.WhitePhantom)
     IfActionButtonParamActivated(1, action_button_id=2900010, entity=arg_4_7)
     IfConditionTrue(0, input_condition=1)
-    RotateToFaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
+    FaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     IfCharacterIsType(2, PLAYER, CharacterType.WhitePhantom)
     IfCharacterInsideRegion(-1, PLAYER, region=arg_0_3)
     IfCharacterHasTAEEvent(-1, PLAYER, tae_event_id=700)
@@ -12690,7 +12690,7 @@ def Event12906796(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfLastConditionResultTrue(3)
-    RotateToFaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
+    FaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     IfCharacterIsHuman(4, PLAYER)
     IfCharacterInsideRegion(-2, PLAYER, region=arg_0_3)
     IfCharacterHasTAEEvent(-2, PLAYER, tae_event_id=700)
@@ -12731,7 +12731,7 @@ def Event12906800(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfLastConditionResultTrue(3)
-    RotateToFaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
+    FaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     IfCharacterIsHuman(4, PLAYER)
     IfCharacterInsideRegion(-2, PLAYER, region=arg_0_3)
     IfCharacterHasTAEEvent(-2, PLAYER, tae_event_id=700)
@@ -12759,7 +12759,7 @@ def Event12906802(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfCharacterIsType(1, PLAYER, CharacterType.WhitePhantom)
     IfActionButtonParamActivated(1, action_button_id=2900010, entity=arg_4_7)
     IfConditionTrue(0, input_condition=1)
-    RotateToFaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
+    FaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     IfCharacterIsType(2, PLAYER, CharacterType.WhitePhantom)
     IfCharacterInsideRegion(-1, PLAYER, region=2412801)
     IfCharacterHasTAEEvent(-1, PLAYER, tae_event_id=700)
@@ -15380,7 +15380,7 @@ def Event12907010(_, arg_0_3: int, arg_4_7: int):
     """ 12907010: Event 12907010 """
     EndIfFlagEnabled(arg_0_3)
     IfFlagEnabled(0, arg_0_3)
-    RotateToFaceEntity(PLAYER, arg_4_7, animation=101170, wait_for_completion=False)
+    FaceEntity(PLAYER, arg_4_7, animation=101170, wait_for_completion=False)
     WaitFrames(32)
     InitializeWarpObject(arg_4_7)
 
@@ -15390,7 +15390,7 @@ def Event12907020(_, arg_0_3: int, arg_4_7: int):
     EndIfClient()
     IfFlagEnabled(0, arg_0_3)
     DisableFlag(arg_0_3)
-    RotateToFaceEntity(PLAYER, arg_4_7, animation=101160, wait_for_completion=False)
+    FaceEntity(PLAYER, arg_4_7, animation=101160, wait_for_completion=False)
     Wait(1.0)
     CreateTemporaryVFX(100320, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, dummy_id=100)
     Wait(3.0)
@@ -15801,7 +15801,7 @@ def Event12906974(
     DisableGravity(arg_0_3)
     DisableCharacterCollision(arg_0_3)
     ResetAnimation(arg_0_3, disable_interpolation=False)
-    RotateToFaceEntity(arg_0_3, arg_8_11, animation=arg_16_19, wait_for_completion=True)
+    FaceEntity(arg_0_3, arg_8_11, animation=arg_16_19, wait_for_completion=True)
     IfCharacterInsideRegion(2, arg_0_3, region=arg_12_15)
     RestartIfConditionFalse(2)
     SetEventPoint(arg_0_3, region=arg_8_11, reaction_range=1.0)

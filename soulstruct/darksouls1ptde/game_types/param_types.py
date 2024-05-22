@@ -127,7 +127,7 @@ class ArmorParam(BaseItemParam):
 
     @classmethod
     def get_item_enum(cls):
-        from ..events.emevd.enums import ItemType
+        from ..events.enums import ItemType
         return ItemType.Armor
 
     @classmethod
@@ -203,7 +203,7 @@ class GoodParam(BaseItemParam):
 
     @classmethod
     def get_item_enum(cls):
-        from ..events.emevd.enums import ItemType
+        from ..events.enums import ItemType
         return ItemType.Good
 
     @classmethod
@@ -276,7 +276,7 @@ class AccessoryParam(BaseItemParam):
 
     @classmethod
     def get_item_enum(cls):
-        from ..events.emevd.enums import ItemType
+        from ..events.enums import ItemType
         return ItemType.Ring
 
     @classmethod
@@ -338,7 +338,7 @@ class WeaponParam(BaseItemParam):
 
     @classmethod
     def get_item_enum(cls):
-        from ..events.emevd.enums import ItemType
+        from ..events.enums import ItemType
         return ItemType.Weapon
 
     @classmethod

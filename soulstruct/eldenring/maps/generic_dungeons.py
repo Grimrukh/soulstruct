@@ -392,13 +392,3 @@ ISOLATED_DIVINE_TOWER = Map(
     variable_name='ISOLATED_DIVINE_TOWER',
     verbose_name='Isolated Divine Tower',
 )
-
-
-def get_locals():
-    return globals().copy()
-
-
-if __name__ == '__main__':
-    loc = get_locals()
-    for c in loc:
-        print(f"    \"{c}\",")

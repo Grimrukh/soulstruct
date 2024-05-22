@@ -2863,7 +2863,7 @@ def Event_12901599(_, character: int, region: int, animation_id: int, animation:
     
     MAIN.Await(CharacterInsideRegion(PLAYER, region=region))
     
-    RotateToFaceEntity(character, PLAYER, animation=animation)
+    FaceEntity(character, PLAYER, animation=animation)
 
 
 @ContinueOnRest(12901600)
@@ -3518,7 +3518,7 @@ def Event_12901697(
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(character, PLAYER, animation=animation)
+    FaceEntity(character, PLAYER, animation=animation)
     EnableFlag(flag_1)
     EnableFlag(flag_2)
 
@@ -3580,7 +3580,7 @@ def Event_12901705(
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(character, PLAYER, animation=animation)
+    FaceEntity(character, PLAYER, animation=animation)
     EnableFlag(flag_1)
     EnableFlag(flag_2)
 
@@ -6122,7 +6122,7 @@ def Event_12904568(_, character: int, obj: int):
     
     MAIN.Await(FramesElapsed(frames=3))
     
-    RotateToFaceEntity(character, PLAYER, animation=3024)
+    FaceEntity(character, PLAYER, animation=3024)
     
     MAIN.Await(FramesElapsed(frames=1))
     
@@ -6157,7 +6157,7 @@ def Event_12904579(_, character: int, obj: int, character_1: int, animation: int
     
     MAIN.Await(FramesElapsed(frames=3))
     
-    RotateToFaceEntity(character, PLAYER, animation=animation)
+    FaceEntity(character, PLAYER, animation=animation)
     
     MAIN.Await(FramesElapsed(frames=1))
     
@@ -6198,7 +6198,7 @@ def Event_12904584(_, character: int, obj: int, destination: int, animation: int
     
     MAIN.Await(FramesElapsed(frames=3))
     
-    RotateToFaceEntity(character, PLAYER, animation=animation)
+    FaceEntity(character, PLAYER, animation=animation)
     
     MAIN.Await(FramesElapsed(frames=1))
     
@@ -6453,7 +6453,7 @@ def Event_12904736(_, attacker__character: int, region: int, radius: float):
     SkipLinesIfLastConditionResultFalse(6, input_condition=AND_1)
     ForceAnimation(attacker__character, 3007)
     WaitFrames(frames=50)
-    RotateToFaceEntity(attacker__character, PLAYER, animation=3006)
+    FaceEntity(attacker__character, PLAYER, animation=3006)
     EnableAI(attacker__character)
     ReplanAI(attacker__character)
     End()
@@ -6614,7 +6614,7 @@ def Event_12904773(_, target_entity: int, entity: int, flag: int):
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity, animation=101130)
+    FaceEntity(PLAYER, target_entity, animation=101130)
     Restart()
 
 
@@ -6641,7 +6641,7 @@ def Event_12904775(_, target_entity: int, entity: int, flag: int, flag_1: int):
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity, animation=101130)
+    FaceEntity(PLAYER, target_entity, animation=101130)
     Restart()
 
 
@@ -7236,7 +7236,7 @@ def Event_12904878(_, target_entity: int, entity: int, flag: int, flag_1: int):
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity, animation=101130)
+    FaceEntity(PLAYER, target_entity, animation=101130)
     Restart()
 
 
@@ -7263,7 +7263,7 @@ def Event_12904880(_, target_entity: int, entity: int, flag: int, flag_1: int):
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity, animation=101130)
+    FaceEntity(PLAYER, target_entity, animation=101130)
     Restart()
 
 
@@ -7299,7 +7299,7 @@ def Event_12904881(_, character: int, region: int, vfx_id: int, name: int, flag:
     if FlagDisabled(flag):
         EnableObject(obj)
         CreateVFX(vfx_id)
-    RotateToFaceEntity(character, PLAYER, animation=7021)
+    FaceEntity(character, PLAYER, animation=7021)
     GotoIfCoopClientCountComparison(Label.L1, comparison_type=ComparisonType.Equal, value=0)
     GotoIfCoopClientCountComparison(Label.L2, comparison_type=ComparisonType.Equal, value=1)
     GotoIfCoopClientCountComparison(Label.L3, comparison_type=ComparisonType.Equal, value=2)
@@ -14459,7 +14459,7 @@ def Event_12906789(
     MAIN.Await(OR_1)
     
     EndIfLastConditionResultTrue(input_condition=AND_3)
-    RotateToFaceEntity(PLAYER, region, animation=101130)
+    FaceEntity(PLAYER, region, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     OR_2.Add(CharacterInsideRegion(PLAYER, region=region))
     OR_2.Add(CharacterHasTAEEvent(PLAYER, tae_event_id=700))
@@ -14493,7 +14493,7 @@ def Event_12906790(_, region: int, entity: int, flag: int, flag_1: int, flag_2: 
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, region, animation=101130)
+    FaceEntity(PLAYER, region, animation=101130)
     AND_2.Add(CharacterWhitePhantom(PLAYER))
     OR_1.Add(CharacterInsideRegion(PLAYER, region=region))
     OR_1.Add(CharacterHasTAEEvent(PLAYER, tae_event_id=700))
@@ -14739,7 +14739,7 @@ def Event_12906796(
     MAIN.Await(OR_1)
     
     EndIfLastConditionResultTrue(input_condition=AND_3)
-    RotateToFaceEntity(PLAYER, region, animation=101130)
+    FaceEntity(PLAYER, region, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     OR_2.Add(CharacterInsideRegion(PLAYER, region=region))
     OR_2.Add(CharacterHasTAEEvent(PLAYER, tae_event_id=700))
@@ -14788,7 +14788,7 @@ def Event_12906800(_, region: int, obj: int, vfx_id: int, flag: int, flag_1: int
     MAIN.Await(OR_1)
     
     EndIfLastConditionResultTrue(input_condition=AND_3)
-    RotateToFaceEntity(PLAYER, region, animation=101130)
+    FaceEntity(PLAYER, region, animation=101130)
     AND_4.Add(CharacterHuman(PLAYER))
     OR_2.Add(CharacterInsideRegion(PLAYER, region=region))
     OR_2.Add(CharacterHasTAEEvent(PLAYER, tae_event_id=700))
@@ -14822,7 +14822,7 @@ def Event_12906802(_, target_entity: int, entity: int, flag: int, flag_1: int, f
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity, animation=101130)
+    FaceEntity(PLAYER, target_entity, animation=101130)
     AND_2.Add(CharacterWhitePhantom(PLAYER))
     OR_1.Add(CharacterInsideRegion(PLAYER, region=2412801))
     OR_1.Add(CharacterHasTAEEvent(PLAYER, tae_event_id=700))
@@ -17429,7 +17429,7 @@ def Event_12907010(_, flag: int, warp_object_id: int):
     
     MAIN.Await(FlagEnabled(flag))
     
-    RotateToFaceEntity(PLAYER, warp_object_id, animation=101170)
+    FaceEntity(PLAYER, warp_object_id, animation=101170)
     WaitFrames(frames=32)
     InitializeWarpObject(warp_object_id=warp_object_id)
 
@@ -17443,7 +17443,7 @@ def Event_12907020(_, flag: int, anchor_entity: int):
     MAIN.Await(FlagEnabled(flag))
     
     DisableFlag(flag)
-    RotateToFaceEntity(PLAYER, anchor_entity, animation=101160)
+    FaceEntity(PLAYER, anchor_entity, animation=101160)
     Wait(1.0)
     CreateTemporaryVFX(vfx_id=100320, anchor_entity=anchor_entity, dummy_id=100, anchor_type=CoordEntityType.Object)
     Wait(3.0)
@@ -17946,7 +17946,7 @@ def Event_12906974(
     DisableGravity(character)
     DisableCharacterCollision(character)
     ResetAnimation(character)
-    RotateToFaceEntity(character, region_1, animation=animation, wait_for_completion=True)
+    FaceEntity(character, region_1, animation=animation, wait_for_completion=True)
     AND_2.Add(CharacterInsideRegion(character, region=region_2))
     if not AND_2:
         return RESTART

@@ -551,7 +551,7 @@ def Event_11015390():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1012997)
+    FaceEntity(PLAYER, target_entity=1012997)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -572,7 +572,7 @@ def Event_11015391():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1012997)
+    FaceEntity(PLAYER, target_entity=1012997)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -783,7 +783,7 @@ def Event_11015380():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1012897)
+    FaceEntity(PLAYER, target_entity=1012897)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -804,7 +804,7 @@ def Event_11015381():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1012897)
+    FaceEntity(PLAYER, target_entity=1012897)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -932,7 +932,7 @@ def Event_11015370():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1012887)
+    FaceEntity(PLAYER, target_entity=1012887)
     ForceAnimation(PLAYER, 7410, wait_for_completion=True)
     Restart()
 
@@ -953,7 +953,7 @@ def Event_11015371():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=1012887)
+    FaceEntity(PLAYER, target_entity=1012887)
     ForceAnimation(PLAYER, 7410)
     Restart()
 
@@ -2759,7 +2759,7 @@ def Event_11010580():
     SkipLinesIfLastConditionResultFalse(9, input_condition=AND_1)
     AddSpecialEffect(PLAYER, 4170)
     SkipLinesIfClient(1)
-    RotateToFaceEntity(PLAYER, target_entity=6480)
+    FaceEntity(PLAYER, target_entity=6480)
     SkipLinesIfHost(1)
     if ThisEventFlagEnabled():
         ForceAnimation(PLAYER, 7895, wait_for_completion=True)
@@ -2860,7 +2860,7 @@ def Event_11015101():
     
     MAIN.Await(CharacterInsideRegion(6540, region=1012998))
     
-    RotateToFaceEntity(6540, target_entity=1012997)
+    FaceEntity(6540, target_entity=1012997)
     ForceAnimation(6540, 7410)
     AICommand(6540, command_id=-1, command_slot=0)
     ReplanAI(6540)
@@ -2925,7 +2925,7 @@ def Event_11015104():
     
     MAIN.Await(CharacterInsideRegion(6590, region=1012998))
     
-    RotateToFaceEntity(6590, target_entity=1012997)
+    FaceEntity(6590, target_entity=1012997)
     ForceAnimation(6590, 7410)
     AICommand(6590, command_id=-1, command_slot=0)
     ReplanAI(6590)
@@ -3037,7 +3037,7 @@ def Event_11015843(_, flag: int, line_intersects: int, anchor_entity: int, targe
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity=target_entity)
+    FaceEntity(PLAYER, target_entity=target_entity)
     ForceAnimation(PLAYER, 7410, wait_for_completion=True)
     Unknown_2003_47()
     Restart()

@@ -43,7 +43,7 @@ from soulstruct.base.events.emevd.utils import get_coord_entity_type
 from soulstruct.bloodborne.game_types import *
 
 from .emedf import EMEDF_ALIASES
-from .enums import *
+from ..enums import *
 
 if tp.TYPE_CHECKING:
     from soulstruct.base.events.evs.conditions import EVSConditionManager

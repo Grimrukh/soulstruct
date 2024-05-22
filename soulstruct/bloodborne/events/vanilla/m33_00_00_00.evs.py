@@ -653,7 +653,7 @@ def Event_13304870():
     MAIN.Await(OR_2)
     
     EndIfLastConditionResultTrue(input_condition=AND_4)
-    RotateToFaceEntity(PLAYER, 3302800, animation=101130)
+    FaceEntity(PLAYER, 3302800, animation=101130)
     AND_5.Add(CharacterHuman(PLAYER))
     AND_5.Add(CharacterInsideRegion(PLAYER, region=3302801))
     AND_6.Add(CharacterHuman(PLAYER))
@@ -682,7 +682,7 @@ def Event_13304871():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, 3302800, animation=101130)
+    FaceEntity(PLAYER, 3302800, animation=101130)
     AND_2.Add(CharacterWhitePhantom(PLAYER))
     AND_2.Add(CharacterInsideRegion(PLAYER, region=3302801))
     AND_3.Add(CharacterWhitePhantom(PLAYER))

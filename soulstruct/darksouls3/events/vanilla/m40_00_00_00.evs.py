@@ -945,7 +945,7 @@ def Event_14000121(_, flag: int, item: int, obj: int, target_entity: int, action
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, target_entity, animation=animation, wait_for_completion=True)
+    FaceEntity(PLAYER, target_entity, animation=animation, wait_for_completion=True)
     if ValueNotEqual(left=animation, right=69050):
         Wait(0.8999999761581421)
     else:
@@ -1304,7 +1304,7 @@ def Event_14005460():
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=9350, entity=4001460))
     
-    RotateToFaceEntity(PLAYER, 4001460, animation=60070, wait_for_completion=True)
+    FaceEntity(PLAYER, 4001460, animation=60070, wait_for_completion=True)
     AwardItemLot(4000, host_only=False)
     DisableFlag(9400)
     Wait(3.0)
@@ -1335,7 +1335,7 @@ def Event_14005461():
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=4000, entity=4001461))
     
-    RotateToFaceEntity(PLAYER, 4001461, animation=60070, wait_for_completion=True)
+    FaceEntity(PLAYER, 4001461, animation=60070, wait_for_completion=True)
     AwardItemLot(4020, host_only=False)
     DeleteObjectVFX(4001461)
 
@@ -2574,7 +2574,7 @@ def Event_14005543(_, character: int):
     OR_2.Add(CharacterHasSpecialEffect(character, 159))
     OR_2.Add(HasAIStatus(character, ai_status=AIStatusType.Normal))
     SkipLinesIfConditionFalse(1, OR_2)
-    RotateToFaceEntity(character, PLAYER, wait_for_completion=True)
+    FaceEntity(character, PLAYER, wait_for_completion=True)
 
 
 @ContinueOnRest(14005560)
@@ -4511,7 +4511,7 @@ def Event_14005725():
     
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=0))
     GotoIfConditionTrue(Label.L20, input_condition=AND_1)
-    RotateToFaceEntity(PLAYER, 0, animation=69070)
+    FaceEntity(PLAYER, 0, animation=69070)
     WaitFrames(frames=1)
     OR_1.Add(CharacterInsideRegion(character=PLAYER, region=0))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 150))
@@ -4532,7 +4532,7 @@ def Event_14005725():
 
     # --- Label 20 --- #
     DefineLabel(20)
-    RotateToFaceEntity(PLAYER, 0, animation=0, wait_for_completion=True)
+    FaceEntity(PLAYER, 0, animation=0, wait_for_completion=True)
     WaitFrames(frames=1)
     EnableFlag(0)
     OR_3.Add(FlagDisabled(0))

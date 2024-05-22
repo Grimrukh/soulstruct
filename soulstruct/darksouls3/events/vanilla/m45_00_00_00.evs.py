@@ -967,7 +967,7 @@ def Event_14505160():
     MAIN.Await(AND_4)
     
     BanishPhantoms(unknown=0)
-    RotateToFaceEntity(PLAYER, 4501101, animation=91040)
+    FaceEntity(PLAYER, 4501101, animation=91040)
     Wait(3.0)
     WarpToMap(game_map=DREG_HEAP, player_start=5002110)
     EnableFlag(14500160)
@@ -3489,7 +3489,7 @@ def Event_14505870():
     SetNetworkUpdateRate(4500860, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     ActivateMultiplayerBuffs(4500860)
     SetDecoratedBossHealthBarState(state=True, character=4500860, slot=0, name=30000, decoration=3)
-    RotateToFaceEntity(4500860, PLAYER)
+    FaceEntity(4500860, PLAYER)
     SetNetworkConnectedFlagState(flag=14505861, state=FlagSetting.On)
     if PlayerNotInOwnWorld():
         return

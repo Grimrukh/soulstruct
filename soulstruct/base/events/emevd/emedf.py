@@ -21,7 +21,7 @@ from enum import IntEnum
 from pathlib import Path
 
 from soulstruct.utilities.files import read_json
-from .enums import BaseNegatableEMEVDEnum
+from ..enums import BaseNegatableEMEVDEnum
 from .utils import get_coord_entity_type
 
 

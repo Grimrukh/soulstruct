@@ -1985,7 +1985,7 @@ def Event_13604800():
     MAIN.Await(OR_1)
     
     EndIfLastConditionResultTrue(input_condition=AND_3)
-    RotateToFaceEntity(PLAYER, 3602800, animation=101130, wait_for_completion=True)
+    FaceEntity(PLAYER, 3602800, animation=101130, wait_for_completion=True)
     AND_4.Add(CharacterHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=3602801))
     AND_5.Add(CharacterHuman(PLAYER))
@@ -2014,7 +2014,7 @@ def Event_13604801():
     
     MAIN.Await(AND_1)
     
-    RotateToFaceEntity(PLAYER, 3602800, animation=101130, wait_for_completion=True)
+    FaceEntity(PLAYER, 3602800, animation=101130, wait_for_completion=True)
     AND_2.Add(CharacterWhitePhantom(PLAYER))
     AND_2.Add(CharacterInsideRegion(PLAYER, region=3602801))
     AND_3.Add(TimeElapsed(seconds=2.0))
@@ -2381,7 +2381,7 @@ def Event_13605400(
     MAIN.Await(OR_1)
     
     WaitRandomSeconds(min_seconds=min_seconds, max_seconds=max_seconds)
-    RotateToFaceEntity(character, PLAYER, animation=animation)
+    FaceEntity(character, PLAYER, animation=animation)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -2416,7 +2416,7 @@ def Event_13605480(
     MAIN.Await(OR_1)
     
     Wait(seconds)
-    RotateToFaceEntity(character, PLAYER, animation=animation)
+    FaceEntity(character, PLAYER, animation=animation)
     WaitFrames(frames=frames)
 
     # --- Label 0 --- #
@@ -2454,7 +2454,7 @@ def Event_13605490(
     MAIN.Await(OR_1)
     
     WaitRandomSeconds(min_seconds=min_seconds, max_seconds=max_seconds)
-    RotateToFaceEntity(character, PLAYER, animation=animation)
+    FaceEntity(character, PLAYER, animation=animation)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -2490,7 +2490,7 @@ def Event_13605500(
     MAIN.Await(OR_1)
     
     WaitRandomSeconds(min_seconds=min_seconds, max_seconds=max_seconds)
-    RotateToFaceEntity(character, PLAYER, animation=animation)
+    FaceEntity(character, PLAYER, animation=animation)
     EnableGravity(character)
     EnableCharacterCollision(character)
 
@@ -2626,7 +2626,7 @@ def Event_13605700(_, character: int, animation: int, flag: int):
     MAIN.Await(OR_1)
     
     EnableFlag(flag)
-    RotateToFaceEntity(character, PLAYER, animation=animation, wait_for_completion=True)
+    FaceEntity(character, PLAYER, animation=animation, wait_for_completion=True)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -2729,7 +2729,7 @@ def Event_13605750():
     
     MAIN.Await(OR_1)
     
-    RotateToFaceEntity(3600201, PLAYER, animation=7007)
+    FaceEntity(3600201, PLAYER, animation=7007)
     EnableGravity(3600201)
     EnableCharacterCollision(3600201)
 
