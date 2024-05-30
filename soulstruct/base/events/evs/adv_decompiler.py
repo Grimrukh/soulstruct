@@ -160,7 +160,7 @@ class AdvancedDecompiler:
             self.i += 1
     
         # Remove any trailing blank lines that were added due to the last instruction.
-        while self.out_lines[-1] == "":
+        while self.out_lines and self.out_lines[-1] == "":
             self.out_lines.pop()
 
         # Pop frame stack.

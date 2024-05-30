@@ -261,6 +261,9 @@ class Event(abc.ABC):
     ) -> Self:
         event_struct = EventStruct.from_bytes(reader)
 
+        # Defined here in case there are no instructions.
+        instructions = []
+
         if event_struct.instructions_local_offset != -1:
             with reader.temp_offset(instruction_table_offset + event_struct.instructions_local_offset):
                 instructions = [

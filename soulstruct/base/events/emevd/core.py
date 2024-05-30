@@ -100,7 +100,7 @@ class EMEVD(GameFile, abc.ABC):
 
     # Internal usage.
     byte_order: ByteOrder = field(repr=False, default=ByteOrder.LittleEndian)
-    event_signatures: dict[int, EventSignature] = field(repr=False, default=dict)
+    event_signatures: dict[int, EventSignature] = field(repr=False, default_factory=dict)
     # `EMEVD` used to reprocess common event calls. Usually called 'common_func.emevd', but in Bloodborne, was merged
     # with 'common.emevd'. Can be added manually with `apply_common_func()` or supplied with `to_evs` or `write_evs`.
     _common_func: EMEVD | None = field(repr=False, default=None)
