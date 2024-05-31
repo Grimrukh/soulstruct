@@ -43,7 +43,11 @@ class NoSkipOrReturnError(Exception):
 
 
 class EVSError(Exception):
-    def __init__(self, lineno: tp.Union[ast.AST, ast.Expr, ast.For, ast.If, ast.Assign, ast.Return, int], msg):
+    def __init__(
+        self,
+        lineno: tp.Union[ast.AST, ast.Expr, ast.For, ast.If, ast.Assign, ast.Return, ast.Call, int],
+        msg: str,
+    ):
         if isinstance(lineno, ast.AST):
             lineno = lineno.lineno
         self.lineno = lineno

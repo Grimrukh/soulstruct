@@ -1005,14 +1005,14 @@ class Condition:
     def __init__(self, condition, hold: bool = False): ...
 
 
-class HeldCondition:
+class HeldCondition(Condition):
     """
     Alternative syntax for `Condition(condition, hold=True)`. (See above.)
     """
     def __init__(self, condition): ...
 
 
-def LastResult(condition_group: ConditionGroup):
+def LastResult(condition_group: ConditionGroup | Condition):
     """
     Wrap a naked condition group like `AND_1` with this to tell EVS/EMEVD that you want to check the LAST RESULT of
     this condition group rather than actively re-evaluating it.
@@ -4331,7 +4331,7 @@ def SetStandbyAnimationSettings(
 def ResetStandbyAnimationSettings(character: Character | int, event_layers=()):
     """
     Calls `SetStandbyAnimationSettings` with `standby_animation=-1`, `damage_animation=-1`, `cancel_animation=-1`,
-    `death_animation=-1`, `standby_exit_animation=1`.
+    `death_animation=-1`, `standby_exit_animation=-1`.
     """
 
 

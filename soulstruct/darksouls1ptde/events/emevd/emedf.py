@@ -2318,7 +2318,7 @@ EMEDF = {
                 damage_animation=-1,
                 cancel_animation=-1,
                 death_animation=-1,
-                standby_exit_animation=1,
+                standby_exit_animation=-1,
             ),
         },
     },

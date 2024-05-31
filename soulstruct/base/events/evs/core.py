@@ -801,9 +801,6 @@ class EVSParser(abc.ABC):
                 f"such as `Flag` (tests for enabled state), `Region` (tests if player is inside), etc.",
             )
 
-        # TODO: Need a 'condition parsing' function that takes an integer (Constant -1), built-in group (Name 'AND_01',
-        #  or defined Condition and returns the appropriate `ConditionGroupState`.
-
         # 3a. The condition is a standard or previously-defined `Condition` wrapped with `LastResult()`.
         is_last_result = False
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "LastResult":
