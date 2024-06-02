@@ -1832,7 +1832,7 @@ EMEDF = {
         },
     },
     (2003, 13): {
-        "alias": "SetNavmeshType",
+        "alias": "SetNavmeshFaceFlag",
         "docstring": """
             Set given navmesh type.
         """,
@@ -1851,9 +1851,9 @@ EMEDF = {
             },
         },
         "partials": {
-            "EnableNavmeshType": dict(operation=BitOperation.Add),
-            "DisableNavmeshType": dict(operation=BitOperation.Delete),
-            "ToggleNavmeshType": dict(operation=BitOperation.Invert),
+            "AddNavmeshFaceFlag": dict(operation=BitOperation.Add),
+            "RemoveNavmeshFaceFlag": dict(operation=BitOperation.Delete),
+            "ToggleNavmeshFaceFlag": dict(operation=BitOperation.Invert),
         },
     },
     (2003, 14): {

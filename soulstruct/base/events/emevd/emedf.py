@@ -168,6 +168,8 @@ def build_emedf_aliases_tests(emedf: EMEDF_TYPING) -> tuple[dict, dict, dict]:
 
         if v["alias"].startswith("If") and not v["alias"].startswith("If_Unknown"):
 
+            # TODO: Need to detect negated versions and add to 'if_not', 'skip_not', 'end_not', 'restart_not'...
+
             test_name = v["alias"].removeprefix("If")
             emedf_tests.setdefault(test_name, {})["if"] = v["alias"]
 

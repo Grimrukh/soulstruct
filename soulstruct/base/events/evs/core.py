@@ -17,6 +17,7 @@ from ..emevd.utils import (
     format_event_layers,
 )
 
+from .compiler import EVSInstructionCompiler
 from .conditions import EVSConditionManager, ConditionGroupState
 from .exceptions import *
 from .utils import *
@@ -26,6 +27,9 @@ _LOGGER = logging.getLogger("soulstruct")
 
 class EVSParser(abc.ABC):
 
+    # These names are handled fully internally by this parser and have PYI stub definitions only.
+    SPECIAL_NAMES: set[str] = {"Await", "EnableThisFlag", "DisableThisFlag", "Condition", "HeldCondition"}
+
     # Class variables overridden by game-specific subclasses.
     EMEDF_ALIASES: dict[str, tp.Any] = None
     EMEDF_TESTS: dict[str, tp.Any] = None
@@ -34,8 +38,7 @@ class EVSParser(abc.ABC):
     GAME_TYPES = None  # type: tp.Any
     OR_SLOTS = []  # type: list[int]
     AND_SLOTS = []  # type: list[int]
-    COMPILER: dict[str, tp.Callable]
-    COMPILE: tp.Callable
+    COMPILER: EVSInstructionCompiler
     COMPILE_OBJECT_TEST: tp.Callable
     SUPPORTS_COMMON_FUNC: bool = False
     USES_COMMON_FUNC_SLOT: bool = False
@@ -47,6 +50,7 @@ class EVSParser(abc.ABC):
     script_directory: tp.Optional[Path]
     linked_offsets: list[int]
     strings_with_offsets: list[str]
+    locals: dict[str, tp.Any]  # local event function namespace (constants only)
     globals: dict[str, tp.Any]  # global script namespace
     for_vars: dict[str, tp.Any]  # local to each event function
     events: dict[str, EventInfo]  # information about each event function (collected before proper statement parsing)
@@ -173,6 +177,7 @@ class EVSParser(abc.ABC):
             if groups["names"] != "*":
                 # Only import certain names from `common_func` module.
                 cf_imported_names = [name.strip(" \n") for name in groups["names"].split(",")]
+                cf_imported_names = [name for name in cf_imported_names if name]  # remove empty strings
                 names.extend(cf_imported_names)
 
             # Otherise, star import preserves all names from common module.
@@ -312,7 +317,7 @@ class EVSParser(abc.ABC):
             elif isinstance(node, ast.FunctionDef):
                 self._scan_event(node)
             elif isinstance(node, ast.Assign):
-                self._assign_name(node)
+                self._assign_name(node, is_local=False)
             elif isinstance(node, ast.ClassDef):
                 continue  # Class definitions (e.g. enums) are collected from the real Python parser.
             elif isinstance(node, ast.AnnAssign):
@@ -332,6 +337,7 @@ class EVSParser(abc.ABC):
         for event_name, event_function in self.events.items():
             self.current_event = self.events[event_name]
             self.for_vars = {}
+            self.locals = {}
             self.cond.reset(self.current_event.id)
             self.cond.evaluated_condition_groups = set()
 
@@ -354,7 +360,7 @@ class EVSParser(abc.ABC):
 
         if not event_info.nodes:
             # Empty event functions can cause problems. Add a dummy 'End()' instruction.
-            event_emevd += self.COMPILE("End")
+            event_emevd += self.COMPILER.compile("End")
             _LOGGER.warning(f"Event {event_info.name} has no instructions. Added dummy 'End()' instruction.")
             return event_emevd
 
@@ -397,34 +403,28 @@ class EVSParser(abc.ABC):
         if isinstance(node, ast.If):
             return self._compile_if(node)
 
-        # ASSIGN (CONDITION ONLY)
+        # ASSIGN
         if isinstance(node, ast.Assign):
-            try:
-                if not isinstance(node.value, ast.Call) or not isinstance(node.value.func, ast.Name):
-                    raise ValueError
-                if node.value.func.id not in {"Condition", "HeldCondition"}:
-                    raise ValueError
-            except ValueError:
-                raise EVSSyntaxError(
-                    node.lineno,
-                    "Cannot create local variables inside event script functions. Define them globally or import them "
-                    "from other modules. All assignment statements must be `c = Condition()` or `c = HeldCondition()` "
-                    "statements.",
-                )
-            return self._assign_condition(node, held=node.value.func.id == "HeldCondition")
+            if isinstance(node.value, ast.Call):
+                if isinstance(node.value.func, ast.Name):
+                    if node.value.func.id in {"Condition", "HeldCondition"}:
+                        # This is a Condition/HeldCondition assignment.
+                        return self._assign_condition(node, held=node.value.func.id == "HeldCondition")
+
+            # Assign local variable.
+            self._assign_name(node, is_local=True)
 
         # RETURN
         if isinstance(node, ast.Return):
             if node.value is None or (isinstance(node.value, ast.Name) and node.value.id == "END"):
-                return self.COMPILE("End")
-            elif isinstance(node.value, ast.Name) and node.value.id == "RESTART":
-                return self.COMPILE("Restart")
-            else:
-                raise EVSSyntaxError(
-                    node,
-                    f"Invalid return value '{node.value}'. It should be None (empty) to end the "
-                    f"event, or the constant RESTART to restart it.",
-                )
+                return self.COMPILER.compile("End")
+            if isinstance(node.value, ast.Name) and node.value.id == "RESTART":
+                return self.COMPILER.compile("Restart")
+            raise EVSSyntaxError(
+                node,
+                f"Invalid return value '{node.value}'. It should be None (empty) to end the "
+                f"event, or the constant RESTART to restart it.",
+            )
 
         raise EVSSyntaxError(
             node,
@@ -495,9 +495,9 @@ class EVSParser(abc.ABC):
         instr_name = "RunCommonEvent" if is_common_func else "RunEvent"
         # We can discard the returned evaluated condition groups set here.
         if slot is None:
-            instruction = self.COMPILER[instr_name](event_id, args=args, arg_types=arg_types)
+            instruction = self.COMPILER.compile(instr_name, event_id, args=args, arg_types=arg_types)
         else:
-            instruction = self.COMPILER[instr_name](event_id, slot=slot, args=args, arg_types=arg_types)
+            instruction = self.COMPILER.compile(instr_name, event_id, slot=slot, args=args, arg_types=arg_types)
         instruction[0] += event_layer_string
         return instruction
 
@@ -604,7 +604,7 @@ class EVSParser(abc.ABC):
                 return self._compile_instr(node, "EnableFlag", self.current_event.id)
             return self._compile_instr(node, "DisableFlag", self.current_event.id)
 
-        if name in self.EMEDF_ALIASES or name in self.COMPILER:
+        if name in self.EMEDF_ALIASES or name in self.COMPILER.custom_funcs:
             return self._compile_instruction(node)
 
         raise EVSSyntaxError(
@@ -702,8 +702,8 @@ class EVSParser(abc.ABC):
             statement_node = as_event_statement_node(child_node, "Invalid statement node.")
             try:
                 body_emevd += self._compile_event_body_node(statement_node)
-            except TypeError:
-                raise EVSSyntaxError(node, f"Error in IF block:\n  {ast.dump(node)}")
+            except TypeError as ex:
+                raise EVSSyntaxError(node, f"Error in IF block:\n  {ast.dump(node)}\nError: {ex}")
 
         # 2. Build the test line. This could be a simple skip, a multi-line chain skip, or a skip that uses a fully-
         #    fledged Condition, depending on the test. Note that the body length has 1 added (an extra skip line) if
@@ -818,7 +818,7 @@ class EVSParser(abc.ABC):
         # 3. The node specifies a condition group. Integers are not permitted in this context (`if -3` is nonsense).
         if isinstance(node, ast.Name):
             # noinspection PyTypeChecker
-            condition_group = self._get_condition_group(node, integer_permitted=False)
+            condition_group = self._get_condition_group_state(node, integer_permitted=False)
             if condition_group.index == 0:
                 _LOGGER.warning(
                     f"MAIN condition used in a skip/return instruction on line {node.lineno}. This is unusual."
@@ -1059,7 +1059,7 @@ class EVSParser(abc.ABC):
         if isinstance(node, ast.Name):
 
             # noinspection PyTypeChecker
-            input_condition = self._get_condition_group(node, integer_permitted=False)
+            input_condition = self._get_condition_group_state(node, integer_permitted=False)
 
             if input_condition:
                 if condition is None:
@@ -1085,6 +1085,13 @@ class EVSParser(abc.ABC):
 
         # Call
         if isinstance(node, ast.Call):
+            if isinstance(node.func, ast.Name) and node.func.id == "LastResult":
+                raise EVSSyntaxError(
+                    node.lineno,
+                    "As `LastResult(condition)` must use line skips or gotos, when using it in a boolean operation, "
+                    "please use `any()` or `all()` in front of it to force the use of line skips rather than a full "
+                    "Condition."
+                )
             emevd_args += self._parse_nodes(node.args)
             emevd_kwargs.update(self._parse_keyword_nodes(node.keywords))
             node = node.func  # -> ast.Name (parsed below)
@@ -1226,16 +1233,15 @@ class EVSParser(abc.ABC):
         `COMPILE` function also takes our `ConditionGroupManager` and marks conditions as old or assigns children as
         appropriate to the instruction (based on EMEDF information).
         """
-
         try:
-            return self.COMPILE(instr_name, *args, cond=self.cond, **kwargs)
+            return self.COMPILER.compile(instr_name, *args, cond=self.cond, **kwargs)
         except Exception as ex:
             print(instr_name, args, kwargs)
             raise EVSSyntaxError(node, f"Failed to auto-compile instruction {instr_name}.\n    Error: {ex}")
 
-    def _get_condition_group(self, node, integer_permitted=False) -> ConditionGroupState | None:
+    def _get_condition_group_state(self, node, integer_permitted=False) -> ConditionGroupState | None:
         """Resolve local `Condition` object, built-in name like `AND_01`, or (if permitted) a naked index into a
-        condition group.
+        managed, indexed `ConditionGroupState`.
 
         Returns `None` if the node cannot be interpreted as a condition group.
         """
@@ -1279,42 +1285,74 @@ class EVSParser(abc.ABC):
         restart_event=False,
         **kwargs,
     ) -> list[str]:
-        tests = self.EMEDF_TESTS[node.id]
+        test_name = node.id
+        tests = self.EMEDF_TESTS[test_name]
         event_layers = format_event_layers(kwargs.pop("event_layers", None))
         instruction_lines = []
-
-        if negate:
-            # TODO: Look up 'negate' key of test to redirect (or raise `NoNegateError`).
-            # tests = tests["negate"]
-            raise EVSError(node, f"Cannot yet support `not` keyword with test functions.")
 
         if skip_lines > 0:
             if condition is not None or end_event or restart_event:
                 raise ValueError("You cannot use more than one of: condition, skip_lines, end_event, restart_event.")
             if "skip" not in tests:
                 raise NoSkipOrReturnError
+            if negate:
+                if "skip_not" in tests:
+                    instr_name = tests["skip_not"]
+                else:
+                    raise EVSError(
+                        node, f"Cannot support `not` keyword with SkipLines-based test function '{test_name}'."
+                    )
+            else:
+                instr_name = tests["skip"]
             # `line_count` is always the first positional argument.
-            instruction_lines = self._compile_instr(node, tests["skip"], skip_lines, *args, **kwargs)
+            instruction_lines = self._compile_instr(node, instr_name, skip_lines, *args, **kwargs)
         elif skip_lines < 0:
             raise ValueError("You cannot skip a negative number of lines.")
 
         if condition is not None:
             if end_event or restart_event:
                 raise ValueError("You cannot use more than one of: condition, skip_lines, end_event, restart_event.")
+            if negate:
+                if "if_not" in tests:
+                    instr_name = tests["if_not"]
+                else:
+                    raise EVSError(
+                        node, f"Cannot support `not` keyword with Condition-based test function '{test_name}'.")
+            else:
+                instr_name = tests["if"]
+
             # "if" is always present in tests. `condition` is always the first positional argument.
-            instruction_lines = self._compile_instr(node, tests["if"], condition.index, *args, **kwargs)
+            instruction_lines = self._compile_instr(node, instr_name, condition.index, *args, **kwargs)
 
         if end_event:
             if restart_event:
                 raise ValueError("You cannot use more than one of: condition, skip_lines, end_event, restart_event.")
             if "end" not in tests:
                 raise NoSkipOrReturnError
-            instruction_lines = self._compile_instr(node, tests["end"], *args, **kwargs)
+            if negate:
+                if "end_not" in tests:
+                    instr_name = tests["end_not"]
+                else:
+                    raise EVSError(
+                        node, f"Cannot support `not` keyword with End-based test function '{test_name}'."
+                    )
+            else:
+                instr_name = tests["end"]
+            instruction_lines = self._compile_instr(node, instr_name, *args, **kwargs)
 
         if restart_event:
             if "restart" not in tests:
                 raise NoSkipOrReturnError
-            instruction_lines = self._compile_instr(node, tests["restart"], *args, **kwargs)
+            if negate:
+                if "restart_not" in tests:
+                    instr_name = tests["restart_not"]
+                else:
+                    raise EVSError(
+                        node, f"Cannot yet support `not` keyword with Restart-based test function '{test_name}'."
+                    )
+            else:
+                instr_name = tests["restart"]
+            instruction_lines = self._compile_instr(node, instr_name, *args, **kwargs)
 
         if instruction_lines:
             instruction_lines[0] += event_layers
@@ -1326,20 +1364,27 @@ class EVSParser(abc.ABC):
     #  ASSIGNMENT METHODS: These create global/local objects, including Conditions, from assignment nodes.
     # ~~~~~~~~~~~~~~~~~~~~
 
-    def _assign_name(self, node: ast.Assign):
+    def _assign_name(self, node: ast.Assign, is_local: bool):
         """Assign object to name of your choosing. Can only be used outside any event function scripts."""
         value = self._parse_nodes(node.value)
         for target in node.targets:
             if not isinstance(target, ast.Name):
                 raise EVSSyntaxError(node, "Values can only be assigned to (any number of) single names.")
             name = target.id
-            if name in self.EMEDF_ALIASES or name in {"Await", "EnableThisFlag", "DisableThisFlag"}:
-                raise EVSSyntaxError(node, f"Cannot assign to an instruction name ({name}).")
+            if name in self.EMEDF_ALIASES or name in self.SPECIAL_NAMES:
+                raise EVSSyntaxError(node, f"Cannot assign to an instruction/reserved name ({name}).")
             if name in BUILTIN_NAMES:
                 raise EVSSyntaxError(node, f"Cannot assign to a builtin EVS name ({name}).")
             if name in self.events:
                 raise EVSSyntaxError(node, f"Cannot assign to an existing event name ({name}).")
+
+            if is_local:
+                if name in self.current_event.args:
+                    raise EVSSyntaxError(node, f"Cannot assign to an event argument name ({name}).")
+                # NOTE: You can replace previously defined locals.
+                self.locals[name] = value
             else:
+                # NOTE: You can replace previously defined globals.
                 self.globals[name] = value  # will override any previous value
 
     def _assign_condition(self, node: ast.Assign, held=False):
@@ -1478,7 +1523,7 @@ class EVSParser(abc.ABC):
             return left & right
         raise EVSSyntaxError(node, f"Unsupported binary operation: {node.op}")
 
-    def _parse_function_call(self, node: ast.Call):
+    def _parse_function_call(self, node: ast.Call, allowed_calls=()):
         """Return the name (or None), positional args, and keyword arguments of function call node.
 
         If the function is an Attribute node rather a Name, then the returned name will be None.
@@ -1489,8 +1534,8 @@ class EVSParser(abc.ABC):
             name = None
         else:
             raise EVSSyntaxError(node, f"Invalid callable node type: {type(node)}")
-        args = self._parse_nodes(node.args)
-        kwargs = self._parse_keyword_nodes(node.keywords)
+        args = self._parse_nodes(node.args, allowed_calls=allowed_calls)
+        kwargs = self._parse_keyword_nodes(node.keywords, allowed_calls=allowed_calls)
         return name, args, kwargs
 
     def _compile_game_type_method(self, node, name, args, kwargs):
@@ -1541,7 +1586,7 @@ class EVSParser(abc.ABC):
         elif isinstance(node, (ast.List, ast.Tuple)):
             return [self._parse_nodes(sequence_node, allowed_calls=allowed_calls) for sequence_node in node.elts]
         elif isinstance(node, ast.Call):
-            name, args, kwargs = self._parse_function_call(node)
+            name, args, kwargs = self._parse_function_call(node, allowed_calls=allowed_calls)
             if name is not None and name in allowed_calls:
                 return self._execute_function_call(name, args, kwargs, node.lineno)
             raise EVSValueError(node.lineno, f"Invalid callable: {repr(name)}.")
@@ -1562,11 +1607,11 @@ class EVSParser(abc.ABC):
             raise EVSCallableError(lineno, name)
         return func(*args, **kwargs)
 
-    def _parse_keyword_nodes(self, keywords):
+    def _parse_keyword_nodes(self, keywords, allowed_calls=()):
         """Returns a kwargs dictionary built from the given keyword node(s)."""
         if isinstance(keywords, ast.keyword):
-            return {keywords.arg: self._parse_nodes(keywords.value)}
-        return {kw.arg: self._parse_nodes(kw.value) for kw in keywords}
+            return {keywords.arg: self._parse_nodes(keywords.value, allowed_calls=allowed_calls)}
+        return {kw.arg: self._parse_nodes(kw.value, allowed_calls=allowed_calls) for kw in keywords}
 
     def _parse_decorator(self, event_node: ast.FunctionDef) -> tuple[int, int]:
         """Extract `OnRestBehavior` enum value (default is 0) and event ID (default is -1) from function decorator."""

@@ -5,7 +5,7 @@ __all__ = [
     "create_bak",
     "restore_bak",
     "find_steam_common_paths",
-    "import_arbitrary_file",
+    "import_arbitrary_module",
     "read_json",
     "write_json",
 ]
@@ -103,7 +103,7 @@ def _get_drives():
     return drives
 
 
-def import_arbitrary_file(path: str | Path) -> types.ModuleType:
+def import_arbitrary_module(path: str | Path) -> types.ModuleType:
     """
     TODO: This does not seem to work with `dataclass(slots=True)`. I think I need to assign `__module__` to each
      imported class manually, or something:

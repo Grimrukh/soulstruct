@@ -13,7 +13,7 @@ from enum import Enum, IntEnum
 from pathlib import Path
 from types import ModuleType
 
-from soulstruct.utilities.files import import_arbitrary_file
+from soulstruct.utilities.files import import_arbitrary_module
 from soulstruct.base.game_types import *
 
 _LOGGER = logging.getLogger("soulstruct")
@@ -113,7 +113,7 @@ class GameEnumsManager(abc.ABC):
         `Character` enum will appear under the `Character` itself but also the parent `MapPart` key -- but otherwise,
         conflicting values will log warnings or (if under the exact same child type key) raise a `ValueError`.
         """
-        self.modules = {Path(path).name.split(".")[0]: import_arbitrary_file(path) for path in module_paths}
+        self.modules = {Path(path).name.split(".")[0]: import_arbitrary_module(path) for path in module_paths}
         self.enums = {module_stem: {} for module_stem in self.modules}
         self.all_event_ids = [] if all_event_ids is None else all_event_ids
         self.all_common_event_ids = []  # added separately

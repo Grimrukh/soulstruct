@@ -45,7 +45,7 @@ from functools import wraps
 from pathlib import Path
 
 from soulstruct.base.game_types.basic_types import GAME_TYPE
-from soulstruct.utilities.files import import_arbitrary_file
+from soulstruct.utilities.files import import_arbitrary_module
 from ..emevd.utils import get_write_offset
 
 from .exceptions import *
@@ -242,10 +242,21 @@ def import_from(
                 "`script_directory` needed for relative import, but was not given to `EVSParser` or auto-detected.",
             )
         level = 0 if node.level == 0 else node.level - 1  # single dot (level 1) is the same as no dot (level 0)
-        module_path = script_directory / ("../" * level + node.module.replace(".", "/") + ".py")
+        module_path = (script_directory / ("../" * level + node.module.replace(".", "/") + ".py")).resolve()
         if not module_path.is_file():
             raise EVSImportError(node, node.module, f"Cannot import missing module file: {module_path}")
-        module = import_arbitrary_file(module_path)
+        try:
+            module = import_arbitrary_module(module_path)
+        except ImportError as ex:
+            if "no known parent package" in str(ex):
+                raise EVSImportError(
+                    node,
+                    node.module,
+                    f"Cannot import module '{module_path}' due to having no known parent package.\n"
+                    f"    Note that currently, EVS files cannot import modules that "
+                    f"contain their own relative imports. Please use absolute imports only."
+                )
+            raise
 
     module_dict = {}
     for alias in node.names:
@@ -302,7 +313,7 @@ def import_from_common_func(
         module_path = script_directory / ("../" * level + module_name.replace(".", "/") + ".py")
         if not module_path.is_file():
             raise EVSCommonFuncImportError(module_name, "", "Cannot import missing module file.")
-        module = import_arbitrary_file(module_path)
+        module = import_arbitrary_module(module_path)
 
     for name in names:
         if name == "*":

@@ -37,7 +37,7 @@ class ConditionGroupState:
 
     # Condition groups that have been loaded into this one. EVS users are free to repeatedly load the same condition
     # group into multiple other condition groups, but this is not tracked here (we just use a set).
-    children: set[ConditionGroupState] = field(default_factory=list)
+    children: set[ConditionGroupState] = field(default_factory=set)
 
     @property
     def active(self):
@@ -61,8 +61,7 @@ class ConditionGroupState:
 
     def activate_with_child(self, condition: ConditionGroupState):
         self.children.add(condition)
-        self._stale = False
-        self._active = True
+        self.activate()
 
     def deactivate(self):
         """Called when a 'frame-ending' instruction like `MAIN.Await()` or `Wait()` is called.
@@ -81,6 +80,10 @@ class ConditionGroupState:
     def __eq__(self, other: ConditionGroupState):
         return self.index == other.index
 
+    def __repr__(self):
+        """For appearance in numeric EMEVD."""
+        return f"{self.index}"
+
 
 class EVSConditionManager:
 
@@ -89,6 +92,9 @@ class EVSConditionManager:
 
     # Managed condition slots.
     conditions: list[ConditionGroupState]
+    # Sub-lists of conditions for quick access.
+    or_conditions: list[ConditionGroupState]  # negative indices
+    and_conditions: list[ConditionGroupState]  # positive indices
     
     # Enabled when the very last instruction was `MAIN.Await()`, so back-to-back Awaits() can be used without warning
     # about stale conditions (rarely useful).
@@ -105,18 +111,27 @@ class EVSConditionManager:
         ]
         self.just_awaited_main = False
 
+        self.or_conditions = [c for c in self.conditions if c.index < 0]
+        self.and_conditions = [c for c in self.conditions if c.index > 0]
+
     @property
     def MAIN(self):
         return self.conditions[0]
 
-    def __getitem__(self, name_or_index: str | int) -> ConditionGroupState:
+    def __getitem__(self, name_or_index: str | int | ConditionGroupState) -> ConditionGroupState:
+        if isinstance(name_or_index, ConditionGroupState):
+            # May already have been resolved before passing to internal compiler.
+            return name_or_index
+
         if isinstance(name_or_index, int):
             return self.conditions[name_or_index]
-        elif isinstance(name_or_index, str):
+
+        if isinstance(name_or_index, str):
             for condition in self.conditions:
                 if condition.name == name_or_index:
                     return condition
             raise KeyError(f"No condition named '{name_or_index}'.")
+
         raise TypeError(f"Condition name or index must be an integer or string, not {type(name_or_index).__name__}.")
 
     @property
@@ -132,12 +147,6 @@ class EVSConditionManager:
         for condition in self.conditions:
             condition.deactivate()
 
-    def get_or_conditions(self):
-        return [c for c in self.conditions if c.index < 0]
-
-    def get_and_conditions(self):
-        return [c for c in self.conditions if c.index >= 0]
-
     def reset(self, event_id: int):
         """Reset for every new event."""
         self.event_id = event_id
@@ -146,11 +155,11 @@ class EVSConditionManager:
 
     def check_out_OR(self, node: ast.AST, event_id: int, name="_", hold=False) -> ConditionGroupState:
         """Automatically check out the next available OR condition group index (closest to 0)."""
-        return self._check_out(node, event_id, name, hold, "OR", self.get_or_conditions())
+        return self._check_out(node, event_id, name, hold, "OR", self.or_conditions)
 
     def check_out_AND(self, node: ast.AST, event_id: int, name="_", hold=False) -> ConditionGroupState:
         """Automatically check out the next available AND condition group index (closest to 0)."""
-        return self._check_out(node, event_id, name, hold, "AND", self.get_and_conditions())
+        return self._check_out(node, event_id, name, hold, "AND", self.and_conditions)
 
     def _check_out(
         self, node, event_id: int, name: str, hold: bool, bool_type: str, conditions: list[ConditionGroupState]

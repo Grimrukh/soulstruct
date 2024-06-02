@@ -11,7 +11,6 @@ from __future__ import annotations
 
 __all__ = [
     "COMPILER",
-    "compile_instruction",
     "compile_game_object_test",
 
     "RunEvent",
@@ -39,37 +38,16 @@ __all__ = [
 import logging
 import typing as tp
 
-from soulstruct.base.events.evs.compiler import base_compile_instruction, BooleanTestCompiler
+from soulstruct.base.events.evs.compiler import EVSInstructionCompiler, BooleanTestCompiler
 from soulstruct.base.events.emevd.utils import get_coord_entity_type
 from soulstruct.eldenring.game_types import *
 
 from .emedf import EMEDF_ALIASES
 from ..enums import *
 
-if tp.TYPE_CHECKING:
-    from soulstruct.base.events.evs.conditions import EVSConditionManager
-
 _LOGGER = logging.getLogger("soulstruct")
 
-
-# This dictionary maps EVS instruction function names to functions that produce actual numeric output. These functions
-# may take different arguments to a single underlying instruction (e.g., tuples as flag ranges, `GameMap` instances) or
-# merge multiple underlying instructions into one interface for simplicity, such as `IfActionButton` or `PlayCutscene`.
-# If a function name does not appear in here, it will found as an 'alias' in EMEDF and compiled automatically.
-# (Such functions should still appear in the PYI module for intelli-sense.)
-COMPILER = {}
-
-
-def compile_instruction(instr_name: str, *args, cond: EVSConditionManager = None, **kwargs) -> list[str]:
-    """Compile instruction using `COMPILER` function if available, or fall back to `base_compile_instruction`
-    that purely uses EMEDF.
-
-    `cond` can be passed in for `base_decompile_instruction` to manage conditions. However, to ease signatures, it is
-    never passed to decorated COMPILER functions, which are highly unlikely to ever need it.
-    """
-    if instr_name in COMPILER:
-        return COMPILER[instr_name](*args, **kwargs)
-    return base_compile_instruction(EMEDF_ALIASES, instr_name, *args, cond=cond, **kwargs)
+COMPILER = EVSInstructionCompiler(EMEDF_ALIASES)
 
 
 def compile_game_object_test(
@@ -81,7 +59,7 @@ def compile_game_object_test(
     end_event=False,
     restart_event=False,
 ) -> list[str]:
-    test = BooleanTestCompiler(compile_instruction)
+    test = BooleanTestCompiler(COMPILER)
 
     if issubclass(game_object_int_type, Flag):
         test.set_all("FlagEnabled", "FlagDisabled")
@@ -114,16 +92,8 @@ def compile_game_object_test(
     )
 
 
-def _compile(func):
-    """Decorator that simply adds the decorated function to the `COMPILER` dictionary under its own name."""
-    if func.__name__ in COMPILER:
-        raise ValueError(f"EVS instruction {func.__name__} appeared more than once in module.")
-    COMPILER[func.__name__] = func
-    return func  # no actual decoration
-
-
 # noinspection PyUnusedLocal
-@_compile
+@COMPILER.add_custom_instruction
 def RunEvent(event_id, slot=0, args=(0,), arg_types="", event_layers=None):
     """Run the given `event_id`, which must be defined in the same script.
 
@@ -143,13 +113,13 @@ def RunEvent(event_id, slot=0, args=(0,), arg_types="", event_layers=None):
     full_arg_types = "iI" + str(arg_types[0])
     if len(arg_types) > 1:
         full_arg_types += f"|{arg_types[1:]}"
-    return base_compile_instruction(
-        EMEDF_ALIASES, "RunEvent", slot=slot, event_id=event_id, args=args, arg_types=full_arg_types
+    return COMPILER.compile(
+        "_RunEvent", slot=slot, event_id=event_id, args=args, arg_types=full_arg_types
     )
 
 
 # noinspection PyUnusedLocal
-@_compile
+@COMPILER.add_custom_instruction
 def RunCommonEvent(event_id, slot=0, args=(0,), arg_types="", event_layers=None):
     """Run the given `event_id` as a common function.
 
@@ -179,12 +149,12 @@ def RunCommonEvent(event_id, slot=0, args=(0,), arg_types="", event_layers=None)
     full_arg_types = "iI" + str(arg_types[0])
     if len(arg_types) > 1:
         full_arg_types += f"|{arg_types[1:]}"
-    return base_compile_instruction(
-        EMEDF_ALIASES, "RunCommonEvent", slot=slot, event_id=event_id, args=args, arg_types=full_arg_types
+    return COMPILER.compile(
+        "RunCommonEvent", slot=slot, event_id=event_id, args=args, arg_types=full_arg_types
     )
 
 
-@_compile
+@COMPILER.add_custom_instruction
 def EnableAssetActivation(asset: AssetTyping, obj_act_id: int, relative_index=None):
     """
     Allows the given ObjAct to be performed with the asset, optionally only at the given relative_index.
@@ -192,15 +162,15 @@ def EnableAssetActivation(asset: AssetTyping, obj_act_id: int, relative_index=No
     I've combined two instructions into one here, as they're very similar.
     """
     if relative_index is None:
-        return compile_instruction(
+        return COMPILER.compile(
             "SetAssetActivation", asset=asset, obj_act_id=obj_act_id, state=True
         )
-    return compile_instruction(
+    return COMPILER.compile(
         "SetAssetActivationWithIdx", asset=asset, obj_act_id=obj_act_id, relative_index=relative_index, state=True
     )
 
 
-@_compile
+@COMPILER.add_custom_instruction
 def DisableAssetActivation(asset: AssetTyping, obj_act_id, relative_index=None):
     """
     Prevents the given ObjAct from being performed with the object.
@@ -208,22 +178,22 @@ def DisableAssetActivation(asset: AssetTyping, obj_act_id, relative_index=None):
     Used for doors that you can only open once, for example. Again, I've combined the relative index version here.
     """
     if relative_index is None:
-        return compile_instruction("SetAssetActivation", asset=asset, obj_act_id=obj_act_id, state=False)
-    return compile_instruction(
+        return COMPILER.compile("SetAssetActivation", asset=asset, obj_act_id=obj_act_id, state=False)
+    return COMPILER.compile(
         "SetAssetActivationWithIdx", asset=asset, obj_act_id=obj_act_id, relative_index=relative_index, state=False
     )
 
 
-@_compile
+@COMPILER.add_custom_instruction
 def AwardItemLot(item_lot: int, host_only=True):
     """Directly award an item lot to player(s). By default, only the host receives the item."""
     if host_only:
-        return compile_instruction("AwardItemLotToHostOnly", item_lot=item_lot)
-    return compile_instruction("AwardItemLotToAllPlayers", item_lot=item_lot)
+        return COMPILER.compile("AwardItemLotToHostOnly", item_lot=item_lot)
+    return COMPILER.compile("AwardItemLotToAllPlayers", item_lot=item_lot)
 
 
 # TODO: Only use new Cutscene instruction set.
-@_compile
+@COMPILER.add_custom_instruction
 def PlayCutscene(
     cutscene_id: int,
     cutscene_flags: int = 0,
@@ -261,14 +231,14 @@ def PlayCutscene(
         if rotation or relative_rotation_axis_x or relative_rotation_axis_z or vertical_translation:
             raise ValueError("You cannot use move arguments AND rotation/translation arguments with cutscenes.")
         if player_id is None:
-            return compile_instruction(
+            return COMPILER.compile(
                 "PlayCutsceneAndMovePlayer",
                 cutscene_id=cutscene_id,
                 cutscene_flags=cutscene_flags,
                 move_to_region=move_to_region,
                 game_map=game_map,
             )
-        return compile_instruction(
+        return COMPILER.compile(
             "PlayCutsceneAndMoveSpecificPlayer",
             cutscene_id=cutscene_id,
             cutscene_flags=cutscene_flags,
@@ -281,7 +251,7 @@ def PlayCutscene(
         player_id = PLAYER
 
     if rotation or relative_rotation_axis_x or relative_rotation_axis_z or vertical_translation:
-        return compile_instruction(
+        return COMPILER.compile(
             "PlayCutsceneAndRotatePlayer",
             cutscene_id=cutscene_id,
             cutscene_flags=cutscene_flags,
@@ -292,7 +262,7 @@ def PlayCutscene(
             player_id=player_id,
         )
 
-    return compile_instruction(
+    return COMPILER.compile(
         "PlayCutsceneToPlayer",
         cutscene_id=cutscene_id,
         cutscene_flags=cutscene_flags,
@@ -300,7 +270,7 @@ def PlayCutscene(
     )
 
 
-@_compile
+@COMPILER.add_custom_instruction
 def Move(
     character: CharacterTyping,
     destination: CoordEntityTyping,
@@ -335,7 +305,7 @@ def Move(
     if short_move:
         if copy_draw_parent or set_draw_parent:
             raise ValueError("You cannot copy or set the draw parent during a short move.")
-        return compile_instruction(
+        return COMPILER.compile(
             "ShortMove",
             character=character,
             destination=destination,
@@ -343,7 +313,7 @@ def Move(
             destination_type=destination_type,
         )
     if copy_draw_parent is not None:
-        return compile_instruction(
+        return COMPILER.compile(
             "MoveAndCopyDrawParent",
             character=character,
             destination=destination,
@@ -352,7 +322,7 @@ def Move(
             destination_type=destination_type,
         )
     if set_draw_parent is not None:
-        return compile_instruction(
+        return COMPILER.compile(
             "MoveAndSetDrawParent",
             character=character,
             destination=destination,
@@ -360,7 +330,7 @@ def Move(
             dummy_id=dummy_id,
             destination_type=destination_type,
         )
-    return compile_instruction(
+    return COMPILER.compile(
         "MoveToEntity",
         character=character,
         destination=destination,
@@ -369,7 +339,7 @@ def Move(
     )
 
 
-@_compile
+@COMPILER.add_custom_instruction
 def IfPlayerItemState(
     condition: int, state: bool, item: ItemTyping, item_type: ItemType = None, including_storage: bool = False
 ):
@@ -380,69 +350,69 @@ def IfPlayerItemState(
         except AttributeError:
             raise AttributeError("Item type not detected. Use keyword or typed item.")
     if including_storage:
-        return compile_instruction(
+        return COMPILER.compile(
             "IfPlayerItemStateIncludingStorage", condition=condition, item_type=item_type, item=item, state=state
         )
-    return compile_instruction(
+    return COMPILER.compile(
         "IfPlayerItemStateExcludingStorage", condition=condition, item_type=item_type, item=item, state=state
     )
 
 
 # region `IfPlayerItemState` partials
-@_compile
+@COMPILER.add_custom_instruction
 def IfPlayerHasItem(condition: int, item: ItemTyping, item_type: ItemType = None, including_storage: bool = False):
     return IfPlayerItemState(condition, True, item, item_type, including_storage)
 
 
-@_compile
+@COMPILER.add_custom_instruction
 def IfPlayerHasWeapon(condition: int, weapon: WeaponTyping, including_storage: bool = False):
     return IfPlayerItemState(condition, True, weapon, ItemType.Weapon, including_storage)
 
 
-@_compile
+@COMPILER.add_custom_instruction
 def IfPlayerHasArmor(condition: int, armor: ArmorTyping, including_storage: bool = False):
     return IfPlayerItemState(condition, True, armor, ItemType.Armor, including_storage)
 
 
-@_compile
+@COMPILER.add_custom_instruction
 def IfPlayerHasTalisman(condition: int, ring: AccessoryTyping, including_storage: bool = False):
     return IfPlayerItemState(condition, True, ring, ItemType.Talisman, including_storage)
 
 
-@_compile
+@COMPILER.add_custom_instruction
 def IfPlayerHasGood(condition: int, good: GoodTyping, including_storage: bool = False):
     return IfPlayerItemState(condition, True, good, ItemType.Good, including_storage)
 
 
-@_compile
+@COMPILER.add_custom_instruction
 def IfPlayerDoesNotHaveItem(
     condition: int, item: ItemTyping, item_type: ItemType = None, including_storage: bool = False
 ):
     return IfPlayerItemState(condition, False, item, item_type, including_storage)
 
 
-@_compile
+@COMPILER.add_custom_instruction
 def IfPlayerDoesNotHaveWeapon(condition: int, weapon: WeaponTyping, including_storage: bool = False):
     return IfPlayerItemState(condition, False, weapon, ItemType.Weapon, including_storage)
 
 
-@_compile
+@COMPILER.add_custom_instruction
 def IfPlayerDoesNotHaveArmor(condition: int, armor: ArmorTyping, including_storage: bool = False):
     return IfPlayerItemState(condition, False, armor, ItemType.Armor, including_storage)
 
 
-@_compile
+@COMPILER.add_custom_instruction
 def IfPlayerDoesNotHaveTalisman(condition: int, ring: AccessoryTyping, including_storage: bool = False):
     return IfPlayerItemState(condition, False, ring, ItemType.Talisman, including_storage)
 
 
-@_compile
+@COMPILER.add_custom_instruction
 def IfPlayerDoesNotHaveGood(condition: int, good: GoodTyping, including_storage: bool = False):
     return IfPlayerItemState(condition, False, good, ItemType.Good, including_storage)
 # endregion
 
 
-@_compile
+@COMPILER.add_custom_instruction
 def IfActionButton(
     condition: int,
     prompt_text: EventTextTyping,
@@ -479,19 +449,20 @@ def IfActionButton(
 
     if boss_version:
         if line_intersects is None:
-            return compile_instruction("IfActionButtonBoss", **kwargs)
-        else:
-            return compile_instruction("IfActionButtonBossLineIntersect", **kwargs, line_intersects=line_intersects)
-    else:
-        if line_intersects is None:
-            return compile_instruction("IfActionButtonBasic", **kwargs)
-        else:
-            return compile_instruction("IfActionButtonBasicLineIntersect", **kwargs, line_intersects=line_intersects)
+            return COMPILER.compile("IfActionButtonBoss", **kwargs)
+        return COMPILER.compile(
+            "IfActionButtonBossLineIntersect", **kwargs, line_intersects=line_intersects
+        )
+    if line_intersects is None:
+        return COMPILER.compile("IfActionButtonBasic", **kwargs)
+    return COMPILER.compile(
+        "IfActionButtonBasicLineIntersect", **kwargs, line_intersects=line_intersects
+    )
 
 
-@_compile
+@COMPILER.add_custom_instruction
 def DefineLabel(label: Label | int):
     """Wrapper for generating any valid label (0-20, inclusive)."""
     if not 0 <= label <= 20:
         raise ValueError(f"Label for `DefineLabel` must be between 0 and 20, inclusive, not: {label}")
-    return base_compile_instruction(EMEDF_ALIASES, f"DefineLabel_{int(label)}")
+    return COMPILER.compile(f"DefineLabel_{int(label)}")

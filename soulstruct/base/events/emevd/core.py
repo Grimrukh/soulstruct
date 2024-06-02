@@ -136,6 +136,8 @@ class EMEVD(GameFile, abc.ABC):
                 evs_string, map_name=map_name, script_directory=script_directory, common_func_evs=common_func_evs
             )
         except Exception as ex:
+            import traceback
+            traceback.print_exc()
             raise EMEVDError(f"Error occurred while parsing EVS string: {ex}")
         return cls.from_evs_parser(parser)
 

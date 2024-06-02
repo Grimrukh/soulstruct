@@ -822,16 +822,16 @@ def Preconstructor():
 def Event_1039542498():
     """Event 1039542498"""
     GotoIfFlagDisabled(Label.L0, flag=1039540592)
-    DisableNavmeshType(navmesh_id=1039542498, navmesh_type=NavmeshType.Disable)
+    RemoveNavmeshFaceFlag(navmesh_id=1039542498, navmesh_type=NavmeshType.Disable)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    EnableNavmeshType(navmesh_id=1039542498, navmesh_type=NavmeshType.Disable)
+    AddNavmeshFaceFlag(navmesh_id=1039542498, navmesh_type=NavmeshType.Disable)
     
     MAIN.Await(FlagEnabled(1039540592))
     
-    DisableNavmeshType(navmesh_id=1039542498, navmesh_type=NavmeshType.Disable)
+    RemoveNavmeshFaceFlag(navmesh_id=1039542498, navmesh_type=NavmeshType.Disable)
     End()
 
 
@@ -851,16 +851,16 @@ def Event_1039542811():
 def Event_1039542499():
     """Event 1039542499"""
     GotoIfFlagDisabled(Label.L0, flag=1039540594)
-    DisableNavmeshType(navmesh_id=1039542499, navmesh_type=NavmeshType.Disable)
+    RemoveNavmeshFaceFlag(navmesh_id=1039542499, navmesh_type=NavmeshType.Disable)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    EnableNavmeshType(navmesh_id=1039542499, navmesh_type=NavmeshType.Disable)
+    AddNavmeshFaceFlag(navmesh_id=1039542499, navmesh_type=NavmeshType.Disable)
     
     MAIN.Await(FlagEnabled(1039540594))
     
-    DisableNavmeshType(navmesh_id=1039542499, navmesh_type=NavmeshType.Disable)
+    RemoveNavmeshFaceFlag(navmesh_id=1039542499, navmesh_type=NavmeshType.Disable)
     End()
 
 

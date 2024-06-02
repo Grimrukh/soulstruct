@@ -1065,13 +1065,13 @@ def Event_11700200(
     if FlagDisabled(flag):
         EndOfAnimation(obj=obj, animation_id=3)
         DisableMapCollision(collision=collision_1)
-        DisableNavmeshType(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
-        EnableNavmeshType(navmesh_id=navmesh_id_1, navmesh_type=NavmeshType.Disable)
+        RemoveNavmeshFaceFlag(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
+        AddNavmeshFaceFlag(navmesh_id=navmesh_id_1, navmesh_type=NavmeshType.Disable)
     else:
         EndOfAnimation(obj=obj, animation_id=1)
         DisableMapCollision(collision=collision)
-        EnableNavmeshType(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
-        DisableNavmeshType(navmesh_id=navmesh_id_1, navmesh_type=NavmeshType.Disable)
+        AddNavmeshFaceFlag(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
+        RemoveNavmeshFaceFlag(navmesh_id=navmesh_id_1, navmesh_type=NavmeshType.Disable)
     
     MAIN.Await(FlagEnabled(flag_1))
     
@@ -1079,7 +1079,7 @@ def Event_11700200(
         ForceAnimation(obj, 1)
         DisableMapCollision(collision=collision)
         EnableObject(obj_1)
-        EnableNavmeshType(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
+        AddNavmeshFaceFlag(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
         ForceAnimation(obj_1, 1)
         WaitFrames(frames=180)
         DisableObject(obj_1)
@@ -1090,7 +1090,7 @@ def Event_11700200(
     ForceAnimation(obj, 3)
     DisableMapCollision(collision=collision_1)
     EnableObject(obj_1)
-    EnableNavmeshType(navmesh_id=navmesh_id_1, navmesh_type=NavmeshType.Disable)
+    AddNavmeshFaceFlag(navmesh_id=navmesh_id_1, navmesh_type=NavmeshType.Disable)
     ForceAnimation(obj_1, 3)
     WaitFrames(frames=180)
     DisableObject(obj_1)

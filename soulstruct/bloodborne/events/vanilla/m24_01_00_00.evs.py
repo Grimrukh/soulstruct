@@ -1239,7 +1239,7 @@ def Event_12410337(_, navmesh_id: int):
     """Event 12410337"""
     MAIN.Await(ObjectActivated(obj_act_id=12411303))
     
-    EnableNavmeshType(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
+    AddNavmeshFaceFlag(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
 
 
 @RestartOnRest(12415420)

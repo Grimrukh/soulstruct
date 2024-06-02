@@ -2195,11 +2195,11 @@ def Event_12901447(_, obj_act_id: int, navmesh_id: int):
     """Event 12901447"""
     if ThisEventSlotFlagEnabled():
         return
-    EnableNavmeshType(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
+    AddNavmeshFaceFlag(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
     
     MAIN.Await(ObjectActivated(obj_act_id=obj_act_id))
     
-    DisableNavmeshType(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
+    RemoveNavmeshFaceFlag(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
 
 
 @ContinueOnRest(12901525)
@@ -2207,12 +2207,12 @@ def Event_12901525(_, obj_act_id: int, navmesh_id: int):
     """Event 12901525"""
     if ThisEventSlotFlagEnabled():
         return
-    EnableNavmeshType(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
+    AddNavmeshFaceFlag(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
     
     MAIN.Await(ObjectActivated(obj_act_id=obj_act_id))
     
     Wait(3.0)
-    DisableNavmeshType(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
+    RemoveNavmeshFaceFlag(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
 
 
 @RestartOnRest(12901532)

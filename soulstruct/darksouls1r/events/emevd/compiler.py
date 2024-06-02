@@ -11,7 +11,6 @@ from __future__ import annotations
 
 __all__ = [
     "COMPILER",
-    "compile_instruction",
     "compile_game_object_test",
 
     "RunEvent",
@@ -35,9 +34,8 @@ __all__ = [
 ]
 
 import logging
-import typing as tp
 
-from soulstruct.base.events.evs.compiler import base_compile_instruction
+from soulstruct.base.events.evs.compiler import EVSInstructionCompiler
 from soulstruct.darksouls1ptde.events.emevd.compiler import (
     compile_game_object_test,
     EnableObjectActivation,
@@ -61,42 +59,14 @@ from soulstruct.darksouls1ptde.events.emevd.compiler import (
 
 from .emedf import EMEDF_ALIASES
 
-if tp.TYPE_CHECKING:
-    from soulstruct.base.events.evs.conditions import EVSConditionManager
 
 _LOGGER = logging.getLogger("soulstruct")
 
-
-# This dictionary maps EVS instruction function names to functions that produce actual numeric output. These functions
-# may take different arguments to a single underlying instruction (e.g., tuples as flag ranges, `GameMap` instances) or
-# merge multiple underlying instructions into one interface for simplicity, such as `IfActionButton` or `PlayCutscene`.
-# If a function name does not appear in here, it will found as an 'alias' in EMEDF and compiled automatically.
-# (Such functions should still appear in the PYI module for intelli-sense.)
-COMPILER = {}
-
-
-def compile_instruction(instr_name: str, *args, cond: EVSConditionManager = None, **kwargs) -> list[str]:
-    """Compile instruction using `COMPILER` function if available, or fall back to `base_compile_instruction`
-    that purely uses EMEDF.
-
-    `cond` can be passed in for `base_decompile_instruction` to manage conditions. However, to ease signatures, it is
-    never passed to decorated COMPILER functions, which are highly unlikely to ever need it.
-    """
-    if instr_name in COMPILER:
-        return COMPILER[instr_name](*args, **kwargs)
-    return base_compile_instruction(EMEDF_ALIASES, instr_name, *args, cond=cond, **kwargs)
-
-
-def _compile(func):
-    """Decorator that simply adds the decorated function to the `COMPILER` dictionary under its own name."""
-    if func.__name__ in COMPILER:
-        raise ValueError(f"EVS instruction {func.__name__} appeared more than once in module.")
-    COMPILER[func.__name__] = func
-    return func  # no actual decoration
+COMPILER = EVSInstructionCompiler(EMEDF_ALIASES)
 
 
 # noinspection PyUnusedLocal
-@_compile
+@COMPILER.add_custom_instruction
 def RunEvent(event_id, slot=0, args=(0,), arg_types="", event_layers=None):
     """Run the given `event_id`, which must be defined in the same script.
 
@@ -116,26 +86,26 @@ def RunEvent(event_id, slot=0, args=(0,), arg_types="", event_layers=None):
     full_arg_types = "iI" + str(arg_types[0])
     if len(arg_types) > 1:
         full_arg_types += f"|{arg_types[1:]}"
-    return base_compile_instruction(
-        EMEDF_ALIASES, "RunEvent", slot=slot, event_id=event_id, args=args, arg_types=full_arg_types
+    return COMPILER.compile(
+        "_RunEvent", slot=slot, event_id=event_id, args=args, arg_types=full_arg_types
     )
 
 
 # Add PTDE imported functions to `COMPILER`.
-_compile(EnableObjectActivation)
-_compile(DisableObjectActivation)
-_compile(AwardItemLot)
-_compile(PlayCutscene)
-_compile(Move)
-_compile(IfPlayerItemState)
-_compile(IfPlayerHasItem)
-_compile(IfPlayerHasWeapon)
-_compile(IfPlayerHasArmor)
-_compile(IfPlayerHasRing)
-_compile(IfPlayerHasGood)
-_compile(IfPlayerDoesNotHaveItem)
-_compile(IfPlayerDoesNotHaveWeapon)
-_compile(IfPlayerDoesNotHaveArmor)
-_compile(IfPlayerDoesNotHaveRing)
-_compile(IfPlayerDoesNotHaveGood)
-_compile(IfActionButton)
+COMPILER.add_custom_instruction(EnableObjectActivation)
+COMPILER.add_custom_instruction(DisableObjectActivation)
+COMPILER.add_custom_instruction(AwardItemLot)
+COMPILER.add_custom_instruction(PlayCutscene)
+COMPILER.add_custom_instruction(Move)
+COMPILER.add_custom_instruction(IfPlayerItemState)
+COMPILER.add_custom_instruction(IfPlayerHasItem)
+COMPILER.add_custom_instruction(IfPlayerHasWeapon)
+COMPILER.add_custom_instruction(IfPlayerHasArmor)
+COMPILER.add_custom_instruction(IfPlayerHasRing)
+COMPILER.add_custom_instruction(IfPlayerHasGood)
+COMPILER.add_custom_instruction(IfPlayerDoesNotHaveItem)
+COMPILER.add_custom_instruction(IfPlayerDoesNotHaveWeapon)
+COMPILER.add_custom_instruction(IfPlayerDoesNotHaveArmor)
+COMPILER.add_custom_instruction(IfPlayerDoesNotHaveRing)
+COMPILER.add_custom_instruction(IfPlayerDoesNotHaveGood)
+COMPILER.add_custom_instruction(IfActionButton)

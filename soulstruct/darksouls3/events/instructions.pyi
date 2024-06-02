@@ -340,10 +340,10 @@ __all__ = [
     "EnableBossHealthBar",
     "DisableBossHealthBar",
     "KillBoss",  # 2003[12]
-    "SetNavmeshType",  # 2003[13]
-    "EnableNavmeshType",
-    "DisableNavmeshType",
-    "ToggleNavmeshType",
+    "SetNavmeshFaceFlag",  # 2003[13]
+    "AddNavmeshFaceFlag",
+    "RemoveNavmeshFaceFlag",
+    "ToggleNavmeshFaceFlag",
     "WarpToMap",  # 2003[14]
     "HandleMinibossDefeat",  # 2003[15]
     "TriggerMultiplayerEvent",  # 2003[16]
@@ -3849,7 +3849,7 @@ def KillBoss(game_area_param_id: int, event_layers=()):
 
 
 # (2003, 13)
-def SetNavmeshType(
+def SetNavmeshFaceFlag(
     navmesh_id: NavigationEvent | int,
     navmesh_type: NavmeshType | int,
     operation: BitOperation | int,
@@ -3861,23 +3861,23 @@ def SetNavmeshType(
 
 
 # (2003, 13)
-def EnableNavmeshType(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType | int, event_layers=()):
+def AddNavmeshFaceFlag(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType | int, event_layers=()):
     """
-    Calls `SetNavmeshType` with `operation=0`.
-    """
-
-
-# (2003, 13)
-def DisableNavmeshType(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType | int, event_layers=()):
-    """
-    Calls `SetNavmeshType` with `operation=1`.
+    Calls `SetNavmeshFaceFlag` with `operation=0`.
     """
 
 
 # (2003, 13)
-def ToggleNavmeshType(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType | int, event_layers=()):
+def RemoveNavmeshFaceFlag(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType | int, event_layers=()):
     """
-    Calls `SetNavmeshType` with `operation=2`.
+    Calls `SetNavmeshFaceFlag` with `operation=1`.
+    """
+
+
+# (2003, 13)
+def ToggleNavmeshFaceFlag(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType | int, event_layers=()):
+    """
+    Calls `SetNavmeshFaceFlag` with `operation=2`.
     """
 
 

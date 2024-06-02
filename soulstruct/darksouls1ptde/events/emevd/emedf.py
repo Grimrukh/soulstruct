@@ -1841,7 +1841,7 @@ EMEDF = {
         },
     },
     (2003, 13): {
-        "alias": "SetNavmeshType",
+        "alias": "SetNavmeshFaceFlag",
         "docstring": """
             Set given navmesh type.
         """,
@@ -1860,9 +1860,9 @@ EMEDF = {
             },
         },
         "partials": {
-            "EnableNavmeshType": dict(operation=BitOperation.Add),
-            "DisableNavmeshType": dict(operation=BitOperation.Delete),
-            "ToggleNavmeshType": dict(operation=BitOperation.Invert),
+            "AddNavmeshFaceFlag": dict(operation=BitOperation.Add),
+            "RemoveNavmeshFaceFlag": dict(operation=BitOperation.Delete),
+            "ToggleNavmeshFaceFlag": dict(operation=BitOperation.Invert),
         },
     },
     (2003, 14): {
@@ -3456,33 +3456,41 @@ EMEDF = {
 add_common_emedf_info(EMEDF, PACKAGE_PATH("darksouls1ptde/events/emevd/ds1-common.emedf.json"))
 EMEDF_ALIASES, EMEDF_TESTS, EMEDF_COMPARISON_TESTS = build_emedf_aliases_tests(EMEDF)
 
-# Extra tests that use custom instructions from `compiler`.
+# Extra tests that use custom instructions from `compiler` (to auto-detect certain arguments from argument types).
 EMEDF_TESTS |= {
     "ActionButton": {
         "if": "IfActionButton",
     },
     "PlayerHasWeapon": {
         "if": "IfPlayerHasWeapon",
+        "if_not": "IfPlayerDoesNotHaveWeapon",
     },
     "PlayerHasArmor": {
         "if": "IfPlayerHasArmor",
+        "if_not": "IfPlayerDoesNotHaveArmor",
     },
     "PlayerHasRing": {
         "if": "IfPlayerHasRing",
+        "if_not": "IfPlayerDoesNotHaveRing",
     },
     "PlayerHasGood": {
         "if": "IfPlayerHasGood",
+        "if_not": "IfPlayerDoesNotHaveGood",
     },
     "PlayerDoesNotHaveWeapon": {
         "if": "IfPlayerDoesNotHaveWeapon",
+        "if_not": "IfPlayerHasWeapon",
     },
     "PlayerDoesNotHaveArmor": {
         "if": "IfPlayerDoesNotHaveArmor",
+        "if_not": "IfPlayerHasArmor",
     },
     "PlayerDoesNotHaveRing": {
         "if": "IfPlayerDoesNotHaveRing",
+        "if_not": "IfPlayerHasRing",
     },
     "PlayerDoesNotHaveGood": {
         "if": "IfPlayerDoesNotHaveGood",
+        "if_not": "IfPlayerHasGood",
     },
 }

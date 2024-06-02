@@ -1621,13 +1621,13 @@ def Event_14000519():
 def Event_14002498():
     """Event 14002498"""
     GotoIfFlagEnabled(Label.L0, flag=14000546)
-    EnableNavmeshType(navmesh_id=14002498, navmesh_type=NavmeshType.Disable)
+    AddNavmeshFaceFlag(navmesh_id=14002498, navmesh_type=NavmeshType.Disable)
     
     MAIN.Await(FlagEnabled(14000546))
 
     # --- Label 0 --- #
     DefineLabel(0)
-    DisableNavmeshType(navmesh_id=14002498, navmesh_type=NavmeshType.Disable)
+    RemoveNavmeshFaceFlag(navmesh_id=14002498, navmesh_type=NavmeshType.Disable)
     End()
 
 

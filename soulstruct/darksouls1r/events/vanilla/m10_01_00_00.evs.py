@@ -18,7 +18,7 @@ def Constructor():
     DisableFlag(11010580)
     if FlagEnabled(61010610):
         EndOfAnimation(obj=1011101, animation_id=2)
-        EnableNavmeshType(navmesh_id=1013100, navmesh_type=NavmeshType.Disable)
+        AddNavmeshFaceFlag(navmesh_id=1013100, navmesh_type=NavmeshType.Disable)
     SkipLinesIfClient(24)
     DisableObject(1011994)
     DeleteVFX(1011995, erase_root_only=False)
@@ -1561,7 +1561,7 @@ def Event_11010600():
     if FlagDisabled(61010610):
         Event_11010611()
         Restart()
-    EnableNavmeshType(navmesh_id=1013100, navmesh_type=NavmeshType.Disable)
+    AddNavmeshFaceFlag(navmesh_id=1013100, navmesh_type=NavmeshType.Disable)
     EnableFlag(11010605)
     ForceAnimation(1011101, 2)
     WaitFrames(frames=60)
@@ -1570,7 +1570,7 @@ def Event_11010600():
     if FlagEnabled(61010610):
         Event_11010611()
         Restart()
-    DisableNavmeshType(navmesh_id=1013100, navmesh_type=NavmeshType.Disable)
+    RemoveNavmeshFaceFlag(navmesh_id=1013100, navmesh_type=NavmeshType.Disable)
     ForceAnimation(1011101, 4)
     WaitFrames(frames=200)
     Event_11010611()
