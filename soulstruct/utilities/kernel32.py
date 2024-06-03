@@ -3,8 +3,8 @@ __all__ = [
     "kernel32", "PROCESS_VM_READ", "PROCESS_VM_WRITE", "PROCESS_VM_OPERATION", "PROCESS_ALL_ACCESS", "SIZE_T", "PSIZE_T"
 ]
 
-import ctypes as c
-from ctypes import wintypes as w
+import zugbruecke.ctypes as c
+from zugbruecke.ctypes import wintypes as w
 
 
 kernel32 = c.WinDLL("kernel32", use_last_error=True)

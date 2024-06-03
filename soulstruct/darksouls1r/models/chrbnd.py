@@ -15,7 +15,7 @@ from soulstruct.games import DARK_SOULS_DSR
 @dataclass(slots=True)
 class CHRBND(FLVERBinder):
 
-    INTERROOT_STEM = f"{DARK_SOULS_DSR.interroot_prefix}\\chr"
+    INTERROOT_STEM = f"{DARK_SOULS_DSR.interroot_prefix}/chr"
 
     # NOTE: ID is defined here, but because the BDT is written outside the CHRBND, reading/writing is not managed here.
     CHRTPFBHD_ENTRY_ID: tp.ClassVar[int] = 800
@@ -25,4 +25,4 @@ class CHRBND(FLVERBinder):
     v4_info = None
 
     def get_chrtpfbhd_entry_path(self, model_stem: str) -> str:
-        return self.get_entry_path(f"{model_stem}\\{model_stem}.chrtpfbhd")
+        return self.get_entry_path(f"{model_stem}/{model_stem}.chrtpfbhd")

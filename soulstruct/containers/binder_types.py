@@ -25,7 +25,7 @@ class InterrootBinder(Binder, abc.ABC):
     INTERROOT_STEM: tp.ClassVar[str] = NotImplemented
 
     def get_entry_path(self, relative_path: str) -> str:
-        return f"{self.INTERROOT_STEM}\\{relative_path}"
+        return f"{self.INTERROOT_STEM}/{relative_path}"
 
 
 @dataclass(slots=True)
@@ -92,10 +92,10 @@ class FLVERBinder(InterrootBinder, abc.ABC):
         self.flvers[self.model_stem] = value
 
     def get_tpf_entry_path(self, model_stem: str) -> str:
-        return f"{self.INTERROOT_STEM}\\{model_stem}\\{model_stem}.tpf"
+        return f"{self.INTERROOT_STEM}/{model_stem}/{model_stem}.tpf"
 
     def get_flver_entry_path(self, model_stem: str) -> str:
-        return f"{self.INTERROOT_STEM}\\{model_stem}\\{model_stem}.flver"
+        return f"{self.INTERROOT_STEM}/{model_stem}/{model_stem}.flver"
 
     def _get_model_stem(self) -> str:
         """Get model stem from `model_stem` field or `path` name as a backup."""

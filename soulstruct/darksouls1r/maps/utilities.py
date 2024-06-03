@@ -145,20 +145,20 @@ def build_ffxbnd(
                 raise ValueError(f"Extra file ID for FFX must be an `int`.")
             file_name = f"f{extra_id:07d}.ffx"  # this formatting will still allow ID to be longer than 7 digits
             entry_id = next_ffx_id
-            entry_path = f"N:\\FRPG\\data\\Sfx\\OutputData\\Main\\Effect_x64\\{file_name}"
+            entry_path = f"N:/FRPG/data/Sfx/OutputData/Main/Effect_x64/{file_name}"
         elif file_type == ".tpf":
             if isinstance(extra_id, int):
                 file_name = f"s{extra_id:05d}.tpf"
             else:
                 file_name = f"s{extra_id}.tpf"  # use full given name string
             entry_id = next_tpf_id
-            entry_path = f"N:\\FRPG\\data\\Sfx\\tex\\{file_name}"
+            entry_path = f"N:/FRPG/data/Sfx/tex/{file_name}"
         elif file_type == ".flver":
             if not isinstance(extra_id, int):
                 raise ValueError(f"Extra file ID for FFX FLVER must be an `int`.")
             file_name = f"s{extra_id:05d}.flver"
             entry_id = next_flver_id
-            entry_path = f"N:\\FRPG\\data\\Sfx\\model\\{file_name}"
+            entry_path = f"N:/FRPG/data/Sfx/model/{file_name}"
         else:
             raise ValueError(f"Invalid extra FFX file type: {file_type}. Must be 'ffx', 'tpf', or 'flver'.")
 
@@ -230,18 +230,18 @@ def build_ffxbnd(
                         is_ffx = True
                         file_name = f"f{int(ffx_id_match.group(1)):07d}.ffx"
                         entry_id = next_ffx_id
-                        entry_path = f"N:\\FRPG\\data\\Sfx\\OutputData\\Main\\Effect_x64\\{file_name}"
+                        entry_path = f"N:/FRPG/data/Sfx/OutputData/Main/Effect_x64/{file_name}"
                     elif flver_id_match := _FLVER_FILE_MATCH.match(extra_file_path.name):
                         is_flver = True
                         file_name = f"s{int(flver_id_match.group(1)):05d}.flver"
                         entry_id = next_flver_id
-                        entry_path = f"N:\\FRPG\\data\\Sfx\\model\\{file_name}"
+                        entry_path = f"N:/FRPG/data/Sfx/model/{file_name}"
                     elif tpf_id_match := _TPF_FILE_MATCH.match(extra_file_path.name):
                         # NOTE: TPF name match includes any characters after the ID digits (e.g. "_n").
                         is_tpf = True
                         file_name = f"s{tpf_id_match.group(1)}.tpf"
                         entry_id = next_tpf_id
-                        entry_path = f"N:\\FRPG\\data\\Sfx\\tex\\{file_name}"
+                        entry_path = f"N:/FRPG/data/Sfx/tex/{file_name}"
                     else:
                         _LOGGER.warning(
                             f"Ignoring non-FFX/FLVER/TPF file in extra character folder: {extra_file_path.name}"
@@ -384,7 +384,7 @@ def find_flver_textures(flver_path: str | Path) -> list[BinderEntry]:
     texture_dir = flver_path.parent.parent / flver_path.parent.name[0:3]  # e.g. "m10"
 
     flver = FLVER.from_path(flver_path)
-    tpf_paths = {f"\\{Path(texture_path).stem}.tpf.dcx" for texture_path in flver.get_all_texture_paths()}
+    tpf_paths = {f"/{Path(texture_path).stem}.tpf.dcx" for texture_path in flver.get_all_texture_paths()}
     tpf_count = len(tpf_paths)
     tpf_entries = []
 

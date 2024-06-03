@@ -23,4 +23,4 @@ class TalkESDBND(_BaseTalkESDBND):
 
     @classmethod
     def get_default_new_entry_path(cls, entry_name: str):
-        return f"N:\\SPRJ\\data\\INTERROOT_ps4\\script\\talk\\{entry_name}"
+        return f"N:/SPRJ/data/INTERROOT_ps4/script/talk/{entry_name}"

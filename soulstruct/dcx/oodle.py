@@ -15,6 +15,7 @@ __all__ = [
     "decompress",
 ]
 
+import os
 import ctypes as c
 import logging
 import typing as tp
@@ -247,12 +248,18 @@ def LOAD_DLL(dll_path: str):
 
 # Try to load DLL automatically from Soulstruct, Sekiro, or Elden Ring path.
 _auto_oodle_locations = (
-    PACKAGE_PATH(__DLL_NAME),
-    PACKAGE_PATH("..", __DLL_NAME),
-    Path(SEKIRO_PATH, __DLL_NAME),
-    Path(ELDEN_RING_PATH, __DLL_NAME),
+    # PACKAGE_PATH(__DLL_NAME),
+    # PACKAGE_PATH("..", __DLL_NAME),
+    # Path(SEKIRO_PATH, __DLL_NAME),
+    # Path(ELDEN_RING_PATH, __DLL_NAME),
 )
 for _location in _auto_oodle_locations:
+    if os.name != 'nt':
+        print(
+        f"{YELLOW}# WARNING: Could not load `oo2core_6_win64.dll` on a platform that is not windows.\n"
+        f"# You will not be able to compress/decompress Sekiro or Elden Ring files using Soulstruct.\n"
+    )
+        break
     if _location.exists():
         LOAD_DLL(str(_location))
         break
