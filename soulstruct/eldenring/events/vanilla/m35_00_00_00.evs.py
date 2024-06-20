@@ -1526,13 +1526,13 @@ def Event_35000050():
 def Event_35002498():
     """Event 35002498"""
     GotoIfFlagEnabled(Label.L0, flag=35000598)
-    AddNavmeshFaceFlag(navmesh_id=35002498, navmesh_type=NavmeshType.Disable)
+    AddNavmeshFaceFlag(navmesh_id=35002498, navmesh_type=NavmeshFlag.Disable)
     
     MAIN.Await(FlagEnabled(35000598))
 
     # --- Label 0 --- #
     DefineLabel(0)
-    RemoveNavmeshFaceFlag(navmesh_id=35002498, navmesh_type=NavmeshType.Disable)
+    RemoveNavmeshFaceFlag(navmesh_id=35002498, navmesh_type=NavmeshFlag.Disable)
     End()
 
 

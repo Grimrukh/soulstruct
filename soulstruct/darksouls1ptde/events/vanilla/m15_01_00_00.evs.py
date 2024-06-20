@@ -1135,7 +1135,7 @@ def Event_11510210():
     if ThisEventFlagEnabled():
         EndOfAnimation(obj=1511200, animation_id=0)
         End()
-    AddNavmeshFaceFlag(navmesh_id=1513200, navmesh_type=NavmeshType.Disable)
+    AddNavmeshFaceFlag(navmesh_id=1513200, navmesh_type=NavmeshFlag.Disable)
     
     MAIN.Await(ActionButton(
         prompt_text=10010400,
@@ -1150,7 +1150,7 @@ def Event_11510210():
     Move(PLAYER, destination=1511200, destination_type=CoordEntityType.Object, dummy_id=121, short_move=True)
     ForceAnimation(PLAYER, 7110)
     ForceAnimation(1511200, 0)
-    RemoveNavmeshFaceFlag(navmesh_id=1513200, navmesh_type=NavmeshType.Disable)
+    RemoveNavmeshFaceFlag(navmesh_id=1513200, navmesh_type=NavmeshFlag.Disable)
 
 
 @ContinueOnRest(11510211)
@@ -1637,44 +1637,44 @@ def Event_11510340():
     """Event 11510340"""
     if FlagEnabled(11515300):
         EnableMapCollision(collision=1513310)
-        AddNavmeshFaceFlag(navmesh_id=1513350, navmesh_type=NavmeshType.Disable)
-        AddNavmeshFaceFlag(navmesh_id=1513351, navmesh_type=NavmeshType.Disable)
-        AddNavmeshFaceFlag(navmesh_id=1513352, navmesh_type=NavmeshType.Disable)
-        AddNavmeshFaceFlag(navmesh_id=1513353, navmesh_type=NavmeshType.Disable)
-        AddNavmeshFaceFlag(navmesh_id=1513354, navmesh_type=NavmeshType.Disable)
+        AddNavmeshFaceFlag(navmesh_id=1513350, navmesh_type=NavmeshFlag.Disable)
+        AddNavmeshFaceFlag(navmesh_id=1513351, navmesh_type=NavmeshFlag.Disable)
+        AddNavmeshFaceFlag(navmesh_id=1513352, navmesh_type=NavmeshFlag.Disable)
+        AddNavmeshFaceFlag(navmesh_id=1513353, navmesh_type=NavmeshFlag.Disable)
+        AddNavmeshFaceFlag(navmesh_id=1513354, navmesh_type=NavmeshFlag.Disable)
     
         MAIN.Await(FlagDisabled(11515300))
     
         Restart()
     if FlagEnabled(11510303):
         EnableMapCollision(collision=1513310)
-        RemoveNavmeshFaceFlag(navmesh_id=1513350, navmesh_type=NavmeshType.Disable)
-        AddNavmeshFaceFlag(navmesh_id=1513351, navmesh_type=NavmeshType.Disable)
-        AddNavmeshFaceFlag(navmesh_id=1513352, navmesh_type=NavmeshType.Disable)
-        AddNavmeshFaceFlag(navmesh_id=1513353, navmesh_type=NavmeshType.Disable)
-        AddNavmeshFaceFlag(navmesh_id=1513354, navmesh_type=NavmeshType.Disable)
+        RemoveNavmeshFaceFlag(navmesh_id=1513350, navmesh_type=NavmeshFlag.Disable)
+        AddNavmeshFaceFlag(navmesh_id=1513351, navmesh_type=NavmeshFlag.Disable)
+        AddNavmeshFaceFlag(navmesh_id=1513352, navmesh_type=NavmeshFlag.Disable)
+        AddNavmeshFaceFlag(navmesh_id=1513353, navmesh_type=NavmeshFlag.Disable)
+        AddNavmeshFaceFlag(navmesh_id=1513354, navmesh_type=NavmeshFlag.Disable)
     
         MAIN.Await(FlagEnabled(11515300))
     
         Restart()
     if FlagEnabled(11510302):
         DisableMapCollision(collision=1513310)
-        AddNavmeshFaceFlag(navmesh_id=1513350, navmesh_type=NavmeshType.Disable)
-        RemoveNavmeshFaceFlag(navmesh_id=1513351, navmesh_type=NavmeshType.Disable)
-        RemoveNavmeshFaceFlag(navmesh_id=1513352, navmesh_type=NavmeshType.Disable)
-        RemoveNavmeshFaceFlag(navmesh_id=1513353, navmesh_type=NavmeshType.Disable)
-        AddNavmeshFaceFlag(navmesh_id=1513354, navmesh_type=NavmeshType.Disable)
+        AddNavmeshFaceFlag(navmesh_id=1513350, navmesh_type=NavmeshFlag.Disable)
+        RemoveNavmeshFaceFlag(navmesh_id=1513351, navmesh_type=NavmeshFlag.Disable)
+        RemoveNavmeshFaceFlag(navmesh_id=1513352, navmesh_type=NavmeshFlag.Disable)
+        RemoveNavmeshFaceFlag(navmesh_id=1513353, navmesh_type=NavmeshFlag.Disable)
+        AddNavmeshFaceFlag(navmesh_id=1513354, navmesh_type=NavmeshFlag.Disable)
     
         MAIN.Await(FlagEnabled(11515300))
     
         Restart()
     if FlagEnabled(11510301):
         EnableMapCollision(collision=1513310)
-        AddNavmeshFaceFlag(navmesh_id=1513350, navmesh_type=NavmeshType.Disable)
-        AddNavmeshFaceFlag(navmesh_id=1513351, navmesh_type=NavmeshType.Disable)
-        AddNavmeshFaceFlag(navmesh_id=1513352, navmesh_type=NavmeshType.Disable)
-        RemoveNavmeshFaceFlag(navmesh_id=1513353, navmesh_type=NavmeshType.Disable)
-        RemoveNavmeshFaceFlag(navmesh_id=1513354, navmesh_type=NavmeshType.Disable)
+        AddNavmeshFaceFlag(navmesh_id=1513350, navmesh_type=NavmeshFlag.Disable)
+        AddNavmeshFaceFlag(navmesh_id=1513351, navmesh_type=NavmeshFlag.Disable)
+        AddNavmeshFaceFlag(navmesh_id=1513352, navmesh_type=NavmeshFlag.Disable)
+        RemoveNavmeshFaceFlag(navmesh_id=1513353, navmesh_type=NavmeshFlag.Disable)
+        RemoveNavmeshFaceFlag(navmesh_id=1513354, navmesh_type=NavmeshFlag.Disable)
     
         MAIN.Await(FlagEnabled(11515300))
     

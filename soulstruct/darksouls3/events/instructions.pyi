@@ -3851,7 +3851,7 @@ def KillBoss(game_area_param_id: int, event_layers=()):
 # (2003, 13)
 def SetNavmeshFaceFlag(
     navmesh_id: NavigationEvent | int,
-    navmesh_type: NavmeshType | int,
+    navmesh_type: NavmeshFlag | int,
     operation: BitOperation | int,
     event_layers=(),
 ):
@@ -3861,21 +3861,21 @@ def SetNavmeshFaceFlag(
 
 
 # (2003, 13)
-def AddNavmeshFaceFlag(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType | int, event_layers=()):
+def AddNavmeshFaceFlag(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshFlag | int, event_layers=()):
     """
     Calls `SetNavmeshFaceFlag` with `operation=0`.
     """
 
 
 # (2003, 13)
-def RemoveNavmeshFaceFlag(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType | int, event_layers=()):
+def RemoveNavmeshFaceFlag(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshFlag | int, event_layers=()):
     """
     Calls `SetNavmeshFaceFlag` with `operation=1`.
     """
 
 
 # (2003, 13)
-def ToggleNavmeshFaceFlag(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType | int, event_layers=()):
+def ToggleNavmeshFaceFlag(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshFlag | int, event_layers=()):
     """
     Calls `SetNavmeshFaceFlag` with `operation=2`.
     """

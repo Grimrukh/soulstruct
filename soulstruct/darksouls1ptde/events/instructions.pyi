@@ -3179,28 +3179,28 @@ def KillBoss(game_area_param_id: int):
 
 
 # (2003, 13)
-def SetNavmeshFaceFlag(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType | int, operation: BitOperation | int):
+def SetNavmeshFaceFlag(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshFlag | int, operation: BitOperation | int):
     """
     Set given navmesh type.
     """
 
 
 # (2003, 13)
-def AddNavmeshFaceFlag(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType | int):
+def AddNavmeshFaceFlag(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshFlag | int):
     """
     Calls `SetNavmeshFaceFlag` with `operation=0`.
     """
 
 
 # (2003, 13)
-def RemoveNavmeshFaceFlag(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType | int):
+def RemoveNavmeshFaceFlag(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshFlag | int):
     """
     Calls `SetNavmeshFaceFlag` with `operation=1`.
     """
 
 
 # (2003, 13)
-def ToggleNavmeshFaceFlag(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshType | int):
+def ToggleNavmeshFaceFlag(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshFlag | int):
     """
     Calls `SetNavmeshFaceFlag` with `operation=2`.
     """

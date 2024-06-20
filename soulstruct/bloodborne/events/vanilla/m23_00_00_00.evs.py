@@ -2422,7 +2422,7 @@ def Event_12300235():
 def Event_12300240():
     """Event 12300240"""
     GotoIfThisEventFlagDisabled(Label.L0)
-    AddNavmeshFaceFlag(navmesh_id=2303070, navmesh_type=NavmeshType.Disable)
+    AddNavmeshFaceFlag(navmesh_id=2303070, navmesh_type=NavmeshFlag.Disable)
     EndOfAnimation(obj=2301322, animation_id=1)
     CreateObjectVFX(2301323, vfx_id=750, dummy_id=923240)
     End()
@@ -2432,7 +2432,7 @@ def Event_12300240():
     
     MAIN.Await(ObjectDestroyed(2301320))
     
-    AddNavmeshFaceFlag(navmesh_id=2303070, navmesh_type=NavmeshType.Disable)
+    AddNavmeshFaceFlag(navmesh_id=2303070, navmesh_type=NavmeshFlag.Disable)
     ForceAnimation(2301322, 1, wait_for_completion=True)
     DisableObject(2301322)
     CreateObjectVFX(2301323, vfx_id=750, dummy_id=923240)

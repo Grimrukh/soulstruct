@@ -1650,7 +1650,7 @@ EMEDF = {
                 "default": None,
             },
             "navmesh_type": {
-                "type": NavmeshType,
+                "type": NavmeshFlag,
                 "default": None,
             },
             "operation": {

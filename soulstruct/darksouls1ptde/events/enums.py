@@ -35,7 +35,7 @@ __all__ = [
     "ItemType",
     "RangeState",
     "CoordEntityType",
-    "NavmeshType",
+    "NavmeshFlag",
     "NumberButtons",
     "OnOffChange",
     "OnRestBehavior",
@@ -241,18 +241,18 @@ class CoordEntityType(BaseEMEVDEnum):
     Character = 2
 
 
-class NavmeshType(BaseEMEVDEnum):
+class NavmeshFlag(BaseEMEVDEnum):
     """Bit flags for Navmesh types.
 
     NOTE: These EMEVD bit values are in reverse-endian order to the actual NVM triangle flag.
     """
     Default = 0b0000_0000_0000_0000  # no special flags
     Disable = 0b0000_0000_0000_0001  # ignored completely during pathfinding
-    Gate = 0b0000_0000_0000_0010  # location of an MCG gate node to connect to another navmesh in the same map
+    Exit = 0b0000_0000_0000_0010  # location of an MCG gate node to connect to another navmesh in the same map
     Obstacle = 0b0000_0000_0000_0100  # will trigger enemies' 'destroy obstacle' animation; can stack with other flags
-    Drop = 0b0000_0000_0000_1000  # a drop from one floor section to another; usually extends into air
+    Wall = 0b0000_0000_0000_1000  # wall that a character may drop off from a non-`FloorBeneathWall` face
     Degenerate = 0b0000_0000_0001_0000  # seen on triangles with co-linear vertices and potentially others
-    DropAdjacent = 0b0000_0000_0010_0000  # replaces standard floor triangles when they are adjacent to `Drop`
+    FloorBeneathWall = 0b0000_0000_0010_0000  # adjacent `Wall` faces cannot be traversed from this side
     LandingPoint = 0b0000_0000_0100_0000
     Event = 0b0000_0000_1000_0000
     Edge = 0b0000_0001_0000_0000
@@ -261,7 +261,7 @@ class NavmeshType(BaseEMEVDEnum):
     Hole = 0b0000_1000_0000_0000
     Door = 0b0001_0000_0000_0000
     ClosedDoor = 0b0010_0000_0000_0000
-    MapExit = 0b0100_0000_0000_0000  # used to generate dynamic gate nodes to connect to other maps
+    BlockExit = 0b0100_0000_0000_0000  # used to generate dynamic gate nodes to connect to other map blocks
     InsideWall = 0b1000_0000_0000_0000  # unknown use
 
 

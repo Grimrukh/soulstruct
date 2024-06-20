@@ -2050,18 +2050,18 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
 def Event12901447(_, arg_0_3: int, arg_4_7: int):
     """ 12901447: Event 12901447 """
     EndIfThisEventSlotFlagEnabled()
-    AddNavmeshFaceFlag(arg_4_7, NavmeshType.Disable)
+    AddNavmeshFaceFlag(arg_4_7, NavmeshFlag.Disable)
     IfObjectActivated(0, obj_act_id=arg_0_3)
-    RemoveNavmeshFaceFlag(arg_4_7, NavmeshType.Disable)
+    RemoveNavmeshFaceFlag(arg_4_7, NavmeshFlag.Disable)
 
 
 def Event12901525(_, arg_0_3: int, arg_4_7: int):
     """ 12901525: Event 12901525 """
     EndIfThisEventSlotFlagEnabled()
-    AddNavmeshFaceFlag(arg_4_7, NavmeshType.Disable)
+    AddNavmeshFaceFlag(arg_4_7, NavmeshFlag.Disable)
     IfObjectActivated(0, obj_act_id=arg_0_3)
     Wait(3.0)
-    RemoveNavmeshFaceFlag(arg_4_7, NavmeshType.Disable)
+    RemoveNavmeshFaceFlag(arg_4_7, NavmeshFlag.Disable)
 
 
 @RestartOnRest

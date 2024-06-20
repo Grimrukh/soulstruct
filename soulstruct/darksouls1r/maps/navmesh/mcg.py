@@ -202,7 +202,7 @@ class MCGEdge:
 
     Note that these objects in the `MCG` file reference indices of navmesh parts in the `MSB` file.
 
-    Each edge specifies the exact triangles on the attached navmesh (which should have flag `NavmeshType.Gate`) that are
+    Each edge specifies the exact triangles on the attached navmesh (which should have flag `NavmeshFlag.Exit`) that are
     located at its start and end nodes (which, interestingly, do not simply specify it themselves).
     """
 

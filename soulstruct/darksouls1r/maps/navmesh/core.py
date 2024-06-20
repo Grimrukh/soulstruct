@@ -5,7 +5,7 @@ Currently only set up for DS1R.
 Detailed information about the relationship between MSB navmeshes and collisions, MCP files, and MCG files:
 
     - A navmesh is a simple mesh comprised of triangular faces. Each face can one or more surface type flags associated
-    with it, which are enumerated in `NavmeshType`.
+    with it, which are enumerated in `NavmeshFlag`.
 
     - Enemy pathing is plotted out as a sequence of moves from face to face (to the center of each face, specifically).
     Some enemies are not permitted to have paths planned out over faces with certain flags (e.g. only some characters

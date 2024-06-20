@@ -62,7 +62,7 @@ __all__ = [
     "ItemType",
     "RangeState",
     "CoordEntityType",
-    "NavmeshType",
+    "NavmeshFlag",
     "NumberButtons",
     "OnOffChange",
     "OnRestBehavior",

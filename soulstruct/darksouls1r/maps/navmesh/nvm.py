@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["NVMTriangle", "NavmeshType", "NVMBox", "NVMEventEntity", "NVM"]
+__all__ = ["NVMTriangle", "NavmeshFlag", "NVMBox", "NVMEventEntity", "NVM"]
 
 import logging
 import typing as tp
@@ -8,7 +8,7 @@ from collections import deque
 from dataclasses import dataclass, field
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.darksouls1r.events.enums import NavmeshType
+from soulstruct.darksouls1r.events.enums import NavmeshFlag
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3, Matrix3
 
@@ -33,7 +33,7 @@ class NVMTriangle:
 
     vertex_indices: tuple[int, int, int]
     connected_indices: tuple[int, int, int]  # indices of surrounding triangles along the 1-2, 2-3, and 1-3 edges
-    obstacle_count: int  # number of breakable objects on this triangle (implies `NavmeshType.Obstacle` flag)
+    obstacle_count: int  # number of breakable objects on this triangle (implies `NavmeshFlag.Obstacle` flag)
     flags: int  # used by AI to check if this triangle can be navigated by a given character
 
     @classmethod
@@ -53,7 +53,7 @@ class NVMTriangle:
         obstacles_and_flags = (self.obstacle_count << 2) | (self.reverse_flags_bits(self.flags) << 16)
         writer.pack("I", obstacles_and_flags)
 
-    def has_flag(self, navmesh_type: NavmeshType):
+    def has_flag(self, navmesh_type: NavmeshFlag):
         return self.flags & navmesh_type == navmesh_type
 
     def get_centroid(self, vertices: list[Vector3]) -> Vector3:
@@ -69,25 +69,25 @@ class NVMTriangle:
         return int(f"{{0:016b}}".format(n)[::-1], 2)
 
     @property
-    def flag(self) -> NavmeshType:
-        """Try to access the triangle flags as a single `NavmeshType` enum.
+    def flag(self) -> NavmeshFlag:
+        """Try to access the triangle flags as a single `NavmeshFlag` enum.
 
         Will raise `ValueError` if multiple flags are set (which does happen).
         """
         try:
-            return NavmeshType(self.flags)
+            return NavmeshFlag(self.flags)
         except ValueError:  # unexpected multiple flags
             raise ValueError(f"`NVMTriangle` has multiple flags: {self.flags:016b}")
 
     @flag.setter
-    def flag(self, flag: NavmeshType):
+    def flag(self, flag: NavmeshFlag):
         """Set the triangle flags to a single value."""
         self.flags = flag.value
 
     def __repr__(self):
         try:
             flag = self.flag
-            if flag == NavmeshType.Default:
+            if flag == NavmeshFlag.Default:
                 return (
                     f"NVMTriangle({self.vertex_indices}, "
                     f"connected_indices={self.connected_indices}, "
@@ -97,7 +97,7 @@ class NVMTriangle:
                 f"NVMTriangle({self.vertex_indices}, "
                 f"connected_indices={self.connected_indices}, "
                 f"obstacle_count={self.obstacle_count}, "
-                f"flag=<NavmeshType.{flag.name}>)"
+                f"flag=<NavmeshFlag.{flag.name}>)"
             )
         except ValueError:
             return (

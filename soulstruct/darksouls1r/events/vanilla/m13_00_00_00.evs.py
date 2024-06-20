@@ -1191,12 +1191,12 @@ def Event_11300900(_, obj_act_id: int, obj: int, obj_1: int, navmesh_id: int):
         EndOfAnimation(obj=obj, animation_id=2)
         DisableObjectActivation(obj, obj_act_id=-1)
         End()
-    AddNavmeshFaceFlag(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
+    AddNavmeshFaceFlag(navmesh_id=navmesh_id, navmesh_type=NavmeshFlag.Disable)
     
     MAIN.Await(ObjectActivated(obj_act_id=obj_act_id))
     
     ForceAnimation(obj_1, 1)
-    RemoveNavmeshFaceFlag(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
+    RemoveNavmeshFaceFlag(navmesh_id=navmesh_id, navmesh_type=NavmeshFlag.Disable)
 
 
 @ContinueOnRest(11305030)
@@ -1208,7 +1208,7 @@ def Event_11305030(_, flag: int, flag_1: int, flag_2: int, obj: int, obj_1: int,
         EndOfAnimation(obj=obj, animation_id=2)
     else:
         DisableObjectActivation(obj, obj_act_id=3012)
-        AddNavmeshFaceFlag(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
+        AddNavmeshFaceFlag(navmesh_id=navmesh_id, navmesh_type=NavmeshFlag.Disable)
     AND_1.Add(FlagEnabled(flag_1))
     AND_2.Add(FlagEnabled(flag_2))
     OR_1.Add(AND_1)
@@ -1223,13 +1223,13 @@ def Event_11305030(_, flag: int, flag_1: int, flag_2: int, obj: int, obj_1: int,
     ForceAnimation(obj_1, 3)
     WaitFrames(frames=140)
     EnableObjectActivation(obj, obj_act_id=3012)
-    RemoveNavmeshFaceFlag(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
+    RemoveNavmeshFaceFlag(navmesh_id=navmesh_id, navmesh_type=NavmeshFlag.Disable)
     Restart()
     DisableFlag(flag)
     ForceAnimation(obj_1, 1)
     WaitFrames(frames=140)
     EnableObjectActivation(obj, obj_act_id=3011)
-    AddNavmeshFaceFlag(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Disable)
+    AddNavmeshFaceFlag(navmesh_id=navmesh_id, navmesh_type=NavmeshFlag.Disable)
     Restart()
 
 
