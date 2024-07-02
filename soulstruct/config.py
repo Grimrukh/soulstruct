@@ -26,13 +26,14 @@ from pathlib import Path
 
 _LOGGER = logging.getLogger("soulstruct")
 
-_DEFAULT_STEAM_PATH = r"C:\Program Files (x86)\Steam\steamapps\common"
+_DEFAULT_STEAM_PATH = r"/home/astrale/.steam/steam/steamapps/common"
+# _DEFAULT_STEAM_PATH = r"Z:\home\astrale\.steam\steam\steamapps\common"
 _CONFIG_DEFAULTS = {
-    "DEFAULT_PROJECT_PATH": "",
+    "DEFAULT_PROJECT_PATH": r"/home/astrale/Bureau/moddingDS",
     "DEFAULT_TEXT_EDITOR_FONT_SIZE": 14,
     "DES_PATH": r"C:\Demon's Souls\PS3_GAME\USRDIR",
     "DESR_PATH": r"C:\Demon's Souls Remake\dvdroot_ps5",
-    "PTDE_PATH": _DEFAULT_STEAM_PATH + r"\Dark Souls Prepare to Die Edition\DATA",
+    "PTDE_PATH": _DEFAULT_STEAM_PATH + r"/Dark Souls Prepare to Die Edition/DATA",
     "DSR_PATH": _DEFAULT_STEAM_PATH + r"\DARK SOULS REMASTERED",
     "DS2_PATH": _DEFAULT_STEAM_PATH + r"\Dark Souls II\Game",
     "DS2_SOTFS_PATH": _DEFAULT_STEAM_PATH + r"\Dark Souls II Scholar of the First Sin\Game",

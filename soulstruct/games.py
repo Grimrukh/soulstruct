@@ -128,7 +128,7 @@ DARK_SOULS_PTDE = Game(
     generic_game_path="C:/Program Files (x86)/Steam/steamapps/common/Dark Souls Prepare to Die Edition/DATA",
     save_file_path=Path("~/Documents/NBGI/DarkSouls").expanduser(),
     executable_name="DARKSOULS.exe",
-    interroot_prefix="N:\\FRPG\\data\\INTERROOT_win32",
+    interroot_prefix="N:/FRPG/data/INTERROOT_win32",
     gadget_name="DS Gadget.exe",
     default_file_paths={
         "AIScriptDirectory": "script",
@@ -167,7 +167,7 @@ DARK_SOULS_DSR = Game(
     generic_game_path="C:/Program Files (x86)/Steam/steamapps/common/DARK SOULS REMASTERED/",
     save_file_path=Path("~/Documents/NBGI/DARK SOULS REMASTERED").expanduser(),
     executable_name="DarkSoulsRemastered.exe",
-    interroot_prefix="N:\\FRPG\\data\\INTERROOT_x64",
+    interroot_prefix="N:/FRPG/data/INTERROOT_x64",
     gadget_name="DSR-Gadget.exe",
     default_file_paths={
         "AIScriptDirectory": "script",
@@ -215,7 +215,7 @@ BLOODBORNE = Game(
     default_game_path=BB_PATH,
     generic_game_path="{DISC}/Image0/dvdroot_ps4",
     executable_name="../eboot.bin",
-    interroot_prefix="N:\\SPRJ\\data\\INTERROOT_ps4",
+    interroot_prefix="N:/SPRJ/data/INTERROOT_ps4",
     default_file_paths={
         "AIScriptDirectory": "script",
         "EventDirectory": "event",
@@ -260,7 +260,7 @@ ELDEN_RING = Game(
     },
     default_game_path=ELDEN_RING_PATH,
     executable_name="ELDENRING.exe",
-    interroot_prefix="N:\\GR\\data\\INTERROOT_win64",
+    interroot_prefix="N:/GR/data/INTERROOT_win64",
     default_file_paths={
         "EventDirectory": "event",
         "MapStudioDirectory": "map/MapStudio",

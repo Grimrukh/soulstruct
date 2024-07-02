@@ -253,7 +253,7 @@ class DrawParamBND(Binder):
 
     @classmethod
     def get_default_new_entry_path(cls, entry_name: str) -> str:
-        return f"N:\\FRPG\\data\\INTERROOT_win32\\param\\DrawParam\\{entry_name}"
+        return f"N:/FRPG/data/INTERROOT_win32/param/DrawParam/{entry_name}"
 
     @classmethod
     def resolve_draw_param_stem(cls, draw_param_stem_or_nickname: str):

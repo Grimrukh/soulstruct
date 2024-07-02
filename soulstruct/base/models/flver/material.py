@@ -127,7 +127,7 @@ class Texture:
     @property
     def path_parent(self) -> str:
         """Directory part of FLVER texture path, as a string. Includes (exactly one) trailing backslash."""
-        return str(Path(self.path).parent).rstrip("\\") + "\\"
+        return str(Path(self.path).parent).rstrip("/") + "/"
 
     @property
     def name(self) -> str:

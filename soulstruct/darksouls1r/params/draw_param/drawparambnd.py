@@ -32,7 +32,7 @@ class DrawParamBND(DrawParamBND):
 
     @classmethod
     def get_default_new_entry_path(cls, entry_name: str) -> str:
-        return f"N:\\FRPG\\data\\INTERROOT_x64\\param\\DrawParam\\{entry_name}"
+        return f"N:/FRPG/data/INTERROOT_x64/param/DrawParam/{entry_name}"
 
     def assign_param_from_entry(
         self, entry: BinderEntry, param_stem: str, slot: int, typed_draw_param_class: type[DrawParam]

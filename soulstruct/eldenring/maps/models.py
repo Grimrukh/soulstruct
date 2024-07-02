@@ -84,7 +84,7 @@ class MSBModel(BaseMSBModel):
 class MSBMapPieceModel(MSBModel):
     SUBTYPE_ENUM: tp.ClassVar = MSBModelSubtype.MapPieceModel
 
-    SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\GR\\data\\Model\\map\\{map_stem}\\sib\\{name}.sib"
+    SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:/GR/data/Model/map/{map_stem}/sib/{name}.sib"
 
     def set_auto_sib_path(self, map_stem: str):
         self.sib_path = self.SIB_PATH_TEMPLATE.format(map_stem=map_stem, name=self.name)
@@ -94,21 +94,21 @@ class MSBMapPieceModel(MSBModel):
 class MSBCharacterModel(MSBModel):
     SUBTYPE_ENUM: tp.ClassVar = MSBModelSubtype.CharacterModel
 
-    SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\GR\\data\\Model\\chr\\{name}\\sib\\{name}.sib"
+    SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:/GR/data/Model/chr/{name}/sib/{name}.sib"
 
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBPlayerModel(MSBModel):
     SUBTYPE_ENUM: tp.ClassVar = MSBModelSubtype.PlayerModel
 
-    SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\GR\\data\\Model\\chr\\{name}\\sib\\{name}.sib"
+    SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:/GR/data/Model/chr/{name}/sib/{name}.sib"
 
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBCollisionModel(MSBModel):
     SUBTYPE_ENUM: tp.ClassVar = MSBModelSubtype.CollisionModel
 
-    SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\GR\\data\\Model\\map\\{map_stem}\\hkxwin\\{name}.hkxwin"
+    SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:/GR/data/Model/map/{map_stem}/hkxwin/{name}.hkxwin"
 
     def set_auto_sib_path(self, map_stem: str):
         self.sib_path = self.SIB_PATH_TEMPLATE.format(map_stem=map_stem, name=self.name)
@@ -120,7 +120,7 @@ class MSBAssetModel(MSBModel):
 
     # `name_prefix` is 'AEGxxx', full `name` is 'AEGxxx_xxx'.
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = (
-        "N:\\GR\\data\\Asset\\Environment\\geometry\\{name_prefix}\\{name}\\sib\\{name}.sib"
+        "N:/GR/data/Asset/Environment/geometry/{name_prefix}/{name}/sib/{name}.sib"
     )
 
     def set_auto_sib_path(self):
