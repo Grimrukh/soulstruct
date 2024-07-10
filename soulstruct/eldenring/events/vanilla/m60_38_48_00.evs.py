@@ -18,15 +18,16 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_38_48_00_enums import *
-from .enums.m60_37_49_00_enums import Characters as m60_37_Characters
+from .enums.m60_37_49_00_enums import Characters as m60_37_49_00_Characters
 
 
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1038480000, asset=Assets.AEG099_060_9000)
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.ErdtreeAvatar, name=904810601, npc_threat_level=18)
+    CommonFunc_90005870(0, character=Characters.ErdtreeAvatar, name=904810601, npc_threat_level=18)
     CommonFunc_90005860(
         0,
         flag=1038480800,
@@ -36,15 +37,15 @@ def Constructor():
         item_lot=30200,
         seconds=0.0,
     )
-    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.ErdtreeAvatar, npc_threat_level=18, required_flag=0)
+    CommonFunc_90005872(0, character=Characters.ErdtreeAvatar, npc_threat_level=18, right=0)
     Event_1038482580()
-    CommonFunc_90005683(0, flag=62201, asset=Assets.AEG099_055_2000, vfx_id=209, flag_1=78290, flag_2=78290)
+    CommonFunc_90005683(0, flag=62201, asset=Assets.AEG099_055_2000, dummy_id=209, flag_1=78290, flag_2=78290)
 
 
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
-    DisableBackread(m60_37_Characters.FesteringFingerprintVyke)
+    DisableBackread(m60_37_49_00_Characters.FesteringFingerprintVyke)
     CommonFunc_90005261(
         0,
         character=Characters.RevenantFollower0,

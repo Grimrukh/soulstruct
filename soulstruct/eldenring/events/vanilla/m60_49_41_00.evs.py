@@ -19,17 +19,18 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_49_41_00_enums import *
 
 
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005300(0, flag=1049410299, character=Characters.Scarab, item_lot=40426, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1049410299, character=Characters.Scarab, item_lot=40426, seconds=0.0, left=0)
     Event_1049412580()
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, dummy_id=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, dummy_id=100, vfx_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, dummy_id=100, vfx_id=800, right=0)
 
 
 @RestartOnRest(1049412580)

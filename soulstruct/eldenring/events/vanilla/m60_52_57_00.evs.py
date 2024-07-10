@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_52_57_00_enums import *
 
 
@@ -51,10 +52,10 @@ def Constructor():
         region=0,
         radius=3.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -64,14 +65,14 @@ def Constructor():
         region=0,
         radius=3.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Avionette0, region=1052572240, seconds=0.0, animation_id=3010)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Avionette1, region=1052572240, seconds=0.5, animation_id=3010)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Avionette2, region=1052572243, seconds=0.0, animation_id=3032)
+    CommonFunc_90005250(0, character=Characters.Avionette0, region=1052572240, seconds=0.0, animation_id=3010)
+    CommonFunc_90005250(0, character=Characters.Avionette1, region=1052572240, seconds=0.5, animation_id=3010)
+    CommonFunc_90005250(0, character=Characters.Avionette2, region=1052572243, seconds=0.0, animation_id=3032)
     Event_1052572200(0, character=1052575200)
     CommonFunc_90005261(0, character=1052570320, region=1052572320, radius=3.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=1052570321, region=1052572321, radius=3.0, seconds=0.0, animation_id=0)
@@ -112,14 +113,14 @@ def Event_1052572210():
     """Event 1052572210"""
     GotoIfFlagEnabled(Label.L0, flag=1052570210)
     DeleteAssetVFX(Assets.AEG099_251_9000)
-    CreateAssetVFX(Assets.AEG099_251_9000, vfx_id=200, dummy_id=1500)
+    CreateAssetVFX(Assets.AEG099_251_9000, dummy_id=200, vfx_id=1500)
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=1052572210))
     
     MAIN.Await(AND_1)
     
     EnableFlag(1052570210)
-    DisplayDialog(text=20210, anchor_entity=0, display_distance=5.0)
+    DisplayDialog(text=20210, display_distance=5.0)
 
     # --- Label 0 --- #
     DefineLabel(0)

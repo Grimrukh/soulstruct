@@ -19,6 +19,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_52_38_00_enums import *
 
 
@@ -2698,11 +2699,11 @@ def Event_200():
 @RestartOnRest(1252382200)
 def Event_1252382200(
     _,
-    character: uint,
-    left: uint,
-    flag: uint,
-    flag_1: uint,
-    flag_2: uint,
+    character: Character | int,
+    left: Flag | int,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
     destination: uint,
     action_button_id: int,
 ):
@@ -2769,13 +2770,13 @@ def Event_1252382200(
 def Event_1252382280(
     _,
     character: uint,
-    left: uint,
-    flag: uint,
-    flag_1: uint,
-    flag_2: uint,
-    asset: uint,
+    left: Flag | int,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
+    asset: Asset | int,
     animation_id: int,
-    text: int,
+    text: EventText | int,
 ):
     """Event 1252382280"""
     DisableCharacter(character)
@@ -2811,7 +2812,7 @@ def Event_1252382280(
     SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames)
     AddSpecialEffect(character, 110)
     AddSpecialEffect(character, 111)
-    CreateAssetVFX(asset, vfx_id=100, dummy_id=30320)
+    CreateAssetVFX(asset, dummy_id=100, vfx_id=30320)
     RemoveSpecialEffect(character, 4380)
     RemoveSpecialEffect(character, 18677)
     EnableCharacter(character)
@@ -2837,7 +2838,15 @@ def Event_1252382280(
 
 
 @RestartOnRest(1252382360)
-def Event_1252382360(_, character: uint, left: uint, flag: uint, flag_1: uint, flag_2: uint, asset: uint):
+def Event_1252382360(
+    _,
+    character: Character | int,
+    left: Flag | int,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
+    asset: Asset | int,
+):
     """Event 1252382360"""
     GotoIfFlagEnabled(Label.L2, flag=1252380800)
     if PlayerNotInOwnWorld():
@@ -2857,7 +2866,7 @@ def Event_1252382360(_, character: uint, left: uint, flag: uint, flag_1: uint, f
     AND_4.Add(FlagEnabled(flag))
     AND_4.Add(FlagEnabled(flag_1))
     GotoIfConditionTrue(Label.L1, input_condition=AND_4)
-    CreateAssetVFX(asset, vfx_id=100, dummy_id=30080)
+    CreateAssetVFX(asset, dummy_id=100, vfx_id=30080)
     OR_1.Add(FlagEnabled(flag_1))
     OR_1.Add(FlagEnabled(1252380800))
     
@@ -2901,10 +2910,10 @@ def Event_1252382360(_, character: uint, left: uint, flag: uint, flag_1: uint, f
 def Event_1252382440(
     _,
     character: uint,
-    left: uint,
-    flag: uint,
-    flag_1: uint,
-    flag_2: uint,
+    left: Flag | int,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
     destination: uint,
     animation_id: int,
 ):
@@ -2980,13 +2989,13 @@ def Event_1252382440(
 def Event_1252382520(
     _,
     character: uint,
-    left: uint,
-    flag: uint,
-    flag_1: uint,
-    flag_2: uint,
+    left: Flag | int,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
     animation_id: int,
     animation_id_1: int,
-    text: int,
+    text: EventText | int,
     destination: uint,
 ):
     """Event 1252382520"""
@@ -3059,13 +3068,13 @@ def Event_1252382520(
 def Event_1252382600(
     _,
     character: uint,
-    left: uint,
-    flag: uint,
-    flag_1: uint,
-    flag_2: uint,
-    left_1: uint,
+    left: Flag | int,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
+    left_1: Flag | int,
     animation_id: int,
-    text: int,
+    text: EventText | int,
 ):
     """Event 1252382600"""
     if FlagEnabled(1252380800):
@@ -3172,7 +3181,7 @@ def Event_1252382600(
 
 
 @RestartOnRest(1252382680)
-def Event_1252382680(_, asset: uint):
+def Event_1252382680(_, asset: Asset | int):
     """Event 1252382680"""
     GotoIfFlagEnabled(Label.L0, flag=9411)
     GotoIfFlagEnabled(Label.L1, flag=1252380800)
@@ -3384,11 +3393,11 @@ def Event_1252382820():
         Characters.Human0,
         destination=PLAYER,
         destination_type=CoordEntityType.Character,
-        dummy_id=900,
+        dummy_id=235,
         copy_draw_parent=PLAYER,
     )
-    FaceEntity(Characters.Human0, 1052382299, wait_for_completion=True)
-    FaceEntity(Characters.Human0, 1052382299, wait_for_completion=True)
+    FaceEntityAndForceAnimation(Characters.Human0, 1052382299, wait_for_completion=True)
+    FaceEntityAndForceAnimation(Characters.Human0, 1052382299, wait_for_completion=True)
     Wait(1.0)
     Move(
         Characters.StarscourgeRadahn,
@@ -3406,7 +3415,7 @@ def Event_1252382820():
         Characters.StarscourgeRadahn,
         destination=PLAYER,
         destination_type=CoordEntityType.Character,
-        dummy_id=229,
+        dummy_id=235,
         copy_draw_parent=PLAYER,
     )
 

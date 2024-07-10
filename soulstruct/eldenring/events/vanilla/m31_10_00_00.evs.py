@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m31_10_00_00_enums import *
 
 
@@ -46,7 +47,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=0)
 
 
 @ContinueOnRest(50)
@@ -100,7 +101,7 @@ def Event_31102200(_, character: uint):
 
 
 @RestartOnRest(31102250)
-def Event_31102250(_, character: uint, region: uint, radius: float, seconds: float, animation_id: int):
+def Event_31102250(_, character: uint, region: Region | int, radius: float, seconds: float, animation_id: int):
     """Event 31102250"""
     if ThisEventSlotFlagEnabled():
         return
@@ -166,7 +167,7 @@ def Event_31102250(_, character: uint, region: uint, radius: float, seconds: flo
 
 
 @RestartOnRest(31102255)
-def Event_31102255(_, character: uint, patrol_information_id: uint):
+def Event_31102255(_, character: Character | int, patrol_information_id: uint):
     """Event 31102255"""
     if ThisEventSlotFlagEnabled():
         return
@@ -368,9 +369,9 @@ def Event_31102815():
         return RESTART
     SuppressSoundForFogGate(duration=5.0)
     if CharacterDoesNotHaveSpecialEffect(character=PLAYER, special_effect=4250):
-        FaceEntity(PLAYER, 31102800, animation=60060, wait_for_completion=True)
+        FaceEntityAndForceAnimation(PLAYER, 31102800, animation=60060, wait_for_completion=True)
     else:
-        FaceEntity(PLAYER, 31102800, animation=60060)
+        FaceEntityAndForceAnimation(PLAYER, 31102800, animation=60060)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -388,7 +389,8 @@ def Event_31102815():
     
     if FlagEnabled(31100800):
         return RESTART
-    RestartIfLastConditionResultTrue(input_condition=OR_4)
+    if LastResult(OR_4):
+        return RESTART
 
     # --- Label 1 --- #
     DefineLabel(1)
@@ -418,7 +420,7 @@ def Event_31102815():
     
     MAIN.Await(AND_10)
     
-    FaceEntity(PLAYER, 31102800, animation=60060, wait_for_completion=True)
+    FaceEntityAndForceAnimation(PLAYER, 31102800, animation=60060, wait_for_completion=True)
     BanishInvaders(unknown=0)
     Restart()
 
@@ -463,7 +465,7 @@ def Event_31102849():
         flag_2=31102806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=31100800, asset=Assets.AEG099_001_9000, dummy_id=3, right=31100801)
+    CommonFunc_9005811(0, flag=31100800, asset=Assets.AEG099_001_9000, vfx_id=3, right=31100801)
     CommonFunc_9005822(
         0,
         flag=31100800,

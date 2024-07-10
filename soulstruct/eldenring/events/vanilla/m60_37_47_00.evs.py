@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_37_47_00_enums import *
 
 
@@ -58,4 +59,4 @@ def Constructor():
     )
     CommonFunc_90005251(0, character=Characters.WildMouflon, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.Runebear, radius=10.0, seconds=0.0, animation_id=-1)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=0)

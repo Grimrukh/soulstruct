@@ -19,6 +19,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_39_44_00_enums import *
 
 
@@ -179,7 +180,7 @@ def Constructor():
         first_flag=400460,
         last_flag=400460,
         flag=3829,
-        dummy_id=0,
+        vfx_id=0,
     )
     Event_1039443727()
     Event_1039443728(
@@ -447,7 +448,7 @@ def Constructor():
     )
     Event_1039442344(0, flag=1039440800, character=Characters.TibiaMariner, character_1=1039445250)
     Event_1039442345(0, character__targeting_character=Characters.TibiaMariner, region=1039442810)
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.TibiaMariner, name=904950601, npc_threat_level=24)
+    CommonFunc_90005870(0, character=Characters.TibiaMariner, name=904950601, npc_threat_level=24)
     CommonFunc_90005860(
         0,
         flag=1039440800,
@@ -531,17 +532,17 @@ def Event_1039442341(
 def Event_1039442342(
     _,
     character: uint,
-    flag: uint,
+    flag: Flag | int,
     special_effect: int,
     destination: uint,
-    first_flag: uint,
+    first_flag: Flag | int,
     special_effect_1: int,
     special_effect_2: int,
     special_effect_3: int,
     destination_1: uint,
     destination_2: uint,
     destination_3: uint,
-    last_flag: uint,
+    last_flag: Flag | int,
 ):
     """Event 1039442342"""
     if FlagEnabled(flag):
@@ -592,10 +593,10 @@ def Event_1039442342(
 @RestartOnRest(1039442343)
 def Event_1039442343(
     _,
-    character: uint,
-    region: uint,
-    region_1: uint,
-    region_2: uint,
+    character: Character | int,
+    region: Region | int,
+    region_1: Region | int,
+    region_2: Region | int,
     special_effect: int,
     special_effect_1: int,
     special_effect_2: int,
@@ -632,7 +633,7 @@ def Event_1039442343(
 
 
 @RestartOnRest(1039442344)
-def Event_1039442344(_, flag: uint, character: uint, character_1: uint):
+def Event_1039442344(_, flag: Flag | int, character: Character | int, character_1: uint):
     """Event 1039442344"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     DisableCharacter(character_1)
@@ -663,13 +664,13 @@ def Event_1039442344(_, flag: uint, character: uint, character_1: uint):
 
 
 @RestartOnRest(1039442345)
-def Event_1039442345(_, character__targeting_character: uint, region: uint):
+def Event_1039442345(_, character__targeting_character: uint, region: Region | int):
     """Event 1039442345"""
     DisableNetworkSync()
     if FlagEnabled(character__targeting_character):
         return
-    AND_1.Add(CharacterTargeting(targeting_character=character__targeting_character, targeted_character=20000))
-    AND_1.Add(CharacterOutsideRegion(character=20000, region=region))
+    AND_1.Add(CharacterTargeting(targeting_character=character__targeting_character, targeted_character=ALL_PLAYERS))
+    AND_1.Add(CharacterOutsideRegion(character=ALL_PLAYERS, region=region))
     
     MAIN.Await(AND_1)
     
@@ -956,7 +957,7 @@ def Event_1039443711(_, character: uint):
 
 
 @RestartOnRest(1039443712)
-def Event_1039443712(_, attacked_entity: uint, flag: uint):
+def Event_1039443712(_, attacked_entity: uint, flag: Flag | int):
     """Event 1039443712"""
     WaitFrames(frames=1)
     if PlayerNotInOwnWorld():
@@ -1290,7 +1291,7 @@ def Event_1039443727():
 
 
 @RestartOnRest(1039443728)
-def Event_1039443728(_, asset: uint, asset_1: uint, asset_2: uint, asset_3: uint):
+def Event_1039443728(_, asset: Asset | int, asset_1: Asset | int, asset_2: Asset | int, asset_3: Asset | int):
     """Event 1039443728"""
     WaitFrames(frames=1)
     DisableAsset(asset)
@@ -1344,7 +1345,7 @@ def Event_1039443729():
     """Event 1039443729"""
     if PlayerNotInOwnWorld():
         return
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     OR_1.Add(FlagEnabled(3822))
     OR_1.Add(FlagEnabled(3442))
     if OR_1:
@@ -1387,7 +1388,7 @@ def Event_1039443730():
     """Event 1039443730"""
     if PlayerNotInOwnWorld():
         return
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     AND_15.Add(FlagEnabled(3822))
     AND_15.Add(FlagEnabled(3442))
     if AND_15:
@@ -1424,7 +1425,7 @@ def Event_1039443730():
 @RestartOnRest(1039443731)
 def Event_1039443731():
     """Event 1039443731"""
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     if PlayerNotInOwnWorld():
         return
     OR_14.Add(FlagEnabled(3825))
@@ -1477,8 +1478,8 @@ def Event_1039443731():
     # --- Label 20 --- #
     DefineLabel(20)
     EnableRandomFlagInRange(flag_range=(1039442730, 1039442739))
-    SkipLinesIfFlagRangeAllDisabled(1, (1039442730, 1039442732))
-    EnableNetworkFlag(1039442715)
+    if FlagRangeAnyEnabled((1039442730, 1039442732)):
+        EnableNetworkFlag(1039442715)
     OR_15.Add(FlagState(FlagSetting.Change, FlagType.Absolute, 3825))
     OR_15.Add(FlagState(FlagSetting.Change, FlagType.Absolute, 3826))
     OR_15.Add(FlagState(FlagSetting.Change, FlagType.Absolute, 3828))
@@ -1502,14 +1503,14 @@ def Event_1039443732(_, character: uint):
 
 
 @RestartOnRest(1039443740)
-def Event_1039443740(_, character: uint):
+def Event_1039443740(_, character: Character | int):
     """Event 1039443740"""
     DisableNetworkSync()
     WaitFrames(frames=1)
     GotoIfPlayerNotInOwnWorld(Label.L10)
-    SkipLinesIfFlagRangeAnyEnabled(2, (1039440735, 1039440736))
-    DisableNetworkConnectedFlagRange(flag_range=(1039440735, 1039440736))
-    EnableNetworkFlag(1039440735)
+    if FlagRangeAllDisabled((1039440735, 1039440736)):
+        DisableNetworkConnectedFlagRange(flag_range=(1039440735, 1039440736))
+        EnableNetworkFlag(1039440735)
 
     # --- Label 10 --- #
     DefineLabel(10)
@@ -1556,14 +1557,14 @@ def Event_1039443740(_, character: uint):
 
 
 @RestartOnRest(1039443741)
-def Event_1039443741(_, character: uint):
+def Event_1039443741(_, character: Character | int):
     """Event 1039443741"""
     DisableNetworkSync()
     WaitFrames(frames=1)
     GotoIfPlayerNotInOwnWorld(Label.L10)
-    SkipLinesIfFlagRangeAnyEnabled(2, (1039440737, 1039440738))
-    DisableNetworkConnectedFlagRange(flag_range=(1039440737, 1039440738))
-    EnableNetworkFlag(1039440737)
+    if FlagRangeAllDisabled((1039440737, 1039440738)):
+        DisableNetworkConnectedFlagRange(flag_range=(1039440737, 1039440738))
+        EnableNetworkFlag(1039440737)
 
     # --- Label 10 --- #
     DefineLabel(10)
@@ -1615,9 +1616,9 @@ def Event_1039443742(_, character: uint):
     DisableNetworkSync()
     WaitFrames(frames=1)
     GotoIfPlayerNotInOwnWorld(Label.L10)
-    SkipLinesIfFlagRangeAnyEnabled(2, (1039440745, 1039440746))
-    DisableNetworkConnectedFlagRange(flag_range=(1039440745, 1039440746))
-    EnableNetworkFlag(1039440745)
+    if FlagRangeAllDisabled((1039440745, 1039440746)):
+        DisableNetworkConnectedFlagRange(flag_range=(1039440745, 1039440746))
+        EnableNetworkFlag(1039440745)
 
     # --- Label 10 --- #
     DefineLabel(10)
@@ -1670,9 +1671,9 @@ def Event_1039443743(_, character: uint):
     DisableNetworkSync()
     WaitFrames(frames=1)
     GotoIfPlayerNotInOwnWorld(Label.L10)
-    SkipLinesIfFlagRangeAnyEnabled(2, (1039440747, 1039440748))
-    DisableNetworkConnectedFlagRange(flag_range=(1039440747, 1039440748))
-    EnableNetworkFlag(1039440747)
+    if FlagRangeAllDisabled((1039440747, 1039440748)):
+        DisableNetworkConnectedFlagRange(flag_range=(1039440747, 1039440748))
+        EnableNetworkFlag(1039440747)
 
     # --- Label 10 --- #
     DefineLabel(10)
@@ -1725,9 +1726,9 @@ def Event_1039443744(_, character: uint):
     DisableNetworkSync()
     WaitFrames(frames=1)
     GotoIfPlayerNotInOwnWorld(Label.L10)
-    SkipLinesIfFlagRangeAnyEnabled(2, (1039440749, 1039440750))
-    DisableNetworkConnectedFlagRange(flag_range=(1039440749, 1039440750))
-    EnableNetworkFlag(1039440749)
+    if FlagRangeAllDisabled((1039440749, 1039440750)):
+        DisableNetworkConnectedFlagRange(flag_range=(1039440749, 1039440750))
+        EnableNetworkFlag(1039440749)
 
     # --- Label 10 --- #
     DefineLabel(10)
@@ -1780,9 +1781,9 @@ def Event_1039443745(_, character: uint):
     DisableNetworkSync()
     WaitFrames(frames=1)
     GotoIfPlayerNotInOwnWorld(Label.L10)
-    SkipLinesIfFlagRangeAnyEnabled(2, (1039440751, 1039440752))
-    DisableNetworkConnectedFlagRange(flag_range=(1039440751, 1039440752))
-    EnableNetworkFlag(1039440751)
+    if FlagRangeAllDisabled((1039440751, 1039440752)):
+        DisableNetworkConnectedFlagRange(flag_range=(1039440751, 1039440752))
+        EnableNetworkFlag(1039440751)
 
     # --- Label 10 --- #
     DefineLabel(10)
@@ -1835,9 +1836,9 @@ def Event_1039443746(_, character: uint):
     DisableNetworkSync()
     WaitFrames(frames=1)
     GotoIfPlayerNotInOwnWorld(Label.L10)
-    SkipLinesIfFlagRangeAnyEnabled(2, (1039440753, 1039440754))
-    DisableNetworkConnectedFlagRange(flag_range=(1039440753, 1039440754))
-    EnableNetworkFlag(1039440753)
+    if FlagRangeAllDisabled((1039440753, 1039440754)):
+        DisableNetworkConnectedFlagRange(flag_range=(1039440753, 1039440754))
+        EnableNetworkFlag(1039440753)
 
     # --- Label 10 --- #
     DefineLabel(10)

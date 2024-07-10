@@ -3,7 +3,6 @@ from __future__ import annotations
 __all__ = [
     "MTD",
     "MTDParam",
-    "MTDShaderCategory",
     "MTDBND",
 ]
 
@@ -15,6 +14,7 @@ from dataclasses import dataclass, field
 from enum import IntEnum
 
 from soulstruct.base.game_file import GameFile
+from soulstruct.games import Game, get_game
 from soulstruct.containers import Binder
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.future import StrEnum
@@ -29,6 +29,8 @@ _LOGGER = logging.getLogger("soulstruct")
 
 @dataclass(slots=True)
 class MTD(GameFile):
+    """Material definition file used in older games. Replaced by similar but more powerful `MATBIN` in newer games
+    (from Elden Ring). Note that these newer games' FLVERs may still reference '.mtd' files, but the suffix is wrong."""
 
     shader_path: str
     description: str
@@ -152,14 +154,6 @@ class MTD(GameFile):
     @property
     def shader_name(self):
         return Path(self.shader_path).name
-
-    @property
-    def shader_category(self) -> MTDShaderCategory | None:
-        for category in MTDShaderCategory:
-            if self.shader_name.startswith(category):
-                # noinspection PyTypeChecker
-                return category
-        return None
 
     @property
     def shader_stem(self):
@@ -530,18 +524,6 @@ def write_marked_string(writer: BinaryWriter, marker: int, string: str):
     write_marker(writer, marker)
 
 
-class MTDShaderCategory(StrEnum):
-    """TODO: Should probably be game-specific."""
-
-    PHN = "FRPG_Phn"
-    SFX = "FRPG_Sfx"
-    NORMAL_TO_ALPHA = "FRPG_NormalToAlpha"  # used by mist, light shafts, and special 'M_Tree[D]_Edge.mtd'
-    WATER = "FRPG_Water"
-    SNOW = "FRPG_Snow"  # has 'g_SnowColor', 'g_SnowHeight', and other 'g_Snow*' params
-    FOLIAGE = "FRPG_Foliage"  # has 'g_Wind*' params and two extra UV slots for wind animation control
-    IVY = "FRPG_Ivy"  # has 'g_Wind*' params and two extra UV slots for wind animation control
-
-
 @dataclass(slots=True)
 class MTDBND(Binder):
     """NOTE: This is NOT an abstract class. It can be used for any game (so far), but will lack `from_bundled()`."""
@@ -560,3 +542,23 @@ class MTDBND(Binder):
             if entry.name in self.mtds:
                 continue  # ignore repeated names silently
             self.mtds[entry.name] = entry.to_binary_file(MTD)
+
+    @classmethod
+    def from_bundled(cls, game_or_name: Game | str) -> MTDBND:
+        game = get_game(game_or_name)
+        mtdbnd = None  # type: MTDBND | None
+        for resource_key, resource_path in game.bundled_resource_paths.items():
+            if resource_key.endswith("MTDBND"):
+                if mtdbnd is None:
+                    mtdbnd = cls.from_path(resource_path)
+                else:
+                    mtdbnd |= cls.from_path(resource_path)
+        if mtdbnd is None:
+            raise FileNotFoundError(f"No bundled MTDBND found for {game.name}.")
+        return mtdbnd
+
+    @classmethod
+    def from_path_or_bundled(cls, game_or_name: Game | str, mtdbnd_path: Path):
+        if mtdbnd_path.is_file():
+            return cls.from_path(mtdbnd_path)
+        return cls.from_bundled(game_or_name)

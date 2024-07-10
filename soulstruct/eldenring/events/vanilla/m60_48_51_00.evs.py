@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_48_51_00_enums import *
 
 
@@ -32,26 +33,34 @@ def Constructor():
         region=0,
         radius=0.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005476(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
     Event_1048512820(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
-    CommonFunc_NightsCavalryHealthBar(
+    CommonFunc_90005871(
         0,
-        nights_cavalry=Characters.NightsCavalry,
+        character=Characters.NightsCavalry,
         name=903150607,
         npc_threat_level=10,
-        horse=Characters.NightsCavalryHorse,
+        character_1=Characters.NightsCavalryHorse,
     )
     RunCommonEvent(1048512800, slot=0, args=(1048510800, 0, 1048510800, 0, 1048510700, 0.0), arg_types="IIIIif")
-    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.NightsCavalry, npc_threat_level=10, required_flag=0)
+    CommonFunc_90005872(0, character=Characters.NightsCavalry, npc_threat_level=10, right=0)
 
 
 @RestartOnRest(1048512800)
-def Event_1048512800(_, flag: uint, left: uint, character: uint, left_1: uint, item_lot: int, seconds: float):
+def Event_1048512800(
+    _,
+    flag: Flag | int,
+    left: Flag | int,
+    character: uint,
+    left_1: uint,
+    item_lot: int,
+    seconds: float,
+):
     """Event 1048512800"""
     if ValueNotEqual(left=item_lot, right=0):
         Unknown_2004_76(flag=flag, item_lot=item_lot)
@@ -107,7 +116,7 @@ def Event_1048512800(_, flag: uint, left: uint, character: uint, left_1: uint, i
 
 
 @RestartOnRest(1048512820)
-def Event_1048512820(_, character: uint, character_1: uint):
+def Event_1048512820(_, character: Character | int, character_1: Character | int):
     """Event 1048512820"""
     AND_1.Add(CharacterAlive(character))
     SkipLinesIfConditionTrue(1, AND_1)

@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m10_01_00_00_enums import *
 
 
@@ -83,7 +84,7 @@ def Event_10010020():
         change_time=True,
         time=(23, 45, 0),
     )
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -116,7 +117,8 @@ def Event_10010030():
     SetRespawnPoint(respawn_point=18002020)
     SaveRequest()
     DisableLoadingScreenText()
-    EndIfLastConditionResultTrue(input_condition=AND_3)
+    if LastResult(AND_3):
+        return
     if ThisEventSlotFlagDisabled():
         Wait(1.0)
     AddSpecialEffect(PLAYER, 4790)
@@ -134,7 +136,7 @@ def Event_10010030():
         change_time=True,
         time=(10, 30, 0),
     )
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
 
 
 @ContinueOnRest(10010031)
@@ -398,8 +400,8 @@ def Event_10012849():
         flag_2=10012806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=10010800, asset=Assets.AEG099_001_9000, dummy_id=16, right=10010801)
-    CommonFunc_9005811(0, flag=10010800, asset=Assets.AEG099_001_9001, dummy_id=16, right=0)
+    CommonFunc_9005811(0, flag=10010800, asset=Assets.AEG099_001_9000, vfx_id=16, right=10010801)
+    CommonFunc_9005811(0, flag=10010800, asset=Assets.AEG099_001_9001, vfx_id=16, right=0)
     CommonFunc_9005822(
         0,
         flag=10010800,

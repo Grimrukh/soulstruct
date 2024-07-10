@@ -19,6 +19,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_33_42_00_enums import *
 
 
@@ -27,7 +28,7 @@ def Constructor():
     """Event 0"""
     Event_1033422211()
     Event_1033422611()
-    CommonFunc_90005300(0, flag=1033420610, character=Characters.GiantTurtle, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1033420610, character=Characters.GiantTurtle, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005880(
         0,
         flag=1033420800,
@@ -96,7 +97,7 @@ def Event_1033422211():
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.GiantTurtle, attacker=PLAYER))
-    OR_2.Add(EntityWithinDistance(entity=Characters.GiantTurtle, other_entity=40000, radius=7.0))
+    OR_2.Add(EntityWithinDistance(entity=Characters.GiantTurtle, other_entity=TORRENT, radius=7.0))
     AND_1.Add(OR_2)
     AND_1.Add(OR_1)
     

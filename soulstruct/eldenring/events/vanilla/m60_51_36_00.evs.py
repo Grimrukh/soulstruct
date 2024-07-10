@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_51_36_00_enums import *
 
 
@@ -358,13 +359,13 @@ def Constructor():
         repetition_time=1.0,
         flag=57,
     )
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, vfx_id=100, dummy_id=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, vfx_id=100, dummy_id=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9004, vfx_id=100, dummy_id=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9005, vfx_id=100, dummy_id=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9006, vfx_id=100, dummy_id=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9007, vfx_id=100, dummy_id=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9008, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, dummy_id=100, vfx_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, dummy_id=100, vfx_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9004, dummy_id=100, vfx_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9005, dummy_id=100, vfx_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9006, dummy_id=100, vfx_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9007, dummy_id=100, vfx_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9008, dummy_id=100, vfx_id=800, right=0)
     CommonFunc_90005605(
         0,
         asset=Assets.AEG099_510_9000,
@@ -410,7 +411,7 @@ def Constructor():
         character=Characters.LionGuardian0,
         item_lot=1051360700,
         seconds=0.0,
-        item_is_dropped=0,
+        left=0,
     )
     CommonFunc_90005300(
         0,
@@ -418,14 +419,14 @@ def Constructor():
         character=Characters.LionGuardian1,
         item_lot=1051360800,
         seconds=0.0,
-        item_is_dropped=0,
+        left=0,
     )
     Event_1051362340(0, character=Characters.Troll)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier, region=1051362422, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnFootSoldier0, region=1051362422, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnFootSoldier1, region=1051362422, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnFootSoldier2, region=1051362422, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.MadPumpkinHead, region=1051362490, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier, region=1051362422, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnFootSoldier0, region=1051362422, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnFootSoldier1, region=1051362422, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnFootSoldier2, region=1051362422, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.MadPumpkinHead, region=1051362490, seconds=0.0, animation_id=-1)
     CommonFunc_90005501(
         0,
         flag=1051360510,
@@ -546,14 +547,14 @@ def Event_1051362215():
 def Event_1051362216(
     _,
     asset__asset_flag: uint,
-    asset: uint,
+    asset: Asset | int,
     dummy_id_start: int,
     dummy_id_end: int,
     behavior_param_id__behaviour_id: int,
     radius: float,
     life: float,
     repetition_time: float,
-    flag: uint,
+    flag: Flag | int,
 ):
     """Event 1051362216"""
     if FlagDisabled(flag):
@@ -613,13 +614,13 @@ def Event_1051362220():
     
     EnableFlag(9021)
     PlayCutscene(60510000, cutscene_flags=CutsceneFlags.Unskippable, player_id=10000)
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
 
     # --- Label 1 --- #
     DefineLabel(1)
     EndOfAnimation(asset=Assets.AEG030_419_2000, animation_id=2)
     EnableAsset(Assets.AEG099_001_9002)
-    CreateAssetVFX(Assets.AEG099_001_9002, vfx_id=101, dummy_id=5)
+    CreateAssetVFX(Assets.AEG099_001_9002, dummy_id=101, vfx_id=5)
     SetCurrentTime(
         time=(3, 30, 0),
         fade_transition=False,
@@ -655,7 +656,7 @@ def Event_1051362230():
 
 
 @RestartOnRest(1051362340)
-def Event_1051362340(_, character: uint):
+def Event_1051362340(_, character: Character | int):
     """Event 1051362340"""
     if FlagEnabled(1051362340):
         return
@@ -685,25 +686,25 @@ def Event_1051362340(_, character: uint):
 
 
 @RestartOnRest(1051362490)
-def Event_1051362490(_, region: uint):
+def Event_1051362490(_, region: Region | int):
     """Event 1051362490"""
     DisableNetworkSync()
-    AND_2.Add(CharacterInsideRegion(character=20000, region=region))
+    AND_2.Add(CharacterInsideRegion(character=ALL_PLAYERS, region=region))
     
     MAIN.Await(AND_2)
     
-    AddSpecialEffect(20000, 9621)
+    AddSpecialEffect(ALL_PLAYERS, 9621)
     Wait(0.10000000149011612)
-    AND_3.Add(CharacterOutsideRegion(character=20000, region=region))
+    AND_3.Add(CharacterOutsideRegion(character=ALL_PLAYERS, region=region))
     
     MAIN.Await(AND_3)
     
     Wait(0.10000000149011612)
     AND_4.Add(FlagEnabled(9410))
     AND_4.Add(FlagDisabled(9413))
-    AND_4.Add(CharacterInsideRegion(character=20000, region=1051362500))
+    AND_4.Add(CharacterInsideRegion(character=ALL_PLAYERS, region=1051362500))
     SkipLinesIfConditionTrue(1, AND_4)
-    RemoveSpecialEffect(20000, 9621)
+    RemoveSpecialEffect(ALL_PLAYERS, 9621)
     Restart()
 
 
@@ -712,7 +713,7 @@ def Event_1051362500():
     """Event 1051362500"""
     DisableNetworkSync()
     GotoIfFlagEnabled(Label.L0, flag=9413)
-    AND_1.Add(CharacterInsideRegion(character=20000, region=1051362500))
+    AND_1.Add(CharacterInsideRegion(character=ALL_PLAYERS, region=1051362500))
     AND_1.Add(FlagEnabled(9410))
     OR_1.Add(Invasion())
     AND_1.Add(not OR_1)
@@ -720,21 +721,21 @@ def Event_1051362500():
     MAIN.Await(AND_1)
     
     GotoIfFlagEnabled(Label.L0, flag=9413)
-    AddSpecialEffect(20000, 9621)
+    AddSpecialEffect(ALL_PLAYERS, 9621)
     Wait(0.10000000149011612)
-    OR_2.Add(CharacterOutsideRegion(character=20000, region=1051362500))
+    OR_2.Add(CharacterOutsideRegion(character=ALL_PLAYERS, region=1051362500))
     OR_2.Add(Invasion())
     
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    if CharacterOutsideRegion(character=20000, region=1051362710):
-        RemoveSpecialEffect(20000, 9621)
+    if CharacterOutsideRegion(character=ALL_PLAYERS, region=1051362710):
+        RemoveSpecialEffect(ALL_PLAYERS, 9621)
     Restart()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    RemoveSpecialEffect(20000, 9621)
+    RemoveSpecialEffect(ALL_PLAYERS, 9621)
     End()
 
 
@@ -770,7 +771,7 @@ def Event_1051362519():
 
 
 @ContinueOnRest(1051362560)
-def Event_1051362560(_, asset: uint):
+def Event_1051362560(_, asset: Asset | int):
     """Event 1051362560"""
     GotoIfFlagEnabled(Label.L0, flag=9413)
     GotoIfFlagEnabled(Label.L1, flag=9410)
@@ -800,7 +801,7 @@ def Event_1051362580():
 
 
 @RestartOnRest(1051362630)
-def Event_1051362630(_, asset: uint):
+def Event_1051362630(_, asset: Asset | int):
     """Event 1051362630"""
     DisableAsset(asset)
 
@@ -808,17 +809,17 @@ def Event_1051362630(_, asset: uint):
 @RestartOnRest(1051362650)
 def Event_1051362650(
     _,
-    flag: uint,
-    flag_1: uint,
-    asset: uint,
-    source_flag: uint,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    asset: Asset | int,
+    source_flag: Flag | int,
     value: uint,
-    flag_2: uint,
-    flag_3: uint,
-    flag_4: uint,
-    flag_5: uint,
-    flag_6: uint,
-    flag_7: uint,
+    flag_2: Flag | int,
+    flag_3: Flag | int,
+    flag_4: Flag | int,
+    flag_5: Flag | int,
+    flag_6: Flag | int,
+    flag_7: Flag | int,
 ):
     """Event 1051362650"""
     MAIN.Await(FlagEnabled(1051360800))
@@ -841,7 +842,7 @@ def Event_1051362650(
     if AND_10:
         return
     if FlagDisabled(9000):
-        CreateAssetVFX(asset, vfx_id=100, dummy_id=6400)
+        CreateAssetVFX(asset, dummy_id=100, vfx_id=6400)
     AND_1.Add(FlagEnabled(flag_1))
     AND_1.Add(FlagDisabled(9000))
     OR_1.Add(FlagEnabled(flag))
@@ -854,7 +855,7 @@ def Event_1051362650(
     AND_11.Add(EventValue(flag=source_flag, bit_count=3) > value)
     if AND_11:
         return RESTART
-    CreateAssetVFX(asset, vfx_id=100, dummy_id=6400)
+    CreateAssetVFX(asset, dummy_id=100, vfx_id=6400)
     if UnsignedEqual(left=value, right=0):
         EnableFlag(flag_2)
         EventValueOperation(
@@ -1042,8 +1043,8 @@ def Event_1051362849():
         flag_2=1051362806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=1051360800, asset=Assets.AEG099_001_9000, dummy_id=5, right=0)
-    CommonFunc_9005811(0, flag=1051360800, asset=Assets.AEG099_001_9001, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=1051360800, asset=Assets.AEG099_001_9000, vfx_id=5, right=0)
+    CommonFunc_9005811(0, flag=1051360800, asset=Assets.AEG099_001_9001, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=1051360800,
@@ -1065,7 +1066,7 @@ def Event_1051363700():
     AND_1.Add(FlagDisabled(9411))
     AwaitConditionTrue(AND_1)
     PlayCutscene(60510000, cutscene_flags=0, player_id=10000)
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     EnableFlag(9411)
     End()
 

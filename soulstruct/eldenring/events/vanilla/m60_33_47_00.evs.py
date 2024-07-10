@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_33_47_00_enums import *
 
 
@@ -143,11 +144,11 @@ def Event_1033472610(
     anchor_entity: uint,
     area_id: uchar,
     block_id: uchar,
-    cc_id: char,
-    dd_id: char,
-    player_start: uint,
-    left_flag: uint,
-    cancel_flag__right_flag: uint,
+    cc_id: uchar,
+    dd_id: uchar,
+    player_start: PlayerStart | int,
+    left_flag: Flag | int,
+    cancel_flag__right_flag: Flag | int,
 ):
     """Event 1033472610"""
     if Multiplayer():
@@ -205,14 +206,20 @@ def Event_1033472610(
 
     # --- Label 5 --- #
     DefineLabel(5)
-    FaceEntity(PLAYER, anchor_entity, wait_for_completion=True)
+    FaceEntityAndForceAnimation(PLAYER, anchor_entity, wait_for_completion=True)
     ForceAnimation(PLAYER, 60490)
     Wait(3.0)
     WarpToMap(game_map=(area_id, block_id, cc_id, dd_id), player_start=player_start)
 
 
 @RestartOnRest(1033472611)
-def Event_1033472611(_, flag: uint, destination: uint, left_flag: uint, cancel_flag__right_flag: uint):
+def Event_1033472611(
+    _,
+    flag: Flag | int,
+    destination: uint,
+    left_flag: Flag | int,
+    cancel_flag__right_flag: Flag | int,
+):
     """Event 1033472611"""
     OR_1.Add(FlagEnabled(flag))
     OR_1.Add(PlayerNotInOwnWorld())
@@ -260,7 +267,7 @@ def Event_1033472611(_, flag: uint, destination: uint, left_flag: uint, cancel_f
 
 
 @RestartOnRest(1033472612)
-def Event_1033472612(_, flag: uint, asset: uint):
+def Event_1033472612(_, flag: Flag | int, asset: Asset | int):
     """Event 1033472612"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     EnableAsset(asset)

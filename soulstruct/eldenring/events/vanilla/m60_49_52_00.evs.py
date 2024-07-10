@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_49_52_00_enums import *
 
 
@@ -37,7 +38,7 @@ def Constructor():
         left_3=0,
     )
     Event_1049522825(0, flag=1049520800, character=Characters.Gargoyle)
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.Gargoyle, name=904770600, npc_threat_level=16)
+    CommonFunc_90005870(0, character=Characters.Gargoyle, name=904770600, npc_threat_level=16)
     CommonFunc_90005860(
         0,
         flag=1049520800,
@@ -47,7 +48,7 @@ def Constructor():
         item_lot=30505,
         seconds=0.0,
     )
-    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.Gargoyle, npc_threat_level=16, required_flag=0)
+    CommonFunc_90005872(0, character=Characters.Gargoyle, npc_threat_level=16, right=0)
     CommonFunc_90005261(0, character=1049520550, region=1049522550, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005780(
         0,
@@ -81,7 +82,7 @@ def Event_1049522820(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    region: uint,
+    region: Region | int,
     seconds: float,
     left: uint,
     left_1: uint,
@@ -182,7 +183,7 @@ def Event_1049522820(
 
 
 @RestartOnRest(1049522825)
-def Event_1049522825(_, flag: uint, character: uint):
+def Event_1049522825(_, flag: Flag | int, character: uint):
     """Event 1049522825"""
     if FlagEnabled(flag):
         return

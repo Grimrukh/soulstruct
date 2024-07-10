@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_47_40_00_enums import *
 
 
@@ -523,7 +524,7 @@ def Constructor():
             life=0.0,
             repetition_time=1.0,
         )
-    CommonFunc_90005683(0, flag=62410, asset=Assets.AEG099_055_2000, vfx_id=207, flag_1=78490, flag_2=78490)
+    CommonFunc_90005683(0, flag=62410, asset=Assets.AEG099_055_2000, dummy_id=207, flag_1=78490, flag_2=78490)
     CommonFunc_90005620(
         0,
         flag=1047400570,
@@ -535,56 +536,56 @@ def Constructor():
         right=1047402572,
     )
     CommonFunc_90005621(0, flag=1047400570, asset=Assets.AEG099_272_9000)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.MonstrousCrow0, region=1047402259, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1047400259, region=1047402259, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.MonstrousCrow1, region=1047402260, seconds=0.0, animation_id=-1)
-    CommonFunc_90005300(0, flag=1047400290, character=Characters.Scarab, item_lot=40400, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005250(0, character=Characters.MonstrousCrow0, region=1047402259, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1047400259, region=1047402259, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.MonstrousCrow1, region=1047402260, seconds=0.0, animation_id=-1)
+    CommonFunc_90005300(0, flag=1047400290, character=Characters.Scarab, item_lot=40400, seconds=0.0, left=0)
     Event_1047402399()
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Dummy, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse0, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse1, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse2, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse3, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse4, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse5, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse6, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse7, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse8, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse9, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse10, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse11, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse12, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse13, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse14, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse15, region=1047402399, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1047400321, region=1047402321, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1047400322, region=1047402321, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1047400323, region=1047402321, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1047400324, region=1047402321, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1047400325, region=1047402321, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1047400326, region=1047402321, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1047400327, region=1047402321, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1047400328, region=1047402321, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Dummy, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse0, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse1, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse2, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse3, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse4, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse5, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse6, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse7, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse8, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse9, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse10, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse11, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse12, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse13, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse14, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse15, region=1047402399, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1047400321, region=1047402321, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1047400322, region=1047402321, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1047400323, region=1047402321, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1047400324, region=1047402321, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1047400325, region=1047402321, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1047400326, region=1047402321, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1047400327, region=1047402321, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1047400328, region=1047402321, seconds=0.0, animation_id=-1)
     Event_1047402302()
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse16, region=1047402336, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse17, region=1047402336, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse18, region=1047402336, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse19, region=1047402336, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse20, region=1047402340, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse21, region=1047402340, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse22, region=1047402340, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse23, region=1047402402, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse24, region=1047402402, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpseBare1, region=1047402402, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpseBare2, region=1047402402, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpseBare3, region=1047402402, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpseBare4, region=1047402402, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpseBare5, region=1047402402, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpseBare6, region=1047402402, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpseBare7, region=1047402336, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1047400468, region=1047402468, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse16, region=1047402336, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse17, region=1047402336, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse18, region=1047402336, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse19, region=1047402336, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse20, region=1047402340, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse21, region=1047402340, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse22, region=1047402340, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse23, region=1047402402, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse24, region=1047402402, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpseBare1, region=1047402402, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpseBare2, region=1047402402, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpseBare3, region=1047402402, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpseBare4, region=1047402402, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpseBare5, region=1047402402, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpseBare6, region=1047402402, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpseBare7, region=1047402336, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1047400468, region=1047402468, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=1047400391, radius=60.0, seconds=0.0, animation_id=-1)
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.PutridAvatar, name=904811602, npc_threat_level=18)
+    CommonFunc_90005870(0, character=Characters.PutridAvatar, name=904811602, npc_threat_level=18)
     CommonFunc_90005860(
         0,
         flag=1047400800,
@@ -594,11 +595,11 @@ def Constructor():
         item_lot=30410,
         seconds=0.0,
     )
-    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.PutridAvatar, npc_threat_level=18, required_flag=0)
+    CommonFunc_90005872(0, character=Characters.PutridAvatar, npc_threat_level=18, right=0)
 
 
 @RestartOnRest(1047402301)
-def Event_1047402301(_, character: uint, region: uint, patrol_information_id: uint):
+def Event_1047402301(_, character: Character | int, region: Region | int, patrol_information_id: uint):
     """Event 1047402301"""
     MAIN.Await(CharacterInsideRegion(character=character, region=region))
     

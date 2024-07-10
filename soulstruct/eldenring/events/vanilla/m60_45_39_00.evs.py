@@ -17,6 +17,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_45_39_00_enums import *
 
 
@@ -86,7 +87,7 @@ def Constructor():
     )
     Event_1045392345(0, flag=1045390800, character=Characters.TibiaMariner, character_1=1045395230)
     Event_1045392346(0, character__targeting_character=Characters.TibiaMariner, region=1045392810)
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.TibiaMariner, name=904950600, npc_threat_level=24)
+    CommonFunc_90005870(0, character=Characters.TibiaMariner, name=904950600, npc_threat_level=24)
     CommonFunc_90005860(
         0,
         flag=1045390800,
@@ -129,7 +130,7 @@ def Preconstructor():
 
 
 @RestartOnRest(1045392280)
-def Event_1045392280(_, attacker__character: uint, region: uint):
+def Event_1045392280(_, attacker__character: uint, region: Region | int):
     """Event 1045392280"""
     RemoveSpecialEffect(attacker__character, 4800)
     RemoveSpecialEffect(attacker__character, 5654)
@@ -146,12 +147,12 @@ def Event_1045392280(_, attacker__character: uint, region: uint):
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=PLAYER))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=35000))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=35000, attacker=attacker__character))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=ALL_SPIRIT_SUMMONS))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=ALL_SPIRIT_SUMMONS, attacker=attacker__character))
     OR_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=attacker__character, radius=10.0))
-    OR_2.Add(EntityWithinDistance(entity=35000, other_entity=attacker__character, radius=10.0))
+    OR_2.Add(EntityWithinDistance(entity=ALL_SPIRIT_SUMMONS, other_entity=attacker__character, radius=10.0))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
-    OR_2.Add(CharacterInsideRegion(character=35000, region=region))
+    OR_2.Add(CharacterInsideRegion(character=ALL_SPIRIT_SUMMONS, region=region))
     AND_1.Add(OR_2)
     
     MAIN.Await(AND_1)
@@ -311,17 +312,17 @@ def Event_1045392341(
 def Event_1045392342(
     _,
     character: uint,
-    flag: uint,
+    flag: Flag | int,
     special_effect: int,
     destination: uint,
-    first_flag: uint,
+    first_flag: Flag | int,
     special_effect_1: int,
     special_effect_2: int,
     special_effect_3: int,
     destination_1: uint,
     destination_2: uint,
     destination_3: uint,
-    last_flag: uint,
+    last_flag: Flag | int,
 ):
     """Event 1045392342"""
     if FlagEnabled(flag):
@@ -372,10 +373,10 @@ def Event_1045392342(
 @RestartOnRest(1045392343)
 def Event_1045392343(
     _,
-    character: uint,
-    region: uint,
-    region_1: uint,
-    region_2: uint,
+    character: Character | int,
+    region: Region | int,
+    region_1: Region | int,
+    region_2: Region | int,
     special_effect: int,
     special_effect_1: int,
     special_effect_2: int,
@@ -412,7 +413,7 @@ def Event_1045392343(
 
 
 @RestartOnRest(1045392345)
-def Event_1045392345(_, flag: uint, character: uint, character_1: uint):
+def Event_1045392345(_, flag: Flag | int, character: Character | int, character_1: uint):
     """Event 1045392345"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     DisableCharacter(character_1)
@@ -443,13 +444,13 @@ def Event_1045392345(_, flag: uint, character: uint, character_1: uint):
 
 
 @RestartOnRest(1045392346)
-def Event_1045392346(_, character__targeting_character: uint, region: uint):
+def Event_1045392346(_, character__targeting_character: Character | int, region: Region | int):
     """Event 1045392346"""
     DisableNetworkSync()
     if FlagEnabled(1045390800):
         return
-    AND_1.Add(CharacterTargeting(targeting_character=character__targeting_character, targeted_character=20000))
-    AND_1.Add(CharacterOutsideRegion(character=20000, region=region))
+    AND_1.Add(CharacterTargeting(targeting_character=character__targeting_character, targeted_character=ALL_PLAYERS))
+    AND_1.Add(CharacterOutsideRegion(character=ALL_PLAYERS, region=region))
     
     MAIN.Await(AND_1)
     

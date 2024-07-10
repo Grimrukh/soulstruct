@@ -101,8 +101,13 @@ class AdvancedDecompiler:
     def current_line(self) -> str:
         return self.in_lines[self.i]
     
-    def get_line_ahead(self, count: int = 1) -> str:
-        return self.in_lines[self.i + count]
+    def get_line_ahead(self, count: int) -> str:
+        try:
+            return self.in_lines[self.i + count]
+        except IndexError:
+            raise IndexError(
+                f"Cannot get line {count} ahead of current line {self.i}. (Total lines: {len(self.in_lines)})"
+            )
 
     def adv_decompile(self, instruction_lines: list[str], conditions_only=False) -> list[str]:
         """Parses basic EVS output (already a list of strings) and replaces it with relatively simply Python `if/else`
@@ -239,6 +244,13 @@ class AdvancedDecompiler:
             self.out_lines.append(f"{line}  # NOTE: useless skip")
             self.i += 1
             return
+
+        if self.i + line_count >= len(self.in_lines):
+            # Skip goes beyond end of event. Preserve for inspection.
+            self.out_lines.append(f"{line}  # NOTE: skip goes past end of event")
+            self.i += 1
+            return
+
         args = match_dict["args"].removeprefix(", ")
         # Find negated skip.
         for test_name, tests in self.emedf_tests.items():
@@ -248,7 +260,7 @@ class AdvancedDecompiler:
             # Could not find test name (possibly no negation).
             self.out_lines.append(line)
             self.i += 1
-            return  
+            return
         if_block_lines = [f"{indent}{self.get_line_ahead(1 + j)}" for j in range(line_count)]
         if any("SkipLinesIf" in instr for instr in if_block_lines):
             # Cannot yet skip other skips. Ignore this line, and recur on block lines for conditions only.

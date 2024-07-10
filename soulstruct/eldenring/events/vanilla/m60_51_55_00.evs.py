@@ -18,13 +18,14 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_51_55_00_enums import *
 
 
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005300(0, flag=1051550300, character=Characters.GuardianGolem, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1051550300, character=Characters.GuardianGolem, item_lot=0, seconds=0.0, left=0)
 
 
 @ContinueOnRest(250)

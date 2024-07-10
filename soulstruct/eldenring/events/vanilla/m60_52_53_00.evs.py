@@ -18,8 +18,9 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_52_53_00_enums import *
-from .enums.m60_52_52_00_enums import Characters as m60_52_Characters
+from .enums.m60_52_52_00_enums import Characters as m60_52_52_00_Characters
 
 
 @ContinueOnRest(0)
@@ -68,13 +69,13 @@ def Event_1052532500():
 
     # --- Label 1 --- #
     DefineLabel(1)
-    OR_1.Add(AttackedWithDamageType(attacked_entity=m60_52_Characters.FireGiant0))
-    OR_1.Add(CharacterHasStateInfo(character=m60_52_Characters.FireGiant0, state_info=436))
-    OR_1.Add(CharacterHasStateInfo(character=m60_52_Characters.FireGiant0, state_info=2))
-    OR_1.Add(CharacterHasStateInfo(character=m60_52_Characters.FireGiant0, state_info=5))
-    OR_1.Add(CharacterHasStateInfo(character=m60_52_Characters.FireGiant0, state_info=6))
-    OR_1.Add(CharacterHasStateInfo(character=m60_52_Characters.FireGiant0, state_info=260))
-    OR_1.Add(EntityWithinDistance(entity=m60_52_Characters.FireGiant0, other_entity=PLAYER, radius=120.0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=m60_52_52_00_Characters.FireGiant0))
+    OR_1.Add(CharacterHasStateInfo(character=m60_52_52_00_Characters.FireGiant0, state_info=436))
+    OR_1.Add(CharacterHasStateInfo(character=m60_52_52_00_Characters.FireGiant0, state_info=2))
+    OR_1.Add(CharacterHasStateInfo(character=m60_52_52_00_Characters.FireGiant0, state_info=5))
+    OR_1.Add(CharacterHasStateInfo(character=m60_52_52_00_Characters.FireGiant0, state_info=6))
+    OR_1.Add(CharacterHasStateInfo(character=m60_52_52_00_Characters.FireGiant0, state_info=260))
+    OR_1.Add(EntityWithinDistance(entity=m60_52_52_00_Characters.FireGiant0, other_entity=PLAYER, radius=120.0))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=1052532800))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=1052532801))
     AND_2.Add(OR_2)
@@ -151,15 +152,15 @@ def Event_200():
 @ContinueOnRest(1052532400)
 def Event_1052532400(
     _,
-    flag: uint,
-    summon_flag: uint,
-    dismissal_flag: uint,
+    flag: Flag | int,
+    summon_flag: Flag | int,
+    dismissal_flag: Flag | int,
     character: uint,
-    region: uint,
-    right: uint,
+    region: Region | int,
+    right: Flag | int,
     unknown: uchar,
-    flag_1: uint,
-    flag_2: uint,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
 ):
     """Event 1052532400"""
     if PlayerInOwnWorld():

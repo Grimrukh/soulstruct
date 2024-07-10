@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_44_35_00_enums import *
 
 
@@ -150,7 +151,7 @@ def Constructor():
         region=0,
         left=0,
     )
-    Event_1044352600(0, attacked_entity=1044351600, region=1044352600)
+    Event_1044352600(0, attacked_entity=Assets.AEG099_280_9000, region=1044352600)
     Event_1044352650(
         0,
         tutorial_param_id=1520,
@@ -237,7 +238,7 @@ def Event_1044352600(_, attacked_entity: uint, region: uint):
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    PlaySoundEffect(attacked_entity, 810000099, sound_type=SoundType.Unknown14)
+    PlaySoundEffect(attacked_entity, 810000099, sound_type=SoundType.unk_GeometrySet)
     ForceAnimation(attacked_entity, 1)
     TriggerAISound(ai_sound_param_id=7000, anchor_entity=region, unk_8_12=1)
     Wait(2.0)
@@ -250,11 +251,11 @@ def Event_1044352600(_, attacked_entity: uint, region: uint):
 def Event_1044352650(
     _,
     tutorial_param_id: int,
-    flag: uint,
+    flag: Flag | int,
     tutorial_param_id_1: int,
-    flag_1: uint,
-    flag_2: uint,
-    flag_3: uint,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
+    flag_3: Flag | int,
 ):
     """Event 1044352650"""
     DisableNetworkSync()
@@ -286,7 +287,7 @@ def Event_1044352650(
 
 
 @RestartOnRest(1044352740)
-def Event_1044352740(_, character: uint, character_1: uint):
+def Event_1044352740(_, character: Character | int, character_1: Character | int):
     """Event 1044352740"""
     WaitFrames(frames=1)
     DisableCharacter(character)
@@ -296,7 +297,7 @@ def Event_1044352740(_, character: uint, character_1: uint):
 
 
 @RestartOnRest(1044350710)
-def Event_1044350710(_, character: uint, character_1: uint):
+def Event_1044350710(_, character: uint, character_1: Character | int):
     """Event 1044350710"""
     DisableNetworkSync()
     WaitFrames(frames=1)
@@ -393,7 +394,7 @@ def Event_1044350711():
 
 
 @RestartOnRest(1044350712)
-def Event_1044350712(_, character: uint):
+def Event_1044350712(_, character: Character | int):
     """Event 1044350712"""
     if PlayerNotInOwnWorld():
         return
@@ -420,7 +421,7 @@ def Event_1044350713():
 
 
 @RestartOnRest(1044350714)
-def Event_1044350714(_, character: uint):
+def Event_1044350714(_, character: Character | int):
     """Event 1044350714"""
     DisableCharacter(character)
     AND_1.Add(FlagDisabled(1044350800))
@@ -433,7 +434,7 @@ def Event_1044350714(_, character: uint):
 
 
 @RestartOnRest(1044350715)
-def Event_1044350715(_, character: uint, character_1: uint):
+def Event_1044350715(_, character: uint, character_1: Character | int):
     """Event 1044350715"""
     if ThisEventSlotFlagEnabled():
         return

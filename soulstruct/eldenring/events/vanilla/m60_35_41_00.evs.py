@@ -18,14 +18,15 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_35_41_00_enums import *
 
 
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005525(0, flag=1035410612, asset=1035411612)
-    CommonFunc_90005525(0, flag=1035410611, asset=1035411611)
+    CommonFunc_90005525(0, flag=1035410612, asset=Assets.AEG004_983_1000)
+    CommonFunc_90005525(0, flag=1035410611, asset=Assets.AEG004_983_1001)
     CommonFunc_90005620(
         0,
         flag=1035410570,
@@ -40,7 +41,7 @@ def Constructor():
     Event_1035412610(0, flag=1035410610, character=Characters.GiantTurtle)
     Event_1035412611(0, flag=1035410610, attacked_entity=Characters.GiantTurtle)
     CommonFunc_90005251(0, character=Characters.GiantTurtle, radius=0.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005300(0, flag=1035410610, character=Characters.GiantTurtle, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1035410610, character=Characters.GiantTurtle, item_lot=0, seconds=0.0, left=0)
 
 
 @ContinueOnRest(50)
@@ -114,7 +115,7 @@ def Preconstructor():
 
 
 @RestartOnRest(1035412610)
-def Event_1035412610(_, flag: uint, character: uint):
+def Event_1035412610(_, flag: Flag | int, character: uint):
     """Event 1035412610"""
     if FlagEnabled(flag):
         return
@@ -133,7 +134,7 @@ def Event_1035412610(_, flag: uint, character: uint):
 
 
 @RestartOnRest(1035412611)
-def Event_1035412611(_, flag: uint, attacked_entity: uint):
+def Event_1035412611(_, flag: Flag | int, attacked_entity: uint):
     """Event 1035412611"""
     if FlagEnabled(flag):
         return

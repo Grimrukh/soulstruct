@@ -18,20 +18,21 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_50_56_00_enums import *
-from .enums.m60_50_57_00_enums import Characters as m60_50_Characters
+from .enums.m60_50_57_00_enums import Characters as m60_50_57_00_Characters
 
 
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.GreatWyrmTheodorix, name=904911600, npc_threat_level=5)
-    CommonFunc_KillFieldDragonWyrm(
+    CommonFunc_90005870(0, character=Characters.GreatWyrmTheodorix, name=904911600, npc_threat_level=5)
+    CommonFunc_90005861(
         0,
         flag=1050560800,
-        extra_flag=0,
+        left=0,
         character=Characters.GreatWyrmTheodorix,
-        felled_banner_rank=1,
+        left_1=1,
         item_lot=30550,
         text=30065,
         seconds=0.0,
@@ -83,14 +84,14 @@ def Constructor():
         asset=1050566250,
         character=Characters.Imp0,
         character_1=Characters.Imp1,
-        character_2=35000,
+        character_2=ALL_SPIRIT_SUMMONS,
         special_effect=17170,
         special_effect_1=17171,
     )
     Event_1050562260(0, anchor_entity=Assets.AEG099_251_9000)
     Event_1050562260(1, anchor_entity=Assets.AEG099_251_9001)
     Event_1050562260(2, anchor_entity=Assets.AEG099_251_9002)
-    CommonFunc_90005300(0, flag=1050560300, character=Characters.RedWolf, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1050560300, character=Characters.RedWolf, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005560(0, flag=1050560500, asset=Assets.AEG099_635_9000, left=0)
     CommonFunc_90005795(
         0,
@@ -102,7 +103,7 @@ def Constructor():
         message=80604,
         action_button_id=9000,
         asset=Assets.AEG099_090_9001,
-        dummy_id=30010,
+        vfx_id=30010,
     )
     if CeremonyActive(ceremony=20):
         CommonFunc_90005796(0, flag=7604, character=Characters.JunoHoslow, banner_type=5, region=1050562141)
@@ -125,14 +126,14 @@ def Event_1050562145():
         return
     EnableBackread(Characters.JunoHoslow)
     SetTeamType(Characters.JunoHoslow, TeamType.Human)
-    DisableCharacter(m60_50_Characters.GiantSkeletonTorso)
-    DisableAnimations(m60_50_Characters.GiantSkeletonTorso)
+    DisableCharacter(m60_50_57_00_Characters.GiantSkeletonTorso)
+    DisableAnimations(m60_50_57_00_Characters.GiantSkeletonTorso)
     DeleteAssetVFX(1050566700)
-    CreateAssetVFX(1050566700, vfx_id=200, dummy_id=806700)
+    CreateAssetVFX(1050566700, dummy_id=200, vfx_id=806700)
 
 
 @RestartOnRest(1050562200)
-def Event_1050562200(_, attacker__character: uint, region: uint):
+def Event_1050562200(_, attacker__character: uint, region: Region | int):
     """Event 1050562200"""
     RemoveSpecialEffect(attacker__character, 4800)
     RemoveSpecialEffect(attacker__character, 5650)
@@ -149,12 +150,12 @@ def Event_1050562200(_, attacker__character: uint, region: uint):
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=PLAYER))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=35000))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=35000, attacker=attacker__character))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=ALL_SPIRIT_SUMMONS))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=ALL_SPIRIT_SUMMONS, attacker=attacker__character))
     OR_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=attacker__character, radius=10.0))
-    OR_2.Add(EntityWithinDistance(entity=35000, other_entity=attacker__character, radius=10.0))
+    OR_2.Add(EntityWithinDistance(entity=ALL_SPIRIT_SUMMONS, other_entity=attacker__character, radius=10.0))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
-    OR_2.Add(CharacterInsideRegion(character=35000, region=region))
+    OR_2.Add(CharacterInsideRegion(character=ALL_SPIRIT_SUMMONS, region=region))
     AND_1.Add(OR_2)
     
     MAIN.Await(AND_1)
@@ -165,7 +166,7 @@ def Event_1050562200(_, attacker__character: uint, region: uint):
 
 
 @RestartOnRest(1050562555)
-def Event_1050562555(_, character: uint):
+def Event_1050562555(_, character: Character | int):
     """Event 1050562555"""
     DisableGravity(character)
 
@@ -179,11 +180,11 @@ def Event_1050562580():
 @RestartOnRest(1050562250)
 def Event_1050562250(
     _,
-    flag: uint,
+    flag: Flag | int,
     asset: uint,
-    character: uint,
-    character_1: uint,
-    character_2: uint,
+    character: Character | int,
+    character_1: Character | int,
+    character_2: Character | int,
     special_effect: int,
     special_effect_1: int,
 ):
@@ -192,7 +193,7 @@ def Event_1050562250(
     EnableSpawner(entity=1050563250)
     EnableSpawner(entity=1050563251)
     DeleteAssetVFX(asset)
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=1500)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=1500)
     GotoIfPlayerNotInOwnWorld(Label.L1)
     AND_1.Add(CharacterHasSpecialEffect(character, special_effect))
     AND_1.Add(CharacterHasSpecialEffect(character, special_effect_1))
@@ -210,7 +211,7 @@ def Event_1050562250(
     MAIN.Await(OR_1)
     
     EnableNetworkFlag(flag)
-    DisplayDialog(text=20210, anchor_entity=0, display_distance=5.0)
+    DisplayDialog(text=20210, display_distance=5.0)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -226,7 +227,7 @@ def Event_1050562250(
     
     MAIN.Await(FlagEnabled(flag))
     
-    DisplayDialog(text=20210, anchor_entity=0, display_distance=5.0)
+    DisplayDialog(text=20210, display_distance=5.0)
     DisableSpawner(entity=1050563250)
     DisableSpawner(entity=1050563251)
     DisableAsset(asset)

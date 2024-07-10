@@ -19,6 +19,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_36_43_00_enums import *
 
 
@@ -50,7 +51,7 @@ def Preconstructor():
 
 
 @RestartOnRest(1036433700)
-def Event_1036433700(_, character: uint, asset: uint):
+def Event_1036433700(_, character: uint, asset: Asset | int):
     """Event 1036433700"""
     WaitFrames(frames=1)
     DisableNetworkSync()

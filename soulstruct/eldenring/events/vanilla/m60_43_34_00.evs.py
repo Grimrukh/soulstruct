@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_43_34_00_enums import *
 
 
@@ -28,20 +29,20 @@ def Constructor():
     CommonFunc_90005461(0, character=1043340204)
     CommonFunc_90005462(1, character=1043340204)
     CommonFunc_90005460(0, character=1043340204)
-    Event_1043342220(0, character=Characters.DemiHuman0, asset=1043341220, region=1043342220)
-    Event_1043342220(1, character=Characters.DemiHuman1, asset=1043341221, region=1043342220)
-    Event_1043342220(2, character=Characters.DemiHuman2, asset=1043341222, region=1043342220)
-    Event_1043342220(3, character=Characters.DemiHuman3, asset=1043341223, region=1043342223)
-    Event_1043342220(4, character=Characters.DemiHuman4, asset=1043341224, region=1043342223)
+    Event_1043342220(0, character=Characters.DemiHuman0, asset=Assets.AEG801_480_9000, region=1043342220)
+    Event_1043342220(1, character=Characters.DemiHuman1, asset=Assets.AEG801_480_9001, region=1043342220)
+    Event_1043342220(2, character=Characters.DemiHuman2, asset=Assets.AEG801_480_9002, region=1043342220)
+    Event_1043342220(3, character=Characters.DemiHuman3, asset=Assets.AEG801_480_9003, region=1043342223)
+    Event_1043342220(4, character=Characters.DemiHuman4, asset=Assets.AEG801_480_9004, region=1043342223)
     Event_1043342220(5, character=1043340225, asset=1043341225, region=1043342223)
-    CommonFunc_90005683(0, flag=62150, asset=Assets.AEG099_055_1001, vfx_id=210, flag_1=78196, flag_2=78196)
+    CommonFunc_90005683(0, flag=62150, asset=Assets.AEG099_055_1001, dummy_id=210, flag_1=78196, flag_2=78196)
     CommonFunc_90005300(
         0,
         flag=1043340340,
         character=Characters.DemiHumanQueen,
         item_lot=1043340400,
         seconds=0.0,
-        item_is_dropped=0,
+        left=0,
     )
     CommonFunc_90005706(0, character=Characters.Commoner, animation_id=930025, left=Assets.AEG099_590_9000)
     CommonFunc_90005771(0, other_entity=Characters.TalkDummy0, flag=1043342700)
@@ -71,10 +72,10 @@ def Preconstructor():
         region=1043342212,
         radius=10.0,
         seconds=2.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -84,10 +85,10 @@ def Preconstructor():
         region=1043342212,
         radius=10.0,
         seconds=1.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -97,16 +98,16 @@ def Preconstructor():
         region=1043342212,
         radius=10.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1043340300, region=1043342300, seconds=0.0, animation_id=3031)
+    CommonFunc_90005250(0, character=1043340300, region=1043342300, seconds=0.0, animation_id=3031)
 
 
 @RestartOnRest(1043342220)
-def Event_1043342220(_, character: uint, asset: uint, region: uint):
+def Event_1043342220(_, character: uint, asset: uint, region: Region | int):
     """Event 1043342220"""
     EnableAsset(asset)
     DisableCharacter(character)
@@ -121,7 +122,7 @@ def Event_1043342220(_, character: uint, asset: uint, region: uint):
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=asset, attacker=20000))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=asset, attacker=ALL_PLAYERS))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))

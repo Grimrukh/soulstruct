@@ -145,12 +145,17 @@ def RunCommonEvent(event_id, slot=0, args=(0,), arg_types="", event_layers=None)
         # Assume all signed integers, unless the only argument is zero.
         arg_types = "I" if args == (0,) else "i" * len(args)
     if len(args) != len(arg_types):
-        raise ValueError("Number of event arguments does not match length of argument type string in RunEvent.")
+        raise ValueError(
+            f"Number of event arguments ({len(args)}) does not match length of argument type string ({len(arg_types)}) "
+            f"in `RunCommonEvent`:\n"
+            f"   Args: {args}\n"
+            f"   Arg types: {arg_types}"
+        )
     full_arg_types = "iI" + str(arg_types[0])
     if len(arg_types) > 1:
         full_arg_types += f"|{arg_types[1:]}"
     return COMPILER.compile(
-        "RunCommonEvent", slot=slot, event_id=event_id, args=args, arg_types=full_arg_types
+        "_RunCommonEvent", slot=slot, event_id=event_id, args=args, arg_types=full_arg_types
     )
 
 

@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_51_43_00_enums import *
 
 
@@ -25,7 +26,7 @@ from .enums.m60_51_43_00_enums import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1051430000, asset=Assets.AEG099_060_9000)
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.Gargoyle, name=904770600, npc_threat_level=16)
+    CommonFunc_90005870(0, character=Characters.Gargoyle, name=904770600, npc_threat_level=16)
     CommonFunc_90005860(
         0,
         flag=1051430800,
@@ -35,7 +36,7 @@ def Constructor():
         item_lot=30425,
         seconds=0.0,
     )
-    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.Gargoyle, npc_threat_level=16, required_flag=0)
+    CommonFunc_90005872(0, character=Characters.Gargoyle, npc_threat_level=16, right=0)
     Event_1051432209()
     Event_1051432200(0, character=Characters.Gargoyle, radius=55.0, seconds=0.0, animation_id=-1)
     Event_1051430700(0, character=Characters.BeastClergyman)
@@ -247,12 +248,12 @@ def Event_1051430700(_, character: uint):
 def Event_1051430701(
     _,
     character: uint,
-    flag: uint,
-    flag_1: uint,
-    flag_2: uint,
-    flag_3: uint,
-    first_flag: uint,
-    last_flag: uint,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
+    flag_3: Flag | int,
+    first_flag: Flag | int,
+    last_flag: Flag | int,
     right: int,
 ):
     """Event 1051430701"""
@@ -265,7 +266,7 @@ def Event_1051430701(
     MAIN.Await(AND_1)
     
     OR_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=PLAYER))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=40000))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=TORRENT))
     AND_4.Add(HealthRatio(character) >= 1.0)
     SkipLinesIfConditionFalse(2, AND_4)
     AND_2.Add(HealthRatio(character) < 0.6499999761581421)
@@ -303,7 +304,8 @@ def Event_1051430701(
     
     MAIN.Await(OR_4)
     
-    RestartIfLastConditionResultTrue(input_condition=OR_3)
+    if LastResult(OR_3):
+        return RESTART
     SetTeamType(character, TeamType.HostileNPC)
     ForceAnimation(character, 20034)
     GotoIfValueComparison(Label.L0, comparison_type=ComparisonType.Equal, left=1, right=right)
@@ -349,7 +351,7 @@ def Event_1051430702(_, character: uint, value: float):
 
 
 @RestartOnRest(1051430703)
-def Event_1051430703(_, character: uint):
+def Event_1051430703(_, character: Character | int):
     """Event 1051430703"""
     if PlayerNotInOwnWorld():
         return
@@ -363,7 +365,7 @@ def Event_1051430703(_, character: uint):
 
 
 @RestartOnRest(1051433705)
-def Event_1051433705(_, character: uint):
+def Event_1051433705(_, character: Character | int):
     """Event 1051433705"""
     WaitFrames(frames=1)
     if PlayerNotInOwnWorld():
@@ -379,7 +381,7 @@ def Event_1051433705(_, character: uint):
 
 
 @RestartOnRest(1051433706)
-def Event_1051433706(_, flag: uint):
+def Event_1051433706(_, flag: Flag | int):
     """Event 1051433706"""
     WaitFrames(frames=1)
     if PlayerNotInOwnWorld():
@@ -396,7 +398,7 @@ def Event_1051433706(_, flag: uint):
 
 
 @RestartOnRest(1051433707)
-def Event_1051433707(_, flag: uint, flag_1: uint):
+def Event_1051433707(_, flag: Flag | int, flag_1: Flag | int):
     """Event 1051433707"""
     WaitFrames(frames=1)
     if PlayerNotInOwnWorld():
@@ -418,14 +420,14 @@ def Event_1051433707(_, flag: uint, flag_1: uint):
 @RestartOnRest(1051433708)
 def Event_1051433708(
     _,
-    item: int,
-    item_1: int,
-    item_2: int,
-    first_flag: uint,
-    flag: uint,
-    flag_1: uint,
-    flag_2: uint,
-    last_flag: uint,
+    item: BaseItemParam | int,
+    item_1: BaseItemParam | int,
+    item_2: BaseItemParam | int,
+    first_flag: Flag | int,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
+    last_flag: Flag | int,
 ):
     """Event 1051433708"""
     WaitFrames(frames=1)

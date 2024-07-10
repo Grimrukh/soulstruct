@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_41_52_00_enums import *
 
 
@@ -59,7 +60,7 @@ def Preconstructor():
 
 
 @RestartOnRest(1041522270)
-def Event_1041522270(_, owner_entity: uint, region: uint, source_entity: uint):
+def Event_1041522270(_, owner_entity: uint, region: Region | int, source_entity: uint):
     """Event 1041522270"""
     DisableNetworkSync()
     CreateProjectileOwner(entity=owner_entity)
@@ -184,7 +185,7 @@ def Event_1041522300(_, character: uint):
 
 
 @ContinueOnRest(1041522320)
-def Event_1041522320(_, character: uint, name: int, npc_threat_level: uint):
+def Event_1041522320(_, character: Character | int, name: NPCName | int, npc_threat_level: uint):
     """Event 1041522320"""
     DisableNetworkSync()
     DisableHealthBar(character)

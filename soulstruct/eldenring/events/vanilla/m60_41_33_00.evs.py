@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_41_33_00_enums import *
 
 
@@ -194,7 +195,7 @@ def Event_1041332849():
         flag_2=1041332806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=1041330800, asset=1041331800, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=1041330800, asset=1041331800, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=1041330800,
@@ -206,7 +207,7 @@ def Event_1041332849():
         left=0,
         left_1=0,
     )
-    CommonFunc_9005812(0, flag=1041330800, asset=1041331801, dummy_id=3, right=0, dummy_id_1=0)
+    CommonFunc_9005812(0, flag=1041330800, asset=1041331801, vfx_id=3, right=0, vfx_id_1=0)
 
 
 @RestartOnRest(1041333700)

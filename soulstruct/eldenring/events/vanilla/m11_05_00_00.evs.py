@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m11_05_00_00_enums import *
 
 
@@ -174,6 +175,9 @@ def Constructor():
         seconds=0.0,
         seconds_1=0.0,
     )
+    Event_11052698()
+    Event_11052697()
+    Event_11052699()
     Event_11053700(
         0,
         character=Characters.Godfrey,
@@ -205,7 +209,7 @@ def Constructor():
         first_flag=9500,
         last_flag=9500,
         flag=11059206,
-        dummy_id=806780,
+        vfx_id=806780,
     )
     Event_11053707()
     CommonFunc_90005750(
@@ -216,7 +220,7 @@ def Constructor():
         first_flag=400500,
         last_flag=400500,
         flag=11059305,
-        dummy_id=0,
+        vfx_id=0,
     )
     RunCommonEvent(
         11053708,
@@ -327,10 +331,10 @@ def Preconstructor():
         region=11052300,
         radius=5.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -340,10 +344,10 @@ def Preconstructor():
         region=11052301,
         radius=5.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -353,10 +357,10 @@ def Preconstructor():
         region=11052302,
         radius=5.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
 
 
@@ -374,7 +378,7 @@ def Event_11052500():
     MAIN.Await(AND_1)
     
     PlayCutscene(13000060, cutscene_flags=0, player_id=10000)
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     EnableFlag(11050500)
     ForceAnimation(PLAYER, 0)
     Wait(1.0)
@@ -460,6 +464,95 @@ def Event_11052692():
     DisableAssetActivation(Assets.AEG227_052_0501, obj_act_id=-1)
 
 
+@RestartOnRest(11052697)
+def Event_11052697():
+    """Event 11052697"""
+    DisableNetworkSync()
+    if PlayerNotInOwnWorld():
+        return
+    AND_1.Add(FlagEnabled(710880))
+    AND_1.Add(FlagDisabled(69480))
+    AND_1.Add(FlagDisabled(2051))
+    AND_1.Add(FlagDisabled(2052))
+    AND_1.Add(PlayerInOwnWorld())
+    OR_1.Add(Multiplayer())
+    OR_1.Add(MultiplayerPending())
+    AND_1.Add(not OR_1)
+    AND_1.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 9640))
+    
+    MAIN.Await(AND_1)
+    
+    DisplayTutorialMessage(tutorial_param_id=1880, unk_4_5=True, unk_5_6=True)
+    if FlagDisabled(69480):
+        GivePlayerItemAmountSpecifiedByFlagValue(item_type=ItemType.Good, item=9153, flag=710880, bit_count=1)
+    EnableFlag(69480)
+
+
+@RestartOnRest(11052696)
+def Event_11052696():
+    """Event 11052696"""
+    MAIN.Await(FlagEnabled(11058556))
+    
+    EnableFlag(11008556)
+
+
+@RestartOnRest(11052698)
+def Event_11052698():
+    """Event 11052698"""
+    DisableNetworkSync()
+    if PlayerNotInOwnWorld():
+        return
+    AND_1.Add(FlagDisabled(710850))
+    AND_1.Add(CharacterInsideRegion(character=PLAYER, region=11052698))
+    AND_1.Add(PlayerInOwnWorld())
+    OR_1.Add(Multiplayer())
+    OR_1.Add(MultiplayerPending())
+    AND_1.Add(not OR_1)
+    AND_1.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 9640))
+    
+    MAIN.Await(AND_1)
+    
+    EnableFlag(710850)
+    EnableFlag(60350)
+    if FlagDisabled(6080):
+        EnableFlag(6080)
+        StartPS5Activity(activity_id=7)
+    WaitFrames(frames=1)
+    DisplayTutorialMessage(tutorial_param_id=1850, unk_4_5=True, unk_5_6=True)
+    if FlagDisabled(69450):
+        GivePlayerItemAmountSpecifiedByFlagValue(item_type=ItemType.Good, item=9150, flag=710850, bit_count=1)
+    WaitFrames(frames=1)
+    EnableFlag(69450)
+
+
+@ContinueOnRest(11052699)
+def Event_11052699():
+    """Event 11052699"""
+    if FlagEnabled(11008556):
+        return
+    GotoIfMultiplayer(Label.L0)
+    GotoIfMultiplayerPending(Label.L0)
+    EnableAssetActivation(11051699, obj_act_id=227030)
+    OR_2.Add(Multiplayer())
+    OR_2.Add(MultiplayerPending())
+    
+    MAIN.Await(OR_2)
+    
+    DisableAssetActivation(11051699, obj_act_id=227030)
+    Restart()
+
+    # --- Label 0 --- #
+    DefineLabel(0)
+    DisableAssetActivation(11051699, obj_act_id=227030)
+    OR_2.Add(Multiplayer())
+    OR_2.Add(MultiplayerPending())
+    
+    MAIN.Await(not OR_2)
+    
+    EnableAssetActivation(11051699, obj_act_id=227030)
+    Restart()
+
+
 @ContinueOnRest(11052800)
 def Event_11052800():
     """Event 11052800"""
@@ -539,7 +632,7 @@ def Event_11052810():
         )
     else:
         PlayCutscene(11050010, cutscene_flags=0, player_id=10000)
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     EnableNetworkFlag(11050801)
     if PlayerNotInOwnWorld():
         SetBossMusic(bgm_boss_conv_param_id=472000, state=BossMusicState.LongFadeOut)
@@ -597,7 +690,7 @@ def Event_11052811():
         )
     else:
         PlayCutscene(11050020, cutscene_flags=0, player_id=10000)
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     EnableFlag(11052802)
     DisableCharacter(Characters.Godfrey)
     if PlayerInOwnWorld():
@@ -673,8 +766,8 @@ def Event_11052849():
         flag_2=11052806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=11050800, asset=Assets.AEG099_001_9001, dummy_id=17, right=0)
-    CommonFunc_9005813(0, flag=11050800, asset=Assets.AEG099_001_9002, dummy_id=18, right=11050801, dummy_id_1=18)
+    CommonFunc_9005811(0, flag=11050800, asset=Assets.AEG099_001_9001, vfx_id=17, right=0)
+    CommonFunc_9005813(0, flag=11050800, asset=Assets.AEG099_001_9002, vfx_id=18, right=11050801, vfx_id_1=18)
     CommonFunc_9005822(
         0,
         flag=11050800,
@@ -698,7 +791,7 @@ def Event_11052850():
     
     Wait(4.0)
     PlaySoundEffect(11058050, 888880000, sound_type=SoundType.s_SFX)
-    AddSpecialEffect(20000, 1899)
+    AddSpecialEffect(ALL_PLAYERS, 1899)
     AND_2.Add(PlayerInOwnWorld())
     AND_2.Add(CharacterDead(Characters.SirGideonOfnir0))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 9646))
@@ -898,13 +991,13 @@ def Event_11052859():
         flag_2=11052856,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9003, dummy_id=5, right=11050854)
-    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9004, dummy_id=4, right=11050854)
-    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9005, dummy_id=4, right=11050854)
-    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_002_9000, dummy_id=8, right=11050854)
-    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9006, dummy_id=4, right=11050854)
-    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9007, dummy_id=5, right=11050854)
-    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9008, dummy_id=5, right=11050854)
+    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9003, vfx_id=5, right=11050854)
+    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9004, vfx_id=4, right=11050854)
+    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9005, vfx_id=4, right=11050854)
+    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_002_9000, vfx_id=8, right=11050854)
+    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9006, vfx_id=4, right=11050854)
+    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9007, vfx_id=5, right=11050854)
+    CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9008, vfx_id=5, right=11050854)
     CommonFunc_9005822(
         0,
         flag=11050850,
@@ -919,7 +1012,14 @@ def Event_11052859():
 
 
 @RestartOnRest(11053700)
-def Event_11053700(_, character: uint, character_1: uint, flag: uint, flag_1: uint, distance: float):
+def Event_11053700(
+    _,
+    character: Character | int,
+    character_1: Character | int,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    distance: float,
+):
     """Event 11053700"""
     if PlayerNotInOwnWorld():
         return
@@ -1057,11 +1157,11 @@ def Event_11053708(
     asset: uint,
     action_button_id: int,
     item_lot: int,
-    first_flag: uint,
-    last_flag: uint,
-    flag: uint,
-    dummy_id: int,
-    flag_1: uint,
+    first_flag: Flag | int,
+    last_flag: Flag | int,
+    flag: Flag | int,
+    vfx_id: int,
+    flag_1: Flag | int,
 ):
     """Event 11053708"""
     DisableNetworkSync()
@@ -1073,10 +1173,10 @@ def Event_11053708(
     
     MAIN.Await(AND_1)
     
-    if ValueNotEqual(left=dummy_id, right=0):
-        CreateAssetVFX(asset, vfx_id=90, dummy_id=dummy_id)
+    if ValueNotEqual(left=vfx_id, right=0):
+        CreateAssetVFX(asset, dummy_id=90, vfx_id=vfx_id)
     else:
-        CreateAssetVFX(asset, vfx_id=90, dummy_id=6101)
+        CreateAssetVFX(asset, dummy_id=90, vfx_id=6101)
     OR_2.Add(FlagDisabled(flag))
     OR_2.Add(FlagRangeAllEnabled(flag_range=(first_flag, last_flag)))
     OR_1.Add(ActionButtonParamActivated(action_button_id=action_button_id, entity=asset))
@@ -1097,7 +1197,7 @@ def Event_11053708(
 
 
 @RestartOnRest(11053710)
-def Event_11053710(_, character: uint):
+def Event_11053710(_, character: Character | int):
     """Event 11053710"""
     if PlayerInOwnWorld():
         DisableThisNetworSlotFlag()
@@ -1213,8 +1313,8 @@ def Event_11053731(_, entity: uint):
     OR_1.Add(FlagEnabled(1039409259))
     if OR_1:
         return
-    AND_1.Add(EntityWithinDistance(entity=entity, other_entity=20000, radius=4.0))
-    AND_1.Add(CharacterHasSpecialEffect(20000, 9690))
+    AND_1.Add(EntityWithinDistance(entity=entity, other_entity=ALL_PLAYERS, radius=4.0))
+    AND_1.Add(CharacterHasSpecialEffect(ALL_PLAYERS, 9690))
     AwaitConditionTrue(AND_1)
     EnableNetworkFlag(1039402710)
     End()

@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_52_56_00_enums import *
 
 
@@ -53,7 +54,7 @@ def Constructor():
         seconds=0.0,
     )
     Event_1052562815(0, character=Characters.ErdtreeAvatar0, name=904810601, npc_threat_level=18)
-    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.ErdtreeAvatar0, npc_threat_level=18, required_flag=0)
+    CommonFunc_90005872(0, character=Characters.ErdtreeAvatar0, npc_threat_level=18, right=0)
     CommonFunc_90005211(
         0,
         character=Characters.ErdtreeAvatar0,
@@ -62,10 +63,10 @@ def Constructor():
         region=1052562800,
         radius=5.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -75,10 +76,10 @@ def Constructor():
         region=0,
         radius=0.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     Event_1052562820()
     Event_1052562821()
@@ -99,7 +100,7 @@ def Constructor():
 
 
 @ContinueOnRest(1052562815)
-def Event_1052562815(_, character: uint, name: int, npc_threat_level: uint):
+def Event_1052562815(_, character: Character | int, name: NPCName | int, npc_threat_level: uint):
     """Event 1052562815"""
     DisableNetworkSync()
     OR_15.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
@@ -217,7 +218,7 @@ def Event_1052562830(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    region: uint,
+    region: Region | int,
     seconds: float,
     seconds_1: float,
     left: uint,

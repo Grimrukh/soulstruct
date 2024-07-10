@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_39_50_00_enums import *
 
 
@@ -103,10 +104,10 @@ def Preconstructor():
         region=1039502300,
         radius=5.0,
         seconds=0.5,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005200(
         0,
@@ -137,18 +138,18 @@ def Preconstructor():
 @RestartOnRest(1039502575)
 def Event_1039502575(
     _,
-    flag: uint,
-    flag_1: uint,
-    left_flag: uint,
-    cancel_flag__right_flag: uint,
-    message: int,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    left_flag: Flag | int,
+    cancel_flag__right_flag: Flag | int,
+    message: EventText | int,
     anchor_entity: uint,
     area_id: uchar,
     block_id: uchar,
-    cc_id: char,
-    dd_id: char,
+    cc_id: uchar,
+    dd_id: uchar,
     player_start: uint,
-    flag_2: uint,
+    flag_2: Flag | int,
 ):
     """Event 1039502575"""
     DisableFlag(left_flag)
@@ -206,7 +207,7 @@ def Event_1039502575(
 
 
 @RestartOnRest(1039502576)
-def Event_1039502576(_, flag: uint, flag_1: uint, entity: uint, flag_2: uint):
+def Event_1039502576(_, flag: Flag | int, flag_1: Flag | int, entity: uint, flag_2: Flag | int):
     """Event 1039502576"""
     ForceAnimation(entity, 0, loop=True)
     if PlayerNotInOwnWorld():
@@ -237,16 +238,16 @@ def Event_1039502576(_, flag: uint, flag_1: uint, entity: uint, flag_2: uint):
 @RestartOnRest(1039502580)
 def Event_1039502580(
     _,
-    flag: uint,
-    flag_1: uint,
-    flag_2: uint,
-    character: uint,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
+    character: Character | int,
     item_lot: int,
     area_id: uchar,
     block_id: uchar,
-    cc_id: char,
-    dd_id: char,
-    player_start: uint,
+    cc_id: uchar,
+    dd_id: uchar,
+    player_start: PlayerStart | int,
 ):
     """Event 1039502580"""
     if FlagEnabled(flag):
@@ -265,7 +266,7 @@ def Event_1039502580(
     AwardItemLot(item_lot, host_only=True)
     EnableNetworkFlag(flag)
     Wait(5.0)
-    AddSpecialEffect(20000, 8870)
+    AddSpecialEffect(ALL_PLAYERS, 8870)
     Wait(2.0)
     EnableFlag(flag_2)
     EnableFlag(9295)

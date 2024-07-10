@@ -107,7 +107,7 @@ def build_numeric(numeric_string: str, event_class: type[Event]):
 
                 args_list = []
                 for i, fmt in enumerate(struct_arg_types):
-                    arg = split_arg_list[i]
+                    arg = split_arg_list[i].strip()
                     try:
                         arg_type = ArgType.from_fmt(fmt)
                     except ValueError:

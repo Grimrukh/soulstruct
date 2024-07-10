@@ -18,13 +18,14 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_48_55_00_enums import *
 
 
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005300(0, flag=1048550200, character=1048550200, item_lot=40522, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1048550200, character=1048550200, item_lot=40522, seconds=0.0, left=0)
 
 
 @ContinueOnRest(200)
@@ -60,19 +61,19 @@ def Event_200():
         character_1=Characters.NightsCavalryHorse1,
         destination=1248552801,
     )
-    CommonFunc_NightsCavalryHealthBar(
+    CommonFunc_90005871(
         0,
-        nights_cavalry=Characters.NightsCavalry0,
+        character=Characters.NightsCavalry0,
         name=903150608,
         npc_threat_level=10,
-        horse=Characters.NightsCavalryHorse0,
+        character_1=Characters.NightsCavalryHorse0,
     )
-    CommonFunc_NightsCavalryHealthBar(
+    CommonFunc_90005871(
         0,
-        nights_cavalry=Characters.NightsCavalry1,
+        character=Characters.NightsCavalry1,
         name=903150609,
         npc_threat_level=10,
-        horse=Characters.NightsCavalryHorse1,
+        character_1=Characters.NightsCavalryHorse1,
     )
     RunCommonEvent(
         1248552800,
@@ -106,7 +107,7 @@ def Event_250():
 
 
 @RestartOnRest(1248552320)
-def Event_1248552320(_, character: uint, character_1: uint):
+def Event_1248552320(_, character: Character | int, character_1: Character | int):
     """Event 1248552320"""
     if FlagEnabled(1248550800):
         return
@@ -123,7 +124,13 @@ def Event_1248552320(_, character: uint, character_1: uint):
 
 
 @ContinueOnRest(1248552321)
-def Event_1248552321(_, character: uint, character_1: uint, npc_threat_level: uint, flag: uint):
+def Event_1248552321(
+    _,
+    character: Character | int,
+    character_1: Character | int,
+    npc_threat_level: uint,
+    flag: Flag | int,
+):
     """Event 1248552321"""
     DisableNetworkSync()
     AND_1.Add(FlagEnabled(flag))
@@ -147,8 +154,8 @@ def Event_1248552321(_, character: uint, character_1: uint, npc_threat_level: ui
 @RestartOnRest(1248552800)
 def Event_1248552800(
     _,
-    flag: uint,
-    left: uint,
+    flag: Flag | int,
+    left: Flag | int,
     character: uint,
     left_1: uint,
     item_lot: int,
@@ -221,7 +228,7 @@ def Event_1248552800(
 
 
 @RestartOnRest(1248552820)
-def Event_1248552820(_, character: uint, seconds: float):
+def Event_1248552820(_, character: Character | int, seconds: float):
     """Event 1248552820"""
     AND_1.Add(CharacterAlive(character))
     SkipLinesIfConditionTrue(1, AND_1)

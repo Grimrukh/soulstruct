@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_54_53_00_enums import *
 
 
@@ -41,7 +42,7 @@ def Event_1054532500():
     
     EnableFlag(1054530500)
     EnableFlag(130)
-    DisplayDialog(text=99999100, anchor_entity=0, display_distance=4.0, button_type=ButtonType.Yes_or_No)
+    DisplayDialog(text=99999100, display_distance=4.0, button_type=ButtonType.Yes_or_No)
 
 
 @RestartOnRest(1054533700)
@@ -55,7 +56,7 @@ def Event_1054533700():
 
     # --- Label 0 --- #
     DefineLabel(0)
-    AND_1.Add(EntityWithinDistance(entity=20000, other_entity=Assets.AEG099_060_9000, radius=3.0))
+    AND_1.Add(EntityWithinDistance(entity=ALL_PLAYERS, other_entity=Assets.AEG099_060_9000, radius=3.0))
     
     MAIN.Await(AND_1)
     
@@ -64,7 +65,7 @@ def Event_1054533700():
 
     # --- Label 1 --- #
     DefineLabel(1)
-    AND_2.Add(EntityBeyondDistance(entity=20000, other_entity=Assets.AEG099_060_9000, radius=3.0))
+    AND_2.Add(EntityBeyondDistance(entity=ALL_PLAYERS, other_entity=Assets.AEG099_060_9000, radius=3.0))
     
     MAIN.Await(AND_2)
     
@@ -83,7 +84,7 @@ def Event_1054533701():
 
     # --- Label 0 --- #
     DefineLabel(0)
-    AND_1.Add(EntityWithinDistance(entity=20000, other_entity=Assets.AEG099_060_9000, radius=3.0))
+    AND_1.Add(EntityWithinDistance(entity=ALL_PLAYERS, other_entity=Assets.AEG099_060_9000, radius=3.0))
     
     MAIN.Await(AND_1)
     
@@ -92,7 +93,7 @@ def Event_1054533701():
 
     # --- Label 1 --- #
     DefineLabel(1)
-    AND_2.Add(EntityBeyondDistance(entity=20000, other_entity=Assets.AEG099_060_9000, radius=3.0))
+    AND_2.Add(EntityBeyondDistance(entity=ALL_PLAYERS, other_entity=Assets.AEG099_060_9000, radius=3.0))
     
     MAIN.Await(AND_2)
     

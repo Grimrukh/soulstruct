@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m31_22_00_00_enums import *
 
 
@@ -32,7 +33,7 @@ def Constructor():
     Event_31222849()
     Event_31222813(0, character=Characters.Snail5, flag=31222821)
     Event_31222813(1, character=Characters.GodskinNoble, flag=31222820)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=0)
     Event_31222500()
     CommonFunc_90005646(
         0,
@@ -51,8 +52,8 @@ def Constructor():
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Wolf4, region=31222304, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Wolf5, region=31222304, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Wolf4, region=31222304, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Wolf5, region=31222304, seconds=0.0, animation_id=0)
     Event_31222300()
     Event_31222306()
     Event_31222312()
@@ -324,7 +325,7 @@ def Event_31222330():
 
 
 @RestartOnRest(31222340)
-def Event_31222340(_, entity: uint, flag: uint, seconds: float):
+def Event_31222340(_, entity: uint, flag: Flag | int, seconds: float):
     """Event 31222340"""
     if ThisEventSlotFlagEnabled():
         return
@@ -356,7 +357,7 @@ def Event_31222500():
 
 
 @RestartOnRest(31222520)
-def Event_31222520(_, flag: uint, flag_1: uint, asset: uint):
+def Event_31222520(_, flag: Flag | int, flag_1: Flag | int, asset: Asset | int):
     """Event 31222520"""
     if FlagEnabled(flag):
         return
@@ -483,7 +484,7 @@ def Event_31222812():
 
 
 @RestartOnRest(31222813)
-def Event_31222813(_, character: uint, flag: uint):
+def Event_31222813(_, character: Character | int, flag: Flag | int):
     """Event 31222813"""
     if FlagEnabled(31220800):
         return
@@ -527,7 +528,7 @@ def Event_31222849():
         flag_2=31222806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=31220800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=31220800, asset=Assets.AEG099_001_9000, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=31220800,

@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_42_51_00_enums import *
 
 
@@ -43,7 +44,7 @@ def Constructor():
         flag_10=78308,
         flag_11=78309,
     )
-    CommonFunc_90005300(0, flag=1042510300, character=Characters.Gargoyle, item_lot=1042510900, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1042510300, character=Characters.Gargoyle, item_lot=1042510900, seconds=0.0, left=0)
     Event_1042512240(0, asset=Assets.AEG099_070_9000, entity=Assets.AEG099_071_9000, flag=62031)
 
 
@@ -65,7 +66,7 @@ def Preconstructor():
 
 
 @RestartOnRest(1042512240)
-def Event_1042512240(_, asset: uint, entity: uint, flag: uint):
+def Event_1042512240(_, asset: Asset | int, entity: uint, flag: Flag | int):
     """Event 1042512240"""
     DisableNetworkSync()
     GotoIfFlagDisabled(Label.L0, flag=flag)
@@ -75,7 +76,7 @@ def Event_1042512240(_, asset: uint, entity: uint, flag: uint):
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=803220)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=803220)
     
     MAIN.Await(FlagEnabled(flag))
     

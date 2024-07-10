@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_39_52_00_enums import *
 
 
@@ -69,7 +70,7 @@ def Constructor():
         left=0,
     )
     CommonFunc_90005631(0, anchor_entity=Assets.AEG099_376_1000, text=61031)
-    CommonFunc_90005300(0, flag=1039520500, character=Characters.Scarab, item_lot=40306, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1039520500, character=Characters.Scarab, item_lot=40306, seconds=0.0, left=0)
     Event_1039523700(0, character=Characters.YuraHunterofBloodyFingers)
     Event_1039523701(0, character=Characters.YuraHunterofBloodyFingers)
     Event_1039523703(0, asset=Assets.AEG099_429_9000, asset_1=Assets.AEG099_429_9001, asset_2=Assets.AEG099_429_9002)
@@ -83,7 +84,7 @@ def Constructor():
         first_flag=400163,
         last_flag=400163,
         flag=1039529205,
-        dummy_id=0,
+        vfx_id=0,
     )
 
 
@@ -171,11 +172,11 @@ def Preconstructor():
         left_3=0,
     )
     Event_1039522400()
-    CommonFunc_90005300(0, flag=1039520400, character=Characters.SanguineNoble, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1039520400, character=Characters.SanguineNoble, item_lot=0, seconds=0.0, left=0)
 
 
 @RestartOnRest(1039522220)
-def Event_1039522220(_, character: uint):
+def Event_1039522220(_, character: Character | int):
     """Event 1039522220"""
     AddSpecialEffect(character, 5551)
     End()
@@ -236,7 +237,7 @@ def Event_1039522660():
     
     EnableNetworkFlag(1039520655)
     DisableAsset(Assets.AEG003_316_9000)
-    FaceEntity(PLAYER, Assets.AEG003_316_9000, wait_for_completion=True)
+    FaceEntityAndForceAnimation(PLAYER, Assets.AEG003_316_9000, wait_for_completion=True)
     ForceAnimation(PLAYER, 60010)
     Wait(1.0)
     PlaySoundEffect(1039522650, 806855, sound_type=SoundType.s_SFX)
@@ -389,7 +390,7 @@ def Event_1039523701(_, character: uint):
 
 
 @RestartOnRest(1039523702)
-def Event_1039523702(_, flag: uint):
+def Event_1039523702(_, flag: Flag | int):
     """Event 1039523702"""
     WaitFrames(frames=1)
     if PlayerNotInOwnWorld():
@@ -412,7 +413,7 @@ def Event_1039523702(_, flag: uint):
 
 
 @RestartOnRest(1039523703)
-def Event_1039523703(_, asset: uint, asset_1: uint, asset_2: uint):
+def Event_1039523703(_, asset: Asset | int, asset_1: Asset | int, asset_2: Asset | int):
     """Event 1039523703"""
     GotoIfFlagEnabled(Label.L1, flag=1039529208)
     DisableAsset(asset)
@@ -432,7 +433,7 @@ def Event_1039523703(_, asset: uint, asset_1: uint, asset_2: uint):
 
 
 @RestartOnRest(1039523704)
-def Event_1039523704(_, character: uint):
+def Event_1039523704(_, character: Character | int):
     """Event 1039523704"""
     if PlayerNotInOwnWorld():
         return

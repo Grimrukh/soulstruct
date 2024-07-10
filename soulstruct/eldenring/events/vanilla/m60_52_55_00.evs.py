@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_52_55_00_enums import *
 
 
@@ -46,7 +47,7 @@ def Constructor():
         character=Characters.ChiefGuardianArghanthy,
         item_lot=1052550700,
         seconds=0.0,
-        item_is_dropped=0,
+        left=0,
     )
     Event_1052552270(
         0,
@@ -75,9 +76,9 @@ def Constructor():
         left_3=0,
     )
     CommonFunc_90005261(0, character=Characters.SmallerDog1, region=1052552282, radius=5.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005300(0, flag=1052550300, character=Characters.Scarab, item_lot=40516, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1052550300, character=Characters.Scarab, item_lot=40516, seconds=0.0, left=0)
     Event_1052552580()
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, dummy_id=100, vfx_id=800, right=0)
 
 
 @RestartOnRest(1052552270)
@@ -86,7 +87,7 @@ def Event_1052552270(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    region: uint,
+    region: Region | int,
     radius: float,
     seconds: float,
     left: uint,

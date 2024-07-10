@@ -18,15 +18,16 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m30_12_00_00_enums import *
-from .enums.m30_10_00_00_enums import Characters as m30_10_Characters
+from .enums.m30_10_00_00_enums import Characters as m30_10_00_00_Characters
 
 
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=301200, asset=Assets.AEG099_060_9001)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=0)
     CommonFunc_90005201(
         0,
         character=Characters.Misbegotten0,
@@ -51,10 +52,10 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.ScalyMisbegotten1, region=30122250, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(1, character=Characters.ScalyMisbegotten2, region=30122250, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Misbegotten2, region=30122205, seconds=0.0, animation_id=3000)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Misbegotten3, region=30122208, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.ScalyMisbegotten1, region=30122250, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(1, character=Characters.ScalyMisbegotten2, region=30122250, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Misbegotten2, region=30122205, seconds=0.0, animation_id=3000)
+    CommonFunc_90005250(0, character=Characters.Misbegotten3, region=30122208, seconds=0.0, animation_id=-1)
     CommonFunc_90005271(0, character=Characters.Misbegotten4, seconds=0.0, animation_id=-1)
     CommonFunc_90005271(0, character=Characters.Misbegotten5, seconds=0.0, animation_id=-1)
     CommonFunc_90005271(0, character=Characters.Misbegotten6, seconds=0.0, animation_id=-1)
@@ -72,7 +73,7 @@ def Constructor():
     Event_30122300(10, character=Characters.Misbegotten18)
     Event_30122300(11, character=Characters.Misbegotten19)
     Event_30122502(0, character=Characters.Omen, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Omen, region=30122502, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Omen, region=30122502, seconds=0.0, animation_id=0)
     Event_30122500()
     Event_30122501()
     CommonFunc_90005650(
@@ -100,11 +101,11 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_91005600(0, flag=30122800, asset=30121695, dummy_id=5)
+    CommonFunc_91005600(0, flag=30122800, asset=30121695, vfx_id=5)
 
 
 @RestartOnRest(30122520)
-def Event_30122520(_, flag: uint, asset: uint, flag_1: uint):
+def Event_30122520(_, flag: Flag | int, asset: Asset | int, flag_1: Flag | int):
     """Event 30122520"""
     if FlagEnabled(flag):
         return
@@ -126,7 +127,7 @@ def Event_30122520(_, flag: uint, asset: uint, flag_1: uint):
 
 
 @RestartOnRest(30122300)
-def Event_30122300(_, character: uint):
+def Event_30122300(_, character: Character | int):
     """Event 30122300"""
     Kill(character)
     End()
@@ -210,7 +211,7 @@ def Event_30122800():
     MAIN.Await(AND_1)
     
     Wait(4.0)
-    PlaySoundEffect(m30_10_Characters.CrucibleKnight0, 888880000, sound_type=SoundType.s_SFX)
+    PlaySoundEffect(m30_10_00_00_Characters.CrucibleKnight0, 888880000, sound_type=SoundType.s_SFX)
     AND_2.Add(CharacterDead(Characters.LeonineMisbegotten))
     AND_2.Add(CharacterDead(Characters.DepravedPerfumer))
     
@@ -293,7 +294,7 @@ def Event_30122849():
         flag_2=30122806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=30120800, asset=Assets.AEG099_001_9001, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=30120800, asset=Assets.AEG099_001_9001, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=30120800,

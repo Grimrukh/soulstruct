@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_52_41_00_enums import *
 
 
@@ -29,15 +30,15 @@ def Constructor():
     Event_1052412270()
     Event_1052412270(slot=1)
     Event_1052412200(0, character=Characters.GiantBall, asset=Assets.AEG099_090_9000, region=1052412210)
-    CommonFunc_90005300(0, flag=1052410850, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1052410850, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005476(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
     Event_1052412291(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
-    CommonFunc_NightsCavalryHealthBar(
+    CommonFunc_90005871(
         0,
-        nights_cavalry=Characters.NightsCavalry,
+        character=Characters.NightsCavalry,
         name=903150606,
         npc_threat_level=10,
-        horse=Characters.NightsCavalryHorse,
+        character_1=Characters.NightsCavalryHorse,
     )
     CommonFunc_90005860(
         0,
@@ -48,7 +49,7 @@ def Constructor():
         item_lot=1052410100,
         seconds=0.0,
     )
-    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.NightsCavalry, npc_threat_level=10, required_flag=0)
+    CommonFunc_90005872(0, character=Characters.NightsCavalry, npc_threat_level=10, right=0)
     Event_1052412510()
     CommonFunc_90005501(
         0,
@@ -60,7 +61,7 @@ def Constructor():
         asset_2=Assets.AEG099_182_2000,
         flag_2=1052410512,
     )
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.FlyingDragon, name=904500601, npc_threat_level=25)
+    CommonFunc_90005870(0, character=Characters.FlyingDragon, name=904500601, npc_threat_level=25)
     CommonFunc_90005860(
         0,
         flag=1052410800,
@@ -80,7 +81,7 @@ def Preconstructor():
 
 
 @RestartOnRest(1052412200)
-def Event_1052412200(_, character: uint, asset: uint, region: uint):
+def Event_1052412200(_, character: uint, asset: Asset | int, region: uint):
     """Event 1052412200"""
     DisableCharacter(character)
     if FlagEnabled(region):
@@ -100,7 +101,7 @@ def Event_1052412200(_, character: uint, asset: uint, region: uint):
     
     MAIN.Await(AND_2)
     
-    CreateAssetVFX(asset, vfx_id=100, dummy_id=620383)
+    CreateAssetVFX(asset, dummy_id=100, vfx_id=620383)
     EnableCharacter(character)
     EnableNetworkFlag(region)
     Wait(2.0)
@@ -119,7 +120,7 @@ def Event_1052412200(_, character: uint, asset: uint, region: uint):
 @RestartOnRest(1052412220)
 def Event_1052412220():
     """Event 1052412220"""
-    CreateAssetVFX(Assets.AEG099_251_2000, vfx_id=200, dummy_id=1500)
+    CreateAssetVFX(Assets.AEG099_251_2000, dummy_id=200, vfx_id=1500)
 
 
 @RestartOnRest(1052412230)
@@ -133,7 +134,7 @@ def Event_1052412230():
 
 
 @RestartOnRest(1052412291)
-def Event_1052412291(_, character: uint, character_1: uint):
+def Event_1052412291(_, character: Character | int, character_1: Character | int):
     """Event 1052412291"""
     AND_1.Add(CharacterAlive(character))
     SkipLinesIfConditionTrue(1, AND_1)

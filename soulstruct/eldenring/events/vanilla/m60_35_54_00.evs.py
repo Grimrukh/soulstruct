@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_35_54_00_enums import *
 
 
@@ -272,30 +273,30 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(
+    CommonFunc_90005250(
         0,
         character=Characters.LesserFingercreeper4,
         region=1035542301,
         seconds=0.5,
         animation_id=20004,
     )
-    CommonFunc_AITrigger_RegionOrHurt(
+    CommonFunc_90005250(
         1,
         character=Characters.LesserFingercreeper5,
         region=1035542301,
         seconds=1.0,
         animation_id=20004,
     )
-    CommonFunc_AITrigger_RegionOrHurt(
+    CommonFunc_90005250(
         2,
         character=Characters.LesserFingercreeper6,
         region=1035542301,
         seconds=1.2000000476837158,
         animation_id=20004,
     )
-    CommonFunc_AITrigger_RegionOrHurt(4, character=Characters.LesserFingercreeper1, region=1035542301, seconds=1.5, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(5, character=Characters.LesserFingercreeper9, region=1035542301, seconds=1.5, animation_id=-1)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_90005250(4, character=Characters.LesserFingercreeper1, region=1035542301, seconds=1.5, animation_id=-1)
+    CommonFunc_90005250(5, character=Characters.LesserFingercreeper9, region=1035542301, seconds=1.5, animation_id=-1)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=0)
     Event_1035542230()
     CommonFunc_90005706(0, character=Characters.WanderingNoble, animation_id=930023, left=0)
     CommonFunc_90005730(
@@ -336,7 +337,7 @@ def Event_1035542200(_, character: uint):
 
 
 @RestartOnRest(1035542201)
-def Event_1035542201(_, attacker__character: uint, region: uint):
+def Event_1035542201(_, attacker__character: uint, region: Region | int):
     """Event 1035542201"""
     RemoveSpecialEffect(attacker__character, 4800)
     RemoveSpecialEffect(attacker__character, 5659)
@@ -353,12 +354,12 @@ def Event_1035542201(_, attacker__character: uint, region: uint):
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=PLAYER))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=35000))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=35000, attacker=attacker__character))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=ALL_SPIRIT_SUMMONS))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=ALL_SPIRIT_SUMMONS, attacker=attacker__character))
     OR_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=attacker__character, radius=10.0))
-    OR_2.Add(EntityWithinDistance(entity=35000, other_entity=attacker__character, radius=10.0))
+    OR_2.Add(EntityWithinDistance(entity=ALL_SPIRIT_SUMMONS, other_entity=attacker__character, radius=10.0))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
-    OR_2.Add(CharacterInsideRegion(character=35000, region=region))
+    OR_2.Add(CharacterInsideRegion(character=ALL_SPIRIT_SUMMONS, region=region))
     AND_1.Add(OR_2)
     
     MAIN.Await(AND_1)
@@ -393,16 +394,16 @@ def Event_1035542230():
 
 
 @RestartOnRest(1035542236)
-def Event_1035542236(_, character: uint):
+def Event_1035542236(_, character: Character | int):
     """Event 1035542236"""
-    FaceEntity(character, 1035542200, animation=5002)
+    FaceEntityAndForceAnimation(character, 1035542200, animation=5002)
     WaitFrames(frames=7)
     Kill(character)
     End()
 
 
 @RestartOnRest(1035542450)
-def Event_1035542450(_, asset: uint):
+def Event_1035542450(_, asset: Asset | int):
     """Event 1035542450"""
     DisableAsset(asset)
     End()
@@ -516,7 +517,7 @@ def Event_1035542580():
 
 
 @RestartOnRest(1035543700)
-def Event_1035543700(_, character: uint):
+def Event_1035543700(_, character: Character | int):
     """Event 1035543700"""
     if FlagEnabled(1035549201):
         return

@@ -19,8 +19,9 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_45_33_00_enums import *
-from .enums.m60_33_40_00_enums import Assets as m60_33_Assets
+from .enums.m60_33_40_00_enums import Assets as m60_33_40_00_Assets
 
 
 @ContinueOnRest(0)
@@ -29,8 +30,8 @@ def Constructor():
     RegisterGrace(grace_flag=1045330000, asset=Assets.AEG099_060_9000)
     CommonFunc_9005910(0, asset=1045331940, first_flag=1045330101, last_flag=1045330103, right=3)
     CommonFunc_9005911(0, asset=1045331941)
-    CommonFunc_9005912(0, flag=1045330100, text=605053)
-    CommonFunc_90005300(0, flag=1045330200, character=Characters.Turtle0, item_lot=45000000, seconds=0.0, item_is_dropped=0)
+    CommonFunc_9005912(0, flag=1045330100, place_name_id=605053)
+    CommonFunc_90005300(0, flag=1045330200, character=Characters.Turtle0, item_lot=45000000, seconds=0.0, left=0)
     Event_1045332220()
     Event_1045332250(0, flag=1045330200, flag_1=1045330201, flag_2=1045330202, flag_3=1045330205)
     Event_1045332251(0, flag=1045330200, attacked_entity=Characters.Turtle0)
@@ -43,11 +44,11 @@ def Constructor():
     Event_1045332254()
     Event_1045332255()
     Event_1045332256()
-    CommonFunc_90005300(0, flag=1045330200, character=Characters.Turtle0, item_lot=0, seconds=0.0, item_is_dropped=0)
-    CommonFunc_90005300(0, flag=1045330201, character=Characters.Turtle1, item_lot=0, seconds=0.0, item_is_dropped=0)
-    CommonFunc_90005300(0, flag=1045330202, character=Characters.Turtle2, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1045330200, character=Characters.Turtle0, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1045330201, character=Characters.Turtle1, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1045330202, character=Characters.Turtle2, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005251(0, character=Characters.Turtle1, radius=0.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005300(0, flag=1045330900, character=Characters.OnyxLord, item_lot=1045330400, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1045330900, character=Characters.OnyxLord, item_lot=1045330400, seconds=0.0, left=0)
 
 
 @ContinueOnRest(50)
@@ -108,11 +109,11 @@ def Event_1045332220():
 
 
 @RestartOnRest(1045332250)
-def Event_1045332250(_, flag: uint, flag_1: uint, flag_2: uint, flag_3: uint):
+def Event_1045332250(_, flag: Flag | int, flag_1: Flag | int, flag_2: Flag | int, flag_3: Flag | int):
     """Event 1045332250"""
     GotoIfFlagEnabled(Label.L0, flag=flag_3)
     DeleteAssetVFX(Assets.AEG099_251_2000)
-    CreateAssetVFX(Assets.AEG099_251_2000, vfx_id=200, dummy_id=1500)
+    CreateAssetVFX(Assets.AEG099_251_2000, dummy_id=200, vfx_id=1500)
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(FlagEnabled(flag_1))
     AND_1.Add(FlagEnabled(flag_2))
@@ -120,7 +121,7 @@ def Event_1045332250(_, flag: uint, flag_1: uint, flag_2: uint, flag_3: uint):
     MAIN.Await(AND_1)
     
     EnableFlag(flag_3)
-    DisplayDialog(text=20210, anchor_entity=0, display_distance=5.0)
+    DisplayDialog(text=20210, display_distance=5.0)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -131,7 +132,7 @@ def Event_1045332250(_, flag: uint, flag_1: uint, flag_2: uint, flag_3: uint):
 
 
 @RestartOnRest(1045332251)
-def Event_1045332251(_, flag: uint, attacked_entity: uint):
+def Event_1045332251(_, flag: Flag | int, attacked_entity: uint):
     """Event 1045332251"""
     if FlagEnabled(flag):
         return
@@ -144,7 +145,7 @@ def Event_1045332251(_, flag: uint, attacked_entity: uint):
 
 
 @RestartOnRest(1045332252)
-def Event_1045332252(_, flag: uint, character: uint):
+def Event_1045332252(_, flag: Flag | int, character: Character | int):
     """Event 1045332252"""
     DisableCharacter(character)
     if FlagEnabled(flag):
@@ -166,7 +167,7 @@ def Event_1045332253():
     DisableNetworkSync()
     if FlagEnabled(1045330205):
         return
-    OR_1.Add(ActionButtonParamActivated(action_button_id=9320, entity=m60_33_Assets.AEG099_251_2000))
+    OR_1.Add(ActionButtonParamActivated(action_button_id=9320, entity=m60_33_40_00_Assets.AEG099_251_2000))
     OR_1.Add(FlagEnabled(1045330205))
     
     MAIN.Await(OR_1)
@@ -218,7 +219,7 @@ def Event_1045332256():
 
 
 @RestartOnRest(1045332260)
-def Event_1045332260(_, vfx_id: uint, earliest_hour: uchar, earliest_minute: uchar, flag: uint):
+def Event_1045332260(_, vfx_id: VFXEvent | int, earliest_hour: uchar, earliest_minute: uchar, flag: Flag | int):
     """Event 1045332260"""
     DeleteVFX(vfx_id, erase_root_only=False)
     DisableNetworkFlag(flag)
@@ -238,7 +239,7 @@ def Event_1045332260(_, vfx_id: uint, earliest_hour: uchar, earliest_minute: uch
 
 
 @RestartOnRest(1045332265)
-def Event_1045332265(_, vfx_id: uint):
+def Event_1045332265(_, vfx_id: VFXEvent | int):
     """Event 1045332265"""
     GotoIfFlagEnabled(Label.L0, flag=1045330900)
     
@@ -267,7 +268,7 @@ def Event_1045332900():
     
     MAIN.Await(AND_1)
     
-    CreateAssetVFX(Assets.AEG099_090_9000, vfx_id=100, dummy_id=806901)
+    CreateAssetVFX(Assets.AEG099_090_9000, dummy_id=100, vfx_id=806901)
     
     MAIN.Await(TimeOfDayInRange(earliest=(1, 0, 1), latest=(23, 59, 59)))
     

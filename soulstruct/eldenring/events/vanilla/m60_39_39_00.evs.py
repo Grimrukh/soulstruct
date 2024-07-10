@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_39_39_00_enums import *
 
 
@@ -40,7 +41,7 @@ def Constructor():
     Event_1039393700(0, asset__character=Characters.SorcererThops)
     Event_1039393701()
     Event_1039393702(0, character=Characters.SorcererThops, asset=Assets.AEG003_061_9000)
-    CommonFunc_90005300(0, flag=1039390200, character=Characters.Scarab, item_lot=40206, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1039390200, character=Characters.Scarab, item_lot=40206, seconds=0.0, left=0)
     Event_1039392200()
 
 
@@ -138,7 +139,7 @@ def Event_1039393701():
 
 
 @RestartOnRest(1039393702)
-def Event_1039393702(_, character: uint, asset: uint):
+def Event_1039393702(_, character: Character | int, asset: Asset | int):
     """Event 1039393702"""
     AND_1.Add(FlagEnabled(3801))
     AwaitConditionTrue(AND_1)

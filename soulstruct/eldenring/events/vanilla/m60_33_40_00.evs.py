@@ -19,6 +19,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_33_40_00_enums import *
 
 
@@ -54,7 +55,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005300(0, flag=1033400610, character=Characters.GiantTurtle, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1033400610, character=Characters.GiantTurtle, item_lot=0, seconds=0.0, left=0)
 
 
 @ContinueOnRest(50)
@@ -100,7 +101,7 @@ def Event_1033400519():
 
 
 @RestartOnRest(1033402610)
-def Event_1033402610(_, flag: uint, flag_1: uint, flag_2: uint, flag_3: uint):
+def Event_1033402610(_, flag: Flag | int, flag_1: Flag | int, flag_2: Flag | int, flag_3: Flag | int):
     """Event 1033402610"""
     GotoIfFlagDisabled(Label.L0, flag=flag_3)
     DisableAsset(Assets.AEG099_251_2000)
@@ -110,7 +111,7 @@ def Event_1033402610(_, flag: uint, flag_1: uint, flag_2: uint, flag_3: uint):
     # --- Label 0 --- #
     DefineLabel(0)
     DeleteAssetVFX(Assets.AEG099_251_2000)
-    CreateAssetVFX(Assets.AEG099_251_2000, vfx_id=200, dummy_id=1500)
+    CreateAssetVFX(Assets.AEG099_251_2000, dummy_id=200, vfx_id=1500)
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(FlagEnabled(flag_1))
     AND_1.Add(FlagEnabled(flag_2))
@@ -158,7 +159,7 @@ def Event_1034432612():
 
 
 @RestartOnRest(1034432613)
-def Event_1034432613(_, flag: uint, character: uint):
+def Event_1034432613(_, flag: Flag | int, character: uint):
     """Event 1034432613"""
     if FlagEnabled(flag):
         return
@@ -177,7 +178,7 @@ def Event_1034432613(_, flag: uint, character: uint):
 
 
 @RestartOnRest(1034432614)
-def Event_1034432614(_, flag: uint, attacked_entity: uint):
+def Event_1034432614(_, flag: Flag | int, attacked_entity: uint):
     """Event 1034432614"""
     if FlagEnabled(flag):
         return
@@ -199,4 +200,4 @@ def Event_1033402615():
     
     MAIN.Await(AND_1)
     
-    DisplayDialog(text=20210, anchor_entity=0, display_distance=5.0)
+    DisplayDialog(text=20210, display_distance=5.0)

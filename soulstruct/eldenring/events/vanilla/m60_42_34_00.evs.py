@@ -16,8 +16,9 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_42_34_00_enums import *
-from .enums.m60_43_34_00_enums import Characters as m60_43_Characters
+from .enums.m60_43_34_00_enums import Characters as m60_43_34_00_Characters
 
 
 @ContinueOnRest(0)
@@ -28,4 +29,4 @@ def Constructor():
     CommonFunc_90005460(0, character=Characters.GiantOctopus)
     CommonFunc_90005461(0, character=Characters.GiantOctopus)
     CommonFunc_90005462(0, character=Characters.GiantOctopus)
-    CommonFunc_90005706(0, character=m60_43_Characters.Commoner, animation_id=30025, left=0)
+    CommonFunc_90005706(0, character=m60_43_34_00_Characters.Commoner, animation_id=30025, left=0)

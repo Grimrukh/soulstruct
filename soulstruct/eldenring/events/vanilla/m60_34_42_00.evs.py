@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_34_42_00_enums import *
 
 
@@ -25,7 +26,7 @@ from .enums.m60_34_42_00_enums import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1034420000, asset=Assets.AEG099_060_9000)
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.GlintstoneDragon0, name=904502602, npc_threat_level=25)
+    CommonFunc_90005870(0, character=Characters.GlintstoneDragon0, name=904502602, npc_threat_level=25)
     CommonFunc_90005860(
         0,
         flag=1034420800,
@@ -57,19 +58,19 @@ def Constructor():
         character=Characters.GlintstoneDragon1,
         item_lot=1034420400,
         seconds=0.0,
-        item_is_dropped=0,
+        left=0,
     )
-    Event_1034422600(0, asset=1034421600, flag=1034422600, owner_entity=Characters.Dummy)
-    Event_1034422600(1, asset=1034421601, flag=1034422601, owner_entity=Characters.Dummy)
-    Event_1034422600(2, asset=1034421602, flag=1034422602, owner_entity=Characters.Dummy)
-    Event_1034422600(3, asset=1034421603, flag=1034422603, owner_entity=Characters.Dummy)
-    Event_1034422600(4, asset=1034421604, flag=1034422604, owner_entity=Characters.Dummy)
-    Event_1034422600(5, asset=1034421605, flag=1034422605, owner_entity=Characters.Dummy)
-    Event_1034422600(6, asset=1034421606, flag=1034422606, owner_entity=Characters.Dummy)
-    Event_1034422600(7, asset=1034421607, flag=1034422607, owner_entity=Characters.Dummy)
-    Event_1034422600(8, asset=1034421608, flag=1034422608, owner_entity=Characters.Dummy)
-    Event_1034422600(9, asset=1034421609, flag=1034422609, owner_entity=Characters.Dummy)
-    CommonFunc_90005525(0, flag=1034420650, asset=1034421650)
+    Event_1034422600(0, asset=Assets.AEG099_045_9000, flag=1034422600, owner_entity=Characters.Dummy)
+    Event_1034422600(1, asset=Assets.AEG099_045_9001, flag=1034422601, owner_entity=Characters.Dummy)
+    Event_1034422600(2, asset=Assets.AEG099_045_9002, flag=1034422602, owner_entity=Characters.Dummy)
+    Event_1034422600(3, asset=Assets.AEG099_045_9003, flag=1034422603, owner_entity=Characters.Dummy)
+    Event_1034422600(4, asset=Assets.AEG099_045_9004, flag=1034422604, owner_entity=Characters.Dummy)
+    Event_1034422600(5, asset=Assets.AEG099_045_9005, flag=1034422605, owner_entity=Characters.Dummy)
+    Event_1034422600(6, asset=Assets.AEG099_045_9006, flag=1034422606, owner_entity=Characters.Dummy)
+    Event_1034422600(7, asset=Assets.AEG099_045_9007, flag=1034422607, owner_entity=Characters.Dummy)
+    Event_1034422600(8, asset=Assets.AEG099_045_9008, flag=1034422608, owner_entity=Characters.Dummy)
+    Event_1034422600(9, asset=Assets.AEG099_045_9009, flag=1034422609, owner_entity=Characters.Dummy)
+    CommonFunc_90005525(0, flag=1034420650, asset=Assets.AEG004_983_1000)
     CommonFunc_90005706(0, character=Characters.Commoner, animation_id=930023, left=0)
     Event_1034420700(0, character=Characters.NepheliLoux, asset=Assets.AEG007_360_2000)
     CommonFunc_90005704(0, attacked_entity=Characters.NepheliLoux, flag=4221, flag_1=4220, flag_2=10009701, right=3)
@@ -95,11 +96,11 @@ def Preconstructor():
     DisableBackread(Characters.Commoner)
     Event_1034422230()
     CommonFunc_90005251(0, character=Characters.AlbinauricLookout0, radius=10.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AlbinauricLookout2, region=1034422203, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AlbinauricLookout2, region=1034422203, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.AlbinauricLookout3, radius=8.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AlbinauricLookout4, region=1034422208, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AlbinauricLookout5, region=1034422208, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AlbinauricLookout6, region=1034422208, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AlbinauricLookout4, region=1034422208, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AlbinauricLookout5, region=1034422208, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AlbinauricLookout6, region=1034422208, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=1034420222, radius=20.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=1034420228, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
@@ -148,7 +149,7 @@ def Event_1034422230():
 
 
 @RestartOnRest(1034422600)
-def Event_1034422600(_, asset: uint, flag: uint, owner_entity: uint):
+def Event_1034422600(_, asset: uint, flag: Flag | int, owner_entity: uint):
     """Event 1034422600"""
     if FlagEnabled(flag):
         return
@@ -161,8 +162,8 @@ def Event_1034422600(_, asset: uint, flag: uint, owner_entity: uint):
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=asset, attacker=20000))
-    OR_2.Add(EntityWithinDistance(entity=asset, other_entity=20000, radius=2.0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=asset, attacker=ALL_PLAYERS))
+    OR_2.Add(EntityWithinDistance(entity=asset, other_entity=ALL_PLAYERS, radius=2.0))
     AND_1.Add(OR_2)
     AND_1.Add(OR_1)
     
@@ -341,7 +342,7 @@ def Event_1034422802():
 
 
 @RestartOnRest(1034420700)
-def Event_1034420700(_, character: uint, asset: uint):
+def Event_1034420700(_, character: uint, asset: Asset | int):
     """Event 1034420700"""
     WaitFrames(frames=1)
     DisableNetworkSync()

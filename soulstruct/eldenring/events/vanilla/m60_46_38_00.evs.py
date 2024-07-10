@@ -19,6 +19,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_46_38_00_enums import *
 
 
@@ -57,11 +58,11 @@ def Event_1046382210():
 def Event_1046380670(
     _,
     tutorial_param_id: int,
-    flag: uint,
+    flag: Flag | int,
     tutorial_param_id_1: int,
-    flag_1: uint,
-    flag_2: uint,
-    flag_3: uint,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
+    flag_3: Flag | int,
 ):
     """Event 1046380670"""
     DisableNetworkSync()
@@ -93,7 +94,7 @@ def Event_1046380670(
 
 
 @RestartOnRest(1046380671)
-def Event_1046380671(_, flag: uint, tutorial_param_id: int, item: int, flag_1: uint):
+def Event_1046380671(_, flag: Flag | int, tutorial_param_id: int, item: BaseItemParam | int, flag_1: Flag | int):
     """Event 1046380671"""
     DisableNetworkSync()
     if PlayerNotInOwnWorld():

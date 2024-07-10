@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m31_21_00_00_enums import *
 
 
@@ -32,8 +33,8 @@ def Constructor():
     Event_312112811()
     Event_31212830(0, flag=31210801, character=Characters.TalkDummy1)
     Event_31212860()
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, dummy_id=100, vfx_id=800, right=0)
     CommonFunc_90005261(
         0,
         character=Characters.GraveWardenDuelist,
@@ -192,10 +193,10 @@ def Preconstructor():
         region=31212209,
         radius=0.0,
         seconds=1.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005261(
         0,
@@ -595,13 +596,13 @@ def Event_31212205():
 
 
 @RestartOnRest(31212210)
-def Event_31212210(_, character: uint):
+def Event_31212210(_, character: Character | int):
     """Event 31212210"""
     AddSpecialEffect(character, 90000)
 
 
 @RestartOnRest(31212230)
-def Event_31212230(_, character: uint):
+def Event_31212230(_, character: Character | int):
     """Event 31212230"""
     Kill(character)
 
@@ -612,7 +613,7 @@ def Event_31212250(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    region: uint,
+    region: Region | int,
     radius: float,
     seconds: float,
     left: uint,
@@ -687,7 +688,7 @@ def Event_31212250(
 
 
 @RestartOnRest(31212260)
-def Event_31212260(_, character: uint, region: uint, patrol_information_id: uint):
+def Event_31212260(_, character: Character | int, region: Region | int, patrol_information_id: uint):
     """Event 31212260"""
     if ThisEventSlotFlagEnabled():
         return
@@ -712,7 +713,7 @@ def Event_31212260(_, character: uint, region: uint, patrol_information_id: uint
 
 
 @RestartOnRest(31212308)
-def Event_31212308(_, character: uint, region: uint):
+def Event_31212308(_, character: uint, region: Region | int):
     """Event 31212308"""
     if ThisEventSlotFlagEnabled():
         return
@@ -748,9 +749,9 @@ def Event_31212308(_, character: uint, region: uint):
 @RestartOnRest(31212400)
 def Event_31212400(
     _,
-    flag: uint,
+    flag: Flag | int,
     asset: uint,
-    asset_1: uint,
+    asset_1: Asset | int,
     obj_act_id: uint,
     obj_act_id_1: int,
     animation_id: int,
@@ -886,9 +887,9 @@ def Event_31212815():
         return RESTART
     SuppressSoundForFogGate(duration=5.0)
     if CharacterDoesNotHaveSpecialEffect(character=PLAYER, special_effect=4250):
-        FaceEntity(PLAYER, 31212800, animation=60060, wait_for_completion=True)
+        FaceEntityAndForceAnimation(PLAYER, 31212800, animation=60060, wait_for_completion=True)
     else:
-        FaceEntity(PLAYER, 31212800, animation=60060)
+        FaceEntityAndForceAnimation(PLAYER, 31212800, animation=60060)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -906,7 +907,8 @@ def Event_31212815():
     
     if FlagEnabled(31210800):
         return RESTART
-    RestartIfLastConditionResultTrue(input_condition=OR_4)
+    if LastResult(OR_4):
+        return RESTART
 
     # --- Label 1 --- #
     DefineLabel(1)
@@ -936,7 +938,7 @@ def Event_31212815():
     
     MAIN.Await(AND_10)
     
-    FaceEntity(PLAYER, 31212800, animation=60060, wait_for_completion=True)
+    FaceEntityAndForceAnimation(PLAYER, 31212800, animation=60060, wait_for_completion=True)
     BanishInvaders(unknown=0)
     Restart()
 
@@ -963,7 +965,7 @@ def Event_31212860():
 
 
 @RestartOnRest(31212830)
-def Event_31212830(_, flag: uint, character: uint):
+def Event_31212830(_, flag: Flag | int, character: Character | int):
     """Event 31212830"""
     if FlagEnabled(flag):
         return
@@ -984,8 +986,8 @@ def Event_31032849():
         flag_2=31212806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=31210800, asset=Assets.AEG099_001_9000, dummy_id=3, right=31210801)
-    CommonFunc_9005811(0, flag=31210800, asset=Assets.AEG099_001_9001, dummy_id=3, right=31210801)
+    CommonFunc_9005811(0, flag=31210800, asset=Assets.AEG099_001_9000, vfx_id=3, right=31210801)
+    CommonFunc_9005811(0, flag=31210800, asset=Assets.AEG099_001_9001, vfx_id=3, right=31210801)
     CommonFunc_9005822(
         0,
         flag=31210800,

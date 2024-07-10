@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_49_55_00_enums import *
 
 
@@ -51,7 +52,7 @@ def Constructor():
     Event_1049552550(0, character=Characters.WanderingNoble6, asset=Assets.AEG099_390_9052)
     Event_1049552550(1, character=Characters.WanderingNoble2, asset=Assets.AEG099_390_9056)
     Event_1049552550(2, character=Characters.WanderingNoble11, asset=Assets.AEG099_390_9006)
-    CommonFunc_90005683(0, flag=62512, asset=Assets.AEG099_057_1000, vfx_id=211, flag_1=78594, flag_2=0)
+    CommonFunc_90005683(0, flag=62512, asset=Assets.AEG099_057_1000, dummy_id=211, flag_1=78594, flag_2=0)
     Event_1049552400(
         0,
         flag=1049550405,
@@ -94,7 +95,7 @@ def Preconstructor():
 
 
 @RestartOnRest(1049552200)
-def Event_1049552200(_, attacker__character: uint, region: uint):
+def Event_1049552200(_, attacker__character: uint, region: Region | int):
     """Event 1049552200"""
     RemoveSpecialEffect(attacker__character, 4800)
     RemoveSpecialEffect(attacker__character, 5650)
@@ -111,12 +112,12 @@ def Event_1049552200(_, attacker__character: uint, region: uint):
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=PLAYER))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=35000))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=35000, attacker=attacker__character))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=ALL_SPIRIT_SUMMONS))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=ALL_SPIRIT_SUMMONS, attacker=attacker__character))
     OR_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=attacker__character, radius=10.0))
-    OR_2.Add(EntityWithinDistance(entity=35000, other_entity=attacker__character, radius=10.0))
+    OR_2.Add(EntityWithinDistance(entity=ALL_SPIRIT_SUMMONS, other_entity=attacker__character, radius=10.0))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
-    OR_2.Add(CharacterInsideRegion(character=35000, region=region))
+    OR_2.Add(CharacterInsideRegion(character=ALL_SPIRIT_SUMMONS, region=region))
     AND_1.Add(OR_2)
     
     MAIN.Await(AND_1)
@@ -174,7 +175,15 @@ def Event_1049552210(_, character: uint):
 
 
 @RestartOnRest(1049552400)
-def Event_1049552400(_, flag: uint, flag_1: uint, anchor_entity: uint, character: uint, left: int, item_lot: int):
+def Event_1049552400(
+    _,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    anchor_entity: uint,
+    character: Character | int,
+    left: int,
+    item_lot: int,
+):
     """Event 1049552400"""
     if FlagEnabled(flag):
         return
@@ -185,22 +194,12 @@ def Event_1049552400(_, flag: uint, flag_1: uint, anchor_entity: uint, character
     
     Wait(1.0)
     GotoIfValueComparison(Label.L2, comparison_type=ComparisonType.Equal, left=left, right=0)
-    CreateTemporaryVFX(
-        vfx_id=601111,
-        anchor_entity=anchor_entity,
-        dummy_id=960,
-        anchor_type=CoordEntityType.Character,
-    )
+    CreateTemporaryVFX(vfx_id=601111, anchor_entity=anchor_entity, dummy_id=960, anchor_type=CoordEntityType.Character)
     Goto(Label.L3)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    CreateTemporaryVFX(
-        vfx_id=601110,
-        anchor_entity=anchor_entity,
-        dummy_id=960,
-        anchor_type=CoordEntityType.Character,
-    )
+    CreateTemporaryVFX(vfx_id=601110, anchor_entity=anchor_entity, dummy_id=960, anchor_type=CoordEntityType.Character)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -215,7 +214,7 @@ def Event_1049552400(_, flag: uint, flag_1: uint, anchor_entity: uint, character
 
 
 @RestartOnRest(1049552401)
-def Event_1049552401(_, flag: uint, flag_1: uint, character: uint, character_1: uint, left: int):
+def Event_1049552401(_, flag: Flag | int, flag_1: Flag | int, character: uint, character_1: uint, left: int):
     """Event 1049552401"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     DisableCharacter(character)
@@ -292,7 +291,7 @@ def Event_1049552420(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    region: uint,
+    region: Region | int,
     radius: float,
     seconds: float,
     left: uint,
@@ -421,6 +420,6 @@ def Event_1049552500():
 
 
 @RestartOnRest(1049552550)
-def Event_1049552550(_, character: uint, asset: uint):
+def Event_1049552550(_, character: Character | int, asset: Asset | int):
     """Event 1049552550"""
     AttachAssetToCharacter(character=character, dummy_id=72, asset=asset)

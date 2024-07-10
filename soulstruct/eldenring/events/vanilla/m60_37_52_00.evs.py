@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_37_52_00_enums import *
 
 
@@ -92,10 +93,10 @@ def Constructor():
         region=1037522405,
         radius=3.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005261(0, character=Characters.DemiHuman6, region=1037522302, radius=5.0, seconds=2.0, animation_id=-1)
     CommonFunc_90005261(
@@ -146,7 +147,7 @@ def Constructor():
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
-    CommonFunc_90005300(0, flag=1037520355, character=1037525350, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1037520355, character=1037525350, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005600(0, grace_flag=1037520001, asset=Assets.AEG099_060_9001, enemy_block_distance=5.0, character=0)
     CommonFunc_90005200(
         0,
@@ -259,7 +260,7 @@ def Preconstructor():
 
 
 @RestartOnRest(1035542210)
-def Event_1035542210(_, character: uint):
+def Event_1035542210(_, character: Character | int):
     """Event 1035542210"""
     AND_1.Add(FlagEnabled(1037520350))
     if AND_1:
@@ -290,13 +291,13 @@ def Event_1037522220():
 @RestartOnRest(1037522900)
 def Event_1037522900(
     _,
-    grace_flag: uint,
-    character: uint,
+    grace_flag: Flag | int,
+    character: Character | int,
     asset: uint,
     enemy_block_distance: float,
-    character_1: uint,
-    character_2: uint,
-    flag: uint,
+    character_1: Character | int,
+    character_2: Character | int,
+    flag: Flag | int,
 ):
     """Event 1037522900"""
     GotoIfFlagEnabled(Label.L0, flag=flag)

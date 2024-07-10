@@ -17,23 +17,28 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_43_38_00_enums import *
-from .enums.m60_43_37_00_enums import Characters as m60_43_Characters
+from .enums.m60_43_37_00_enums import Characters as m60_43_37_00_Characters
 
 
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1043380000, asset=Assets.AEG099_060_9000)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, vfx_id=100, dummy_id=800, right=1043388540)
-    CommonFunc_90005683(0, flag=62105, asset=Assets.AEG099_055_1000, vfx_id=208, flag_1=78194, flag_2=78194)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, dummy_id=100, vfx_id=800, right=1043388540)
+    CommonFunc_90005683(0, flag=62105, asset=Assets.AEG099_055_1000, dummy_id=208, flag_1=78194, flag_2=78194)
     CommonFunc_90005251(0, character=Characters.KaidenSellsword, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005460(0, character=Characters.GiantOctopus)
     CommonFunc_90005461(0, character=Characters.GiantOctopus)
     CommonFunc_90005462(0, character=Characters.GiantOctopus)
     Event_1043382270()
     Event_1043382270(slot=1)
-    Event_1043383700(0, character=Characters.YuraHunterofBloodyFingers, attacker=m60_43_Characters.BloodyFingerNerijus)
+    Event_1043383700(
+        0,
+        character=Characters.YuraHunterofBloodyFingers,
+        attacker=m60_43_37_00_Characters.BloodyFingerNerijus,
+    )
     Event_1043383701(
         0,
         character=Characters.YuraHunterofBloodyFingers,
@@ -149,7 +154,7 @@ def Event_1043382270():
 
 
 @RestartOnRest(1043382650)
-def Event_1043382650(_, tutorial_param_id: int, flag: uint, flag_1: uint):
+def Event_1043382650(_, tutorial_param_id: int, flag: Flag | int, flag_1: Flag | int):
     """Event 1043382650"""
     if Multiplayer():
         return
@@ -184,7 +189,7 @@ def Event_1043382650(_, tutorial_param_id: int, flag: uint, flag_1: uint):
 
 
 @RestartOnRest(1043383700)
-def Event_1043383700(_, character: uint, attacker: uint):
+def Event_1043383700(_, character: Character | int, attacker: Character | int):
     """Event 1043383700"""
     WaitFrames(frames=1)
     if PlayerNotInOwnWorld():
@@ -236,9 +241,9 @@ def Event_1043383700(_, character: uint, attacker: uint):
 def Event_1043383701(
     _,
     character: uint,
-    character_1: uint,
-    region: uint,
-    region_1: uint,
+    character_1: Character | int,
+    region: Region | int,
+    region_1: Region | int,
     destination: uint,
     destination_1: uint,
     destination_2: uint,
@@ -295,7 +300,7 @@ def Event_1043383701(
 
 
 @RestartOnRest(1043383702)
-def Event_1043383702(_, character: uint):
+def Event_1043383702(_, character: Character | int):
     """Event 1043383702"""
     if FlagEnabled(1043379262):
         return
@@ -347,12 +352,12 @@ def Event_1043383702(_, character: uint):
 
 
 @RestartOnRest(1043383703)
-def Event_1043383703(_, character: uint, flag: uint, distance: float):
+def Event_1043383703(_, character: Character | int, flag: Flag | int, distance: float):
     """Event 1043383703"""
     if PlayerNotInOwnWorld():
         return
     SetCharacterTalkRange(character=character, distance=17.0)
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     if FlagDisabled(3620):
         return
     AND_1.Add(FlagDisabled(3625))

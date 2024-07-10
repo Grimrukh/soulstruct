@@ -16,10 +16,11 @@ strings:
 """
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 
 
 @RestartOnRest(1052392699)
-def Event_1052392699(_, asset: uint):
+def Event_1052392699(_, asset: Asset | int):
     """Event 1052392699"""
     GotoIfFlagEnabled(Label.L0, flag=9411)
     GotoIfFlagEnabled(Label.L1, flag=1052380800)

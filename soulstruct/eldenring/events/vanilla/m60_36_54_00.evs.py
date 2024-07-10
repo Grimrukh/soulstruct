@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_36_54_00_enums import *
 
 
@@ -52,7 +53,7 @@ def Constructor():
         seconds=0.0,
         animation_id=0,
     )
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.FallingstarBeast, name=904680603, npc_threat_level=19)
+    CommonFunc_90005870(0, character=Characters.FallingstarBeast, name=904680603, npc_threat_level=19)
     CommonFunc_90005860(
         0,
         flag=1036540800,
@@ -63,7 +64,7 @@ def Constructor():
         seconds=0.0,
     )
     Event_1036542350(0, region=1036542450, special_effect=16488, special_effect_1=16489)
-    CommonFunc_90005300(0, flag=1036540498, character=Characters.Scarab, item_lot=40334, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1036540498, character=Characters.Scarab, item_lot=40334, seconds=0.0, left=0)
     CommonFunc_90005261(
         0,
         character=Characters.Marionette0,
@@ -81,9 +82,9 @@ def Constructor():
         animation_id=0,
     )
     CommonFunc_90005261(0, character=Characters.Marionette5, region=1036542220, radius=5.0, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Marionette2, region=1036542425, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(1, character=Characters.Marionette7, region=1036542425, seconds=2.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Avionette, region=1036542414, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Marionette2, region=1036542425, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(1, character=Characters.Marionette7, region=1036542425, seconds=2.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Avionette, region=1036542414, seconds=0.0, animation_id=0)
     CommonFunc_90005211(
         0,
         character=Characters.Marionette3,
@@ -92,10 +93,10 @@ def Constructor():
         region=1036542410,
         radius=10.0,
         seconds=7.099999904632568,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         1,
@@ -105,10 +106,10 @@ def Constructor():
         region=1036542410,
         radius=10.0,
         seconds=7.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         2,
@@ -118,10 +119,10 @@ def Constructor():
         region=1036542410,
         radius=10.0,
         seconds=7.199999809265137,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         3,
@@ -131,10 +132,10 @@ def Constructor():
         region=1036542410,
         radius=10.0,
         seconds=7.5,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         4,
@@ -144,14 +145,14 @@ def Constructor():
         region=1036542410,
         radius=5.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LeyndellSoldier, region=1036542305, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(1, character=Characters.LeyndellFootSoldier0, region=1036542305, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(2, character=Characters.LeyndellFootSoldier1, region=1036542305, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LeyndellSoldier, region=1036542305, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(1, character=Characters.LeyndellFootSoldier0, region=1036542305, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(2, character=Characters.LeyndellFootSoldier1, region=1036542305, seconds=0.0, animation_id=-1)
     CommonFunc_90005391(
         0,
         flag=1036540350,
@@ -224,17 +225,17 @@ def Event_1036542580():
 
 
 @RestartOnRest(1036542200)
-def Event_1036542200(_, character: uint):
+def Event_1036542200(_, character: Character | int):
     """Event 1036542200"""
     Kill(character)
     End()
 
 
 @RestartOnRest(1036542240)
-def Event_1036542240(_, asset: uint, entity: uint, flag: uint):
+def Event_1036542240(_, asset: Asset | int, entity: uint, flag: Flag | int):
     """Event 1036542240"""
     GotoIfFlagEnabled(Label.L0, flag=flag)
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=803220)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=803220)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -246,7 +247,15 @@ def Event_1036542240(_, asset: uint, entity: uint, flag: uint):
 
 
 @RestartOnRest(1036542250)
-def Event_1036542250(_, flag: uint, flag_1: uint, anchor_entity: uint, character: uint, left: int, item_lot: int):
+def Event_1036542250(
+    _,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    anchor_entity: uint,
+    character: Character | int,
+    left: int,
+    item_lot: int,
+):
     """Event 1036542250"""
     if FlagEnabled(flag):
         return
@@ -257,22 +266,12 @@ def Event_1036542250(_, flag: uint, flag_1: uint, anchor_entity: uint, character
     
     Wait(1.0)
     GotoIfValueComparison(Label.L2, comparison_type=ComparisonType.Equal, left=left, right=0)
-    CreateTemporaryVFX(
-        vfx_id=601111,
-        anchor_entity=anchor_entity,
-        dummy_id=960,
-        anchor_type=CoordEntityType.Character,
-    )
+    CreateTemporaryVFX(vfx_id=601111, anchor_entity=anchor_entity, dummy_id=960, anchor_type=CoordEntityType.Character)
     Goto(Label.L3)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    CreateTemporaryVFX(
-        vfx_id=601110,
-        anchor_entity=anchor_entity,
-        dummy_id=960,
-        anchor_type=CoordEntityType.Character,
-    )
+    CreateTemporaryVFX(vfx_id=601110, anchor_entity=anchor_entity, dummy_id=960, anchor_type=CoordEntityType.Character)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -286,7 +285,7 @@ def Event_1036542250(_, flag: uint, flag_1: uint, anchor_entity: uint, character
 
 
 @RestartOnRest(1036542400)
-def Event_1036542400(_, character: uint, region: uint, seconds: float):
+def Event_1036542400(_, character: uint, region: Region | int, seconds: float):
     """Event 1036542400"""
     DisableAI(character)
     DisableGravity(character)
@@ -302,7 +301,7 @@ def Event_1036542400(_, character: uint, region: uint, seconds: float):
 
 
 @RestartOnRest(1036542450)
-def Event_1036542450(_, asset: uint):
+def Event_1036542450(_, asset: Asset | int):
     """Event 1036542450"""
     DisableAsset(asset)
     End()
@@ -1279,23 +1278,23 @@ def Event_1036542301():
 
 
 @RestartOnRest(1036542350)
-def Event_1036542350(_, region: uint, special_effect: int, special_effect_1: int):
+def Event_1036542350(_, region: Region | int, special_effect: int, special_effect_1: int):
     """Event 1036542350"""
     if FlagEnabled(1036540800):
         return
     DisableNetworkSync()
-    AND_1.Add(CharacterInsideRegion(character=20000, region=region))
+    AND_1.Add(CharacterInsideRegion(character=ALL_PLAYERS, region=region))
     
     MAIN.Await(AND_1)
     
-    AddSpecialEffect(20000, special_effect)
+    AddSpecialEffect(ALL_PLAYERS, special_effect)
     Wait(0.10000000149011612)
-    AND_2.Add(CharacterOutsideRegion(character=20000, region=region))
+    AND_2.Add(CharacterOutsideRegion(character=ALL_PLAYERS, region=region))
     
     MAIN.Await(AND_2)
     
     Wait(0.10000000149011612)
-    AddSpecialEffect(20000, special_effect_1)
+    AddSpecialEffect(ALL_PLAYERS, special_effect_1)
     Restart()
 
 

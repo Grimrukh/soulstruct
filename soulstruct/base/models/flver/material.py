@@ -91,7 +91,7 @@ class TextureStruct(BinaryStruct):
 class Texture:
 
     path: str = ""
-    texture_type: str = ""
+    texture_type: str = ""  # MTD or MATBIN sampler name (e.g. 'g_Diffuse', 'C_DetailBlend__snp_Texture2D_7_AlbedoMap')
     scale: Vector2 = field(default_factory=Vector2.one)
     unk_x10: int = 1  # always 0 when `path` is empty, and *very rarely* 2 (for three total materials in DS1)
     unk_x11: bool = True  # seems exactly `bool(path)` in DS1

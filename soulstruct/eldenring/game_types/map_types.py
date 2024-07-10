@@ -110,6 +110,7 @@ class MapTile(Map):
         x_id: int,
         y_id: int,
         size_id: int,
+        area_id=60,
         name=None,
         emevd_file_stem=None,
         msb_file_stem=None,
@@ -150,7 +151,7 @@ class MapTile(Map):
 
         # TODO: Can probably simplify stem arguments.
         super().__init__(
-            area_id=60,
+            area_id=area_id,
             block_id=x_id,
             cc_id=y_id,
             dd_id=size_id,

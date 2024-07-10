@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m18_00_00_00_enums import *
 
 
@@ -135,8 +136,8 @@ def Constructor():
         flag_3=18000533,
         asset=Assets.AEG027_156_9000,
     )
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, dummy_id=100, vfx_id=800, right=0)
     CommonFunc_90005501(
         0,
         flag=18000510,
@@ -265,7 +266,7 @@ def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.Commoner)
     CommonFunc_90005251(0, character=Characters.WanderingNoble1, radius=2.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=18000300, region=18002300, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=18000300, region=18002300, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.CastleGuard, radius=4.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.BanishedKnight, radius=8.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.Imp0, radius=4.0, seconds=0.0, animation_id=3000)
@@ -295,8 +296,8 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005300(0, flag=18000350, character=Characters.GraftedScion0, item_lot=18002000, seconds=0.0, item_is_dropped=0)
-    CommonFunc_90005300(0, flag=18000351, character=Characters.GraftedScion1, item_lot=18002010, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=18000350, character=Characters.GraftedScion0, item_lot=18002000, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=18000351, character=Characters.GraftedScion1, item_lot=18002010, seconds=0.0, left=0)
     Event_18002520()
 
 
@@ -327,7 +328,7 @@ def Event_18000020():
         return
     EnableFlag(9021)
     PlayCutscene(60430000, cutscene_flags=CutsceneFlags.Unknown16, player_id=10000)
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     SetCameraAngle(x_angle=6.980000019073486, y_angle=106.95999908447266)
 
     # --- Label 0 --- #
@@ -463,7 +464,7 @@ def Event_18000050():
 
 
 @RestartOnRest(18002200)
-def Event_18002200(_, character: uint, region: uint, patrol_information_id: uint, flag: uint):
+def Event_18002200(_, character: Character | int, region: Region | int, patrol_information_id: uint, flag: Flag | int):
     """Event 18002200"""
     if FlagEnabled(flag):
         return
@@ -477,7 +478,7 @@ def Event_18002200(_, character: uint, region: uint, patrol_information_id: uint
 
 
 @RestartOnRest(18002211)
-def Event_18002211(_, other_entity: uint, flag: uint):
+def Event_18002211(_, other_entity: uint, flag: Flag | int):
     """Event 18002211"""
     if FlagEnabled(flag):
         return
@@ -490,7 +491,7 @@ def Event_18002211(_, other_entity: uint, flag: uint):
 
 
 @RestartOnRest(18002250)
-def Event_18002250(_, character: uint, special_effect: int):
+def Event_18002250(_, character: Character | int, special_effect: int):
     """Event 18002250"""
     AddSpecialEffect(character, special_effect)
 
@@ -543,11 +544,11 @@ def Event_18002410():
 @RestartOnRest(18002411)
 def Event_18002411(
     _,
-    region: uint,
+    region: Region | int,
     patrol_information_id: uint,
-    region_1: uint,
+    region_1: Region | int,
     patrol_information_id_1: uint,
-    region_2: uint,
+    region_2: Region | int,
     patrol_information_id_2: uint,
 ):
     """Event 18002411"""
@@ -583,7 +584,7 @@ def Event_18002411(
 
 
 @RestartOnRest(18002440)
-def Event_18002440(_, asset_flag: uint, asset: uint, asset_1: uint, flag: uint, seconds: float):
+def Event_18002440(_, asset_flag: Flag | int, asset: uint, asset_1: Asset | int, flag: Flag | int, seconds: float):
     """Event 18002440"""
     if FlagEnabled(flag):
         DisableAsset(asset)
@@ -697,7 +698,7 @@ def Event_18002440(_, asset_flag: uint, asset: uint, asset_1: uint, flag: uint, 
 
 
 @RestartOnRest(18002450)
-def Event_18002450(_, asset_flag: uint, asset: uint, flag: uint):
+def Event_18002450(_, asset_flag: Flag | int, asset: uint, flag: Flag | int):
     """Event 18002450"""
     if FlagEnabled(18000400):
         return
@@ -834,7 +835,14 @@ def Event_18002510():
         flag_3=18002517,
         left_1=0,
     )
-    CommonFunc_90005681(0, flag=18000530, flag_1=18000531, flag_2=18000532, flag_3=18000533, attacked_entity=18001530)
+    CommonFunc_90005681(
+        0,
+        flag=18000530,
+        flag_1=18000531,
+        flag_2=18000532,
+        flag_3=18000533,
+        attacked_entity=Assets.AEG027_156_9000,
+    )
     if FlagEnabled(57):
         CommonFunc_90005682(
             0,
@@ -958,7 +966,7 @@ def Event_18002520():
 
 
 @ContinueOnRest(18002569)
-def Event_18002569(_, flag: uint, asset: uint):
+def Event_18002569(_, flag: Flag | int, asset: uint):
     """Event 18002569"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     DisableAsset(asset)
@@ -966,7 +974,7 @@ def Event_18002569(_, flag: uint, asset: uint):
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=101, dummy_id=806043)
+    CreateAssetVFX(asset, dummy_id=101, vfx_id=806043)
     AND_1.Add(FlagEnabled(flag))
     
     MAIN.Await(AND_1)
@@ -984,7 +992,14 @@ def Event_18002580():
 
 
 @RestartOnRest(18002640)
-def Event_18002640(_, region: uint, tutorial_param_id: int, flag: uint, item: int, flag_1: uint):
+def Event_18002640(
+    _,
+    region: Region | int,
+    tutorial_param_id: int,
+    flag: Flag | int,
+    item: BaseItemParam | int,
+    flag_1: Flag | int,
+):
     """Event 18002640"""
     DisableNetworkSync()
     if PlayerNotInOwnWorld():
@@ -1004,7 +1019,7 @@ def Event_18002640(_, region: uint, tutorial_param_id: int, flag: uint, item: in
 
 
 @RestartOnRest(18002650)
-def Event_18002650(_, region: uint, tutorial_param_id: int, flag: uint):
+def Event_18002650(_, region: Region | int, tutorial_param_id: int, flag: Flag | int):
     """Event 18002650"""
     DisableNetworkSync()
     if PlayerNotInOwnWorld():
@@ -1022,7 +1037,7 @@ def Event_18002650(_, region: uint, tutorial_param_id: int, flag: uint):
 
 
 @RestartOnRest(18002651)
-def Event_18002651(_, region: uint, tutorial_param_id: int, flag: uint):
+def Event_18002651(_, region: Region | int, tutorial_param_id: int, flag: Flag | int):
     """Event 18002651"""
     DisableNetworkSync()
     if PlayerNotInOwnWorld():
@@ -1038,7 +1053,7 @@ def Event_18002651(_, region: uint, tutorial_param_id: int, flag: uint):
 
 
 @RestartOnRest(18002654)
-def Event_18002654(_, region: uint, tutorial_param_id: int, flag: uint):
+def Event_18002654(_, region: Region | int, tutorial_param_id: int, flag: Flag | int):
     """Event 18002654"""
     DisableNetworkSync()
     if PlayerNotInOwnWorld():
@@ -1081,7 +1096,7 @@ def Event_18002654(_, region: uint, tutorial_param_id: int, flag: uint):
 
 
 @RestartOnRest(18002655)
-def Event_18002655(_, region: uint, tutorial_param_id: int, flag: uint, flag_1: uint):
+def Event_18002655(_, region: Region | int, tutorial_param_id: int, flag: Flag | int, flag_1: Flag | int):
     """Event 18002655"""
     DisableNetworkSync()
     if PlayerNotInOwnWorld():
@@ -1126,7 +1141,7 @@ def Event_18002655(_, region: uint, tutorial_param_id: int, flag: uint, flag_1: 
 
 
 @RestartOnRest(18002662)
-def Event_18002662(_, region: uint, tutorial_param_id: int, flag: uint, flag_1: uint):
+def Event_18002662(_, region: Region | int, tutorial_param_id: int, flag: Flag | int, flag_1: Flag | int):
     """Event 18002662"""
     DisableNetworkSync()
     if PlayerNotInOwnWorld():
@@ -1168,7 +1183,14 @@ def Event_18002662(_, region: uint, tutorial_param_id: int, flag: uint, flag_1: 
 
 
 @RestartOnRest(18002663)
-def Event_18002663(_, tutorial_param_id: int, flag: uint, item: int, flag_1: uint, entity: uint):
+def Event_18002663(
+    _,
+    tutorial_param_id: int,
+    flag: Flag | int,
+    item: BaseItemParam | int,
+    flag_1: Flag | int,
+    entity: uint,
+):
     """Event 18002663"""
     DisableNetworkSync()
     if PlayerNotInOwnWorld():
@@ -1190,7 +1212,7 @@ def Event_18002663(_, tutorial_param_id: int, flag: uint, item: int, flag_1: uin
 
 
 @RestartOnRest(18002665)
-def Event_18002665(_, flag: uint, tutorial_param_id: int, item: int, flag_1: uint):
+def Event_18002665(_, flag: Flag | int, tutorial_param_id: int, item: BaseItemParam | int, flag_1: Flag | int):
     """Event 18002665"""
     DisableNetworkSync()
     if PlayerNotInOwnWorld():
@@ -1214,7 +1236,7 @@ def Event_18002665(_, flag: uint, tutorial_param_id: int, item: int, flag_1: uin
 
 
 @RestartOnRest(18002671)
-def Event_18002671(_, flag: uint):
+def Event_18002671(_, flag: Flag | int):
     """Event 18002671"""
     DisableNetworkSync()
     if PlayerNotInOwnWorld():
@@ -1307,7 +1329,7 @@ def Event_18000820():
         flag_2=18002806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=18000800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=18000800, asset=Assets.AEG099_001_9000, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=18000800,
@@ -1385,8 +1407,8 @@ def Event_18000870():
         flag_2=18002856,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=18000850, asset=Assets.AEG099_001_9010, dummy_id=3, right=0)
-    CommonFunc_9005811(0, flag=18000850, asset=Assets.AEG099_001_9011, dummy_id=4, right=0)
+    CommonFunc_9005811(0, flag=18000850, asset=Assets.AEG099_001_9010, vfx_id=3, right=0)
+    CommonFunc_9005811(0, flag=18000850, asset=Assets.AEG099_001_9011, vfx_id=4, right=0)
     CommonFunc_9005822(
         0,
         flag=18000850,

@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_39_53_00_enums import *
 
 
@@ -81,7 +82,7 @@ def Constructor():
         message=80603,
         action_button_id=9000,
         asset=Assets.AEG099_090_9002,
-        dummy_id=30010,
+        vfx_id=30010,
     )
     if CeremonyActive(ceremony=20):
         CommonFunc_90005796(0, flag=7603, character=Characters.RileightheIdle, banner_type=5, region=1039532141)
@@ -110,7 +111,7 @@ def Event_1039532145():
     EnableBackread(Characters.RileightheIdle)
     SetTeamType(Characters.RileightheIdle, TeamType.Human)
     DeleteAssetVFX(1039536700)
-    CreateAssetVFX(1039536700, vfx_id=200, dummy_id=806700)
+    CreateAssetVFX(1039536700, dummy_id=200, vfx_id=806700)
 
 
 @RestartOnRest(1039532300)
@@ -199,7 +200,7 @@ def Event_1039532610():
     MAIN.Await(AND_1)
     
     Wait(2.0)
-    DisplayDialog(text=30101, anchor_entity=0, display_distance=5.0, button_type=ButtonType.Yes_or_No)
+    DisplayDialog(text=30101, display_distance=5.0, button_type=ButtonType.Yes_or_No)
 
 
 @RestartOnRest(1039532650)
@@ -237,7 +238,7 @@ def Event_1039532660():
     
     EnableNetworkFlag(1039530655)
     DisableAsset(Assets.AEG003_316_9001)
-    FaceEntity(PLAYER, Assets.AEG003_316_9001, wait_for_completion=True)
+    FaceEntityAndForceAnimation(PLAYER, Assets.AEG003_316_9001, wait_for_completion=True)
     ForceAnimation(PLAYER, 60010)
     Wait(1.0)
     PlaySoundEffect(1039532650, 806855, sound_type=SoundType.s_SFX)

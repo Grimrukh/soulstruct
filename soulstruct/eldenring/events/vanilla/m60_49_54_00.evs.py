@@ -18,8 +18,9 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_49_54_00_enums import *
-from .enums.m12_03_00_00_enums import Assets as m12_03_Assets
+from .enums.m12_03_00_00_enums import Assets as m12_03_00_00_Assets
 
 
 @ContinueOnRest(0)
@@ -44,15 +45,15 @@ def Constructor():
         flag_10=78528,
         flag_11=78529,
     )
-    CommonFunc_90005300(0, flag=1049540200, character=Characters.Scarab, item_lot=1049540700, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1049540200, character=Characters.Scarab, item_lot=1049540700, seconds=0.0, left=0)
     CommonFunc_90005501(
         0,
         flag=1049540510,
         flag_1=1049541511,
         left=10,
-        asset=m12_03_Assets.AEG239_010_0500,
+        asset=m12_03_00_00_Assets.AEG239_010_0500,
         asset_1=12031511,
-        asset_2=m12_03_Assets.AEG239_021_0502,
+        asset_2=m12_03_00_00_Assets.AEG239_021_0502,
         flag_2=1049540512,
     )
     Event_1049542510()
@@ -62,7 +63,7 @@ def Constructor():
     CommonFunc_90005261(0, character=Characters.Wolf, region=1049542260, radius=10.0, seconds=0.0, animation_id=20010)
     CommonFunc_90005261(0, character=1049540373, region=1049542260, radius=10.0, seconds=0.0, animation_id=20002)
     Event_1049542350(0, character=Characters.AlbinauricArcher, character_1=Characters.BigWolf)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, dummy_id=100, vfx_id=800, right=0)
     Event_1049543700(0, character=Characters.TalkDummy1, region=1049542700, distance=155.0)
     CommonFunc_90005706(0, character=Characters.WanderingNoble4, animation_id=930023, left=0)
 
@@ -243,10 +244,10 @@ def Event_1049542510():
         flag=1049540510,
         flag_1=1049540511,
         left=10,
-        asset=m12_03_Assets.AEG239_010_0500,
+        asset=m12_03_00_00_Assets.AEG239_010_0500,
         asset_1=1049541511,
         obj_act_id=1049543511,
-        asset_2=m12_03_Assets.AEG239_021_0502,
+        asset_2=m12_03_00_00_Assets.AEG239_021_0502,
         obj_act_id_1=12033512,
         region=1049542511,
         region_1=12032512,
@@ -265,7 +266,7 @@ def Event_1049540519():
 
 
 @RestartOnRest(1049543700)
-def Event_1049543700(_, character: uint, region: uint, distance: float):
+def Event_1049543700(_, character: Character | int, region: uint, distance: float):
     """Event 1049543700"""
     WaitFrames(frames=1)
     DisableBackread(character)

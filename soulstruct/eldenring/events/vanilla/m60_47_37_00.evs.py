@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_47_37_00_enums import *
 
 
@@ -45,7 +46,15 @@ def Constructor():
 
 
 @RestartOnRest(1047372200)
-def Event_1047372200(_, flag: uint, flag_1: uint, anchor_entity: uint, character: uint, left: int, item_lot: int):
+def Event_1047372200(
+    _,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    anchor_entity: uint,
+    character: Character | int,
+    left: int,
+    item_lot: int,
+):
     """Event 1047372200"""
     if FlagEnabled(flag):
         return
@@ -56,22 +65,12 @@ def Event_1047372200(_, flag: uint, flag_1: uint, anchor_entity: uint, character
     
     Wait(1.0)
     GotoIfValueComparison(Label.L2, comparison_type=ComparisonType.Equal, left=left, right=0)
-    CreateTemporaryVFX(
-        vfx_id=601111,
-        anchor_entity=anchor_entity,
-        dummy_id=960,
-        anchor_type=CoordEntityType.Character,
-    )
+    CreateTemporaryVFX(vfx_id=601111, anchor_entity=anchor_entity, dummy_id=960, anchor_type=CoordEntityType.Character)
     Goto(Label.L3)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    CreateTemporaryVFX(
-        vfx_id=601110,
-        anchor_entity=anchor_entity,
-        dummy_id=960,
-        anchor_type=CoordEntityType.Character,
-    )
+    CreateTemporaryVFX(vfx_id=601110, anchor_entity=anchor_entity, dummy_id=960, anchor_type=CoordEntityType.Character)
 
     # --- Label 3 --- #
     DefineLabel(3)

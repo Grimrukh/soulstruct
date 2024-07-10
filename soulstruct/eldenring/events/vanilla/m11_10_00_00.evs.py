@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m11_10_00_00_enums import *
 
 
@@ -93,8 +94,8 @@ def Constructor():
     CommonFunc_90005621(0, flag=11100575, asset=Assets.AEG099_270_9001)
     Event_11102680()
     Event_11103700(0, character=Characters.ScalyMisbegotten)
-    RunCommonEvent(11103702)
-    RunCommonEvent(11103703)
+    RunCommonEvent(Event_11103702)
+    RunCommonEvent(Event_11103703)
     Event_11103705(0, character=Characters.FingerReaderEnia)
     CommonFunc_90005708(0, character=Characters.FingerReaderEnia, flag=3480, left=0)
     Event_11103706(0, entity=Characters.TheTwoFingers)
@@ -126,7 +127,7 @@ def Constructor():
         first_flag=400349,
         last_flag=400349,
         flag=4048,
-        dummy_id=0,
+        vfx_id=0,
     )
     CommonFunc_90005775(0, world_map_point_param_id=81463900, flag=1045399206, distance=-1.0)
     Event_11100735(0, character=Characters.FiaDeathbedCompanion0)
@@ -171,7 +172,7 @@ def Constructor():
         first_flag=400359,
         last_flag=400359,
         flag=3909,
-        dummy_id=0,
+        vfx_id=0,
     )
     CommonFunc_90005750(
         0,
@@ -181,7 +182,7 @@ def Constructor():
         first_flag=400356,
         last_flag=400358,
         flag=400359,
-        dummy_id=0,
+        vfx_id=0,
     )
     Event_11100740(0, character=Characters.SirGideonOfnir0)
     Event_11100741(0, character=Characters.SirGideonOfnir1)
@@ -201,11 +202,11 @@ def Constructor():
         first_flag=400490,
         last_flag=400490,
         flag=11109656,
-        dummy_id=0,
+        vfx_id=0,
     )
-    RunCommonEvent(11103770)
-    RunCommonEvent(11103771)
-    RunCommonEvent(11103772)
+    RunCommonEvent(Event_11103770)
+    RunCommonEvent(Event_11103771)
+    RunCommonEvent(Event_11103772)
     Event_11103775()
     Event_11100790()
     Event_11100791(0, flag=400282, flag_1=11109770)
@@ -246,6 +247,7 @@ def Preconstructor():
     DisableBackread(Characters.MadTongueAlberich)
     EnableAssetInvulnerability(Assets.AEG221_531_4500)
     EnableAssetInvulnerability(Assets.AEG221_524_4500)
+    Event_11100690()
     Event_11002548()
     Event_11100680()
     Event_11102100()
@@ -432,15 +434,15 @@ def Event_11102606():
 @ContinueOnRest(11102620)
 def Event_11102620(
     _,
-    flag: uint,
-    left_flag: uint,
-    cancel_flag__right_flag: uint,
+    flag: Flag | int,
+    left_flag: Flag | int,
+    cancel_flag__right_flag: Flag | int,
     asset: uint,
-    player_start: uint,
+    player_start: PlayerStart | int,
     area_id: uchar,
     block_id: uchar,
-    cc_id: char,
-    dd_id: char,
+    cc_id: uchar,
+    dd_id: uchar,
 ):
     """Event 11102620"""
     if PlayerNotInOwnWorld():
@@ -453,7 +455,7 @@ def Event_11102620(
     MAIN.Await(AND_1)
     
     if ThisEventSlotFlagDisabled():
-        CreateAssetVFX(asset, vfx_id=190, dummy_id=1300)
+        CreateAssetVFX(asset, dummy_id=190, vfx_id=1300)
     OR_2.Add(MultiplayerPending())
     OR_2.Add(Multiplayer())
     AND_2.Add(not OR_2)
@@ -478,14 +480,14 @@ def Event_11102620(
 
     # --- Label 1 --- #
     DefineLabel(1)
-    FaceEntity(PLAYER, Assets.AEG099_065_9000, wait_for_completion=True)
+    FaceEntityAndForceAnimation(PLAYER, Assets.AEG099_065_9000, wait_for_completion=True)
     ForceAnimation(PLAYER, 60460)
     Wait(2.5)
     WarpToMap(game_map=(area_id, block_id, cc_id, dd_id), player_start=player_start, unk_8_12=-11100)
 
 
 @RestartOnRest(11102650)
-def Event_11102650(_, flag: uint, tutorial_param_id: int, item: int, flag_1: uint):
+def Event_11102650(_, flag: Flag | int, tutorial_param_id: int, item: BaseItemParam | int, flag_1: Flag | int):
     """Event 11102650"""
     DisableNetworkSync()
     if PlayerNotInOwnWorld():
@@ -510,7 +512,7 @@ def Event_11102650(_, flag: uint, tutorial_param_id: int, item: int, flag_1: uin
 
 
 @RestartOnRest(11102651)
-def Event_11102651(_, flag: uint, tutorial_param_id: int, item: int, flag_1: uint):
+def Event_11102651(_, flag: Flag | int, tutorial_param_id: int, item: BaseItemParam | int, flag_1: Flag | int):
     """Event 11102651"""
     DisableNetworkSync()
     if PlayerNotInOwnWorld():
@@ -535,7 +537,7 @@ def Event_11102651(_, flag: uint, tutorial_param_id: int, item: int, flag_1: uin
 
 
 @RestartOnRest(11102652)
-def Event_11102652(_, flag: uint, tutorial_param_id: int, item: int, flag_1: uint):
+def Event_11102652(_, flag: Flag | int, tutorial_param_id: int, item: BaseItemParam | int, flag_1: Flag | int):
     """Event 11102652"""
     DisableNetworkSync()
     if PlayerNotInOwnWorld():
@@ -571,7 +573,8 @@ def Event_11100680():
     DisableHealthBar(Characters.TalkDummy3)
     ActivateGparamOverride(gparam_sub_id=1, change_duration=0.0)
     SetTeamType(Characters.EnshaoftheRoyalRemains1, TeamType.Enemy)
-    EndOfAnimation(asset=1110548, animation_id=0)
+    Wait(0.5)
+    EndOfAnimation(asset=Assets.AEG227_013_0501, animation_id=0)
     AND_1.Add(CharacterDead(Characters.EnshaoftheRoyalRemains1))
     
     MAIN.Await(AND_1)
@@ -580,7 +583,7 @@ def Event_11100680():
     DisplayBanner(BannerType.GreatEnemyFelled)
     DisableFlag(1035429211)
     SetPseudoMultiplayerReturnPosition(region=11102766)
-    AddSpecialEffect(20000, 4820)
+    AddSpecialEffect(ALL_PLAYERS, 4820)
     IssueEndOfPseudoMultiplayerNotification(success=True)
 
 
@@ -604,6 +607,26 @@ def Event_11102680():
     MAIN.Await(OR_1)
     
     EnableAI(Characters.EnshaoftheRoyalRemains1)
+
+
+@RestartOnRest(11100690)
+def Event_11100690():
+    """Event 11100690"""
+    if PlayerNotInOwnWorld():
+        return
+    if ThisEventSlotFlagEnabled():
+        return
+    OR_1.Add(CharacterInsideRegion(character=PLAYER, region=11102690))
+    GotoIfConditionTrue(Label.L0, input_condition=OR_1)
+    GotoIfConditionFalse(Label.L1, input_condition=OR_1)
+
+    # --- Label 0 --- #
+    DefineLabel(0)
+    Move(PLAYER, destination=11102691, destination_type=CoordEntityType.Region, copy_draw_parent=0)
+
+    # --- Label 1 --- #
+    DefineLabel(1)
+    End()
 
 
 @RestartOnRest(11103700)
@@ -648,7 +671,7 @@ def Event_11103700(_, character: uint):
     AND_5.Add(FlagEnabled(1035429211))
     SkipLinesIfConditionTrue(6, AND_5)
     DeleteAssetVFX(Assets.AEG099_090_9001)
-    CreateAssetVFX(Assets.AEG099_090_9001, vfx_id=100, dummy_id=803450)
+    CreateAssetVFX(Assets.AEG099_090_9001, dummy_id=100, vfx_id=803450)
     if FlagEnabled(110):
         EnableAsset(Assets.AEG221_657_4500)
     if FlagDisabled(110):
@@ -1226,14 +1249,14 @@ def Event_11103716(_, character: uint):
 
 
 @RestartOnRest(11103720)
-def Event_11103720(_, character: uint):
+def Event_11103720(_, character: Character | int):
     """Event 11103720"""
     DisableCharacter(character)
     DisableBackread(character)
 
 
 @RestartOnRest(11100730)
-def Event_11100730(_, character: uint, asset: uint):
+def Event_11100730(_, character: uint, asset: Asset | int):
     """Event 11100730"""
     WaitFrames(frames=1)
     DisableNetworkSync()
@@ -1270,7 +1293,7 @@ def Event_11100730(_, character: uint, asset: uint):
 
 
 @RestartOnRest(11100731)
-def Event_11100731(_, character: uint, asset: uint, entity: uint):
+def Event_11100731(_, character: uint, asset: Asset | int, entity: uint):
     """Event 11100731"""
     WaitFrames(frames=1)
     DisableNetworkSync()
@@ -1565,7 +1588,7 @@ def Event_11100745(_, character: uint):
 
 
 @RestartOnRest(11100750)
-def Event_11100750(_, character: uint, asset: uint):
+def Event_11100750(_, character: uint, asset: Asset | int):
     """Event 11100750"""
     DisableNetworkSync()
     WaitFrames(frames=1)
@@ -1951,13 +1974,13 @@ def Event_11103775():
     
     GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_1)
     DisableFlag(11109785)
-    DisplayDialog(text=30120, anchor_entity=0, display_distance=5.0, number_buttons=NumberButtons.OneButton)
+    DisplayDialog(text=30120, display_distance=5.0, number_buttons=NumberButtons.OneButton)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
     DisableFlag(1034509254)
-    DisplayDialog(text=30130, anchor_entity=0, display_distance=5.0, button_type=ButtonType.Yes_or_No)
+    DisplayDialog(text=30130, display_distance=5.0, button_type=ButtonType.Yes_or_No)
     End()
 
 
@@ -1971,7 +1994,7 @@ def Event_11100790():
 
 
 @RestartOnRest(11100791)
-def Event_11100791(_, flag: uint, flag_1: uint):
+def Event_11100791(_, flag: Flag | int, flag_1: Flag | int):
     """Event 11100791"""
     if PlayerNotInOwnWorld():
         return
@@ -2038,7 +2061,7 @@ def Event_11100797():
     """Event 11100797"""
     if PlayerNotInOwnWorld():
         return
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     AND_1.Add(FlagRangeAnyEnabled(flag_range=(3487, 3489)))
     AND_1.Add(FlagDisabled(60500))
     AND_1.Add(FlagDisabled(11109777))

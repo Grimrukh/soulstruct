@@ -17,6 +17,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_39_42_00_enums import *
 
 
@@ -57,7 +58,7 @@ def Constructor():
         seconds_1=0.0,
     )
     CommonFunc_90005630(0, far_view_id=61394200, asset=1039421500, dummy_id=115)
-    CommonFunc_90005683(0, flag=62203, asset=Assets.AEG099_055_1000, vfx_id=209, flag_1=78294, flag_2=78294)
+    CommonFunc_90005683(0, flag=62203, asset=Assets.AEG099_055_1000, dummy_id=209, flag_1=78294, flag_2=78294)
     CommonFunc_90005631(0, anchor_entity=Assets.AEG099_376_1000, text=61020)
     CommonFunc_90005706(0, character=Characters.WanderingNoble9, animation_id=930025, left=0)
 
@@ -69,7 +70,7 @@ def Preconstructor():
 
 
 @RestartOnRest(1039422200)
-def Event_1039422200(_, attacker__character: uint, region: uint):
+def Event_1039422200(_, attacker__character: uint, region: Region | int):
     """Event 1039422200"""
     RemoveSpecialEffect(attacker__character, 4800)
     RemoveSpecialEffect(attacker__character, 5657)
@@ -86,12 +87,12 @@ def Event_1039422200(_, attacker__character: uint, region: uint):
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=PLAYER))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=35000))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=35000, attacker=attacker__character))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=ALL_SPIRIT_SUMMONS))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=ALL_SPIRIT_SUMMONS, attacker=attacker__character))
     OR_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=attacker__character, radius=10.0))
-    OR_2.Add(EntityWithinDistance(entity=35000, other_entity=attacker__character, radius=10.0))
+    OR_2.Add(EntityWithinDistance(entity=ALL_SPIRIT_SUMMONS, other_entity=attacker__character, radius=10.0))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
-    OR_2.Add(CharacterInsideRegion(character=35000, region=region))
+    OR_2.Add(CharacterInsideRegion(character=ALL_SPIRIT_SUMMONS, region=region))
     AND_1.Add(OR_2)
     
     MAIN.Await(AND_1)
@@ -102,14 +103,14 @@ def Event_1039422200(_, attacker__character: uint, region: uint):
 
 
 @RestartOnRest(1039422202)
-def Event_1039422202(_, character: uint):
+def Event_1039422202(_, character: Character | int):
     """Event 1039422202"""
     Kill(character)
     End()
 
 
 @RestartOnRest(1039422210)
-def Event_1039422210(_, character: uint, region: uint, flag: uint):
+def Event_1039422210(_, character: uint, region: Region | int, flag: Flag | int):
     """Event 1039422210"""
     AND_10.Add(CharacterDead(character))
     if AND_10:
@@ -174,7 +175,7 @@ def Event_1039422210(_, character: uint, region: uint, flag: uint):
 
 
 @RestartOnRest(1039422340)
-def Event_1039422340(_, character: uint, region: uint, flag: uint):
+def Event_1039422340(_, character: uint, region: Region | int, flag: Flag | int):
     """Event 1039422340"""
     AND_10.Add(CharacterDead(character))
     if AND_10:
@@ -238,10 +239,10 @@ def Event_1039422340(_, character: uint, region: uint, flag: uint):
 
 
 @RestartOnRest(1039422600)
-def Event_1039422600(_, asset: uint, entity: uint, flag: uint):
+def Event_1039422600(_, asset: Asset | int, entity: uint, flag: Flag | int):
     """Event 1039422600"""
     GotoIfFlagEnabled(Label.L0, flag=flag)
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=803220)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=803220)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -258,11 +259,11 @@ def Event_1039422610(
     anchor_entity: uint,
     area_id: uchar,
     block_id: uchar,
-    cc_id: char,
-    dd_id: char,
-    player_start: uint,
-    left_flag: uint,
-    cancel_flag__right_flag: uint,
+    cc_id: uchar,
+    dd_id: uchar,
+    player_start: PlayerStart | int,
+    left_flag: Flag | int,
+    cancel_flag__right_flag: Flag | int,
 ):
     """Event 1039422610"""
     if Multiplayer():

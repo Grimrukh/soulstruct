@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_42_50_00_enums import *
 
 
@@ -30,7 +31,7 @@ def Constructor():
         character=Characters.UlceratedTreeSpirit,
         item_lot=1042500020,
         seconds=0.0,
-        item_is_dropped=0,
+        left=0,
     )
 
 

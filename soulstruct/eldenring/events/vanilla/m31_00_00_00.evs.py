@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m31_00_00_00_enums import *
 
 
@@ -50,9 +51,9 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    Event_31002500(0, attacked_entity=31001500, region=31002500)
-    Event_31002500(1, attacked_entity=31001501, region=31002501)
-    Event_31002500(2, attacked_entity=31001502, region=31002502)
+    Event_31002500(0, attacked_entity=Assets.AEG099_280_9000, region=31002500)
+    Event_31002500(1, attacked_entity=Assets.AEG099_280_9001, region=31002501)
+    Event_31002500(2, attacked_entity=Assets.AEG099_280_9002, region=31002502)
     Event_31003700(0, character=Characters.Patches1)
     Event_31003710(0, character=Characters.Patches3)
     Event_31003701(0, character=Characters.Patches1, flag=31002709, flag_1=31009201, character_1=Characters.Patches0)
@@ -233,7 +234,7 @@ def Event_31002500(_, attacked_entity: uint, region: uint):
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    PlaySoundEffect(attacked_entity, 810000099, sound_type=SoundType.Unknown14)
+    PlaySoundEffect(attacked_entity, 810000099, sound_type=SoundType.unk_GeometrySet)
     ForceAnimation(attacked_entity, 1)
     TriggerAISound(ai_sound_param_id=7000, anchor_entity=region, unk_8_12=1)
     Wait(2.0)
@@ -248,16 +249,16 @@ def Event_31002200(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    region: uint,
+    region: Region | int,
     radius: float,
     seconds: float,
     left: uint,
     left_1: uint,
     left_2: uint,
     left_3: uint,
-    region_1: uint,
-    region_2: uint,
-    region_3: uint,
+    region_1: Region | int,
+    region_2: Region | int,
+    region_3: Region | int,
 ):
     """Event 31002200"""
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
@@ -355,13 +356,13 @@ def Event_31002200(
 def Event_31002210(
     _,
     character: uint,
-    region: uint,
+    region: Region | int,
     radius: float,
     seconds: float,
     animation_id: int,
-    region_1: uint,
-    region_2: uint,
-    region_3: uint,
+    region_1: Region | int,
+    region_2: Region | int,
+    region_3: Region | int,
 ):
     """Event 31002210"""
     if ThisEventSlotFlagEnabled():
@@ -425,7 +426,7 @@ def Event_31002210(
 
 
 @RestartOnRest(31002230)
-def Event_31002230(_, character: uint, region: uint, radius: float, seconds: float, animation_id: int):
+def Event_31002230(_, character: uint, region: Region | int, radius: float, seconds: float, animation_id: int):
     """Event 31002230"""
     if ThisEventSlotFlagEnabled():
         return
@@ -656,7 +657,7 @@ def Event_31002849():
         flag_2=31002806,
         action_button_id=10000,
     )
-    Event_31002832(0, flag=31000800, asset=Assets.AEG099_001_9000, dummy_id=4, right=0)
+    Event_31002832(0, flag=31000800, asset=Assets.AEG099_001_9000, vfx_id=4, right=0)
     Event_31002833(
         0,
         flag=31000800,
@@ -671,7 +672,15 @@ def Event_31002849():
 
 
 @RestartOnRest(31002831)
-def Event_31002831(_, flag: uint, entity: uint, region: uint, flag_1: uint, flag_2: uint, action_button_id: int):
+def Event_31002831(
+    _,
+    flag: Flag | int,
+    entity: uint,
+    region: uint,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
+    action_button_id: int,
+):
     """Event 31002831"""
     if FlagEnabled(3691):
         return
@@ -686,7 +695,7 @@ def Event_31002831(_, flag: uint, entity: uint, region: uint, flag_1: uint, flag
     MAIN.Await(AND_1)
     
     SuppressSoundForFogGate(duration=5.0)
-    FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    FaceEntityAndForceAnimation(PLAYER, region, animation=60060, wait_for_completion=True)
     AND_2.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
     OR_1.Add(TimeElapsed(seconds=3.0))
@@ -695,7 +704,8 @@ def Event_31002831(_, flag: uint, entity: uint, region: uint, flag_1: uint, flag
     
     MAIN.Await(AND_2)
     
-    RestartIfLastConditionResultTrue(input_condition=OR_1)
+    if LastResult(OR_1):
+        return RESTART
     EnableFlag(flag_2)
     Restart()
 
@@ -703,14 +713,14 @@ def Event_31002831(_, flag: uint, entity: uint, region: uint, flag_1: uint, flag
 @RestartOnRest(31002830)
 def Event_31002830(
     _,
-    flag: uint,
+    flag: Flag | int,
     entity: uint,
     region: uint,
-    flag_1: uint,
-    character: uint,
+    flag_1: Flag | int,
+    character: Character | int,
     action_button_id: int,
-    left: uint,
-    region_1: uint,
+    left: Flag | int,
+    region_1: Region | int,
 ):
     """Event 31002830"""
     if FlagEnabled(3691):
@@ -749,9 +759,9 @@ def Event_31002830(
         return RESTART
     SuppressSoundForFogGate(duration=5.0)
     if CharacterDoesNotHaveSpecialEffect(character=PLAYER, special_effect=4250):
-        FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+        FaceEntityAndForceAnimation(PLAYER, region, animation=60060, wait_for_completion=True)
     else:
-        FaceEntity(PLAYER, region, animation=60060)
+        FaceEntityAndForceAnimation(PLAYER, region, animation=60060)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -769,7 +779,8 @@ def Event_31002830(
     
     if FlagEnabled(flag):
         return RESTART
-    RestartIfLastConditionResultTrue(input_condition=OR_4)
+    if LastResult(OR_4):
+        return RESTART
 
     # --- Label 1 --- #
     DefineLabel(1)
@@ -798,13 +809,13 @@ def Event_31002830(
     
     MAIN.Await(AND_10)
     
-    FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    FaceEntityAndForceAnimation(PLAYER, region, animation=60060, wait_for_completion=True)
     BanishInvaders(unknown=0)
     Restart()
 
 
 @RestartOnRest(31002832)
-def Event_31002832(_, flag: uint, asset: uint, dummy_id: int, right: uint):
+def Event_31002832(_, flag: Flag | int, asset: uint, vfx_id: int, right: Flag | int):
     """Event 31002832"""
     if FlagEnabled(3691):
         return
@@ -846,7 +857,7 @@ def Event_31002832(_, flag: uint, asset: uint, dummy_id: int, right: uint):
     
     EnableAsset(asset)
     DeleteAssetVFX(asset)
-    CreateAssetVFX(asset, vfx_id=101, dummy_id=dummy_id)
+    CreateAssetVFX(asset, dummy_id=101, vfx_id=vfx_id)
     OR_11.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     OR_11.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader))
     OR_11.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader2))
@@ -886,12 +897,12 @@ def Event_31002832(_, flag: uint, asset: uint, dummy_id: int, right: uint):
 @RestartOnRest(31002833)
 def Event_31002833(
     _,
-    flag: uint,
+    flag: Flag | int,
     bgm_boss_conv_param_id: int,
-    flag_1: uint,
-    flag_2: uint,
-    right: uint,
-    flag_3: uint,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
+    right: Flag | int,
+    flag_3: Flag | int,
     left: int,
     left_1: int,
 ):
@@ -952,7 +963,7 @@ def Event_31002899():
         left=0,
         region_1=0,
     )
-    Event_31002872(0, flag=31000850, asset=Assets.AEG099_001_9000, dummy_id=4, right=0)
+    Event_31002872(0, flag=31000850, asset=Assets.AEG099_001_9000, vfx_id=4, right=0)
     Event_31002873(
         0,
         flag=31000850,
@@ -1101,14 +1112,14 @@ def Event_31002863():
 @RestartOnRest(31002870)
 def Event_31002870(
     _,
-    flag: uint,
+    flag: Flag | int,
     entity: uint,
     region: uint,
-    flag_1: uint,
-    character: uint,
+    flag_1: Flag | int,
+    character: Character | int,
     action_button_id: int,
-    left: uint,
-    region_1: uint,
+    left: Flag | int,
+    region_1: Region | int,
 ):
     """Event 31002870"""
     if FlagDisabled(3691):
@@ -1147,9 +1158,9 @@ def Event_31002870(
         return RESTART
     SuppressSoundForFogGate(duration=5.0)
     if CharacterDoesNotHaveSpecialEffect(character=PLAYER, special_effect=4250):
-        FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+        FaceEntityAndForceAnimation(PLAYER, region, animation=60060, wait_for_completion=True)
     else:
-        FaceEntity(PLAYER, region, animation=60060)
+        FaceEntityAndForceAnimation(PLAYER, region, animation=60060)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -1167,7 +1178,8 @@ def Event_31002870(
     
     if FlagEnabled(flag):
         return RESTART
-    RestartIfLastConditionResultTrue(input_condition=OR_4)
+    if LastResult(OR_4):
+        return RESTART
 
     # --- Label 1 --- #
     DefineLabel(1)
@@ -1196,13 +1208,13 @@ def Event_31002870(
     
     MAIN.Await(AND_10)
     
-    FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    FaceEntityAndForceAnimation(PLAYER, region, animation=60060, wait_for_completion=True)
     BanishInvaders(unknown=0)
     Restart()
 
 
 @RestartOnRest(31002872)
-def Event_31002872(_, flag: uint, asset: uint, dummy_id: int, right: uint):
+def Event_31002872(_, flag: Flag | int, asset: uint, vfx_id: int, right: Flag | int):
     """Event 31002872"""
     if FlagDisabled(3691):
         return
@@ -1244,7 +1256,7 @@ def Event_31002872(_, flag: uint, asset: uint, dummy_id: int, right: uint):
     
     EnableAsset(asset)
     DeleteAssetVFX(asset)
-    CreateAssetVFX(asset, vfx_id=101, dummy_id=dummy_id)
+    CreateAssetVFX(asset, dummy_id=101, vfx_id=vfx_id)
     OR_11.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     OR_11.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader))
     OR_11.Add(CharacterIsType(PLAYER, character_type=CharacterType.Invader2))
@@ -1284,12 +1296,12 @@ def Event_31002872(_, flag: uint, asset: uint, dummy_id: int, right: uint):
 @RestartOnRest(31002873)
 def Event_31002873(
     _,
-    flag: uint,
+    flag: Flag | int,
     bgm_boss_conv_param_id: int,
-    flag_1: uint,
-    flag_2: uint,
-    right: uint,
-    flag_3: uint,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
+    right: Flag | int,
+    flag_3: Flag | int,
     left: int,
     left_1: int,
 ):
@@ -1412,15 +1424,15 @@ def Event_31002875():
 @RestartOnRest(31002876)
 def Event_31002876(
     _,
-    flag: uint,
-    left_flag: uint,
-    cancel_flag__right_flag: uint,
+    flag: Flag | int,
+    left_flag: Flag | int,
+    cancel_flag__right_flag: Flag | int,
     asset: uint,
-    player_start: uint,
+    player_start: PlayerStart | int,
     area_id: uchar,
     block_id: uchar,
-    cc_id: char,
-    dd_id: char,
+    cc_id: uchar,
+    dd_id: uchar,
 ):
     """Event 31002876"""
     if PlayerNotInOwnWorld():
@@ -1434,7 +1446,7 @@ def Event_31002876(
     MAIN.Await(AND_1)
     
     if ThisEventSlotFlagDisabled():
-        CreateAssetVFX(asset, vfx_id=190, dummy_id=1300)
+        CreateAssetVFX(asset, dummy_id=190, vfx_id=1300)
     OR_2.Add(MultiplayerPending())
     OR_2.Add(Multiplayer())
     AND_2.Add(not OR_2)
@@ -1545,7 +1557,7 @@ def Event_31003700(_, character: uint):
 
 
 @RestartOnRest(31003701)
-def Event_31003701(_, character: uint, flag: uint, flag_1: uint, character_1: uint):
+def Event_31003701(_, character: uint, flag: Flag | int, flag_1: Flag | int, character_1: uint):
     """Event 31003701"""
     WaitFrames(frames=1)
     if PlayerNotInOwnWorld():
@@ -1611,7 +1623,7 @@ def Event_31003701(_, character: uint, flag: uint, flag_1: uint, character_1: ui
 
 
 @RestartOnRest(31003702)
-def Event_31003702(_, character: uint):
+def Event_31003702(_, character: Character | int):
     """Event 31003702"""
     WaitFrames(frames=1)
     if PlayerNotInOwnWorld():
@@ -1651,7 +1663,7 @@ def Event_31003703():
 
 
 @RestartOnRest(31003704)
-def Event_31003704(_, character: uint, seconds: float):
+def Event_31003704(_, character: Character | int, seconds: float):
     """Event 31003704"""
     WaitFrames(frames=1)
     if FlagDisabled(3685):
@@ -1723,7 +1735,7 @@ def Event_31003704(_, character: uint, seconds: float):
 
     # --- Label 2 --- #
     DefineLabel(2)
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     AddSpecialEffect(character, 9702)
     AddSpecialEffect(character, 5006)
     AddSpecialEffect(character, 9704)
@@ -1734,7 +1746,7 @@ def Event_31003704(_, character: uint, seconds: float):
 
 
 @RestartOnRest(31003705)
-def Event_31003705(_, character: uint):
+def Event_31003705(_, character: Character | int):
     """Event 31003705"""
     GotoIfPlayerNotInOwnWorld(Label.L1)
     WaitFrames(frames=1)
@@ -1798,7 +1810,7 @@ def Event_31003705(_, character: uint):
 
 
 @RestartOnRest(31003706)
-def Event_31003706(_, character: uint, flag: uint, first_flag: uint, last_flag: uint):
+def Event_31003706(_, character: Character | int, flag: Flag | int, first_flag: Flag | int, last_flag: Flag | int):
     """Event 31003706"""
     if PlayerNotInOwnWorld():
         return
@@ -1854,7 +1866,7 @@ def Event_31003707():
     Wait(2.200000047683716)
     AND_1.Add(HealthValue(PLAYER) == 0)
     GotoIfConditionTrue(Label.L20, input_condition=AND_1)
-    DisplayDialog(text=20700, anchor_entity=0, display_distance=5.0, button_type=ButtonType.Yes_or_No)
+    DisplayDialog(text=20700, display_distance=5.0, button_type=ButtonType.Yes_or_No)
     Wait(2.799999952316284)
     AND_2.Add(HealthValue(PLAYER) == 0)
     GotoIfConditionTrue(Label.L20, input_condition=AND_2)
@@ -1993,7 +2005,7 @@ def Event_31003710(_, character: uint):
 
 
 @RestartOnRest(31003711)
-def Event_31003711(_, character: uint, flag: uint, flag_1: uint, character_1: uint):
+def Event_31003711(_, character: uint, flag: Flag | int, flag_1: Flag | int, character_1: uint):
     """Event 31003711"""
     WaitFrames(frames=1)
     if PlayerNotInOwnWorld():
@@ -2068,7 +2080,7 @@ def Event_31003712():
 
 
 @RestartOnRest(31003713)
-def Event_31003713(_, character: uint):
+def Event_31003713(_, character: Character | int):
     """Event 31003713"""
     if PlayerNotInOwnWorld():
         return
@@ -2098,7 +2110,7 @@ def Event_31003713(_, character: uint):
 
 
 @RestartOnRest(31003714)
-def Event_31003714(_, character: uint, seconds: float):
+def Event_31003714(_, character: Character | int, seconds: float):
     """Event 31003714"""
     WaitFrames(frames=1)
     if FlagDisabled(3691):
@@ -2179,7 +2191,7 @@ def Event_31003714(_, character: uint, seconds: float):
 
     # --- Label 2 --- #
     DefineLabel(2)
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     AddSpecialEffect(character, 9702)
     AddSpecialEffect(character, 5006)
     AddSpecialEffect(character, 9704)
@@ -2191,7 +2203,7 @@ def Event_31003714(_, character: uint, seconds: float):
 
 
 @RestartOnRest(31003715)
-def Event_31003715(_, attacked_entity: uint):
+def Event_31003715(_, attacked_entity: Character | int):
     """Event 31003715"""
     if PlayerNotInOwnWorld():
         return
@@ -2243,7 +2255,7 @@ def Event_31003715(_, attacked_entity: uint):
 
 
 @RestartOnRest(31003716)
-def Event_31003716(_, character: uint, flag: uint, first_flag: uint, last_flag: uint):
+def Event_31003716(_, character: Character | int, flag: Flag | int, first_flag: Flag | int, last_flag: Flag | int):
     """Event 31003716"""
     if PlayerNotInOwnWorld():
         return

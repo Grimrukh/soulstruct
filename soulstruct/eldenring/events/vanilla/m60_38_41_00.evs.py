@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_38_41_00_enums import *
 
 
@@ -288,7 +289,7 @@ def Event_1038413710(_, character: uint):
 
 
 @RestartOnRest(1038413711)
-def Event_1038413711(_, character: uint, flag: uint, flag_1: uint):
+def Event_1038413711(_, character: uint, flag: Flag | int, flag_1: Flag | int):
     """Event 1038413711"""
     WaitFrames(frames=1)
     if PlayerNotInOwnWorld():

@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m30_16_00_00_enums import *
 
 
@@ -25,7 +26,7 @@ from .enums.m30_16_00_00_enums import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=301600, asset=Assets.AEG099_060_9000)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, dummy_id=100, vfx_id=800, right=0)
     Event_30162800()
     Event_30162810()
     Event_30162849()
@@ -50,13 +51,13 @@ def Constructor():
         region=30162242,
         radius=8.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     Event_30162622()
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30160221, region=30162221, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30160221, region=30162221, seconds=0.0, animation_id=-1)
     CommonFunc_90005650(
         0,
         flag=30160540,
@@ -131,7 +132,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier6, region=30162221, seconds=0.0, animation_id=3006)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier6, region=30162221, seconds=0.0, animation_id=3006)
     CommonFunc_90005200(
         0,
         character=Characters.Imp4,
@@ -144,7 +145,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Imp5, region=30162205, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Imp5, region=30162205, seconds=0.0, animation_id=0)
     CommonFunc_90005200(
         0,
         character=Characters.Imp6,
@@ -319,7 +320,7 @@ def Preconstructor():
 
 
 @RestartOnRest(30162601)
-def Event_30162601(_, region: uint, entity: uint):
+def Event_30162601(_, region: Region | int, entity: uint):
     """Event 30162601"""
     if ThisEventSlotFlagEnabled():
         return
@@ -339,7 +340,7 @@ def Event_30162601(_, region: uint, entity: uint):
 
 
 @RestartOnRest(30162602)
-def Event_30162602(_, character: uint, character_1: uint, animation_id: int):
+def Event_30162602(_, character: uint, character_1: Character | int, animation_id: int):
     """Event 30162602"""
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
     DisableCharacter(character)
@@ -353,7 +354,7 @@ def Event_30162602(_, character: uint, character_1: uint, animation_id: int):
 
 
 @RestartOnRest(30162511)
-def Event_30162511(_, character: uint, special_effect: int, region: uint):
+def Event_30162511(_, character: Character | int, special_effect: int, region: Region | int):
     """Event 30162511"""
     if ThisEventSlotFlagEnabled():
         return
@@ -410,20 +411,20 @@ def Event_30162621(_, character: uint):
     OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.RedmaneKnight1, attacker=PLAYER))
     OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.RedmaneKnight0, attacker=PLAYER))
     OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.RedmaneKnight3, attacker=PLAYER))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.CleanrotKnight3, attacker=35000))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.CleanrotKnight5, attacker=35000))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.RadahnSoldier0, attacker=35000))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.RadahnSoldier1, attacker=35000))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.RedmaneKnight1, attacker=35000))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.RedmaneKnight0, attacker=35000))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.RedmaneKnight3, attacker=35000))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.CleanrotKnight3, attacker=ALL_SPIRIT_SUMMONS))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.CleanrotKnight5, attacker=ALL_SPIRIT_SUMMONS))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.RadahnSoldier0, attacker=ALL_SPIRIT_SUMMONS))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.RadahnSoldier1, attacker=ALL_SPIRIT_SUMMONS))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.RedmaneKnight1, attacker=ALL_SPIRIT_SUMMONS))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.RedmaneKnight0, attacker=ALL_SPIRIT_SUMMONS))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.RedmaneKnight3, attacker=ALL_SPIRIT_SUMMONS))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=6))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=260))
     OR_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=5.0))
-    OR_2.Add(EntityWithinDistance(entity=35000, other_entity=character, radius=5.0))
+    OR_2.Add(EntityWithinDistance(entity=ALL_SPIRIT_SUMMONS, other_entity=character, radius=5.0))
     AND_1.Add(OR_2)
     
     MAIN.Await(AND_1)
@@ -450,7 +451,7 @@ def Event_30162621(_, character: uint):
 
 
 @RestartOnRest(30162520)
-def Event_30162520(_, flag: uint, asset: uint, flag_1: uint):
+def Event_30162520(_, flag: Flag | int, asset: Asset | int, flag_1: Flag | int):
     """Event 30162520"""
     if FlagEnabled(flag):
         return
@@ -556,7 +557,7 @@ def Event_30162849():
         flag_2=30162806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=30160800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=30160800, asset=Assets.AEG099_001_9000, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=30160800,
@@ -578,7 +579,7 @@ def Event_30162900():
     
     MAIN.Await(FlagEnabled(30160800))
     
-    CreateAssetVFX(30161900, vfx_id=90, dummy_id=1300)
+    CreateAssetVFX(30161900, dummy_id=90, vfx_id=1300)
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=9000, entity=30161900))
     

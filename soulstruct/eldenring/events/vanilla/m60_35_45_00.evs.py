@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_35_45_00_enums import *
 
 
@@ -118,10 +119,10 @@ def Preconstructor():
         region=1035452210,
         radius=3.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
 
 
@@ -138,7 +139,7 @@ def Event_1035452500():
     MAIN.Await(AND_1)
     
     Wait(2.0)
-    DisplayDialog(text=30100, anchor_entity=0, display_distance=5.0, button_type=ButtonType.Yes_or_No)
+    DisplayDialog(text=30100, display_distance=5.0, button_type=ButtonType.Yes_or_No)
 
 
 @ContinueOnRest(1035452600)
@@ -147,10 +148,10 @@ def Event_1035452600(
     anchor_entity: uint,
     area_id: uchar,
     block_id: uchar,
-    cc_id: char,
-    dd_id: char,
-    player_start: uint,
-    flag: uint,
+    cc_id: uchar,
+    dd_id: uchar,
+    player_start: PlayerStart | int,
+    flag: Flag | int,
     target_entity: uint,
     animation_id: int,
     action_button_id: int,
@@ -175,7 +176,7 @@ def Event_1035452600(
 
     # --- Label 1 --- #
     DefineLabel(1)
-    FaceEntity(PLAYER, target_entity, wait_for_completion=True)
+    FaceEntityAndForceAnimation(PLAYER, target_entity, wait_for_completion=True)
     ForceAnimation(PLAYER, animation_id)
     Wait(2.5)
     EnableFlag(flag)
@@ -183,7 +184,7 @@ def Event_1035452600(
 
 
 @RestartOnRest(1035452605)
-def Event_1035452605(_, flag: uint, target_entity: uint, animation: int):
+def Event_1035452605(_, flag: Flag | int, target_entity: uint, animation: int):
     """Event 1035452605"""
     if FlagDisabled(flag):
         return
@@ -191,5 +192,5 @@ def Event_1035452605(_, flag: uint, target_entity: uint, animation: int):
     MAIN.Await(FlagEnabled(flag))
     
     WaitFrames(frames=1)
-    FaceEntity(PLAYER, target_entity, animation=animation)
+    FaceEntityAndForceAnimation(PLAYER, target_entity, animation=animation)
     DisableFlag(flag)

@@ -19,6 +19,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_45_34_00_enums import *
 
 
@@ -68,8 +69,8 @@ def Constructor():
     CommonFunc_90005461(0, character=1045340207)
     CommonFunc_90005462(1, character=1045340207)
     CommonFunc_90005460(0, character=1045340207)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, dummy_id=800, right=1045348540)
-    CommonFunc_90005683(0, flag=62151, asset=Assets.AEG099_055_1000, vfx_id=208, flag_1=78198, flag_2=78198)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, dummy_id=100, vfx_id=800, right=1045348540)
+    CommonFunc_90005683(0, flag=62151, asset=Assets.AEG099_055_1000, dummy_id=208, flag_1=78198, flag_2=78198)
     CommonFunc_90005704(0, attacked_entity=Characters.IrinaofMorne0, flag=3381, flag_1=3380, flag_2=1045349201, right=3)
     CommonFunc_90005703(
         0,
@@ -107,7 +108,7 @@ def Constructor():
         first_flag=400061,
         last_flag=400061,
         flag=1045349258,
-        dummy_id=0,
+        vfx_id=0,
     )
     Event_1045340707(0, attacked_entity=Characters.Edgar)
 
@@ -119,11 +120,11 @@ def Preconstructor():
     DisableBackread(Characters.IrinaofMorne1)
     DisableBackread(Characters.Edgar)
     Event_1045340706()
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1045340405, region=1045342405, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=1045340405, region=1045342405, seconds=0.0, animation_id=0)
 
 
 @RestartOnRest(1045342250)
-def Event_1045342250(_, character: uint):
+def Event_1045342250(_, character: Character | int):
     """Event 1045342250"""
     Kill(character)
     End()
@@ -134,7 +135,7 @@ def Event_1045342680():
     """Event 1045342680"""
     MAIN.Await(FlagEnabled(1045348540))
     
-    CreateAssetVFX(Assets.AEG099_090_9001, vfx_id=100, dummy_id=800)
+    CreateAssetVFX(Assets.AEG099_090_9001, dummy_id=100, vfx_id=800)
 
 
 @RestartOnRest(1045340700)
@@ -196,7 +197,7 @@ def Event_1045340700(_, character: uint):
 
 
 @RestartOnRest(1045340701)
-def Event_1045340701(_, character: uint, asset: uint):
+def Event_1045340701(_, character: uint, asset: Asset | int):
     """Event 1045340701"""
     DisableNetworkSync()
     WaitFrames(frames=1)
@@ -306,7 +307,7 @@ def Event_1045340706():
 
 
 @RestartOnRest(1045340707)
-def Event_1045340707(_, attacked_entity: uint):
+def Event_1045340707(_, attacked_entity: Character | int):
     """Event 1045340707"""
     if PlayerNotInOwnWorld():
         return

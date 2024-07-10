@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m30_18_00_00_enums import *
 
 
@@ -25,8 +26,8 @@ from .enums.m30_18_00_00_enums import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=301800, asset=Assets.AEG099_060_9000)
-    CommonFunc_90005525(0, flag=30180570, asset=30181570)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_90005525(0, flag=30180570, asset=Assets.AEG027_157_1000)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=0)
     CommonFunc_90005616(0, flag=30187900, region=30182700)
     CommonFunc_90005200(
         0,
@@ -40,8 +41,8 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30180201, region=30182207, seconds=0.0, animation_id=3004)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Imp1, region=30182205, seconds=0.0, animation_id=3004)
+    CommonFunc_90005250(0, character=30180201, region=30182207, seconds=0.0, animation_id=3004)
+    CommonFunc_90005250(0, character=Characters.Imp1, region=30182205, seconds=0.0, animation_id=3004)
     CommonFunc_90005200(
         0,
         character=Characters.Imp2,
@@ -102,8 +103,8 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Imp11, region=30182218, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Imp4, region=30182300, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Imp11, region=30182218, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Imp4, region=30182300, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=30180213,
@@ -152,9 +153,9 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Imp10, region=30182300, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Imp12, region=30182221, seconds=0.0, animation_id=3004)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Imp13, region=30182221, seconds=1.0, animation_id=3004)
+    CommonFunc_90005250(0, character=Characters.Imp10, region=30182300, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Imp12, region=30182221, seconds=0.0, animation_id=3004)
+    CommonFunc_90005250(0, character=Characters.Imp13, region=30182221, seconds=1.0, animation_id=3004)
     CommonFunc_90005200(
         0,
         character=30180217,
@@ -167,7 +168,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Imp8, region=30182227, seconds=0.0, animation_id=3004)
+    CommonFunc_90005250(0, character=Characters.Imp8, region=30182227, seconds=0.0, animation_id=3004)
     CommonFunc_90005211(
         0,
         character=Characters.ErdtreeBurialWatchdog0,
@@ -176,10 +177,10 @@ def Constructor():
         region=30182353,
         radius=7.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005200(
         0,
@@ -289,11 +290,11 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallLivingPot7, region=30182250, seconds=0.0, animation_id=3003)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallLivingPot8, region=30182250, seconds=2.0, animation_id=3003)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LivingPot4, region=30182250, seconds=0.0, animation_id=3004)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30180327, region=30182250, seconds=2.5, animation_id=3003)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30180328, region=30182250, seconds=3.0, animation_id=3003)
+    CommonFunc_90005250(0, character=Characters.SmallLivingPot7, region=30182250, seconds=0.0, animation_id=3003)
+    CommonFunc_90005250(0, character=Characters.SmallLivingPot8, region=30182250, seconds=2.0, animation_id=3003)
+    CommonFunc_90005250(0, character=Characters.LivingPot4, region=30182250, seconds=0.0, animation_id=3004)
+    CommonFunc_90005250(0, character=30180327, region=30182250, seconds=2.5, animation_id=3003)
+    CommonFunc_90005250(0, character=30180328, region=30182250, seconds=3.0, animation_id=3003)
     CommonFunc_90005260(
         0,
         character=Characters.SmallLivingPot7,
@@ -314,8 +315,8 @@ def Constructor():
     CommonFunc_90005260(0, character=30180327, region=30182301, radius=5.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005260(0, character=30180328, region=30182301, radius=5.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005260(0, character=30180354, region=30182301, radius=5.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallLivingPot5, region=30182305, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallLivingPot6, region=30182305, seconds=1.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallLivingPot5, region=30182305, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallLivingPot6, region=30182305, seconds=1.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=Characters.SmallLivingPot16,
@@ -412,15 +413,15 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(
+    CommonFunc_90005250(
         0,
         character=Characters.SmallLivingPot0,
         region=30182251,
         seconds=0.699999988079071,
         animation_id=3010,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallLivingPot1, region=30182251, seconds=0.5, animation_id=3011)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30180341, region=30182341, seconds=0.0, animation_id=3011)
+    CommonFunc_90005250(0, character=Characters.SmallLivingPot1, region=30182251, seconds=0.5, animation_id=3011)
+    CommonFunc_90005250(0, character=30180341, region=30182341, seconds=0.0, animation_id=3011)
     CommonFunc_90005200(
         0,
         character=Characters.SmallLivingPot9,
@@ -433,9 +434,9 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LivingPot2, region=30182212, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30180342, region=30182229, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30180343, region=30182229, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LivingPot2, region=30182212, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30180342, region=30182229, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30180343, region=30182229, seconds=0.0, animation_id=-1)
     Event_30182218(0, character=Characters.Imp6, animation_id=30010)
     Event_30182218(1, character=Characters.Imp7, animation_id=30010)
     Event_30182218(2, character=Characters.Imp9, animation_id=30001)
@@ -445,7 +446,7 @@ def Constructor():
     Event_30182220(0, character=Characters.Imp6, seconds=0.0, animation_id=0)
     Event_30182220(1, character=Characters.Imp7, seconds=0.0, animation_id=0)
     Event_30182220(2, character=Characters.Imp9, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30180230, region=30182230, seconds=0.0, animation_id=3004)
+    CommonFunc_90005250(0, character=30180230, region=30182230, seconds=0.0, animation_id=3004)
     CommonFunc_90005200(
         1,
         character=30180216,
@@ -482,8 +483,8 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallLivingPot20, region=30182333, seconds=0.0, animation_id=3011)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallLivingPot15, region=30182333, seconds=0.5, animation_id=3011)
+    CommonFunc_90005250(0, character=Characters.SmallLivingPot20, region=30182333, seconds=0.0, animation_id=3011)
+    CommonFunc_90005250(0, character=Characters.SmallLivingPot15, region=30182333, seconds=0.5, animation_id=3011)
     CommonFunc_90005201(
         0,
         character=Characters.SmallLivingPot14,
@@ -496,7 +497,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallLivingPot13, region=30172317, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallLivingPot13, region=30172317, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=30180319,
@@ -533,7 +534,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LivingPot1, region=30182254, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LivingPot1, region=30182254, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.LivingPot3,
@@ -551,8 +552,8 @@ def Constructor():
     Event_30182350(2, character=Characters.LivingPot3)
     Event_30182350(3, character=Characters.ErdtreeBurialWatchdog0)
     Event_30182350(4, character=30180354)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30180251, region=30182251, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30180254, region=30182254, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=30180251, region=30182251, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=30180254, region=30182254, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=30180344, region=30182344, radius=10.0, seconds=0.5, animation_id=3011)
     CommonFunc_90005261(0, character=30180345, region=30182344, radius=10.0, seconds=1.0, animation_id=3011)
     CommonFunc_90005261(
@@ -565,44 +566,44 @@ def Constructor():
     )
     CommonFunc_90005261(0, character=30180347, region=30182254, radius=1.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=30180348, region=30182344, radius=1.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.ErdtreeBurialWatchdog1, region=30182257, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30180255, region=30182255, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30180256, region=30182255, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30180400, region=30182401, seconds=0.0, animation_id=3001)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.FungalPod1, region=30182401, seconds=0.5, animation_id=3001)
-    CommonFunc_AITrigger_RegionOrHurt(
+    CommonFunc_90005250(0, character=Characters.ErdtreeBurialWatchdog1, region=30182257, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=30180255, region=30182255, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30180256, region=30182255, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30180400, region=30182401, seconds=0.0, animation_id=3001)
+    CommonFunc_90005250(0, character=Characters.FungalPod1, region=30182401, seconds=0.5, animation_id=3001)
+    CommonFunc_90005250(
         0,
         character=Characters.FungalPod2,
         region=30182401,
         seconds=0.800000011920929,
         animation_id=3001,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.FungalPod3, region=30182401, seconds=1.5, animation_id=3001)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30180404, region=30182401, seconds=2.0, animation_id=3001)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30180405, region=30182401, seconds=2.4000000953674316, animation_id=3001)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30180406, region=30182401, seconds=3.0, animation_id=3001)
-    CommonFunc_AITrigger_RegionOrHurt(
+    CommonFunc_90005250(0, character=Characters.FungalPod3, region=30182401, seconds=1.5, animation_id=3001)
+    CommonFunc_90005250(0, character=30180404, region=30182401, seconds=2.0, animation_id=3001)
+    CommonFunc_90005250(0, character=30180405, region=30182401, seconds=2.4000000953674316, animation_id=3001)
+    CommonFunc_90005250(0, character=30180406, region=30182401, seconds=3.0, animation_id=3001)
+    CommonFunc_90005250(
         0,
         character=Characters.FungalPod4,
         region=30182401,
         seconds=3.299999952316284,
         animation_id=3001,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.FungalPod5, region=30182401, seconds=4.0, animation_id=3001)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30180409, region=30182401, seconds=4.5, animation_id=3001)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30180410, region=30182411, seconds=0.0, animation_id=3001)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.FungalPod6, region=30182411, seconds=0.5, animation_id=3001)
-    CommonFunc_AITrigger_RegionOrHurt(
+    CommonFunc_90005250(0, character=Characters.FungalPod5, region=30182401, seconds=4.0, animation_id=3001)
+    CommonFunc_90005250(0, character=30180409, region=30182401, seconds=4.5, animation_id=3001)
+    CommonFunc_90005250(0, character=30180410, region=30182411, seconds=0.0, animation_id=3001)
+    CommonFunc_90005250(0, character=Characters.FungalPod6, region=30182411, seconds=0.5, animation_id=3001)
+    CommonFunc_90005250(
         0,
         character=Characters.FungalPod7,
         region=30182411,
         seconds=0.800000011920929,
         animation_id=3001,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.FungalPod8, region=30182411, seconds=1.5, animation_id=3001)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.FungalPod0, region=30182411, seconds=2.0, animation_id=3001)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30180415, region=30182411, seconds=2.799999952316284, animation_id=3001)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GiantFungalPod, region=30182450, seconds=0.0, animation_id=3002)
+    CommonFunc_90005250(0, character=Characters.FungalPod8, region=30182411, seconds=1.5, animation_id=3001)
+    CommonFunc_90005250(0, character=Characters.FungalPod0, region=30182411, seconds=2.0, animation_id=3001)
+    CommonFunc_90005250(0, character=30180415, region=30182411, seconds=2.799999952316284, animation_id=3001)
+    CommonFunc_90005250(0, character=Characters.GiantFungalPod, region=30182450, seconds=0.0, animation_id=3002)
     CommonFunc_90005650(
         0,
         flag=30180540,
@@ -661,7 +662,14 @@ def Constructor():
         flag_3=30180508,
         asset=Assets.AEG027_156_0500,
     )
-    CommonFunc_90005681(0, flag=30180505, flag_1=30180506, flag_2=30180507, flag_3=30180508, attacked_entity=30181505)
+    CommonFunc_90005681(
+        0,
+        flag=30180505,
+        flag_1=30180506,
+        flag_2=30180507,
+        flag_3=30180508,
+        attacked_entity=Assets.AEG027_156_0500,
+    )
     CommonFunc_90005680(
         0,
         flag=30180505,
@@ -679,7 +687,14 @@ def Constructor():
         flag_3=30180503,
         asset=Assets.AEG027_156_0501,
     )
-    CommonFunc_90005681(0, flag=30180500, flag_1=30180501, flag_2=30180502, flag_3=30180503, attacked_entity=30181500)
+    CommonFunc_90005681(
+        0,
+        flag=30180500,
+        flag_1=30180501,
+        flag_2=30180502,
+        flag_3=30180503,
+        attacked_entity=Assets.AEG027_156_0501,
+    )
     CommonFunc_90005680(
         0,
         flag=30180500,
@@ -715,7 +730,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_91005600(0, flag=30182800, asset=30181695, dummy_id=5)
+    CommonFunc_91005600(0, flag=30182800, asset=30181695, vfx_id=5)
 
 
 @ContinueOnRest(50)
@@ -734,7 +749,7 @@ def Event_30180050():
 
 
 @RestartOnRest(30182350)
-def Event_30182350(_, character: uint):
+def Event_30182350(_, character: Character | int):
     """Event 30182350"""
     AddSpecialEffect(character, 15211)
     End()
@@ -829,7 +844,14 @@ def Event_30182227():
 @ContinueOnRest(30182500)
 def Event_30182500():
     """Event 30182500"""
-    CommonFunc_90005681(0, flag=30180500, flag_1=30180501, flag_2=30180502, flag_3=30180503, attacked_entity=30181500)
+    CommonFunc_90005681(
+        0,
+        flag=30180500,
+        flag_1=30180501,
+        flag_2=30180502,
+        flag_3=30180503,
+        attacked_entity=Assets.AEG027_156_0501,
+    )
     if FlagEnabled(57):
         CommonFunc_90005682(
             0,
@@ -942,7 +964,14 @@ def Event_30182500():
             dummy_id_2=0,
             dummy_id_3=0,
         )
-    CommonFunc_90005681(0, flag=30180505, flag_1=30180506, flag_2=30180507, flag_3=30180508, attacked_entity=30181505)
+    CommonFunc_90005681(
+        0,
+        flag=30180505,
+        flag_1=30180506,
+        flag_2=30180507,
+        flag_3=30180508,
+        attacked_entity=Assets.AEG027_156_0500,
+    )
     if FlagEnabled(57):
         CommonFunc_90005682(
             0,
@@ -2235,7 +2264,7 @@ def Event_30182849():
         flag_2=30182806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=30180800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=30180800, asset=Assets.AEG099_001_9000, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=30180800,

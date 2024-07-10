@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_54_56_00_enums import *
 
 
@@ -47,13 +48,13 @@ def Event_1054562500():
 @ContinueOnRest(200)
 def Event_200():
     """Event 200"""
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.BorealistheFreezingFog, name=904503600, npc_threat_level=25)
-    CommonFunc_KillFieldDragonWyrm(
+    CommonFunc_90005870(0, character=Characters.BorealistheFreezingFog, name=904503600, npc_threat_level=25)
+    CommonFunc_90005861(
         0,
         flag=1254560800,
-        extra_flag=0,
+        left=0,
         character=Characters.BorealistheFreezingFog,
-        felled_banner_rank=1,
+        left_1=1,
         item_lot=30510,
         text=30066,
         seconds=0.0,
@@ -130,18 +131,18 @@ def Event_1054562820(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    region: uint,
+    region: Region | int,
     radius: float,
     seconds: float,
     left: uint,
     left_1: uint,
     left_2: uint,
     left_3: uint,
-    region_1: uint,
-    region_2: uint,
-    region_3: uint,
-    region_4: uint,
-    region_5: uint,
+    region_1: Region | int,
+    region_2: Region | int,
+    region_3: Region | int,
+    region_4: Region | int,
+    region_5: Region | int,
 ):
     """Event 1054562820"""
     EndIffSpecialStandbyEndedFlagEnabled(character=character)

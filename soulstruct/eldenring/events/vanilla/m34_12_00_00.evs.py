@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m34_12_00_00_enums import *
 
 
@@ -66,13 +67,13 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, dummy_id=100, vfx_id=800, right=0)
     CommonFunc_90005560(0, flag=34120650, asset=Assets.AEG099_635_9000, left=0)
-    CommonFunc_90005525(0, flag=34120590, asset=34121590)
-    CommonFunc_90005525(0, flag=34120591, asset=34121591)
-    CommonFunc_90005525(0, flag=34120592, asset=34121592)
-    CommonFunc_90005525(0, flag=34120593, asset=34121593)
-    CommonFunc_90005525(0, flag=34120594, asset=34121594)
+    CommonFunc_90005525(0, flag=34120590, asset=Assets.AEG027_069_0500)
+    CommonFunc_90005525(0, flag=34120591, asset=Assets.AEG027_069_0501)
+    CommonFunc_90005525(0, flag=34120592, asset=Assets.AEG027_069_0502)
+    CommonFunc_90005525(0, flag=34120593, asset=Assets.AEG027_069_0503)
+    CommonFunc_90005525(0, flag=34120594, asset=Assets.AEG027_069_0504)
     CommonFunc_90005110(
         0,
         flag=194,
@@ -80,7 +81,7 @@ def Constructor():
         asset=Assets.AEG099_991_9000,
         item_lot=34120500,
         item=8151,
-        dummy_id=806936,
+        vfx_id=806936,
         action_button_id=9083,
         animation_id=60523,
         left=0,
@@ -156,7 +157,7 @@ def Constructor():
 def Preconstructor():
     """Event 50"""
     Event_34120519()
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.VulgarMilitia0, region=34122201, seconds=0.5, animation_id=3020)
+    CommonFunc_90005250(0, character=Characters.VulgarMilitia0, region=34122201, seconds=0.5, animation_id=3020)
     CommonFunc_90005251(0, character=Characters.VulgarMilitia0, radius=2.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(
         0,
@@ -166,10 +167,10 @@ def Preconstructor():
         seconds=0.0,
         animation_id=-1,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.VulgarMilitia2, region=34122211, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.VulgarMilitia3, region=34122211, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.VulgarMilitia2, region=34122211, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.VulgarMilitia3, region=34122211, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.VulgarMilitia4, radius=16.0, seconds=0.0, animation_id=3020)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.VulgarMilitia5, region=34122210, seconds=0.5, animation_id=3020)
+    CommonFunc_90005250(0, character=Characters.VulgarMilitia5, region=34122210, seconds=0.5, animation_id=3020)
     CommonFunc_90005261(
         0,
         character=Characters.VulgarMilitia6,
@@ -178,18 +179,18 @@ def Preconstructor():
         seconds=0.0,
         animation_id=-1,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=34120250, region=34122250, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=34120251, region=34122250, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=34120255, region=34122255, seconds=0.20000000298023224, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=34120256, region=34122255, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=34120257, region=34122255, seconds=0.5, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AbnormalStoneCluster0, region=34122258, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AbnormalStoneCluster1, region=34122258, seconds=1.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AbnormalStoneCluster2, region=34122260, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AbnormalStoneCluster3, region=34122261, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AbnormalStoneCluster4, region=34122263, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AbnormalStoneCluster5, region=34122263, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AbnormalStoneCluster6, region=34122263, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=34120250, region=34122250, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=34120251, region=34122250, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=34120255, region=34122255, seconds=0.20000000298023224, animation_id=-1)
+    CommonFunc_90005250(0, character=34120256, region=34122255, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=34120257, region=34122255, seconds=0.5, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster0, region=34122258, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster1, region=34122258, seconds=1.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster2, region=34122260, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster3, region=34122261, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster4, region=34122263, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster5, region=34122263, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster6, region=34122263, seconds=0.0, animation_id=-1)
     CommonFunc_90005260(
         0,
         character=Characters.AbnormalStoneCluster7,
@@ -214,14 +215,14 @@ def Preconstructor():
         seconds=0.0,
         animation_id=-1,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AbnormalStoneCluster10, region=34122268, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AbnormalStoneCluster11, region=34122270, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AbnormalStoneCluster12, region=34122270, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AbnormalStoneCluster13, region=34122270, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AbnormalStoneCluster14, region=34122270, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.TunnelMiner0, region=34122300, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.TunnelMiner4, region=34122305, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.IronVirgin, region=34122350, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster10, region=34122268, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster11, region=34122270, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster12, region=34122270, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster13, region=34122270, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster14, region=34122270, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner0, region=34122300, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner4, region=34122305, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.IronVirgin, region=34122350, seconds=0.0, animation_id=-1)
 
 
 @ContinueOnRest(34122510)
@@ -293,10 +294,10 @@ def Event_32012200(
     left_1: uint,
     left_2: uint,
     left_3: uint,
-    asset: uint,
-    asset_1: uint,
-    asset_2: uint,
-    asset_3: uint,
+    asset: Asset | int,
+    asset_1: Asset | int,
+    asset_2: Asset | int,
+    asset_3: Asset | int,
 ):
     """Event 32012200"""
     if ThisEventSlotFlagEnabled():
@@ -396,7 +397,7 @@ def Event_32012200(
 
 
 @RestartOnRest(34122400)
-def Event_34122400(_, character: uint, region: uint):
+def Event_34122400(_, character: Character | int, region: Region | int):
     """Event 34122400"""
     AddSpecialEffect(character, 8081)
     AddSpecialEffect(character, 8082)
@@ -520,7 +521,7 @@ def Event_34122849():
         flag_2=34122806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=34120800, asset=Assets.AEG099_003_9000, dummy_id=3, right=34120801)
+    CommonFunc_9005811(0, flag=34120800, asset=Assets.AEG099_003_9000, vfx_id=3, right=34120801)
     CommonFunc_9005822(
         0,
         flag=34120800,
@@ -532,4 +533,4 @@ def Event_34122849():
         left=0,
         left_1=0,
     )
-    CommonFunc_9005811(0, flag=34120800, asset=Assets.AEG099_003_9001, dummy_id=3, right=34120801)
+    CommonFunc_9005811(0, flag=34120800, asset=Assets.AEG099_003_9001, vfx_id=3, right=34120801)

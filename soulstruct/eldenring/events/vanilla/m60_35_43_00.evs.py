@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_35_43_00_enums import *
 
 
@@ -55,10 +56,10 @@ def Preconstructor():
         region=1035432200,
         radius=3.0,
         seconds=1.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -68,10 +69,10 @@ def Preconstructor():
         region=1035432200,
         radius=3.0,
         seconds=2.5,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -81,10 +82,10 @@ def Preconstructor():
         region=1035432200,
         radius=3.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -94,15 +95,15 @@ def Preconstructor():
         region=1035432200,
         radius=3.0,
         seconds=1.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
 
 
 @RestartOnRest(1035432390)
-def Event_1035432390(_, flag: uint, flag_1: uint, character: uint, character_1: uint, left: int):
+def Event_1035432390(_, flag: Flag | int, flag_1: Flag | int, character: uint, character_1: uint, left: int):
     """Event 1035432390"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     DisableCharacter(character)
@@ -183,7 +184,15 @@ def Event_1035432390(_, flag: uint, flag_1: uint, character: uint, character_1: 
 
 
 @RestartOnRest(1035432395)
-def Event_1035432395(_, flag: uint, flag_1: uint, character: uint, character_1: uint, left: int, item_lot: int):
+def Event_1035432395(
+    _,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    character: uint,
+    character_1: uint,
+    left: int,
+    item_lot: int,
+):
     """Event 1035432395"""
     if FlagEnabled(flag):
         return
@@ -198,22 +207,12 @@ def Event_1035432395(_, flag: uint, flag_1: uint, character: uint, character_1: 
 
     # --- Label 1 --- #
     DefineLabel(1)
-    CreateTemporaryVFX(
-        vfx_id=601111,
-        anchor_entity=character_1,
-        dummy_id=960,
-        anchor_type=CoordEntityType.Character,
-    )
+    CreateTemporaryVFX(vfx_id=601111, anchor_entity=character_1, dummy_id=960, anchor_type=CoordEntityType.Character)
     Goto(Label.L3)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    CreateTemporaryVFX(
-        vfx_id=601110,
-        anchor_entity=character_1,
-        dummy_id=960,
-        anchor_type=CoordEntityType.Character,
-    )
+    CreateTemporaryVFX(vfx_id=601110, anchor_entity=character_1, dummy_id=960, anchor_type=CoordEntityType.Character)
     Goto(Label.L3)
 
     # --- Label 3 --- #

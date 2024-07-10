@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m34_11_00_00_enums import *
 
 
@@ -69,9 +70,9 @@ def Constructor():
     )
     Event_34112510()
     Event_34112580()
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, vfx_id=100, dummy_id=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9004, vfx_id=100, dummy_id=800, right=0)
-    CommonFunc_90005300(0, flag=34110280, character=Characters.GodskinNoble, item_lot=34110400, seconds=0.0, item_is_dropped=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, dummy_id=100, vfx_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9004, dummy_id=100, vfx_id=800, right=0)
+    CommonFunc_90005300(0, flag=34110280, character=Characters.GodskinNoble, item_lot=34110400, seconds=0.0, left=0)
     Event_34112400()
     Event_34112410()
     Event_34112420()
@@ -87,10 +88,10 @@ def Constructor():
     Event_34112448()
     Event_34112449()
     Event_34112459()
-    CommonFunc_90005300(0, flag=34110710, character=Characters.PreceptorMiriam0, item_lot=34110700, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=34110710, character=Characters.PreceptorMiriam0, item_lot=34110700, seconds=0.0, left=0)
     Event_34112460()
     Event_34112465()
-    CommonFunc_90005300(0, flag=34110711, character=Characters.PreceptorMiriam1, item_lot=34110710, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=34110711, character=Characters.PreceptorMiriam1, item_lot=34110710, seconds=0.0, left=0)
     Event_34112475(0, flag=34112485, character=Characters.PreceptorMiriam0, region=34112411)
     Event_34112475(1, flag=34112486, character=Characters.PreceptorMiriam0, region=34112421)
     Event_34112475(2, flag=34112487, character=Characters.PreceptorMiriam0, region=34112431)
@@ -116,17 +117,17 @@ def Preconstructor():
     CommonFunc_90005271(0, character=Characters.LesserFingercreeper8, seconds=0.0, animation_id=-1)
     CommonFunc_90005271(0, character=Characters.LesserFingercreeper9, seconds=0.0, animation_id=-1)
     CommonFunc_90005271(0, character=Characters.LesserFingercreeper10, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LesserFingercreeper11, region=34112230, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LesserFingercreeper12, region=34112230, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LesserFingercreeper13, region=34112230, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LesserFingercreeper14, region=34112235, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LesserFingercreeper15, region=34112235, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LesserFingercreeper16, region=34112235, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LesserFingercreeper17, region=34112465, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LesserFingercreeper18, region=34112465, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LesserFingercreeper19, region=34112245, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LesserFingercreeper20, region=34112245, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LesserFingercreeper21, region=34112245, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LesserFingercreeper11, region=34112230, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LesserFingercreeper12, region=34112230, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LesserFingercreeper13, region=34112230, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LesserFingercreeper14, region=34112235, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LesserFingercreeper15, region=34112235, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LesserFingercreeper16, region=34112235, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LesserFingercreeper17, region=34112465, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LesserFingercreeper18, region=34112465, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LesserFingercreeper19, region=34112245, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LesserFingercreeper20, region=34112245, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LesserFingercreeper21, region=34112245, seconds=0.0, animation_id=-1)
     CommonFunc_90005210(
         0,
         character=Characters.WanderingNoble0,
@@ -512,7 +513,7 @@ def Event_34112150():
             unk_20_24=0,
             unk_24_25=False,
         )
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     EndOfAnimation(asset=Assets.AEG022_214_3000, animation_id=1)
     RemoveGoodFromPlayer(item=8111, quantity=1)
     DisableCharacter(34115150)
@@ -566,7 +567,7 @@ def Event_34112150():
             unk_20_24=0,
             unk_24_25=False,
         )
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     EndOfAnimation(asset=Assets.AEG022_214_3000, animation_id=0)
     EnableFlag(34112155)
     GivePlayerItemAmountSpecifiedByFlagValue(item_type=ItemType.Good, item=8111, flag=34112155, bit_count=1)
@@ -615,7 +616,7 @@ def Event_34112151():
             unk_20_24=0,
             unk_24_25=False,
         )
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     SetCameraAngle(x_angle=-0.23999999463558197, y_angle=-104.94999694824219)
     EnableFlag(34110520)
     Restart()
@@ -719,19 +720,19 @@ def Event_34112580():
 @ContinueOnRest(34112900)
 def Event_34112900(
     _,
-    flag: uint,
-    flag_1: uint,
+    flag: Flag | int,
+    flag_1: Flag | int,
     left: uint,
     asset: uint,
     asset_1: uint,
     obj_act_id: uint,
     asset_2: uint,
     obj_act_id_1: uint,
-    region: uint,
-    region_1: uint,
-    flag_2: uint,
-    flag_3: uint,
-    left_1: uint,
+    region: Region | int,
+    region_1: Region | int,
+    flag_2: Flag | int,
+    flag_3: Flag | int,
+    left_1: Flag | int,
 ):
     """Event 34112900"""
     AND_13.Add(FlagEnabled(flag))
@@ -1121,19 +1122,19 @@ def Event_34112900(
 @ContinueOnRest(34112910)
 def Event_34112910(
     _,
-    flag: uint,
-    flag_1: uint,
+    flag: Flag | int,
+    flag_1: Flag | int,
     left: uint,
     asset: uint,
     asset_1: uint,
     obj_act_id: uint,
     asset_2: uint,
     obj_act_id_1: uint,
-    region: uint,
-    region_1: uint,
-    flag_2: uint,
-    flag_3: uint,
-    left_1: uint,
+    region: Region | int,
+    region_1: Region | int,
+    flag_2: Flag | int,
+    flag_3: Flag | int,
+    left_1: Flag | int,
 ):
     """Event 34112910"""
     if CharacterInsideRegion(character=PLAYER, region=34112152):
@@ -1148,9 +1149,9 @@ def Event_34112910(
     AND_15.Add(FlagEnabled(flag_2))
     GotoIfConditionTrue(Label.L9, input_condition=AND_15)
     GotoIfFlagDisabled(Label.L0, flag=flag_1)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
-    EnableAssetActivation(asset_2, obj_act_id=-1)
-    DisableAssetActivation(asset_1, obj_act_id=-1)
+    if MapHasUpdatePermission(unk_state=False, game_map=(0, 0, 0, 0)):
+        EnableAssetActivation(asset_2, obj_act_id=-1)
+        DisableAssetActivation(asset_1, obj_act_id=-1)
     OR_1.Add(AssetActivated(obj_act_id=obj_act_id_1))
     OR_2.Add(FlagDisabled(flag))
     AND_3.Add(CharacterInsideRegion(character=PLAYER, region=region))
@@ -1162,11 +1163,11 @@ def Event_34112910(
     
     MAIN.Await(OR_4)
     
-    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
-    DisableAssetActivation(asset_2, obj_act_id=-1)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
-    EnableNetworkFlag(flag_2)
-    DisableNetworkFlag(flag)
+    if MapHasUpdatePermission(unk_state=False, game_map=(0, 0, 0, 0)):
+        DisableAssetActivation(asset_2, obj_act_id=-1)
+    if MapHasUpdatePermission(unk_state=False, game_map=(0, 0, 0, 0)):
+        EnableNetworkFlag(flag_2)
+        DisableNetworkFlag(flag)
     DisableFlag(flag_1)
     GotoIfLastConditionResultTrue(Label.L1, input_condition=OR_1)
     GotoIfFlagEnabled(Label.L1, flag=flag_3)
@@ -1205,8 +1206,8 @@ def Event_34112910(
 
     # --- Label 1 --- #
     DefineLabel(1)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
-    EnableNetworkFlag(flag_3)
+    if MapHasUpdatePermission(unk_state=False, game_map=(0, 0, 0, 0)):
+        EnableNetworkFlag(flag_3)
     Wait(2.0)
     SkipLinesIfUnsignedEqual(29, left=left, right=10)
     SkipLinesIfUnsignedEqual(26, left=left, right=9)
@@ -1243,8 +1244,8 @@ def Event_34112910(
     # --- Label 11 --- #
     DefineLabel(11)
     ForceAnimation(asset_2, 3, skip_transition=True)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
-    DisableNetworkFlag(flag_3)
+    if MapHasUpdatePermission(unk_state=False, game_map=(0, 0, 0, 0)):
+        DisableNetworkFlag(flag_3)
 
     # --- Label 2 --- #
     DefineLabel(2)
@@ -1331,9 +1332,9 @@ def Event_34112910(
 
     # --- Label 0 --- #
     DefineLabel(0)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
-    EnableAssetActivation(asset_1, obj_act_id=-1)
-    DisableAssetActivation(asset_2, obj_act_id=-1)
+    if MapHasUpdatePermission(unk_state=False, game_map=(0, 0, 0, 0)):
+        EnableAssetActivation(asset_1, obj_act_id=-1)
+        DisableAssetActivation(asset_2, obj_act_id=-1)
     OR_5.Add(AssetActivated(obj_act_id=obj_act_id))
     OR_6.Add(FlagEnabled(flag))
     AND_7.Add(CharacterInsideRegion(character=PLAYER, region=region_1))
@@ -1346,11 +1347,11 @@ def Event_34112910(
     
     MAIN.Await(OR_8)
     
-    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
-    DisableAssetActivation(asset_1, obj_act_id=-1)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
-    EnableNetworkFlag(flag_2)
-    EnableNetworkFlag(flag)
+    if MapHasUpdatePermission(unk_state=False, game_map=(0, 0, 0, 0)):
+        DisableAssetActivation(asset_1, obj_act_id=-1)
+    if MapHasUpdatePermission(unk_state=False, game_map=(0, 0, 0, 0)):
+        EnableNetworkFlag(flag_2)
+        EnableNetworkFlag(flag)
     EnableFlag(flag_1)
     GotoIfLastConditionResultTrue(Label.L4, input_condition=OR_5)
     GotoIfFlagEnabled(Label.L4, flag=flag_3)
@@ -1389,8 +1390,8 @@ def Event_34112910(
 
     # --- Label 4 --- #
     DefineLabel(4)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
-    EnableNetworkFlag(flag_3)
+    if MapHasUpdatePermission(unk_state=False, game_map=(0, 0, 0, 0)):
+        EnableNetworkFlag(flag_3)
     Wait(2.0)
     SkipLinesIfUnsignedEqual(29, left=left, right=10)
     SkipLinesIfUnsignedEqual(26, left=left, right=9)
@@ -1427,8 +1428,8 @@ def Event_34112910(
     # --- Label 14 --- #
     DefineLabel(14)
     ForceAnimation(asset_1, 3, skip_transition=True)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
-    DisableNetworkFlag(flag_3)
+    if MapHasUpdatePermission(unk_state=False, game_map=(0, 0, 0, 0)):
+        DisableNetworkFlag(flag_3)
 
     # --- Label 5 --- #
     DefineLabel(5)
@@ -1908,7 +1909,7 @@ def Event_34112439():
 
 
 @RestartOnRest(34112440)
-def Event_34112440(_, region: uint, region_1: uint):
+def Event_34112440(_, region: Region | int, region_1: uint):
     """Event 34112440"""
     if FlagEnabled(34110710):
         return
@@ -2261,7 +2262,7 @@ def Event_34112465():
 
 
 @RestartOnRest(34112475)
-def Event_34112475(_, flag: uint, character: uint, region: uint):
+def Event_34112475(_, flag: Flag | int, character: uint, region: uint):
     """Event 34112475"""
     if FlagEnabled(character):
         return
@@ -2491,7 +2492,7 @@ def Event_34112849():
         flag_2=34112806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=34110800, asset=34111800, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=34110800, asset=34111800, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=34110800,

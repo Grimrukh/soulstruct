@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_38_54_00_enums import *
 
 
@@ -49,11 +50,11 @@ def Constructor():
         flag_10=78358,
         flag_11=78359,
     )
-    CommonFunc_FieldBattleHealthBar(0, boss=1038540800, name=904680601, npc_threat_level=19)
+    CommonFunc_90005870(0, character=1038540800, name=904680601, npc_threat_level=19)
     CommonFunc_90005860(0, flag=1038540800, left=1038540800, character=1038540800, left_1=0, item_lot=0, seconds=0.0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Dog, region=1038542229, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(1, character=1038540227, region=1038542229, seconds=1.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(2, character=Characters.SmallerDog1, region=1038542229, seconds=6.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Dog, region=1038542229, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(1, character=1038540227, region=1038542229, seconds=1.0, animation_id=-1)
+    CommonFunc_90005250(2, character=Characters.SmallerDog1, region=1038542229, seconds=6.0, animation_id=-1)
     Event_1038542260(0, character=Characters.Dog)
     Event_1038542260(1, character=1038540227)
     Event_1038542260(2, character=Characters.SmallerDog1)
@@ -155,10 +156,10 @@ def Constructor():
         region=1038542370,
         radius=10.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005201(
         0,
@@ -564,10 +565,10 @@ def Constructor():
         region=1038542205,
         radius=10.0,
         seconds=0.6000000238418579,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         1,
@@ -577,10 +578,10 @@ def Constructor():
         region=1038542205,
         radius=10.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     Event_1038542250(0, attacker__character=1038545200, region=1038542200)
     CommonFunc_90005261(0, character=1038540340, region=1039532350, radius=10.0, seconds=1.0, animation_id=-1)
@@ -594,7 +595,7 @@ def Constructor():
         character=Characters.MaleighMarais,
         item_lot=1038540100,
         seconds=0.0,
-        item_is_dropped=0,
+        left=0,
     )
     CommonFunc_90005200(
         0,
@@ -628,7 +629,7 @@ def Event_1038542580():
 
 
 @RestartOnRest(1038542250)
-def Event_1038542250(_, attacker__character: uint, region: uint):
+def Event_1038542250(_, attacker__character: uint, region: Region | int):
     """Event 1038542250"""
     RemoveSpecialEffect(attacker__character, 4800)
     RemoveSpecialEffect(attacker__character, 5660)
@@ -645,17 +646,17 @@ def Event_1038542250(_, attacker__character: uint, region: uint):
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=PLAYER))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=35000))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=35000, attacker=attacker__character))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=ALL_SPIRIT_SUMMONS))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=ALL_SPIRIT_SUMMONS, attacker=attacker__character))
     OR_2.Add(CharacterHasStateInfo(character=attacker__character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=attacker__character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=attacker__character, state_info=5))
     OR_2.Add(CharacterHasStateInfo(character=attacker__character, state_info=6))
     OR_2.Add(CharacterHasStateInfo(character=attacker__character, state_info=260))
     OR_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=attacker__character, radius=10.0))
-    OR_2.Add(EntityWithinDistance(entity=35000, other_entity=attacker__character, radius=10.0))
+    OR_2.Add(EntityWithinDistance(entity=ALL_SPIRIT_SUMMONS, other_entity=attacker__character, radius=10.0))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
-    OR_2.Add(CharacterInsideRegion(character=35000, region=region))
+    OR_2.Add(CharacterInsideRegion(character=ALL_SPIRIT_SUMMONS, region=region))
     AND_1.Add(OR_2)
     
     MAIN.Await(AND_1)
@@ -666,14 +667,14 @@ def Event_1038542250(_, attacker__character: uint, region: uint):
 
 
 @RestartOnRest(1038542260)
-def Event_1038542260(_, character: uint):
+def Event_1038542260(_, character: Character | int):
     """Event 1038542260"""
     AddSpecialEffect(character, 8087)
     End()
 
 
 @RestartOnRest(1038542270)
-def Event_1038542270(_, character: uint):
+def Event_1038542270(_, character: Character | int):
     """Event 1038542270"""
     AddSpecialEffect(character, 8092)
     End()
@@ -701,7 +702,7 @@ def Event_1038542400():
 
 
 @RestartOnRest(1038542450)
-def Event_1038542450(_, asset: uint):
+def Event_1038542450(_, asset: Asset | int):
     """Event 1038542450"""
     DisableAsset(asset)
     End()

@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_50_36_00_enums import *
 
 
@@ -528,14 +529,14 @@ def Constructor():
     CommonFunc_90005251(0, character=Characters.RadahnSoldier1, radius=40.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.RadahnSoldier2, radius=40.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.RadahnSoldier3, radius=10.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1050360206, region=1049362400, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1050360207, region=1049362400, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1050360208, region=1049362400, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1050360209, region=1049362400, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier4, region=1049362400, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1050360211, region=1049362400, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1050360206, region=1049362400, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1050360207, region=1049362400, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1050360208, region=1049362400, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1050360209, region=1049362400, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier4, region=1049362400, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1050360211, region=1049362400, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.RadahnFootSoldier0, radius=12.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnFootSoldier1, region=1049362400, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnFootSoldier1, region=1049362400, seconds=0.0, animation_id=-1)
     CommonFunc_90005490(
         0,
         character=Characters.BulletDummy0,
@@ -600,7 +601,7 @@ def Preconstructor():
 
 
 @RestartOnRest(1050362400)
-def Event_1050362400(_, attacker__character: uint, region: uint):
+def Event_1050362400(_, attacker__character: uint, region: Region | int):
     """Event 1050362400"""
     RemoveSpecialEffect(attacker__character, 5662)
     AddSpecialEffect(attacker__character, 4802)
@@ -615,12 +616,12 @@ def Event_1050362400(_, attacker__character: uint, region: uint):
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=PLAYER))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=35000))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=35000, attacker=attacker__character))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=ALL_SPIRIT_SUMMONS))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=ALL_SPIRIT_SUMMONS, attacker=attacker__character))
     OR_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=attacker__character, radius=10.0))
-    OR_2.Add(EntityWithinDistance(entity=35000, other_entity=attacker__character, radius=10.0))
+    OR_2.Add(EntityWithinDistance(entity=ALL_SPIRIT_SUMMONS, other_entity=attacker__character, radius=10.0))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
-    OR_2.Add(CharacterInsideRegion(character=35000, region=region))
+    OR_2.Add(CharacterInsideRegion(character=ALL_SPIRIT_SUMMONS, region=region))
     AND_1.Add(OR_2)
     
     MAIN.Await(AND_1)

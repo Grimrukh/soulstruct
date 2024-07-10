@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m30_04_00_00_enums import *
 
 
@@ -356,7 +357,7 @@ def Event_30042500():
 
 
 @RestartOnRest(30042650)
-def Event_30042650(_, tutorial_param_id: int, flag: uint):
+def Event_30042650(_, tutorial_param_id: int, flag: Flag | int):
     """Event 30042650"""
     if Multiplayer():
         return
@@ -469,7 +470,7 @@ def Event_30042849():
         flag_2=30042806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=30040800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=30040800, asset=Assets.AEG099_001_9000, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=30040800,
@@ -484,7 +485,7 @@ def Event_30042849():
 
 
 @RestartOnRest(30042900)
-def Event_30042900(_, tutorial_param_id: int, flag: uint, flag_1: uint):
+def Event_30042900(_, tutorial_param_id: int, flag: Flag | int, flag_1: Flag | int):
     """Event 30042900"""
     if PlayerNotInOwnWorld():
         return

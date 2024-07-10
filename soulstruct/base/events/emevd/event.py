@@ -469,7 +469,7 @@ class Event(abc.ABC):
             adv_decompiler = AdvancedDecompiler(self.EMEDF_TESTS, self.EMEDF_COMPARISON_TESTS)
             try:
                 instruction_lines = adv_decompiler.adv_decompile(instruction_lines)
-            except (ValueError, KeyError) as ex:
+            except (ValueError, KeyError, IndexError) as ex:
                 _LOGGER.error(
                     f"Error while trying to decompile event {self.event_id} with high-level language. Using simple "
                     f"EVS output. Error:\n  {ex}")

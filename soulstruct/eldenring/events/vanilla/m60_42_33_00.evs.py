@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_42_33_00_enums import *
 
 
@@ -25,7 +26,7 @@ from .enums.m60_42_33_00_enums import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1042330000, asset=Assets.AEG099_060_9000)
-    CommonFunc_90005300(0, flag=1042330220, character=Characters.Scarab, item_lot=40132, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1042330220, character=Characters.Scarab, item_lot=40132, seconds=0.0, left=0)
     CommonFunc_90005261(0, character=1042330405, region=1042332400, radius=5.0, seconds=0.0, animation_id=3006)
     CommonFunc_90005620(
         0,
@@ -130,18 +131,18 @@ def Event_1042332200(_, character: uint, seconds: float):
 @RestartOnRest(1042332575)
 def Event_1042332575(
     _,
-    flag: uint,
-    flag_1: uint,
-    left_flag: uint,
-    cancel_flag__right_flag: uint,
-    message: int,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    left_flag: Flag | int,
+    cancel_flag__right_flag: Flag | int,
+    message: EventText | int,
     anchor_entity: uint,
     area_id: uchar,
     block_id: uchar,
-    cc_id: char,
-    dd_id: char,
+    cc_id: uchar,
+    dd_id: uchar,
     player_start: uint,
-    flag_2: uint,
+    flag_2: Flag | int,
 ):
     """Event 1042332575"""
     DisableFlag(left_flag)
@@ -199,7 +200,7 @@ def Event_1042332575(
 
 
 @RestartOnRest(1042332576)
-def Event_1042332576(_, flag: uint, flag_1: uint, entity: uint, flag_2: uint):
+def Event_1042332576(_, flag: Flag | int, flag_1: Flag | int, entity: uint, flag_2: Flag | int):
     """Event 1042332576"""
     ForceAnimation(entity, 0, loop=True)
     if PlayerNotInOwnWorld():

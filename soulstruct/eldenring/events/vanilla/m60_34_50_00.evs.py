@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_34_50_00_enums import *
 
 
@@ -55,7 +56,7 @@ def Constructor():
         0,
         flag=1034500739,
         asset=Assets.AEG099_251_2000,
-        dummy_id=1506,
+        vfx_id=1506,
         action_button_id=9320,
         text=30050,
         left=0,
@@ -66,7 +67,7 @@ def Constructor():
         0,
         flag=1034500739,
         asset=Assets.AEG099_251_2001,
-        dummy_id=1506,
+        vfx_id=1506,
         action_button_id=9320,
         text=30050,
         left=0,
@@ -77,7 +78,7 @@ def Constructor():
         0,
         flag=1034500739,
         asset=Assets.AEG099_251_2002,
-        dummy_id=1506,
+        vfx_id=1506,
         action_button_id=9320,
         text=30050,
         left=0,
@@ -87,7 +88,7 @@ def Constructor():
     Event_1034503600(0, region=1034502500, flag=1034500738)
     Event_1034502610()
     Event_1034502620()
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.GlintstoneDragon, name=904502601, npc_threat_level=25)
+    CommonFunc_90005870(0, character=Characters.GlintstoneDragon, name=904502601, npc_threat_level=25)
     CommonFunc_90005860(
         0,
         flag=1034500800,
@@ -102,9 +103,9 @@ def Constructor():
     Event_1034502804()
     Event_1034502802()
     Event_1034502803()
-    CommonFunc_90005300(0, flag=1035510200, character=Characters.Scarab, item_lot=40200, seconds=0.0, item_is_dropped=0)
-    CommonFunc_90005525(0, flag=1034500620, asset=1034501620)
-    CommonFunc_90005525(0, flag=1034500621, asset=1034501621)
+    CommonFunc_90005300(0, flag=1035510200, character=Characters.Scarab, item_lot=40200, seconds=0.0, left=0)
+    CommonFunc_90005525(0, flag=1034500620, asset=Assets.AEG004_983_1000)
+    CommonFunc_90005525(0, flag=1034500621, asset=Assets.AEG004_336_1000)
     Event_1034502580()
     Event_1034502510()
     CommonFunc_90005501(
@@ -224,7 +225,7 @@ def Constructor():
         first_flag=400148,
         last_flag=400148,
         flag=3569,
-        dummy_id=0,
+        vfx_id=0,
     )
     Event_1034503740()
 
@@ -256,7 +257,7 @@ def Preconstructor():
 
 
 @RestartOnRest(1034502340)
-def Event_1034502340(_, character: uint):
+def Event_1034502340(_, character: Character | int):
     """Event 1034502340"""
     Kill(character, award_runes=True)
 
@@ -298,26 +299,26 @@ def Event_1034500519():
 
 
 @RestartOnRest(1034503600)
-def Event_1034503600(_, region: uint, flag: uint):
+def Event_1034503600(_, region: Region | int, flag: Flag | int):
     """Event 1034503600"""
     DisableNetworkSync()
-    AND_2.Add(CharacterInsideRegion(character=20000, region=region))
+    AND_2.Add(CharacterInsideRegion(character=ALL_PLAYERS, region=region))
     AND_2.Add(FlagEnabled(flag))
     
     MAIN.Await(AND_2)
     
-    AddSpecialEffect(20000, 9621)
+    AddSpecialEffect(ALL_PLAYERS, 9621)
     Wait(0.10000000149011612)
 
     # --- Label 0 --- #
     DefineLabel(0)
-    OR_3.Add(CharacterOutsideRegion(character=20000, region=region))
+    OR_3.Add(CharacterOutsideRegion(character=ALL_PLAYERS, region=region))
     OR_3.Add(FlagDisabled(flag))
     
     MAIN.Await(OR_3)
     
     Wait(0.10000000149011612)
-    RemoveSpecialEffect(20000, 9621)
+    RemoveSpecialEffect(ALL_PLAYERS, 9621)
     Restart()
 
 
@@ -555,7 +556,7 @@ def Event_1034500701(_, character: uint, character_1: uint, character_2: uint, c
 
 
 @RestartOnRest(1034500702)
-def Event_1034500702(_, character: uint):
+def Event_1034500702(_, character: Character | int):
     """Event 1034500702"""
     if PlayerNotInOwnWorld():
         return
@@ -960,7 +961,7 @@ def Event_1034500719():
 
 
 @RestartOnRest(1034500730)
-def Event_1034500730(_, character: uint, asset: uint):
+def Event_1034500730(_, character: uint, asset: Asset | int):
     """Event 1034500730"""
     DisableNetworkSync()
     WaitFrames(frames=1)
@@ -1075,14 +1076,14 @@ def Event_1034500731():
     if FlagEnabled(1034509419):
         return
     
-    MAIN.Await(EntityWithinDistance(entity=20000, other_entity=Characters.Ranni, radius=10.0))
+    MAIN.Await(EntityWithinDistance(entity=ALL_PLAYERS, other_entity=Characters.Ranni, radius=10.0))
     
     EnableFlag(1034509419)
     EnableFlag(3758)
 
 
 @RestartOnRest(1034500732)
-def Event_1034500732(_, character: uint):
+def Event_1034500732(_, character: Character | int):
     """Event 1034500732"""
     if PlayerNotInOwnWorld():
         return
@@ -1102,7 +1103,7 @@ def Event_1034500732(_, character: uint):
 
 
 @RestartOnRest(1034500733)
-def Event_1034500733(_, character: uint):
+def Event_1034500733(_, character: Character | int):
     """Event 1034500733"""
     if PlayerNotInOwnWorld():
         return

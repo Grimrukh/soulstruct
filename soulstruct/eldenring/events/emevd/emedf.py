@@ -3173,6 +3173,14 @@ EMEDF = {
             "condition": CONDITION_GROUP | HIDE_NAME,
         },
     },
+    (3, 46): {
+        "alias": "IfTutorialShown",
+        "docstring": "Checks if given `TutorialParam` has been shown yet.",
+        "args": {
+            "condition": CONDITION_GROUP | HIDE_NAME,
+            "tutorial_param_id": INT,
+        },
+    },
     
     (4, 15): {
         "alias": "IfCharacterProportionDeathState",
@@ -3191,6 +3199,21 @@ EMEDF = {
             "IfCharacterProportionAlive": dict(state=False),
         },
     },
+    (4, 16): {
+        "alias": "IfCharacterProportionUnknownState_4_16",
+        "docstring": """
+            Unknown.
+        """,
+        "args": {
+            "condition": CONDITION_GROUP | HIDE_NAME,
+            "character": NO_DEFAULT(CharacterTyping),
+            "unk1": INT,
+            "unk2": INT,
+            "target_comparison_type": TARGET_COMPARISON_TYPE,
+            "target_proportion": TARGET_COUNT_FLOAT,
+        },
+        # TODO: partials
+    },
     (4, 19): {
         "alias": "IfCharacterProportionSpecialEffectState",
         "docstring": """
@@ -3208,6 +3231,18 @@ EMEDF = {
         "partials": {
             "IfCharacterProportionHasSpecialEffect": dict(state=True),
             "IfCharacterProportionDoesNotHaveSpecialEffect": dict(state=False),
+        },
+    },
+    (4, 22): {
+        "alias": "IfCharacterUnknown_4_22",
+        "docstring": """
+            Unknown.
+        """,
+        "args": {
+            "condition": CONDITION_GROUP | HIDE_NAME,
+            "character_group": NO_DEFAULT(CharacterTyping),
+            "target_comparison_type": TARGET_COMPARISON_TYPE,
+            "target_proportion": TARGET_COUNT_FLOAT,
         },
     },
     (4, 28): {
@@ -3456,6 +3491,24 @@ EMEDF = {
             "GotoIfUnsignedLessThanOrEqual": dict(comparison_type=ComparisonType.LessThanOrEqual),
         },
     },
+    (1000, 109): {
+        "alias": "GotoIfUnknown_1000_109",
+        "docstring": "TODO",
+        "args": {
+            "label": LABEL,
+            "unk1": INT,
+            "unk2": INT,
+        },
+    },
+    (1000, 111): {
+        "alias": "GotoIfUnknown_1000_111",
+        "docstring": "TODO",
+        "args": {
+            "label": LABEL,
+            "unk1": INT,
+            "unk2": INT,
+        },
+    },
     (1001, 5): {
         "alias": "WaitUntilTimeOfDayInRange",
         "docstring": "Pause event script until time of day is between the given earliest/latest times.",
@@ -3511,6 +3564,16 @@ EMEDF = {
         """,
         "args": {
             "frames": INT,
+        },
+    },
+    (1001, 7): {
+        "alias": "WaitUnknown_1001_7",
+        "docstring": """
+            Wait for something unknown.
+        """,
+        "args": {
+            "unk1": INT,
+            "unk2": INT,
         },
     },
     (1001, 8): {
@@ -4876,6 +4939,19 @@ EMEDF = {
             "character": NO_DEFAULT(CharacterTyping),
             "enable_distance": FLOAT,  # TODO: once with 220.0
             "unknown_distance": FLOAT,  # TODO: once with 40.0
+        },
+    },
+    (2004, 85): {
+        "alias": "Character_Unknown_2004_85",
+        "docstring": "TODO",
+        "args": {
+            "character": NO_DEFAULT(CharacterTyping),
+            "unk1": INT,
+            "unk2": INT,
+            "unk3": INT,
+            "unk4": INT,
+            "unk5": INT,
+            "unk6": INT,
         },
     },
 

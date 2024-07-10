@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m30_02_00_00_enums import *
 
 
@@ -84,10 +85,10 @@ def Preconstructor():
         region=30022200,
         radius=1.5,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005261(0, character=Characters.Imp1, region=30022201, radius=0.0, seconds=0.0, animation_id=3006)
     CommonFunc_90005211(
@@ -98,10 +99,10 @@ def Preconstructor():
         region=30022202,
         radius=1.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -111,10 +112,10 @@ def Preconstructor():
         region=30022203,
         radius=1.0,
         seconds=0.20000000298023224,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -124,10 +125,10 @@ def Preconstructor():
         region=30022204,
         radius=1.0,
         seconds=0.20000000298023224,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -137,10 +138,10 @@ def Preconstructor():
         region=30022205,
         radius=1.0,
         seconds=4.800000190734863,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -150,10 +151,10 @@ def Preconstructor():
         region=30022206,
         radius=0.0,
         seconds=0.4000000059604645,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -163,10 +164,10 @@ def Preconstructor():
         region=30022206,
         radius=0.0,
         seconds=0.20000000298023224,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -176,10 +177,10 @@ def Preconstructor():
         region=30022206,
         radius=0.0,
         seconds=1.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -189,10 +190,10 @@ def Preconstructor():
         region=30022206,
         radius=0.0,
         seconds=0.8999999761581421,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -202,10 +203,10 @@ def Preconstructor():
         region=30022206,
         radius=0.0,
         seconds=0.10000000149011612,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -215,10 +216,10 @@ def Preconstructor():
         region=30022212,
         radius=0.0,
         seconds=1.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -228,10 +229,10 @@ def Preconstructor():
         region=30022212,
         radius=0.0,
         seconds=2.5,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -241,10 +242,10 @@ def Preconstructor():
         region=30022214,
         radius=1.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005261(0, character=Characters.Imp14, region=30022215, radius=1.0, seconds=0.0, animation_id=0)
     Event_30020050()
@@ -262,7 +263,14 @@ def Event_30020050():
 @ContinueOnRest(30022510)
 def Event_30022510():
     """Event 30022510"""
-    CommonFunc_90005681(0, flag=30020500, flag_1=30020501, flag_2=30020502, flag_3=30020503, attacked_entity=30021500)
+    CommonFunc_90005681(
+        0,
+        flag=30020500,
+        flag_1=30020501,
+        flag_2=30020502,
+        flag_3=30020503,
+        attacked_entity=Assets.AEG027_156_0500,
+    )
     if FlagEnabled(57):
         CommonFunc_90005682(
             0,
@@ -375,7 +383,14 @@ def Event_30022510():
             dummy_id_2=0,
             dummy_id_3=0,
         )
-    CommonFunc_90005681(0, flag=30020505, flag_1=30020506, flag_2=30020507, flag_3=30020508, attacked_entity=30021505)
+    CommonFunc_90005681(
+        0,
+        flag=30020505,
+        flag_1=30020506,
+        flag_2=30020507,
+        flag_3=30020508,
+        attacked_entity=Assets.AEG027_156_0501,
+    )
     if FlagEnabled(57):
         CommonFunc_90005682(
             0,
@@ -499,9 +514,9 @@ def Event_30022580():
 @ContinueOnRest(30022610)
 def Event_30022610(
     _,
-    flag: uint,
+    flag: Flag | int,
     source_entity: uint,
-    region: uint,
+    region: Region | int,
     owner_entity: uint,
     behavior_id: int,
     behavior_id_1: int,
@@ -699,7 +714,7 @@ def Event_30022610(
 
 
 @RestartOnRest(30022650)
-def Event_30022650(_, tutorial_param_id: int, flag: uint):
+def Event_30022650(_, tutorial_param_id: int, flag: Flag | int):
     """Event 30022650"""
     if Multiplayer():
         return
@@ -812,7 +827,7 @@ def Event_30022849():
         flag_2=30022806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=30020800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=30020800, asset=Assets.AEG099_001_9000, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=30020800,

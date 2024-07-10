@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m19_00_00_00_enums import *
 
 
@@ -37,6 +38,7 @@ def Constructor():
     Event_19000120()
     Event_19002500()
     Event_19002502()
+    Event_19002682()
     Event_19002800()
     Event_19002810()
     Event_19002811()
@@ -125,7 +127,7 @@ def Event_19000100():
         update_stable_position=False,
     )
     TriggerMultiplayerEvent(event_id=10)
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     Goto(Label.L15)
 
     # --- Label 11 --- #
@@ -141,7 +143,7 @@ def Event_19000100():
         update_stable_position=False,
     )
     TriggerMultiplayerEvent(event_id=20)
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     Goto(Label.L15)
 
     # --- Label 12 --- #
@@ -157,7 +159,7 @@ def Event_19000100():
         update_stable_position=False,
     )
     TriggerMultiplayerEvent(event_id=30)
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     Goto(Label.L15)
 
     # --- Label 13 --- #
@@ -173,7 +175,7 @@ def Event_19000100():
         update_stable_position=False,
     )
     TriggerMultiplayerEvent(event_id=40)
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     Goto(Label.L15)
 
     # --- Label 15 --- #
@@ -201,7 +203,7 @@ def Event_19000110():
     
     MAIN.Await(AND_3)
     
-    CreateAssetVFX(Assets.AEG099_090_9001, vfx_id=100, dummy_id=30070)
+    CreateAssetVFX(Assets.AEG099_090_9001, dummy_id=100, vfx_id=30070)
     AND_4.Add(ActionButtonParamActivated(action_button_id=9610, entity=Assets.AEG099_090_9001))
     AND_4.Add(PlayerInOwnWorld())
     
@@ -217,7 +219,7 @@ def Event_19000110():
         PlayCutscene(19000021, cutscene_flags=0, player_id=10000)
         EnableFlag(9405)
         TriggerMultiplayerEvent(event_id=60)
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     EnableFlag(120)
     EnableFlag(6010)
     AwardAchievement(achievement_id=2)
@@ -260,7 +262,7 @@ def Event_19000120():
         PlayCutscene(19000031, cutscene_flags=0, player_id=10000)
         EnableFlag(9407)
         TriggerMultiplayerEvent(event_id=80)
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     EnableFlag(120)
     EnableFlag(6010)
     AwardAchievement(achievement_id=3)
@@ -280,7 +282,7 @@ def Event_19000050():
 def Event_19002500():
     """Event 19002500"""
     GotoIfFlagDisabled(Label.L0, flag=19000800)
-    CreateAssetVFX(Assets.AEG099_003_9000, vfx_id=101, dummy_id=1530)
+    CreateAssetVFX(Assets.AEG099_003_9000, dummy_id=101, vfx_id=1530)
     End()
 
     # --- Label 0 --- #
@@ -288,11 +290,11 @@ def Event_19002500():
     GotoIfPlayerInOwnWorld(Label.L1)
     GotoIfFlagDisabled(Label.L1, flag=19002801)
     MoveCharacterAndCopyDrawParentWithFadeout(
-        character=20000,
+        character=ALL_PLAYERS,
         destination_type=CoordEntityType.Region,
         destination=19002811,
         dummy_id=-1,
-        copy_draw_parent=20000,
+        copy_draw_parent=ALL_PLAYERS,
         use_bonfire_effect=False,
         reset_camera=True,
     )
@@ -300,7 +302,7 @@ def Event_19002500():
 
     # --- Label 1 --- #
     DefineLabel(1)
-    CreateAssetVFX(Assets.AEG099_003_9000, vfx_id=101, dummy_id=1530)
+    CreateAssetVFX(Assets.AEG099_003_9000, dummy_id=101, vfx_id=1530)
     if PlayerNotInOwnWorld():
         GotoIfFlagEnabled(Label.L2, flag=19002500)
     AND_1.Add(PlayerInOwnWorld())
@@ -311,18 +313,18 @@ def Event_19002500():
     
     if PlayerInOwnWorld():
         BanishInvaders(unknown=0)
-    OR_9.Add(CharacterInvadeType(character=20000, invade_type=CharacterType.BlackPhantom))
-    OR_9.Add(CharacterInvadeType(character=20000, invade_type=CharacterType.Unknown3))
-    OR_9.Add(CharacterInvadeType(character=20000, invade_type=CharacterType.Unknown4))
-    OR_9.Add(CharacterInvadeType(character=20000, invade_type=CharacterType.Unknown5))
-    OR_9.Add(CharacterInvadeType(character=20000, invade_type=CharacterType.Unknown7))
+    OR_9.Add(CharacterInvadeType(character=ALL_PLAYERS, invade_type=CharacterType.BlackPhantom))
+    OR_9.Add(CharacterInvadeType(character=ALL_PLAYERS, invade_type=CharacterType.Unknown3))
+    OR_9.Add(CharacterInvadeType(character=ALL_PLAYERS, invade_type=CharacterType.Unknown4))
+    OR_9.Add(CharacterInvadeType(character=ALL_PLAYERS, invade_type=CharacterType.Unknown5))
+    OR_9.Add(CharacterInvadeType(character=ALL_PLAYERS, invade_type=CharacterType.Unknown7))
     if OR_9:
         return
     ForceAnimation(PLAYER, 67080)
     if PlayerNotInOwnWorld():
         GotoIfFlagEnabled(Label.L2, flag=19002500)
     Wait(2.4000000953674316)
-    CreateAssetVFX(Assets.AEG099_003_9001, vfx_id=101, dummy_id=1531)
+    CreateAssetVFX(Assets.AEG099_003_9001, dummy_id=101, vfx_id=1531)
     if PlayerNotInOwnWorld():
         GotoIfFlagEnabled(Label.L2, flag=19002500)
     Wait(3.5999999046325684)
@@ -351,7 +353,7 @@ def Event_19002500():
             unk_20_24=19000,
             unk_24_25=False,
         )
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     if FlagDisabled(119):
         EnableFlag(119)
     DeleteAssetVFX(Assets.AEG099_003_9001, erase_root=False)
@@ -383,6 +385,16 @@ def Event_19002502():
     
     AddSpecialEffect(PLAYER, 4281)
     AddSpecialEffect(PLAYER, 4283)
+
+
+@RestartOnRest(19002682)
+def Event_19002682():
+    """Event 19002682"""
+    if PlayerNotInOwnWorld():
+        return
+    if FlagDisabled(121):
+        return
+    MoveRemains(source_region=19002682, destination_region=19002683)
 
 
 @RestartOnRest(19002800)
@@ -418,6 +430,11 @@ def Event_19002800():
     AND_2.Add(HealthRatio(PLAYER) == 0.0)
     if AND_2:
         return
+    AND_3.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 19997))
+    AND_3.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 19998))
+    AND_3.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 19999))
+    
+    MAIN.Await(AND_3)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -431,7 +448,7 @@ def Event_19002800():
         unk_20_24=19000,
         unk_24_25=False,
     )
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     SetCameraAngle(x_angle=20.899999618530273, y_angle=-51.560001373291016)
     SetPlayerPositionDisplay(
         state=True,
@@ -443,9 +460,11 @@ def Event_19002800():
     )
     SetRespawnPoint(respawn_point=19002814)
     SaveRequest()
+    MoveRemains(source_region=19002680, destination_region=19002681)
     EnableFlag(19000804)
-    SetBackreadStateAlternate(35000, False)
-    SetNetworkUpdateRate(35000, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryFiveFrames)
+    AddSpecialEffect(PLAYER, 191)
+    SetBackreadStateAlternate(ALL_SPIRIT_SUMMONS, False)
+    SetNetworkUpdateRate(ALL_SPIRIT_SUMMONS, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryFiveFrames)
 
 
 @RestartOnRest(19002810)
@@ -549,17 +568,24 @@ def Event_19002812():
             unk_20_24=0,
             unk_24_25=False,
         )
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     if PlayerInOwnWorld():
         SetCameraAngle(x_angle=-11.329999923706055, y_angle=-25.829999923706055)
+    if PlayerInOwnWorld():
+        EnableNetworkFlag(19002803)
     if PlayerInOwnWorld():
         EnableThisNetworkSlotFlag()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    SetBackreadStateAlternate(35000, True)
-    SetNetworkUpdateRate(35000, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryFiveFrames)
-    Move(35000, destination=19002813, destination_type=CoordEntityType.Region, copy_draw_parent=Characters.EldenBeast)
+    SetBackreadStateAlternate(ALL_SPIRIT_SUMMONS, True)
+    SetNetworkUpdateRate(ALL_SPIRIT_SUMMONS, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryFiveFrames)
+    Move(
+        ALL_SPIRIT_SUMMONS,
+        destination=19002813,
+        destination_type=CoordEntityType.Region,
+        copy_draw_parent=Characters.EldenBeast,
+    )
     Move(
         Characters.TalkDummy3,
         destination=19002813,
@@ -573,7 +599,7 @@ def Event_19002812():
     ForceAnimation(Characters.EldenBeast, 20000)
     EnableBossHealthBar(Characters.EldenBeast, name=902200000)
     ChangeCamera(normal_camera_id=2200, locked_camera_id=2200)
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     AttachAssetToCharacter(character=Characters.TalkDummy3, dummy_id=10, asset=Assets.AEG099_052_9000)
 
 
@@ -607,7 +633,7 @@ def Event_19002821():
 
 
 @RestartOnRest(19002822)
-def Event_19002822(_, flag: uint, dummy_id: int, dummy_id_1: int, dummy_id_2: int, dummy_id_3: int):
+def Event_19002822(_, flag: Flag | int, dummy_id: int, dummy_id_1: int, dummy_id_2: int, dummy_id_3: int):
     """Event 19002822"""
     if FlagEnabled(19000800):
         return
@@ -696,7 +722,7 @@ def Event_19002849():
         flag_2=19002806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=19000800, asset=Assets.AEG099_001_9000, dummy_id=5, right=19002801)
+    CommonFunc_9005811(0, flag=19000800, asset=Assets.AEG099_001_9000, vfx_id=5, right=19002801)
     CommonFunc_9005822(
         0,
         flag=19000800,
@@ -704,7 +730,7 @@ def Event_19002849():
         flag_1=19002805,
         flag_2=19002806,
         right=0,
-        flag_3=19002802,
+        flag_3=19002803,
         left=0,
         left_1=1,
     )
@@ -713,7 +739,7 @@ def Event_19002849():
 @RestartOnRest(19002900)
 def Event_19002900():
     """Event 19002900"""
-    CreateAssetVFX(Assets.AEG099_090_9000, vfx_id=100, dummy_id=1300)
+    CreateAssetVFX(Assets.AEG099_090_9000, dummy_id=100, vfx_id=1300)
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=9000, entity=Assets.AEG099_090_9000))
     

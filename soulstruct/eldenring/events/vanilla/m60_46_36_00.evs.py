@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_46_36_00_enums import *
 
 
@@ -41,7 +42,7 @@ def Constructor():
         seconds=0.0,
         animation_id=0,
     )
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, dummy_id=100, vfx_id=800, right=0)
     Event_1046362260(0, attacker__character=1046365260, region=1046362260)
     Event_1046362203()
     Event_1046362300()
@@ -82,7 +83,7 @@ def Event_1046362220():
 
 
 @RestartOnRest(1046362260)
-def Event_1046362260(_, attacker__character: uint, region: uint):
+def Event_1046362260(_, attacker__character: uint, region: Region | int):
     """Event 1046362260"""
     RemoveSpecialEffect(attacker__character, 4800)
     RemoveSpecialEffect(attacker__character, 5650)
@@ -99,12 +100,12 @@ def Event_1046362260(_, attacker__character: uint, region: uint):
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=PLAYER))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=35000))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=35000, attacker=attacker__character))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=ALL_SPIRIT_SUMMONS))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=ALL_SPIRIT_SUMMONS, attacker=attacker__character))
     OR_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=attacker__character, radius=10.0))
-    OR_2.Add(EntityWithinDistance(entity=35000, other_entity=attacker__character, radius=10.0))
+    OR_2.Add(EntityWithinDistance(entity=ALL_SPIRIT_SUMMONS, other_entity=attacker__character, radius=10.0))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
-    OR_2.Add(CharacterInsideRegion(character=35000, region=region))
+    OR_2.Add(CharacterInsideRegion(character=ALL_SPIRIT_SUMMONS, region=region))
     AND_1.Add(OR_2)
     
     MAIN.Await(AND_1)
@@ -178,7 +179,7 @@ def Event_1046362310():
 
 
 @RestartOnRest(1046362620)
-def Event_1046362620(_, tutorial_param_id: int, flag: uint):
+def Event_1046362620(_, tutorial_param_id: int, flag: Flag | int):
     """Event 1046362620"""
     if PlayerNotInOwnWorld():
         return

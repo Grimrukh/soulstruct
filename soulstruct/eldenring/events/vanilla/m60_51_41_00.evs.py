@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_51_41_00_enums import *
 
 
@@ -25,11 +26,11 @@ from .enums.m60_51_41_00_enums import *
 def Constructor():
     """Event 0"""
     Event_1051412200(0, character=Characters.GiantBall, asset=Assets.AEG099_090_9000, region=1051412210)
-    CommonFunc_90005300(0, flag=1051410290, character=Characters.Scarab, item_lot=40420, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1051410290, character=Characters.Scarab, item_lot=40420, seconds=0.0, left=0)
 
 
 @RestartOnRest(1051412200)
-def Event_1051412200(_, character: uint, asset: uint, region: uint):
+def Event_1051412200(_, character: uint, asset: Asset | int, region: uint):
     """Event 1051412200"""
     DisableCharacter(character)
     if FlagEnabled(region):
@@ -49,7 +50,7 @@ def Event_1051412200(_, character: uint, asset: uint, region: uint):
     
     MAIN.Await(AND_2)
     
-    CreateAssetVFX(asset, vfx_id=100, dummy_id=620383)
+    CreateAssetVFX(asset, dummy_id=100, vfx_id=620383)
     EnableCharacter(character)
     EnableNetworkFlag(region)
     Wait(2.0)

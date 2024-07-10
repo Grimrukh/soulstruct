@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_38_53_00_enums import *
 
 
@@ -55,7 +56,7 @@ def Event_1038532580():
 
 
 @RestartOnRest(1038532200)
-def Event_1038532200(_, character: uint):
+def Event_1038532200(_, character: Character | int):
     """Event 1038532200"""
     Kill(character)
     End()

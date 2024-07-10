@@ -18,21 +18,22 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_37_54_00_enums import *
 
 
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GraftedScion, region=1037542341, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GraftedScion, region=1037542342, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.GraftedScion, region=1037542341, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.GraftedScion, region=1037542342, seconds=0.0, animation_id=0)
     Event_1037542500()
-    CommonFunc_90005300(0, flag=1037540341, character=Characters.GraftedScion, item_lot=0, seconds=3.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1037540341, character=Characters.GraftedScion, item_lot=0, seconds=3.0, left=0)
     CommonFunc_90005271(0, character=Characters.LeyndellSoldier0, seconds=0.0, animation_id=-1)
     Event_1037542260()
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Marionette2, region=1037542250, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(1, character=Characters.Marionette3, region=1037542250, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(2, character=Characters.Marionette4, region=1037542250, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Marionette2, region=1037542250, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(1, character=Characters.Marionette3, region=1037542250, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(2, character=Characters.Marionette4, region=1037542250, seconds=0.0, animation_id=0)
     CommonFunc_90005200(
         0,
         character=Characters.Marionette0,
@@ -55,16 +56,16 @@ def Constructor():
         animation_id=-1,
     )
     CommonFunc_90005261(1, character=1037540352, region=1037542351, radius=0.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Basilisk0, region=1037542210, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(1, character=Characters.Basilisk2, region=1037542210, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(
+    CommonFunc_90005250(0, character=Characters.Basilisk0, region=1037542210, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(1, character=Characters.Basilisk2, region=1037542210, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(
         2,
         character=Characters.Basilisk3,
         region=1037542210,
         seconds=0.20000000298023224,
         animation_id=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(3, character=1037540213, region=1037542210, seconds=0.10000000149011612, animation_id=0)
+    CommonFunc_90005250(3, character=1037540213, region=1037542210, seconds=0.10000000149011612, animation_id=0)
     CommonFunc_90005200(
         0,
         character=Characters.Basilisk1,
@@ -179,7 +180,7 @@ def Constructor():
     )
     Event_1037542250(3, character=Characters.LeyndellSoldier3)
     Event_1037542300()
-    CommonFunc_AITrigger_RegionOrHurt(1, character=1037540440, region=1037542810, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(1, character=1037540440, region=1037542810, seconds=0.0, animation_id=0)
     CommonFunc_90005200(
         0,
         character=Characters.UlceratedTreeSpirit,
@@ -192,7 +193,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.UlceratedTreeSpirit, name=904640600, npc_threat_level=18)
+    CommonFunc_90005870(0, character=Characters.UlceratedTreeSpirit, name=904640600, npc_threat_level=18)
     CommonFunc_90005860(
         0,
         flag=1037540810,
@@ -202,7 +203,7 @@ def Constructor():
         item_lot=30380,
         seconds=0.0,
     )
-    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.UlceratedTreeSpirit, npc_threat_level=18, required_flag=0)
+    CommonFunc_90005872(0, character=Characters.UlceratedTreeSpirit, npc_threat_level=18, right=0)
     Event_1037542255()
     Event_1037542270(0, attacker__character=1037545810, region=1037542810)
     Event_1037542580()
@@ -339,14 +340,14 @@ def Preconstructor():
 
 
 @RestartOnRest(1037542210)
-def Event_1037542210(_, character__targeting_character: uint, region: uint):
+def Event_1037542210(_, character__targeting_character: Character | int, region: Region | int):
     """Event 1037542210"""
     DisableNetworkSync()
     AND_1.Add(CharacterDead(character__targeting_character))
     if AND_1:
         return
-    AND_1.Add(CharacterTargeting(targeting_character=character__targeting_character, targeted_character=20000))
-    AND_1.Add(CharacterOutsideRegion(character=20000, region=region))
+    AND_1.Add(CharacterTargeting(targeting_character=character__targeting_character, targeted_character=ALL_PLAYERS))
+    AND_1.Add(CharacterOutsideRegion(character=ALL_PLAYERS, region=region))
     
     MAIN.Await(AND_1)
     
@@ -356,7 +357,7 @@ def Event_1037542210(_, character__targeting_character: uint, region: uint):
 
 
 @RestartOnRest(1037542220)
-def Event_1037542220(_, character: uint, region: uint, destination: uint, seconds: float):
+def Event_1037542220(_, character: Character | int, region: Region | int, destination: uint, seconds: float):
     """Event 1037542220"""
     DisableCharacter(character)
     DisableInvincibility(character)
@@ -1268,7 +1269,7 @@ def Event_1037542580():
 
 
 @RestartOnRest(1037542250)
-def Event_1037542250(_, character: uint):
+def Event_1037542250(_, character: Character | int):
     """Event 1037542250"""
     if ThisEventSlotFlagEnabled():
         return
@@ -1298,7 +1299,7 @@ def Event_1037542260():
 
 
 @RestartOnRest(1037542270)
-def Event_1037542270(_, attacker__character: uint, region: uint):
+def Event_1037542270(_, attacker__character: uint, region: Region | int):
     """Event 1037542270"""
     RemoveSpecialEffect(attacker__character, 4800)
     RemoveSpecialEffect(attacker__character, 5661)
@@ -1315,17 +1316,17 @@ def Event_1037542270(_, attacker__character: uint, region: uint):
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=PLAYER))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=35000))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=35000, attacker=attacker__character))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=ALL_SPIRIT_SUMMONS))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=ALL_SPIRIT_SUMMONS, attacker=attacker__character))
     OR_2.Add(CharacterHasStateInfo(character=attacker__character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=attacker__character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=attacker__character, state_info=5))
     OR_2.Add(CharacterHasStateInfo(character=attacker__character, state_info=6))
     OR_2.Add(CharacterHasStateInfo(character=attacker__character, state_info=260))
     OR_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=attacker__character, radius=10.0))
-    OR_2.Add(EntityWithinDistance(entity=35000, other_entity=attacker__character, radius=10.0))
+    OR_2.Add(EntityWithinDistance(entity=ALL_SPIRIT_SUMMONS, other_entity=attacker__character, radius=10.0))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
-    OR_2.Add(CharacterInsideRegion(character=35000, region=region))
+    OR_2.Add(CharacterInsideRegion(character=ALL_SPIRIT_SUMMONS, region=region))
     AND_1.Add(OR_2)
     
     MAIN.Await(AND_1)
@@ -1383,7 +1384,7 @@ def Event_1037542350():
 
 
 @RestartOnRest(1037542351)
-def Event_1037542351(_, flag: uint, flag_1: uint):
+def Event_1037542351(_, flag: Flag | int, flag_1: Flag | int):
     """Event 1037542351"""
     MAIN.Await(FlagEnabled(flag))
     
@@ -1406,7 +1407,7 @@ def Event_1037542400(_, character: uint):
 
 
 @RestartOnRest(1037542450)
-def Event_1037542450(_, asset: uint):
+def Event_1037542450(_, asset: Asset | int):
     """Event 1037542450"""
     DisableAsset(asset)
     End()
@@ -1426,7 +1427,7 @@ def Event_1037542500():
 
 
 @ContinueOnRest(1037542569)
-def Event_1037542569(_, flag: uint, asset: uint):
+def Event_1037542569(_, flag: Flag | int, asset: uint):
     """Event 1037542569"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     DisableAsset(asset)
@@ -1434,7 +1435,7 @@ def Event_1037542569(_, flag: uint, asset: uint):
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=101, dummy_id=806043)
+    CreateAssetVFX(asset, dummy_id=101, vfx_id=806043)
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(FlagEnabled(flag))
     
@@ -1569,7 +1570,7 @@ def Event_1037543701():
     EnableFlag(1037549210)
     AND_2.Add(CharacterMounted(character=PLAYER))
     SkipLinesIfConditionFalse(1, AND_2)
-    Move(40000, destination=1045522712, destination_type=CoordEntityType.Region, short_move=True)
+    Move(TORRENT, destination=1045522712, destination_type=CoordEntityType.Region, short_move=True)
     EnableFlag(9021)
     GotoIfPlayerInOwnWorld(Label.L1)
     OR_3.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
@@ -1598,7 +1599,7 @@ def Event_1037543701():
         unk_20_24=0,
         unk_24_25=False,
     )
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     EnableFlag(3698)
     Goto(Label.L4)
 
@@ -1626,7 +1627,7 @@ def Event_1037543701():
 
 
 @RestartOnRest(1037543702)
-def Event_1037543702(_, character: uint, flag: uint, flag_1: uint, character_1: uint, flag_2: uint):
+def Event_1037543702(_, character: uint, flag: Flag | int, flag_1: Flag | int, character_1: uint, flag_2: Flag | int):
     """Event 1037543702"""
     WaitFrames(frames=1)
     if PlayerNotInOwnWorld():

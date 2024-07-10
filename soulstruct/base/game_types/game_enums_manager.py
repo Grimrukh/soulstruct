@@ -8,6 +8,7 @@ __all__ = [
 import abc
 import inspect
 import logging
+import re
 import typing as tp
 from enum import Enum, IntEnum
 from pathlib import Path
@@ -17,6 +18,8 @@ from soulstruct.utilities.files import import_arbitrary_module
 from soulstruct.base.game_types import *
 
 _LOGGER = logging.getLogger("soulstruct")
+
+MAP_NAME_RE = re.compile(r"(m\d\d_\d\d_\d\d_)(\d\d)(.*)")
 
 
 class GameEnumInfo:
@@ -28,28 +31,33 @@ class GameEnumInfo:
         self.class_name = enum.__class__.__name__
         self.module_name = module_name
 
-    def get_variable_string(self, star_module_names: list[str]) -> str:
+    def get_variable_string(self, star_import_module_names: list[str], use_aa_bb_abbreviation: bool) -> str:
         """String that should appear in actual EVS calls."""
-        if self.module_name in star_module_names:
+        if self.module_name in star_import_module_names:
             return f"{self.class_name}.{self.enum.name}"  # no module prefix alias needed
-        return f"{self.get_class_alias()}.{self.enum.name}"
+        return f"{self.get_class_alias(use_aa_bb_abbreviation)}.{self.enum.name}"
 
-    def get_class_alias(self) -> str:
+    def get_class_alias(self, use_aa_bb_abbreviation: bool) -> str:
         # TODO: Currently using first six characters of module as alias prefix, under the assumption that it will be
         #  a properly named module (e.g. `from m10_02_enums import Characters as m10_02_Characters`).
         if self.module_name.startswith("common") and self.class_name.lower().startswith("common"):
             return self.class_name  # no need for an alias
-        return f"{self.module_name[:6]}_{self.class_name}"
+        if use_aa_bb_abbreviation:
+            # This game doesn't have maps that differ in only CC or DD parts of map stem.
+            return f"{self.module_name[:6]}_{self.class_name}"
+        # Use full module (map) name, except '_enums' suffix.
+        return f"{self.module_name.removesuffix('_enums')}_{self.class_name}"
 
-    def get_import_string(self) -> str:
+    def get_import_string(self, use_aa_bb_abbreviation: bool) -> str:
         """Only called for non-star imports."""
-        class_alias = self.get_class_alias()
+        class_alias = self.get_class_alias(use_aa_bb_abbreviation)
         if class_alias == self.class_name:
             return f"{self.class_name}"  # no alias
         return f"{self.class_name} as {class_alias}"  # import alias (may be a generic class name)
 
     def __repr__(self):
-        return f"GameEnumInfo({self.class_name}.{self.enum.name}<{self.enum.value}>, alias={self.get_class_alias()})"
+        alias = self.get_class_alias(False)
+        return f"GameEnumInfo({self.class_name}.{self.enum.name}<{self.enum.value}>, alias={alias})"
 
 
 class GameEnumsManager(abc.ABC):
@@ -85,6 +93,9 @@ class GameEnumsManager(abc.ABC):
 
     # Dictionary of reserved global ID variables like `PLAYER`.
     RESERVED_GLOBAL_IDS: dict[int, str]
+    
+    # Indicates whether 'mAA_BB' abbreviated prefix can be used for non-star import aliases.
+    USE_AA_BB_ABBREVIATION: bool = False
 
     # Maps module stems (e.g. 'm10_01_00_00_enums') to dictionaries mapping game types to `{value: GameEnumInfo}`
     # dictionaries. When an enum is checked out, a 'star_module' can be passed, which will be checked first. If the
@@ -96,7 +107,7 @@ class GameEnumsManager(abc.ABC):
 
     # Added whenever `checkout_enum()` has a hit. Can be manually cleared and monitored by caller.
     used_enums: list[GameEnumInfo]
-    star_module_names: list[str]
+    star_import_module_names: list[str]
 
     def __init__(self, module_paths: tp.Sequence[str | Path], all_event_ids: list[int] = None):
         """Loads modules and monitors non-star enum usage for `EMEVD.to_evs()`.
@@ -115,7 +126,7 @@ class GameEnumsManager(abc.ABC):
         """
         self.modules = {Path(path).name.split(".")[0]: import_arbitrary_module(path) for path in module_paths}
         self.enums = {module_stem: {} for module_stem in self.modules}
-        self.all_event_ids = [] if all_event_ids is None else all_event_ids
+        self.all_event_ids = all_event_ids or []
         self.all_common_event_ids = []  # added separately
 
         # For generating final import statements.
@@ -132,7 +143,7 @@ class GameEnumsManager(abc.ABC):
 
         # Default. Can be set by user.
         self.used_enums = []
-        self.star_module_names = []
+        self.star_import_module_names = []
 
         if self.modules:
             self.refresh_enums()
@@ -197,12 +208,20 @@ class GameEnumsManager(abc.ABC):
             # Type match (one is child of the other). Only warn if they are in different modules and the enum value is
             # seven or more digits (rather than, say, a reused NPC entity ID like 6000).
             if existing_module_name != module_name and enum_member.value >= 1_000_000:
-                _LOGGER.warning(
-                    f"Enum value {enum_member.value} of type `{enum_member.__class__.__name__}` (for argument type "
-                    f"`{game_type.__name__}`) was defined in module '{module_name}' after already being defined in "
-                    f"module '{existing_module_name}'. Harmless, but potentially redundant, as cross-map imports "
-                    f"are supported by EVS decompilation."
-                )
+                # Also check that module names do not only differ in last two digits, which indicate map version
+                # (e.g. m12_00_00_00 and m12_00_00_01, or m60_44_36_00 and m60_44_36_10).
+                do_warning = True
+                if (m1 := MAP_NAME_RE.match(existing_module_name)) and (m2 := MAP_NAME_RE.match(module_name)):
+                    if m1.group(1) == m2.group(1) and m1.group(3) == m2.group(3):
+                        # Module names are identical except for map version.
+                        do_warning = False
+                if do_warning:
+                    _LOGGER.warning(
+                        f"Enum value {enum_member.value} of type `{enum_member.__class__.__name__}` (for argument type "
+                        f"`{game_type.__name__}`) was defined in module '{module_name}' after already being defined in "
+                        f"module '{existing_module_name}'. Harmless, but potentially redundant, as cross-map imports "
+                        f"are supported by EVS decompilation."
+                    )
         else:
             _LOGGER.warning(
                 f"Enum value {enum_member.value} of type `{enum_member.__class__.__name__}` (for argument type "
@@ -262,14 +281,14 @@ class GameEnumsManager(abc.ABC):
         self,
         enum_value: int,
         *game_types: GAME_INT_TYPE | tp.Sequence[GAME_INT_TYPE],
-        star_module_names: tp.Sequence[str] = None,
+        star_import_module_names: tp.Sequence[str] = None,
     ) -> GameEnumInfo:
         """Attempt to check out an enum with one of the given `game_types` and `enum_value`.
 
-        If `star_module_names` is given, those module names will be checked first. If there are multiple hits in these
-        modules, an `EnumValueRepeatError` will be raised, as the imported value in the EVS script will be unacceptably
-        ambiguous. If there are NO hits in star modules and multiple hits in other, non-star modules, a warning will be
-        logged and none of those enums will be checked out.
+        If `star_import_module_names` is given, those module names will be checked first. If there are multiple hits in
+        these modules, an `EnumValueRepeatError` will be raised, as the imported value in the EVS script will be
+        unacceptably ambiguous. If there are NO hits in star modules and multiple hits in other, non-star modules, a
+        warning will be logged and none of those enums will be checked out.
 
         Raises a `MissingEnumTypeError` if none of the game types are present at all, and `MissingEnumValueError` if a
         game type is present but the specific value is not.
@@ -278,14 +297,14 @@ class GameEnumsManager(abc.ABC):
             enum_value (int): entity ID to check out.
             game_types: names/types of game types to check, e.g. `RegionBox`, `Flag`, etc. If empty, all types will be
                 checked (e.g. for entity IDs of completely unknown type).
-            star_module_names (Sequence): one or more names of modules that will be star-imported in this EVS script
-                and should be checked first.
+            star_import_module_names (Sequence): one or more names of modules that will be star-imported in this EVS
+                script and should be checked first.
         """
         if not self.enums:
             raise self.MissingEnumTypeError("No enums loaded in `GameEnumsManager`.")
 
-        if star_module_names is None:
-            star_module_names = self.star_module_names
+        if star_import_module_names is None:
+            star_import_module_names = self.star_import_module_names
 
         if not game_types:
             # Check ALL valid game types.
@@ -296,15 +315,16 @@ class GameEnumsManager(abc.ABC):
         else:
             is_any = False
 
-        # Search all managed modules for given `enum_value`, starting with `star_module_names`.
+        # Search all managed modules for given `enum_value`, starting with `star_import_module_names`.
         # NOTE: To ensure maximum validity, we do NOT simply stop at the first hit (see docstring above for details).
 
         type_found = False
         star_hits = []
-        if star_module_names:
-            for star_module_name in star_module_names:
+        if star_import_module_names:
+            for star_module_name in star_import_module_names:
                 if star_module_name not in self.enums:
-                    raise KeyError(f"Module name '{star_module_name}' was not loaded by this `GameEnumsManager`.")
+                    # raise KeyError(f"Module name '{star_module_name}' was not loaded by this `GameEnumsManager`.")
+                    continue
                 module_enums = self.enums[star_module_name]
                 for game_type in game_types:
                     if game_type not in module_enums:
@@ -330,7 +350,7 @@ class GameEnumsManager(abc.ABC):
         # Try other modules.
         non_star_hits = []
         for module_name in self.enums:
-            if module_name in star_module_names:
+            if module_name in star_import_module_names:
                 continue  # already checked above
             module_enums = self.enums[module_name]
             for game_type in game_types:
@@ -374,7 +394,7 @@ class GameEnumsManager(abc.ABC):
         self,
         enum_value: int,
         *game_types: GAME_INT_TYPE | tp.Sequence[GAME_INT_TYPE],
-        star_module_names: tp.Sequence[str] = None,
+        star_import_module_names: tp.Sequence[str] = None,
     ) -> str:
         """Calls `_check_out_enum()` but only returns `enum_info.get_variable_string()`."""
 
@@ -382,12 +402,14 @@ class GameEnumsManager(abc.ABC):
         if enum_value in self.RESERVED_GLOBAL_IDS:
             return self.RESERVED_GLOBAL_IDS[enum_value]
 
-        if not star_module_names:
-            star_module_names = self.star_module_names
-        game_enum_info = self._check_out_enum(enum_value, *game_types, star_module_names=star_module_names)
-        return game_enum_info.get_variable_string(star_module_names)
+        if not star_import_module_names:
+            star_import_module_names = self.star_import_module_names
+        game_enum_info = self._check_out_enum(
+            enum_value, *game_types, star_import_module_names=star_import_module_names
+        )
+        return game_enum_info.get_variable_string(star_import_module_names, self.USE_AA_BB_ABBREVIATION)
 
-    def get_import_lines(self, star_module_names: tp.Collection[str], module_prefix: str) -> str:
+    def get_import_lines(self, star_import_module_names: tp.Collection[str], module_prefix: str) -> str:
         if not self.used_enums:
             _LOGGER.warning("No enums used by `GameEnumsManager` for import lines.")
             return ""
@@ -396,13 +418,14 @@ class GameEnumsManager(abc.ABC):
         non_star_imports = {}
         imports = ""
         for used_enum in self.used_enums:
-            if used_enum.module_name in star_module_names:
+            if used_enum.module_name in star_import_module_names:
                 if used_enum.module_name not in imported_star:
                     imports += f"\nfrom {module_prefix}{used_enum.module_name} import *"
                     imported_star.add(used_enum.module_name)
             else:
                 # Non-star import.
-                non_star_imports.setdefault(used_enum.module_name, set()).add(used_enum.get_import_string())
+                import_string = used_enum.get_import_string(self.USE_AA_BB_ABBREVIATION)
+                non_star_imports.setdefault(used_enum.module_name, set()).add(import_string)
         for module_name in sorted(non_star_imports):
             sorted_aliases = sorted(non_star_imports[module_name])
             import_prefix = f"\nfrom {module_prefix}{module_name} import "

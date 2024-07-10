@@ -18,15 +18,16 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_41_37_00_enums import *
 
 
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=1041378540)
-    CommonFunc_90005300(0, flag=1041370200, character=Characters.Scarab, item_lot=40120, seconds=0.0, item_is_dropped=0)
-    CommonFunc_90005300(0, flag=1041370340, character=Characters.GuardianGolem, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=1041378540)
+    CommonFunc_90005300(0, flag=1041370200, character=Characters.Scarab, item_lot=40120, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1041370340, character=Characters.GuardianGolem, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005570(0, flag=60833, gesture_param_id=91, asset=Assets.AEG099_610_9001, left=0, left_1=1, right=0)
 
 
@@ -69,4 +70,4 @@ def Event_1041372670():
     MAIN.Await(AND_1)
     
     EnableFlag(1041370670)
-    DisplayDialog(text=90010, anchor_entity=0, display_distance=1.0, number_buttons=NumberButtons.OneButton)
+    DisplayDialog(text=90010, display_distance=1.0, number_buttons=NumberButtons.OneButton)

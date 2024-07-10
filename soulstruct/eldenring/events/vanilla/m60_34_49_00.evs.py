@@ -18,8 +18,9 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_34_49_00_enums import *
-from .enums.m60_35_49_00_enums import Assets as m60_35_Assets
+from .enums.m60_35_49_00_enums import Assets as m60_35_49_00_Assets
 
 
 @ContinueOnRest(0)
@@ -64,7 +65,7 @@ def Constructor():
     )
     Event_1034492290(
         2,
-        source_entity=m60_35_Assets.AEG099_090_9000,
+        source_entity=m60_35_49_00_Assets.AEG099_090_9000,
         region=1035492200,
         flag=1034492283,
         flag_1=6001,
@@ -128,7 +129,7 @@ def Constructor():
         first_flag=400240,
         last_flag=400241,
         flag=3768,
-        dummy_id=0,
+        vfx_id=0,
     )
 
 
@@ -144,7 +145,7 @@ def Preconstructor():
 
 
 @RestartOnRest(1034492210)
-def Event_1034492210(_, character: uint):
+def Event_1034492210(_, character: Character | int):
     """Event 1034492210"""
     EnableNetworkSync()
     SetBackreadStateAlternate(character, True)
@@ -155,7 +156,7 @@ def Event_1034492210(_, character: uint):
 
 
 @RestartOnRest(1034492270)
-def Event_1034492270(_, seconds: float, flag: uint):
+def Event_1034492270(_, seconds: float, flag: Flag | int):
     """Event 1034492270"""
     if PlayerNotInOwnWorld():
         return
@@ -172,7 +173,15 @@ def Event_1034492270(_, seconds: float, flag: uint):
 
 
 @RestartOnRest(1034492290)
-def Event_1034492290(_, source_entity: uint, region: uint, flag: uint, flag_1: uint, flag_2: uint, frames: int):
+def Event_1034492290(
+    _,
+    source_entity: uint,
+    region: Region | int,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
+    frames: int,
+):
     """Event 1034492290"""
     EnableNetworkSync()
     AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
@@ -190,7 +199,7 @@ def Event_1034492290(_, source_entity: uint, region: uint, flag: uint, flag_1: u
     
     if FlagEnabled(1035500800):
         return
-    WaitFramesAfterCutscene(frames=frames)
+    WaitRealFrames(frames=frames)
     GotoIfFlagDisabled(Label.L1, flag=flag_1)
     GotoIfFlagDisabled(Label.L1, flag=flag_2)
     AND_2.Add(NewGameCycleEqual(completion_count=0))
@@ -304,7 +313,7 @@ def Event_1034492290(_, source_entity: uint, region: uint, flag: uint, flag_1: u
 
 
 @RestartOnRest(1034492340)
-def Event_1034492340(_, character: uint):
+def Event_1034492340(_, character: Character | int):
     """Event 1034492340"""
     Kill(character, award_runes=True)
 
@@ -467,17 +476,7 @@ def Event_1034493704(_, character: uint):
     MAIN.Await(AttackedWithDamageType(attacked_entity=character, attacker=PLAYER))
     
     if FlagEnabled(1034499236):
-        CreateTemporaryVFX(
-            vfx_id=646060,
-            anchor_entity=character,
-            dummy_id=960,
-            anchor_type=CoordEntityType.Character,
-        )
+        CreateTemporaryVFX(vfx_id=646060, anchor_entity=character, dummy_id=960, anchor_type=CoordEntityType.Character)
     if FlagEnabled(1034499237):
-        CreateTemporaryVFX(
-            vfx_id=641111,
-            anchor_entity=character,
-            dummy_id=960,
-            anchor_type=CoordEntityType.Character,
-        )
+        CreateTemporaryVFX(vfx_id=641111, anchor_entity=character, dummy_id=960, anchor_type=CoordEntityType.Character)
     Restart()

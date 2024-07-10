@@ -19,6 +19,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_44_37_00_enums import *
 
 
@@ -26,10 +27,10 @@ from .enums.m60_44_37_00_enums import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1044370000, asset=Assets.AEG099_060_9000)
-    Event_1044372210(0, character=Characters.DemiHuman0, asset=1044371211, region=1044372210)
-    Event_1044372210(1, character=Characters.DemiHuman1, asset=1044371212, region=1044372210)
-    Event_1044372210(2, character=Characters.DemiHuman2, asset=1044371213, region=1044372210)
-    Event_1044372210(3, character=Characters.DemiHuman3, asset=1044371214, region=1044372210)
+    Event_1044372210(0, character=Characters.DemiHuman0, asset=Assets.AEG801_480_9000, region=1044372210)
+    Event_1044372210(1, character=Characters.DemiHuman1, asset=Assets.AEG801_480_9001, region=1044372210)
+    Event_1044372210(2, character=Characters.DemiHuman2, asset=Assets.AEG801_480_9002, region=1044372210)
+    Event_1044372210(3, character=Characters.DemiHuman3, asset=Assets.AEG801_480_9003, region=1044372210)
     CommonFunc_90005706(0, character=Characters.WanderingNoble, animation_id=930023, left=0)
     Event_1044373715(0, character=1044370705)
     Event_1044373716()
@@ -63,10 +64,10 @@ def Preconstructor():
         region=1044372200,
         radius=10.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005261(0, character=Characters.Skeleton1, region=1044372200, radius=10.0, seconds=1.0, animation_id=-1)
     CommonFunc_90005211(
@@ -77,16 +78,16 @@ def Preconstructor():
         region=1044372200,
         radius=10.0,
         seconds=1.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005261(0, character=Characters.Runebear, region=1044372350, radius=15.0, seconds=0.0, animation_id=0)
 
 
 @RestartOnRest(1044372210)
-def Event_1044372210(_, character: uint, asset: uint, region: uint):
+def Event_1044372210(_, character: uint, asset: uint, region: Region | int):
     """Event 1044372210"""
     EnableAsset(asset)
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
@@ -102,7 +103,7 @@ def Event_1044372210(_, character: uint, asset: uint, region: uint):
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=asset, attacker=20000))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=asset, attacker=ALL_PLAYERS))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -159,7 +160,7 @@ def Event_1044375220():
 
 
 @RestartOnRest(1044372650)
-def Event_1044372650(_, tutorial_param_id: int, flag: uint):
+def Event_1044372650(_, tutorial_param_id: int, flag: Flag | int):
     """Event 1044372650"""
     if PlayerNotInOwnWorld():
         return
@@ -181,10 +182,10 @@ def Event_1044373700(
     asset__character: uint,
     asset__character_1: uint,
     asset__character_2: uint,
-    flag: uint,
-    flag_1: uint,
-    flag_2: uint,
-    flag_3: uint,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
+    flag_3: Flag | int,
 ):
     """Event 1044373700"""
     WaitFrames(frames=1)
@@ -237,7 +238,14 @@ def Event_1044373700(
 
 
 @RestartOnRest(1044373701)
-def Event_1044373701(_, flag: uint, flag_1: uint, flag_2: uint, first_flag: uint, last_flag: uint):
+def Event_1044373701(
+    _,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
+    first_flag: Flag | int,
+    last_flag: Flag | int,
+):
     """Event 1044373701"""
     if PlayerNotInOwnWorld():
         return
@@ -256,7 +264,15 @@ def Event_1044373701(_, flag: uint, flag_1: uint, flag_2: uint, first_flag: uint
 
 
 @RestartOnRest(1044373702)
-def Event_1044373702(_, character: uint, flag: uint, first_flag: uint, flag_1: uint, last_flag: uint, flag_2: uint):
+def Event_1044373702(
+    _,
+    character: Character | int,
+    flag: Flag | int,
+    first_flag: Flag | int,
+    flag_1: Flag | int,
+    last_flag: Flag | int,
+    flag_2: Flag | int,
+):
     """Event 1044373702"""
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(FlagEnabled(flag))
@@ -280,7 +296,7 @@ def Event_1044373710(_, character: uint):
 
 
 @RestartOnRest(1044373715)
-def Event_1044373715(_, character: uint):
+def Event_1044373715(_, character: Character | int):
     """Event 1044373715"""
     DisableCharacter(character)
     DisableBackread(character)

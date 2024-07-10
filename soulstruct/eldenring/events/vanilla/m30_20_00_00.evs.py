@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m30_20_00_00_enums import *
 
 
@@ -38,10 +39,10 @@ def Constructor():
         region=30202200,
         radius=1.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=1,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=1,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -51,10 +52,10 @@ def Constructor():
         region=30202201,
         radius=1.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=1,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=1,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -64,10 +65,10 @@ def Constructor():
         region=30202202,
         radius=1.0,
         seconds=1.0,
-        do_disable_gravity_and_collision=1,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=1,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005261(
         0,
@@ -126,10 +127,10 @@ def Constructor():
         region=30202243,
         radius=1.0,
         seconds=1.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -139,10 +140,10 @@ def Constructor():
         region=30202243,
         radius=1.0,
         seconds=1.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -152,10 +153,10 @@ def Constructor():
         region=30202243,
         radius=1.0,
         seconds=2.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -165,10 +166,10 @@ def Constructor():
         region=30202250,
         radius=1.0,
         seconds=1.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -178,10 +179,10 @@ def Constructor():
         region=30202250,
         radius=2.0,
         seconds=1.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -191,10 +192,10 @@ def Constructor():
         region=30202250,
         radius=2.0,
         seconds=2.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005261(
         0,
@@ -220,10 +221,10 @@ def Constructor():
         region=30202202,
         radius=1.0,
         seconds=0.10000000149011612,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -233,10 +234,10 @@ def Constructor():
         region=30202202,
         radius=1.0,
         seconds=0.30000001192092896,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005261(
         0,
@@ -290,7 +291,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_90005525(0, flag=30200560, asset=30201560)
+    CommonFunc_90005525(0, flag=30200560, asset=Assets.AEG027_157_9000)
     CommonFunc_90005501(
         0,
         flag=30200510,
@@ -350,7 +351,7 @@ def Event_30202510():
 
 
 @RestartOnRest(30202520)
-def Event_30202520(_, flag: uint, asset: uint, flag_1: uint):
+def Event_30202520(_, flag: Flag | int, asset: Asset | int, flag_1: Flag | int):
     """Event 30202520"""
     if FlagEnabled(flag):
         return
@@ -479,7 +480,7 @@ def Event_30202829():
         flag_2=30202806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=30200800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=30200800, asset=Assets.AEG099_001_9000, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=30200800,

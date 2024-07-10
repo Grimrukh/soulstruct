@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m31_01_00_00_enums import *
 
 
@@ -43,7 +44,7 @@ def Constructor():
         dd_id=0,
     )
     Event_31012500()
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=0)
 
 
 @ContinueOnRest(50)
@@ -85,7 +86,7 @@ def Event_31012500():
 
 
 @RestartOnRest(31012200)
-def Event_31012200(_, character: uint, patrol_information_id: uint):
+def Event_31012200(_, character: Character | int, patrol_information_id: uint):
     """Event 31012200"""
     if ThisEventSlotFlagEnabled():
         return
@@ -103,7 +104,7 @@ def Event_31012200(_, character: uint, patrol_information_id: uint):
 
 
 @RestartOnRest(31012207)
-def Event_31012207(_, character: uint, region: uint, radius: float, seconds: float, animation_id: int):
+def Event_31012207(_, character: uint, region: Region | int, radius: float, seconds: float, animation_id: int):
     """Event 31012207"""
     if ThisEventSlotFlagEnabled():
         return
@@ -354,7 +355,7 @@ def Event_31012849():
         flag_2=31012806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=31010800, asset=Assets.AEG099_001_9000, dummy_id=3, right=31010801)
+    CommonFunc_9005811(0, flag=31010800, asset=Assets.AEG099_001_9000, vfx_id=3, right=31010801)
     CommonFunc_9005822(
         0,
         flag=31010800,

@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_36_47_00_enums import *
 
 
@@ -59,10 +60,10 @@ def Event_1036472600(
     anchor_entity: uint,
     area_id: uchar,
     block_id: uchar,
-    cc_id: char,
-    dd_id: char,
-    player_start: uint,
-    flag: uint,
+    cc_id: uchar,
+    dd_id: uchar,
+    player_start: PlayerStart | int,
+    flag: Flag | int,
     target_entity: uint,
     animation: int,
     action_button_id: int,
@@ -87,14 +88,14 @@ def Event_1036472600(
 
     # --- Label 1 --- #
     DefineLabel(1)
-    FaceEntity(PLAYER, target_entity, animation=animation)
+    FaceEntityAndForceAnimation(PLAYER, target_entity, animation=animation)
     Wait(2.5)
     EnableFlag(flag)
     WarpToMap(game_map=(area_id, block_id, cc_id, dd_id), player_start=player_start)
 
 
 @RestartOnRest(1036472605)
-def Event_1036472605(_, flag: uint, target_entity: uint, animation: int):
+def Event_1036472605(_, flag: Flag | int, target_entity: uint, animation: int):
     """Event 1036472605"""
     if FlagDisabled(flag):
         return
@@ -102,7 +103,7 @@ def Event_1036472605(_, flag: uint, target_entity: uint, animation: int):
     MAIN.Await(FlagEnabled(flag))
     
     WaitFrames(frames=1)
-    FaceEntity(PLAYER, target_entity, animation=animation)
+    FaceEntityAndForceAnimation(PLAYER, target_entity, animation=animation)
     DisableFlag(flag)
 
 

@@ -19,13 +19,14 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_45_37_00_enums import *
 
 
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, dummy_id=100, vfx_id=800, right=0)
     CommonFunc_90005251(0, character=1045370201, radius=80.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=1045370207, radius=50.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=1045370214, radius=10.0, seconds=0.0, animation_id=-1)
@@ -67,7 +68,7 @@ def Constructor():
         left_3=0,
     )
     Event_1045372344()
-    CommonFunc_90005300(0, flag=1045370200, character=Characters.Scarab, item_lot=40116, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1045370200, character=Characters.Scarab, item_lot=40116, seconds=0.0, left=0)
     CommonFunc_90005400(0, character=Characters.Runebear3, special_effect=0, seconds=0.0, seconds_1=0.0, left=0)
     CommonFunc_90005401(0, flag=98101, character=Characters.Runebear3)
     CommonFunc_90005637(0, flag=1045378601, character=Characters.WanderingNoble, region=1045371620)
@@ -132,10 +133,10 @@ def Preconstructor():
 
 
 @RestartOnRest(1045372200)
-def Event_1045372200(_, asset: uint, entity: uint, flag: uint):
+def Event_1045372200(_, asset: Asset | int, entity: uint, flag: Flag | int):
     """Event 1045372200"""
     GotoIfFlagEnabled(Label.L0, flag=flag)
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=803220)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=803220)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -161,7 +162,7 @@ def Event_1045372344():
 
 
 @RestartOnRest(1045370650)
-def Event_1045370650(_, tutorial_param_id: int, flag: uint, flag_1: uint):
+def Event_1045370650(_, tutorial_param_id: int, flag: Flag | int, flag_1: Flag | int):
     """Event 1045370650"""
     if Multiplayer():
         return
@@ -327,7 +328,7 @@ def Event_1045370713():
 
 
 @RestartOnRest(1045370714)
-def Event_1045370714(_, character: uint):
+def Event_1045370714(_, character: Character | int):
     """Event 1045370714"""
     if PlayerNotInOwnWorld():
         return

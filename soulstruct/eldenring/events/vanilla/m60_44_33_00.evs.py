@@ -19,6 +19,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_44_33_00_enums import *
 
 
@@ -46,7 +47,7 @@ def Constructor():
         flag_10=78118,
         flag_11=78119,
     )
-    CommonFunc_90005300(0, flag=1044330290, character=Characters.Scarab, item_lot=40140, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1044330290, character=Characters.Scarab, item_lot=40140, seconds=0.0, left=0)
     CommonFunc_90005550(0, flag=1044330500, asset=1044331500, obj_act_id=44333500)
     CommonFunc_90005510(
         0,
@@ -90,14 +91,14 @@ def Constructor():
     Event_1044332230(19, character=1044330254)
     Event_1044332230(20, character=1044330255)
     Event_1044332230(21, character=1044330256)
-    Event_1044332280(0, character=Characters.DemiHuman0, asset=1044331280, region=1044332280)
-    Event_1044332280(1, character=Characters.DemiHuman1, asset=1044331281, region=1044332280)
+    Event_1044332280(0, character=Characters.DemiHuman0, asset=Assets.AEG801_480_9000, region=1044332280)
+    Event_1044332280(1, character=Characters.DemiHuman1, asset=Assets.AEG801_480_9001, region=1044332280)
     CommonFunc_90005400(0, character=Characters.Misbegotten4, special_effect=0, seconds=0.0, seconds_1=0.0, left=0)
     CommonFunc_90005401(0, flag=98103, character=Characters.Misbegotten4)
     if FlagEnabled(57):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=1044331600,
+            asset__asset_flag=Assets.AEG007_450_1000,
             asset=Assets.AEG007_450_1000,
             dummy_id_start=200,
             dummy_id_end=0,
@@ -109,7 +110,7 @@ def Constructor():
     if FlagEnabled(56):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=1044331600,
+            asset__asset_flag=Assets.AEG007_450_1000,
             asset=Assets.AEG007_450_1000,
             dummy_id_start=200,
             dummy_id_end=0,
@@ -121,7 +122,7 @@ def Constructor():
     if FlagEnabled(55):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=1044331600,
+            asset__asset_flag=Assets.AEG007_450_1000,
             asset=Assets.AEG007_450_1000,
             dummy_id_start=200,
             dummy_id_end=0,
@@ -133,7 +134,7 @@ def Constructor():
     if FlagEnabled(54):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=1044331600,
+            asset__asset_flag=Assets.AEG007_450_1000,
             asset=Assets.AEG007_450_1000,
             dummy_id_start=200,
             dummy_id_end=0,
@@ -145,7 +146,7 @@ def Constructor():
     if FlagEnabled(53):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=1044331600,
+            asset__asset_flag=Assets.AEG007_450_1000,
             asset=Assets.AEG007_450_1000,
             dummy_id_start=200,
             dummy_id_end=0,
@@ -157,7 +158,7 @@ def Constructor():
     if FlagEnabled(52):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=1044331600,
+            asset__asset_flag=Assets.AEG007_450_1000,
             asset=Assets.AEG007_450_1000,
             dummy_id_start=200,
             dummy_id_end=0,
@@ -169,7 +170,7 @@ def Constructor():
     if FlagEnabled(51):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=1044331600,
+            asset__asset_flag=Assets.AEG007_450_1000,
             asset=Assets.AEG007_450_1000,
             dummy_id_start=200,
             dummy_id_end=0,
@@ -181,7 +182,7 @@ def Constructor():
     if FlagEnabled(50):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=1044331600,
+            asset__asset_flag=Assets.AEG007_450_1000,
             asset=Assets.AEG007_450_1000,
             dummy_id_start=200,
             dummy_id_end=0,
@@ -245,11 +246,11 @@ def Preconstructor():
     DisableBackread(Characters.NomadMule)
     CommonFunc_90005251(0, character=Characters.GodrickSoldier0, radius=5.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.GodrickSoldier1, radius=5.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallerDog0, region=1044332233, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1044330271, region=1044332233, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallerDog1, region=1044332231, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallerDog2, region=1044332231, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallerDog3, region=1044332231, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallerDog0, region=1044332233, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1044330271, region=1044332233, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallerDog1, region=1044332231, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallerDog2, region=1044332231, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallerDog3, region=1044332231, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.Troll, radius=3.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(
         0,
@@ -378,7 +379,7 @@ def Event_200():
 
 
 @RestartOnRest(1044332230)
-def Event_1044332230(_, character: uint):
+def Event_1044332230(_, character: Character | int):
     """Event 1044332230"""
     Kill(character)
     End()
@@ -391,7 +392,7 @@ def Event_1044332240():
 
 
 @RestartOnRest(1044332280)
-def Event_1044332280(_, character: uint, asset: uint, region: uint):
+def Event_1044332280(_, character: uint, asset: uint, region: Region | int):
     """Event 1044332280"""
     DisableCharacter(character)
     DisableAsset(asset)
@@ -406,7 +407,7 @@ def Event_1044332280(_, character: uint, asset: uint, region: uint):
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=asset, attacker=20000))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=asset, attacker=ALL_PLAYERS))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))

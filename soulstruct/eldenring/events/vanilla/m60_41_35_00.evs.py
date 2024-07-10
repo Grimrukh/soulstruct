@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_41_35_00_enums import *
 
 
@@ -25,8 +26,8 @@ from .enums.m60_41_35_00_enums import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1041350000, asset=Assets.AEG099_060_9000)
-    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, dummy_id=800, right=0)
-    CommonFunc_90005300(0, flag=1041350210, character=Characters.Scarab, item_lot=40144, seconds=0.0, item_is_dropped=0)
+    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, dummy_id=100, vfx_id=800, right=0)
+    CommonFunc_90005300(0, flag=1041350210, character=Characters.Scarab, item_lot=40144, seconds=0.0, left=0)
     Event_1041350700(0, character=Characters.Dummy)
     Event_1041350701()
     CommonFunc_90005708(0, character=Characters.Dummy, flag=6001, left=0)
@@ -36,11 +37,11 @@ def Constructor():
 @RestartOnRest(1041352680)
 def Event_1041352680():
     """Event 1041352680"""
-    CreateAssetVFX(Assets.AEG003_316_9000, vfx_id=100, dummy_id=800)
+    CreateAssetVFX(Assets.AEG003_316_9000, dummy_id=100, vfx_id=800)
 
 
 @RestartOnRest(1041350700)
-def Event_1041350700(_, character: uint):
+def Event_1041350700(_, character: Character | int):
     """Event 1041350700"""
     DisableGravity(character)
     DisableCharacterCollision(character)

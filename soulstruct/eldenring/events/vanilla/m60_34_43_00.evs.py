@@ -19,6 +19,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_34_43_00_enums import *
 
 
@@ -26,7 +27,7 @@ from .enums.m60_34_43_00_enums import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1034430000, asset=Assets.AEG099_060_9000)
-    CommonFunc_90005300(0, flag=1034430310, character=Characters.Scarab, item_lot=40260, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1034430310, character=Characters.Scarab, item_lot=40260, seconds=0.0, left=0)
     Event_1034432580(0, flag=1034430580, entity=Assets.AEG110_500_2000)
     Event_1034432610()
     Event_1034432260(
@@ -103,18 +104,18 @@ def Constructor():
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1034430300, region=1034432300, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1034430302, region=1034432302, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1034430303, region=1034432300, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1034430305, region=1034432305, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1034430300, region=1034432300, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1034430302, region=1034432302, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1034430303, region=1034432300, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1034430305, region=1034432305, seconds=0.0, animation_id=-1)
 
 
 @RestartOnRest(1034432260)
 def Event_1034432260(
     _,
-    flag: uint,
+    flag: Flag | int,
     destination: uint,
-    character: uint,
+    character: Character | int,
     seconds: float,
     seconds_1: float,
     seconds_2: float,
@@ -126,7 +127,7 @@ def Event_1034432260(
     """Event 1034432260"""
     if FlagEnabled(flag):
         return
-    AND_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=20000))
+    AND_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=ALL_PLAYERS))
     if AND_1:
         return
     ForceAnimation(destination, 0)
@@ -145,7 +146,7 @@ def Event_1034432260(
 @RestartOnRest(1034432261)
 def Event_1034432261(
     _,
-    flag: uint,
+    flag: Flag | int,
     asset: uint,
     character: uint,
     character_1: uint,
@@ -155,7 +156,7 @@ def Event_1034432261(
     seconds_3: float,
     seconds_4: float,
     item_lot: int,
-    flag_1: uint,
+    flag_1: Flag | int,
 ):
     """Event 1034432261"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
@@ -179,14 +180,14 @@ def Event_1034432261(
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=803160)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=803160)
     AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=20000))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=ALL_PLAYERS))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -218,7 +219,7 @@ def Event_1034432262(
     _,
     character: uint,
     seconds: float,
-    attacked_entity: uint,
+    attacked_entity: Character | int,
     seconds_1: float,
     character_1: uint,
     animation_id: int,
@@ -226,7 +227,7 @@ def Event_1034432262(
     radius: float,
     seconds_2: float,
     seconds_3: float,
-    flag: uint,
+    flag: Flag | int,
 ):
     """Event 1034432262"""
     if FlagEnabled(character):
@@ -239,14 +240,14 @@ def Event_1034432262(
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=20000))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character_1, attacker=20000))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=ALL_PLAYERS))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character_1, attacker=ALL_PLAYERS))
     OR_2.Add(CharacterHasStateInfo(character=character_1, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character_1, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character_1, state_info=5))
     OR_2.Add(CharacterHasStateInfo(character=character_1, state_info=6))
     OR_2.Add(CharacterHasStateInfo(character=character_1, state_info=260))
-    OR_2.Add(EntityWithinDistance(entity=character_1, other_entity=20000, radius=radius))
+    OR_2.Add(EntityWithinDistance(entity=character_1, other_entity=ALL_PLAYERS, radius=radius))
     AND_1.Add(OR_2)
     AND_4.Add(CharacterHasSpecialEffect(character, 481))
     AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
@@ -292,7 +293,7 @@ def Event_1034432262(
 
 
 @RestartOnRest(1034432580)
-def Event_1034432580(_, flag: uint, entity: uint):
+def Event_1034432580(_, flag: Flag | int, entity: uint):
     """Event 1034432580"""
     GotoIfFlagEnabled(Label.L0, flag=flag)
     ForceAnimation(entity, 0)

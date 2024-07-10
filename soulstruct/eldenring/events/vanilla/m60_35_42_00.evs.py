@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_35_42_00_enums import *
 
 
@@ -26,7 +27,7 @@ def Constructor():
     """Event 0"""
     Event_1035422150()
     RegisterGrace(grace_flag=1035420000, asset=Assets.AEG099_060_9000)
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.Omenkiller, name=904820600, npc_threat_level=5)
+    CommonFunc_90005870(0, character=Characters.Omenkiller, name=904820600, npc_threat_level=5)
     CommonFunc_90005860(
         0,
         flag=1035420800,
@@ -36,7 +37,7 @@ def Constructor():
         item_lot=30225,
         seconds=0.0,
     )
-    CommonFunc_90005300(0, flag=1035420220, character=Characters.Scarab, item_lot=40208, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1035420220, character=Characters.Scarab, item_lot=40208, seconds=0.0, left=0)
     CommonFunc_90005780(
         0,
         flag=1035420800,
@@ -81,7 +82,7 @@ def Constructor():
     )
     CommonFunc_90005702(0, character=Characters.AlbinauricLookout0, flag=3543, first_flag=3540, last_flag=3544)
     Event_1035423700(0, character=Characters.AlbinauricLookout0, asset=Assets.AEG110_334_9000)
-    Event_1035420701(0, character=Characters.AlbinauricLookout0, asset=1035421700)
+    Event_1035420701(0, character=Characters.AlbinauricLookout0, asset=Assets.AEG110_334_9000)
     Event_1035423702(0, character=Characters.AlbinauricLookout0)
     Event_1035423703(0, entity=Characters.AlbinauricLookout0)
     Event_1035420710(0, character=Characters.Ranni)
@@ -110,7 +111,7 @@ def Constructor():
         first_flag=400393,
         last_flag=400393,
         flag=1035429255,
-        dummy_id=0,
+        vfx_id=0,
     )
     Event_1035420711(0, entity=Characters.Ranni)
     Event_1035420712()
@@ -131,10 +132,10 @@ def Preconstructor():
         seconds=0.0,
         animation_id=-1,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1035420201, region=1035422204, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1035420201, region=1035422204, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.AlbinauricLookout1, radius=8.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.AlbinauricLookout2, radius=8.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1035420204, region=1035422204, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1035420204, region=1035422204, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=1035420205,
@@ -147,15 +148,15 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1035420206, region=1035422204, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1035420207, region=1035422204, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1035420206, region=1035422204, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1035420207, region=1035422204, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.AlbinauricLookout3, radius=5.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AlbinauricLookout4, region=1035422204, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AlbinauricLookout5, region=1035422204, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AlbinauricLookout6, region=1035422204, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AlbinauricLookout7, region=1035422204, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallCrabCrystal0, region=1035422315, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallCrabCrystal1, region=1035422317, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AlbinauricLookout4, region=1035422204, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AlbinauricLookout5, region=1035422204, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AlbinauricLookout6, region=1035422204, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AlbinauricLookout7, region=1035422204, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallCrabCrystal0, region=1035422315, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallCrabCrystal1, region=1035422317, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.LargeCrabSnow0,
@@ -258,9 +259,9 @@ def Event_1035422150():
         )
     else:
         PlayCutscene(12060000, cutscene_flags=0, player_id=10000)
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     SetCameraAngle(x_angle=34.79999923706055, y_angle=-136.3699951171875)
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     if PlayerInOwnWorld():
         ForceAnimation(PLAYER, 67100)
     DisableNetworkConnectedFlagRange(flag_range=(780000, 780009))
@@ -313,7 +314,7 @@ def Event_1035420200():
 
 
 @RestartOnRest(1035423700)
-def Event_1035423700(_, character: uint, asset: uint):
+def Event_1035423700(_, character: uint, asset: Asset | int):
     """Event 1035423700"""
     WaitFrames(frames=1)
     DisableNetworkSync()
@@ -399,9 +400,9 @@ def Event_1035420701(_, character: uint, asset: uint):
     DisableAsset(Assets.AEG099_090_9020)
     GotoIfFlagEnabled(Label.L1, flag=1035420701)
     EnableAsset(Assets.AEG099_090_9020)
-    CreateAssetVFX(Assets.AEG099_090_9020, vfx_id=100, dummy_id=600904)
+    CreateAssetVFX(Assets.AEG099_090_9020, dummy_id=100, vfx_id=600904)
     AND_1.Add(PlayerInOwnWorld())
-    AND_1.Add(AttackedWithDamageType(attacked_entity=asset, attacker=20000))
+    AND_1.Add(AttackedWithDamageType(attacked_entity=asset, attacker=ALL_PLAYERS))
     
     MAIN.Await(AND_1)
     
@@ -556,7 +557,7 @@ def Event_1035420712():
 
 
 @RestartOnRest(1035420720)
-def Event_1035420720(_, character: uint, asset: uint):
+def Event_1035420720(_, character: uint, asset: Asset | int):
     """Event 1035420720"""
     WaitFrames(frames=1)
     DisableNetworkSync()

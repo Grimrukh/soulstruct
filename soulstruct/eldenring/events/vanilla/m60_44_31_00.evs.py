@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_44_31_00_enums import *
 
 
@@ -29,13 +30,13 @@ def Constructor():
     Event_1044312200(2, character=Characters.SpiritJellyfish2, region=1044312200)
     Event_1044312200(3, character=Characters.SpiritJellyfish3, region=1044312200)
     Event_1044312340()
-    CommonFunc_90005300(0, flag=1044310350, character=Characters.GuardianGolem, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1044310350, character=Characters.GuardianGolem, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005550(0, flag=1044310200, asset=1044311200, obj_act_id=44313200)
     CommonFunc_90005631(0, anchor_entity=Assets.AEG099_376_1000, text=61012)
 
 
 @RestartOnRest(1044312200)
-def Event_1044312200(_, character: uint, region: uint):
+def Event_1044312200(_, character: Character | int, region: Region | int):
     """Event 1044312200"""
     AND_1.Add(CharacterDead(character))
     if AND_1:
@@ -47,7 +48,7 @@ def Event_1044312200(_, character: uint, region: uint):
 
 
 @RestartOnRest(1044312210)
-def Event_1044312210(_, character: uint):
+def Event_1044312210(_, character: Character | int):
     """Event 1044312210"""
     Kill(character)
     End()

@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m12_09_00_00_enums import *
 
 
@@ -278,7 +279,7 @@ def Event_12092848():
     # --- Label 0 --- #
     DefineLabel(0)
     DeleteAssetVFX(Assets.AEG099_065_9000)
-    CreateAssetVFX(Assets.AEG099_065_9000, vfx_id=190, dummy_id=1300)
+    CreateAssetVFX(Assets.AEG099_065_9000, dummy_id=190, vfx_id=1300)
     OR_2.Add(MultiplayerPending())
     OR_2.Add(Multiplayer())
     AND_2.Add(not OR_2)
@@ -376,7 +377,7 @@ def Event_12092849():
         flag_2=12092806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=12090800, asset=Assets.AEG099_002_9000, dummy_id=8, right=0)
+    CommonFunc_9005811(0, flag=12090800, asset=Assets.AEG099_002_9000, vfx_id=8, right=0)
     CommonFunc_9005822(
         0,
         flag=12090800,
@@ -391,7 +392,7 @@ def Event_12092849():
 
 
 @RestartOnRest(12092200)
-def Event_12092200(_, character: uint, flag: uint):
+def Event_12092200(_, character: Character | int, flag: Flag | int):
     """Event 12092200"""
     AND_1.Add(CharacterHasSpecialEffect(character, 13605))
     AND_1.Add(HealthRatio(character) == 0.0)
@@ -404,7 +405,7 @@ def Event_12092200(_, character: uint, flag: uint):
 
 
 @RestartOnRest(12092230)
-def Event_12092230(_, flag: uint, character: uint):
+def Event_12092230(_, flag: Flag | int, character: uint):
     """Event 12092230"""
     AND_1.Add(FlagEnabled(flag))
     
@@ -423,7 +424,7 @@ def Event_12092230(_, flag: uint, character: uint):
 
 
 @RestartOnRest(12092260)
-def Event_12092260(_, flag: uint, character: uint, character_1: uint):
+def Event_12092260(_, flag: Flag | int, character: uint, character_1: uint):
     """Event 12092260"""
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(CharacterHasSpecialEffect(character_1, 13610))
@@ -432,15 +433,9 @@ def Event_12092260(_, flag: uint, character: uint, character_1: uint):
     
     DisableFlag(flag)
     DisableAnimations(character_1)
-    Move(
-        character_1,
-        destination=character,
-        destination_type=CoordEntityType.Character,
-        dummy_id=260,
-        short_move=True,
-    )
-    AND_15.Add(EntityWithinDistance(entity=20000, other_entity=character, radius=40.0))
-    AND_15.Add(EntityBeyondDistance(entity=20000, other_entity=character, radius=7.0))
+    Move(character_1, destination=character, destination_type=CoordEntityType.Character, dummy_id=260, short_move=True)
+    AND_15.Add(EntityWithinDistance(entity=ALL_PLAYERS, other_entity=character, radius=40.0))
+    AND_15.Add(EntityBeyondDistance(entity=ALL_PLAYERS, other_entity=character, radius=7.0))
     SkipLinesIfConditionTrue(2, AND_15)
     ForceAnimation(character_1, 3014)
     SkipLines(1)
@@ -524,7 +519,15 @@ def Event_12092295(_, character: uint):
 
 
 @RestartOnRest(12092854)
-def Event_12092854(_, flag: uint, flag_1: uint, flag_2: uint, flag_3: uint, character: uint, character_1: uint):
+def Event_12092854(
+    _,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
+    flag_3: Flag | int,
+    character: Character | int,
+    character_1: Character | int,
+):
     """Event 12092854"""
     MAIN.Await(CharacterHasSpecialEffect(character, 13642))
     
@@ -561,19 +564,19 @@ def Event_12092854(_, flag: uint, flag_1: uint, flag_2: uint, flag_3: uint, char
 @RestartOnRest(12092859)
 def Event_12092859(
     _,
-    flag: uint,
-    flag_1: uint,
-    flag_2: uint,
-    flag_3: uint,
-    first_flag: uint,
-    flag_4: uint,
-    last_flag: uint,
-    character: uint,
-    character_1: uint,
-    character_2: uint,
-    character_3: uint,
-    character_4: uint,
-    character_5: uint,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
+    flag_3: Flag | int,
+    first_flag: Flag | int,
+    flag_4: Flag | int,
+    last_flag: Flag | int,
+    character: Character | int,
+    character_1: Character | int,
+    character_2: Character | int,
+    character_3: Character | int,
+    character_4: Character | int,
+    character_5: Character | int,
     character_6: uint,
     character_7: uint,
     character_8: uint,
@@ -602,35 +605,35 @@ def Event_12092859(
     character_31: uint,
     character_32: uint,
     character_33: uint,
-    spawner: uint,
-    spawner_1: uint,
-    spawner_2: uint,
-    spawner_3: uint,
-    spawner_4: uint,
-    spawner_5: uint,
-    spawner_6: uint,
-    spawner_7: uint,
-    spawner_8: uint,
-    spawner_9: uint,
-    spawner_10: uint,
-    spawner_11: uint,
-    spawner_12: uint,
-    spawner_13: uint,
-    spawner_14: uint,
-    spawner_15: uint,
-    spawner_16: uint,
-    spawner_17: uint,
-    spawner_18: uint,
-    spawner_19: uint,
-    spawner_20: uint,
-    spawner_21: uint,
-    spawner_22: uint,
-    spawner_23: uint,
-    spawner_24: uint,
-    spawner_25: uint,
-    spawner_26: uint,
-    spawner_27: uint,
-    flag_5: uint,
+    spawner: SpawnerEvent | int,
+    spawner_1: SpawnerEvent | int,
+    spawner_2: SpawnerEvent | int,
+    spawner_3: SpawnerEvent | int,
+    spawner_4: SpawnerEvent | int,
+    spawner_5: SpawnerEvent | int,
+    spawner_6: SpawnerEvent | int,
+    spawner_7: SpawnerEvent | int,
+    spawner_8: SpawnerEvent | int,
+    spawner_9: SpawnerEvent | int,
+    spawner_10: SpawnerEvent | int,
+    spawner_11: SpawnerEvent | int,
+    spawner_12: SpawnerEvent | int,
+    spawner_13: SpawnerEvent | int,
+    spawner_14: SpawnerEvent | int,
+    spawner_15: SpawnerEvent | int,
+    spawner_16: SpawnerEvent | int,
+    spawner_17: SpawnerEvent | int,
+    spawner_18: SpawnerEvent | int,
+    spawner_19: SpawnerEvent | int,
+    spawner_20: SpawnerEvent | int,
+    spawner_21: SpawnerEvent | int,
+    spawner_22: SpawnerEvent | int,
+    spawner_23: SpawnerEvent | int,
+    spawner_24: SpawnerEvent | int,
+    spawner_25: SpawnerEvent | int,
+    spawner_26: SpawnerEvent | int,
+    spawner_27: SpawnerEvent | int,
+    flag_5: Flag | int,
 ):
     """Event 12092859"""
     if ThisEventSlotFlagDisabled():
@@ -1008,13 +1011,13 @@ def Event_12092859(
 @RestartOnRest(12092860)
 def Event_12092860(
     _,
-    flag: uint,
-    character: uint,
-    character_1: uint,
-    character_2: uint,
-    character_3: uint,
-    character_4: uint,
-    character_5: uint,
+    flag: Flag | int,
+    character: Character | int,
+    character_1: Character | int,
+    character_2: Character | int,
+    character_3: Character | int,
+    character_4: Character | int,
+    character_5: Character | int,
 ):
     """Event 12092860"""
     DisableFlag(flag)
@@ -1094,7 +1097,7 @@ def Event_12092861(_, character: uint):
 
 
 @RestartOnRest(12092862)
-def Event_12092862(_, character: uint, character_1: uint):
+def Event_12092862(_, character: Character | int, character_1: Character | int):
     """Event 12092862"""
     MAIN.Await(CharacterHasSpecialEffect(character, 13624))
     
@@ -1108,7 +1111,7 @@ def Event_12092862(_, character: uint, character_1: uint):
 
 
 @RestartOnRest(12092863)
-def Event_12092863(_, character: uint, character_1: uint, flag: uint):
+def Event_12092863(_, character: Character | int, character_1: Character | int, flag: Flag | int):
     """Event 12092863"""
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(CharacterHasSpecialEffect(character, 13624))
@@ -1124,7 +1127,7 @@ def Event_12092863(_, character: uint, character_1: uint, flag: uint):
 
 
 @RestartOnRest(12092864)
-def Event_12092864(_, character: uint, character_1: uint, flag: uint, flag_1: uint):
+def Event_12092864(_, character: Character | int, character_1: Character | int, flag: Flag | int, flag_1: Flag | int):
     """Event 12092864"""
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(FlagEnabled(flag_1))
@@ -1140,7 +1143,7 @@ def Event_12092864(_, character: uint, character_1: uint, flag: uint, flag_1: ui
 
 
 @RestartOnRest(12092865)
-def Event_12092865(_, character: uint):
+def Event_12092865(_, character: Character | int):
     """Event 12092865"""
     MAIN.Await(CharacterHasSpecialEffect(character, 13624))
     

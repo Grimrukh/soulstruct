@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_38_49_00_enums import *
 
 
@@ -32,8 +33,8 @@ def Constructor():
     Event_1038492304()
     Event_1038492320()
     Event_1038492580()
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Rat0, region=1038492302, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Rat1, region=1038492313, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Rat0, region=1038492302, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Rat1, region=1038492313, seconds=0.0, animation_id=-1)
     CommonFunc_90005706(0, character=Characters.Commoner0, animation_id=930018, left=0)
 
 
@@ -65,7 +66,7 @@ def Event_1038492300():
         SetNetworkUpdateRate(Characters.BulletDummy, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     EnableFlag(1038492212)
     if FlagDisabled(1038492209):
-        CreateAssetVFX(Assets.AEG099_090_9000, vfx_id=100, dummy_id=806740)
+        CreateAssetVFX(Assets.AEG099_090_9000, dummy_id=100, vfx_id=806740)
         EnableFlag(1038492209)
     OR_1.Add(FlagDisabled(1038492207))
     OR_1.Add(FlagDisabled(1038492208))
@@ -229,7 +230,7 @@ def Event_1038492306():
 
 
 @RestartOnRest(1038492310)
-def Event_1038492310(_, character: uint):
+def Event_1038492310(_, character: Character | int):
     """Event 1038492310"""
     DisableNetworkSync()
     if FlagEnabled(1038490201):

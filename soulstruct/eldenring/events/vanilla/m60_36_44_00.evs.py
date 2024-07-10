@@ -19,6 +19,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_36_44_00_enums import *
 
 
@@ -29,8 +30,8 @@ def Constructor():
     Event_1036442203(1, character=1036440204)
     Event_1036442203(2, character=1036440205)
     Event_1036442203(3, character=1036440206)
-    CommonFunc_90005300(0, flag=1036440250, character=Characters.Scarab, item_lot=40202, seconds=0.0, item_is_dropped=0)
-    CommonFunc_90005300(0, flag=1036440260, character=1036440260, item_lot=1036440200, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1036440250, character=Characters.Scarab, item_lot=40202, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1036440260, character=1036440260, item_lot=1036440200, seconds=0.0, left=0)
     CommonFunc_90005920(0, flag=1036440600, asset=1036441600, obj_act_id=1036443600)
     CommonFunc_90005705(0, character=Characters.FingerReader)
 
@@ -59,7 +60,7 @@ def Preconstructor():
 
 
 @RestartOnRest(1036442203)
-def Event_1036442203(_, character: uint):
+def Event_1036442203(_, character: Character | int):
     """Event 1036442203"""
     Kill(character)
     End()

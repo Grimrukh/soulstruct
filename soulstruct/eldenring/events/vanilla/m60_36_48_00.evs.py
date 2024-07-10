@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_36_48_00_enums import *
 
 
@@ -51,7 +52,7 @@ def Constructor():
         seconds=0.0,
         animation_id=-1,
     )
-    CommonFunc_90005300(0, flag=1036480800, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1036480800, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005476(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
     RunCommonEvent(90005477)
     Event_1036482340(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
@@ -64,13 +65,13 @@ def Constructor():
         item_lot=1036480400,
         seconds=0.0,
     )
-    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.NightsCavalry, npc_threat_level=10, required_flag=0)
-    CommonFunc_NightsCavalryHealthBar(
+    CommonFunc_90005872(0, character=Characters.NightsCavalry, npc_threat_level=10, right=0)
+    CommonFunc_90005871(
         0,
-        nights_cavalry=Characters.NightsCavalry,
+        character=Characters.NightsCavalry,
         name=903150603,
         npc_threat_level=10,
-        horse=Characters.NightsCavalryHorse,
+        character_1=Characters.NightsCavalryHorse,
     )
     CommonFunc_90005703(
         0,
@@ -106,7 +107,7 @@ def Preconstructor():
 
 
 @RestartOnRest(1036482340)
-def Event_1036482340(_, character: uint, character_1: uint):
+def Event_1036482340(_, character: Character | int, character_1: Character | int):
     """Event 1036482340"""
     AND_1.Add(CharacterAlive(character))
     SkipLinesIfConditionTrue(1, AND_1)
@@ -228,8 +229,8 @@ def Event_1036483701(_, entity: uint):
     OR_1.Add(FlagEnabled(1039409259))
     if OR_1:
         return
-    AND_1.Add(EntityWithinDistance(entity=entity, other_entity=20000, radius=4.0))
-    AND_1.Add(CharacterHasSpecialEffect(20000, 9690))
+    AND_1.Add(EntityWithinDistance(entity=entity, other_entity=ALL_PLAYERS, radius=4.0))
+    AND_1.Add(CharacterHasSpecialEffect(ALL_PLAYERS, 9690))
     AwaitConditionTrue(AND_1)
     EnableNetworkFlag(1039402710)
     End()

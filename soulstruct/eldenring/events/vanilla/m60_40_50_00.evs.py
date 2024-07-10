@@ -16,7 +16,8 @@ strings:
 """
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
-from .enums.m60_41_50_00_enums import Characters as m60_41_Characters
+from soulstruct.eldenring.game_types import *
+from .enums.m60_41_50_00_enums import Characters as m60_41_50_00_Characters
 
 
 @ContinueOnRest(0)
@@ -52,11 +53,11 @@ def Constructor():
 
 
 @RestartOnRest(1040502200)
-def Event_1040502200(_, vfx_id: uint):
+def Event_1040502200(_, vfx_id: VFXEvent | int):
     """Event 1040502200"""
     GotoIfFlagEnabled(Label.L0, flag=1041500800)
     
-    MAIN.Await(CharacterDead(m60_41_Characters.FallingstarBeast))
+    MAIN.Await(CharacterDead(m60_41_50_00_Characters.FallingstarBeast))
 
     # --- Label 0 --- #
     DefineLabel(0)

@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m34_14_00_00_enums import *
 
 
@@ -86,7 +87,7 @@ def Constructor():
         asset=Assets.AEG099_991_9000,
         item_lot=34140700,
         item=8150,
-        dummy_id=806932,
+        vfx_id=806932,
         action_button_id=9082,
         animation_id=60521,
         left=0,
@@ -98,12 +99,12 @@ def Constructor():
         asset=Assets.AEG099_991_9001,
         item_lot=34140710,
         item=8152,
-        dummy_id=806938,
+        vfx_id=806938,
         action_button_id=9084,
         animation_id=60524,
         left=0,
     )
-    CommonFunc_91005600(0, flag=34142800, asset=34141695, dummy_id=5)
+    CommonFunc_91005600(0, flag=34142800, asset=34141695, vfx_id=5)
     Event_34142550()
     Event_34140700()
 
@@ -116,7 +117,15 @@ def Preconstructor():
 
 
 @RestartOnRest(34142250)
-def Event_34142250(_, flag: uint, flag_1: uint, anchor_entity: uint, character: uint, left: int, item_lot: int):
+def Event_34142250(
+    _,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    anchor_entity: uint,
+    character: Character | int,
+    left: int,
+    item_lot: int,
+):
     """Event 34142250"""
     if FlagEnabled(flag):
         return
@@ -127,22 +136,12 @@ def Event_34142250(_, flag: uint, flag_1: uint, anchor_entity: uint, character: 
     
     Wait(1.0)
     GotoIfValueComparison(Label.L2, comparison_type=ComparisonType.Equal, left=left, right=0)
-    CreateTemporaryVFX(
-        vfx_id=601111,
-        anchor_entity=anchor_entity,
-        dummy_id=960,
-        anchor_type=CoordEntityType.Character,
-    )
+    CreateTemporaryVFX(vfx_id=601111, anchor_entity=anchor_entity, dummy_id=960, anchor_type=CoordEntityType.Character)
     Goto(Label.L3)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    CreateTemporaryVFX(
-        vfx_id=601110,
-        anchor_entity=anchor_entity,
-        dummy_id=960,
-        anchor_type=CoordEntityType.Character,
-    )
+    CreateTemporaryVFX(vfx_id=601110, anchor_entity=anchor_entity, dummy_id=960, anchor_type=CoordEntityType.Character)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -155,7 +154,7 @@ def Event_34142250(_, flag: uint, flag_1: uint, anchor_entity: uint, character: 
 
 
 @RestartOnRest(34142251)
-def Event_34142251(_, character: uint, flag: uint, character_1: uint, character_2: uint, left: int):
+def Event_34142251(_, character: uint, flag: Flag | int, character_1: uint, character_2: uint, left: int):
     """Event 34142251"""
     EnableImmortality(character_1)
     GotoIfFlagDisabled(Label.L0, flag=character)
@@ -218,7 +217,7 @@ def Event_34142251(_, character: uint, flag: uint, character_1: uint, character_
 
 
 @RestartOnRest(34142252)
-def Event_34142252(_, flag: uint, seconds: float, character: uint, seconds_1: float):
+def Event_34142252(_, flag: Flag | int, seconds: float, character: Character | int, seconds_1: float):
     """Event 34142252"""
     if FlagEnabled(flag):
         return
@@ -291,7 +290,7 @@ def Event_34142550():
     GotoIfPlayerNotInOwnWorld(Label.L1)
     GotoIfFlagEnabled(Label.L2, flag=34142550)
     DeleteAssetVFX(Assets.AEG099_239_9000)
-    CreateAssetVFX(Assets.AEG099_239_9000, vfx_id=101, dummy_id=1541)
+    CreateAssetVFX(Assets.AEG099_239_9000, dummy_id=101, vfx_id=1541)
     EnableNetworkFlag(34142550)
 
     # --- Label 2 --- #
@@ -319,7 +318,7 @@ def Event_34142550():
     # --- Label 1 --- #
     DefineLabel(1)
     DeleteAssetVFX(Assets.AEG099_239_9000)
-    CreateAssetVFX(Assets.AEG099_239_9000, vfx_id=101, dummy_id=1541)
+    CreateAssetVFX(Assets.AEG099_239_9000, dummy_id=101, vfx_id=1541)
     End()
 
 
@@ -410,7 +409,7 @@ def Event_34142865():
     
     SetWeather(weather=Weather.Null, duration=-1.0, immediate_change=False)
     Wait(4.0)
-    AddSpecialEffect(20000, 8870)
+    AddSpecialEffect(ALL_PLAYERS, 8870)
     Wait(2.0)
     EnableFlag(34140865)
     WarpToMap(game_map=DIVINE_TOWER_OF_EAST_ALTUS, player_start=34142852)
@@ -487,6 +486,6 @@ def Event_34140700():
     
     MAIN.Await(FlagEnabled(11109687))
     
-    MAIN.Await(CharacterInsideRegion(character=20000, region=34142700))
+    MAIN.Await(CharacterInsideRegion(character=ALL_PLAYERS, region=34142700))
     
     EnableFlag(34149200)

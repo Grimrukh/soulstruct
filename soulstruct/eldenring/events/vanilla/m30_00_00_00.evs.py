@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m30_00_00_00_enums import *
 
 
@@ -88,10 +89,10 @@ def Preconstructor():
         region=30002200,
         radius=1.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -101,10 +102,10 @@ def Preconstructor():
         region=30002201,
         radius=1.0,
         seconds=1.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005201(
         0,
@@ -126,10 +127,10 @@ def Preconstructor():
         region=30002205,
         radius=1.0,
         seconds=0.6000000238418579,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -139,10 +140,10 @@ def Preconstructor():
         region=30002205,
         radius=1.0,
         seconds=0.30000001192092896,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -152,10 +153,10 @@ def Preconstructor():
         region=30002207,
         radius=1.0,
         seconds=1.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -165,10 +166,10 @@ def Preconstructor():
         region=30002207,
         radius=1.0,
         seconds=1.5,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005201(
         0,
@@ -190,10 +191,10 @@ def Preconstructor():
         region=30002212,
         radius=1.0,
         seconds=0.8999999761581421,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -203,10 +204,10 @@ def Preconstructor():
         region=30002215,
         radius=2.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005201(
         0,
@@ -228,10 +229,10 @@ def Preconstructor():
         region=30002215,
         radius=1.0,
         seconds=0.30000001192092896,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -241,10 +242,10 @@ def Preconstructor():
         region=30002215,
         radius=1.0,
         seconds=1.2000000476837158,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -254,10 +255,10 @@ def Preconstructor():
         region=30002215,
         radius=1.0,
         seconds=1.2000000476837158,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -267,10 +268,10 @@ def Preconstructor():
         region=30002215,
         radius=1.0,
         seconds=0.30000001192092896,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005200(
         0,
@@ -326,7 +327,7 @@ def Event_30002500():
         EndOfAnimation(asset=Assets.AEG027_155_0500, animation_id=12)
     GotoIfFlagEnabled(Label.L0, flag=30000500)
     AND_1.Add(FlagDisabled(30000500))
-    AND_1.Add(AttackedWithDamageType(attacked_entity=30001500, attacker=20000))
+    AND_1.Add(AttackedWithDamageType(attacked_entity=30001500, attacker=ALL_PLAYERS))
     
     MAIN.Await(AND_1)
     
@@ -337,7 +338,7 @@ def Event_30002500():
     # --- Label 0 --- #
     DefineLabel(0)
     AND_2.Add(FlagEnabled(30000500))
-    AND_2.Add(AttackedWithDamageType(attacked_entity=30001500, attacker=20000))
+    AND_2.Add(AttackedWithDamageType(attacked_entity=30001500, attacker=ALL_PLAYERS))
     
     MAIN.Await(AND_2)
     
@@ -347,7 +348,14 @@ def Event_30002500():
 
 
 @RestartOnRest(30009570)
-def Event_30009570(_, flag: uint, destination: uint, left_flag: uint, cancel_flag__right_flag: uint, seconds: float):
+def Event_30009570(
+    _,
+    flag: Flag | int,
+    destination: uint,
+    left_flag: Flag | int,
+    cancel_flag__right_flag: Flag | int,
+    seconds: float,
+):
     """Event 30009570"""
     OR_1.Add(FlagEnabled(flag))
     OR_1.Add(PlayerNotInOwnWorld())
@@ -386,7 +394,7 @@ def Event_30009570(_, flag: uint, destination: uint, left_flag: uint, cancel_fla
     # --- Label 2 --- #
     DefineLabel(2)
     Move(PLAYER, destination=destination, destination_type=CoordEntityType.Asset, dummy_id=191, short_move=True)
-    FaceEntity(PLAYER, destination, animation=60010)
+    FaceEntityAndForceAnimation(PLAYER, destination, animation=60010)
     Wait(seconds)
     DisplayDialog(text=208000, anchor_entity=destination)
     RemoveGoodFromPlayer(item=8000, quantity=1)
@@ -394,15 +402,15 @@ def Event_30009570(_, flag: uint, destination: uint, left_flag: uint, cancel_fla
 
 
 @RestartOnRest(30002570)
-def Event_30002570(_, flag: uint, asset: uint, asset_1: uint, asset_2: uint):
+def Event_30002570(_, flag: Flag | int, asset: Asset | int, asset_1: Asset | int, asset_2: Asset | int):
     """Event 30002570"""
     if FlagEnabled(30002570):
         return
     DeleteAssetVFX(asset)
     DeleteAssetVFX(asset_1)
     DisableAsset(asset_2)
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=806040)
-    CreateAssetVFX(asset_1, vfx_id=101, dummy_id=806041)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=806040)
+    CreateAssetVFX(asset_1, dummy_id=101, vfx_id=806041)
     
     MAIN.Await(FlagEnabled(flag))
     
@@ -418,9 +426,9 @@ def Event_30002570(_, flag: uint, asset: uint, asset_1: uint, asset_2: uint):
 @ContinueOnRest(30002610)
 def Event_30002610(
     _,
-    flag: uint,
+    flag: Flag | int,
     source_entity: uint,
-    region: uint,
+    region: Region | int,
     owner_entity: uint,
     behavior_id: int,
     behavior_id_1: int,
@@ -669,7 +677,14 @@ def Event_30002611():
 @ContinueOnRest(30002510)
 def Event_30002510():
     """Event 30002510"""
-    CommonFunc_90005681(0, flag=30000500, flag_1=30000501, flag_2=30000502, flag_3=30000503, attacked_entity=30001500)
+    CommonFunc_90005681(
+        0,
+        flag=30000500,
+        flag_1=30000501,
+        flag_2=30000502,
+        flag_3=30000503,
+        attacked_entity=Assets.AEG027_155_0500,
+    )
     if FlagEnabled(57):
         CommonFunc_90005682(
             0,
@@ -861,7 +876,7 @@ def Event_30002829():
         flag_2=30002806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=30000800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=30000800, asset=Assets.AEG099_001_9000, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=30000800,

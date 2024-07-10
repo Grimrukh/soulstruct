@@ -18,22 +18,23 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_38_46_00_enums import *
-from .enums.m12_01_00_00_enums import Assets as m12_01_Assets
+from .enums.m12_01_00_00_enums import Assets as m12_01_00_00_Assets
 
 
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1038460000, asset=Assets.AEG099_060_9000)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=0)
     CommonFunc_90005511(0, flag=1038460560, asset=1038461550, obj_act_id=1038463560, obj_act_id_1=257018, left=0)
     CommonFunc_90005512(0, flag=1038460560, region=1038462550, region_1=1038462551)
     CommonFunc_90005640(0, flag=1038460540, asset=Assets.AEG239_001_2000)
     Event_1038462200(0, character=Characters.Commoner0)
     Event_1038462200(1, character=Characters.Commoner1)
     Event_1038462200(2, character=Characters.ThornSorcerer)
-    CommonFunc_90005300(0, flag=1038460340, character=Characters.GuardianGolem, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1038460340, character=Characters.GuardianGolem, item_lot=0, seconds=0.0, left=0)
     Event_1038460510()
     CommonFunc_90005501(
         0,
@@ -42,7 +43,7 @@ def Constructor():
         left=0,
         asset=Assets.AEG239_010_2000,
         asset_1=Assets.AEG239_020_2000,
-        asset_2=m12_01_Assets.AEG239_021_0500,
+        asset_2=m12_01_00_00_Assets.AEG239_021_0500,
         flag_2=1038460652,
     )
 
@@ -55,7 +56,7 @@ def Preconstructor():
 
 
 @RestartOnRest(1038462200)
-def Event_1038462200(_, character: uint):
+def Event_1038462200(_, character: Character | int):
     """Event 1038462200"""
     Kill(character)
 
@@ -67,7 +68,7 @@ def Event_1038462210(_, character: uint):
     
     MAIN.Await(CharacterInsideRegion(character=PLAYER, region=1038462210))
     
-    CreateAssetVFX(1038461210, vfx_id=100, dummy_id=620383)
+    CreateAssetVFX(1038461210, dummy_id=100, vfx_id=620383)
     EnableCharacter(character)
     Wait(2.0)
     DeleteAssetVFX(1038461210)
@@ -98,7 +99,7 @@ def Event_1038460510():
         asset=Assets.AEG239_010_2000,
         asset_1=Assets.AEG239_020_2000,
         obj_act_id=1038463651,
-        asset_2=m12_01_Assets.AEG239_021_0500,
+        asset_2=m12_01_00_00_Assets.AEG239_021_0500,
         obj_act_id_1=1038463652,
         region=1038462651,
         region_1=1038462652,

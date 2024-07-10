@@ -18,8 +18,9 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_34_41_00_enums import *
-from .enums.m12_04_00_00_enums import Assets as m12_04_Assets
+from .enums.m12_04_00_00_enums import Assets as m12_04_00_00_Assets
 
 
 @ContinueOnRest(0)
@@ -33,7 +34,7 @@ def Constructor():
         left=1,
         asset=Assets.AEG239_010_2000,
         asset_1=Assets.AEG239_020_2000,
-        asset_2=m12_04_Assets.AEG239_021_0500,
+        asset_2=m12_04_00_00_Assets.AEG239_021_0500,
         flag_2=1034410512,
     )
     Event_1034412510()
@@ -51,7 +52,7 @@ def Event_1034412510():
         asset=Assets.AEG239_010_2000,
         asset_1=Assets.AEG239_020_2000,
         obj_act_id=1034413511,
-        asset_2=m12_04_Assets.AEG239_021_0500,
+        asset_2=m12_04_00_00_Assets.AEG239_021_0500,
         obj_act_id_1=1034413512,
         region=1034412511,
         region_1=1034412512,

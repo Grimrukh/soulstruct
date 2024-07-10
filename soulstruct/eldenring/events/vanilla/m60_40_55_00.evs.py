@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_40_55_00_enums import *
 
 
@@ -28,7 +29,7 @@ def Preconstructor():
     CommonFunc_90005261(0, character=Characters.Rat1, region=1040552302, radius=2.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.Rat2, region=1040552302, radius=2.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.Rat3, region=1040552302, radius=2.0, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GiantRat, region=1040552250, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.GiantRat, region=1040552250, seconds=0.0, animation_id=0)
     CommonFunc_90005200(
         0,
         character=Characters.PutridCorpse,

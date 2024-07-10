@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_43_33_00_enums import *
 
 
@@ -25,7 +26,7 @@ from .enums.m60_43_33_00_enums import *
 def Constructor():
     """Event 0"""
     CommonFunc_90005600(0, grace_flag=1043330000, asset=1043331950, enemy_block_distance=5.0, character=1043330480)
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.ErdtreeAvatar, name=904810600, npc_threat_level=18)
+    CommonFunc_90005870(0, character=Characters.ErdtreeAvatar, name=904810600, npc_threat_level=18)
     CommonFunc_90005860(
         0,
         flag=1043330800,
@@ -36,8 +37,8 @@ def Constructor():
         seconds=0.0,
     )
     CommonFunc_90005251(0, character=Characters.ErdtreeAvatar, radius=20.0, seconds=0.0, animation_id=0)
-    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.ErdtreeAvatar, npc_threat_level=18, required_flag=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, vfx_id=100, dummy_id=800, right=1043338600)
+    CommonFunc_90005872(0, character=Characters.ErdtreeAvatar, npc_threat_level=18, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, dummy_id=100, vfx_id=800, right=1043338600)
     CommonFunc_90005550(0, flag=1043330530, asset=1043331530, obj_act_id=1043333530)
     Event_1043332270()
     Event_1043332270(slot=1)
@@ -68,7 +69,7 @@ def Constructor():
     Event_1043332230(9, character=Characters.Bat9, region=1043332233)
     Event_1043332230(10, character=Characters.Bat10, region=1043332233)
     Event_1043332230(11, character=Characters.Bat11, region=1043332233)
-    CommonFunc_90005300(0, flag=1043330221, character=Characters.Scarab, item_lot=40136, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1043330221, character=Characters.Scarab, item_lot=40136, seconds=0.0, left=0)
 
 
 @ContinueOnRest(50)
@@ -105,7 +106,7 @@ def Event_1043330050():
 
 
 @RestartOnRest(1043332230)
-def Event_1043332230(_, character: uint, region: uint):
+def Event_1043332230(_, character: Character | int, region: Region | int):
     """Event 1043332230"""
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
     AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
@@ -293,4 +294,4 @@ def Event_1043332680():
     """Event 1043332680"""
     MAIN.Await(FlagEnabled(1043338600))
     
-    CreateAssetVFX(Assets.AEG099_090_9003, vfx_id=100, dummy_id=800)
+    CreateAssetVFX(Assets.AEG099_090_9003, dummy_id=100, vfx_id=800)

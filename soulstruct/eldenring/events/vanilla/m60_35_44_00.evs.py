@@ -19,6 +19,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_35_44_00_enums import *
 
 
@@ -116,15 +117,15 @@ def Preconstructor():
         region=1035442220,
         radius=10.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
 
 
 @RestartOnRest(1035442650)
-def Event_1035442650(_, flag: uint, tutorial_param_id: int, item: int, flag_1: uint):
+def Event_1035442650(_, flag: Flag | int, tutorial_param_id: int, item: BaseItemParam | int, flag_1: Flag | int):
     """Event 1035442650"""
     DisableNetworkSync()
     if PlayerNotInOwnWorld():
@@ -148,7 +149,7 @@ def Event_1035442650(_, flag: uint, tutorial_param_id: int, item: int, flag_1: u
 
 
 @RestartOnRest(1035443700)
-def Event_1035443700(_, character: uint, asset: uint):
+def Event_1035443700(_, character: uint, asset: Asset | int):
     """Event 1035443700"""
     WaitFrames(frames=1)
     DisableNetworkSync()

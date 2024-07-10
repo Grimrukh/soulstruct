@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_43_52_00_enums import *
 
 
@@ -41,8 +42,8 @@ def Constructor():
     )
     Event_1043522510()
     Event_1043522515()
-    CommonFunc_90005300(0, flag=1043520506, character=Characters.Margit, item_lot=1043520500, seconds=0.0, item_is_dropped=0)
-    CommonFunc_90005300(0, flag=1043520400, character=Characters.Scarab, item_lot=40316, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1043520506, character=Characters.Margit, item_lot=1043520500, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1043520400, character=Characters.Scarab, item_lot=40316, seconds=0.0, left=0)
     CommonFunc_90005631(0, anchor_entity=Assets.AEG099_376_1000, text=61032)
     CommonFunc_90005705(0, character=Characters.FingerReader)
 
@@ -55,7 +56,7 @@ def Preconstructor():
 
 
 @RestartOnRest(1043522500)
-def Event_1043522500(_, character: uint, character_1: uint, flag: uint, region: uint, flag_1: uint):
+def Event_1043522500(_, character: uint, character_1: uint, flag: Flag | int, region: Region | int, flag_1: Flag | int):
     """Event 1043522500"""
     DisableCharacter(character_1)
     DisableGravity(character_1)
@@ -94,13 +95,7 @@ def Event_1043522500(_, character: uint, character_1: uint, flag: uint, region: 
     Wait(1.0)
     CreateTemporaryVFX(vfx_id=636615, anchor_entity=character, dummy_id=900, anchor_type=CoordEntityType.Character)
     ForceAnimation(character, 20030, skip_transition=True)
-    Move(
-        character_1,
-        destination=character,
-        destination_type=CoordEntityType.Character,
-        dummy_id=900,
-        short_move=True,
-    )
+    Move(character_1, destination=character, destination_type=CoordEntityType.Character, dummy_id=900, short_move=True)
     Wait(1.0)
     ForceAnimation(character, 20030, skip_transition=True)
     Wait(1.0)
@@ -116,7 +111,7 @@ def Event_1043522500(_, character: uint, character_1: uint, flag: uint, region: 
 
 
 @RestartOnRest(1043522505)
-def Event_1043522505(_, flag: uint, character: uint, character_1: uint, flag_1: uint):
+def Event_1043522505(_, flag: Flag | int, character: uint, character_1: uint, flag_1: Flag | int):
     """Event 1043522505"""
     if FlagEnabled(flag):
         return
@@ -139,13 +134,7 @@ def Event_1043522505(_, flag: uint, character: uint, character_1: uint, flag_1: 
     
     MAIN.Await(CharacterDead(character_1))
     
-    Move(
-        character,
-        destination=character_1,
-        destination_type=CoordEntityType.Character,
-        dummy_id=900,
-        short_move=True,
-    )
+    Move(character, destination=character_1, destination_type=CoordEntityType.Character, dummy_id=900, short_move=True)
     EnableCharacter(character)
     EnableAnimations(character)
     EnableGravity(character)

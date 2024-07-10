@@ -18,8 +18,8 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_44_52_00_enums import *
-from .enums.m60_45_52_00_enums import Characters as m60_45_Characters
 
 
 @ContinueOnRest(0)
@@ -54,7 +54,7 @@ def Constructor():
         first_flag=400308,
         last_flag=400309,
         flag=1044529272,
-        dummy_id=6101,
+        vfx_id=6101,
     )
     Event_1044523710()
     Event_1044523711()
@@ -171,7 +171,7 @@ def Event_1044523701(_, character: uint):
 
 
 @RestartOnRest(1044523702)
-def Event_1044523702(_, character: uint, asset: uint, asset_1: uint):
+def Event_1044523702(_, character: uint, asset: Asset | int, asset_1: Asset | int):
     """Event 1044523702"""
     WaitFrames(frames=1)
     DisableNetworkSync()
@@ -240,7 +240,7 @@ def Event_1044523702(_, character: uint, asset: uint, asset_1: uint):
 
 
 @RestartOnRest(1044523703)
-def Event_1044523703(_, asset: uint, asset_1: uint):
+def Event_1044523703(_, asset: Asset | int, asset_1: Asset | int):
     """Event 1044523703"""
     WaitFrames(frames=1)
     DisableAsset(asset)
@@ -274,7 +274,7 @@ def Event_1044523704(_, entity: uint):
     DisableNetworkConnectedFlagRange(flag_range=(4140, 4144))
     EnableNetworkFlag(4143)
     SaveRequest()
-    WaitFramesAfterCutscene(frames=2)
+    WaitRealFrames(frames=2)
     ForceAnimation(entity, 90201)
     End()
 
@@ -316,7 +316,7 @@ def Event_1044523706():
 
 
 @RestartOnRest(1044523707)
-def Event_1044523707(_, asset: uint, asset_1: uint):
+def Event_1044523707(_, asset: Asset | int, asset_1: Asset | int):
     """Event 1044523707"""
     WaitFrames(frames=1)
     DisableNetworkSync()
@@ -339,7 +339,7 @@ def Event_1044523707(_, asset: uint, asset_1: uint):
     DeleteAssetVFX(asset_1)
     GotoIfFlagEnabled(Label.L20, flag=4143)
     GotoIfFlagEnabled(Label.L20, flag=4147)
-    CreateAssetVFX(asset_1, vfx_id=90, dummy_id=800291)
+    CreateAssetVFX(asset_1, dummy_id=90, vfx_id=800291)
     Goto(Label.L20)
 
     # --- Label 20 --- #
@@ -358,13 +358,8 @@ def Event_1044523710():
     if FlagDisabled(4240):
         return
     AwaitFlagEnabled(flag=1045522181)
-    Move(
-        m60_45_Characters.DungEater,
-        destination=1044522700,
-        destination_type=CoordEntityType.Region,
-        set_draw_parent=0,
-    )
-    ForceAnimation(m60_45_Characters.DungEater, 63010)
+    Move(1045520705, destination=1044522700, destination_type=CoordEntityType.Region, set_draw_parent=0)
+    ForceAnimation(1045520705, 63010)
     End()
 
 

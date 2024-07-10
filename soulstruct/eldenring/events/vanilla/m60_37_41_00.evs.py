@@ -17,6 +17,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_37_41_00_enums import *
 
 
@@ -79,11 +80,11 @@ def Constructor():
         seconds=0.0,
         animation_id=-1,
     )
-    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, dummy_id=100, vfx_id=800, right=0)
     Event_1037410220(0, character=Characters.WanderingNoble)
 
 
 @RestartOnRest(1037410220)
-def Event_1037410220(_, character: uint):
+def Event_1037410220(_, character: Character | int):
     """Event 1037410220"""
     Kill(character)

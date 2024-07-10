@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_37_55_00_enums import *
 
 
@@ -47,7 +48,7 @@ def Constructor():
 
 
 @RestartOnRest(1037552200)
-def Event_1037552200(_, character: uint, region: uint):
+def Event_1037552200(_, character: Character | int, region: Region | int):
     """Event 1037552200"""
     MAIN.Await(CharacterInsideRegion(character=PLAYER, region=region))
     

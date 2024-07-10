@@ -490,7 +490,7 @@ class EVSParser(abc.ABC):
 
         event_id = event_info.id
         args = (0,) if not args else args
-        arg_types = event_info.arg_types if event_info.arg_types else None
+        arg_types = event_info.arg_types or None
 
         instr_name = "RunCommonEvent" if is_common_func else "RunEvent"
         # We can discard the returned evaluated condition groups set here.

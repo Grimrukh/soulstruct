@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_33_46_00_enums import *
 
 
@@ -75,7 +76,13 @@ def Constructor():
 
 
 @RestartOnRest(1033462611)
-def Event_1033462611(_, flag: uint, destination: uint, left_flag: uint, cancel_flag__right_flag: uint):
+def Event_1033462611(
+    _,
+    flag: Flag | int,
+    destination: uint,
+    left_flag: Flag | int,
+    cancel_flag__right_flag: Flag | int,
+):
     """Event 1033462611"""
     OR_1.Add(FlagEnabled(flag))
     OR_1.Add(PlayerNotInOwnWorld())
@@ -123,7 +130,7 @@ def Event_1033462611(_, flag: uint, destination: uint, left_flag: uint, cancel_f
 
 
 @RestartOnRest(1033462612)
-def Event_1033462612(_, flag: uint, asset: uint):
+def Event_1033462612(_, flag: Flag | int, asset: Asset | int):
     """Event 1033462612"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     EnableAsset(asset)

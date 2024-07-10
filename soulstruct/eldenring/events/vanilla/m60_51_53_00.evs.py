@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_51_53_00_enums import *
 
 
@@ -59,10 +60,10 @@ def Constructor():
         region=0,
         radius=3.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -72,10 +73,10 @@ def Constructor():
         region=0,
         radius=3.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005300(
         0,
@@ -83,7 +84,7 @@ def Constructor():
         character=Characters.ExtraLargeScarab,
         item_lot=1051530700,
         seconds=0.0,
-        item_is_dropped=0,
+        left=0,
     )
     Event_1051532220(
         0,
@@ -105,7 +106,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005300(0, flag=1051530380, character=Characters.BloodyFingerOkina, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1051530380, character=Characters.BloodyFingerOkina, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005790(
         0,
         right=0,
@@ -247,7 +248,7 @@ def Event_1051532220(_, character: uint, special_effect: int, region: uint, regi
 
 
 @RestartOnRest(1051532330)
-def Event_1051532330(_, attacker__character: uint, region: uint):
+def Event_1051532330(_, attacker__character: uint, region: Region | int):
     """Event 1051532330"""
     RemoveSpecialEffect(attacker__character, 4800)
     RemoveSpecialEffect(attacker__character, 5651)
@@ -264,12 +265,12 @@ def Event_1051532330(_, attacker__character: uint, region: uint):
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=PLAYER))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=35000))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=35000, attacker=attacker__character))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=ALL_SPIRIT_SUMMONS))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=ALL_SPIRIT_SUMMONS, attacker=attacker__character))
     OR_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=attacker__character, radius=10.0))
-    OR_2.Add(EntityWithinDistance(entity=35000, other_entity=attacker__character, radius=10.0))
+    OR_2.Add(EntityWithinDistance(entity=ALL_SPIRIT_SUMMONS, other_entity=attacker__character, radius=10.0))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
-    OR_2.Add(CharacterInsideRegion(character=35000, region=region))
+    OR_2.Add(CharacterInsideRegion(character=ALL_SPIRIT_SUMMONS, region=region))
     AND_1.Add(OR_2)
     
     MAIN.Await(AND_1)

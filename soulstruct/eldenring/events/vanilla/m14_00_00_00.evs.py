@@ -18,9 +18,10 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m14_00_00_00_enums import *
-from .enums.m31_06_00_00_enums import Assets as m31_06_Assets
-from .enums.m60_35_46_00_enums import Assets as m60_35_Assets
+from .enums.m31_06_00_00_enums import Assets as m31_06_00_00_Assets
+from .enums.m60_35_46_00_enums import Assets as m60_35_46_00_Assets
 
 
 @ContinueOnRest(0)
@@ -377,7 +378,7 @@ def Constructor():
         left=0,
         asset=Assets.AEG257_009_0500,
         asset_1=Assets.AEG257_002_0500,
-        asset_2=m60_35_Assets.AEG257_002_2001,
+        asset_2=m60_35_46_00_Assets.AEG257_002_2001,
         flag_2=14000512,
     )
     Event_14002510()
@@ -398,7 +399,7 @@ def Constructor():
         left=0,
         asset=Assets.AEG257_011_0500,
         asset_1=Assets.AEG257_002_0504,
-        asset_2=m31_06_Assets.AEG257_002_1000,
+        asset_2=m31_06_00_00_Assets.AEG257_002_1000,
         flag_2=14000522,
     )
     Event_14002580()
@@ -413,11 +414,11 @@ def Constructor():
     Event_14002590()
     Event_14002592()
     Event_14002594()
-    CommonFunc_90005300(0, flag=14000276, character=Characters.RayaLucariaScholar23, item_lot=0, seconds=0.0, item_is_dropped=0)
-    CommonFunc_90005300(0, flag=14000277, character=Characters.RayaLucariaScholar24, item_lot=0, seconds=0.0, item_is_dropped=0)
-    CommonFunc_90005525(0, flag=14000610, asset=14001610)
-    CommonFunc_90005525(0, flag=14000611, asset=14001611)
-    CommonFunc_90005525(0, flag=14000612, asset=14001612)
+    CommonFunc_90005300(0, flag=14000276, character=Characters.RayaLucariaScholar23, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=14000277, character=Characters.RayaLucariaScholar24, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005525(0, flag=14000610, asset=Assets.AEG257_035_3000)
+    CommonFunc_90005525(0, flag=14000611, asset=Assets.AEG257_035_3001)
+    CommonFunc_90005525(0, flag=14000612, asset=Assets.AEG257_039_1000)
     CommonFunc_90005605(
         0,
         asset=Assets.AEG099_510_9000,
@@ -457,16 +458,16 @@ def Constructor():
         character=Characters.SmallCrabCrystal0,
         item_lot=14000005,
         seconds=0.0,
-        item_is_dropped=0,
+        left=0,
     )
-    CommonFunc_90005300(0, flag=14000634, character=14000634, item_lot=14000015, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=14000634, character=14000634, item_lot=14000015, seconds=0.0, left=0)
     CommonFunc_90005300(
         0,
         flag=14000637,
         character=Characters.SmallCrabCrystal1,
         item_lot=14000025,
         seconds=0.0,
-        item_is_dropped=0,
+        left=0,
     )
     CommonFunc_90005300(
         0,
@@ -474,7 +475,7 @@ def Constructor():
         character=Characters.SmallCrabCrystal2,
         item_lot=14000035,
         seconds=0.0,
-        item_is_dropped=0,
+        left=0,
     )
     Event_14002491(0, character=Characters.Avionette2, region=14002492, radius=15.0, seconds=0.0, animation_id=3032)
     Event_14002491(1, character=Characters.Avionette3, region=14002493, radius=15.0, seconds=0.0, animation_id=3032)
@@ -483,14 +484,14 @@ def Constructor():
     Event_14002490(1, character=Characters.Avionette1, region=14002491, seconds=0.0, animation_id=3032)
     Event_14002490(2, character=Characters.Avionette6, region=14002496, seconds=0.0, animation_id=3032)
     Event_14002490(3, character=Characters.Avionette7, region=14002496, seconds=1.0, animation_id=3032)
-    CommonFunc_90005300(0, flag=14000486, character=Characters.Scarab, item_lot=40272, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=14000486, character=Characters.Scarab, item_lot=40272, seconds=0.0, left=0)
     CommonFunc_90005300(
         0,
         flag=14000499,
         character=Characters.MoongrumCarianKnight,
         item_lot=14000980,
         seconds=0.0,
-        item_is_dropped=0,
+        left=0,
     )
     CommonFunc_90005780(
         0,
@@ -524,7 +525,7 @@ def Constructor():
         message=80609,
         action_button_id=9000,
         asset=Assets.AEG099_090_9001,
-        dummy_id=30010,
+        vfx_id=30010,
     )
     if CeremonyActive(ceremony=20):
         CommonFunc_90005796(0, flag=7608, character=Characters.SorceressSellen2, banner_type=5, region=14002141)
@@ -539,7 +540,7 @@ def Constructor():
         message=80608,
         action_button_id=9000,
         asset=Assets.AEG099_090_9002,
-        dummy_id=30000,
+        vfx_id=30000,
     )
     if CeremonyActive(ceremony=30):
         Event_14002155()
@@ -560,7 +561,7 @@ def Constructor():
         first_flag=400107,
         last_flag=400107,
         flag=3469,
-        dummy_id=0,
+        vfx_id=0,
     )
     Event_14000712()
     Event_14000713()
@@ -601,7 +602,7 @@ def Constructor():
         first_flag=400360,
         last_flag=400362,
         flag=3806,
-        dummy_id=0,
+        vfx_id=0,
     )
 
 
@@ -622,8 +623,8 @@ def Preconstructor():
     DisableBackread(Characters.SorcererThops)
     DisableAsset(14006710)
     Event_14000519()
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar0, region=14002200, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar1, region=14002200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar0, region=14002200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar1, region=14002200, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.RayaLucariaScholar2,
@@ -649,7 +650,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar7, region=14002228, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar7, region=14002228, seconds=0.0, animation_id=-1)
     CommonFunc_90005210(
         0,
         character=Characters.RayaLucariaScholar8,
@@ -663,20 +664,20 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar9, region=14002228, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar3, region=14002222, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar11, region=14002222, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar13, region=14002251, seconds=0.5, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar14, region=14002251, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar15, region=14002252, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=14000260, region=14002260, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar9, region=14002228, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar3, region=14002222, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar11, region=14002222, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar13, region=14002251, seconds=0.5, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar14, region=14002251, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar15, region=14002252, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=14000260, region=14002260, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=14000261, radius=10.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar17, region=14002260, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=14000263, region=14002260, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar16, region=14002267, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar18, region=14002267, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar20, region=14002267, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar19, region=14002266, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar17, region=14002260, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=14000263, region=14002260, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar16, region=14002267, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar18, region=14002267, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar20, region=14002267, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar19, region=14002266, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(
         0,
         character=Characters.RayaLucariaScholar21,
@@ -693,12 +694,12 @@ def Preconstructor():
         seconds=0.0,
         animation_id=-1,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar23, region=14002276, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar24, region=14002276, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar25, region=14002285, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar26, region=14002285, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar27, region=14002285, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse0, region=14002300, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar23, region=14002276, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar24, region=14002276, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar25, region=14002285, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar26, region=14002285, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar27, region=14002285, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse0, region=14002300, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.PutridCorpse1,
@@ -711,7 +712,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse2, region=14002310, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse2, region=14002310, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=Characters.PutridCorpse3,
@@ -820,7 +821,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse12, region=14002323, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse12, region=14002323, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.PutridCorpse13,
@@ -969,10 +970,10 @@ def Preconstructor():
         region=14002355,
         radius=5.0,
         seconds=0.5,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -982,10 +983,10 @@ def Preconstructor():
         region=14002355,
         radius=5.0,
         seconds=0.5,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005221(
         0,
@@ -1020,7 +1021,7 @@ def Preconstructor():
         left_3=0,
     )
     CommonFunc_90005251(0, character=Characters.PutridCorpseBare0, radius=16.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpseBare2, region=14002345, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpseBare2, region=14002345, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=14000392,
@@ -1029,10 +1030,10 @@ def Preconstructor():
         region=14002355,
         radius=5.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005200(
         0,
@@ -1082,7 +1083,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallerDog0, region=14002345, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallerDog0, region=14002345, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=Characters.SmallerDog1,
@@ -1091,10 +1092,10 @@ def Preconstructor():
         region=14002345,
         radius=5.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=1,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=1,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -1104,10 +1105,10 @@ def Preconstructor():
         region=14002345,
         radius=5.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=1,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=1,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -1117,10 +1118,10 @@ def Preconstructor():
         region=14002345,
         radius=5.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=1,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=1,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005221(
         0,
@@ -1206,7 +1207,7 @@ def Preconstructor():
         seconds=0.0,
         left=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.WanderingNoble13, region=14002267, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.WanderingNoble13, region=14002267, seconds=0.0, animation_id=-1)
     CommonFunc_90005221(
         0,
         character=Characters.WanderingNoble12,
@@ -1458,8 +1459,8 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Marionette11, region=14002487, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Marionette12, region=14002487, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Marionette11, region=14002487, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Marionette12, region=14002487, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=Characters.Avionette5,
@@ -1468,18 +1469,18 @@ def Preconstructor():
         region=14002495,
         radius=3.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Avionette8, region=14002396, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Avionette9, region=14002396, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Page, region=14002675, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.MadPumpkinHead, region=14002276, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.IronVirgin0, region=14002293, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.IronVirgin1, region=14002294, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.MoongrumCarianKnight, region=14002499, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Avionette8, region=14002396, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Avionette9, region=14002396, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Page, region=14002675, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.MadPumpkinHead, region=14002276, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.IronVirgin0, region=14002293, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.IronVirgin1, region=14002294, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.MoongrumCarianKnight, region=14002499, seconds=0.0, animation_id=-1)
 
 
 @ContinueOnRest(14002080)
@@ -1508,7 +1509,7 @@ def Event_14002145():
     SetTeamType(Characters.SorceressSellen2, TeamType.Human)
     SetTeamType(Characters.WitchHunterJerren0, TeamType.Enemy)
     DeleteAssetVFX(14006710)
-    CreateAssetVFX(14006710, vfx_id=200, dummy_id=806700)
+    CreateAssetVFX(14006710, dummy_id=200, vfx_id=806700)
 
 
 @RestartOnRest(14002155)
@@ -1521,11 +1522,11 @@ def Event_14002155():
     SetTeamType(Characters.WitchHunterJerren1, TeamType.Enemy)
     SetTeamType(Characters.SorceressSellen1, TeamType.Human)
     DeleteAssetVFX(14006700)
-    CreateAssetVFX(14006700, vfx_id=200, dummy_id=806700)
+    CreateAssetVFX(14006700, dummy_id=200, vfx_id=806700)
 
 
 @RestartOnRest(14002165)
-def Event_14002165(_, flag: uint, character: uint, banner_type: uchar, region: uint):
+def Event_14002165(_, flag: Flag | int, character: Character | int, banner_type: uchar, region: Region | int):
     """Event 14002165"""
     DisableNetworkSync()
     if PlayerInOwnWorld():
@@ -1540,7 +1541,7 @@ def Event_14002165(_, flag: uint, character: uint, banner_type: uchar, region: u
     DisplayBanner(banner_type)
     if UnsignedNotEqual(left=region, right=0):
         SetPseudoMultiplayerReturnPosition(region=region)
-    AddSpecialEffect(20000, 4822)
+    AddSpecialEffect(ALL_PLAYERS, 4822)
     IssueEndOfPseudoMultiplayerNotification(success=True)
 
 
@@ -1567,7 +1568,7 @@ def Event_14002510():
         asset=Assets.AEG257_009_0500,
         asset_1=Assets.AEG257_002_0500,
         obj_act_id=14003511,
-        asset_2=m60_35_Assets.AEG257_002_2001,
+        asset_2=m60_35_46_00_Assets.AEG257_002_2001,
         obj_act_id_1=1035463512,
         region=14002511,
         region_1=14002512,
@@ -1599,7 +1600,7 @@ def Event_14002510():
         asset=Assets.AEG257_011_0500,
         asset_1=Assets.AEG257_002_0504,
         obj_act_id=14003521,
-        asset_2=m31_06_Assets.AEG257_002_1000,
+        asset_2=m31_06_00_00_Assets.AEG257_002_1000,
         obj_act_id_1=14003522,
         region=14002521,
         region_1=14002522,
@@ -1632,7 +1633,7 @@ def Event_14002498():
 
 
 @RestartOnRest(14003500)
-def Event_14003500(_, region: uint, flag: uint):
+def Event_14003500(_, region: Region | int, flag: Flag | int):
     """Event 14003500"""
     DisableNetworkSync()
     AND_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
@@ -1780,7 +1781,7 @@ def Event_14002590():
 def Event_14002592():
     """Event 14002592"""
     DeleteAssetVFX(Assets.AEG003_316_9002)
-    CreateAssetVFX(Assets.AEG003_316_9002, vfx_id=100, dummy_id=814631)
+    CreateAssetVFX(Assets.AEG003_316_9002, dummy_id=100, vfx_id=814631)
 
 
 @RestartOnRest(14002594)
@@ -1808,11 +1809,11 @@ def Event_14002650(
     anchor_entity: uint,
     area_id: uchar,
     block_id: uchar,
-    cc_id: char,
-    dd_id: char,
-    player_start: uint,
-    left_flag: uint,
-    cancel_flag__right_flag: uint,
+    cc_id: uchar,
+    dd_id: uchar,
+    player_start: PlayerStart | int,
+    left_flag: Flag | int,
+    cancel_flag__right_flag: Flag | int,
 ):
     """Event 14002650"""
     if Multiplayer():
@@ -1844,7 +1845,7 @@ def Event_14002650(
 
 
 @RestartOnRest(14002328)
-def Event_14002328(_, character: uint):
+def Event_14002328(_, character: Character | int):
     """Event 14002328"""
     Kill(character)
 
@@ -1860,9 +1861,9 @@ def Event_14002360(
     left_1: uint,
     left_2: uint,
     left_3: uint,
-    attacked_entity: uint,
-    attacked_entity_1: uint,
-    attacked_entity_2: uint,
+    attacked_entity: Character | int,
+    attacked_entity_1: Character | int,
+    attacked_entity_2: Character | int,
 ):
     """Event 14002360"""
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
@@ -1931,7 +1932,7 @@ def Event_14002360(
 
 
 @RestartOnRest(14002490)
-def Event_14002490(_, character: uint, region: uint, seconds: float, animation_id: int):
+def Event_14002490(_, character: uint, region: Region | int, seconds: float, animation_id: int):
     """Event 14002490"""
     if ThisEventSlotFlagEnabled():
         return
@@ -1969,7 +1970,7 @@ def Event_14002490(_, character: uint, region: uint, seconds: float, animation_i
 
 
 @RestartOnRest(14002491)
-def Event_14002491(_, character: uint, region: uint, radius: float, seconds: float, animation_id: int):
+def Event_14002491(_, character: uint, region: Region | int, radius: float, seconds: float, animation_id: int):
     """Event 14002491"""
     if ThisEventSlotFlagEnabled():
         return
@@ -2164,8 +2165,8 @@ def Event_14002800():
     CreateVFX(14002686)
     CreateVFX(14002687)
     EnableFlag(14000804)
-    SetBackreadStateAlternate(35000, False)
-    SetNetworkUpdateRate(35000, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryFiveFrames)
+    SetBackreadStateAlternate(ALL_SPIRIT_SUMMONS, False)
+    SetNetworkUpdateRate(ALL_SPIRIT_SUMMONS, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryFiveFrames)
 
 
 @RestartOnRest(14002810)
@@ -2285,7 +2286,7 @@ def Event_14002810():
         )
     else:
         PlayCutscene(14000000, cutscene_flags=0, player_id=10000)
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     EnableNetworkFlag(14000801)
     EnableCharacter(Characters.RennalaPhaseOne0)
     EnableAnimations(Characters.RennalaPhaseOne0)
@@ -2494,14 +2495,14 @@ def Event_14002811():
             unk_20_24=0,
             unk_24_25=False,
         )
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     if PlayerInOwnWorld():
         SetCameraAngle(x_angle=4.960000038146973, y_angle=-117.80000305175781)
     EnableFlag(14002803)
-    SetBackreadStateAlternate(35000, True)
-    SetNetworkUpdateRate(35000, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryFiveFrames)
+    SetBackreadStateAlternate(ALL_SPIRIT_SUMMONS, True)
+    SetNetworkUpdateRate(ALL_SPIRIT_SUMMONS, is_fixed=True, update_rate=CharacterUpdateRate.AtLeastEveryFiveFrames)
     Move(
-        35000,
+        ALL_SPIRIT_SUMMONS,
         destination=14002806,
         destination_type=CoordEntityType.Region,
         copy_draw_parent=Characters.RennalaPhaseTwo,
@@ -2519,7 +2520,7 @@ def Event_14002811():
     ForceAnimation(Characters.RennalaPhaseTwo, 20005)
     EnableBossHealthBar(Characters.RennalaPhaseTwo, name=902030001)
     SetNetworkUpdateRate(Characters.RennalaPhaseTwo, is_fixed=True, update_rate=CharacterUpdateRate.Always)
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     AttachAssetToCharacter(character=Characters.TalkDummy7, dummy_id=10, asset=Assets.AEG099_052_9001)
 
 
@@ -2602,7 +2603,7 @@ def Event_14002849():
         flag_2=14002806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=14000800, asset=Assets.AEG099_001_9000, dummy_id=3, right=14000801)
+    CommonFunc_9005811(0, flag=14000800, asset=Assets.AEG099_001_9000, vfx_id=3, right=14000801)
     CommonFunc_9005822(
         0,
         flag=14000800,
@@ -2699,15 +2700,8 @@ def Event_14002889():
         flag_2=14002856,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=14000850, asset=Assets.AEG099_003_9000, dummy_id=3, right=0)
-    CommonFunc_9005813(
-        0,
-        flag=14000850,
-        asset=Assets.AEG099_003_9001,
-        dummy_id=3,
-        right=14000851,
-        dummy_id_1=806760,
-    )
+    CommonFunc_9005811(0, flag=14000850, asset=Assets.AEG099_003_9000, vfx_id=3, right=0)
+    CommonFunc_9005813(0, flag=14000850, asset=Assets.AEG099_003_9001, vfx_id=3, right=14000851, vfx_id_1=806760)
     CommonFunc_9005822(
         0,
         flag=14000850,
@@ -2722,10 +2716,10 @@ def Event_14002889():
 
 
 @RestartOnRest(14002820)
-def Event_14002820(_, character: uint):
+def Event_14002820(_, character: Character | int):
     """Event 14002820"""
     DisableAI(character)
-    AND_1.Add(CharacterInsideRegion(character=20000, region=14002812))
+    AND_1.Add(CharacterInsideRegion(character=ALL_PLAYERS, region=14002812))
     AND_1.Add(HasAIStatus(Characters.RennalaStudent0, ai_status=AIStatusType.Battle))
     
     MAIN.Await(AND_1)
@@ -2746,7 +2740,7 @@ def Event_14002820(_, character: uint):
 @RestartOnRest(14002821)
 def Event_14002821(_, character: uint):
     """Event 14002821"""
-    OR_1.Add(EntityWithinDistance(entity=20000, other_entity=character, radius=30.0))
+    OR_1.Add(EntityWithinDistance(entity=ALL_PLAYERS, other_entity=character, radius=30.0))
     OR_1.Add(HealthRatio(character, target_comparison_type=ComparisonType.NotEqual) == 1.0)
     
     MAIN.Await(OR_1)
@@ -2757,7 +2751,7 @@ def Event_14002821(_, character: uint):
 
 
 @RestartOnRest(14002822)
-def Event_14002822(_, character: uint):
+def Event_14002822(_, character: Character | int):
     """Event 14002822"""
     MAIN.Await(CharacterDead(character))
     
@@ -2769,33 +2763,33 @@ def Event_14002822(_, character: uint):
 @RestartOnRest(14003801)
 def Event_14003801(
     _,
-    flag: uint,
-    character: uint,
-    character_1: uint,
-    character_2: uint,
-    character_3: uint,
-    character_4: uint,
-    character_5: uint,
-    character_6: uint,
-    character_7: uint,
-    character_8: uint,
-    character_9: uint,
-    character_10: uint,
-    character_11: uint,
-    character_12: uint,
-    character_13: uint,
-    character_14: uint,
-    character_15: uint,
-    character_16: uint,
-    character_17: uint,
-    character_18: uint,
-    character_19: uint,
-    character_20: uint,
-    character_21: uint,
-    character_22: uint,
-    character_23: uint,
-    character_24: uint,
-    character_25: uint,
+    flag: Flag | int,
+    character: Character | int,
+    character_1: Character | int,
+    character_2: Character | int,
+    character_3: Character | int,
+    character_4: Character | int,
+    character_5: Character | int,
+    character_6: Character | int,
+    character_7: Character | int,
+    character_8: Character | int,
+    character_9: Character | int,
+    character_10: Character | int,
+    character_11: Character | int,
+    character_12: Character | int,
+    character_13: Character | int,
+    character_14: Character | int,
+    character_15: Character | int,
+    character_16: Character | int,
+    character_17: Character | int,
+    character_18: Character | int,
+    character_19: Character | int,
+    character_20: Character | int,
+    character_21: Character | int,
+    character_22: Character | int,
+    character_23: Character | int,
+    character_24: Character | int,
+    character_25: Character | int,
 ):
     """Event 14003801"""
     if PlayerNotInOwnWorld():
@@ -2977,7 +2971,13 @@ def Event_14003801(
 
 
 @RestartOnRest(14003805)
-def Event_14003805(_, flag: uint, character: uint, character_1: uint, character_2: uint):
+def Event_14003805(
+    _,
+    flag: Flag | int,
+    character: Character | int,
+    character_1: Character | int,
+    character_2: Character | int,
+):
     """Event 14003805"""
     if PlayerNotInOwnWorld():
         return
@@ -3018,7 +3018,7 @@ def Event_14003805(_, flag: uint, character: uint, character_1: uint, character_
 
 
 @RestartOnRest(14003807)
-def Event_14003807(_, character: uint, character_1: uint):
+def Event_14003807(_, character: Character | int, character_1: Character | int):
     """Event 14003807"""
     if PlayerNotInOwnWorld():
         return
@@ -3035,7 +3035,7 @@ def Event_14003807(_, character: uint, character_1: uint):
 
 
 @RestartOnRest(14003808)
-def Event_14003808(_, flag: uint, character: uint):
+def Event_14003808(_, flag: Flag | int, character: Character | int):
     """Event 14003808"""
     if PlayerNotInOwnWorld():
         return
@@ -3053,7 +3053,7 @@ def Event_14003808(_, flag: uint, character: uint):
 
 
 @RestartOnRest(14003809)
-def Event_14003809(_, flag: uint, character: uint):
+def Event_14003809(_, flag: Flag | int, character: Character | int):
     """Event 14003809"""
     AND_1.Add(CharacterHasSpecialEffect(character, 14350))
     AND_1.Add(FlagDisabled(flag))
@@ -3069,32 +3069,32 @@ def Event_14003809(_, flag: uint, character: uint):
 @RestartOnRest(14003811)
 def Event_14003811(
     _,
-    flag: uint,
-    character: uint,
-    character_1: uint,
-    character_2: uint,
-    character_3: uint,
-    character_4: uint,
-    character_5: uint,
-    character_6: uint,
-    character_7: uint,
-    character_8: uint,
-    character_9: uint,
-    character_10: uint,
-    character_11: uint,
-    character_12: uint,
-    character_13: uint,
-    character_14: uint,
-    character_15: uint,
-    character_16: uint,
-    character_17: uint,
-    character_18: uint,
-    character_19: uint,
-    character_20: uint,
-    character_21: uint,
-    character_22: uint,
-    character_23: uint,
-    character_24: uint,
+    flag: Flag | int,
+    character: Character | int,
+    character_1: Character | int,
+    character_2: Character | int,
+    character_3: Character | int,
+    character_4: Character | int,
+    character_5: Character | int,
+    character_6: Character | int,
+    character_7: Character | int,
+    character_8: Character | int,
+    character_9: Character | int,
+    character_10: Character | int,
+    character_11: Character | int,
+    character_12: Character | int,
+    character_13: Character | int,
+    character_14: Character | int,
+    character_15: Character | int,
+    character_16: Character | int,
+    character_17: Character | int,
+    character_18: Character | int,
+    character_19: Character | int,
+    character_20: Character | int,
+    character_21: Character | int,
+    character_22: Character | int,
+    character_23: Character | int,
+    character_24: Character | int,
 ):
     """Event 14003811"""
     OR_1.Add(CharacterHasSpecialEffect(
@@ -3323,23 +3323,17 @@ def Event_14003811(
 
 
 @RestartOnRest(14003814)
-def Event_14003814(_, destination: uint, character: uint):
+def Event_14003814(_, destination: uint, character: Character | int):
     """Event 14003814"""
     if ThisEventSlotFlagDisabled():
         DisableGravity(character)
-    Move(
-        character,
-        destination=destination,
-        destination_type=CoordEntityType.Character,
-        dummy_id=20,
-        short_move=True,
-    )
+    Move(character, destination=destination, destination_type=CoordEntityType.Character, dummy_id=20, short_move=True)
     Wait(1.0)
     Restart()
 
 
 @RestartOnRest(14003815)
-def Event_14003815(_, character: uint, anchor_entity: uint):
+def Event_14003815(_, character: Character | int, anchor_entity: uint):
     """Event 14003815"""
     MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Battle))
     
@@ -3349,7 +3343,7 @@ def Event_14003815(_, character: uint, anchor_entity: uint):
 
 
 @RestartOnRest(14003817)
-def Event_14003817(_, character__character_group: uint):
+def Event_14003817(_, character__character_group: Character | int):
     """Event 14003817"""
     if PlayerNotInOwnWorld():
         return
@@ -3386,7 +3380,7 @@ def Event_14003820(_, asset: uint):
 
 
 @RestartOnRest(14003825)
-def Event_14003825(_, flag: uint, character: uint, character_1: uint):
+def Event_14003825(_, flag: Flag | int, character: Character | int, character_1: Character | int):
     """Event 14003825"""
     if PlayerNotInOwnWorld():
         return
@@ -3418,7 +3412,7 @@ def Event_14003825(_, flag: uint, character: uint, character_1: uint):
 
 
 @RestartOnRest(14003950)
-def Event_14003950(_, flag: uint, asset: uint):
+def Event_14003950(_, flag: Flag | int, asset: Asset | int):
     """Event 14003950"""
     AND_1.Add(AssetDestroyed(asset))
     AND_1.Add(FlagEnabled(flag))
@@ -3448,18 +3442,27 @@ def Event_14003834(_, asset: uint):
 
 
 @RestartOnRest(14003840)
-def Event_14003840(_, character: uint, left: uint, left_1: uint, left_2: uint, flag: uint, flag_1: uint, flag_2: uint):
+def Event_14003840(
+    _,
+    character: Character | int,
+    left: uint,
+    left_1: uint,
+    left_2: uint,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
+):
     """Event 14003840"""
     WaitFrames(frames=1)
     SkipLinesIfUnsignedEqual(2, left=left_2, right=0)
     SkipLinesIfFlagDisabled(1, flag_2)
-    OR_1.Add(EntityWithinDistance(entity=20000, other_entity=left_2, radius=10.0))
+    OR_1.Add(EntityWithinDistance(entity=ALL_PLAYERS, other_entity=left_2, radius=10.0))
     SkipLinesIfUnsignedEqual(2, left=left_1, right=0)
     SkipLinesIfFlagDisabled(1, flag_1)
-    OR_1.Add(EntityWithinDistance(entity=20000, other_entity=left_1, radius=10.0))
+    OR_1.Add(EntityWithinDistance(entity=ALL_PLAYERS, other_entity=left_1, radius=10.0))
     SkipLinesIfUnsignedEqual(2, left=left, right=0)
     SkipLinesIfFlagDisabled(1, flag)
-    OR_1.Add(EntityWithinDistance(entity=20000, other_entity=left, radius=10.0))
+    OR_1.Add(EntityWithinDistance(entity=ALL_PLAYERS, other_entity=left, radius=10.0))
     AND_1.Add(OR_1)
     AND_1.Add(CharacterDoesNotHaveSpecialEffect(character, 14367))
     AND_1.Add(CharacterAlive(character))
@@ -3487,25 +3490,25 @@ def Event_14003845(
     MAIN.Await(CharacterHasSpecialEffect(character, 14362))
     
     if FlagEnabled(asset_5):
-        CreateAssetVFX(asset_2, vfx_id=200, dummy_id=814625)
+        CreateAssetVFX(asset_2, dummy_id=200, vfx_id=814625)
     if FlagEnabled(asset_4):
-        CreateAssetVFX(asset_1, vfx_id=200, dummy_id=814625)
+        CreateAssetVFX(asset_1, dummy_id=200, vfx_id=814625)
     if FlagEnabled(asset_3):
-        CreateAssetVFX(asset, vfx_id=200, dummy_id=814625)
+        CreateAssetVFX(asset, dummy_id=200, vfx_id=814625)
     Wait(1.5)
     if FlagEnabled(asset_5):
-        OR_1.Add(EntityWithinDistance(entity=20000, other_entity=asset_2, radius=4.5))
+        OR_1.Add(EntityWithinDistance(entity=ALL_PLAYERS, other_entity=asset_2, radius=4.5))
     if FlagEnabled(asset_4):
-        OR_1.Add(EntityWithinDistance(entity=20000, other_entity=asset_1, radius=4.5))
+        OR_1.Add(EntityWithinDistance(entity=ALL_PLAYERS, other_entity=asset_1, radius=4.5))
     if FlagEnabled(asset_3):
-        OR_1.Add(EntityWithinDistance(entity=20000, other_entity=asset, radius=4.5))
+        OR_1.Add(EntityWithinDistance(entity=ALL_PLAYERS, other_entity=asset, radius=4.5))
     OR_1.Add(TimeElapsed(seconds=5.0))
     AwaitConditionTrue(OR_1)
     GotoIfCharacterDoesNotHaveSpecialEffect(Label.L10, character=character, special_effect=14363)
     ReplanAI(character)
     ForceAnimation(character, 3014)
     Wait(0.699999988079071)
-    AND_1.Add(EntityWithinDistance(entity=20000, other_entity=asset_2, radius=4.5))
+    AND_1.Add(EntityWithinDistance(entity=ALL_PLAYERS, other_entity=asset_2, radius=4.5))
     GotoIfConditionFalse(Label.L0, input_condition=AND_1)
     GotoIfFlagDisabled(Label.L0, flag=asset_5)
     GotoIfAssetDestroyed(Label.L0, asset=asset_5)
@@ -3523,7 +3526,7 @@ def Event_14003845(
 
     # --- Label 0 --- #
     DefineLabel(0)
-    AND_2.Add(EntityWithinDistance(entity=20000, other_entity=asset_1, radius=4.5))
+    AND_2.Add(EntityWithinDistance(entity=ALL_PLAYERS, other_entity=asset_1, radius=4.5))
     GotoIfConditionFalse(Label.L1, input_condition=AND_2)
     GotoIfFlagDisabled(Label.L1, flag=asset_4)
     GotoIfAssetDestroyed(Label.L1, asset=asset_4)
@@ -3541,7 +3544,7 @@ def Event_14003845(
 
     # --- Label 1 --- #
     DefineLabel(1)
-    AND_3.Add(EntityWithinDistance(entity=20000, other_entity=asset, radius=4.5))
+    AND_3.Add(EntityWithinDistance(entity=ALL_PLAYERS, other_entity=asset, radius=4.5))
     GotoIfConditionFalse(Label.L2, input_condition=AND_3)
     GotoIfFlagDisabled(Label.L2, flag=asset_3)
     GotoIfAssetDestroyed(Label.L2, asset=asset_3)
@@ -3577,26 +3580,26 @@ def Event_14003850(
     asset_2: uint,
     asset_3: uint,
     asset_4: uint,
-    flag: uint,
-    flag_1: uint,
-    flag_2: uint,
-    flag_3: uint,
-    flag_4: uint,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
+    flag_3: Flag | int,
+    flag_4: Flag | int,
     asset__asset_flag: uint,
     asset__asset_flag_1: uint,
     asset__asset_flag_2: uint,
     asset__asset_flag_3: uint,
     asset__asset_flag_4: uint,
-    region: uint,
-    region_1: uint,
-    region_2: uint,
-    region_3: uint,
-    region_4: uint,
+    region: Region | int,
+    region_1: Region | int,
+    region_2: Region | int,
+    region_3: Region | int,
+    region_4: Region | int,
 ):
     """Event 14003850"""
     MAIN.Await(CharacterHasSpecialEffect(character, 14363))
     
-    SkipLinesIfCharacterOutsideRegion(24, character=20000, region=region)
+    SkipLinesIfCharacterOutsideRegion(24, character=ALL_PLAYERS, region=region)
     SkipLinesIfFlagDisabled(23, flag)
     ShootProjectile(
         owner_entity=character,
@@ -3726,7 +3729,7 @@ def Event_14003850(
     Wait(7.5)
     DisableAsset(asset)
     Goto(Label.L10)
-    SkipLinesIfCharacterOutsideRegion(24, character=20000, region=region_1)
+    SkipLinesIfCharacterOutsideRegion(24, character=ALL_PLAYERS, region=region_1)
     SkipLinesIfFlagDisabled(23, flag_1)
     ShootProjectile(
         owner_entity=character,
@@ -3856,7 +3859,7 @@ def Event_14003850(
     Wait(7.5)
     DisableAsset(asset_1)
     Goto(Label.L10)
-    SkipLinesIfCharacterOutsideRegion(24, character=20000, region=region_2)
+    SkipLinesIfCharacterOutsideRegion(24, character=ALL_PLAYERS, region=region_2)
     SkipLinesIfFlagDisabled(23, flag_2)
     ShootProjectile(
         owner_entity=character,
@@ -3986,7 +3989,7 @@ def Event_14003850(
     Wait(7.5)
     DisableAsset(asset_2)
     Goto(Label.L10)
-    SkipLinesIfCharacterOutsideRegion(24, character=20000, region=region_3)
+    SkipLinesIfCharacterOutsideRegion(24, character=ALL_PLAYERS, region=region_3)
     SkipLinesIfFlagDisabled(23, flag_3)
     ShootProjectile(
         owner_entity=character,
@@ -4116,7 +4119,7 @@ def Event_14003850(
     Wait(7.5)
     DisableAsset(asset_3)
     Goto(Label.L10)
-    SkipLinesIfCharacterOutsideRegion(24, character=20000, region=region_4)
+    SkipLinesIfCharacterOutsideRegion(24, character=ALL_PLAYERS, region=region_4)
     SkipLinesIfFlagDisabled(23, flag_4)
     ShootProjectile(
         owner_entity=character,
@@ -4255,40 +4258,40 @@ def Event_14003850(
 @ContinueOnRest(14003880)
 def Event_14003880(
     _,
-    character: uint,
+    character: Character | int,
     destination: uint,
     destination_1: uint,
     destination_2: uint,
     destination_3: uint,
-    flag: uint,
-    flag_1: uint,
-    flag_2: uint,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
 ):
     """Event 14003880"""
     DisableNetworkSync()
     if FlagEnabled(14000899):
         return
     GotoIfThisEventSlotFlagDisabled(Label.L10)
-    OR_14.Add(CharacterIsType(20000, character_type=CharacterType.WhitePhantom))
+    OR_14.Add(CharacterIsType(ALL_PLAYERS, character_type=CharacterType.WhitePhantom))
     if not OR_14:
         return
     if FlagDisabled(flag):
         EnableFlag(flag)
-        Move(20000, destination=destination_1, destination_type=CoordEntityType.Region, copy_draw_parent=0)
+        Move(ALL_PLAYERS, destination=destination_1, destination_type=CoordEntityType.Region, copy_draw_parent=0)
         End()
     if FlagDisabled(flag_1):
         EnableFlag(flag_1)
-        Move(20000, destination=destination_2, destination_type=CoordEntityType.Region, copy_draw_parent=0)
+        Move(ALL_PLAYERS, destination=destination_2, destination_type=CoordEntityType.Region, copy_draw_parent=0)
         End()
     if FlagDisabled(flag_2):
         EnableFlag(flag_2)
-        Move(20000, destination=destination_3, destination_type=CoordEntityType.Region, copy_draw_parent=0)
+        Move(ALL_PLAYERS, destination=destination_3, destination_type=CoordEntityType.Region, copy_draw_parent=0)
     End()
 
     # --- Label 10 --- #
     DefineLabel(10)
-    OR_15.Add(CharacterIsType(20000, character_type=CharacterType.WhitePhantom))
-    OR_15.Add(CharacterIsType(20000, character_type=CharacterType.BlackPhantom))
+    OR_15.Add(CharacterIsType(ALL_PLAYERS, character_type=CharacterType.WhitePhantom))
+    OR_15.Add(CharacterIsType(ALL_PLAYERS, character_type=CharacterType.BlackPhantom))
     SkipLinesIfConditionFalse(1, OR_15)
     End()
     
@@ -4306,28 +4309,13 @@ def Event_14003880(
     GotoIfConditionFalse(Label.L0, input_condition=AND_10)
     if FlagDisabled(flag):
         EnableFlag(flag)
-        Move(
-            CLIENT_PLAYER_1,
-            destination=destination_1,
-            destination_type=CoordEntityType.Region,
-            copy_draw_parent=0,
-        )
+        Move(CLIENT_PLAYER_1, destination=destination_1, destination_type=CoordEntityType.Region, copy_draw_parent=0)
     if FlagDisabled(flag_1):
         EnableFlag(flag_1)
-        Move(
-            CLIENT_PLAYER_1,
-            destination=destination_2,
-            destination_type=CoordEntityType.Region,
-            copy_draw_parent=0,
-        )
+        Move(CLIENT_PLAYER_1, destination=destination_2, destination_type=CoordEntityType.Region, copy_draw_parent=0)
     if FlagDisabled(flag_2):
         EnableFlag(flag_2)
-        Move(
-            CLIENT_PLAYER_1,
-            destination=destination_3,
-            destination_type=CoordEntityType.Region,
-            copy_draw_parent=0,
-        )
+        Move(CLIENT_PLAYER_1, destination=destination_3, destination_type=CoordEntityType.Region, copy_draw_parent=0)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -4335,28 +4323,13 @@ def Event_14003880(
     GotoIfConditionFalse(Label.L1, input_condition=AND_11)
     if FlagDisabled(flag):
         EnableFlag(flag)
-        Move(
-            CLIENT_PLAYER_2,
-            destination=destination_1,
-            destination_type=CoordEntityType.Region,
-            copy_draw_parent=0,
-        )
+        Move(CLIENT_PLAYER_2, destination=destination_1, destination_type=CoordEntityType.Region, copy_draw_parent=0)
     if FlagDisabled(flag_1):
         EnableFlag(flag_1)
-        Move(
-            CLIENT_PLAYER_2,
-            destination=destination_2,
-            destination_type=CoordEntityType.Region,
-            copy_draw_parent=0,
-        )
+        Move(CLIENT_PLAYER_2, destination=destination_2, destination_type=CoordEntityType.Region, copy_draw_parent=0)
     if FlagDisabled(flag_2):
         EnableFlag(flag_2)
-        Move(
-            CLIENT_PLAYER_2,
-            destination=destination_3,
-            destination_type=CoordEntityType.Region,
-            copy_draw_parent=0,
-        )
+        Move(CLIENT_PLAYER_2, destination=destination_3, destination_type=CoordEntityType.Region, copy_draw_parent=0)
 
     # --- Label 1 --- #
     DefineLabel(1)
@@ -4364,28 +4337,13 @@ def Event_14003880(
     GotoIfConditionFalse(Label.L2, input_condition=AND_12)
     if FlagDisabled(flag):
         EnableFlag(flag)
-        Move(
-            CLIENT_PLAYER_3,
-            destination=destination_1,
-            destination_type=CoordEntityType.Region,
-            copy_draw_parent=0,
-        )
+        Move(CLIENT_PLAYER_3, destination=destination_1, destination_type=CoordEntityType.Region, copy_draw_parent=0)
     if FlagDisabled(flag_1):
         EnableFlag(flag_1)
-        Move(
-            CLIENT_PLAYER_3,
-            destination=destination_2,
-            destination_type=CoordEntityType.Region,
-            copy_draw_parent=0,
-        )
+        Move(CLIENT_PLAYER_3, destination=destination_2, destination_type=CoordEntityType.Region, copy_draw_parent=0)
     if FlagDisabled(flag_2):
         EnableFlag(flag_2)
-        Move(
-            CLIENT_PLAYER_3,
-            destination=destination_3,
-            destination_type=CoordEntityType.Region,
-            copy_draw_parent=0,
-        )
+        Move(CLIENT_PLAYER_3, destination=destination_3, destination_type=CoordEntityType.Region, copy_draw_parent=0)
 
     # --- Label 2 --- #
     DefineLabel(2)
@@ -4395,28 +4353,13 @@ def Event_14003880(
     GotoIfConditionFalse(Label.L3, input_condition=AND_13)
     if FlagDisabled(flag):
         EnableFlag(flag)
-        Move(
-            CLIENT_PLAYER_4,
-            destination=destination_1,
-            destination_type=CoordEntityType.Region,
-            copy_draw_parent=0,
-        )
+        Move(CLIENT_PLAYER_4, destination=destination_1, destination_type=CoordEntityType.Region, copy_draw_parent=0)
     if FlagDisabled(flag_1):
         EnableFlag(flag_1)
-        Move(
-            CLIENT_PLAYER_4,
-            destination=destination_2,
-            destination_type=CoordEntityType.Region,
-            copy_draw_parent=0,
-        )
+        Move(CLIENT_PLAYER_4, destination=destination_2, destination_type=CoordEntityType.Region, copy_draw_parent=0)
     if FlagDisabled(flag_2):
         EnableFlag(flag_2)
-        Move(
-            CLIENT_PLAYER_4,
-            destination=destination_3,
-            destination_type=CoordEntityType.Region,
-            copy_draw_parent=0,
-        )
+        Move(CLIENT_PLAYER_4, destination=destination_3, destination_type=CoordEntityType.Region, copy_draw_parent=0)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -4426,28 +4369,13 @@ def Event_14003880(
     GotoIfConditionFalse(Label.L4, input_condition=AND_14)
     if FlagDisabled(flag):
         EnableFlag(flag)
-        Move(
-            CLIENT_PLAYER_5,
-            destination=destination_1,
-            destination_type=CoordEntityType.Region,
-            copy_draw_parent=0,
-        )
+        Move(CLIENT_PLAYER_5, destination=destination_1, destination_type=CoordEntityType.Region, copy_draw_parent=0)
     if FlagDisabled(flag_1):
         EnableFlag(flag_1)
-        Move(
-            CLIENT_PLAYER_5,
-            destination=destination_2,
-            destination_type=CoordEntityType.Region,
-            copy_draw_parent=0,
-        )
+        Move(CLIENT_PLAYER_5, destination=destination_2, destination_type=CoordEntityType.Region, copy_draw_parent=0)
     if FlagDisabled(flag_2):
         EnableFlag(flag_2)
-        Move(
-            CLIENT_PLAYER_5,
-            destination=destination_3,
-            destination_type=CoordEntityType.Region,
-            copy_draw_parent=0,
-        )
+        Move(CLIENT_PLAYER_5, destination=destination_3, destination_type=CoordEntityType.Region, copy_draw_parent=0)
 
     # --- Label 4 --- #
     DefineLabel(4)
@@ -4490,7 +4418,7 @@ def Event_14003885(
 
 
 @RestartOnRest(14003886)
-def Event_14003886(_, character: uint, region: uint, special_effect: int):
+def Event_14003886(_, character: Character | int, region: Region | int, special_effect: int):
     """Event 14003886"""
     AND_1.Add(CharacterInsideRegion(character=character, region=region))
     AND_1.Add(CharacterHasSpecialEffect(character, special_effect, target_count=0.0))
@@ -4502,7 +4430,7 @@ def Event_14003886(_, character: uint, region: uint, special_effect: int):
 
 
 @RestartOnRest(14003892)
-def Event_14003892(_, character: uint, character_1: uint):
+def Event_14003892(_, character: Character | int, character_1: Character | int):
     """Event 14003892"""
     MAIN.Await(CharacterHasSpecialEffect(character, 14378))
     
@@ -4512,7 +4440,7 @@ def Event_14003892(_, character: uint, character_1: uint):
 
 
 @RestartOnRest(14003893)
-def Event_14003893(_, character: uint, character_1: uint):
+def Event_14003893(_, character: Character | int, character_1: Character | int):
     """Event 14003893"""
     MAIN.Await(CharacterHasSpecialEffect(character, 5028))
     
@@ -4522,7 +4450,7 @@ def Event_14003893(_, character: uint, character_1: uint):
 
 
 @RestartOnRest(14003894)
-def Event_14003894(_, character: uint, character_1: uint):
+def Event_14003894(_, character: Character | int, character_1: Character | int):
     """Event 14003894"""
     MAIN.Await(CharacterHasSpecialEffect(character, 5029))
     
@@ -4534,15 +4462,15 @@ def Event_14003894(_, character: uint, character_1: uint):
 @RestartOnRest(14003898)
 def Event_14003898(
     _,
-    character: uint,
-    character_1: uint,
-    character_2: uint,
-    character_3: uint,
-    character_4: uint,
-    character_5: uint,
-    character_6: uint,
-    character_7: uint,
-    character_8: uint,
+    character: Character | int,
+    character_1: Character | int,
+    character_2: Character | int,
+    character_3: Character | int,
+    character_4: Character | int,
+    character_5: Character | int,
+    character_6: Character | int,
+    character_7: Character | int,
+    character_8: Character | int,
 ):
     """Event 14003898"""
     if ThisEventSlotFlagDisabled():
@@ -4618,7 +4546,7 @@ def Event_14003915():
 
 
 @RestartOnRest(14003922)
-def Event_14003922(_, flag: uint, character: uint, character_1: uint):
+def Event_14003922(_, flag: Flag | int, character: uint, character_1: uint):
     """Event 14003922"""
     AND_1.Add(CharacterHasSpecialEffect(character, 14580))
     AND_1.Add(FlagDisabled(flag))
@@ -4645,7 +4573,7 @@ def Event_14003922(_, flag: uint, character: uint, character_1: uint):
 
 
 @RestartOnRest(14003923)
-def Event_14003923(_, flag: uint, flag_1: uint, character: uint, character_1: uint):
+def Event_14003923(_, flag: Flag | int, flag_1: Flag | int, character: Character | int, character_1: Character | int):
     """Event 14003923"""
     AND_1.Add(FlagDisabled(flag_1))
     AND_1.Add(FlagEnabled(flag))
@@ -4663,7 +4591,7 @@ def Event_14003923(_, flag: uint, flag_1: uint, character: uint, character_1: ui
 
 
 @RestartOnRest(14003924)
-def Event_14003924(_, flag: uint, flag_1: uint, character: uint):
+def Event_14003924(_, flag: Flag | int, flag_1: Flag | int, character: Character | int):
     """Event 14003924"""
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(FlagEnabled(flag_1))
@@ -4678,7 +4606,7 @@ def Event_14003924(_, flag: uint, flag_1: uint, character: uint):
 
 
 @RestartOnRest(14003925)
-def Event_14003925(_, flag: uint, character: uint):
+def Event_14003925(_, flag: Flag | int, character: uint):
     """Event 14003925"""
     AND_1.Add(HealthValue(character) <= 1)
     AND_1.Add(CharacterDoesNotHaveSpecialEffect(character, 14573))
@@ -4715,7 +4643,7 @@ def Event_14003926(_, character: uint):
 @RestartOnRest(14003937)
 def Event_14003937(
     _,
-    flag: uint,
+    flag: Flag | int,
     character: uint,
     character_1: uint,
     character_2: uint,
@@ -4794,13 +4722,13 @@ def Event_14003937(
 @RestartOnRest(14003938)
 def Event_14003938(
     _,
-    flag: uint,
-    flag_1: uint,
-    character: uint,
-    character_1: uint,
-    character_2: uint,
-    character_3: uint,
-    character_4: uint,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    character: Character | int,
+    character_1: Character | int,
+    character_2: Character | int,
+    character_3: Character | int,
+    character_4: Character | int,
 ):
     """Event 14003938"""
     AND_1.Add(FlagDisabled(flag_1))
@@ -4829,12 +4757,12 @@ def Event_14003938(
 @RestartOnRest(14003939)
 def Event_14003939(
     _,
-    flag: uint,
-    flag_1: uint,
-    character: uint,
-    character_1: uint,
-    character_2: uint,
-    character_3: uint,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    character: Character | int,
+    character_1: Character | int,
+    character_2: Character | int,
+    character_3: Character | int,
 ):
     """Event 14003939"""
     AND_1.Add(FlagEnabled(flag))
@@ -4856,7 +4784,7 @@ def Event_14003939(
 
 
 @RestartOnRest(14003940)
-def Event_14003940(_, flag: uint, character: uint):
+def Event_14003940(_, flag: Flag | int, character: uint):
     """Event 14003940"""
     AND_1.Add(HealthValue(character) <= 1)
     AND_1.Add(CharacterDoesNotHaveSpecialEffect(character, 14573))
@@ -4891,7 +4819,7 @@ def Event_14003945(_, character: uint):
 
 
 @RestartOnRest(14003962)
-def Event_14003962(_, flag: uint, character: uint, character_1: uint):
+def Event_14003962(_, flag: Flag | int, character: uint, character_1: uint):
     """Event 14003962"""
     AND_1.Add(CharacterHasSpecialEffect(character, 14585))
     AND_1.Add(FlagDisabled(flag))
@@ -4919,7 +4847,7 @@ def Event_14003962(_, flag: uint, character: uint, character_1: uint):
 
 
 @RestartOnRest(14003963)
-def Event_14003963(_, flag: uint, flag_1: uint, character: uint, character_1: uint):
+def Event_14003963(_, flag: Flag | int, flag_1: Flag | int, character: Character | int, character_1: Character | int):
     """Event 14003963"""
     AND_1.Add(FlagDisabled(flag_1))
     AND_1.Add(FlagEnabled(flag))
@@ -4936,7 +4864,7 @@ def Event_14003963(_, flag: uint, flag_1: uint, character: uint, character_1: ui
 
 
 @RestartOnRest(14003964)
-def Event_14003964(_, flag: uint, flag_1: uint, character: uint):
+def Event_14003964(_, flag: Flag | int, flag_1: Flag | int, character: Character | int):
     """Event 14003964"""
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(FlagEnabled(flag_1))
@@ -4951,7 +4879,7 @@ def Event_14003964(_, flag: uint, flag_1: uint, character: uint):
 
 
 @RestartOnRest(14003965)
-def Event_14003965(_, flag: uint, character: uint):
+def Event_14003965(_, flag: Flag | int, character: uint):
     """Event 14003965"""
     AND_1.Add(HealthValue(character) <= 1)
     AND_1.Add(CharacterDoesNotHaveSpecialEffect(character, 14573))
@@ -4986,7 +4914,7 @@ def Event_14003966(_, character: uint):
 
 
 @RestartOnRest(14003972)
-def Event_14003972(_, flag: uint, character: uint, character_1: uint):
+def Event_14003972(_, flag: Flag | int, character: uint, character_1: uint):
     """Event 14003972"""
     AND_1.Add(CharacterHasSpecialEffect(character, 14575))
     AND_1.Add(FlagDisabled(flag))
@@ -5013,7 +4941,7 @@ def Event_14003972(_, flag: uint, character: uint, character_1: uint):
 
 
 @RestartOnRest(14003973)
-def Event_14003973(_, flag: uint, flag_1: uint, character: uint, character_1: uint):
+def Event_14003973(_, flag: Flag | int, flag_1: Flag | int, character: Character | int, character_1: Character | int):
     """Event 14003973"""
     AND_1.Add(FlagDisabled(flag_1))
     AND_1.Add(FlagEnabled(flag))
@@ -5030,7 +4958,7 @@ def Event_14003973(_, flag: uint, flag_1: uint, character: uint, character_1: ui
 
 
 @RestartOnRest(14003974)
-def Event_14003974(_, flag: uint, flag_1: uint, character: uint):
+def Event_14003974(_, flag: Flag | int, flag_1: Flag | int, character: Character | int):
     """Event 14003974"""
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(FlagEnabled(flag_1))
@@ -5045,7 +4973,7 @@ def Event_14003974(_, flag: uint, flag_1: uint, character: uint):
 
 
 @RestartOnRest(14003975)
-def Event_14003975(_, flag: uint, character: uint):
+def Event_14003975(_, flag: Flag | int, character: uint):
     """Event 14003975"""
     AND_1.Add(HealthValue(character) <= 1)
     AND_1.Add(CharacterDoesNotHaveSpecialEffect(character, 14573))
@@ -5080,7 +5008,7 @@ def Event_14003976(_, character: uint):
 
 
 @RestartOnRest(14003977)
-def Event_14003977(_, character: uint, character_1: uint):
+def Event_14003977(_, character: Character | int, character_1: Character | int):
     """Event 14003977"""
     MAIN.Await(HealthValue(character) == 0)
     
@@ -5497,14 +5425,14 @@ def Event_14000742():
         return
     AND_1.Add(FlagEnabled(3948))
     AND_1.Add(FlagDisabled(11109306))
-    AND_1.Add(EntityWithinDistance(entity=Characters.BoctheSeamster, other_entity=20000, radius=4.0))
+    AND_1.Add(EntityWithinDistance(entity=Characters.BoctheSeamster, other_entity=ALL_PLAYERS, radius=4.0))
     AwaitConditionTrue(AND_1)
     EnableNetworkFlag(11109306)
     End()
 
 
 @RestartOnRest(14000750)
-def Event_14000750(_, character: uint, asset: uint):
+def Event_14000750(_, character: uint, asset: Asset | int):
     """Event 14000750"""
     WaitFrames(frames=1)
     DisableNetworkSync()

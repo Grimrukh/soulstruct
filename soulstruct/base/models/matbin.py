@@ -1,10 +1,3 @@
-"""Alternate (and more common) material configuration file.
-
-Can be pointed to by FLVER materials instead of `MTD` files. Note that a '.matxml' file suffix is used in the FLVER
-data, which is what the Elden Ring engine presumably unpacks these `.matbin` files into.
-
-Among other information, contains the texture paths for the material, which can be omitted from Elden Ring FLVERs.
-"""
 from __future__ import annotations
 
 __all__ = ["MATBIN", "MATBINBND"]
@@ -17,8 +10,8 @@ from enum import IntEnum
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.containers import Binder, BinderVersion, BinderVersion4Info, EntryNotFoundError
-from soulstruct.games import ELDEN_RING
+from soulstruct.games import Game, get_game
+from soulstruct.containers import Binder, EntryNotFoundError
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector2
 
@@ -27,6 +20,13 @@ _LOGGER = logging.getLogger("soulstruct")
 
 @dataclass(slots=True)
 class MATBIN(GameFile):
+    """Material definition file used from Elden Ring onwards, completely replacing `MTD` format.
+
+    Note that Elden Ring still has an `mtd` folder with MTD Binders inside it, and FLVER textures may reference '.mtd'
+    material definitions, but the files are unused and the FLVER texture suffixes are ignored. FLVER texture suffix in
+    MATBIN games is typically '.matxml' (which this file presumably converts to, internally) but again, the suffix is
+    ignored.
+    """
     
     @dataclass(slots=True)
     class HeaderStruct(BinaryStruct):
@@ -118,10 +118,10 @@ class MATBIN(GameFile):
     def get_all_sampler_stems(self) -> dict[str, str]:
         return {sampler.sampler_type: Path(sampler.path).stem if sampler.path else "" for sampler in self.samplers}
 
-    def get_sampler_path(self, matbin_sampler_type: str) -> Path:
+    def get_sampler_path(self, matbin_sampler_type: str) -> str:
         for sampler in self.samplers:
             if sampler.sampler_type == matbin_sampler_type:
-                return Path(sampler.path)
+                return sampler.path
         raise KeyError(
             f"MATBIN sampler type '{matbin_sampler_type}' not found in MATBIN from path '{self.path}'."
         )
@@ -311,10 +311,6 @@ class MATBINBND(Binder):
     use_lazy_load: bool = True  # if True, entries will only be loaded into `MATBIN` instances when requested
     matbins: dict[str, MATBIN] = field(default_factory=dict)
 
-    dcx_type = ELDEN_RING.default_dcx_type
-    version: BinderVersion = BinderVersion.V4
-    v4_info: BinderVersion4Info = field(default_factory=lambda: BinderVersion4Info(hash_table_type=4))
-
     def __post_init__(self):
         """Loads FIRST instance of each entry name as an MATBIN."""
         super(MATBINBND, self).__post_init__()
@@ -329,9 +325,13 @@ class MATBINBND(Binder):
             self.matbins[entry.name] = entry.to_binary_file(MATBIN)
 
     def get_matbin(self, matbin_name: str) -> MATBIN:
-        """Look up MATBIN name in Binder. Changes '.matxml' to '.matbin' if necessary."""
+        """Look up MATBIN name in Binder. Changes '.mtd' or '.matxml' suffix to '.matbin' if necessary."""
         if matbin_name.endswith(".matxml"):
-            matbin_name = matbin_name.removesuffix(".matxml") + ".matbin"
+            matbin_name = matbin_name.removesuffix(".matxml")
+        elif matbin_name.endswith(".mtd"):
+            matbin_name = matbin_name.removesuffix(".mtd")
+        if not matbin_name.endswith(".matbin"):
+            matbin_name += ".matbin"
         try:
             return self.matbins[matbin_name]
         except KeyError:
@@ -345,16 +345,42 @@ class MATBINBND(Binder):
             return matbin
 
     @classmethod
-    def from_bundled(cls):
-        """TODO: Does not include 'devpatch' file (1 KB)."""
-        if cls._BUNDLED is None:
-            _LOGGER.info(f"Loading bundled `MTDBND` for {ELDEN_RING.name}.")
-            bundled_matbinbnd_path = Path(__file__).parent / "resources/allmaterial.matbinbnd.dcx"
-            cls._BUNDLED = cls.from_path(bundled_matbinbnd_path)
-        return cls._BUNDLED
+    def from_bundled(cls, game_or_name: Game | str) -> MATBINBND:
+        game = get_game(game_or_name)
+        matbinbnd = None  # type: MATBINBND | None
+        for resource_key, resource_path in game.bundled_resource_paths.items():
+            if resource_key.endswith("MATBINBND"):
+                if matbinbnd is None:
+                    matbinbnd = cls.from_path(resource_path)
+                else:
+                    matbinbnd |= cls.from_path(resource_path)
+        if not matbinbnd:
+            raise FileNotFoundError(f"No bundled MATBINBND found for {game.name}.")
+        return matbinbnd
 
     @classmethod
-    def from_path_or_bundled(cls, mtdbnd_path: Path):
-        if mtdbnd_path.is_file():
-            return cls.from_path(mtdbnd_path)
-        return cls.from_bundled()
+    def from_path_or_bundled(cls, game_or_name: Game | str, matbinbnd_path: Path | None):
+        if matbinbnd_path and matbinbnd_path.is_file():
+            return cls.from_path(matbinbnd_path)
+        return cls.from_bundled(game_or_name)
+
+    @classmethod
+    def combine_matbinbnds(cls, *matbinbnds: MATBINBND):
+        """Combine multiple MATBINBND Binders into one.
+
+        Combines both raw BND entries and pre-loaded MATBINs.
+        """
+        combined = cls()
+        for matbinbnd in matbinbnds:
+            for matbin_name, matbin in matbinbnd.matbins.items():
+                if matbin_name in combined.matbins:
+                    _LOGGER.warning(f"MATBIN '{matbin_name}' already exists in combined MATBINBND. Replacing...")
+                combined.matbins[matbin_name] = matbin
+            entries_by_name = combined.get_entries_by_name()
+            for entry in matbinbnd.entries:
+                if entry.name in entries_by_name:
+                    _LOGGER.warning(f"Entry '{entry.name}' already exists in combined MATBINBND. Replacing...")
+                    combined.remove_entry_name(entry.name)
+                combined.entries.append(entry)
+                entries_by_name[entry.name] = entry
+        return combined

@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_45_51_00_enums import *
 
 
@@ -25,7 +26,7 @@ from .enums.m60_45_51_00_enums import *
 def Constructor():
     """Event 0"""
     Event_1045512620()
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=1045518620)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=1045518620)
 
 
 @RestartOnRest(1045512620)

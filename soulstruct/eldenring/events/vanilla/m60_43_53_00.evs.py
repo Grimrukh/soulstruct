@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_43_53_00_enums import *
 
 
@@ -44,7 +45,7 @@ def Constructor():
         flag_10=78308,
         flag_11=78309,
     )
-    CommonFunc_90005300(0, flag=1043530500, character=Characters.Scarab, item_lot=40318, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1043530500, character=Characters.Scarab, item_lot=40318, seconds=0.0, left=0)
     CommonFunc_90005211(
         0,
         character=Characters.LeyndellFootSoldier0,
@@ -53,10 +54,10 @@ def Constructor():
         region=1043532350,
         radius=3.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -66,10 +67,10 @@ def Constructor():
         region=1043532350,
         radius=3.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -79,12 +80,12 @@ def Constructor():
         region=1043532350,
         radius=3.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.BellBearingHunter, name=903100602, npc_threat_level=10)
+    CommonFunc_90005870(0, character=Characters.BellBearingHunter, name=903100602, npc_threat_level=10)
     CommonFunc_90005860(
         0,
         flag=1043530800,
@@ -101,7 +102,7 @@ def Constructor():
         region=1043532400,
         flag_1=1043532708,
     )
-    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.BellBearingHunter, npc_threat_level=10, required_flag=0)
+    CommonFunc_90005872(0, character=Characters.BellBearingHunter, npc_threat_level=10, right=0)
     CommonFunc_90005702(0, character=Characters.Merchant, flag=4763, first_flag=4760, last_flag=4763)
     CommonFunc_90005703(
         0,
@@ -154,10 +155,10 @@ def Preconstructor():
         region=1043532203,
         radius=3.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005200(
         0,
@@ -191,10 +192,10 @@ def Preconstructor():
         region=1043532206,
         radius=8.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -204,10 +205,10 @@ def Preconstructor():
         region=1043532206,
         radius=8.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005200(
         0,
@@ -392,7 +393,7 @@ def Preconstructor():
 
 
 @RestartOnRest(1043530700)
-def Event_1043530700(_, character: uint, character_1: uint, asset: uint):
+def Event_1043530700(_, character: uint, character_1: Character | int, asset: Asset | int):
     """Event 1043530700"""
     DisableNetworkSync()
     WaitFrames(frames=1)

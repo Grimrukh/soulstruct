@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_35_50_00_enums import *
 
 
@@ -45,7 +46,7 @@ def Constructor():
     )
     RegisterGrace(grace_flag=1035500000, asset=Assets.AEG099_060_9002)
     RegisterGrace(grace_flag=1035500001, asset=Assets.AEG099_060_9001)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, dummy_id=100, vfx_id=800, right=0)
     Event_1035502200(0, region=1035502700)
     CommonFunc_9005810(
         0,
@@ -55,8 +56,8 @@ def Constructor():
         asset=Assets.AEG099_060_9000,
         enemy_block_distance=5.0,
     )
-    CommonFunc_90005300(0, flag=1035500322, character=Characters.Scarab1, item_lot=40220, seconds=0.0, item_is_dropped=0)
-    CommonFunc_90005300(0, flag=1035500320, character=Characters.Scarab0, item_lot=40250, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1035500322, character=Characters.Scarab1, item_lot=40220, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1035500320, character=Characters.Scarab0, item_lot=40250, seconds=0.0, left=0)
     Event_1035502580()
     CommonFunc_90005501(
         0,
@@ -480,9 +481,9 @@ def Constructor():
     )
     CommonFunc_90005251(0, character=1035500303, radius=15.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.Page0, region=1035502311, radius=18.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Page1, region=1035502313, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Page2, region=1035502314, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BigWolf, region=1035502342, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Page1, region=1035502313, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Page2, region=1035502314, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BigWolf, region=1035502342, seconds=0.0, animation_id=0)
     CommonFunc_90005200(
         0,
         character=Characters.Fingercreeper0,
@@ -533,13 +534,13 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LargeCrabSnow, region=1035502390, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LiurniaTroll, region=1035502391, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LargeCrabSnow, region=1035502390, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LiurniaTroll, region=1035502391, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.IronVirgin, radius=5.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaSoldier0, region=1035502400, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaSoldier1, region=1035502400, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaSoldier2, region=1035502402, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaSoldier5, region=1035502409, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier0, region=1035502400, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier1, region=1035502400, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier2, region=1035502402, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier5, region=1035502409, seconds=0.0, animation_id=-1)
     CommonFunc_90005260(
         0,
         character=Characters.RayaLucariaSoldier6,
@@ -548,9 +549,9 @@ def Constructor():
         seconds=0.0,
         animation_id=-1,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaSoldier7, region=1035502411, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaSoldier8, region=1035502412, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaSoldier9, region=1035502412, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier7, region=1035502411, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier8, region=1035502412, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier9, region=1035502412, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.RayaLucariaSoldier10,
@@ -564,7 +565,7 @@ def Constructor():
         left_3=0,
     )
     CommonFunc_90005251(0, character=Characters.RayaLucariaSoldier11, radius=17.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaSoldier12, region=1035502416, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier12, region=1035502416, seconds=0.0, animation_id=-1)
     CommonFunc_90005260(
         0,
         character=Characters.RayaLucariaSoldier17,
@@ -591,14 +592,14 @@ def Constructor():
     Event_1035502840()
     Event_1035502841()
     Event_1035502842()
-    Event_1035502210(0, asset=1035501600, flag=1035502600, owner_entity=Characters.Dummy)
-    Event_1035502210(1, asset=1035501601, flag=1035502601, owner_entity=Characters.Dummy)
-    Event_1035502210(2, asset=1035501602, flag=1035502602, owner_entity=Characters.Dummy)
-    Event_1035502210(3, asset=1035501603, flag=1035502603, owner_entity=Characters.Dummy)
-    Event_1035502210(4, asset=1035501604, flag=1035502604, owner_entity=Characters.Dummy)
-    Event_1035502210(5, asset=1035501605, flag=1035502605, owner_entity=Characters.Dummy)
-    Event_1035502210(6, asset=1035501606, flag=1035502606, owner_entity=Characters.Dummy)
-    Event_1035502210(7, asset=1035501608, flag=1035502608, owner_entity=Characters.Dummy)
+    Event_1035502210(0, asset=Assets.AEG099_045_9000, flag=1035502600, owner_entity=Characters.Dummy)
+    Event_1035502210(1, asset=Assets.AEG099_045_9001, flag=1035502601, owner_entity=Characters.Dummy)
+    Event_1035502210(2, asset=Assets.AEG099_045_9002, flag=1035502602, owner_entity=Characters.Dummy)
+    Event_1035502210(3, asset=Assets.AEG099_045_9003, flag=1035502603, owner_entity=Characters.Dummy)
+    Event_1035502210(4, asset=Assets.AEG099_045_9004, flag=1035502604, owner_entity=Characters.Dummy)
+    Event_1035502210(5, asset=Assets.AEG099_045_9005, flag=1035502605, owner_entity=Characters.Dummy)
+    Event_1035502210(6, asset=Assets.AEG099_045_9006, flag=1035502606, owner_entity=Characters.Dummy)
+    Event_1035502210(7, asset=Assets.AEG099_045_9008, flag=1035502608, owner_entity=Characters.Dummy)
     Event_1035500700(
         0,
         character=Characters.AlbinauricLookout0,
@@ -626,7 +627,7 @@ def Constructor():
         first_flag=400149,
         last_flag=400149,
         flag=1035509215,
-        dummy_id=0,
+        vfx_id=0,
     )
     CommonFunc_90005750(
         0,
@@ -636,7 +637,7 @@ def Constructor():
         first_flag=400149,
         last_flag=400149,
         flag=1035509216,
-        dummy_id=0,
+        vfx_id=0,
     )
     CommonFunc_90005706(0, character=Characters.CariaManorSilentSpirit, animation_id=90102, left=0)
 
@@ -658,30 +659,30 @@ def Preconstructor():
 
 
 @RestartOnRest(1035502200)
-def Event_1035502200(_, region: uint):
+def Event_1035502200(_, region: Region | int):
     """Event 1035502200"""
     DisableNetworkSync()
     Wait(0.10000000149011612)
-    AND_1.Add(CharacterInsideRegion(character=20000, region=region))
+    AND_1.Add(CharacterInsideRegion(character=ALL_PLAYERS, region=region))
     OR_1.Add(Invasion())
     AND_1.Add(not OR_1)
     
     MAIN.Await(AND_1)
     
-    AddSpecialEffect(20000, 9621)
+    AddSpecialEffect(ALL_PLAYERS, 9621)
     Wait(0.10000000149011612)
-    OR_2.Add(CharacterOutsideRegion(character=20000, region=region))
+    OR_2.Add(CharacterOutsideRegion(character=ALL_PLAYERS, region=region))
     OR_2.Add(Invasion())
     
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    RemoveSpecialEffect(20000, 9621)
+    RemoveSpecialEffect(ALL_PLAYERS, 9621)
     Restart()
 
 
 @RestartOnRest(1035502210)
-def Event_1035502210(_, asset: uint, flag: uint, owner_entity: uint):
+def Event_1035502210(_, asset: uint, flag: Flag | int, owner_entity: uint):
     """Event 1035502210"""
     if FlagEnabled(flag):
         return
@@ -694,8 +695,8 @@ def Event_1035502210(_, asset: uint, flag: uint, owner_entity: uint):
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=asset, attacker=20000))
-    OR_2.Add(EntityWithinDistance(entity=asset, other_entity=20000, radius=2.0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=asset, attacker=ALL_PLAYERS))
+    OR_2.Add(EntityWithinDistance(entity=asset, other_entity=ALL_PLAYERS, radius=2.0))
     AND_1.Add(OR_2)
     AND_1.Add(OR_1)
     
@@ -798,7 +799,7 @@ def Event_1035502401():
 
 
 @RestartOnRest(1035502400)
-def Event_1035502400(_, character: uint, region: uint, seconds: float, animation_id: int):
+def Event_1035502400(_, character: uint, region: Region | int, seconds: float, animation_id: int):
     """Event 1035502400"""
     EnableNetworkSync()
     if ThisEventSlotFlagEnabled():
@@ -1151,8 +1152,8 @@ def Event_1035502849():
         flag_2=1035502806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=1035500800, asset=Assets.AEG099_003_9000, dummy_id=3, right=1035500801)
-    CommonFunc_9005813(0, flag=1035500800, asset=Assets.AEG099_003_9001, dummy_id=3, right=0, dummy_id_1=3)
+    CommonFunc_9005811(0, flag=1035500800, asset=Assets.AEG099_003_9000, vfx_id=3, right=1035500801)
+    CommonFunc_9005813(0, flag=1035500800, asset=Assets.AEG099_003_9001, vfx_id=3, right=0, vfx_id_1=3)
     CommonFunc_9005822(
         0,
         flag=1035500800,
@@ -1167,7 +1168,7 @@ def Event_1035502849():
 
 
 @RestartOnRest(1035500700)
-def Event_1035500700(_, character: uint, character_1: uint, character_2: uint, character_3: uint, asset: uint):
+def Event_1035500700(_, character: uint, character_1: uint, character_2: uint, character_3: uint, asset: Asset | int):
     """Event 1035500700"""
     DisableNetworkSync()
     WaitFrames(frames=1)
@@ -1248,7 +1249,7 @@ def Event_1035500700(_, character: uint, character_1: uint, character_2: uint, c
 
 
 @RestartOnRest(1035500701)
-def Event_1035500701(_, character: uint, character_1: uint, character_2: uint, character_3: uint, asset: uint):
+def Event_1035500701(_, character: uint, character_1: uint, character_2: uint, character_3: uint, asset: Asset | int):
     """Event 1035500701"""
     DisableNetworkSync()
     WaitFrames(frames=1)
@@ -1321,7 +1322,7 @@ def Event_1035500702():
 
 
 @RestartOnRest(1035500703)
-def Event_1035500703(_, flag: uint, region: uint):
+def Event_1035500703(_, flag: Flag | int, region: Region | int):
     """Event 1035500703"""
     if PlayerNotInOwnWorld():
         return

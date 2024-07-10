@@ -18,8 +18,9 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m39_20_00_00_enums import *
-from .enums.m60_37_51_00_enums import Assets as m60_37_Assets
+from .enums.m60_37_51_00_enums import Assets as m60_37_51_00_Assets
 
 
 @ContinueOnRest(0)
@@ -38,7 +39,7 @@ def Constructor():
         asset=Assets.AEG099_060_9000,
         enemy_block_distance=5.0,
     )
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=0)
     Event_39202670()
     CommonFunc_90005501(
         0,
@@ -65,8 +66,8 @@ def Constructor():
         flag=39200520,
         flag_1=39201520,
         left=0,
-        asset=m60_37_Assets.AEG027_012_0000,
-        asset_1=m60_37_Assets.AEG027_080_0000,
+        asset=m60_37_51_00_Assets.AEG027_012_0000,
+        asset_1=m60_37_51_00_Assets.AEG027_080_0000,
         asset_2=Assets.AEG027_080_8000,
         flag_2=39200521,
     )
@@ -81,7 +82,7 @@ def Constructor():
         flag_2=39200526,
     )
     Event_39202500()
-    CommonFunc_90005502(0, flag=39200514, asset=m60_37_Assets.AEG027_080_0000, region=39202522)
+    CommonFunc_90005502(0, flag=39200514, asset=m60_37_51_00_Assets.AEG027_080_0000, region=39202522)
     Event_39202580()
     CommonFunc_90005780(
         0,
@@ -159,7 +160,7 @@ def Constructor():
         message=80606,
         action_button_id=9000,
         asset=Assets.AEG099_090_9001,
-        dummy_id=30010,
+        vfx_id=30010,
     )
     if CeremonyActive(ceremony=50):
         CommonFunc_90005796(0, flag=7606, character=Characters.GreatHornedTragoth1, banner_type=5, region=39202141)
@@ -175,7 +176,7 @@ def Constructor():
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.GreatHornedTragoth1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.TunnelMiner5, region=39202268, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner5, region=39202268, seconds=0.0, animation_id=-1)
     CommonFunc_90005271(0, character=Characters.TunnelMiner1, seconds=0.0, animation_id=-1)
     CommonFunc_90005271(0, character=Characters.TunnelMiner7, seconds=0.0, animation_id=-1)
     Event_39202280(
@@ -251,7 +252,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.VulgarMilitia2, region=39202214, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.VulgarMilitia2, region=39202214, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(
         0,
         character=Characters.VulgarMilitia0,
@@ -277,25 +278,25 @@ def Preconstructor():
         animation_id=-1,
     )
     Event_39202200()
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.VulgarMilitia3, region=39202356, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.VulgarMilitia8, region=39202356, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Bat0, region=39202301, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Bat1, region=39202301, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Bat3, region=39202301, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Bat4, region=39202301, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Bat5, region=39202350, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Bat6, region=39202350, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Bat7, region=39202350, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.VulgarMilitia3, region=39202356, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.VulgarMilitia8, region=39202356, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Bat0, region=39202301, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Bat1, region=39202301, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Bat3, region=39202301, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Bat4, region=39202301, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Bat5, region=39202350, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Bat6, region=39202350, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Bat7, region=39202350, seconds=0.0, animation_id=-1)
     Event_39202302()
     Event_39202351()
     Event_39202318()
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.OldWomanBat0, region=39202350, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Octopus0, region=39202360, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Octopus1, region=39202360, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.OldWomanBat0, region=39202350, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Octopus0, region=39202360, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Octopus1, region=39202360, seconds=0.0, animation_id=-1)
     CommonFunc_90005460(0, character=Characters.GiantOctopus)
     CommonFunc_90005461(0, character=Characters.GiantOctopus)
     CommonFunc_90005462(0, character=Characters.GiantOctopus)
-    CommonFunc_90005300(0, flag=39200290, character=Characters.Scarab, item_lot=40290, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=39200290, character=Characters.Scarab, item_lot=40290, seconds=0.0, left=0)
 
 
 @RestartOnRest(39202145)
@@ -307,9 +308,9 @@ def Event_39202145():
     SetTeamType(Characters.GreatHornedTragoth1, TeamType.Human)
     EnableFlag(39202104)
     DeleteAssetVFX(Assets.AEG099_236_9001)
-    CreateAssetVFX(Assets.AEG099_236_9001, vfx_id=200, dummy_id=806700)
+    CreateAssetVFX(Assets.AEG099_236_9001, dummy_id=200, vfx_id=806700)
     DeleteAssetVFX(Assets.AEG099_236_9000)
-    CreateAssetVFX(Assets.AEG099_236_9000, vfx_id=200, dummy_id=806700)
+    CreateAssetVFX(Assets.AEG099_236_9000, dummy_id=200, vfx_id=806700)
 
 
 @ContinueOnRest(39202500)
@@ -352,8 +353,8 @@ def Event_39202500():
         flag=39200520,
         flag_1=39201520,
         left=0,
-        asset=m60_37_Assets.AEG027_012_0000,
-        asset_1=m60_37_Assets.AEG027_080_0000,
+        asset=m60_37_51_00_Assets.AEG027_012_0000,
+        asset_1=m60_37_51_00_Assets.AEG027_080_0000,
         obj_act_id=39203521,
         asset_2=Assets.AEG027_080_8000,
         obj_act_id_1=39203522,
@@ -456,7 +457,7 @@ def Event_39202280(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    asset: uint,
+    asset: Asset | int,
     special_effect: int,
     seconds: float,
     left: uint,
@@ -553,10 +554,10 @@ def Event_39202220(
     left_1: uint,
     left_2: uint,
     left_3: uint,
-    asset: uint,
-    asset_1: uint,
-    asset_2: uint,
-    asset_3: uint,
+    asset: Asset | int,
+    asset_1: Asset | int,
+    asset_2: Asset | int,
+    asset_3: Asset | int,
 ):
     """Event 39202220"""
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
@@ -639,11 +640,11 @@ def Event_39202230(
     left_1: uint,
     left_2: uint,
     left_3: uint,
-    asset: uint,
-    asset_1: uint,
-    asset_2: uint,
-    asset_3: uint,
-    flag: uint,
+    asset: Asset | int,
+    asset_1: Asset | int,
+    asset_2: Asset | int,
+    asset_3: Asset | int,
+    flag: Flag | int,
 ):
     """Event 39202230"""
     if FlagEnabled(flag):
@@ -750,7 +751,7 @@ def Event_39202240(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    flag: uint,
+    flag: Flag | int,
     radius: float,
     seconds: float,
     left: uint,
@@ -851,7 +852,7 @@ def Event_39202240(
 
 
 @RestartOnRest(39202260)
-def Event_39202260(_, character: uint, region: uint):
+def Event_39202260(_, character: Character | int, region: Region | int):
     """Event 39202260"""
     if ThisEventSlotFlagEnabled():
         return
@@ -1059,8 +1060,8 @@ def Event_39202829():
         flag_2=39202806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=39200800, asset=Assets.AEG099_002_9000, dummy_id=5, right=0)
-    CommonFunc_9005811(0, flag=39200800, asset=Assets.AEG099_002_9001, dummy_id=5, right=0)
+    CommonFunc_9005811(0, flag=39200800, asset=Assets.AEG099_002_9000, vfx_id=5, right=0)
+    CommonFunc_9005811(0, flag=39200800, asset=Assets.AEG099_002_9001, vfx_id=5, right=0)
     CommonFunc_9005822(
         0,
         flag=39200800,

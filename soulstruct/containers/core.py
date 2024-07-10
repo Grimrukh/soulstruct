@@ -1012,13 +1012,45 @@ class Binder(BaseBinaryFile):
 
     def add_entry(self, entry: BinderEntry):
         if id(entry) in {id(e) for e in self.entries}:
-            raise BinderError(f"Given `BinderEntry` instance with ID {entry.entry_id} is already in this binder.")
+            raise BinderError(f"Given `BinderEntry` instance with object ID {entry.entry_id} is already in Binder.")
         if entry.entry_id in {e.id for e in self.entries}:
             _LOGGER.warning(
                 f"Entry ID {entry.entry_id} appears more than once in this Binder. Entry still added, but you should"
                 f"fix this."
             )
         self.entries.append(entry)
+
+    def add_or_replace_entry_with_name(self, entry: BinderEntry):
+        """Add or replace ALL entries with the same name."""
+        entry_name = entry.name
+        for existing_entry in self.entries:
+            print(existing_entry.name)
+            if existing_entry.name == entry_name:
+                self.entries.remove(existing_entry)
+        self.entries.append(entry)
+
+    def add_or_replace_entry_with_id(self, entry: BinderEntry):
+        """Add or replace an entry with the same ID. ID must be unique in the Binder, unlike name-based replacement."""
+        entries_by_id = self.get_entries_by_name()
+        if entry.entry_id in entries_by_id:
+            existing_entry = entries_by_id[entry.name]
+            self.entries.remove(existing_entry)
+        self.entries.append(entry)
+
+    def __or__(self, other: Binder | list[BinderEntry]):
+        if isinstance(other, Binder):
+            new_entries = other.entries
+        elif isinstance(other, list):
+            new_entries = other
+        else:
+            raise TypeError("`Binder` | operator must be used with another `Binder` or list of `BinderEntry`s.")
+
+        new_entry_names = {entry.name for entry in new_entries}
+        for entry in tuple(self.entries):
+            if entry.name in new_entry_names:
+                self.entries.remove(entry)
+        self.entries.extend(new_entries)
+        return self
 
     def remove_entry(self, entry: BinderEntry):
         """NOTE: Uses `id()` to remove the exact same entry instance. Does not check for field-wise entry equality."""

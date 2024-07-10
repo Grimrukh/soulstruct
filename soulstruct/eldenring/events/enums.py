@@ -114,6 +114,7 @@ class BossMusicState(BaseEMEVDEnum):
     LongFadeOut = -1
     Start = 0
     HeatUp = 1
+    Unknown = 2  # added in DLC
 
 
 class ButtonType(BaseEMEVDEnum):
@@ -655,6 +656,10 @@ class TeamType(IntEnum):
     WhiteBerserker = 31
     RedBerserker = 32
     ArchEnemyTeam = 33
+
+    # Types 34+ are ER only.
+    Unknown67 = 70
+    Unknown70 = 70
 
 
 class Weather(IntEnum):

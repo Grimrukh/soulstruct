@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_47_41_00_enums import *
 
 
@@ -257,7 +258,7 @@ def Event_1047412300():
         dismissal_flag=1047410230,
         unknown=0,
     )
-    CreateAssetVFX(Assets.AEG099_090_9000, vfx_id=100, dummy_id=30090)
+    CreateAssetVFX(Assets.AEG099_090_9000, dummy_id=100, vfx_id=30090)
     AND_3.Add(CharacterDead(Characters.KnightoftheGreatJar1))
     SkipLinesIfConditionTrue(2, AND_3)
     PlaceSummonSign(
@@ -268,7 +269,7 @@ def Event_1047412300():
         dismissal_flag=1047410231,
         unknown=0,
     )
-    CreateAssetVFX(Assets.AEG099_090_9001, vfx_id=100, dummy_id=30090)
+    CreateAssetVFX(Assets.AEG099_090_9001, dummy_id=100, vfx_id=30090)
     AND_4.Add(CharacterDead(Characters.KnightoftheGreatJar2))
     SkipLinesIfConditionTrue(2, AND_4)
     PlaceSummonSign(
@@ -279,7 +280,7 @@ def Event_1047412300():
         dismissal_flag=1047410232,
         unknown=0,
     )
-    CreateAssetVFX(Assets.AEG099_090_9002, vfx_id=100, dummy_id=30090)
+    CreateAssetVFX(Assets.AEG099_090_9002, dummy_id=100, vfx_id=30090)
     
     MAIN.Await(MultiplayerPending())
     
@@ -320,7 +321,7 @@ def Event_1047412302():
 
 
 @RestartOnRest(1047412303)
-def Event_1047412303(_, character: uint):
+def Event_1047412303(_, character: Character | int):
     """Event 1047412303"""
     DisableNetworkSync()
     SetBackreadStateAlternate(character, True)
@@ -413,14 +414,14 @@ def Event_1047412400():
     """Event 1047412400"""
     DisableNetworkSync()
     
-    MAIN.Await(CharacterInsideRegion(character=20000, region=1047412400))
+    MAIN.Await(CharacterInsideRegion(character=ALL_PLAYERS, region=1047412400))
     
-    AddSpecialEffect(20000, 514)
+    AddSpecialEffect(ALL_PLAYERS, 514)
     Wait(1.0)
     
-    MAIN.Await(CharacterOutsideRegion(character=20000, region=1047412401))
+    MAIN.Await(CharacterOutsideRegion(character=ALL_PLAYERS, region=1047412401))
     
-    RemoveSpecialEffect(20000, 514)
+    RemoveSpecialEffect(ALL_PLAYERS, 514)
     Restart()
 
 

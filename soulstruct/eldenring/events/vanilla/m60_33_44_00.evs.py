@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_33_44_00_enums import *
 
 
@@ -40,7 +41,7 @@ def Constructor():
     CommonFunc_90005460(0, character=1033440206)
     CommonFunc_90005461(0, character=1033440206)
     CommonFunc_90005462(0, character=1033440206)
-    CommonFunc_90005683(0, flag=62202, asset=Assets.AEG099_055_1000, vfx_id=209, flag_1=78292, flag_2=78292)
+    CommonFunc_90005683(0, flag=62202, asset=Assets.AEG099_055_1000, dummy_id=209, flag_1=78292, flag_2=78292)
     CommonFunc_90005790(
         0,
         right=0,
@@ -124,7 +125,7 @@ def Event_1033440700(_, character: uint, animation_id: int):
 
 
 @RestartOnRest(1033440705)
-def Event_1033440705(_, asset: uint):
+def Event_1033440705(_, asset: Asset | int):
     """Event 1033440705"""
     DisableNetworkSync()
     WaitFrames(frames=1)
@@ -155,7 +156,7 @@ def Event_1033440705(_, asset: uint):
 
 
 @RestartOnRest(1033440710)
-def Event_1033440710(_, asset: uint):
+def Event_1033440710(_, asset: Asset | int):
     """Event 1033440710"""
     DisableNetworkSync()
     WaitFrames(frames=1)

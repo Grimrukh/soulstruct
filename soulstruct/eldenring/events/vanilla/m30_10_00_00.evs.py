@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m30_10_00_00_enums import *
 
 
@@ -150,9 +151,9 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Basilisk6, region=30102205, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(1, character=Characters.Basilisk7, region=30102205, seconds=0.5, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CatacombsSkeleton2, region=30102215, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Basilisk6, region=30102205, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(1, character=Characters.Basilisk7, region=30102205, seconds=0.5, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.CatacombsSkeleton2, region=30102215, seconds=0.0, animation_id=0)
     CommonFunc_90005200(
         0,
         character=Characters.CatacombsSkeleton3,
@@ -173,12 +174,12 @@ def Constructor():
         region=30102212,
         radius=5.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CatacombsSkeleton5, region=30102213, seconds=0.0, animation_id=3011)
+    CommonFunc_90005250(0, character=Characters.CatacombsSkeleton5, region=30102213, seconds=0.0, animation_id=3011)
     CommonFunc_90005200(
         0,
         character=30100228,
@@ -239,7 +240,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CatacombsSkeleton11, region=30102240, seconds=0.0, animation_id=3008)
+    CommonFunc_90005250(0, character=Characters.CatacombsSkeleton11, region=30102240, seconds=0.0, animation_id=3008)
     CommonFunc_90005200(
         1,
         character=30100241,
@@ -252,11 +253,11 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CatacombsSkeleton6, region=30102232, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(1, character=Characters.CatacombsSkeleton7, region=30102232, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(2, character=Characters.CatacombsSkeleton8, region=30102232, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Basilisk0, region=30102250, seconds=0.0, animation_id=3001)
-    CommonFunc_AITrigger_RegionOrHurt(1, character=Characters.Basilisk1, region=30102250, seconds=0.0, animation_id=3001)
+    CommonFunc_90005250(0, character=Characters.CatacombsSkeleton6, region=30102232, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(1, character=Characters.CatacombsSkeleton7, region=30102232, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(2, character=Characters.CatacombsSkeleton8, region=30102232, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Basilisk0, region=30102250, seconds=0.0, animation_id=3001)
+    CommonFunc_90005250(1, character=Characters.Basilisk1, region=30102250, seconds=0.0, animation_id=3001)
     CommonFunc_90005200(
         0,
         character=Characters.Basilisk2,
@@ -322,7 +323,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Omen, region=30102300, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Omen, region=30102300, seconds=0.0, animation_id=0)
     Event_30102480()
     Event_30102490()
     Event_30102400(0, character=Characters.MercilessChariot0)
@@ -334,7 +335,7 @@ def Constructor():
         region_1=30102455,
         patrol_information_id_1=30103452,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.MercilessChariot1, region=30102415, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.MercilessChariot1, region=30102415, seconds=0.0, animation_id=0)
     Event_30102400(1, character=Characters.MercilessChariot1)
     Event_30102410(
         1,
@@ -353,7 +354,7 @@ def Constructor():
         patrol_information_id_1=30103412,
     )
     Event_30102465(0, character=Characters.MercilessChariot1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.MercilessChariot2, region=30102425, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.MercilessChariot2, region=30102425, seconds=0.0, animation_id=0)
     Event_30102400(2, character=Characters.MercilessChariot2)
     Event_30102410(
         3,
@@ -390,7 +391,7 @@ def Event_30100050():
 
 
 @ContinueOnRest(30100100)
-def Event_30100100(_, flag: uint, asset: uint, obj_act_id: uint, obj_act_id_1: int):
+def Event_30100100(_, flag: Flag | int, asset: uint, obj_act_id: uint, obj_act_id_1: int):
     """Event 30100100"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     EndOfAnimation(asset=asset, animation_id=2)
@@ -415,14 +416,14 @@ def Event_30102200():
     DeleteAssetVFX(Assets.AEG020_948_1000, erase_root=False)
     DeleteAssetVFX(Assets.AEG020_948_1001, erase_root=False)
     DeleteAssetVFX(Assets.AEG027_057_0500, erase_root=False)
-    CreateAssetVFX(Assets.AEG020_948_1000, vfx_id=201, dummy_id=806721)
-    CreateAssetVFX(Assets.AEG020_948_1001, vfx_id=201, dummy_id=806721)
-    CreateAssetVFX(Assets.AEG027_057_0500, vfx_id=108, dummy_id=806721)
+    CreateAssetVFX(Assets.AEG020_948_1000, dummy_id=201, vfx_id=806721)
+    CreateAssetVFX(Assets.AEG020_948_1001, dummy_id=201, vfx_id=806721)
+    CreateAssetVFX(Assets.AEG027_057_0500, dummy_id=108, vfx_id=806721)
     End()
 
 
 @RestartOnRest(30102400)
-def Event_30102400(_, character: uint):
+def Event_30102400(_, character: Character | int):
     """Event 30102400"""
     GotoIfFlagEnabled(Label.L0, flag=30102465)
     EnableInvincibility(character)
@@ -502,10 +503,10 @@ def Event_30102305(_, asset__asset_flag: uint, other_entity: uint):
 @RestartOnRest(30102410)
 def Event_30102410(
     _,
-    character: uint,
-    region: uint,
+    character: Character | int,
+    region: Region | int,
     patrol_information_id: uint,
-    region_1: uint,
+    region_1: Region | int,
     patrol_information_id_1: uint,
 ):
     """Event 30102410"""
@@ -706,7 +707,7 @@ def Event_30102460():
 
 
 @RestartOnRest(30102465)
-def Event_30102465(_, character: uint):
+def Event_30102465(_, character: Character | int):
     """Event 30102465"""
     AND_1.Add(FlagEnabled(30102460))
     AND_1.Add(CharacterInsideRegion(character=character, region=30102470))
@@ -814,16 +815,23 @@ def Event_30100519():
 @ContinueOnRest(30102500)
 def Event_30102500():
     """Event 30102500"""
-    CommonFunc_90005681(0, flag=30100500, flag_1=30100501, flag_2=30100502, flag_3=30100503, attacked_entity=30101500)
+    CommonFunc_90005681(
+        0,
+        flag=30100500,
+        flag_1=30100501,
+        flag_2=30100502,
+        flag_3=30100503,
+        attacked_entity=Assets.AEG027_057_0500,
+    )
     Event_30102521(0, flag=30100503, region=30102500, entity=Characters.TalkDummy0)
 
 
 @ContinueOnRest(30102520)
 def Event_30102520(
     _,
-    flag: uint,
+    flag: Flag | int,
     source_entity: uint,
-    region: uint,
+    region: Region | int,
     owner_entity: uint,
     behavior_id: int,
     behavior_id_1: int,
@@ -1201,7 +1209,7 @@ def Event_30102520(
 
 
 @ContinueOnRest(30102521)
-def Event_30102521(_, flag: uint, region: uint, entity: uint):
+def Event_30102521(_, flag: Flag | int, region: Region | int, entity: uint):
     """Event 30102521"""
     AND_1.Add(FlagDisabled(flag))
     if UnsignedNotEqual(left=region, right=0):
@@ -1657,9 +1665,9 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
 @ContinueOnRest(30102530)
 def Event_30102530(
     _,
-    flag: uint,
+    flag: Flag | int,
     source_entity: uint,
-    region: uint,
+    region: Region | int,
     owner_entity: uint,
     behavior_id: int,
     behavior_id_1: int,
@@ -2037,7 +2045,14 @@ def Event_30102530(
 
 
 @ContinueOnRest(30102540)
-def Event_30102540(_, flag: uint, flag_1: uint, flag_2: uint, flag_3: uint, attacked_entity: uint):
+def Event_30102540(
+    _,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
+    flag_3: Flag | int,
+    attacked_entity: uint,
+):
     """Event 30102540"""
     AND_13.Add(FlagEnabled(flag))
     AND_13.Add(FlagEnabled(flag_1))
@@ -2051,41 +2066,41 @@ def Event_30102540(_, flag: uint, flag_1: uint, flag_2: uint, flag_3: uint, atta
     GotoIfFlagDisabled(Label.L0, flag=flag)
     OR_1.Add(FlagDisabled(flag))
     AND_2.Add(FlagEnabled(flag_1))
-    AND_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=20000))
+    AND_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=ALL_PLAYERS))
     OR_2.Add(AND_2)
     OR_4.Add(OR_1)
     OR_4.Add(OR_2)
     
     MAIN.Await(OR_4)
     
-    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
-    DisableNetworkFlag(flag)
-    EnableNetworkFlag(flag_3)
+    if MapHasUpdatePermission(unk_state=False, game_map=(0, 0, 0, 0)):
+        DisableNetworkFlag(flag)
+        EnableNetworkFlag(flag_3)
     DisableFlag(flag_1)
     EnableFlag(flag_2)
     ForceAnimation(attacked_entity, 21, wait_for_completion=True)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
-    DisableNetworkFlag(flag_3)
+    if MapHasUpdatePermission(unk_state=False, game_map=(0, 0, 0, 0)):
+        DisableNetworkFlag(flag_3)
     Restart()
 
     # --- Label 0 --- #
     DefineLabel(0)
     OR_5.Add(FlagEnabled(flag))
     AND_6.Add(FlagDisabled(flag_1))
-    AND_6.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=20000))
+    AND_6.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=ALL_PLAYERS))
     OR_6.Add(AND_6)
     OR_8.Add(OR_5)
     OR_8.Add(OR_6)
     
     MAIN.Await(OR_8)
     
-    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
-    EnableNetworkFlag(flag)
-    EnableNetworkFlag(flag_3)
+    if MapHasUpdatePermission(unk_state=False, game_map=(0, 0, 0, 0)):
+        EnableNetworkFlag(flag)
+        EnableNetworkFlag(flag_3)
     EnableFlag(flag_1)
     ForceAnimation(attacked_entity, 12, wait_for_completion=True)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
-    DisableNetworkFlag(flag_3)
+    if MapHasUpdatePermission(unk_state=False, game_map=(0, 0, 0, 0)):
+        DisableNetworkFlag(flag_3)
     DisableFlag(flag_2)
     Restart()
 
@@ -2225,7 +2240,7 @@ def Event_30102849():
         flag_2=30102806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=30100800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=30100800, asset=Assets.AEG099_001_9000, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=30100800,

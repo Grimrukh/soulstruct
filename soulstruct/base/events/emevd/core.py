@@ -318,13 +318,14 @@ class EMEVD(GameFile, abc.ABC):
 
     def to_evs(
         self,
-        enums_star_module_paths: list[str | Path] = (),
-        enums_non_star_module_paths: list[str | Path] = (),
+        enums_module_paths: list[str | Path] = (),
+        star_import_module_names: list[str] = (),
         warn_missing_enums=True,
         enums_module_prefix=".",
         event_function_prefix="Event",
         docstring="",
         common_func_emevd: EMEVD = None,
+        enums_manager: GameEnumsManager = None,
     ) -> str:
         """Convert EMEVD to a Python-style EVS string.
 
@@ -355,14 +356,18 @@ class EMEVD(GameFile, abc.ABC):
         else:
             self.regenerate_signatures()
 
-        enums_manager = self.ENTITY_ENUMS_MANAGER(
-            list(enums_star_module_paths) + list(enums_non_star_module_paths), list(self.events)
-        )
-        star_module_names = [Path(path).name.split(".")[0] for path in enums_star_module_paths]
-        enums_manager.star_module_names = star_module_names
+        if enums_manager:
+            # Update `all_event_ids` and `star_import_module_names` of existing `GameEnumsManager`.
+            enums_manager.all_event_ids = list(self.events)
+            enums_manager.star_import_module_names = star_import_module_names
+        else:
+            # Create a new `GameEnumsManager` from the given module paths and events in this EMEVD.
+            # User may want to supply an existing one if decompiling multiple EMEVDs that reference the same modules.
+            enums_manager = self.ENTITY_ENUMS_MANAGER(list(enums_module_paths), all_event_ids=list(self.events))
+            enums_manager.star_import_module_names = star_import_module_names
 
         if self._common_func:
-            # Add common event IDs to `GameEnumsManager`.
+            # Update common event IDs of `GameEnumsManager`.
             enums_manager.all_common_event_ids = list(self._common_func.events)
 
         docstring = self.get_evs_docstring(docstring)
@@ -402,7 +407,7 @@ class EMEVD(GameFile, abc.ABC):
                     missing_done.add((game_types, value))
                 if missing_flag_count > 0:
                     _LOGGER.warning(f"{self.map_name}: Missing {missing_flag_count} flag IDs.")
-            imports += enums_manager.get_import_lines(star_module_names, enums_module_prefix)
+            imports += enums_manager.get_import_lines(star_import_module_names, enums_module_prefix)
 
         return docstring + "\n" + "\n\n\n".join([imports] + evs_events) + "\n"
 
@@ -593,13 +598,14 @@ class EMEVD(GameFile, abc.ABC):
     def write_evs(
         self,
         evs_path: str | Path = None,
-        enums_star_module_paths: list[str | Path] = (),
-        enums_non_star_module_paths: list[str | Path] = (),
+        enums_module_paths: list[str | Path] = (),
+        star_import_module_names: list[str] = (),
         warn_missing_enums=True,
         enums_module_prefix=".",
-        event_prefix="Event",
+        event_function_prefix="Event",
         docstring="",
         common_func_emevd: EMEVD = None,
+        enums_manager: GameEnumsManager = None,
     ):
         if not evs_path:
             evs_path = self.map_name
@@ -609,13 +615,14 @@ class EMEVD(GameFile, abc.ABC):
         if evs_path.parent:
             evs_path.parent.mkdir(exist_ok=True, parents=True)
         evs_string = self.to_evs(
-            enums_star_module_paths,
-            enums_non_star_module_paths,
-            warn_missing_enums,
-            enums_module_prefix,
-            event_prefix,
-            docstring,
-            common_func_emevd,
+            enums_module_paths=enums_module_paths,
+            star_import_module_names=star_import_module_names,
+            warn_missing_enums=warn_missing_enums,
+            enums_module_prefix=enums_module_prefix,
+            event_function_prefix=event_function_prefix,
+            docstring=docstring,
+            common_func_emevd=common_func_emevd,
+            enums_manager=enums_manager,
         )
         with evs_path.open("w", encoding="utf-8") as f:
             f.write(evs_string)
@@ -634,9 +641,9 @@ class EMEVD(GameFile, abc.ABC):
             emevd_source = Path(emevd_source)
             if emevd_source.suffix == ".txt":
                 return "numeric_path"
-            if emevd_source.name.endswith(".evs") or emevd_source.name.endswith(".evs.py"):
+            if emevd_source.name.endswith((".evs", ".evs.py", ".py")):
                 return "evs_path"
-            if any(emevd_source.name.endswith(suffix) for suffix in (".emevd", ".emevd.dcx")):
+            if emevd_source.name.endswith((".emevd", ".emevd.dcx")):
                 return "emevd_path"
             raise TypeError(f"Unknown EMEVD source path name: {emevd_source.name}")
 

@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_39_54_00_enums import *
 
 
@@ -35,9 +36,9 @@ def Constructor():
         enemy_block_distance=5.0,
     )
     CommonFunc_90005632(0, flag=580020, asset=Assets.AEG099_386_2000, item_lot=80020)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, dummy_id=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, dummy_id=100, vfx_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, dummy_id=100, vfx_id=800, right=0)
     CommonFunc_90005261(
         0,
         character=Characters.PutridCorpse6,
@@ -58,7 +59,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PerfumerTricia3, region=1039542610, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.PerfumerTricia3, region=1039542610, seconds=0.0, animation_id=0)
     CommonFunc_90005261(
         0,
         character=Characters.PutridCorpse7,
@@ -223,9 +224,9 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Basilisk3, region=1039542667, seconds=0.0, animation_id=3001)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Basilisk4, region=1039542668, seconds=0.5, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Basilisk5, region=1039542668, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Basilisk3, region=1039542667, seconds=0.0, animation_id=3001)
+    CommonFunc_90005250(0, character=Characters.Basilisk4, region=1039542668, seconds=0.5, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Basilisk5, region=1039542668, seconds=0.0, animation_id=0)
     CommonFunc_90005200(
         0,
         character=Characters.Basilisk6,
@@ -250,13 +251,13 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Basilisk7, region=1039542671, seconds=0.0, animation_id=3001)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PerfumerTricia0, region=1039542551, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PerfumerTricia1, region=1039542552, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse1, region=1039542206, seconds=0.0, animation_id=3035)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse0, region=1039542203, seconds=0.0, animation_id=3036)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1039540553, region=1039542553, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PutridCorpse3, region=1039542209, seconds=0.0, animation_id=3016)
+    CommonFunc_90005250(0, character=Characters.Basilisk7, region=1039542671, seconds=0.0, animation_id=3001)
+    CommonFunc_90005250(0, character=Characters.PerfumerTricia0, region=1039542551, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.PerfumerTricia1, region=1039542552, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse1, region=1039542206, seconds=0.0, animation_id=3035)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse0, region=1039542203, seconds=0.0, animation_id=3036)
+    CommonFunc_90005250(0, character=1039540553, region=1039542553, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse3, region=1039542209, seconds=0.0, animation_id=3016)
     CommonFunc_90005211(
         0,
         character=Characters.PutridCorpse4,
@@ -265,10 +266,10 @@ def Constructor():
         region=1039542226,
         radius=2.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -278,10 +279,10 @@ def Constructor():
         region=1039542226,
         radius=2.0,
         seconds=0.5,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -291,10 +292,10 @@ def Constructor():
         region=1039542226,
         radius=2.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005200(
         0,
@@ -308,7 +309,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RevenantFollower0, region=1039542504, seconds=2.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.RevenantFollower0, region=1039542504, seconds=2.0, animation_id=0)
     CommonFunc_90005261(
         0,
         character=Characters.PutridCorpse15,
@@ -393,10 +394,10 @@ def Constructor():
         region=1039542350,
         radius=1.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -406,10 +407,10 @@ def Constructor():
         region=1039542350,
         radius=1.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -419,10 +420,10 @@ def Constructor():
         region=1039542350,
         radius=1.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005201(
         0,
@@ -444,12 +445,12 @@ def Constructor():
         region=1039542207,
         radius=1.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RevenantFollower1, region=1039542296, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.RevenantFollower1, region=1039542296, seconds=0.0, animation_id=0)
     CommonFunc_90005200(
         0,
         character=Characters.PutridCorpse23,
@@ -510,7 +511,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.PerfumerTricia2, region=1039542555, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.PerfumerTricia2, region=1039542555, seconds=0.0, animation_id=0)
     CommonFunc_90005200(
         0,
         character=Characters.SmallerDog1,
@@ -535,17 +536,17 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1039540337, region=1039542330, seconds=0.0, animation_id=3005)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.WanderingNoble1, region=1039542341, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.WanderingNoble0, region=1039542340, seconds=0.0, animation_id=3001)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Page0, region=1039542320, seconds=0.0, animation_id=3009)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.WanderingNoble2, region=1039542342, seconds=1.0, animation_id=3000)
+    CommonFunc_90005250(0, character=1039540337, region=1039542330, seconds=0.0, animation_id=3005)
+    CommonFunc_90005250(0, character=Characters.WanderingNoble1, region=1039542341, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.WanderingNoble0, region=1039542340, seconds=0.0, animation_id=3001)
+    CommonFunc_90005250(0, character=Characters.Page0, region=1039542320, seconds=0.0, animation_id=3009)
+    CommonFunc_90005250(0, character=Characters.WanderingNoble2, region=1039542342, seconds=1.0, animation_id=3000)
     Event_1039542200(0, character=1039540361, region=1039542311, seconds=0.0, animation_id=3005)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CleanrotKnight1, region=1039542311, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1039540338, region=1039542338, seconds=0.0, animation_id=3000)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.WanderingNoble3, region=1039542343, seconds=0.0, animation_id=3006)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Page1, region=1039542322, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CleanrotKnight2, region=1039542312, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.CleanrotKnight1, region=1039542311, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=1039540338, region=1039542338, seconds=0.0, animation_id=3000)
+    CommonFunc_90005250(0, character=Characters.WanderingNoble3, region=1039542343, seconds=0.0, animation_id=3006)
+    CommonFunc_90005250(0, character=Characters.Page1, region=1039542322, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.CleanrotKnight2, region=1039542312, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=1039540370, region=1039542636, radius=1.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=1039540371, region=1039542636, radius=1.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=1039540372, region=1039542636, radius=1.0, seconds=0.0, animation_id=-1)
@@ -746,7 +747,7 @@ def Constructor():
     CommonFunc_90005261(0, character=1039544552, region=1039546550, radius=1.0, seconds=0.0, animation_id=3010)
     CommonFunc_90005261(0, character=1039544553, region=1039546550, radius=1.0, seconds=0.0, animation_id=3010)
     CommonFunc_90005261(0, character=1039544695, region=1039546695, radius=1.0, seconds=0.0, animation_id=3008)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Basilisk0, region=1039542380, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Basilisk0, region=1039542380, seconds=0.0, animation_id=0)
     CommonFunc_90005200(
         0,
         character=Characters.Basilisk2,
@@ -771,12 +772,12 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Slug10, region=1039542627, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Slug11, region=1039542627, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Slug12, region=1039542627, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Slug0, region=1039542607, seconds=3.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Slug8, region=1039542607, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Slug9, region=1039542607, seconds=8.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Slug10, region=1039542627, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Slug11, region=1039542627, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Slug12, region=1039542627, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Slug0, region=1039542607, seconds=3.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Slug8, region=1039542607, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Slug9, region=1039542607, seconds=8.0, animation_id=0)
     Event_1039542283(0, character=1039540283)
     Event_1039542520(0, asset_flag=1039542650, asset=1039541260)
     Event_1039542520(1, asset_flag=1039542651, asset=1039541261)
@@ -865,7 +866,7 @@ def Event_1039542499():
 
 
 @RestartOnRest(1039542290)
-def Event_1039542290(_, character: uint):
+def Event_1039542290(_, character: Character | int):
     """Event 1039542290"""
     if ThisEventSlotFlagEnabled():
         return
@@ -874,7 +875,7 @@ def Event_1039542290(_, character: uint):
 
 
 @RestartOnRest(1039542283)
-def Event_1039542283(_, character: uint):
+def Event_1039542283(_, character: Character | int):
     """Event 1039542283"""
     Kill(character)
     End()
@@ -894,7 +895,7 @@ def Event_1039542580():
 
 
 @RestartOnRest(1039542200)
-def Event_1039542200(_, character: uint, region: uint, seconds: float, animation_id: int):
+def Event_1039542200(_, character: uint, region: Region | int, seconds: float, animation_id: int):
     """Event 1039542200"""
     if ThisEventSlotFlagEnabled():
         return
@@ -984,7 +985,7 @@ def Event_1039542849():
         flag_2=1039542806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=1039540800, asset=Assets.AEG099_002_9000, dummy_id=5, right=0)
+    CommonFunc_9005811(0, flag=1039540800, asset=Assets.AEG099_002_9000, vfx_id=5, right=0)
     CommonFunc_9005822(
         0,
         flag=1039540800,
@@ -1045,7 +1046,7 @@ def Event_1039542810():
 
 
 @RestartOnRest(1039542720)
-def Event_1039542720(_, character: uint, region: uint, seconds: float):
+def Event_1039542720(_, character: Character | int, region: Region | int, seconds: float):
     """Event 1039542720"""
     AND_5.Add(CharacterInsideRegion(character=PLAYER, region=region))
     GotoIfConditionTrue(Label.L1, input_condition=AND_5)
@@ -1081,7 +1082,7 @@ def Event_1039542510():
 
 
 @RestartOnRest(1039542520)
-def Event_1039542520(_, asset_flag: uint, asset: uint):
+def Event_1039542520(_, asset_flag: Flag | int, asset: uint):
     """Event 1039542520"""
     WaitFrames(frames=1)
     if AssetDestroyed(asset):
@@ -1172,7 +1173,7 @@ def Event_1039543700(_, character: uint):
 
 
 @RestartOnRest(1039543702)
-def Event_1039543702(_, character: uint, flag: uint):
+def Event_1039543702(_, character: Character | int, flag: Flag | int):
     """Event 1039543702"""
     WaitFrames(frames=1)
     if PlayerNotInOwnWorld():
@@ -1190,7 +1191,7 @@ def Event_1039543702(_, character: uint, flag: uint):
 
 
 @RestartOnRest(1039543709)
-def Event_1039543709(_, character: uint):
+def Event_1039543709(_, character: Character | int):
     """Event 1039543709"""
     DisableCharacter(character)
     DisableBackread(character)

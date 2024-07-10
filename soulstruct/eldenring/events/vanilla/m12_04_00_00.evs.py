@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m12_04_00_00_enums import *
 
 
@@ -52,7 +53,7 @@ def Event_12042400():
         Goto(Label.L10)
     if ThisEventSlotFlagDisabled():
         DeleteVFX(12041400)
-        CreateAssetVFX(Assets.AEG099_002_9002, vfx_id=101, dummy_id=1507)
+        CreateAssetVFX(Assets.AEG099_002_9002, dummy_id=101, vfx_id=1507)
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(ActionButtonParamActivated(action_button_id=9506, entity=Assets.AEG099_002_9002))
     AND_2.Add(FlagEnabled(114))
@@ -63,7 +64,7 @@ def Event_12042400():
     
     GotoIfFlagEnabled(Label.L1, flag=114)
     if PlayerInOwnWorld():
-        DisplayDialog(text=20006, anchor_entity=0, display_distance=5.0)
+        DisplayDialog(text=20006, display_distance=5.0)
     Wait(1.0)
     Restart()
 
@@ -76,7 +77,7 @@ def Event_12042400():
     # --- Label 10 --- #
     DefineLabel(10)
     DeleteVFX(12041400)
-    CreateAssetVFX(Assets.AEG099_002_9002, vfx_id=101, dummy_id=1507)
+    CreateAssetVFX(Assets.AEG099_002_9002, dummy_id=101, vfx_id=1507)
     OR_9.Add(FlagEnabled(114))
     
     MAIN.Await(OR_9)
@@ -167,7 +168,7 @@ def Event_12042810():
 @ContinueOnRest(12042849)
 def Event_12042849():
     """Event 12042849"""
-    CommonFunc_9005811(0, flag=12040800, asset=Assets.AEG099_002_9001, dummy_id=8, right=0)
+    CommonFunc_9005811(0, flag=12040800, asset=Assets.AEG099_002_9001, vfx_id=8, right=0)
     CommonFunc_9005800(
         0,
         flag=12040800,
@@ -188,7 +189,7 @@ def Event_12042849():
         flag_2=12042806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=12040800, asset=Assets.AEG099_002_9000, dummy_id=8, right=0)
+    CommonFunc_9005811(0, flag=12040800, asset=Assets.AEG099_002_9000, vfx_id=8, right=0)
     CommonFunc_9005822(
         0,
         flag=12040800,

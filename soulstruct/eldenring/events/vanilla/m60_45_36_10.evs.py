@@ -18,51 +18,52 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_45_36_10_enums import *
-from .enums.m60_45_36_00_enums import Characters as m60_45_Characters
+from .enums.m60_45_36_00_enums import Characters as m60_45_36_00_Characters
 
 
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1045360000, asset=Assets.AEG099_060_9000)
-    CommonFunc_90005460(0, character=m60_45_Characters.GiantOctopus)
-    CommonFunc_90005461(0, character=m60_45_Characters.GiantOctopus)
-    CommonFunc_90005462(0, character=m60_45_Characters.GiantOctopus)
-    CommonFunc_90005463(0, character=1045362212, character_1=m60_45_Characters.GiantOctopus)
+    CommonFunc_90005460(0, character=m60_45_36_00_Characters.GiantOctopus)
+    CommonFunc_90005461(0, character=m60_45_36_00_Characters.GiantOctopus)
+    CommonFunc_90005462(0, character=m60_45_36_00_Characters.GiantOctopus)
+    CommonFunc_90005463(0, character=1045362212, character_1=m60_45_36_00_Characters.GiantOctopus)
     CommonFunc_90005464(
         0,
         flag=1045362212,
-        character=m60_45_Characters.GiantOctopus,
-        character_1=m60_45_Characters.Octopus0,
+        character=m60_45_36_00_Characters.GiantOctopus,
+        character_1=m60_45_36_00_Characters.Octopus0,
         value=0,
     )
     CommonFunc_90005464(
         0,
         flag=1045362212,
-        character=m60_45_Characters.GiantOctopus,
-        character_1=m60_45_Characters.Octopus1,
+        character=m60_45_36_00_Characters.GiantOctopus,
+        character_1=m60_45_36_00_Characters.Octopus1,
         value=1,
     )
     CommonFunc_90005464(
         0,
         flag=1045362212,
-        character=m60_45_Characters.GiantOctopus,
-        character_1=m60_45_Characters.Octopus2,
+        character=m60_45_36_00_Characters.GiantOctopus,
+        character_1=m60_45_36_00_Characters.Octopus2,
         value=2,
     )
     CommonFunc_90005464(
         0,
         flag=1045362212,
-        character=m60_45_Characters.GiantOctopus,
-        character_1=m60_45_Characters.Octopus3,
+        character=m60_45_36_00_Characters.GiantOctopus,
+        character_1=m60_45_36_00_Characters.Octopus3,
         value=3,
     )
     CommonFunc_90005464(
         0,
         flag=1045362212,
-        character=m60_45_Characters.GiantOctopus,
-        character_1=m60_45_Characters.Octopus4,
+        character=m60_45_36_00_Characters.GiantOctopus,
+        character_1=m60_45_36_00_Characters.Octopus4,
         value=4,
     )
     Event_1045362200()
@@ -73,13 +74,13 @@ def Constructor():
         flag_1=4726,
         flag_2=4728,
         flag_3=1045369305,
-        character=m60_45_Characters.Merchant,
-        character_1=m60_45_Characters.NomadMule,
+        character=m60_45_36_00_Characters.Merchant,
+        character_1=m60_45_36_00_Characters.NomadMule,
         asset=1045366700,
     )
     CommonFunc_90005703(
         0,
-        character=m60_45_Characters.Merchant,
+        character=m60_45_36_00_Characters.Merchant,
         flag=4726,
         flag_1=4727,
         flag_2=1045369306,
@@ -90,16 +91,16 @@ def Constructor():
     )
     CommonFunc_90005704(
         0,
-        attacked_entity=m60_45_Characters.Merchant,
+        attacked_entity=m60_45_36_00_Characters.Merchant,
         flag=4726,
         flag_1=4725,
         flag_2=1045369306,
         right=3,
     )
-    CommonFunc_90005702(0, character=m60_45_Characters.Merchant, flag=4728, first_flag=4725, last_flag=4729)
+    CommonFunc_90005702(0, character=m60_45_36_00_Characters.Merchant, flag=4728, first_flag=4725, last_flag=4729)
     CommonFunc_90005703(
         0,
-        character=m60_45_Characters.NomadMule,
+        character=m60_45_36_00_Characters.NomadMule,
         flag=4726,
         flag_1=4727,
         flag_2=1045369307,
@@ -110,22 +111,28 @@ def Constructor():
     )
     CommonFunc_90005704(
         0,
-        attacked_entity=m60_45_Characters.NomadMule,
+        attacked_entity=m60_45_36_00_Characters.NomadMule,
         flag=4726,
         flag_1=4725,
         flag_2=1045369307,
         right=3,
     )
-    CommonFunc_90005728(0, attacked_entity=m60_45_Characters.NomadMule, flag=1045362706, flag_1=1045362707)
+    CommonFunc_90005728(0, attacked_entity=m60_45_36_00_Characters.NomadMule, flag=1045362706, flag_1=1045362707)
     CommonFunc_90005727(
         0,
         flag=4726,
-        character=m60_45_Characters.Merchant,
-        character_1=m60_45_Characters.NomadMule,
+        character=m60_45_36_00_Characters.Merchant,
+        character_1=m60_45_36_00_Characters.NomadMule,
         first_flag=4725,
         last_flag=4728,
     )
-    CommonFunc_90005729(0, flag=1045369300, character=m60_45_Characters.Merchant, distance=40.0, flag_1=1045362702)
+    CommonFunc_90005729(
+        0,
+        flag=1045369300,
+        character=m60_45_36_00_Characters.Merchant,
+        distance=40.0,
+        flag_1=1045362702,
+    )
     CommonFunc_90005725(
         0,
         flag=4725,
@@ -171,18 +178,18 @@ def Constructor():
         last_flag=4728,
     )
     CommonFunc_90005729(0, flag=1045369300, character=Characters.Merchant, distance=40.0, flag_1=1045362702)
-    CommonFunc_90005706(0, character=m60_45_Characters.WanderingNoble, animation_id=930023, left=0)
+    CommonFunc_90005706(0, character=m60_45_36_00_Characters.WanderingNoble, animation_id=930023, left=0)
     Event_1045363704()
-    CommonFunc_90005706(0, character=m60_45_Characters.WanderingNoble, animation_id=30023, left=0)
+    CommonFunc_90005706(0, character=m60_45_36_00_Characters.WanderingNoble, animation_id=30023, left=0)
     Event_1045363715()
 
 
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
-    DisableBackread(m60_45_Characters.Merchant)
-    DisableBackread(m60_45_Characters.NomadMule)
-    DisableBackread(m60_45_Characters.WanderingNoble)
+    DisableBackread(m60_45_36_00_Characters.Merchant)
+    DisableBackread(m60_45_36_00_Characters.NomadMule)
+    DisableBackread(m60_45_36_00_Characters.WanderingNoble)
     DisableBackread(Characters.Merchant)
     DisableBackread(Characters.NomadMule)
 
@@ -190,7 +197,7 @@ def Preconstructor():
 @RestartOnRest(1045362200)
 def Event_1045362200():
     """Event 1045362200"""
-    AddSpecialEffect(m60_45_Characters.GiantOctopus, 11771)
+    AddSpecialEffect(m60_45_36_00_Characters.GiantOctopus, 11771)
 
 
 @RestartOnRest(1045362400)
@@ -209,7 +216,13 @@ def Event_1045362400():
 
 
 @RestartOnRest(1045363700)
-def Event_1045363700(_, character: uint, character_1: uint, character_2: uint, asset: uint):
+def Event_1045363700(
+    _,
+    character: uint,
+    character_1: Character | int,
+    character_2: Character | int,
+    asset: Asset | int,
+):
     """Event 1045363700"""
     WaitFrames(frames=1)
     DisableFlag(1045369200)
@@ -245,8 +258,8 @@ def Event_1045363700(_, character: uint, character_1: uint, character_2: uint, a
     EnableBackread(character_2)
     if FlagEnabled(4980):
         ForceAnimation(character, 30001)
-    SkipLinesIfFlagRangeAllDisabled(1, (4982, 4983))
-    ForceAnimation(character, 30002)
+    if FlagRangeAnyEnabled((4982, 4983)):
+        ForceAnimation(character, 30002)
     Goto(Label.L20)
 
     # --- Label 2 --- #
@@ -262,9 +275,9 @@ def Event_1045363700(_, character: uint, character_1: uint, character_2: uint, a
     SetTeamType(character_1, TeamType.HostileNPC)
     if FlagEnabled(4980):
         ForceAnimation(character, 30001)
-    SkipLinesIfFlagRangeAllDisabled(2, (4982, 4983))
-    ForceAnimation(character, 30002)
-    DisableAI(character)
+    if FlagRangeAnyEnabled((4982, 4983)):
+        ForceAnimation(character, 30002)
+        DisableAI(character)
     Goto(Label.L20)
 
     # --- Label 4 --- #
@@ -288,7 +301,7 @@ def Event_1045363700(_, character: uint, character_1: uint, character_2: uint, a
 
 
 @ContinueOnRest(1045363702)
-def Event_1045363702(_, character: uint):
+def Event_1045363702(_, character: Character | int):
     """Event 1045363702"""
     if PlayerNotInOwnWorld():
         return
@@ -332,7 +345,7 @@ def Event_1045363703(_, character: uint):
 
     # --- Label 1 --- #
     DefineLabel(1)
-    OR_6.Add(EntityWithinDistance(entity=20000, other_entity=character, radius=4.0))
+    OR_6.Add(EntityWithinDistance(entity=ALL_PLAYERS, other_entity=character, radius=4.0))
     OR_6.Add(CharacterDoesNotHaveSpecialEffect(character, 9601))
     
     MAIN.Await(OR_6)
@@ -346,7 +359,7 @@ def Event_1045363703(_, character: uint):
 
     # --- Label 2 --- #
     DefineLabel(2)
-    OR_7.Add(EntityBeyondDistance(entity=20000, other_entity=character, radius=6.0))
+    OR_7.Add(EntityBeyondDistance(entity=ALL_PLAYERS, other_entity=character, radius=6.0))
     OR_7.Add(CharacterDoesNotHaveSpecialEffect(character, 9603))
     
     MAIN.Await(OR_7)
@@ -368,7 +381,7 @@ def Event_1045363703(_, character: uint):
 
     # --- Label 11 --- #
     DefineLabel(11)
-    OR_11.Add(EntityBeyondDistance(entity=20000, other_entity=character, radius=6.0))
+    OR_11.Add(EntityBeyondDistance(entity=ALL_PLAYERS, other_entity=character, radius=6.0))
     OR_11.Add(CharacterDoesNotHaveSpecialEffect(character, 9603))
     
     MAIN.Await(OR_11)
@@ -394,14 +407,14 @@ def Event_1045363704():
     if FlagEnabled(1045369229):
         return
     
-    MAIN.Await(EntityWithinDistance(entity=PLAYER, other_entity=m60_45_Characters.Merchant, radius=7.5))
+    MAIN.Await(EntityWithinDistance(entity=PLAYER, other_entity=m60_45_36_00_Characters.Merchant, radius=7.5))
     
     EnableNetworkFlag(1045369229)
     End()
 
 
 @RestartOnRest(1045363705)
-def Event_1045363705(_, character: uint):
+def Event_1045363705(_, character: Character | int):
     """Event 1045363705"""
     if PlayerNotInOwnWorld():
         return
@@ -435,12 +448,12 @@ def Event_1045363705(_, character: uint):
 
 
 @RestartOnRest(1045363706)
-def Event_1045363706(_, character: uint, attacked_entity: uint):
+def Event_1045363706(_, character: uint, attacked_entity: Character | int):
     """Event 1045363706"""
     if PlayerNotInOwnWorld():
         return
-    OR_1.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=20000))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=40000))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=ALL_PLAYERS))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=TORRENT))
     AND_1.Add(OR_1)
     AND_1.Add(FlagDisabled(1041362709))
     
@@ -458,13 +471,13 @@ def Event_1045363706(_, character: uint, attacked_entity: uint):
 @ContinueOnRest(1045363707)
 def Event_1045363707(
     _,
-    character: uint,
-    first_flag: uint,
-    flag: uint,
-    flag_1: uint,
-    last_flag: uint,
-    character_1: uint,
-    flag_2: uint,
+    character: Character | int,
+    first_flag: Flag | int,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    last_flag: Flag | int,
+    character_1: Character | int,
+    flag_2: Flag | int,
 ):
     """Event 1045363707"""
     WaitFrames(frames=1)
@@ -475,12 +488,12 @@ def Event_1045363707(
     DisableNetworkFlag(flag_2)
     OR_1.Add(FlagEnabled(flag))
     OR_1.Add(FlagEnabled(flag_1))
-    AND_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=20000))
+    AND_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=ALL_PLAYERS))
     AND_1.Add(HealthValue(character) < 1)
     OR_2.Add(OR_1)
     OR_2.Add(AND_1)
     OR_3.Add(FlagEnabled(flag_2))
-    AND_3.Add(AttackedWithDamageType(attacked_entity=character_1, attacker=20000))
+    AND_3.Add(AttackedWithDamageType(attacked_entity=character_1, attacker=ALL_PLAYERS))
     AND_3.Add(HealthValue(character_1) < 1)
     OR_4.Add(OR_3)
     OR_4.Add(AND_3)

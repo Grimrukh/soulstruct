@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_49_37_00_enums import *
 
 
@@ -26,15 +27,15 @@ def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1049370000, asset=Assets.AEG099_060_9000)
     CommonFunc_90005251(0, character=1049370200, radius=20.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005300(0, flag=1049370800, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1049370800, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005476(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
     Event_1049372291(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
-    CommonFunc_NightsCavalryHealthBar(
+    CommonFunc_90005871(
         0,
-        nights_cavalry=Characters.NightsCavalry,
+        character=Characters.NightsCavalry,
         name=903150605,
         npc_threat_level=10,
-        horse=Characters.NightsCavalryHorse,
+        character_1=Characters.NightsCavalryHorse,
     )
     CommonFunc_90005860(
         0,
@@ -45,8 +46,8 @@ def Constructor():
         item_lot=1049370100,
         seconds=0.0,
     )
-    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.NightsCavalry, npc_threat_level=10, required_flag=0)
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.DeathRiteBird, name=904980606, npc_threat_level=24)
+    CommonFunc_90005872(0, character=Characters.NightsCavalry, npc_threat_level=10, right=0)
+    CommonFunc_90005870(0, character=Characters.DeathRiteBird, name=904980606, npc_threat_level=24)
     CommonFunc_90005860(
         0,
         flag=1049370850,
@@ -57,7 +58,7 @@ def Constructor():
         seconds=0.0,
     )
     Event_1049372299()
-    CommonFunc_90005300(0, flag=1049370299, character=Characters.LionGuardian, item_lot=1049370700, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1049370299, character=Characters.LionGuardian, item_lot=1049370700, seconds=0.0, left=0)
     CommonFunc_90005725(
         0,
         flag=4780,
@@ -112,7 +113,7 @@ def Preconstructor():
 
 
 @RestartOnRest(1049372291)
-def Event_1049372291(_, character: uint, character_1: uint):
+def Event_1049372291(_, character: Character | int, character_1: Character | int):
     """Event 1049372291"""
     AND_1.Add(CharacterAlive(character))
     SkipLinesIfConditionTrue(1, AND_1)

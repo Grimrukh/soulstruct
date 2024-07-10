@@ -42,6 +42,8 @@ class EventDirectory(GameFileMapDirectory[EMEVD], abc.ABC):
         if not directory_path.is_dir():
             raise NotADirectoryError(f"Missing directory: {directory_path}")
         all_map_stems = [getattr(game_map, cls.MAP_STEM_ATTRIBUTE) for game_map in cls.ALL_MAPS]
+        if cls.COMMON_FUNC:
+            all_map_stems.append(cls.COMMON_FUNC.emevd_file_stem)
         files = {}
         file_name_re = re.compile(cls.FILE_NAME_PATTERN + r"(\.dcx)?$")
         for file_path in directory_path.glob("*"):
@@ -96,50 +98,48 @@ class EventDirectory(GameFileMapDirectory[EMEVD], abc.ABC):
         if enums_directory is not None:
             enums_directory = Path(enums_directory)
 
-        common_func_emevd: EMEVD | None
-        if self.COMMON_FUNC and self.COMMON_FUNC.name in self.files:
+        enums_module_paths = list(enums_directory.glob("*_enums.py")) if enums_directory else []
+
+        # Create one `GameEnumsManager` passed to all non-CommonFunc EMEVDs.
+        enums_manager = self.FILE_CLASS.ENTITY_ENUMS_MANAGER(enums_module_paths)  # `all_event_ids` set per EMEVD
+
+        common_func_emevd = None  # type: EMEVD | None
+        if self.COMMON_FUNC and self.COMMON_FUNC.emevd_file_stem in self.files:
             # Write `common_func` first.
-            common_func_emevd = self.files[self.COMMON_FUNC.name]
+            common_func_emevd = self.files[self.COMMON_FUNC.emevd_file_stem]
             common_func_emevd.write_evs(
                 evs_path=evs_directory / f"{common_func_emevd.map_name}.py",  # no '.evs' extension (for importing)
-                enums_star_module_paths=[],
-                enums_non_star_module_paths=[],
+                enums_module_paths=[],
+                star_import_module_names=[],
                 warn_missing_enums=warn_missing_enums,
                 enums_module_prefix=enums_module_prefix,
-                event_prefix="CommonFunc",
+                event_function_prefix="CommonFunc",
                 docstring="Common functions that can be imported and used in other EVS scripts.",
+                enums_manager=None,
             )
             _LOGGER.info(f"Wrote EVS for COMMON_FUNC map: {common_func_emevd.map_name}")
-        else:
-            common_func_emevd = None
 
         for map_name, emevd in self.files.items():
-            if self.COMMON_FUNC and map_name == self.COMMON_FUNC.name:
+            if self.COMMON_FUNC and map_name == self.COMMON_FUNC.emevd_file_stem:
                 continue  # already done above
-            enums_star_module_paths = []
-            enums_non_star_module_paths = []
 
-            if enums_directory and map_name != "Common":  # TODO: why not allow 'common_enums' import?
-                matching_map_module_name = f"{emevd.map_name}_enums.py"
-                for module_path in enums_directory.glob("*_enums.py"):
-                    if module_path.name == matching_map_module_name:
-                        enums_star_module_paths.append(module_path)
-                    else:
-                        enums_non_star_module_paths.append(module_path)
+            # Reset used and missing enums for each map.
+            enums_manager.used_enums.clear()
+            enums_manager.missing_enums.clear()
 
             emevd.write_evs(
                 evs_path=evs_directory / f"{emevd.map_name}.evs.py",
-                enums_star_module_paths=enums_star_module_paths,
-                enums_non_star_module_paths=enums_non_star_module_paths,
+                star_import_module_names=[f"{emevd.map_name}_enums"],
                 warn_missing_enums=warn_missing_enums,
                 enums_module_prefix=enums_module_prefix,
-                event_prefix="Event",
+                event_function_prefix="Event",
                 docstring=self.GET_MAP(map_name).verbose_name,
                 common_func_emevd=common_func_emevd,
+                enums_manager=enums_manager,
             )
             _LOGGER.info(f"Wrote EVS for map {emevd.map_name} successfully.")
 
-        _LOGGER.info("All EMEVD files written to decompiled EVS scripts successfully.")
+        _LOGGER.info(f"All EMEVD files written to decompiled EVS scripts successfully in '{evs_directory}'.")
 
     def write_numeric(self, event_directory=None):
         if event_directory is None:

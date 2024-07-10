@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_40_53_00_enums import *
 
 
@@ -36,7 +37,12 @@ def Constructor():
     Event_1040532680()
     Event_1040532685()
     Event_1040532690()
-    CommonFunc_90005300(0, flag=1040530500, character=Characters.Scarab, item_lot=40320, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1040530500, character=Characters.Scarab, item_lot=40320, seconds=0.0, left=0)
+    Event_1040532700()
+    if CeremonyActive(ceremony=20):
+        CommonFunc_90005796(0, flag=7612, character=1040530700, banner_type=5, region=1040532701)
+        Event_1040532145()
+    CommonFunc_90005774(0, flag=7612, item_lot=105100, flag_1=400510)
 
 
 @ContinueOnRest(50)
@@ -53,7 +59,7 @@ def Preconstructor():
     )
     CommonFunc_90005261(0, character=Characters.AltusDog, region=1040532404, radius=7.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.AltusDog, region=1040532430, radius=5.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BleedDog0, region=1040532402, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BleedDog0, region=1040532402, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(
         0,
         character=Characters.LivingMass0,
@@ -248,7 +254,7 @@ def Preconstructor():
     )
     CommonFunc_90005251(0, character=Characters.BleedDog2, radius=6.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.LivingMass11, radius=5.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Wormface3, region=1040532357, seconds=0.0, animation_id=3000)
+    CommonFunc_90005250(0, character=Characters.Wormface3, region=1040532357, seconds=0.0, animation_id=3000)
     CommonFunc_90005251(0, character=Characters.Wormface3, radius=2.0, seconds=0.0, animation_id=0)
     CommonFunc_90005201(
         0,
@@ -420,7 +426,7 @@ def Event_1040532849():
         flag_2=1040532806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=1040530800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=1040530800, asset=Assets.AEG099_001_9000, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=1040530800,
@@ -432,7 +438,7 @@ def Event_1040532849():
         left=0,
         left_1=0,
     )
-    CommonFunc_9005812(0, flag=1040530800, asset=Assets.AEG099_001_9001, dummy_id=3, right=0, dummy_id_1=0)
+    CommonFunc_9005812(0, flag=1040530800, asset=Assets.AEG099_001_9001, vfx_id=3, right=0, vfx_id_1=0)
 
 
 @RestartOnRest(1040532650)
@@ -471,7 +477,7 @@ def Event_1040532660():
     EnableFlag(1040530655)
     DisableAsset(Assets.AEG003_316_9000)
     DisableMapPiece(map_piece_id=1040532651)
-    FaceEntity(PLAYER, Assets.AEG003_316_9000, wait_for_completion=True)
+    FaceEntityAndForceAnimation(PLAYER, Assets.AEG003_316_9000, wait_for_completion=True)
     ForceAnimation(PLAYER, 60010)
     Wait(1.0)
     PlaySoundEffect(1040532650, 806855, sound_type=SoundType.s_SFX)
@@ -513,7 +519,7 @@ def Event_1040532680():
     if PlayerNotInOwnWorld():
         return
     AND_1.Add(PlayerInOwnWorld())
-    AND_1.Add(AttackedWithDamageType(attacked_entity=1040531651, attacker=20000))
+    AND_1.Add(AttackedWithDamageType(attacked_entity=1040531651, attacker=ALL_PLAYERS))
     
     MAIN.Await(AND_1)
     
@@ -571,3 +577,85 @@ def Event_1040532690():
     DisableSpawner(entity=1040533610)
     EnableFlag(1040532701)
     Restart()
+
+
+@RestartOnRest(1040532700)
+def Event_1040532700():
+    """Event 1040532700"""
+    DisableNetworkSync()
+    if PlayerNotInOwnWorld():
+        return
+    DisableFlag(1040532141)
+    DisableFlag(1040532142)
+    DeleteAssetVFX(1040531700)
+    if FlagEnabled(7612):
+        return
+    CreateAssetVFX(1040531700, dummy_id=100, vfx_id=30010)
+    OR_2.Add(Multiplayer())
+    OR_2.Add(MultiplayerPending())
+    OR_3.Add(OR_2)
+    OR_3.Add(ActionButtonParamActivated(action_button_id=9062, entity=1040531700))
+    
+    MAIN.Await(OR_3)
+    
+    if LastResult(OR_2):
+        return RESTART
+    OR_10.Add(PlayerHasGood(102))
+    GotoIfConditionFalse(Label.L10, input_condition=OR_10)
+    AwaitDialogResponse(
+        message=80612,
+        button_type=ButtonType.Yes_or_No,
+        number_buttons=NumberButtons.TwoButton,
+        anchor_entity=1040531700,
+        display_distance=2.0,
+        left_flag=1040532141,
+        right_flag=1040532142,
+        cancel_flag=1040532142,
+    )
+    if FlagDisabled(1040532141):
+        Wait(1.0)
+        Restart()
+    Goto(Label.L18)
+
+    # --- Label 10 --- #
+    DefineLabel(10)
+    AwaitDialogResponse(
+        message=80613,
+        button_type=ButtonType.Yes_or_No,
+        number_buttons=NumberButtons.TwoButton,
+        anchor_entity=1040531700,
+        display_distance=2.0,
+        left_flag=1040532141,
+        right_flag=1040532142,
+        cancel_flag=1040532142,
+    )
+    if FlagDisabled(1040532141):
+        Wait(1.0)
+        Restart()
+    OR_11.Add(PlayerHasGood(111))
+    GotoIfConditionTrue(Label.L17, input_condition=OR_11)
+    Wait(1.0)
+    DisplayDialog(text=30150, anchor_entity=1040531700, button_type=ButtonType.Yes_or_No)
+    Wait(1.0)
+    Restart()
+
+    # --- Label 17 --- #
+    DefineLabel(17)
+    RemoveGoodFromPlayer(item=111, quantity=1)
+
+    # --- Label 18 --- #
+    DefineLabel(18)
+    EnableFlag(1040532140)
+    AddSpecialEffect(PLAYER, 15)
+    Wait(20.0)
+    Restart()
+
+
+@RestartOnRest(1040532145)
+def Event_1040532145():
+    """Event 1040532145"""
+    if CeremonyInactive(ceremony=20):
+        return
+    EnableBackread(1040530700)
+    DeleteAssetVFX(1040531701)
+    CreateAssetVFX(1040531701, dummy_id=200, vfx_id=806700)

@@ -415,14 +415,19 @@ class MCG(GameFile):
     def get_navmesh_triangles_by_node(self, allow_clashes=False) -> list[dict[str, None | tuple[int, list[int]]]]:
         """Get a list of `((navmesh_a_index, navmesh_a_triangles), (navmesh_b_index, navmesh_b_triangles))` tuples.
 
-        Tuple elements may be `None` if only one or zero connected navmeshes are detected.
+        Tuple elements may be `None` if only one or zero connected navmeshes are detected, which is obviously unusual.
 
         Can optionally permit (with a logged warning) cases where a node has different faces in edges in the same
         navmesh, which is not ideal but could be fixed later.
+
+        Dead-end navmeshes stored on nodes imply that only one other navmesh has edges connected to that node, so we
+        move it to being navmesh 'b' on the node.
         """
         all_node_navmesh_triangles = []
         for node in self.nodes:
-            navmesh_info = {"a": None, "b": None}
+
+            node_navmesh_dict = {"a": None, "b": None}
+
             for edge in node.connected_edges:
                 navmesh_index = edge.navmesh_index
                 if navmesh_index is None:
@@ -440,35 +445,44 @@ class MCG(GameFile):
                 for key in ("a", "b"):
                     if found:
                         break
-                    if navmesh_info[key] is None:
+                    if node_navmesh_dict[key] is None:
                         # First edge/navmesh.
-                        navmesh_info[key] = (navmesh_index, triangles)
+                        node_navmesh_dict[key] = (navmesh_index, triangles)
                         found = True
-                    elif navmesh_info[key][0] == navmesh_index:
-                        # Check triangles are consistent.
-                        if triangles != navmesh_info[key][1]:
-                            msg = (
-                                 f"Node {node} has inconsistent navmesh triangle indices across edges through navmesh "
-                                 f"index {navmesh_index}: {navmesh_info[key][1]} vs. {triangles}"
-                            )
-                            if allow_clashes:
-                                _LOGGER.warning(msg + f". Using first indices: {navmesh_info[key][1]}")
-                            else:
-                                raise ValueError(msg)
-                        found = True
+                    else:
+                        existing_navmesh_index, existing_triangles = node_navmesh_dict[key]
+                        if existing_navmesh_index == navmesh_index:
+                            # Check triangles are consistent.
+                            if triangles != node_navmesh_dict[key][1]:
+                                msg = (
+                                     f"Node {node} has inconsistent navmesh triangle indices across edges through "
+                                     f"navmesh index {navmesh_index}: {existing_triangles} vs. {triangles}"
+                                )
+                                if allow_clashes:
+                                    _LOGGER.warning(f"{msg}. Using first indices: {existing_triangles}")
+                                else:
+                                    raise ValueError(msg)
+                            found = True
 
             # Warn or raise errors about various connection problems.
-            if navmesh_info["a"] is None and navmesh_info["b"] is None:
+            if node_navmesh_dict["a"] is None and node_navmesh_dict["b"] is None:
                 _LOGGER.warning(f"Node {node} has no edges in any navmesh.")
-            elif node.dead_end_navmesh_index != -1 and navmesh_info["b"] is not None:
-                _LOGGER.warning(
-                    f"Node {node} has edges in two navmesh indices ({navmesh_info['a'][0]}, {navmesh_info['b'][0]}) "
-                    f"AND a dead-end navmesh index: {node.dead_end_navmesh_index}"
-                )
-            elif navmesh_info["b"] is None and node.dead_end_navmesh_index == -1:
+            elif node.dead_end_navmesh_index != -1:
+                if node_navmesh_dict["b"] is not None:
+                    navmesh_a_index = node_navmesh_dict["a"][0]
+                    navmesh_b_index = node_navmesh_dict["b"][0]
+                    _LOGGER.warning(
+                        f"Node {node} has edges in two navmesh indices ({navmesh_a_index}, {navmesh_b_index}) "
+                        f"AND a dead-end navmesh index ({node.dead_end_navmesh_index}). Ignoring dead-end navmesh index."
+                    )
+                else:
+                    # Use dead-end as navmesh B. Lack of triangle indices implies it's a dead end locally, and lack of
+                    # edges in a second navmesh implies it globally.
+                    node_navmesh_dict["b"] = (node.dead_end_navmesh_index, [])
+            elif node_navmesh_dict["b"] is None and node.dead_end_navmesh_index == -1:
                 _LOGGER.warning(f"Node {node} has edges in only one navmesh, but no dead-end navmesh.")
 
-            all_node_navmesh_triangles.append(navmesh_info)
+            all_node_navmesh_triangles.append(node_navmesh_dict)
 
         return all_node_navmesh_triangles
 

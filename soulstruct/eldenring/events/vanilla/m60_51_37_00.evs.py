@@ -16,6 +16,7 @@ strings:
 """
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_51_37_00_enums import *
 
 
@@ -44,13 +45,13 @@ def Event_1051372598(
     asset: uint,
     area_id: uchar,
     block_id: uchar,
-    cc_id: char,
-    dd_id: char,
+    cc_id: uchar,
+    dd_id: uchar,
     player_start: uint,
     unk_8_12: int,
-    flag: uint,
-    left_flag: uint,
-    cancel_flag__right_flag: uint,
+    flag: Flag | int,
+    left_flag: Flag | int,
+    cancel_flag__right_flag: Flag | int,
 ):
     """Event 1051372598"""
     if PlayerNotInOwnWorld():
@@ -58,7 +59,7 @@ def Event_1051372598(
     DisableFlag(left_flag)
     DisableFlag(cancel_flag__right_flag)
     DeleteAssetVFX(asset)
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=806870)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=806870)
     AND_1.Add(PlayerInOwnWorld())
     AND_2.Add(MultiplayerPending())
     AND_1.Add(not AND_2)
@@ -118,7 +119,7 @@ def Event_1051372598(
     OR_4.Add(Invasion())
     if OR_4:
         return RESTART
-    FaceEntity(PLAYER, asset, wait_for_completion=True)
+    FaceEntityAndForceAnimation(PLAYER, asset, wait_for_completion=True)
     ForceAnimation(PLAYER, 60490)
     Wait(3.0)
     EnableNetworkFlag(1052382602)
@@ -167,11 +168,11 @@ def Event_1051372599():
     MAIN.Await(FlagEnabled(1052382602))
     
     MoveCharacterAndCopyDrawParentWithFadeout(
-        character=20000,
+        character=ALL_PLAYERS,
         destination_type=CoordEntityType.Region,
         destination=1051382302,
         dummy_id=10,
-        copy_draw_parent=20000,
+        copy_draw_parent=ALL_PLAYERS,
         use_bonfire_effect=False,
         reset_camera=True,
     )

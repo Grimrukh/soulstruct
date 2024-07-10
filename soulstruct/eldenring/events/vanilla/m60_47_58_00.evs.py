@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_47_58_00_enums import *
 
 
@@ -44,7 +45,7 @@ def Constructor():
         first_flag=400411,
         last_flag=400411,
         flag=1047589210,
-        dummy_id=0,
+        vfx_id=0,
     )
     CommonFunc_90005708(0, character=Characters.ApostateAlbinauricArcher, flag=6001, left=0)
 
@@ -382,29 +383,29 @@ def Preconstructor():
 
 
 @RestartOnRest(1047583500)
-def Event_1047583500(_, region: uint):
+def Event_1047583500(_, region: Region | int):
     """Event 1047583500"""
     DisableNetworkSync()
-    AND_1.Add(CharacterInsideRegion(character=20000, region=region))
+    AND_1.Add(CharacterInsideRegion(character=ALL_PLAYERS, region=region))
     OR_1.Add(Invasion())
     AND_1.Add(not OR_1)
     
     MAIN.Await(AND_1)
     
-    AddSpecialEffect(20000, 9621)
+    AddSpecialEffect(ALL_PLAYERS, 9621)
     Wait(0.10000000149011612)
-    OR_2.Add(CharacterOutsideRegion(character=20000, region=region))
+    OR_2.Add(CharacterOutsideRegion(character=ALL_PLAYERS, region=region))
     OR_2.Add(Invasion())
     
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    RemoveSpecialEffect(20000, 9621)
+    RemoveSpecialEffect(ALL_PLAYERS, 9621)
     Restart()
 
 
 @RestartOnRest(1047583700)
-def Event_1047583700(_, character: uint, character_1: uint, asset: uint):
+def Event_1047583700(_, character: uint, character_1: uint, asset: Asset | int):
     """Event 1047583700"""
     WaitFrames(frames=1)
     DisableNetworkSync()
@@ -513,7 +514,7 @@ def Event_1047583701(_, character: uint, entity: uint):
 
 
 @RestartOnRest(1047583702)
-def Event_1047583702(_, character: uint):
+def Event_1047583702(_, character: Character | int):
     """Event 1047583702"""
     WaitFrames(frames=1)
     if FlagDisabled(4100):
@@ -532,7 +533,7 @@ def Event_1047583702(_, character: uint):
 
 
 @RestartOnRest(1047583703)
-def Event_1047583703(_, character: uint):
+def Event_1047583703(_, character: Character | int):
     """Event 1047583703"""
     if PlayerNotInOwnWorld():
         return
@@ -583,7 +584,7 @@ def Event_250():
 
 
 @RestartOnRest(1247582350)
-def Event_1247582350(_, character: uint, region: uint):
+def Event_1247582350(_, character: uint, region: Region | int):
     """Event 1247582350"""
     if FlagEnabled(1247580400):
         return

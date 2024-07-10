@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_50_40_00_enums import *
 
 
@@ -97,13 +98,13 @@ def Constructor():
         character=Characters.LargeDragonbarrowDragon,
         item_lot=1050400800,
         seconds=0.0,
-        item_is_dropped=0,
+        left=0,
     )
     Event_1050402205()
 
 
 @RestartOnRest(1050402201)
-def Event_1050402201(_, character: uint):
+def Event_1050402201(_, character: Character | int):
     """Event 1050402201"""
     if FlagEnabled(1050400599):
         return
@@ -122,7 +123,7 @@ def Event_1050402201(_, character: uint):
 
 
 @RestartOnRest(1050402202)
-def Event_1050402202(_, character: uint):
+def Event_1050402202(_, character: Character | int):
     """Event 1050402202"""
     GotoIfFlagEnabled(Label.L0, flag=1050400599)
     
@@ -147,7 +148,7 @@ def Event_1050402203():
 
 
 @RestartOnRest(1050402204)
-def Event_1050402204(_, character: uint):
+def Event_1050402204(_, character: Character | int):
     """Event 1050402204"""
     DisableNetworkSync()
     DisableHealthBar(character)
@@ -181,7 +182,7 @@ def Event_1050402210(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    region: uint,
+    region: Region | int,
     seconds: float,
     left: uint,
     left_1: uint,
@@ -311,7 +312,7 @@ def Event_1050402800():
         return
     AND_3.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     SkipLinesIfConditionTrue(1, AND_3)
-    AddSpecialEffect(20000, 10251)
+    AddSpecialEffect(ALL_PLAYERS, 10251)
     AddSpecialEffect(Characters.DragonbarrowDragon0, 10250)
     AddSpecialEffect(Characters.DragonbarrowDragon1, 10250)
     AddSpecialEffect(Characters.DragonbarrowDragon2, 10250)

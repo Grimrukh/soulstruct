@@ -17,6 +17,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_38_42_00_enums import *
 
 
@@ -58,14 +59,14 @@ def Preconstructor():
 
 
 @RestartOnRest(1038422200)
-def Event_1038422200(_, character: uint):
+def Event_1038422200(_, character: Character | int):
     """Event 1038422200"""
     Kill(character)
     End()
 
 
 @RestartOnRest(1038422230)
-def Event_1038422230(_, character: uint, region: uint, flag: uint):
+def Event_1038422230(_, character: uint, region: Region | int, flag: Flag | int):
     """Event 1038422230"""
     AND_10.Add(CharacterDead(character))
     if AND_10:

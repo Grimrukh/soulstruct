@@ -57,9 +57,9 @@ class EVSInstructionCompiler:
             # `cond` not passed to custom function.
             return self.custom_funcs[instr_name](*args, **kwargs)
 
-        return self._base_compile_instruction(instr_name.lstrip("_"), *args, cond=cond, **kwargs)
+        return self.base_compile_instruction(instr_name.lstrip("_"), *args, cond=cond, **kwargs)
 
-    def _base_compile_instruction(
+    def base_compile_instruction(
         self, instr_name: str, *args, arg_types="", cond: EVSConditionManager = None, **kwargs
     ) -> list[str]:
         """Compile instruction from EMEDF information.

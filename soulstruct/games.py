@@ -120,8 +120,8 @@ DARK_SOULS_PTDE = Game(
     aliases=("darksoulspreparetodieedition", "darksoulsptde", "ptde", "darksouls1ptde"),
     default_dcx_type=DCXType.Null,  # DCX not used anywhere
     bundled_resource_paths={
-        "paramdefbnd": PACKAGE_PATH("darksouls1ptde/params/resources/darksouls1ptde.paramdefbnd"),
-        "mtdbnd": PACKAGE_PATH("darksouls1ptde/models/mtd/resources/mtd.mtdbnd"),
+        "PARAMDEFBND": PACKAGE_PATH("darksouls1ptde/params/resources/paramdef.paramdefbnd"),
+        "MTDBND": PACKAGE_PATH("darksouls1ptde/models/resources/Mtd.mtdbnd"),
     },
     steam_appid=211420,
     default_game_path=PTDE_PATH,
@@ -159,8 +159,9 @@ DARK_SOULS_DSR = Game(
         ".tpfbdt": DCXType.Null,
     },
     bundled_resource_paths={
-        "paramdefbnd": PACKAGE_PATH("darksouls1r/params/resources/darksouls1r.paramdefbnd.dcx"),
-        "mtdbnd": PACKAGE_PATH("darksouls1ptde/models/mtd/resources/Mtd.mtdbnd.dcx"),
+        "PARAMDEFBND": PACKAGE_PATH("darksouls1r/params/resources/darksouls1r.paramdefbnd.dcx"),
+        "MTDBND": PACKAGE_PATH("darksouls1r/models/resources/Mtd.mtdbnd.dcx"),
+        "PATCH_MTDBND": PACKAGE_PATH("darksouls1r/models/resources/MtdPatch.mtdbnd.dcx"),
     },
     steam_appid=570940,
     default_game_path=DSR_PATH,
@@ -209,7 +210,8 @@ BLOODBORNE = Game(
     aliases=("bloodborne", "bb"),
     default_dcx_type=DCXType.DCX_DFLT_10000_44_9,
     bundled_resource_paths={
-        "paramdefbnd": PACKAGE_PATH("bloodborne/params/resources/bloodborne.paramdefbnd.dcx"),
+        "PARAMDEFBND": PACKAGE_PATH("bloodborne/params/resources/bloodborne.paramdefbnd.dcx"),
+        "MTDBND": PACKAGE_PATH("bloodborne/models/resources/allmaterialbnd.mtdbnd.dcx"),
     },
     steam_appid=None,
     default_game_path=BB_PATH,
@@ -258,6 +260,12 @@ ELDEN_RING = Game(
     special_dcx_types={
         ".bin": DCXType.Null,
     },
+    bundled_resource_paths={
+        "MATBINBND": PACKAGE_PATH("eldenring/models/resources/allmaterial.matbinbnd.dcx"),
+        "dlc01_MATBINBND": PACKAGE_PATH("eldenring/models/resources/allmaterial_dlc01.matbinbnd.dcx"),
+        "dlc02_MATBINBND": PACKAGE_PATH("eldenring/models/resources/allmaterial_dlc02.matbinbnd.dcx"),
+    },
+    steam_appid=1245620,
     default_game_path=ELDEN_RING_PATH,
     executable_name="ELDENRING.exe",
     interroot_prefix="N:\\GR\\data\\INTERROOT_win64",

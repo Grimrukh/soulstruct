@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m31_04_00_00_enums import *
 
 
@@ -155,10 +156,10 @@ def Preconstructor():
         region=31042207,
         radius=2.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -168,10 +169,10 @@ def Preconstructor():
         region=31042207,
         radius=2.0,
         seconds=0.30000001192092896,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -181,10 +182,10 @@ def Preconstructor():
         region=31042257,
         radius=2.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005261(
         0,
@@ -234,10 +235,10 @@ def Preconstructor():
         region=31042275,
         radius=2.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -247,10 +248,10 @@ def Preconstructor():
         region=31042275,
         radius=2.0,
         seconds=0.30000001192092896,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -260,10 +261,10 @@ def Preconstructor():
         region=31042275,
         radius=2.0,
         seconds=0.5,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -273,10 +274,10 @@ def Preconstructor():
         region=31042275,
         radius=2.0,
         seconds=0.8999999761581421,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -286,10 +287,10 @@ def Preconstructor():
         region=31042275,
         radius=2.0,
         seconds=0.699999988079071,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -299,10 +300,10 @@ def Preconstructor():
         region=31042300,
         radius=2.0,
         seconds=10.0,
-        do_disable_gravity_and_collision=1,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=1,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005261(0, character=31040310, region=31042310, radius=2.0, seconds=0.0, animation_id=0)
     CommonFunc_90005211(
@@ -313,10 +314,10 @@ def Preconstructor():
         region=31042311,
         radius=2.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005261(0, character=31040312, region=31042312, radius=2.0, seconds=0.0, animation_id=0)
     CommonFunc_90005211(
@@ -327,10 +328,10 @@ def Preconstructor():
         region=31042318,
         radius=2.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=2,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=2,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -340,10 +341,10 @@ def Preconstructor():
         region=31042318,
         radius=2.0,
         seconds=0.30000001192092896,
-        do_disable_gravity_and_collision=2,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=2,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -353,10 +354,10 @@ def Preconstructor():
         region=31042318,
         radius=2.0,
         seconds=0.5,
-        do_disable_gravity_and_collision=2,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=2,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -366,10 +367,10 @@ def Preconstructor():
         region=31042323,
         radius=2.0,
         seconds=5.0,
-        do_disable_gravity_and_collision=1,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=1,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -379,10 +380,10 @@ def Preconstructor():
         region=31042323,
         radius=2.0,
         seconds=5.199999809265137,
-        do_disable_gravity_and_collision=1,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=1,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     Event_31042310(0, character=Characters.OldWomanBat)
     Event_31042310(1, character=31040310)
@@ -396,7 +397,7 @@ def Preconstructor():
 
 
 @RestartOnRest(31042310)
-def Event_31042310(_, character: uint):
+def Event_31042310(_, character: Character | int):
     """Event 31042310"""
     AddSpecialEffect(character, 90000)
 
@@ -484,7 +485,7 @@ def Event_31042849():
         flag_2=31042806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=31040800, asset=Assets.AEG099_002_9000, dummy_id=5, right=0)
+    CommonFunc_9005811(0, flag=31040800, asset=Assets.AEG099_002_9000, vfx_id=5, right=0)
     CommonFunc_9005822(
         0,
         flag=31040800,

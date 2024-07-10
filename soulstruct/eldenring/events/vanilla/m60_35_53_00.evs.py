@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_35_53_00_enums import *
 
 
@@ -78,15 +79,15 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.MagmaWyrm, region=1035532346, seconds=0.5, animation_id=3004)
+    CommonFunc_90005250(0, character=Characters.MagmaWyrm, region=1035532346, seconds=0.5, animation_id=3004)
     Event_1035532300()
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.MagmaWyrm, name=904910600, npc_threat_level=5)
-    CommonFunc_KillFieldDragonWyrm(
+    CommonFunc_90005870(0, character=Characters.MagmaWyrm, name=904910600, npc_threat_level=5)
+    CommonFunc_90005861(
         0,
         flag=1035530800,
-        extra_flag=1035530800,
+        left=1035530800,
         character=Characters.MagmaWyrm,
-        felled_banner_rank=1,
+        left_1=1,
         item_lot=30390,
         text=30062,
         seconds=0.0,
@@ -122,7 +123,7 @@ def Constructor():
 
 
 @RestartOnRest(1035532200)
-def Event_1035532200(_, attacker__character: uint, region: uint):
+def Event_1035532200(_, attacker__character: uint, region: Region | int):
     """Event 1035532200"""
     RemoveSpecialEffect(attacker__character, 4800)
     RemoveSpecialEffect(attacker__character, 5658)
@@ -139,17 +140,17 @@ def Event_1035532200(_, attacker__character: uint, region: uint):
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=PLAYER))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=35000))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=35000, attacker=attacker__character))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=ALL_SPIRIT_SUMMONS))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=ALL_SPIRIT_SUMMONS, attacker=attacker__character))
     OR_2.Add(CharacterHasStateInfo(character=attacker__character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=attacker__character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=attacker__character, state_info=5))
     OR_2.Add(CharacterHasStateInfo(character=attacker__character, state_info=6))
     OR_2.Add(CharacterHasStateInfo(character=attacker__character, state_info=260))
     OR_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=attacker__character, radius=10.0))
-    OR_2.Add(EntityWithinDistance(entity=35000, other_entity=attacker__character, radius=10.0))
+    OR_2.Add(EntityWithinDistance(entity=ALL_SPIRIT_SUMMONS, other_entity=attacker__character, radius=10.0))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
-    OR_2.Add(CharacterInsideRegion(character=35000, region=region))
+    OR_2.Add(CharacterInsideRegion(character=ALL_SPIRIT_SUMMONS, region=region))
     AND_1.Add(OR_2)
     
     MAIN.Await(AND_1)
@@ -176,7 +177,7 @@ def Event_1035532300():
 
 
 @RestartOnRest(1035532340)
-def Event_1035532340(_, character: uint, region: uint, destination: uint):
+def Event_1035532340(_, character: uint, region: Region | int, destination: uint):
     """Event 1035532340"""
     if FlagEnabled(1035530340):
         End()
@@ -195,7 +196,7 @@ def Event_1035532340(_, character: uint, region: uint, destination: uint):
 
 
 @RestartOnRest(1035532450)
-def Event_1035532450(_, asset: uint):
+def Event_1035532450(_, asset: Asset | int):
     """Event 1035532450"""
     DisableAsset(asset)
     End()

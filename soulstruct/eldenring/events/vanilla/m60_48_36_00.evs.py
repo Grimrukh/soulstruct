@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_48_36_00_enums import *
 
 
@@ -43,7 +44,7 @@ def Constructor():
         flag_10=78418,
         flag_11=78419,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BanishedKnight, region=1048362201, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BanishedKnight, region=1048362201, seconds=0.0, animation_id=-1)
     Event_1048360700(0, character=Characters.Dummy)
     Event_1048360701()
 

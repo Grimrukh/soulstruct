@@ -18,8 +18,9 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_52_52_00_enums import *
-from .enums.m60_52_53_00_enums import Assets as m60_52_Assets, Characters as m60_52_Characters
+from .enums.m60_52_53_00_enums import Assets as m60_52_53_00_Assets, Characters as m60_52_53_00_Characters
 
 
 @ContinueOnRest(200)
@@ -111,8 +112,8 @@ def Event_1052522810():
         DisableFlag(1252520804)
     OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.FireGiant0))
     OR_1.Add(EntityWithinDistance(entity=Characters.FireGiant0, other_entity=PLAYER, radius=120.0))
-    OR_1.Add(EntityWithinDistance(entity=Characters.FireGiant0, other_entity=m60_52_Characters.LivingPot0, radius=120.0))
-    OR_1.Add(EntityWithinDistance(entity=Characters.FireGiant0, other_entity=m60_52_Characters.LivingPot1, radius=120.0))
+    OR_1.Add(EntityWithinDistance(entity=Characters.FireGiant0, other_entity=m60_52_53_00_Characters.LivingPot0, radius=120.0))
+    OR_1.Add(EntityWithinDistance(entity=Characters.FireGiant0, other_entity=m60_52_53_00_Characters.LivingPot1, radius=120.0))
     
     MAIN.Await(OR_1)
     
@@ -170,7 +171,7 @@ def Event_1052522811():
         )
     else:
         PlayCutscene(60520010, cutscene_flags=0, player_id=10000)
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     if PlayerInOwnWorld():
         SetCameraAngle(x_angle=-32.529998779296875, y_angle=-43.560001373291016)
     EnableCharacter(Characters.FireGiant1)
@@ -603,7 +604,7 @@ def Event_1052522849():
     CommonFunc_9005800(
         0,
         flag=1252520800,
-        entity=m60_52_Assets.AEG099_002_9000,
+        entity=m60_52_53_00_Assets.AEG099_002_9000,
         region=1052532800,
         flag_1=1252522805,
         character=1052525800,
@@ -614,7 +615,7 @@ def Event_1052522849():
     CommonFunc_9005800(
         0,
         flag=1252520800,
-        entity=m60_52_Assets.AEG099_003_9001,
+        entity=m60_52_53_00_Assets.AEG099_003_9001,
         region=1052532801,
         flag_1=1252522805,
         character=1052525800,
@@ -625,7 +626,7 @@ def Event_1052522849():
     CommonFunc_9005801(
         0,
         flag=1252520800,
-        entity=m60_52_Assets.AEG099_002_9000,
+        entity=m60_52_53_00_Assets.AEG099_002_9000,
         region=1052532800,
         flag_1=1252522805,
         flag_2=1252522806,
@@ -634,16 +635,16 @@ def Event_1052522849():
     CommonFunc_9005801(
         0,
         flag=1252520800,
-        entity=m60_52_Assets.AEG099_003_9001,
+        entity=m60_52_53_00_Assets.AEG099_003_9001,
         region=1052532801,
         flag_1=1252522805,
         flag_2=1252522806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=1252520800, asset=m60_52_Assets.AEG099_002_9000, dummy_id=9, right=1252520804)
-    CommonFunc_9005811(0, flag=1252520800, asset=m60_52_Assets.AEG099_003_9001, dummy_id=10, right=1252520804)
-    CommonFunc_9005811(0, flag=1252520800, asset=Assets.AEG099_019_1000, dummy_id=0, right=1252520804)
-    CommonFunc_9005811(0, flag=1252520800, asset=m60_52_Assets.AEG099_017_1000, dummy_id=0, right=1252520804)
+    CommonFunc_9005811(0, flag=1252520800, asset=m60_52_53_00_Assets.AEG099_002_9000, vfx_id=9, right=1252520804)
+    CommonFunc_9005811(0, flag=1252520800, asset=m60_52_53_00_Assets.AEG099_003_9001, vfx_id=10, right=1252520804)
+    CommonFunc_9005811(0, flag=1252520800, asset=Assets.AEG099_019_1000, vfx_id=0, right=1252520804)
+    CommonFunc_9005811(0, flag=1252520800, asset=m60_52_53_00_Assets.AEG099_017_1000, vfx_id=0, right=1252520804)
     CommonFunc_9005822(
         0,
         flag=1252520800,

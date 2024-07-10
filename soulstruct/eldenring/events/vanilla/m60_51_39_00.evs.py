@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_51_39_00_enums import *
 
 
@@ -25,22 +26,22 @@ from .enums.m60_51_39_00_enums import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1051390000, asset=Assets.AEG099_060_9000)
-    CommonFunc_90005683(0, flag=62412, asset=Assets.AEG099_055_1000, vfx_id=209, flag_1=78494, flag_2=78494)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.OldWomanBat, region=1051392204, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Rat0, region=1051392280, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Rat1, region=1051392251, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GiantRat, region=1051392280, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier0, region=1051392400, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier1, region=1051392400, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier2, region=1051392401, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier3, region=1051392401, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier4, region=1051392401, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier5, region=1051392401, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier6, region=1051392401, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier7, region=1051392401, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier8, region=1051392401, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier9, region=1051392401, seconds=0.0, animation_id=-1)
+    CommonFunc_90005683(0, flag=62412, asset=Assets.AEG099_055_1000, dummy_id=209, flag_1=78494, flag_2=78494)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=0)
+    CommonFunc_90005250(0, character=Characters.OldWomanBat, region=1051392204, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Rat0, region=1051392280, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Rat1, region=1051392251, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GiantRat, region=1051392280, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier0, region=1051392400, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier1, region=1051392400, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier2, region=1051392401, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier3, region=1051392401, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier4, region=1051392401, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier5, region=1051392401, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier6, region=1051392401, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier7, region=1051392401, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier8, region=1051392401, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier9, region=1051392401, seconds=0.0, animation_id=-1)
     Event_1051392200(0, character=Characters.RadahnSoldier0)
     Event_1051392200(1, character=Characters.RadahnSoldier1)
     Event_1051392200(2, character=Characters.RadahnSoldier2)
@@ -57,7 +58,7 @@ def Constructor():
 
 
 @RestartOnRest(1051392200)
-def Event_1051392200(_, character: uint):
+def Event_1051392200(_, character: Character | int):
     """Event 1051392200"""
     AddSpecialEffect(character, 8081)
     
@@ -67,6 +68,6 @@ def Event_1051392200(_, character: uint):
 
 
 @ContinueOnRest(1051392580)
-def Event_1051392580(_, start_climbing_flag: uint, stop_climbing_flag: uint, asset: uint):
+def Event_1051392580(_, start_climbing_flag: Flag | int, stop_climbing_flag: Flag | int, asset: Asset | int):
     """Event 1051392580"""
     RegisterLadder(start_climbing_flag=start_climbing_flag, stop_climbing_flag=stop_climbing_flag, asset=asset)

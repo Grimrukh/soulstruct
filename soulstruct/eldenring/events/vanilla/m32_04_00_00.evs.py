@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m32_04_00_00_enums import *
 
 
@@ -140,15 +141,15 @@ def Constructor():
         flag_1=32042572,
     )
     Event_32042569(0, flag=32040570, asset=32041570, asset_1=32041571, asset_2=32041572, asset_3=32041573)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=0)
 
 
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_32040519()
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.TunnelMiner0, region=32042200, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.TunnelMiner5, region=32042217, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner0, region=32042200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner5, region=32042217, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=Characters.TunnelMiner6,
@@ -162,15 +163,15 @@ def Preconstructor():
         left_3=0,
     )
     CommonFunc_90005251(0, character=32040250, radius=15.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=32040302, region=32042213, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LeyndellSoldier0, region=32042213, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LeyndellSoldier1, region=32042305, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LeyndellKnight0, region=32042305, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LeyndellKnight1, region=32042351, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallerDog0, region=32042200, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallerDog3, region=32042410, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallerDog4, region=32042410, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.SmallerDog5, region=32042217, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=32040302, region=32042213, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LeyndellSoldier0, region=32042213, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LeyndellSoldier1, region=32042305, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LeyndellKnight0, region=32042305, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LeyndellKnight1, region=32042351, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallerDog0, region=32042200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallerDog3, region=32042410, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallerDog4, region=32042410, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallerDog5, region=32042217, seconds=0.0, animation_id=-1)
 
 
 @ContinueOnRest(32042510)
@@ -204,7 +205,14 @@ def Event_32040519():
 
 
 @RestartOnRest(32049570)
-def Event_32049570(_, flag: uint, destination: uint, left_flag: uint, cancel_flag__right_flag: uint, flag_1: uint):
+def Event_32049570(
+    _,
+    flag: Flag | int,
+    destination: uint,
+    left_flag: Flag | int,
+    cancel_flag__right_flag: Flag | int,
+    flag_1: Flag | int,
+):
     """Event 32049570"""
     OR_1.Add(FlagEnabled(flag))
     OR_1.Add(PlayerNotInOwnWorld())
@@ -254,7 +262,14 @@ def Event_32049570(_, flag: uint, destination: uint, left_flag: uint, cancel_fla
 
 
 @RestartOnRest(32042569)
-def Event_32042569(_, flag: uint, asset: uint, asset_1: uint, asset_2: uint, asset_3: uint):
+def Event_32042569(
+    _,
+    flag: Flag | int,
+    asset: Asset | int,
+    asset_1: Asset | int,
+    asset_2: Asset | int,
+    asset_3: Asset | int,
+):
     """Event 32042569"""
     if ThisEventSlotFlagEnabled():
         return
@@ -269,9 +284,9 @@ def Event_32042569(_, flag: uint, asset: uint, asset_1: uint, asset_2: uint, ass
     DeleteAssetVFX(asset_3)
     DisableAsset(asset_1)
     DisableAsset(asset_2)
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=806040)
-    CreateAssetVFX(asset, vfx_id=201, dummy_id=806040)
-    CreateAssetVFX(asset_3, vfx_id=101, dummy_id=806042)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=806040)
+    CreateAssetVFX(asset, dummy_id=201, vfx_id=806040)
+    CreateAssetVFX(asset_3, dummy_id=101, vfx_id=806042)
     
     MAIN.Await(FlagEnabled(flag))
     
@@ -303,10 +318,10 @@ def Event_32042200(
     left_1: uint,
     left_2: uint,
     left_3: uint,
-    asset: uint,
-    asset_1: uint,
-    asset_2: uint,
-    asset_3: uint,
+    asset: Asset | int,
+    asset_1: Asset | int,
+    asset_2: Asset | int,
+    asset_3: Asset | int,
 ):
     """Event 32042200"""
     if ThisEventSlotFlagEnabled():
@@ -417,11 +432,11 @@ def Event_32042250(
     left_1: uint,
     left_2: uint,
     left_3: uint,
-    asset: uint,
-    asset_1: uint,
-    asset_2: uint,
-    asset_3: uint,
-    flag: uint,
+    asset: Asset | int,
+    asset_1: Asset | int,
+    asset_2: Asset | int,
+    asset_3: Asset | int,
+    flag: Flag | int,
 ):
     """Event 32042250"""
     if FlagEnabled(flag):
@@ -526,7 +541,7 @@ def Event_32042270(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    flag: uint,
+    flag: Flag | int,
     radius: float,
     seconds: float,
     left: uint,
@@ -709,7 +724,7 @@ def Event_32042849():
         flag_2=32042806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=32040800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=32040800, asset=Assets.AEG099_001_9000, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=32040800,

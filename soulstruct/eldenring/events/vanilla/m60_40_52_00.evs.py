@@ -18,8 +18,9 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_40_52_00_enums import *
-from .enums.m60_35_45_00_enums import Characters as m60_35_Characters
+from .enums.m60_35_45_00_enums import Characters as m60_35_45_00_Characters
 
 
 @ContinueOnRest(0)
@@ -44,7 +45,7 @@ def Constructor():
         flag_10=78318,
         flag_11=78319,
     )
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.BlackKnifeAssassin, name=902100600, npc_threat_level=14)
+    CommonFunc_90005870(0, character=Characters.BlackKnifeAssassin, name=902100600, npc_threat_level=14)
     CommonFunc_90005860(
         0,
         flag=1040520800,
@@ -57,7 +58,7 @@ def Constructor():
     Event_1040522240(0, asset=Assets.AEG099_070_9000, entity=Assets.AEG099_071_9000, flag=62030)
     AttachAssetToAsset(child_asset=1040521201, parent_asset=1040521200, parent_dummy_id=151)
     AttachAssetToAsset(child_asset=1040521211, parent_asset=1040521210, parent_dummy_id=151)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9006, vfx_id=100, dummy_id=800, right=1040528620)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9006, dummy_id=100, vfx_id=800, right=1040528620)
     CommonFunc_90005605(
         0,
         asset=Assets.AEG099_510_9000,
@@ -100,7 +101,7 @@ def Constructor():
         flag_2=4768,
         flag_3=1040529305,
         character=Characters.Merchant,
-        character_1=m60_35_Characters.NomadMule,
+        character_1=m60_35_45_00_Characters.NomadMule,
         asset=1040526700,
     )
     CommonFunc_90005703(
@@ -157,15 +158,15 @@ def Preconstructor():
         region=1040522800,
         radius=20.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
 
 
 @RestartOnRest(1040522240)
-def Event_1040522240(_, asset: uint, entity: uint, flag: uint):
+def Event_1040522240(_, asset: Asset | int, entity: uint, flag: Flag | int):
     """Event 1040522240"""
     DisableNetworkSync()
     GotoIfFlagDisabled(Label.L0, flag=flag)
@@ -175,7 +176,7 @@ def Event_1040522240(_, asset: uint, entity: uint, flag: uint):
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=803220)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=803220)
     
     MAIN.Await(FlagEnabled(flag))
     
@@ -252,7 +253,7 @@ def Event_1040523700(_, character: uint):
 
 
 @RestartOnRest(1040523701)
-def Event_1040523701(_, attacked_entity: uint, flag: uint, flag_1: uint):
+def Event_1040523701(_, attacked_entity: uint, flag: Flag | int, flag_1: Flag | int):
     """Event 1040523701"""
     WaitFrames(frames=1)
     if PlayerNotInOwnWorld():
@@ -280,7 +281,7 @@ def Event_1040523701(_, attacked_entity: uint, flag: uint, flag_1: uint):
 
 
 @RestartOnRest(1040523702)
-def Event_1040523702(_, entity: uint, attacked_entity: uint, flag: uint):
+def Event_1040523702(_, entity: uint, attacked_entity: Character | int, flag: Flag | int):
     """Event 1040523702"""
     WaitFrames(frames=1)
     if PlayerNotInOwnWorld():

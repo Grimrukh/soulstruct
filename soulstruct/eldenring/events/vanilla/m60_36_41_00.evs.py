@@ -17,6 +17,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_36_41_00_enums import *
 
 
@@ -56,7 +57,7 @@ def Constructor():
         first_flag=400410,
         last_flag=400410,
         flag=1036419215,
-        dummy_id=0,
+        vfx_id=0,
     )
 
 

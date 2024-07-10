@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_44_39_00_enums import *
 
 
@@ -180,7 +181,7 @@ def Event_1044393710(_, asset__character: uint):
 
 
 @RestartOnRest(1044390715)
-def Event_1044390715(_, character: uint, character_1: uint, asset: uint):
+def Event_1044390715(_, character: uint, character_1: uint, asset: Asset | int):
     """Event 1044390715"""
     DisableNetworkSync()
     WaitFrames(frames=1)

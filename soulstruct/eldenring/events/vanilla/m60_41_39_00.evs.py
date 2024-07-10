@@ -17,6 +17,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_41_39_00_enums import *
 
 
@@ -42,6 +43,6 @@ def Preconstructor():
 
 
 @RestartOnRest(1041392340)
-def Event_1041392340(_, character: uint):
+def Event_1041392340(_, character: Character | int):
     """Event 1041392340"""
     Kill(character, award_runes=True)

@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_35_47_00_enums import *
 
 
@@ -37,10 +38,10 @@ def Constructor():
     Event_1035472222()
     Event_1035472200()
     Event_1035472210()
-    CommonFunc_90005300(0, flag=1035470200, character=Characters.Turtle0, item_lot=0, seconds=0.0, item_is_dropped=0)
-    CommonFunc_90005300(0, flag=1035470201, character=Characters.Turtle1, item_lot=0, seconds=0.0, item_is_dropped=0)
-    CommonFunc_90005300(0, flag=1035470202, character=Characters.Turtle2, item_lot=0, seconds=0.0, item_is_dropped=0)
-    CommonFunc_90005300(0, flag=1035470220, character=Characters.Scarab1, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1035470200, character=Characters.Turtle0, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1035470201, character=Characters.Turtle1, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1035470202, character=Characters.Turtle2, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1035470220, character=Characters.Scarab1, item_lot=0, seconds=0.0, left=0)
     Event_1035472240(
         0,
         character=Characters.Scarab0,
@@ -49,7 +50,7 @@ def Constructor():
         region_1=1035472241,
         region_2=1035472242,
     )
-    CommonFunc_90005300(0, flag=1035470260, character=Characters.Scarab0, item_lot=40210, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1035470260, character=Characters.Scarab0, item_lot=40210, seconds=0.0, left=0)
     Event_1035472270()
     Event_1035472270(slot=1)
 
@@ -109,7 +110,7 @@ def Event_1035472205():
 
 
 @RestartOnRest(1035472206)
-def Event_1035472206(_, flag: uint, attacked_entity: uint):
+def Event_1035472206(_, flag: Flag | int, attacked_entity: uint):
     """Event 1035472206"""
     if FlagEnabled(flag):
         return
@@ -122,7 +123,7 @@ def Event_1035472206(_, flag: uint, attacked_entity: uint):
 
 
 @RestartOnRest(1035472207)
-def Event_1035472207(_, flag: uint, character: uint):
+def Event_1035472207(_, flag: Flag | int, character: Character | int):
     """Event 1035472207"""
     DisableCharacter(character)
     DisableCharacter(Characters.Scarab1)
@@ -213,7 +214,7 @@ def Event_1035472220():
     # --- Label 0 --- #
     DefineLabel(0)
     DeleteAssetVFX(Assets.AEG099_251_2000)
-    CreateAssetVFX(Assets.AEG099_251_2000, vfx_id=200, dummy_id=1500)
+    CreateAssetVFX(Assets.AEG099_251_2000, dummy_id=200, vfx_id=1500)
     AND_1.Add(FlagEnabled(1035470200))
     AND_1.Add(FlagEnabled(1035470201))
     AND_1.Add(FlagEnabled(1035470202))
@@ -221,7 +222,7 @@ def Event_1035472220():
     MAIN.Await(AND_1)
     
     EnableFlag(1035470215)
-    DisplayDialog(text=20210, anchor_entity=0, display_distance=5.0)
+    DisplayDialog(text=20210, display_distance=5.0)
     PlaySoundEffect(Assets.AEG099_251_2000, 1500, sound_type=SoundType.s_SFX)
     DisableAsset(Assets.AEG099_251_2000)
     DeleteAssetVFX(Assets.AEG099_251_2000)

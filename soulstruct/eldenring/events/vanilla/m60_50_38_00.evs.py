@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_50_38_00_enums import *
 
 
@@ -57,7 +58,7 @@ def Constructor():
         first_flag=400312,
         last_flag=400312,
         flag=7611,
-        dummy_id=0,
+        vfx_id=0,
     )
     CommonFunc_90005750(
         0,
@@ -67,7 +68,7 @@ def Constructor():
         first_flag=400312,
         last_flag=400312,
         flag=1050389238,
-        dummy_id=0,
+        vfx_id=0,
     )
     Event_1050383710(0, character=Characters.Millicent0)
     CommonFunc_90005704(0, attacked_entity=Characters.Millicent0, flag=4181, flag_1=4180, flag_2=1050389251, right=3)
@@ -113,7 +114,7 @@ def Constructor():
     CommonFunc_90005702(0, character=Characters.Millicent1, flag=4183, first_flag=4180, last_flag=4184)
     Event_1050383713()
     Event_1050383714()
-    CommonFunc_90005752(0, asset=1050381700, vfx_id=200, dummy_id=120, seconds=3.0)
+    CommonFunc_90005752(0, asset=Assets.AEG099_320_9000, dummy_id=200, vfx_id=120, seconds=3.0)
 
 
 @ContinueOnRest(50)
@@ -198,16 +199,16 @@ def Event_1050383700(_, character: uint, character_1: uint):
     EnableBackread(character)
     ForceAnimation(character, 90100)
     SkipLines(4)
-    SkipLinesIfFlagRangeAllDisabled(3, (4169, 4170))
-    EnableCharacter(character_1)
-    EnableBackread(character_1)
-    ForceAnimation(character_1, 90100)
+    if FlagRangeAnyEnabled((4169, 4170)):
+        EnableCharacter(character_1)
+        EnableBackread(character_1)
+        ForceAnimation(character_1, 90100)
     AND_3.Add(FlagEnabled(4168))
     AND_3.Add(FlagDisabled(1050389230))
     SkipLinesIfConditionFalse(1, AND_3)
     ForceAnimation(character, 90101)
-    SkipLinesIfFlagRangeAllDisabled(1, (4169, 4170))
-    ForceAnimation(character_1, 90101)
+    if FlagRangeAnyEnabled((4169, 4170)):
+        ForceAnimation(character_1, 90101)
     Goto(Label.L20)
 
     # --- Label 4 --- #
@@ -314,7 +315,7 @@ def Event_1050383703(_, character: uint):
 
 
 @RestartOnRest(1050383704)
-def Event_1050383704(_, character: uint, asset: uint, character_1: uint):
+def Event_1050383704(_, character: Character | int, asset: Asset | int, character_1: Character | int):
     """Event 1050383704"""
     EnableAssetInvulnerability(asset)
     OR_1.Add(HealthValue(character) == 0)
@@ -517,10 +518,10 @@ def Event_1050383713():
     
     WaitFrames(frames=2)
     PlayCutscene(60500000, cutscene_flags=0, player_id=10000)
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     EnableFlag(1050382717)
     ForceAnimation(Characters.Millicent0, 90102)
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     End()
 
 

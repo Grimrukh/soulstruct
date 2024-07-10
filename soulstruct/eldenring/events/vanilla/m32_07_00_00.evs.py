@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m32_07_00_00_enums import *
 
 
@@ -130,8 +131,8 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, dummy_id=100, vfx_id=800, right=0)
     CommonFunc_90005703(
         0,
         character=Characters.LivingPot,
@@ -154,17 +155,17 @@ def Constructor():
 def Preconstructor():
     """Event 50"""
     Event_32072820()
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.TunnelMiner4, region=32072204, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Octopus, region=32072306, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier0, region=32072300, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier1, region=32072300, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier3, region=32072306, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier4, region=32072306, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier5, region=32072308, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier6, region=32072309, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier7, region=32072309, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier8, region=32072315, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier9, region=32072316, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner4, region=32072204, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Octopus, region=32072306, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier0, region=32072300, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier1, region=32072300, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier3, region=32072306, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier4, region=32072306, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier5, region=32072308, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier6, region=32072309, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier7, region=32072309, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier8, region=32072315, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier9, region=32072316, seconds=0.0, animation_id=-1)
 
 
 @RestartOnRest(32072580)
@@ -180,17 +181,17 @@ def Event_32072200(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    character_1: uint,
+    character_1: Character | int,
     special_effect: int,
     seconds: float,
     left: uint,
     left_1: uint,
     left_2: uint,
     left_3: uint,
-    asset: uint,
-    asset_1: uint,
-    asset_2: uint,
-    asset_3: uint,
+    asset: Asset | int,
+    asset_1: Asset | int,
+    asset_2: Asset | int,
+    asset_3: Asset | int,
 ):
     """Event 32072200"""
     if ThisEventSlotFlagEnabled():
@@ -405,7 +406,7 @@ def Event_32072849():
         flag_2=32072806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=32070800, asset=Assets.AEG099_001_9000, dummy_id=7, right=32070801)
+    CommonFunc_9005811(0, flag=32070800, asset=Assets.AEG099_001_9000, vfx_id=7, right=32070801)
     CommonFunc_9005822(
         0,
         flag=32070800,
@@ -479,7 +480,7 @@ def Event_32073701():
     if PlayerNotInOwnWorld():
         return
     EndIfFlagRangeAnyEnabled(flag_range=(3666, 3671))
-    OR_1.Add(CharacterInsideRegion(character=20000, region=32072700))
+    OR_1.Add(CharacterInsideRegion(character=ALL_PLAYERS, region=32072700))
     AwaitConditionTrue(OR_1)
     EnableFlag(32009203)
     EnableFlag(3678)
@@ -492,7 +493,7 @@ def Event_32073702():
     if PlayerNotInOwnWorld():
         return
     EndIfFlagRangeAnyEnabled(flag_range=(3666, 3671))
-    AND_1.Add(CharacterInsideRegion(character=20000, region=32072701))
+    AND_1.Add(CharacterInsideRegion(character=ALL_PLAYERS, region=32072701))
     AND_1.Add(FlagDisabled(1043399305))
     OR_1.Add(AND_1)
     AwaitConditionTrue(OR_1)

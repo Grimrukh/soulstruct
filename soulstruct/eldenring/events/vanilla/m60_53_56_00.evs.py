@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_53_56_00_enums import *
 
 
@@ -259,9 +260,9 @@ def Event_1053562200(_, character: uint):
 @RestartOnRest(1053562250)
 def Event_1053562250(
     _,
-    flag: uint,
+    flag: Flag | int,
     destination: uint,
-    character: uint,
+    character: Character | int,
     seconds: float,
     seconds_1: float,
     seconds_2: float,
@@ -273,7 +274,7 @@ def Event_1053562250(
     """Event 1053562250"""
     if FlagEnabled(flag):
         return
-    AND_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=20000))
+    AND_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=ALL_PLAYERS))
     if AND_1:
         return
     ForceAnimation(destination, 0)
@@ -292,7 +293,7 @@ def Event_1053562250(
 @RestartOnRest(1053562260)
 def Event_1053562260(
     _,
-    flag: uint,
+    flag: Flag | int,
     asset: uint,
     character: uint,
     character_1: uint,
@@ -302,7 +303,7 @@ def Event_1053562260(
     seconds_3: float,
     seconds_4: float,
     item_lot: int,
-    flag_1: uint,
+    flag_1: Flag | int,
 ):
     """Event 1053562260"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
@@ -326,14 +327,14 @@ def Event_1053562260(
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=803160)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=803160)
     AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=20000))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=ALL_PLAYERS))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -363,9 +364,9 @@ def Event_1053562260(
 @RestartOnRest(1053562270)
 def Event_1053562270(
     _,
-    flag: uint,
+    flag: Flag | int,
     seconds: float,
-    attacked_entity: uint,
+    attacked_entity: Character | int,
     seconds_1: float,
     character: uint,
     animation_id: int,
@@ -373,7 +374,7 @@ def Event_1053562270(
     radius: float,
     seconds_2: float,
     seconds_3: float,
-    flag_1: uint,
+    flag_1: Flag | int,
 ):
     """Event 1053562270"""
     if FlagEnabled(flag):
@@ -386,14 +387,14 @@ def Event_1053562270(
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=20000))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=20000))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=ALL_PLAYERS))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=ALL_PLAYERS))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=6))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=260))
-    OR_2.Add(EntityWithinDistance(entity=character, other_entity=20000, radius=radius))
+    OR_2.Add(EntityWithinDistance(entity=character, other_entity=ALL_PLAYERS, radius=radius))
     AND_1.Add(OR_2)
     AND_1.Add(OR_1)
     
@@ -410,7 +411,7 @@ def Event_1053562270(
 
 
 @RestartOnRest(1053562820)
-def Event_1053562820(_, flag: uint, flag_1: uint):
+def Event_1053562820(_, flag: Flag | int, flag_1: Flag | int):
     """Event 1053562820"""
     if PlayerNotInOwnWorld():
         return

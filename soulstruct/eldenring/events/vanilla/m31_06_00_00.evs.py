@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m31_06_00_00_enums import *
 
 
@@ -31,7 +32,7 @@ def Constructor():
     Event_31062810()
     Event_31062849()
     Event_31062811()
-    CommonFunc_90005525(0, flag=31060600, asset=31061600)
+    CommonFunc_90005525(0, flag=31060600, asset=Assets.AEG027_069_1000)
     CommonFunc_90005511(0, flag=31060540, asset=Assets.AEG027_043_1000, obj_act_id=31063540, obj_act_id_1=27043, left=0)
     CommonFunc_90005512(0, flag=31060540, region=31062540, region_1=31062541)
     CommonFunc_90005646(
@@ -46,7 +47,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_91005600(0, flag=31062800, asset=Assets.AEG099_001_9002, dummy_id=5)
+    CommonFunc_91005600(0, flag=31062800, asset=Assets.AEG099_001_9002, vfx_id=5)
 
 
 @ContinueOnRest(50)
@@ -264,8 +265,8 @@ def Event_31062849():
         flag_2=31062806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=31060800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
-    CommonFunc_9005813(0, flag=31060800, asset=Assets.AEG099_001_9001, dummy_id=3, right=0, dummy_id_1=806760)
+    CommonFunc_9005811(0, flag=31060800, asset=Assets.AEG099_001_9000, vfx_id=3, right=0)
+    CommonFunc_9005813(0, flag=31060800, asset=Assets.AEG099_001_9001, vfx_id=3, right=0, vfx_id_1=806760)
     CommonFunc_9005822(
         0,
         flag=31060800,

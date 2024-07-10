@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m30_19_00_00_enums import *
 
 
@@ -25,7 +26,7 @@ from .enums.m30_19_00_00_enums import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=301900, asset=Assets.AEG099_060_9000)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=0)
     CommonFunc_90005200(
         0,
         character=Characters.Imp2,
@@ -38,7 +39,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Imp1, region=30192207, seconds=0.0, animation_id=3004)
+    CommonFunc_90005250(0, character=Characters.Imp1, region=30192207, seconds=0.0, animation_id=3004)
     CommonFunc_90005211(
         0,
         character=Characters.Imp8,
@@ -47,14 +48,14 @@ def Constructor():
         region=30192203,
         radius=7.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Imp4, region=30192220, seconds=0.0, animation_id=3004)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Imp7, region=30192210, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30190211, region=30192210, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Imp4, region=30192220, seconds=0.0, animation_id=3004)
+    CommonFunc_90005250(0, character=Characters.Imp7, region=30192210, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30190211, region=30192210, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=30190212,
@@ -115,11 +116,11 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30190214, region=30192210, seconds=0.0, animation_id=3005)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30190225, region=30192225, seconds=1.5, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30190226, region=30192225, seconds=2.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30190227, region=30192225, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30190228, region=30192225, seconds=0.5, animation_id=-1)
+    CommonFunc_90005250(0, character=30190214, region=30192210, seconds=0.0, animation_id=3005)
+    CommonFunc_90005250(0, character=30190225, region=30192225, seconds=1.5, animation_id=-1)
+    CommonFunc_90005250(0, character=30190226, region=30192225, seconds=2.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30190227, region=30192225, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30190228, region=30192225, seconds=0.5, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=30190225,
@@ -168,9 +169,9 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30190222, region=30192203, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Imp9, region=30192204, seconds=0.0, animation_id=3003)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.ErdtreeBurialWatchdog1, region=30192302, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30190222, region=30192203, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Imp9, region=30192204, seconds=0.0, animation_id=3003)
+    CommonFunc_90005250(0, character=Characters.ErdtreeBurialWatchdog1, region=30192302, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=30190235,
@@ -183,7 +184,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.ErdtreeBurialWatchdog0, region=30192301, seconds=0.0, animation_id=3025)
+    CommonFunc_90005250(0, character=Characters.ErdtreeBurialWatchdog0, region=30192301, seconds=0.0, animation_id=3025)
     Event_30192201()
     CommonFunc_90005211(
         0,
@@ -193,10 +194,10 @@ def Constructor():
         region=30192300,
         radius=7.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -206,12 +207,12 @@ def Constructor():
         region=30192214,
         radius=7.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Imp0, region=30192208, seconds=0.0, animation_id=3006)
+    CommonFunc_90005250(0, character=Characters.Imp0, region=30192208, seconds=0.0, animation_id=3006)
     CommonFunc_90005211(
         0,
         character=Characters.Imp10,
@@ -220,10 +221,10 @@ def Constructor():
         region=30192211,
         radius=7.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005200(
         1,
@@ -237,8 +238,8 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CleanrotKnight2, region=30192400, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=30190302, region=30192400, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.CleanrotKnight2, region=30192400, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30190302, region=30192400, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         1,
         character=Characters.CleanrotKnight1,
@@ -251,7 +252,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=301900401, region=30192401, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=301900401, region=30192401, seconds=0.0, animation_id=-1)
     CommonFunc_90005650(
         0,
         flag=30190540,
@@ -269,7 +270,14 @@ def Constructor():
         flag_3=30190508,
         asset=Assets.AEG027_156_0500,
     )
-    CommonFunc_90005681(0, flag=30190505, flag_1=30190506, flag_2=30190507, flag_3=30190508, attacked_entity=30191505)
+    CommonFunc_90005681(
+        0,
+        flag=30190505,
+        flag_1=30190506,
+        flag_2=30190507,
+        flag_3=30190508,
+        attacked_entity=Assets.AEG027_156_0500,
+    )
     CommonFunc_90005680(
         0,
         flag=30190505,
@@ -286,7 +294,14 @@ def Constructor():
         flag_3=30190503,
         asset=Assets.AEG027_215_0500,
     )
-    CommonFunc_90005681(0, flag=30190500, flag_1=30190501, flag_2=30190502, flag_3=30190503, attacked_entity=30191500)
+    CommonFunc_90005681(
+        0,
+        flag=30190500,
+        flag_1=30190501,
+        flag_2=30190502,
+        flag_3=30190503,
+        attacked_entity=Assets.AEG027_215_0500,
+    )
     CommonFunc_90005680(
         0,
         flag=30190500,
@@ -449,7 +464,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_91005600(0, flag=30192800, asset=Assets.AEG099_001_9001, dummy_id=5)
+    CommonFunc_91005600(0, flag=30192800, asset=Assets.AEG099_001_9001, vfx_id=5)
 
 
 @ContinueOnRest(30190050)
@@ -463,7 +478,7 @@ def Event_30190050():
 
 
 @ContinueOnRest(30192210)
-def Event_30192210(_, flag: uint, entity: uint):
+def Event_30192210(_, flag: Flag | int, entity: uint):
     """Event 30192210"""
     if FlagEnabled(flag):
         ForceAnimation(entity, 11)
@@ -503,9 +518,9 @@ def Event_30192201():
 @ContinueOnRest(30192500)
 def Event_30192500(
     _,
-    flag: uint,
+    flag: Flag | int,
     source_entity: uint,
-    region: uint,
+    region: Region | int,
     owner_entity: uint,
     behavior_id: int,
     behavior_id_1: int,
@@ -896,9 +911,9 @@ def Event_30192500(
 @ContinueOnRest(30192501)
 def Event_30192501(
     _,
-    flag: uint,
+    flag: Flag | int,
     source_entity: uint,
-    region: uint,
+    region: Region | int,
     owner_entity: uint,
     behavior_id: int,
     behavior_id_1: int,
@@ -1288,9 +1303,9 @@ def Event_30192501(
 @ContinueOnRest(30192502)
 def Event_30192502(
     _,
-    flag: uint,
+    flag: Flag | int,
     source_entity: uint,
-    region: uint,
+    region: Region | int,
     owner_entity: uint,
     behavior_id: int,
     behavior_id_1: int,
@@ -1680,9 +1695,9 @@ def Event_30192502(
 @ContinueOnRest(30192503)
 def Event_30192503(
     _,
-    flag: uint,
+    flag: Flag | int,
     source_entity: uint,
-    region: uint,
+    region: Region | int,
     owner_entity: uint,
     behavior_id: int,
     behavior_id_1: int,
@@ -2072,9 +2087,9 @@ def Event_30192503(
 @ContinueOnRest(30192504)
 def Event_30192504(
     _,
-    flag: uint,
+    flag: Flag | int,
     source_entity: uint,
-    region: uint,
+    region: Region | int,
     owner_entity: uint,
     behavior_id: int,
     behavior_id_1: int,
@@ -2464,9 +2479,9 @@ def Event_30192504(
 @ContinueOnRest(30192505)
 def Event_30192505(
     _,
-    flag: uint,
+    flag: Flag | int,
     source_entity: uint,
-    region: uint,
+    region: Region | int,
     owner_entity: uint,
     behavior_id: int,
     behavior_id_1: int,
@@ -2856,9 +2871,9 @@ def Event_30192505(
 @ContinueOnRest(30192506)
 def Event_30192506(
     _,
-    flag: uint,
+    flag: Flag | int,
     source_entity: uint,
-    region: uint,
+    region: Region | int,
     owner_entity: uint,
     behavior_id: int,
     behavior_id_1: int,
@@ -3248,9 +3263,9 @@ def Event_30192506(
 @ContinueOnRest(30192507)
 def Event_30192507(
     _,
-    flag: uint,
+    flag: Flag | int,
     source_entity: uint,
-    region: uint,
+    region: Region | int,
     owner_entity: uint,
     behavior_id: int,
     behavior_id_1: int,
@@ -3638,7 +3653,7 @@ def Event_30192507(
 
 
 @RestartOnRest(30192520)
-def Event_30192520(_, flag: uint, asset: uint, flag_1: uint):
+def Event_30192520(_, flag: Flag | int, asset: Asset | int, flag_1: Flag | int):
     """Event 30192520"""
     if FlagEnabled(flag):
         return
@@ -3662,7 +3677,14 @@ def Event_30192520(_, flag: uint, asset: uint, flag_1: uint):
 @ContinueOnRest(30192600)
 def Event_30192600():
     """Event 30192600"""
-    CommonFunc_90005681(0, flag=30190505, flag_1=30190506, flag_2=30190507, flag_3=30190508, attacked_entity=30191505)
+    CommonFunc_90005681(
+        0,
+        flag=30190505,
+        flag_1=30190506,
+        flag_2=30190507,
+        flag_3=30190508,
+        attacked_entity=Assets.AEG027_156_0500,
+    )
     if FlagEnabled(57):
         CommonFunc_90005682(
             0,
@@ -3775,7 +3797,14 @@ def Event_30192600():
             dummy_id_2=0,
             dummy_id_3=0,
         )
-    CommonFunc_90005681(0, flag=30190500, flag_1=30190501, flag_2=30190502, flag_3=30190503, attacked_entity=30191500)
+    CommonFunc_90005681(
+        0,
+        flag=30190500,
+        flag_1=30190501,
+        flag_2=30190502,
+        flag_3=30190503,
+        attacked_entity=Assets.AEG027_215_0500,
+    )
     if FlagEnabled(57):
         CommonFunc_90005682(
             0,
@@ -3969,7 +3998,7 @@ def Event_30192849():
         flag_2=30192806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=30190800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=30190800, asset=Assets.AEG099_001_9000, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=30190800,

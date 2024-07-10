@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_49_53_00_enums import *
 
 
@@ -48,7 +49,7 @@ def Constructor():
     CommonFunc_90005261(0, character=Characters.Springhare1, region=1049532261, radius=1.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.Springhare2, region=1049532262, radius=1.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.Springhare3, region=1049532263, radius=1.0, seconds=0.0, animation_id=0)
-    CommonFunc_900005610(0, asset=1049531600, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=1049531600, dummy_id=100, vfx_id=800, right=0)
     Event_1049532200(0, character=1049535200)
     CommonFunc_90005704(0, attacked_entity=Characters.Shabriri, flag=3621, flag_1=3620, flag_2=1049539201, right=3)
     CommonFunc_90005703(
@@ -214,7 +215,7 @@ def Event_1049533702():
 
 
 @RestartOnRest(1049533703)
-def Event_1049533703(_, character: uint):
+def Event_1049533703(_, character: Character | int):
     """Event 1049533703"""
     if PlayerNotInOwnWorld():
         return
@@ -250,7 +251,7 @@ def Event_1049533705():
 
 
 @RestartOnRest(1049533710)
-def Event_1049533710(_, flag: uint):
+def Event_1049533710(_, flag: Flag | int):
     """Event 1049533710"""
     if PlayerNotInOwnWorld():
         return

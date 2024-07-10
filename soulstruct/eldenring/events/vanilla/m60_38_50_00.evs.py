@@ -18,8 +18,9 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_38_50_00_enums import *
-from .enums.m60_38_51_00_enums import Characters as m60_38_Characters
+from .enums.m60_38_51_00_enums import Characters as m60_38_51_00_Characters
 
 
 @ContinueOnRest(0)
@@ -46,11 +47,11 @@ def Constructor():
     )
     RegisterGrace(grace_flag=1038500001, asset=Assets.AEG099_060_9001)
     RegisterGrace(grace_flag=76301, asset=Assets.AEG099_060_9002)
-    CommonFunc_90005300(0, flag=1038500210, character=Characters.Scarab, item_lot=40256, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1038500210, character=Characters.Scarab, item_lot=40256, seconds=0.0, left=0)
     Event_1038502580()
     Event_1038502500()
     Event_1038503700(0, character=Characters.RyatheScout, asset=Assets.AEG099_320_9000)
-    CommonFunc_90005752(0, asset=1038501700, vfx_id=200, dummy_id=120, seconds=3.0)
+    CommonFunc_90005752(0, asset=Assets.AEG099_320_9000, dummy_id=200, vfx_id=120, seconds=3.0)
     Event_1038503701()
     Event_1038503702(0, attacked_entity=1038501700, other_entity=Characters.RyatheScout)
     Event_1038503703()
@@ -111,7 +112,14 @@ def Preconstructor():
 
 
 @RestartOnRest(1038502400)
-def Event_1038502400(_, character: uint, region: uint, seconds: float, animation_id: int, attacked_entity: uint):
+def Event_1038502400(
+    _,
+    character: uint,
+    region: Region | int,
+    seconds: float,
+    animation_id: int,
+    attacked_entity: Character | int,
+):
     """Event 1038502400"""
     if ThisEventSlotFlagEnabled():
         return
@@ -173,7 +181,7 @@ def Event_1038502580():
 
 
 @RestartOnRest(1038503700)
-def Event_1038503700(_, character: uint, asset: uint):
+def Event_1038503700(_, character: uint, asset: Asset | int):
     """Event 1038503700"""
     WaitFrames(frames=1)
     DisableNetworkSync()
@@ -256,14 +264,14 @@ def Event_1038503701():
     """Event 1038503701"""
     if PlayerNotInOwnWorld():
         return
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     if FlagDisabled(3426):
         return
     OR_1.Add(FlagEnabled(1038519207))
     OR_1.Add(FlagEnabled(1038509205))
     if OR_1:
         return
-    OR_5.Add(EntityWithinDistance(entity=PLAYER, other_entity=m60_38_Characters.TalkDummy0, radius=5.0))
+    OR_5.Add(EntityWithinDistance(entity=PLAYER, other_entity=m60_38_51_00_Characters.TalkDummy0, radius=5.0))
     if OR_5:
         return
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=1038502500))
@@ -282,7 +290,7 @@ def Event_1038503701():
 
 
 @RestartOnRest(1038503702)
-def Event_1038503702(_, attacked_entity: uint, other_entity: uint):
+def Event_1038503702(_, attacked_entity: Character | int, other_entity: uint):
     """Event 1038503702"""
     WaitFrames(frames=1)
     if PlayerNotInOwnWorld():
@@ -298,7 +306,7 @@ def Event_1038503702(_, attacked_entity: uint, other_entity: uint):
 
     # --- Label 1 --- #
     DefineLabel(1)
-    AND_1.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=20000))
+    AND_1.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=ALL_PLAYERS))
     
     MAIN.Await(AND_1)
     
@@ -306,7 +314,7 @@ def Event_1038503702(_, attacked_entity: uint, other_entity: uint):
 
     # --- Label 2 --- #
     DefineLabel(2)
-    AND_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=20000))
+    AND_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=ALL_PLAYERS))
     OR_2.Add(TimeElapsed(seconds=4.0))
     OR_3.Add(AND_2)
     OR_3.Add(OR_2)
@@ -323,7 +331,7 @@ def Event_1038503702(_, attacked_entity: uint, other_entity: uint):
 
     # --- Label 5 --- #
     DefineLabel(5)
-    AND_5.Add(EntityWithinDistance(entity=20000, other_entity=other_entity, radius=10.0))
+    AND_5.Add(EntityWithinDistance(entity=ALL_PLAYERS, other_entity=other_entity, radius=10.0))
     SkipLinesIfConditionFalse(2, AND_5)
     EnableFlag(1038512700)
     
@@ -333,7 +341,7 @@ def Event_1038503702(_, attacked_entity: uint, other_entity: uint):
 
     # --- Label 6 --- #
     DefineLabel(6)
-    AND_6.Add(EntityWithinDistance(entity=20000, other_entity=other_entity, radius=10.0))
+    AND_6.Add(EntityWithinDistance(entity=ALL_PLAYERS, other_entity=other_entity, radius=10.0))
     SkipLinesIfConditionFalse(2, AND_6)
     EnableFlag(1038512702)
     

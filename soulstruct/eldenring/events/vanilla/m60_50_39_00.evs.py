@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_50_39_00_enums import *
 
 
@@ -27,7 +28,7 @@ def Constructor():
     Event_1050392210(0, character=Characters.GiantBall0, asset=Assets.AEG099_090_9001, region=1050392290)
     Event_1050392210(1, character=Characters.GiantBall1, asset=Assets.AEG099_090_9002, region=1050392291)
     Event_1050392580(0, start_climbing_flag=50390580, stop_climbing_flag=50390851, asset=Assets.AEG110_069_2000)
-    CommonFunc_90005525(0, flag=1050390620, asset=1050391620)
+    CommonFunc_90005525(0, flag=1050390620, asset=Assets.AEG004_998_1000)
     CommonFunc_90005632(0, flag=580060, asset=Assets.AEG099_391_2000, item_lot=80060)
     Event_1050392300(0, asset=Assets.AEG099_252_2000, flag=1050390200)
     Event_1050392300(1, asset=Assets.AEG099_252_2001, flag=1050390200)
@@ -36,7 +37,7 @@ def Constructor():
     CommonFunc_90005251(0, character=Characters.RayaLucariaScholar0, radius=11.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.RayaLucariaScholar3, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.RayaLucariaScholar4, radius=7.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar6, region=1050392208, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar6, region=1050392208, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.RayaLucariaScholar7, radius=8.0, seconds=0.0, animation_id=-1)
     Event_1050392200(0, character=Characters.RayaLucariaScholar0, special_effect=14807)
     Event_1050392200(1, character=Characters.RayaLucariaScholar1, special_effect=14808)
@@ -94,18 +95,18 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Marionette, region=1050392400, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Marionette, region=1050392400, seconds=0.0, animation_id=-1)
 
 
 @RestartOnRest(1050392200)
-def Event_1050392200(_, character: uint, special_effect: int):
+def Event_1050392200(_, character: Character | int, special_effect: int):
     """Event 1050392200"""
     DisableNetworkSync()
     AddSpecialEffect(character, special_effect)
 
 
 @RestartOnRest(1050392201)
-def Event_1050392201(_, character: uint, special_effect: int, seconds: float, seconds_1: float):
+def Event_1050392201(_, character: Character | int, special_effect: int, seconds: float, seconds_1: float):
     """Event 1050392201"""
     DisableNetworkSync()
     AddSpecialEffect(character, special_effect)
@@ -116,7 +117,7 @@ def Event_1050392201(_, character: uint, special_effect: int, seconds: float, se
 
 
 @RestartOnRest(1050392210)
-def Event_1050392210(_, character: uint, asset: uint, region: uint):
+def Event_1050392210(_, character: uint, asset: Asset | int, region: uint):
     """Event 1050392210"""
     DisableCharacter(character)
     if FlagEnabled(region):
@@ -136,7 +137,7 @@ def Event_1050392210(_, character: uint, asset: uint, region: uint):
     
     MAIN.Await(AND_2)
     
-    CreateAssetVFX(asset, vfx_id=100, dummy_id=620383)
+    CreateAssetVFX(asset, dummy_id=100, vfx_id=620383)
     EnableCharacter(character)
     EnableNetworkFlag(region)
     Wait(2.0)
@@ -153,10 +154,10 @@ def Event_1050392210(_, character: uint, asset: uint, region: uint):
 
 
 @ContinueOnRest(1050392300)
-def Event_1050392300(_, asset: uint, flag: uint):
+def Event_1050392300(_, asset: uint, flag: Flag | int):
     """Event 1050392300"""
     EnableNetworkSync()
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=1502)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=1502)
     
     MAIN.Await(FlagEnabled(flag))
     
@@ -166,10 +167,10 @@ def Event_1050392300(_, asset: uint, flag: uint):
 
 
 @ContinueOnRest(1050392301)
-def Event_1050392301(_, asset: uint, flag: uint):
+def Event_1050392301(_, asset: uint, flag: Flag | int):
     """Event 1050392301"""
     EnableNetworkSync()
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=1501)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=1501)
     
     MAIN.Await(FlagEnabled(flag))
     
@@ -179,7 +180,7 @@ def Event_1050392301(_, asset: uint, flag: uint):
 
 
 @ContinueOnRest(1050392303)
-def Event_1050392303(_, asset: uint, flag: uint):
+def Event_1050392303(_, asset: uint, flag: Flag | int):
     """Event 1050392303"""
     EnableNetworkSync()
     GotoIfFlagEnabled(Label.L0, flag=flag)
@@ -188,7 +189,7 @@ def Event_1050392303(_, asset: uint, flag: uint):
     
     MAIN.Await(AND_1)
     
-    FaceEntity(PLAYER, asset, wait_for_completion=True)
+    FaceEntityAndForceAnimation(PLAYER, asset, wait_for_completion=True)
     ForceAnimation(PLAYER, 60010)
     Wait(1.2999999523162842)
     EnableFlag(flag)
@@ -196,11 +197,11 @@ def Event_1050392303(_, asset: uint, flag: uint):
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=100, dummy_id=806031)
+    CreateAssetVFX(asset, dummy_id=100, vfx_id=806031)
     End()
 
 
 @ContinueOnRest(1050392580)
-def Event_1050392580(_, start_climbing_flag: uint, stop_climbing_flag: uint, asset: uint):
+def Event_1050392580(_, start_climbing_flag: Flag | int, stop_climbing_flag: Flag | int, asset: Asset | int):
     """Event 1050392580"""
     RegisterLadder(start_climbing_flag=start_climbing_flag, stop_climbing_flag=stop_climbing_flag, asset=asset)

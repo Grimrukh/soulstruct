@@ -18,15 +18,16 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_37_53_00_enums import *
-from .enums.m60_37_54_00_enums import Characters as m60_37_Characters
+from .enums.m60_37_54_00_enums import Characters as m60_37_54_00_Characters
 
 
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005600(0, grace_flag=76357, asset=Assets.AEG099_060_9000, enemy_block_distance=5.0, character=0)
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.DemiHumanQueen, name=904130600, npc_threat_level=16)
+    CommonFunc_90005870(0, character=Characters.DemiHumanQueen, name=904130600, npc_threat_level=16)
     Event_1037532345()
     Event_1037532350()
     CommonFunc_90005860(
@@ -38,7 +39,7 @@ def Constructor():
         item_lot=30395,
         seconds=0.0,
     )
-    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.DemiHumanQueen, npc_threat_level=16, required_flag=0)
+    CommonFunc_90005872(0, character=Characters.DemiHumanQueen, npc_threat_level=16, right=0)
     Event_1037532450(
         0,
         character=Characters.DemiHumanQueen,
@@ -71,23 +72,23 @@ def Constructor():
         seconds=10.0,
         animation_id=-1,
     )
-    CommonFunc_90005300(0, flag=1037530400, character=Characters.LargeScarab, item_lot=40332, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1037530400, character=Characters.LargeScarab, item_lot=40332, seconds=0.0, left=0)
     CommonFunc_90005211(
         0,
-        character=m60_37_Characters.LeyndellFootSoldier2,
+        character=m60_37_54_00_Characters.LeyndellFootSoldier2,
         animation_id=30001,
         animation_id_1=20001,
         region=1037542370,
         radius=5.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005261(
         0,
-        character=m60_37_Characters.LeyndellFootSoldier2,
+        character=m60_37_54_00_Characters.LeyndellFootSoldier2,
         region=1037542370,
         radius=5.0,
         seconds=0.0,
@@ -101,10 +102,10 @@ def Constructor():
         region=1037542370,
         radius=5.0,
         seconds=1.5,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005261(1, character=1037540371, region=1037542370, radius=5.0, seconds=1.5, animation_id=-1)
     CommonFunc_90005211(
@@ -115,10 +116,10 @@ def Constructor():
         region=1037542370,
         radius=5.0,
         seconds=4.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005261(2, character=1037540372, region=1037542370, radius=5.0, seconds=4.0, animation_id=-1)
     CommonFunc_90005211(
@@ -129,10 +130,10 @@ def Constructor():
         region=1037542370,
         radius=5.0,
         seconds=1.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005261(3, character=1037540373, region=1037542370, radius=5.0, seconds=1.0, animation_id=-1)
     CommonFunc_90005211(
@@ -143,10 +144,10 @@ def Constructor():
         region=1037542370,
         radius=5.0,
         seconds=2.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005261(4, character=1037540374, region=1037542370, radius=5.0, seconds=2.0, animation_id=-1)
     CommonFunc_90005211(
@@ -157,10 +158,10 @@ def Constructor():
         region=1037542370,
         radius=5.0,
         seconds=3.299999952316284,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005261(
         5,
@@ -178,10 +179,10 @@ def Constructor():
         region=1037532360,
         radius=10.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005201(
         0,
@@ -229,7 +230,7 @@ def Constructor():
     Event_1037532200(14, source_entity=1037531214, seconds=1.899999976158142)
     Event_1037532200(15, source_entity=Assets.AEG099_048_9000, seconds=4.599999904632568)
     Event_1037532200(16, source_entity=1037531216, seconds=4.0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=1037538620)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=1037538620)
     Event_1037533700(0, character=Characters.Azur)
 
 
@@ -475,7 +476,7 @@ def Event_1037532400(_, character: uint, region: uint, owner_entity: uint):
 
 
 @RestartOnRest(1037532450)
-def Event_1037532450(_, character: uint, region: uint, radius: float, seconds: float, animation_id: int):
+def Event_1037532450(_, character: uint, region: Region | int, radius: float, seconds: float, animation_id: int):
     """Event 1037532450"""
     if ThisEventSlotFlagEnabled():
         return
@@ -544,7 +545,7 @@ def Event_1037532450(_, character: uint, region: uint, radius: float, seconds: f
 
 
 @RestartOnRest(1037533700)
-def Event_1037533700(_, character: uint):
+def Event_1037533700(_, character: Character | int):
     """Event 1037533700"""
     if PlayerNotInOwnWorld():
         return

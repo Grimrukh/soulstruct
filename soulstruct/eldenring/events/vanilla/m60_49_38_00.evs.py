@@ -17,6 +17,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_49_38_00_enums import *
 
 
@@ -85,7 +86,7 @@ def Constructor():
         region=1049382400,
         left=0,
     )
-    CommonFunc_90005300(0, flag=1049380290, character=Characters.Scarab, item_lot=40404, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1049380290, character=Characters.Scarab, item_lot=40404, seconds=0.0, left=0)
     Event_1049382210()
     Event_1049382211(0, source_entity=Assets.AEG099_046_9035, seconds=6.0)
     Event_1049382211(1, source_entity=Assets.AEG099_046_9036, seconds=12.0)
@@ -96,13 +97,13 @@ def Constructor():
     Event_1049382211(6, source_entity=Assets.AEG099_046_9041, seconds=8.0)
     Event_1049382211(7, source_entity=Assets.AEG099_046_9042, seconds=5.0)
     Event_1049382211(8, source_entity=Assets.AEG099_046_9043, seconds=4.0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.DeathRiteBird, region=1049382399, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.DeathRiteBird, region=1049382399, seconds=0.0, animation_id=-1)
     Event_1049382200(0, character=Characters.RayaLucariaScholar0, special_effect=14807)
     Event_1049382200(1, character=Characters.RayaLucariaScholar1, special_effect=14807)
     Event_1049382200(2, character=Characters.RayaLucariaScholar2, special_effect=14807)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar0, region=1049382200, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar1, region=1049382200, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RayaLucariaScholar2, region=1049382200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar0, region=1049382200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar1, region=1049382200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar2, region=1049382200, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.CleanrotKnight2,
@@ -115,12 +116,12 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CleanrotKnight0, region=1049382311, seconds=82.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CleanrotKnight1, region=1049382311, seconds=22.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CleanrotKnight3, region=1049382311, seconds=115.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CleanrotKnight4, region=1049382311, seconds=50.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.CleanrotKnight0, region=1049382311, seconds=82.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.CleanrotKnight1, region=1049382311, seconds=22.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.CleanrotKnight3, region=1049382311, seconds=115.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.CleanrotKnight4, region=1049382311, seconds=50.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.Commander, radius=35.0, seconds=0.0, animation_id=-1)
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.Commander, name=903050600, npc_threat_level=11)
+    CommonFunc_90005870(0, character=Characters.Commander, name=903050600, npc_threat_level=11)
     CommonFunc_90005860(
         0,
         flag=1049380800,
@@ -130,7 +131,7 @@ def Constructor():
         item_lot=30405,
         seconds=0.0,
     )
-    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.Commander, npc_threat_level=11, required_flag=0)
+    CommonFunc_90005872(0, character=Characters.Commander, npc_threat_level=11, right=0)
     Event_1049382820(
         0,
         character=Characters.Commander,
@@ -155,7 +156,7 @@ def Constructor():
 
 
 @RestartOnRest(1049382200)
-def Event_1049382200(_, character: uint, special_effect: int):
+def Event_1049382200(_, character: Character | int, special_effect: int):
     """Event 1049382200"""
     AddSpecialEffect(character, special_effect)
 
@@ -294,7 +295,7 @@ def Event_1049382399(_, character: uint, destination: uint, special_effect: int)
 
 
 @RestartOnRest(1049382820)
-def Event_1049382820(_, character: uint, character_1: uint, special_effect: int, animation_id: int):
+def Event_1049382820(_, character: Character | int, character_1: uint, special_effect: int, animation_id: int):
     """Event 1049382820"""
     GotoIfFlagDisabled(Label.L0, flag=1049380800)
     DisableCharacter(character_1)
@@ -352,7 +353,7 @@ def Event_1049382821(_, character: uint, character_1: uint, character_2: uint, a
 
 
 @RestartOnRest(1049382824)
-def Event_1049382824(_, character: uint, character_1: uint, special_effect: int, animation_id: int):
+def Event_1049382824(_, character: Character | int, character_1: uint, special_effect: int, animation_id: int):
     """Event 1049382824"""
     GotoIfFlagDisabled(Label.L0, flag=1049380800)
     DisableCharacter(character_1)

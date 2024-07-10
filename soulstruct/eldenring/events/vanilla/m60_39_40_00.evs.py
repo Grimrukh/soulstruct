@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_39_40_00_enums import *
 
 
@@ -43,7 +44,7 @@ def Constructor():
         flag_10=78208,
         flag_11=78209,
     )
-    CommonFunc_900005610(0, asset=Assets.AEG003_316_9001, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG003_316_9001, dummy_id=100, vfx_id=800, right=0)
     Event_1039400700(0, character=Characters.Hyetta)
     CommonFunc_90005702(0, character=Characters.Hyetta, flag=3383, first_flag=3380, last_flag=3383)
     CommonFunc_90005703(
@@ -100,10 +101,10 @@ def Preconstructor():
         region=1039402220,
         radius=0.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
 
 
@@ -279,8 +280,8 @@ def Event_1039403711(_, entity: uint):
     OR_1.Add(FlagEnabled(1039409259))
     if OR_1:
         return
-    AND_1.Add(EntityWithinDistance(entity=entity, other_entity=20000, radius=4.0))
-    AND_1.Add(CharacterHasSpecialEffect(20000, 9690))
+    AND_1.Add(EntityWithinDistance(entity=entity, other_entity=ALL_PLAYERS, radius=4.0))
+    AND_1.Add(CharacterHasSpecialEffect(ALL_PLAYERS, 9690))
     AwaitConditionTrue(AND_1)
     EnableNetworkFlag(1039402710)
     End()

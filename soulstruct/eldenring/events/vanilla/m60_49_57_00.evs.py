@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_49_57_00_enums import *
 
 
@@ -32,10 +33,10 @@ def Constructor():
         region=1049572251,
         radius=1.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -45,10 +46,10 @@ def Constructor():
         region=1049572251,
         radius=1.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -58,20 +59,20 @@ def Constructor():
         region=1049572259,
         radius=1.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    CommonFunc_90005300(0, flag=1049570300, character=Characters.LargeScarab, item_lot=1049570710, seconds=0.0, item_is_dropped=0)
-    CommonFunc_90005300(0, flag=1049570310, character=Characters.Scarab, item_lot=1049570700, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1049570300, character=Characters.LargeScarab, item_lot=1049570710, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1049570310, character=Characters.Scarab, item_lot=1049570700, seconds=0.0, left=0)
     CommonFunc_90005300(
         0,
         flag=1049570320,
         character=Characters.ExtraLargeScarab,
         item_lot=1049570720,
         seconds=0.0,
-        item_is_dropped=0,
+        left=0,
     )
     CommonFunc_90005201(
         0,

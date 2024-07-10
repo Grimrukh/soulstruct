@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m30_09_00_00_enums import *
 
 
@@ -48,14 +49,14 @@ def Constructor():
     Event_30092500()
     Event_30092580()
     CommonFunc_90005616(0, flag=30097000, region=30092700)
-    CommonFunc_AITrigger_RegionOrHurt(
+    CommonFunc_90005250(
         0,
         character=Characters.CatacombsSkeleton0,
         region=30092200,
         seconds=0.20000000298023224,
         animation_id=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(1, character=Characters.CatacombsSkeleton1, region=30092200, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(1, character=Characters.CatacombsSkeleton1, region=30092200, seconds=0.0, animation_id=0)
     CommonFunc_90005200(
         0,
         character=Characters.CatacombsSkeleton2,
@@ -68,8 +69,8 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CatacombsSkeleton3, region=30092206, seconds=0.0, animation_id=3000)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CatacombsSkeleton6, region=30092219, seconds=0.0, animation_id=3026)
+    CommonFunc_90005250(0, character=Characters.CatacombsSkeleton3, region=30092206, seconds=0.0, animation_id=3000)
+    CommonFunc_90005250(0, character=Characters.CatacombsSkeleton6, region=30092219, seconds=0.0, animation_id=3026)
     CommonFunc_90005200(
         0,
         character=Characters.CatacombsSkeleton4,
@@ -118,7 +119,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.WanderingNoble4, region=30092230, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.WanderingNoble4, region=30092230, seconds=0.0, animation_id=0)
     CommonFunc_90005221(
         0,
         character=Characters.WanderingNoble0,
@@ -175,7 +176,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.WanderingNoble7, region=30092258, seconds=0.0, animation_id=701)
+    CommonFunc_90005250(0, character=Characters.WanderingNoble7, region=30092258, seconds=0.0, animation_id=701)
     CommonFunc_90005221(
         0,
         character=Characters.WanderingNoble8,
@@ -184,15 +185,15 @@ def Constructor():
         seconds=0.0,
         left=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Page0, region=30092250, seconds=0.0, animation_id=3009)
-    CommonFunc_AITrigger_RegionOrHurt(1, character=Characters.Page1, region=30092250, seconds=3.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Page4, region=30092258, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Page2, region=30092254, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Page3, region=30092254, seconds=0.0, animation_id=3010)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CemeteryShade, region=30092270, seconds=0.0, animation_id=5003)
-    CommonFunc_AITrigger_RegionOrHurt(1, character=30090301, region=30092301, seconds=0.0, animation_id=5003)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BloodhoundKnight, region=30092300, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.MercilessChariot0, region=30092400, seconds=1.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Page0, region=30092250, seconds=0.0, animation_id=3009)
+    CommonFunc_90005250(1, character=Characters.Page1, region=30092250, seconds=3.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Page4, region=30092258, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Page2, region=30092254, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Page3, region=30092254, seconds=0.0, animation_id=3010)
+    CommonFunc_90005250(0, character=Characters.CemeteryShade, region=30092270, seconds=0.0, animation_id=5003)
+    CommonFunc_90005250(1, character=30090301, region=30092301, seconds=0.0, animation_id=5003)
+    CommonFunc_90005250(0, character=Characters.BloodhoundKnight, region=30092300, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.MercilessChariot0, region=30092400, seconds=1.0, animation_id=-1)
     Event_30092400(0, character=Characters.MercilessChariot0)
     Event_30092410(
         0,
@@ -202,7 +203,7 @@ def Constructor():
         region_1=30092421,
         patrol_information_id_1=30093421,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.MercilessChariot1, region=30092410, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.MercilessChariot1, region=30092410, seconds=0.0, animation_id=-1)
     Event_30092400(1, character=Characters.MercilessChariot1)
     Event_30092399()
     Event_30092410(
@@ -256,7 +257,7 @@ def Event_30090050():
 
 
 @ContinueOnRest(30090100)
-def Event_30090100(_, flag: uint, asset: uint, obj_act_id: uint, obj_act_id_1: int):
+def Event_30090100(_, flag: Flag | int, asset: uint, obj_act_id: uint, obj_act_id_1: int):
     """Event 30090100"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     EndOfAnimation(asset=asset, animation_id=2)
@@ -307,7 +308,14 @@ def Event_30090519():
 @RestartOnRest(30092500)
 def Event_30092500():
     """Event 30092500"""
-    CommonFunc_90005681(0, flag=30090500, flag_1=30090501, flag_2=30090502, flag_3=30090503, attacked_entity=30091500)
+    CommonFunc_90005681(
+        0,
+        flag=30090500,
+        flag_1=30090501,
+        flag_2=30090502,
+        flag_3=30090503,
+        attacked_entity=Assets.AEG027_155_0500,
+    )
     if FlagEnabled(57):
         CommonFunc_90005682(
             0,
@@ -480,7 +488,7 @@ def Event_30092399():
 
 
 @RestartOnRest(30092400)
-def Event_30092400(_, character: uint):
+def Event_30092400(_, character: Character | int):
     """Event 30092400"""
     EnableInvincibility(character)
     SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
@@ -495,10 +503,10 @@ def Event_30092400(_, character: uint):
 @RestartOnRest(30092410)
 def Event_30092410(
     _,
-    character: uint,
-    region: uint,
+    character: Character | int,
+    region: Region | int,
     patrol_information_id: uint,
-    region_1: uint,
+    region_1: Region | int,
     patrol_information_id_1: uint,
 ):
     """Event 30092410"""
@@ -534,9 +542,9 @@ def Event_30092580():
 @ContinueOnRest(30092610)
 def Event_30092610(
     _,
-    flag: uint,
+    flag: Flag | int,
     source_entity: uint,
-    region: uint,
+    region: Region | int,
     owner_entity: uint,
     behavior_id: int,
     behavior_id_1: int,
@@ -734,7 +742,7 @@ def Event_30092610(
 
 
 @RestartOnRest(30090790)
-def Event_30090790(_, asset: uint, flag: uint):
+def Event_30090790(_, asset: Asset | int, flag: Flag | int):
     """Event 30090790"""
     if ThisEventSlotFlagEnabled():
         return
@@ -837,7 +845,7 @@ def Event_30092849():
         flag_2=30092806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=30090800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=30090800, asset=Assets.AEG099_001_9000, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=30090800,

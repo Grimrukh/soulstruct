@@ -18,8 +18,9 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m34_13_00_00_enums import *
-from .enums.m31_12_00_00_enums import Assets as m31_12_Assets
+from .enums.m31_12_00_00_enums import Assets as m31_12_00_00_Assets
 
 
 @ContinueOnRest(0)
@@ -37,7 +38,7 @@ def Constructor():
         asset=Assets.AEG099_991_9000,
         item_lot=34130050,
         item=8149,
-        dummy_id=806930,
+        vfx_id=806930,
         action_button_id=9081,
         animation_id=60520,
         left=0,
@@ -110,7 +111,7 @@ def Constructor():
     CommonFunc_90005691(0, region=34132592)
     CommonFunc_90005690(0, region=34132593)
     CommonFunc_90005691(0, region=34132593)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GodskinMonk0, region=34132299, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GodskinMonk0, region=34132299, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.GodskinMonk1, radius=10.0, seconds=0.0, animation_id=-1)
 
 
@@ -198,7 +199,7 @@ def Event_34132580():
 
 
 @RestartOnRest(34132590)
-def Event_34132590(_, entity: uint, region: uint, animation_id: int, asset: uint):
+def Event_34132590(_, entity: uint, region: Region | int, animation_id: int, asset: Asset | int):
     """Event 34132590"""
     ForceAnimation(entity, 0)
     if AssetDestroyed(asset):
@@ -278,7 +279,7 @@ def Event_34132849():
         flag_2=34132806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=34130800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=34130800, asset=Assets.AEG099_001_9000, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=34130800,
@@ -293,7 +294,7 @@ def Event_34132849():
     CommonFunc_9005800(
         0,
         flag=34130800,
-        entity=m31_12_Assets.AEG099_001_9000,
+        entity=m31_12_00_00_Assets.AEG099_001_9000,
         region=34132800,
         flag_1=34132805,
         character=31125800,
@@ -304,14 +305,14 @@ def Event_34132849():
     CommonFunc_9005801(
         0,
         flag=34130800,
-        entity=m31_12_Assets.AEG099_001_9000,
+        entity=m31_12_00_00_Assets.AEG099_001_9000,
         region=34132800,
         flag_1=34132805,
         flag_2=31122806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=34130800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
-    CommonFunc_9005812(0, flag=34130800, asset=Assets.AEG099_001_9001, dummy_id=3, right=0, dummy_id_1=0)
+    CommonFunc_9005811(0, flag=34130800, asset=Assets.AEG099_001_9000, vfx_id=3, right=0)
+    CommonFunc_9005812(0, flag=34130800, asset=Assets.AEG099_001_9001, vfx_id=3, right=0, vfx_id_1=0)
     CommonFunc_9005822(
         0,
         flag=34130800,

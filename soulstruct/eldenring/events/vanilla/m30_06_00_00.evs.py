@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m30_06_00_00_enums import *
 
 
@@ -113,10 +114,10 @@ def Preconstructor():
         region=30062200,
         radius=2.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005251(0, character=Characters.Imp1, radius=20.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.Imp2, region=30062202, radius=5.0, seconds=1.0, animation_id=3002)
@@ -128,12 +129,12 @@ def Preconstructor():
         region=30062203,
         radius=2.0,
         seconds=2.5999999046325684,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Imp4, region=30062204, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Imp4, region=30062204, seconds=0.0, animation_id=0)
     Event_30062206()
     CommonFunc_90005200(
         0,
@@ -179,10 +180,10 @@ def Preconstructor():
         region=30062208,
         radius=5.0,
         seconds=2.799999952316284,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -192,10 +193,10 @@ def Preconstructor():
         region=30062208,
         radius=5.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -205,10 +206,10 @@ def Preconstructor():
         region=30062210,
         radius=2.0,
         seconds=0.30000001192092896,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -218,10 +219,10 @@ def Preconstructor():
         region=30062210,
         radius=2.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -231,10 +232,10 @@ def Preconstructor():
         region=30062212,
         radius=2.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005201(
         0,
@@ -256,10 +257,10 @@ def Preconstructor():
         region=30062214,
         radius=3.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005201(
         0,
@@ -497,7 +498,7 @@ def Event_30062400(
     _,
     owner_entity: uint,
     entity: uint,
-    region: uint,
+    region: Region | int,
     behavior_id: int,
     source_entity: uint,
     source_entity_1: uint,
@@ -1295,7 +1296,7 @@ def Event_30062300(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    region: uint,
+    region: Region | int,
     seconds: float,
     left: uint,
     left_1: uint,
@@ -1425,7 +1426,7 @@ def Event_30060519():
 
 
 @RestartOnRest(30062520)
-def Event_30062520(_, flag: uint, asset: uint, flag_1: uint):
+def Event_30062520(_, flag: Flag | int, asset: Asset | int, flag_1: Flag | int):
     """Event 30062520"""
     if FlagEnabled(flag):
         return
@@ -1529,7 +1530,7 @@ def Event_30062849():
         flag_2=30062806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=30060800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=30060800, asset=Assets.AEG099_001_9000, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=30060800,

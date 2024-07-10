@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_48_57_00_enums import *
 
 
@@ -39,10 +40,10 @@ def Constructor():
         region=1048572277,
         radius=10.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -52,10 +53,10 @@ def Constructor():
         region=1048572277,
         radius=10.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -65,19 +66,19 @@ def Constructor():
         region=1048572285,
         radius=10.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    CommonFunc_90005300(0, flag=1048570200, character=1048570200, item_lot=40526, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1048570200, character=1048570200, item_lot=40526, seconds=0.0, left=0)
     CommonFunc_90005300(
         0,
         flag=1048570250,
         character=Characters.BlackKnifeAssassin0,
         item_lot=1048570900,
         seconds=0.0,
-        item_is_dropped=0,
+        left=0,
     )
     CommonFunc_90005300(
         0,
@@ -85,7 +86,7 @@ def Constructor():
         character=Characters.BlackKnifeAssassin1,
         item_lot=1048570910,
         seconds=0.0,
-        item_is_dropped=0,
+        left=0,
     )
     CommonFunc_90005300(
         0,
@@ -93,7 +94,7 @@ def Constructor():
         character=Characters.BlackKnifeAssassin2,
         item_lot=1048570920,
         seconds=0.0,
-        item_is_dropped=0,
+        left=0,
     )
     CommonFunc_90005300(
         0,
@@ -101,7 +102,7 @@ def Constructor():
         character=Characters.BlackKnifeAssassin3,
         item_lot=1048570930,
         seconds=0.0,
-        item_is_dropped=0,
+        left=0,
     )
     Event_1048572820(
         0,
@@ -115,7 +116,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.DeathRiteBird, name=904980607, npc_threat_level=24)
+    CommonFunc_90005870(0, character=Characters.DeathRiteBird, name=904980607, npc_threat_level=24)
     CommonFunc_90005860(
         0,
         flag=1048570800,
@@ -187,11 +188,11 @@ def Event_1048572256():
 def Event_1048572260():
     """Event 1048572260"""
     DisableNetworkSync()
-    AND_1.Add(CharacterHasSpecialEffect(20000, 416))
+    AND_1.Add(CharacterHasSpecialEffect(ALL_PLAYERS, 416))
     
     MAIN.Await(AND_1)
     
-    AddSpecialEffect(20000, 14508)
+    AddSpecialEffect(ALL_PLAYERS, 14508)
     Wait(1.0)
     Restart()
 
@@ -209,7 +210,7 @@ def Event_1048572270():
 
 
 @RestartOnRest(1048572275)
-def Event_1048572275(_, character: uint):
+def Event_1048572275(_, character: Character | int):
     """Event 1048572275"""
     EnableInvincibility(character)
     SetLockOnPoint(character=character, lock_on_dummy_id=220, state=False)
@@ -220,10 +221,10 @@ def Event_1048572275(_, character: uint):
 def Event_1048572300(
     _,
     anchor_entity: uint,
-    asset: uint,
-    asset_1: uint,
-    character: uint,
-    character_1: uint,
+    asset: Asset | int,
+    asset_1: Asset | int,
+    character: Character | int,
+    character_1: Character | int,
     destination: uint,
 ):
     """Event 1048572300"""
@@ -428,7 +429,7 @@ def Event_1048572350():
     """Event 1048572350"""
     GotoIfFlagEnabled(Label.L0, flag=1048570350)
     DeleteAssetVFX(Assets.AEG099_251_9000, erase_root=False)
-    CreateAssetVFX(Assets.AEG099_251_9000, vfx_id=200, dummy_id=1505)
+    CreateAssetVFX(Assets.AEG099_251_9000, dummy_id=200, vfx_id=1505)
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(FlagEnabled(1048570370))
     AND_1.Add(FlagEnabled(1048570371))
@@ -439,11 +440,11 @@ def Event_1048572350():
     
     EnableFlag(1048570350)
     Wait(2.299999952316284)
-    DisplayDialog(text=30020, anchor_entity=0, display_distance=5.0)
+    DisplayDialog(text=30020, display_distance=5.0)
     DisableAsset(Assets.AEG099_251_9000)
     DeleteAssetVFX(Assets.AEG099_251_9000)
     PlaySoundEffect(Assets.AEG099_251_9000, 1500, sound_type=SoundType.s_SFX)
-    AddSpecialEffect(20000, 8870)
+    AddSpecialEffect(ALL_PLAYERS, 8870)
     Wait(4.5)
     WarpToMap(game_map=NORTHWEST_MOUNTAINTOPS_SW_NW, player_start=1048572301)
     End()
@@ -467,12 +468,12 @@ def Event_1048572355():
     DeleteAssetVFX(1048571383, erase_root=False)
     DeleteAssetVFX(Assets.AEG110_264_2004, erase_root=False)
     DeleteAssetVFX(Assets.AEG110_264_2005, erase_root=False)
-    CreateAssetVFX(1048571380, vfx_id=200, dummy_id=1503)
-    CreateAssetVFX(Assets.AEG110_264_2001, vfx_id=200, dummy_id=1503)
-    CreateAssetVFX(1048571382, vfx_id=200, dummy_id=1503)
-    CreateAssetVFX(1048571383, vfx_id=200, dummy_id=1503)
-    CreateAssetVFX(Assets.AEG110_264_2004, vfx_id=200, dummy_id=1503)
-    CreateAssetVFX(Assets.AEG110_264_2005, vfx_id=200, dummy_id=1503)
+    CreateAssetVFX(1048571380, dummy_id=200, vfx_id=1503)
+    CreateAssetVFX(Assets.AEG110_264_2001, dummy_id=200, vfx_id=1503)
+    CreateAssetVFX(1048571382, dummy_id=200, vfx_id=1503)
+    CreateAssetVFX(1048571383, dummy_id=200, vfx_id=1503)
+    CreateAssetVFX(Assets.AEG110_264_2004, dummy_id=200, vfx_id=1503)
+    CreateAssetVFX(Assets.AEG110_264_2005, dummy_id=200, vfx_id=1503)
     AND_1.Add(FlagEnabled(1048572309))
     
     MAIN.Await(AND_1)
@@ -495,7 +496,7 @@ def Event_1048572355():
 
 
 @RestartOnRest(1048572370)
-def Event_1048572370(_, asset: uint, asset_1: uint, flag: uint):
+def Event_1048572370(_, asset: uint, asset_1: Asset | int, flag: Flag | int):
     """Event 1048572370"""
     DeleteAssetVFX(asset)
     GotoIfFlagEnabled(Label.L0, flag=flag)
@@ -513,9 +514,9 @@ def Event_1048572370(_, asset: uint, asset_1: uint, flag: uint):
     # --- Label 0 --- #
     DefineLabel(0)
     DeleteAssetVFX(asset_1)
-    CreateAssetVFX(asset_1, vfx_id=200, dummy_id=806061)
+    CreateAssetVFX(asset_1, dummy_id=200, vfx_id=806061)
     AwaitFlagEnabled(flag=1048572309)
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=806060)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=806060)
     End()
     GotoIfFlagEnabled(Label.L0, flag=1048572309)
 
@@ -564,7 +565,7 @@ def Event_1048572820(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    region: uint,
+    region: Region | int,
     seconds: float,
     left: uint,
     left_1: uint,

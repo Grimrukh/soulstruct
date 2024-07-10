@@ -67,9 +67,10 @@ class FLVERStruct(BinaryStruct):
 class FLVER(GameFile):
     """Model format used since Dark Souls PTDE.
 
-    Technically, this format is FLVER2. Demon's Souls used an older version, `FLVER0`, which is not supported here.
+    Technically, this format is FLVER2. Demon's Souls used an older version, `FLVER0`, which is not supported here. This
+    class supports ALL games from Dark Souls to Elden Ring; minor format differences are handled internally.
 
-    Order of packed FLVER information, for reference:
+    Order of packed binary FLVER information, for reference:
         - FLVER header
         - Material headers
         - Bone headers

@@ -164,7 +164,8 @@ def _process_arg_types(
             try:
                 args[arg_name] = EnumValue(enum, arg_value)
             except ValueError:
-                raise ValueError(f"Invalid {str(enum)} value: {arg_value}")
+                # Missing enum value. Leave as integer value.
+                _LOGGER.warning(f"Invalid {str(enum)} value: {arg_value}")
 
 
 def assemble_arg_string(defaults: dict, *args, **kwargs):

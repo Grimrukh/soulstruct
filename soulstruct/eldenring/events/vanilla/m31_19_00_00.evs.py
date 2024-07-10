@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m31_19_00_00_enums import *
 
 
@@ -38,7 +39,7 @@ def Constructor():
     Event_31192880()
     Event_31192863(0, character=Characters.Snail1, flag=31192870)
     Event_31192863(1, character=Characters.Snail2, flag=31192871)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=0)
     CommonFunc_90005261(0, character=Characters.Skeleton0, region=31192200, radius=3.0, seconds=0.0, animation_id=0)
     Event_31192210(0, character=Characters.Skeleton1, region=31192210, radius=2.0, seconds=0.0, animation_id=0)
     Event_31192210(1, character=Characters.Skeleton2, region=31192210, radius=2.0, seconds=0.0, animation_id=0)
@@ -49,12 +50,12 @@ def Constructor():
     CommonFunc_90005261(0, character=Characters.Skeleton7, region=31192220, radius=2.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.GraveSkeleton, region=31192219, radius=3.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=31190280, region=31192218, radius=3.0, seconds=0.0, animation_id=3001)
-    CommonFunc_90005525(0, flag=31190600, asset=31191600)
-    CommonFunc_90005525(0, flag=31190601, asset=31191601)
-    CommonFunc_90005525(0, flag=31190602, asset=31191602)
-    CommonFunc_90005525(0, flag=31190603, asset=31191603)
-    CommonFunc_90005525(0, flag=31190604, asset=31191604)
-    CommonFunc_90005525(0, flag=31190605, asset=31191605)
+    CommonFunc_90005525(0, flag=31190600, asset=Assets.AEG027_069_1000)
+    CommonFunc_90005525(0, flag=31190601, asset=Assets.AEG027_069_1001)
+    CommonFunc_90005525(0, flag=31190602, asset=Assets.AEG027_069_1002)
+    CommonFunc_90005525(0, flag=31190603, asset=Assets.AEG027_069_1003)
+    CommonFunc_90005525(0, flag=31190604, asset=Assets.AEG027_069_1004)
+    CommonFunc_90005525(0, flag=31190605, asset=Assets.AEG027_069_1005)
     CommonFunc_90005646(
         0,
         flag=31190800,
@@ -82,7 +83,7 @@ def Constructor():
 
 
 @RestartOnRest(31192210)
-def Event_31192210(_, character: uint, region: uint, radius: float, seconds: float, animation_id: int):
+def Event_31192210(_, character: uint, region: Region | int, radius: float, seconds: float, animation_id: int):
     """Event 31192210"""
     if ThisEventSlotFlagEnabled():
         return
@@ -136,7 +137,7 @@ def Event_35002250(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    region: uint,
+    region: Region | int,
     radius: float,
     seconds: float,
     left: uint,
@@ -217,11 +218,11 @@ def Event_35002250(
 
 
 @RestartOnRest(31190600)
-def Event_31190600(_, flag: uint, asset: uint):
+def Event_31190600(_, flag: Flag | int, asset: uint):
     """Event 31190600"""
     GotoIfFlagEnabled(Label.L0, flag=flag)
     AND_1.Add(PlayerInOwnWorld())
-    AND_1.Add(AttackedWithDamageType(attacked_entity=asset, attacker=20000))
+    AND_1.Add(AttackedWithDamageType(attacked_entity=asset, attacker=ALL_PLAYERS))
     
     MAIN.Await(AND_1)
     
@@ -299,11 +300,11 @@ def Event_31192830():
     DisableNetworkSync()
     if FlagEnabled(31190800):
         return
-    AND_1.Add(CharacterHasSpecialEffect(20000, 416))
+    AND_1.Add(CharacterHasSpecialEffect(ALL_PLAYERS, 416))
     
     MAIN.Await(AND_1)
     
-    AddSpecialEffect(20000, 14508)
+    AddSpecialEffect(ALL_PLAYERS, 14508)
     Wait(1.0)
     Restart()
 
@@ -400,7 +401,7 @@ def Event_31192862():
 
 
 @RestartOnRest(31192863)
-def Event_31192863(_, character: uint, flag: uint):
+def Event_31192863(_, character: Character | int, flag: Flag | int):
     """Event 31192863"""
     DisableNetworkSync()
     if FlagEnabled(31190850):
@@ -479,7 +480,7 @@ def Event_31192849():
         flag_2=31192806,
         action_button_id=10000,
     )
-    CommonFunc_9005813(0, flag=31190800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0, dummy_id_1=3)
+    CommonFunc_9005813(0, flag=31190800, asset=Assets.AEG099_001_9000, vfx_id=3, right=0, vfx_id_1=3)
     CommonFunc_9005822(
         0,
         flag=31190800,
@@ -516,7 +517,7 @@ def Event_31192899():
         flag_2=31192856,
         action_button_id=10000,
     )
-    CommonFunc_9005813(0, flag=31190850, asset=Assets.AEG099_001_9002, dummy_id=3, right=0, dummy_id_1=3)
+    CommonFunc_9005813(0, flag=31190850, asset=Assets.AEG099_001_9002, vfx_id=3, right=0, vfx_id_1=3)
     CommonFunc_9005822(
         0,
         flag=31190850,
@@ -533,14 +534,14 @@ def Event_31192899():
 @RestartOnRest(31192845)
 def Event_31192845(
     _,
-    flag: uint,
+    flag: Flag | int,
     entity: uint,
     region: uint,
-    flag_1: uint,
-    character: uint,
+    flag_1: Flag | int,
+    character: Character | int,
     action_button_id: int,
-    left: uint,
-    region_1: uint,
+    left: Flag | int,
+    region_1: Region | int,
 ):
     """Event 31192845"""
     GotoIfFlagEnabled(Label.L10, flag=flag)
@@ -577,9 +578,9 @@ def Event_31192845(
         return RESTART
     SuppressSoundForFogGate(duration=5.0)
     if CharacterDoesNotHaveSpecialEffect(character=PLAYER, special_effect=4250):
-        FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+        FaceEntityAndForceAnimation(PLAYER, region, animation=60060, wait_for_completion=True)
     else:
-        FaceEntity(PLAYER, region, animation=60060)
+        FaceEntityAndForceAnimation(PLAYER, region, animation=60060)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -597,7 +598,8 @@ def Event_31192845(
     
     if FlagEnabled(flag):
         return RESTART
-    RestartIfLastConditionResultTrue(input_condition=OR_4)
+    if LastResult(OR_4):
+        return RESTART
 
     # --- Label 1 --- #
     DefineLabel(1)
@@ -626,7 +628,7 @@ def Event_31192845(
     
     MAIN.Await(AND_10)
     
-    FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    FaceEntityAndForceAnimation(PLAYER, region, animation=60060, wait_for_completion=True)
     BanishPhantoms(unknown=0)
     BanishInvaders(unknown=0)
     Restart()

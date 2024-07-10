@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_47_39_00_enums import *
 
 
@@ -313,8 +314,8 @@ def Constructor():
             life=0.0,
             repetition_time=1.0,
         )
-    CommonFunc_90005300(0, flag=1047390299, character=Characters.Scarab0, item_lot=40410, seconds=0.0, item_is_dropped=0)
-    CommonFunc_90005300(0, flag=1047390298, character=Characters.Scarab1, item_lot=40422, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1047390299, character=Characters.Scarab0, item_lot=40410, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1047390298, character=Characters.Scarab1, item_lot=40422, seconds=0.0, left=0)
     CommonFunc_90005261(
         0,
         character=Characters.MonstrousCrow0,
@@ -331,8 +332,8 @@ def Constructor():
         seconds=0.0,
         animation_id=-1,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier0, region=1047392450, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier1, region=1047392450, seconds=2.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier0, region=1047392450, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier1, region=1047392450, seconds=2.0, animation_id=-1)
     CommonFunc_90005261(
         0,
         character=Characters.RadahnSoldier2,
@@ -341,8 +342,8 @@ def Constructor():
         seconds=0.0,
         animation_id=-1,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier3, region=1047392406, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RadahnSoldier4, region=1047392406, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.TunnelMiner0, region=1047392450, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.TunnelMiner1, region=1047392450, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.TunnelMiner2, region=1047392450, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier3, region=1047392406, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier4, region=1047392406, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner0, region=1047392450, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner1, region=1047392450, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner2, region=1047392450, seconds=0.0, animation_id=-1)

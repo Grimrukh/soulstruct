@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_47_38_00_enums import *
 
 
@@ -151,7 +152,7 @@ def Constructor():
             life=0.0,
             repetition_time=1.0,
         )
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=0)
     CommonFunc_90005636(
         0,
         flag=31218690,
@@ -166,16 +167,16 @@ def Constructor():
     )
     CommonFunc_90005637(0, flag=31218690, character=Characters.WanderingNoble, region=1047382625)
     CommonFunc_90005251(0, character=1047380294, radius=8.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1047380296, region=1047382296, seconds=0.0, animation_id=-1)
-    CommonFunc_90005300(0, flag=1047380299, character=Characters.LionGuardian, item_lot=1047380700, seconds=0.0, item_is_dropped=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=1047380301, region=1047382453, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.KindredofRot0, region=1047382302, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.KindredofRot1, region=1047382302, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1047380296, region=1047382296, seconds=0.0, animation_id=-1)
+    CommonFunc_90005300(0, flag=1047380299, character=Characters.LionGuardian, item_lot=1047380700, seconds=0.0, left=0)
+    CommonFunc_90005250(0, character=1047380301, region=1047382453, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.KindredofRot0, region=1047382302, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.KindredofRot1, region=1047382302, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=1047380307, radius=8.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.KindredofRot2, region=1047382302, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.FungalSorcerer0, region=1047382450, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.KindredofRot2, region=1047382302, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.FungalSorcerer0, region=1047382450, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.FungalSorcerer1, radius=15.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RedmaneKnight, region=1047382474, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RedmaneKnight, region=1047382474, seconds=0.0, animation_id=-1)
     CommonFunc_90005513(
         0,
         flag=1047380540,
@@ -315,7 +316,7 @@ def Event_1047382211(_, source_entity: uint, seconds: float):
 
 
 @ContinueOnRest(1047382569)
-def Event_1047382569(_, flag: uint, asset: uint):
+def Event_1047382569(_, flag: Flag | int, asset: uint):
     """Event 1047382569"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     DisableAsset(asset)
@@ -323,7 +324,7 @@ def Event_1047382569(_, flag: uint, asset: uint):
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=101, dummy_id=806043)
+    CreateAssetVFX(asset, dummy_id=101, vfx_id=806043)
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(FlagEnabled(flag))
     

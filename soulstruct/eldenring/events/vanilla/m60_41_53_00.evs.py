@@ -18,13 +18,14 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_41_53_00_enums import *
 
 
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.WormfaceLarge, name=904580600, npc_threat_level=8)
+    CommonFunc_90005870(0, character=Characters.WormfaceLarge, name=904580600, npc_threat_level=8)
     CommonFunc_90005860(
         0,
         flag=1041530800,
@@ -47,7 +48,7 @@ def Constructor():
         right=0,
     )
     CommonFunc_90005637(0, flag=32058691, character=Characters.WanderingNoble, region=1041531650)
-    CommonFunc_90005300(0, flag=1041530500, character=Characters.Scarab, item_lot=40308, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1041530500, character=Characters.Scarab, item_lot=40308, seconds=0.0, left=0)
 
 
 @ContinueOnRest(50)
@@ -85,7 +86,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Wormface5, region=1041532361, seconds=0.0, animation_id=3011)
+    CommonFunc_90005250(0, character=Characters.Wormface5, region=1041532361, seconds=0.0, animation_id=3011)
     CommonFunc_90005201(
         0,
         character=Characters.WormfaceLarge,

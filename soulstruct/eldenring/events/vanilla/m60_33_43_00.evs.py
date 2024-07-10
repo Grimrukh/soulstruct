@@ -18,13 +18,14 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_33_43_00_enums import *
 
 
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.ErdtreeAvatar, name=904810600, npc_threat_level=18)
+    CommonFunc_90005870(0, character=Characters.ErdtreeAvatar, name=904810600, npc_threat_level=18)
     CommonFunc_90005860(
         0,
         flag=1033430800,
@@ -35,6 +36,6 @@ def Constructor():
         seconds=0.0,
     )
     CommonFunc_90005251(0, character=Characters.ErdtreeAvatar, radius=20.0, seconds=0.0, animation_id=0)
-    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.ErdtreeAvatar, npc_threat_level=18, required_flag=0)
-    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, dummy_id=800, right=1033438600)
-    CommonFunc_90005300(0, flag=1033430200, character=Characters.Scarab, item_lot=40238, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005872(0, character=Characters.ErdtreeAvatar, npc_threat_level=18, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, dummy_id=100, vfx_id=800, right=1033438600)
+    CommonFunc_90005300(0, flag=1033430200, character=Characters.Scarab, item_lot=40238, seconds=0.0, left=0)

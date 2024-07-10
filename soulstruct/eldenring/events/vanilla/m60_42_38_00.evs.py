@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_42_38_00_enums import *
 
 
@@ -34,7 +35,7 @@ def Constructor():
         item_lot=1042380400,
         seconds=0.0,
     )
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.DeathRiteBird, name=904980601, npc_threat_level=24)
+    CommonFunc_90005870(0, character=Characters.DeathRiteBird, name=904980601, npc_threat_level=24)
     Event_1042382350()
     CommonFunc_90005460(0, character=Characters.GiantOctopus)
     CommonFunc_90005461(0, character=Characters.GiantOctopus)
@@ -56,8 +57,8 @@ def Constructor():
         item_lot=1042380410,
         seconds=0.0,
     )
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.BellBearingHunter, name=903100600, npc_threat_level=10)
-    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.BellBearingHunter, npc_threat_level=10, required_flag=0)
+    CommonFunc_90005870(0, character=Characters.BellBearingHunter, name=903100600, npc_threat_level=10)
+    CommonFunc_90005872(0, character=Characters.BellBearingHunter, npc_threat_level=10, right=0)
     Event_1042383700(0, character=Characters.KnightBernahl)
     CommonFunc_90005704(0, attacked_entity=Characters.KnightBernahl, flag=3881, flag_1=3880, flag_2=1042389251, right=3)
     CommonFunc_90005703(
@@ -127,10 +128,10 @@ def Preconstructor():
         region=1042382340,
         radius=10.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
 
 
@@ -147,6 +148,8 @@ def Event_1042382290():
     if CharacterInsideRegion(character=PLAYER, region=1043392396):
         return
     GotoIfFlagEnabled(Label.L0, flag=1042372800)
+    AND_15.Add(CharacterInsideRegion(character=PLAYER, region=1042402390))
+    GotoIfConditionTrue(Label.L2, input_condition=AND_15)
     OR_1.Add(CharacterInsideRegion(character=PLAYER, region=1042382290))
     OR_1.Add(CharacterInsideRegion(character=PLAYER, region=1042382291))
     OR_1.Add(CharacterInsideRegion(character=PLAYER, region=1042382292))
@@ -181,7 +184,7 @@ def Event_1042382300():
 
 
 @RestartOnRest(1042382340)
-def Event_1042382340(_, character: uint, region: uint, seconds: float, animation_id: int):
+def Event_1042382340(_, character: uint, region: Region | int, seconds: float, animation_id: int):
     """Event 1042382340"""
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
     DisableAI(character)
@@ -307,7 +310,7 @@ def Event_1042382350():
 
 
 @RestartOnRest(1042382600)
-def Event_1042382600(_, flag: uint, asset: uint):
+def Event_1042382600(_, flag: Flag | int, asset: Asset | int):
     """Event 1042382600"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     PostDestruction(asset)
@@ -322,7 +325,7 @@ def Event_1042382600(_, flag: uint, asset: uint):
 
 
 @RestartOnRest(1042382650)
-def Event_1042382650(_, tutorial_param_id: int, flag: uint):
+def Event_1042382650(_, tutorial_param_id: int, flag: Flag | int):
     """Event 1042382650"""
     if Multiplayer():
         return
@@ -345,7 +348,7 @@ def Event_1042382650(_, tutorial_param_id: int, flag: uint):
 
 
 @RestartOnRest(1042382651)
-def Event_1042382651(_, tutorial_param_id: int, flag: uint):
+def Event_1042382651(_, tutorial_param_id: int, flag: Flag | int):
     """Event 1042382651"""
     if Multiplayer():
         return

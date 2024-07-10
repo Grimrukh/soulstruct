@@ -17,6 +17,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_42_35_00_enums import *
 
 
@@ -41,7 +42,7 @@ def Constructor():
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.LargeCrab, region=1042352210, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LargeCrab, region=1042352210, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=Characters.Skeleton0,
@@ -84,7 +85,7 @@ def Preconstructor():
 
 
 @RestartOnRest(1042352222)
-def Event_1042352222(_, character: uint, region: uint):
+def Event_1042352222(_, character: Character | int, region: Region | int):
     """Event 1042352222"""
     AND_1.Add(CharacterDead(character))
     if AND_1:

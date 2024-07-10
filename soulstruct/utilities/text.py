@@ -1,6 +1,15 @@
 from __future__ import annotations
 
-__all__ = ["PY_NAME_RE", "word_wrap", "camel_case_to_spaces", "string_to_identifier", "pad_chars", "indent_lines"]
+__all__ = [
+    "PY_NAME_RE",
+    "word_wrap",
+    "camel_case_to_spaces",
+    "string_to_identifier",
+    "pad_chars",
+    "indent_lines",
+    "atoi",
+    "natural_keys",
+]
 
 import re
 import textwrap
@@ -70,7 +79,17 @@ def pad_chars(text, encoding=None, null_terminate=True, alignment=4, pad: str | 
 
 
 def indent_lines(text: str, indent=4):
-    lines = text.split("\n")
-    if isinstance(indent, int):
-        indent = " " * indent
-    return f"\n{indent}".join(lines)
+    ind = " " * indent
+    return text.replace("\n", f"\n{ind}")
+
+
+def atoi(text: str):
+    return int(text) if text.isdigit() else text
+
+
+def natural_keys(text: str):
+    """Key for `sorted` or `list.sort()` to sort in human/natural order (preserve numeric chunks).
+
+    See: http://nedbatchelder.com/blog/200712/human_sorting.html
+    """
+    return [atoi(c) for c in re.split(r"(\d+)", text)]

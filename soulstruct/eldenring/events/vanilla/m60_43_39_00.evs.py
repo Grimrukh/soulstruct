@@ -18,16 +18,17 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_43_39_00_enums import *
-from .enums.m30_11_00_00_enums import Assets as m30_11_Assets
+from .enums.m30_11_00_00_enums import Assets as m30_11_00_00_Assets
 
 
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1043390000, asset=Assets.AEG099_060_9000)
-    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, dummy_id=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, vfx_id=100, dummy_id=800, right=1043398540)
+    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, dummy_id=100, vfx_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, dummy_id=100, vfx_id=800, right=1043398540)
     CommonFunc_90005460(0, character=Characters.GiantOctopus0)
     CommonFunc_90005461(0, character=Characters.GiantOctopus0)
     CommonFunc_90005462(0, character=Characters.GiantOctopus0)
@@ -43,9 +44,9 @@ def Constructor():
     CommonFunc_90005460(0, character=Characters.GiantOctopus4)
     CommonFunc_90005461(0, character=Characters.GiantOctopus4)
     CommonFunc_90005462(0, character=Characters.GiantOctopus4)
-    Event_1043392600(0, attacked_entity=1043391610, region=1043392610)
-    Event_1043392600(1, attacked_entity=1043391611, region=1043392611)
-    CommonFunc_90005683(0, flag=62104, asset=Assets.AEG099_055_1000, vfx_id=210, flag_1=78192, flag_2=78192)
+    Event_1043392600(0, attacked_entity=Assets.AEG099_280_9000, region=1043392610)
+    Event_1043392600(1, attacked_entity=Assets.AEG099_280_9001, region=1043392611)
+    CommonFunc_90005683(0, flag=62104, asset=Assets.AEG099_055_1000, dummy_id=210, flag_1=78192, flag_2=78192)
     Event_1043393700(0, character=1043390700, character_1=1043390701, character_2=1043390702, asset=1043396700)
     Event_1043393703(0, character=1043390700)
     Event_1043393705(0, character=1043390700)
@@ -141,7 +142,7 @@ def Event_1043392600(_, attacked_entity: uint, region: uint):
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    PlaySoundEffect(attacked_entity, 810000099, sound_type=SoundType.Unknown14)
+    PlaySoundEffect(attacked_entity, 810000099, sound_type=SoundType.unk_GeometrySet)
     ForceAnimation(attacked_entity, 1)
     TriggerAISound(ai_sound_param_id=7000, anchor_entity=region, unk_8_12=1)
     Wait(2.0)
@@ -161,6 +162,8 @@ def Event_1043392390():
     """Event 1043392390"""
     DisableNetworkSync()
     GotoIfFlagEnabled(Label.L0, flag=1042372800)
+    AND_15.Add(InsideMap(game_map=NORTHWEST_LIMGRAVE_COAST_SE_SW))
+    GotoIfConditionTrue(Label.L20, input_condition=AND_15)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=1043392390))
     AND_1.Add(CharacterOutsideRegion(character=PLAYER, region=1043392391))
     AND_1.Add(CharacterOutsideRegion(character=PLAYER, region=1043392392))
@@ -180,9 +183,14 @@ def Event_1043392390():
     Wait(1.0)
     Restart()
 
+    # --- Label 20 --- #
+    DefineLabel(20)
+    Wait(1.0)
+    Restart()
+
 
 @RestartOnRest(1043392670)
-def Event_1043392670(_, tutorial_param_id: int, flag: uint, flag_1: uint):
+def Event_1043392670(_, tutorial_param_id: int, flag: Flag | int, flag_1: Flag | int):
     """Event 1043392670"""
     if Multiplayer():
         return
@@ -203,7 +211,7 @@ def Event_1043392670(_, tutorial_param_id: int, flag: uint, flag_1: uint):
 
 
 @RestartOnRest(1043392671)
-def Event_1043392671(_, tutorial_param_id: int, flag: uint, flag_1: uint):
+def Event_1043392671(_, tutorial_param_id: int, flag: Flag | int, flag_1: Flag | int):
     """Event 1043392671"""
     if Multiplayer():
         return
@@ -222,7 +230,13 @@ def Event_1043392671(_, tutorial_param_id: int, flag: uint, flag_1: uint):
 
 
 @RestartOnRest(1043393700)
-def Event_1043393700(_, character: uint, character_1: uint, character_2: uint, asset: uint):
+def Event_1043393700(
+    _,
+    character: uint,
+    character_1: Character | int,
+    character_2: Character | int,
+    asset: Asset | int,
+):
     """Event 1043393700"""
     WaitFrames(frames=1)
     DisableFlag(1043399200)
@@ -262,8 +276,8 @@ def Event_1043393700(_, character: uint, character_1: uint, character_2: uint, a
     EnableBackread(character_2)
     if FlagEnabled(4980):
         ForceAnimation(character, 30001)
-    SkipLinesIfFlagRangeAllDisabled(1, (4982, 4983))
-    ForceAnimation(character, 30002)
+    if FlagRangeAnyEnabled((4982, 4983)):
+        ForceAnimation(character, 30002)
     Goto(Label.L20)
 
     # --- Label 2 --- #
@@ -279,9 +293,9 @@ def Event_1043393700(_, character: uint, character_1: uint, character_2: uint, a
     SetTeamType(character_1, TeamType.HostileNPC)
     if FlagEnabled(4980):
         ForceAnimation(character, 30001)
-    SkipLinesIfFlagRangeAllDisabled(2, (4982, 4983))
-    ForceAnimation(character, 30002)
-    DisableAI(character)
+    if FlagRangeAnyEnabled((4982, 4983)):
+        ForceAnimation(character, 30002)
+        DisableAI(character)
     Goto(Label.L20)
 
     # --- Label 4 --- #
@@ -304,7 +318,7 @@ def Event_1043393700(_, character: uint, character_1: uint, character_2: uint, a
 
 
 @ContinueOnRest(1043393702)
-def Event_1043393702(_, character: uint):
+def Event_1043393702(_, character: Character | int):
     """Event 1043393702"""
     if PlayerNotInOwnWorld():
         return
@@ -348,7 +362,7 @@ def Event_1043393703(_, character: uint):
 
     # --- Label 1 --- #
     DefineLabel(1)
-    OR_6.Add(EntityWithinDistance(entity=20000, other_entity=character, radius=4.0))
+    OR_6.Add(EntityWithinDistance(entity=ALL_PLAYERS, other_entity=character, radius=4.0))
     OR_6.Add(CharacterDoesNotHaveSpecialEffect(character, 9601))
     
     MAIN.Await(OR_6)
@@ -362,7 +376,7 @@ def Event_1043393703(_, character: uint):
 
     # --- Label 2 --- #
     DefineLabel(2)
-    OR_7.Add(EntityBeyondDistance(entity=20000, other_entity=character, radius=6.0))
+    OR_7.Add(EntityBeyondDistance(entity=ALL_PLAYERS, other_entity=character, radius=6.0))
     OR_7.Add(CharacterDoesNotHaveSpecialEffect(character, 9603))
     
     MAIN.Await(OR_7)
@@ -384,7 +398,7 @@ def Event_1043393703(_, character: uint):
 
     # --- Label 11 --- #
     DefineLabel(11)
-    OR_11.Add(EntityBeyondDistance(entity=20000, other_entity=character, radius=6.0))
+    OR_11.Add(EntityBeyondDistance(entity=ALL_PLAYERS, other_entity=character, radius=6.0))
     OR_11.Add(CharacterDoesNotHaveSpecialEffect(character, 9603))
     
     MAIN.Await(OR_11)
@@ -417,7 +431,7 @@ def Event_1043393704():
 
 
 @RestartOnRest(1043393705)
-def Event_1043393705(_, character: uint):
+def Event_1043393705(_, character: Character | int):
     """Event 1043393705"""
     if PlayerNotInOwnWorld():
         return
@@ -451,12 +465,12 @@ def Event_1043393705(_, character: uint):
 
 
 @RestartOnRest(1043393706)
-def Event_1043393706(_, character: uint, attacked_entity: uint):
+def Event_1043393706(_, character: uint, attacked_entity: Character | int):
     """Event 1043393706"""
     if PlayerNotInOwnWorld():
         return
-    OR_1.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=20000))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=40000))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=ALL_PLAYERS))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=TORRENT))
     AND_1.Add(OR_1)
     AND_1.Add(FlagDisabled(1041362709))
     
@@ -474,13 +488,13 @@ def Event_1043393706(_, character: uint, attacked_entity: uint):
 @ContinueOnRest(1043393707)
 def Event_1043393707(
     _,
-    character: uint,
-    first_flag: uint,
-    flag: uint,
-    flag_1: uint,
-    last_flag: uint,
-    character_1: uint,
-    flag_2: uint,
+    character: Character | int,
+    first_flag: Flag | int,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    last_flag: Flag | int,
+    character_1: Character | int,
+    flag_2: Flag | int,
 ):
     """Event 1043393707"""
     WaitFrames(frames=1)
@@ -491,12 +505,12 @@ def Event_1043393707(
     DisableNetworkFlag(flag_2)
     OR_1.Add(FlagEnabled(flag))
     OR_1.Add(FlagEnabled(flag_1))
-    AND_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=20000))
+    AND_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=ALL_PLAYERS))
     AND_1.Add(HealthValue(character) < 1)
     OR_2.Add(OR_1)
     OR_2.Add(AND_1)
     OR_3.Add(FlagEnabled(flag_2))
-    AND_3.Add(AttackedWithDamageType(attacked_entity=character_1, attacker=20000))
+    AND_3.Add(AttackedWithDamageType(attacked_entity=character_1, attacker=ALL_PLAYERS))
     AND_3.Add(HealthValue(character_1) < 1)
     OR_4.Add(OR_3)
     OR_4.Add(AND_3)
@@ -544,7 +558,7 @@ def Event_1043343700(_, character: uint):
 
 
 @RestartOnRest(1043343701)
-def Event_1043343701(_, character: uint):
+def Event_1043343701(_, character: Character | int):
     """Event 1043343701"""
     GotoIfFlagEnabled(Label.L1, flag=30110800)
     
@@ -564,7 +578,7 @@ def Event_1043343702():
         return
     if FlagEnabled(1043399356):
         return
-    AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=m30_11_Assets.AEG099_060_9000, radius=15.0))
+    AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=m30_11_00_00_Assets.AEG099_060_9000, radius=15.0))
     AND_1.Add(FlagEnabled(1043399355))
     
     MAIN.Await(AND_1)
@@ -679,7 +693,7 @@ def Event_1043390724():
 
 
 @RestartOnRest(1043393750)
-def Event_1043393750(_, character: uint):
+def Event_1043393750(_, character: Character | int):
     """Event 1043393750"""
     WaitFrames(frames=1)
     DisableCharacter(character)

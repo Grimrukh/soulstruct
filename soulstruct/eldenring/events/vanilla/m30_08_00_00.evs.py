@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m30_08_00_00_enums import *
 
 
@@ -71,10 +72,10 @@ def Constructor():
         region=30082210,
         radius=10.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005261(0, character=Characters.Imp2, region=30082303, radius=2.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(1, character=Characters.Imp3, region=30082303, radius=2.0, seconds=0.0, animation_id=0)
@@ -114,18 +115,18 @@ def Constructor():
     Event_30082400(10, character=Characters.Imp6)
     Event_30082400(11, character=Characters.Imp7)
     Event_30082400(12, character=Characters.GraveWardenDuelist)
-    CommonFunc_90005300(0, flag=30080450, character=Characters.GraveWardenDuelist, item_lot=0, seconds=3.0, item_is_dropped=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RevenantFollower1, region=30082403, seconds=0.0, animation_id=3022)
-    CommonFunc_AITrigger_RegionOrHurt(
+    CommonFunc_90005300(0, flag=30080450, character=Characters.GraveWardenDuelist, item_lot=0, seconds=3.0, left=0)
+    CommonFunc_90005250(0, character=Characters.RevenantFollower1, region=30082403, seconds=0.0, animation_id=3022)
+    CommonFunc_90005250(
         1,
         character=Characters.RevenantFollower2,
         region=30082403,
         seconds=0.8999999761581421,
         animation_id=3022,
     )
-    CommonFunc_AITrigger_RegionOrHurt(2, character=30080405, region=30082403, seconds=0.5, animation_id=3022)
+    CommonFunc_90005250(2, character=30080405, region=30082403, seconds=0.5, animation_id=3022)
     CommonFunc_90005251(0, character=30080406, radius=4.0, seconds=0.0, animation_id=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.RevenantFollower0, region=30082400, seconds=0.0, animation_id=3022)
+    CommonFunc_90005250(0, character=Characters.RevenantFollower0, region=30082400, seconds=0.0, animation_id=3022)
     CommonFunc_90005261(
         0,
         character=Characters.RevenantFollower3,
@@ -134,7 +135,7 @@ def Constructor():
         seconds=0.0,
         animation_id=3022,
     )
-    CommonFunc_AITrigger_RegionOrHurt(1, character=Characters.RevenantFollower4, region=30082410, seconds=0.0, animation_id=3022)
+    CommonFunc_90005250(1, character=Characters.RevenantFollower4, region=30082410, seconds=0.0, animation_id=3022)
     CommonFunc_90005261(
         0,
         character=Characters.RevenantFollower5,
@@ -234,7 +235,7 @@ def Constructor():
     Event_30082510()
     Event_30082580()
     Event_30080520()
-    CommonFunc_90005525(0, flag=30080570, asset=30081570)
+    CommonFunc_90005525(0, flag=30080570, asset=Assets.AEG027_157_0500)
     Event_30080790(0, asset=30081520, flag=30080800)
     Event_30082800()
     Event_30082810()
@@ -883,7 +884,7 @@ def Event_30080520():
 
 
 @ContinueOnRest(30082564)
-def Event_30082564(_, flag: uint, asset: uint):
+def Event_30082564(_, flag: Flag | int, asset: uint):
     """Event 30082564"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     DisableAsset(asset)
@@ -891,7 +892,7 @@ def Event_30082564(_, flag: uint, asset: uint):
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=101, dummy_id=806043)
+    CreateAssetVFX(asset, dummy_id=101, vfx_id=806043)
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(FlagEnabled(flag))
     
@@ -958,7 +959,7 @@ def Event_30082501():
 
 
 @RestartOnRest(30080790)
-def Event_30080790(_, asset: uint, flag: uint):
+def Event_30080790(_, asset: Asset | int, flag: Flag | int):
     """Event 30080790"""
     if ThisEventSlotFlagEnabled():
         return
@@ -1059,7 +1060,7 @@ def Event_30082849():
         flag_2=30082806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=30080800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=30080800, asset=Assets.AEG099_001_9000, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=30080800,

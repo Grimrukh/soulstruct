@@ -19,6 +19,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_42_32_00_enums import *
 
 
@@ -81,7 +82,7 @@ def Event_1042322230():
 
 
 @RestartOnRest(1042322500)
-def Event_1042322500(_, character: uint):
+def Event_1042322500(_, character: Character | int):
     """Event 1042322500"""
     AddSpecialEffect(character, 5000)
     
@@ -91,7 +92,7 @@ def Event_1042322500(_, character: uint):
 
 
 @RestartOnRest(1042322510)
-def Event_1042322510(_, asset: uint, region: uint, flag: uint, obj_act_id: uint):
+def Event_1042322510(_, asset: uint, region: Region | int, flag: Flag | int, obj_act_id: uint):
     """Event 1042322510"""
     DisableNetworkSync()
     GotoIfMultiplayerPending(Label.L1)
@@ -116,7 +117,7 @@ def Event_1042322510(_, asset: uint, region: uint, flag: uint, obj_act_id: uint)
     GotoIfMultiplayerPending(Label.L2)
     GotoIfMultiplayer(Label.L2)
     FadeToBlack(strength=0.0, duration=0.0, freeze_player=True, freeze_player_delay=-1.0)
-    DisplayDialog(text=20700, anchor_entity=0, display_distance=5.0, button_type=ButtonType.Yes_or_No)
+    DisplayDialog(text=20700, display_distance=5.0, button_type=ButtonType.Yes_or_No)
     Wait(0.699999988079071)
     AddSpecialEffect(PLAYER, 4090)
     PlaySoundEffect(PLAYER, 8700, sound_type=SoundType.c_CharacterMotion)
@@ -201,7 +202,7 @@ def Event_1042322400():
     # --- Label 0 --- #
     DefineLabel(0)
     DeleteAssetVFX(1042321400, erase_root=False)
-    CreateAssetVFX(1042321400, vfx_id=101, dummy_id=6)
+    CreateAssetVFX(1042321400, dummy_id=101, vfx_id=6)
     AND_1.Add(FlagEnabled(1042320401))
     AND_1.Add(FlagEnabled(1042320402))
     AND_1.Add(FlagEnabled(1042320403))
@@ -214,11 +215,11 @@ def Event_1042322400():
 
 
 @RestartOnRest(1042322401)
-def Event_1042322401(_, flag: uint, asset: uint, asset_1: uint):
+def Event_1042322401(_, flag: Flag | int, asset: Asset | int, asset_1: Asset | int):
     """Event 1042322401"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     DestroyAsset(asset)
-    CreateAssetVFX(asset_1, vfx_id=90, dummy_id=800056)
+    CreateAssetVFX(asset_1, dummy_id=90, vfx_id=800056)
     End()
 
     # --- Label 0 --- #
@@ -228,7 +229,7 @@ def Event_1042322401(_, flag: uint, asset: uint, asset_1: uint):
     MAIN.Await(AND_1)
     
     EnableFlag(flag)
-    CreateAssetVFX(asset_1, vfx_id=90, dummy_id=800056)
+    CreateAssetVFX(asset_1, dummy_id=90, vfx_id=800056)
 
 
 @RestartOnRest(1042322402)
@@ -246,7 +247,7 @@ def Event_1042322402():
 @RestartOnRest(1042322403)
 def Event_1042322403(
     _,
-    character: uint,
+    character: Character | int,
     character_1: uint,
     animation_id: int,
     animation_id_1: int,
@@ -274,7 +275,7 @@ def Event_1042322403(
 
 
 @RestartOnRest(1042322404)
-def Event_1042322404(_, flag: uint, character: uint):
+def Event_1042322404(_, flag: Flag | int, character: uint):
     """Event 1042322404"""
     EnableCharacter(character)
     EnableAnimations(character)

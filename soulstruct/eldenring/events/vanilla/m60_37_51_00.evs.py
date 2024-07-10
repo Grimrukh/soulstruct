@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_37_51_00_enums import *
 
 
@@ -43,7 +44,7 @@ def Constructor():
         flag_10=78308,
         flag_11=78309,
     )
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.AncientDragon, name=904510600, npc_threat_level=28)
+    CommonFunc_90005870(0, character=Characters.AncientDragon, name=904510600, npc_threat_level=28)
     CommonFunc_90005860(
         0,
         flag=1037510800,
@@ -55,10 +56,10 @@ def Constructor():
     )
     Event_1037512208(0, character=Characters.Omen1, region=1037512208, radius=5.0, seconds=0.0, animation_id=20005)
     CommonFunc_90005251(0, character=1037510200, radius=45.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005300(0, flag=1037510210, character=Characters.Scarab0, item_lot=40224, seconds=0.0, item_is_dropped=0)
-    CommonFunc_90005300(0, flag=1037510500, character=Characters.Scarab1, item_lot=40300, seconds=0.0, item_is_dropped=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=39200514)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, dummy_id=800, right=39200514)
+    CommonFunc_90005300(0, flag=1037510210, character=Characters.Scarab0, item_lot=40224, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1037510500, character=Characters.Scarab1, item_lot=40300, seconds=0.0, left=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=39200514)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, dummy_id=100, vfx_id=800, right=39200514)
     CommonFunc_90005771(0, other_entity=Characters.TalkDummy0, flag=1037512700)
 
 
@@ -70,7 +71,7 @@ def Preconstructor():
 
 
 @RestartOnRest(1037512208)
-def Event_1037512208(_, character: uint, region: uint, radius: float, seconds: float, animation_id: int):
+def Event_1037512208(_, character: uint, region: Region | int, radius: float, seconds: float, animation_id: int):
     """Event 1037512208"""
     if ThisEventSlotFlagEnabled():
         return

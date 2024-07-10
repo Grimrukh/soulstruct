@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_39_48_00_enums import *
 
 
@@ -27,7 +28,7 @@ def Constructor():
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, dummy_id=800, right=1039488600)
+    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, dummy_id=100, vfx_id=800, right=1039488600)
     Event_1039482510()
     CommonFunc_90005501(
         0,
@@ -41,7 +42,7 @@ def Constructor():
     )
     Event_1039482610()
     Event_1039482611()
-    CommonFunc_90005300(0, flag=1039480340, character=Characters.LiurniaTroll, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1039480340, character=Characters.LiurniaTroll, item_lot=0, seconds=0.0, left=0)
 
 
 @ContinueOnRest(50)
@@ -92,7 +93,7 @@ def Event_1039482610():
     # --- Label 0 --- #
     DefineLabel(0)
     DeleteAssetVFX(Assets.AEG099_251_2000)
-    CreateAssetVFX(Assets.AEG099_251_2000, vfx_id=200, dummy_id=1502)
+    CreateAssetVFX(Assets.AEG099_251_2000, dummy_id=200, vfx_id=1502)
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=1039480610))
     AND_1.Add(CharacterHasSpecialEffect(PLAYER, 485))
@@ -101,7 +102,7 @@ def Event_1039482610():
     MAIN.Await(AND_1)
     
     EnableNetworkFlag(1039480610)
-    DisplayDialog(text=20210, anchor_entity=0, display_distance=5.0)
+    DisplayDialog(text=20210, display_distance=5.0)
     PlaySoundEffect(Assets.AEG099_251_2000, 1500, sound_type=SoundType.s_SFX)
     DisableAsset(Assets.AEG099_251_2000)
     DeleteAssetVFX(Assets.AEG099_251_2000)

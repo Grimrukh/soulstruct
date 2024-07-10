@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m31_15_00_00_enums import *
 
 
@@ -25,7 +26,7 @@ from .enums.m31_15_00_00_enums import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=31150000, asset=Assets.AEG099_060_9000)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=31155800, region=31152500, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=31155800, region=31152500, seconds=0.0, animation_id=0)
     Event_31152800()
     Event_31152810()
     Event_31152820(0, character=Characters.DemiHumanBeastman0)
@@ -78,8 +79,8 @@ def Constructor():
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.DemiHumanShaman)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.DemiHumanBeastman0, region=31152800, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.DemiHumanBeastman1, region=31152800, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.DemiHumanBeastman0, region=31152800, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.DemiHumanBeastman1, region=31152800, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.DemiHuman0, radius=7.0, seconds=0.0, animation_id=0)
     CommonFunc_90005211(
         0,
@@ -89,10 +90,10 @@ def Preconstructor():
         region=31152217,
         radius=2.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -102,10 +103,10 @@ def Preconstructor():
         region=31152217,
         radius=2.0,
         seconds=1.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005261(0, character=Characters.DemiHuman9, region=31152219, radius=2.0, seconds=1.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.DemiHuman10, region=31152219, radius=2.0, seconds=0.0, animation_id=0)
@@ -115,7 +116,7 @@ def Preconstructor():
 @RestartOnRest(31152570)
 def Event_31152570():
     """Event 31152570"""
-    WaitFramesAfterCutscene(frames=1)
+    WaitRealFrames(frames=1)
     if FlagEnabled(31152570):
         return
     DisableAsset(Assets.AEG027_114_9000)
@@ -125,7 +126,7 @@ def Event_31152570():
 
 
 @RestartOnRest(31152650)
-def Event_31152650(_, tutorial_param_id: int, flag: uint, flag_1: uint):
+def Event_31152650(_, tutorial_param_id: int, flag: Flag | int, flag_1: Flag | int):
     """Event 31152650"""
     if PlayerNotInOwnWorld():
         return
@@ -257,7 +258,7 @@ def Event_31152811():
 
 
 @RestartOnRest(31152820)
-def Event_31152820(_, character: uint):
+def Event_31152820(_, character: Character | int):
     """Event 31152820"""
     if FlagEnabled(31150800):
         return
@@ -269,7 +270,15 @@ def Event_31152820(_, character: uint):
 
 
 @ContinueOnRest(31152825)
-def Event_31152825(_, flag: uint, region: uint, character: uint, target_entity: uint, region_1: uint, animation: int):
+def Event_31152825(
+    _,
+    flag: Flag | int,
+    region: uint,
+    character: Character | int,
+    target_entity: uint,
+    region_1: Region | int,
+    animation: int,
+):
     """Event 31152825"""
     if PlayerNotInOwnWorld():
         return
@@ -288,18 +297,20 @@ def Event_31152825(_, flag: uint, region: uint, character: uint, target_entity: 
     
     MAIN.Await(OR_14)
     
-    RestartIfLastConditionResultTrue(input_condition=OR_15)
+    if LastResult(OR_15):
+        return RESTART
     if ValueNotEqual(left=animation, right=0):
-        FaceEntity(character, target_entity, animation=animation, wait_for_completion=True)
+        FaceEntityAndForceAnimation(character, target_entity, animation=animation, wait_for_completion=True)
     else:
-        FaceEntity(character, target_entity, animation=60060, wait_for_completion=True)
+        FaceEntityAndForceAnimation(character, target_entity, animation=60060, wait_for_completion=True)
     OR_4.Add(TimeElapsed(seconds=3.0))
     OR_5.Add(OR_4)
     OR_5.Add(CharacterInsideRegion(character=character, region=region))
     
     MAIN.Await(OR_5)
     
-    RestartIfLastConditionResultTrue(input_condition=OR_4)
+    if LastResult(OR_4):
+        return RESTART
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.Always)
@@ -308,7 +319,7 @@ def Event_31152825(_, flag: uint, region: uint, character: uint, target_entity: 
 
 
 @RestartOnRest(31152830)
-def Event_31152830(_, flag: uint, character: uint):
+def Event_31152830(_, flag: Flag | int, character: Character | int):
     """Event 31152830"""
     if FlagEnabled(flag):
         return
@@ -340,15 +351,8 @@ def Event_31152849():
         flag_2=31152806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=31150800, asset=Assets.AEG099_003_9000, dummy_id=3, right=31150815)
-    CommonFunc_9005812(
-        0,
-        flag=31150800,
-        asset=Assets.AEG099_001_9000,
-        dummy_id=3,
-        right=31150815,
-        dummy_id_1=806760,
-    )
+    CommonFunc_9005811(0, flag=31150800, asset=Assets.AEG099_003_9000, vfx_id=3, right=31150815)
+    CommonFunc_9005812(0, flag=31150800, asset=Assets.AEG099_001_9000, vfx_id=3, right=31150815, vfx_id_1=806760)
     CommonFunc_9005822(
         0,
         flag=31150800,

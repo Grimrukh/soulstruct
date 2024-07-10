@@ -17,6 +17,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_44_38_00_enums import *
 
 
@@ -27,7 +28,7 @@ def Constructor():
     CommonFunc_90005460(0, character=Characters.Skeleton0)
     CommonFunc_90005461(0, character=Characters.Skeleton0)
     CommonFunc_90005462(0, character=Characters.Skeleton0)
-    CommonFunc_90005300(0, flag=1044380210, character=Characters.Scarab, item_lot=40142, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1044380210, character=Characters.Scarab, item_lot=40142, seconds=0.0, left=0)
     CommonFunc_90005632(0, flag=580000, asset=Assets.AEG099_371_1001, item_lot=80000)
     Event_1044382220()
     CommonFunc_90005704(
@@ -68,17 +69,17 @@ def Preconstructor():
     DisableBackread(1044380702)
     DisableBackread(Characters.YuraHunterofBloodyFingers)
     CommonFunc_90005251(0, character=1044380340, radius=10.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Skeleton0, region=1044382200, seconds=1.0, animation_id=1700)
-    CommonFunc_AITrigger_RegionOrHurt(
+    CommonFunc_90005250(0, character=Characters.Skeleton0, region=1044382200, seconds=1.0, animation_id=1700)
+    CommonFunc_90005250(
         0,
         character=Characters.Skeleton1,
         region=1044382200,
         seconds=0.30000001192092896,
         animation_id=1700,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Skeleton2, region=1044382200, seconds=0.0, animation_id=1700)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Skeleton3, region=1044382200, seconds=0.0, animation_id=1700)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Skeleton4, region=1044382200, seconds=0.5, animation_id=1700)
+    CommonFunc_90005250(0, character=Characters.Skeleton2, region=1044382200, seconds=0.0, animation_id=1700)
+    CommonFunc_90005250(0, character=Characters.Skeleton3, region=1044382200, seconds=0.0, animation_id=1700)
+    CommonFunc_90005250(0, character=Characters.Skeleton4, region=1044382200, seconds=0.5, animation_id=1700)
 
 
 @RestartOnRest(1044382220)
@@ -101,11 +102,11 @@ def Event_1044382220():
 
 
 @RestartOnRest(1044382600)
-def Event_1044382600(_, asset: uint, item_lot: int, flag: uint):
+def Event_1044382600(_, asset: uint, item_lot: int, flag: Flag | int):
     """Event 1044382600"""
     if FlagEnabled(flag):
         return
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=806840)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=806840)
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(ActionButtonParamActivated(action_button_id=9310, entity=asset))
     
@@ -204,7 +205,7 @@ def Event_1044383720(_, character: uint):
 
 
 @RestartOnRest(1044383721)
-def Event_1044383721(_, character: uint):
+def Event_1044383721(_, character: Character | int):
     """Event 1044383721"""
     if PlayerNotInOwnWorld():
         return

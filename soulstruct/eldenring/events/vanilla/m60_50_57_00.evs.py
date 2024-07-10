@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_50_57_00_enums import *
 
 
@@ -37,7 +38,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.DeathRiteBird, name=904980600, npc_threat_level=24)
+    CommonFunc_90005870(0, character=Characters.DeathRiteBird, name=904980600, npc_threat_level=24)
     CommonFunc_90005860(
         0,
         flag=1050570800,
@@ -47,7 +48,7 @@ def Constructor():
         item_lot=30530,
         seconds=0.0,
     )
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.PutridAvatar, name=904811600, npc_threat_level=18)
+    CommonFunc_90005870(0, character=Characters.PutridAvatar, name=904811600, npc_threat_level=18)
     CommonFunc_90005860(
         0,
         flag=1050570850,
@@ -57,7 +58,7 @@ def Constructor():
         item_lot=30555,
         seconds=0.0,
     )
-    CommonFunc_FieldBattleHalfHealthMusic(0, character=Characters.PutridAvatar, npc_threat_level=18, required_flag=0)
+    CommonFunc_90005872(0, character=Characters.PutridAvatar, npc_threat_level=18, right=0)
     Event_1050572320(0, character=Characters.GiantSkeletonTorso, destination=1051570320, special_effect=5030)
     Event_1050572330(0, character=Characters.GiantSkeletonTorso, special_effect=5021)
     Event_1050572340(0, character=Characters.GiantSkeletonTorso, region=1050572320, flag=1050572330)
@@ -185,13 +186,13 @@ def Event_1050572320(_, character: uint, destination: uint, special_effect: int)
 
 
 @RestartOnRest(1050572330)
-def Event_1050572330(_, character: uint, special_effect: int):
+def Event_1050572330(_, character: Character | int, special_effect: int):
     """Event 1050572330"""
     AddSpecialEffect(character, special_effect)
 
 
 @RestartOnRest(1050572340)
-def Event_1050572340(_, character: uint, region: uint, flag: uint):
+def Event_1050572340(_, character: Character | int, region: Region | int, flag: Flag | int):
     """Event 1050572340"""
     AND_15.Add(CharacterAlive(character))
     SkipLinesIfConditionTrue(1, AND_15)
@@ -242,7 +243,7 @@ def Event_1050572820(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    region: uint,
+    region: Region | int,
     seconds: float,
     left: uint,
     left_1: uint,

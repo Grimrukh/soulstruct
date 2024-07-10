@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m30_15_00_00_enums import *
 
 
@@ -25,7 +26,7 @@ from .enums.m30_15_00_00_enums import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=301500, asset=Assets.AEG099_060_9000)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=0)
     CommonFunc_90005200(
         0,
         character=Characters.MirandaRotFlower0,
@@ -62,8 +63,8 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.CatacombsSkeleton0, region=30152214, seconds=0.0, animation_id=3028)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GiantMirandaRotFlower, region=30152310, seconds=0.0, animation_id=3003)
+    CommonFunc_90005250(0, character=Characters.CatacombsSkeleton0, region=30152214, seconds=0.0, animation_id=3028)
+    CommonFunc_90005250(0, character=Characters.GiantMirandaRotFlower, region=30152310, seconds=0.0, animation_id=3003)
     CommonFunc_90005211(
         0,
         character=Characters.CatacombsSkeleton1,
@@ -72,10 +73,10 @@ def Constructor():
         region=30152213,
         radius=2.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005200(
         0,
@@ -125,9 +126,9 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.MirandaRotFlower7, region=30152200, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.MirandaRotFlower8, region=30152200, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.MirandaRotFlower9, region=30152200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.MirandaRotFlower7, region=30152200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.MirandaRotFlower8, region=30152200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.MirandaRotFlower9, region=30152200, seconds=0.0, animation_id=-1)
     CommonFunc_90005650(
         0,
         flag=30150540,
@@ -137,8 +138,8 @@ def Constructor():
         obj_act_id_1=27115,
     )
     CommonFunc_90005651(0, flag=30150540, anchor_entity=Assets.AEG027_041_0500)
-    CommonFunc_90005525(0, flag=30150570, asset=30151570)
-    CommonFunc_90005525(0, flag=30150571, asset=30151571)
+    CommonFunc_90005525(0, flag=30150570, asset=Assets.AEG027_157_0500)
+    CommonFunc_90005525(0, flag=30150571, asset=Assets.AEG027_157_0501)
     Event_30152800()
     Event_30152810()
     Event_30152849()
@@ -155,11 +156,11 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_91005600(0, flag=30152800, asset=30151695, dummy_id=5)
+    CommonFunc_91005600(0, flag=30152800, asset=30151695, vfx_id=5)
 
 
 @RestartOnRest(30152520)
-def Event_30152520(_, flag: uint, asset: uint, flag_1: uint):
+def Event_30152520(_, flag: Flag | int, asset: Asset | int, flag_1: Flag | int):
     """Event 30152520"""
     if FlagEnabled(flag):
         return
@@ -260,7 +261,7 @@ def Event_30152849():
         flag_2=30152806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=30150800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=30150800, asset=Assets.AEG099_001_9000, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=30150800,

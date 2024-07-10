@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_40_54_00_enums import *
 
 
@@ -43,7 +44,7 @@ def Constructor():
         flag_10=78358,
         flag_11=78359,
     )
-    CommonFunc_90005300(0, flag=1040540500, character=Characters.Scarab, item_lot=40312, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1040540500, character=Characters.Scarab, item_lot=40312, seconds=0.0, left=0)
     Event_1040542700(0, character=Characters.BrotherCorhyn)
     CommonFunc_90005704(0, attacked_entity=Characters.BrotherCorhyn, flag=4201, flag_1=4200, flag_2=1040549201, right=3)
     CommonFunc_90005703(
@@ -143,7 +144,7 @@ def Event_250():
 
 
 @RestartOnRest(1040542201)
-def Event_1040542201(_, character: uint, patrol_information_id: uint):
+def Event_1040542201(_, character: Character | int, patrol_information_id: uint):
     """Event 1040542201"""
     if FlagEnabled(1040542201):
         return
@@ -156,7 +157,7 @@ def Event_1040542201(_, character: uint, patrol_information_id: uint):
 
 
 @RestartOnRest(1040542210)
-def Event_1040542210(_, character: uint, patrol_information_id: uint):
+def Event_1040542210(_, character: Character | int, patrol_information_id: uint):
     """Event 1040542210"""
     if FlagEnabled(1040542210):
         return

@@ -18,14 +18,15 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_41_51_00_enums import *
 
 
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.TreeSentinel0, name=903251600, npc_threat_level=12)
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.TreeSentinel1, name=903251600, npc_threat_level=12)
+    CommonFunc_90005870(0, character=Characters.TreeSentinel0, name=903251600, npc_threat_level=12)
+    CommonFunc_90005870(0, character=Characters.TreeSentinel1, name=903251600, npc_threat_level=12)
     Event_1041512800(
         0,
         flag=1041510800,
@@ -70,7 +71,7 @@ def Constructor():
     )
     Event_1041512200(0, character=Characters.LeyndellKnight0)
     Event_1041512200(1, character=Characters.LeyndellKnight1)
-    CommonFunc_90005300(0, flag=1041510410, character=Characters.GiantMirandaFlower, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1041510410, character=Characters.GiantMirandaFlower, item_lot=0, seconds=0.0, left=0)
     Event_1041512270()
     Event_1041512270(slot=1)
 
@@ -78,7 +79,7 @@ def Constructor():
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GiantMirandaFlower, region=1041512410, seconds=0.0, animation_id=700)
+    CommonFunc_90005250(0, character=Characters.GiantMirandaFlower, region=1041512410, seconds=0.0, animation_id=700)
     CommonFunc_90005201(
         0,
         character=Characters.GraveSkeleton2,
@@ -99,10 +100,10 @@ def Preconstructor():
         region=1041512450,
         radius=2.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -112,10 +113,10 @@ def Preconstructor():
         region=1041512450,
         radius=2.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005200(
         0,
@@ -132,7 +133,7 @@ def Preconstructor():
 
 
 @RestartOnRest(1041512200)
-def Event_1041512200(_, character: uint):
+def Event_1041512200(_, character: Character | int):
     """Event 1041512200"""
     if ThisEventSlotFlagEnabled():
         return
@@ -253,7 +254,7 @@ def Event_1041512310(_, character: uint, character_1: uint):
 
 
 @RestartOnRest(1041512320)
-def Event_1041512320(_, character: uint, character_1: uint):
+def Event_1041512320(_, character: Character | int, character_1: Character | int):
     """Event 1041512320"""
     if FlagEnabled(1041510800):
         return
@@ -270,7 +271,13 @@ def Event_1041512320(_, character: uint, character_1: uint):
 
 
 @ContinueOnRest(1041512321)
-def Event_1041512321(_, character: uint, character_1: uint, npc_threat_level: uint, flag: uint):
+def Event_1041512321(
+    _,
+    character: Character | int,
+    character_1: Character | int,
+    npc_threat_level: uint,
+    flag: Flag | int,
+):
     """Event 1041512321"""
     DisableNetworkSync()
     AND_1.Add(FlagEnabled(flag))
@@ -292,7 +299,15 @@ def Event_1041512321(_, character: uint, character_1: uint, npc_threat_level: ui
 
 
 @RestartOnRest(1041512800)
-def Event_1041512800(_, flag: uint, left: uint, character: uint, left_1: uint, item_lot: int, character_1: uint):
+def Event_1041512800(
+    _,
+    flag: Flag | int,
+    left: Flag | int,
+    character: uint,
+    left_1: uint,
+    item_lot: int,
+    character_1: uint,
+):
     """Event 1041512800"""
     if ValueNotEqual(left=item_lot, right=0):
         Unknown_2004_76(flag=flag, item_lot=item_lot)

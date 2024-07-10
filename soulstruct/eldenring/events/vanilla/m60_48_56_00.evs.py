@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_48_56_00_enums import *
 
 
@@ -113,4 +114,4 @@ def Event_1048562350(_, character: uint, character_1: uint):
 @ContinueOnRest(100)
 def Event_100():
     """Event 100"""
-    CommonFunc_90005300(0, flag=1148560200, character=Characters.Scarab, item_lot=40524, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1148560200, character=Characters.Scarab, item_lot=40524, seconds=0.0, left=0)

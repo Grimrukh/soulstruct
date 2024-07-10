@@ -136,7 +136,7 @@ def RunCommonEvent(event_id, args=(0,), arg_types="", event_layers=None):
     if len(arg_types) > 1:
         full_arg_types += f"|{arg_types[1:]}"
     return COMPILER.compile(
-        "RunCommonEvent", event_id=event_id, args=args, arg_types=full_arg_types
+        "_RunCommonEvent", event_id=event_id, args=args, arg_types=full_arg_types
     )
 
 

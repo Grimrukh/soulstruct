@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m32_02_00_00_enums import *
 
 
@@ -367,19 +368,19 @@ def Constructor():
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner0, region=32022200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner0, region=32022200, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.GlintstoneMiner1, radius=26.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner5, region=32022208, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner6, region=32022210, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner7, region=32022210, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner8, region=32022213, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner8, region=32022212, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner9, region=32022210, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner9, region=32022213, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner13, region=32022217, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=32020220, region=32022220, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.BigGlintstoneMiner, region=32022230, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner21, region=32022230, seconds=5.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner5, region=32022208, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner6, region=32022210, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner7, region=32022210, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner8, region=32022213, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner8, region=32022212, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner9, region=32022210, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner9, region=32022213, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner13, region=32022217, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=32020220, region=32022220, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BigGlintstoneMiner, region=32022230, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner21, region=32022230, seconds=5.0, animation_id=-1)
     CommonFunc_90005260(
         0,
         character=Characters.GlintstoneMiner22,
@@ -413,7 +414,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=32020305, region=32022305, seconds=2.0, animation_id=-1)
+    CommonFunc_90005250(0, character=32020305, region=32022305, seconds=2.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.Marionette0,
@@ -544,10 +545,10 @@ def Event_32022200(
     left_1: uint,
     left_2: uint,
     left_3: uint,
-    asset: uint,
-    asset_1: uint,
-    asset_2: uint,
-    asset_3: uint,
+    asset: Asset | int,
+    asset_1: Asset | int,
+    asset_2: Asset | int,
+    asset_3: Asset | int,
 ):
     """Event 32022200"""
     if ThisEventSlotFlagEnabled():
@@ -655,11 +656,11 @@ def Event_32022250(
     left_1: uint,
     left_2: uint,
     left_3: uint,
-    asset: uint,
-    asset_1: uint,
-    asset_2: uint,
-    asset_3: uint,
-    flag: uint,
+    asset: Asset | int,
+    asset_1: Asset | int,
+    asset_2: Asset | int,
+    asset_3: Asset | int,
+    flag: Flag | int,
 ):
     """Event 32022250"""
     if FlagEnabled(flag):
@@ -762,7 +763,7 @@ def Event_32022270(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    flag: uint,
+    flag: Flag | int,
     radius: float,
     seconds: float,
     left: uint,
@@ -950,7 +951,7 @@ def Event_32022849():
         flag_2=32022806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=32020800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=32020800, asset=Assets.AEG099_001_9000, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=32020800,

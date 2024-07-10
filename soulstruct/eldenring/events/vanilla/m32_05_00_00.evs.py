@@ -18,8 +18,9 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m32_05_00_00_enums import *
-from .enums.m31_18_00_00_enums import Characters as m31_18_Characters
+from .enums.m31_18_00_00_enums import Characters as m31_18_00_00_Characters
 
 
 @ContinueOnRest(0)
@@ -53,7 +54,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=0)
     Event_32052200(
         0,
         character=Characters.GlintstoneMiner3,
@@ -136,23 +137,23 @@ def Preconstructor():
     """Event 50"""
     Event_32050519()
     Event_32052820()
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner0, region=32052200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner0, region=32052200, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.GlintstoneMiner1, radius=20.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner2, region=32052205, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.GlintstoneMiner7, region=32052212, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Avionette0, region=32052200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner2, region=32052205, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner7, region=32052212, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Avionette0, region=32052200, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.Avionette1, region=32052206, radius=2.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.Avionette3, region=32052206, radius=2.0, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Avionette2, region=32052205, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Avionette4, region=32052212, seconds=1.0, animation_id=3033)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=32050259, region=32052212, seconds=1.0, animation_id=3033)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Snail0, region=32052300, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Snail1, region=32052300, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Snail2, region=32052300, seconds=0.0, animation_id=3011)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Snail3, region=32052305, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Avionette2, region=32052205, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Avionette4, region=32052212, seconds=1.0, animation_id=3033)
+    CommonFunc_90005250(0, character=32050259, region=32052212, seconds=1.0, animation_id=3033)
+    CommonFunc_90005250(0, character=Characters.Snail0, region=32052300, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Snail1, region=32052300, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Snail2, region=32052300, seconds=0.0, animation_id=3011)
+    CommonFunc_90005250(0, character=Characters.Snail3, region=32052305, seconds=0.0, animation_id=-1)
     CommonFunc_90005260(0, character=Characters.Snail4, region=32052306, radius=10.0, seconds=0.0, animation_id=3011)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=32050307, region=32052306, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Snail5, region=32052306, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=32050307, region=32052306, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Snail5, region=32052306, seconds=0.0, animation_id=-1)
     CommonFunc_90005271(0, character=Characters.Snail6, seconds=0.0, animation_id=-1)
     CommonFunc_90005271(0, character=Characters.Snail7, seconds=0.0, animation_id=-1)
     CommonFunc_90005271(0, character=Characters.Snail8, seconds=0.0, animation_id=-1)
@@ -205,10 +206,10 @@ def Event_32052200(
     left_1: uint,
     left_2: uint,
     left_3: uint,
-    asset: uint,
-    asset_1: uint,
-    asset_2: uint,
-    asset_3: uint,
+    asset: Asset | int,
+    asset_1: Asset | int,
+    asset_2: Asset | int,
+    asset_3: Asset | int,
 ):
     """Event 32052200"""
     if ThisEventSlotFlagEnabled():
@@ -316,11 +317,11 @@ def Event_32052250(
     left_1: uint,
     left_2: uint,
     left_3: uint,
-    asset: uint,
-    asset_1: uint,
-    asset_2: uint,
-    asset_3: uint,
-    flag: uint,
+    asset: Asset | int,
+    asset_1: Asset | int,
+    asset_2: Asset | int,
+    asset_3: Asset | int,
+    flag: Flag | int,
 ):
     """Event 32052250"""
     if FlagEnabled(flag):
@@ -423,7 +424,7 @@ def Event_32052270(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    flag: uint,
+    flag: Flag | int,
     radius: float,
     seconds: float,
     left: uint,
@@ -527,7 +528,7 @@ def Event_32052270(
 @RestartOnRest(32052400)
 def Event_32052400():
     """Event 32052400"""
-    GotoIfCharacterHasSpecialEffect(Label.L0, character=m31_18_Characters.MalformedStar, special_effect=16747)
+    GotoIfCharacterHasSpecialEffect(Label.L0, character=m31_18_00_00_Characters.MalformedStar, special_effect=16747)
     AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
@@ -539,7 +540,7 @@ def Event_32052400():
     
     MAIN.Await(AND_1)
     
-    AddSpecialEffect(m31_18_Characters.MalformedStar, 16747)
+    AddSpecialEffect(m31_18_00_00_Characters.MalformedStar, 16747)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -679,7 +680,7 @@ def Event_32052849():
         flag_2=32052806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=32050800, asset=Assets.AEG099_003_9000, dummy_id=7, right=32050801)
+    CommonFunc_9005811(0, flag=32050800, asset=Assets.AEG099_003_9000, vfx_id=7, right=32050801)
     CommonFunc_9005822(
         0,
         flag=32050800,

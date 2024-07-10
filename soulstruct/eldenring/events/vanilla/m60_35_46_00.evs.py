@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_35_46_00_enums import *
 
 
@@ -83,7 +84,7 @@ def Constructor():
     )
     Event_1035462605(0, flag=1035460605, target_entity=1035462601, animation=60471)
     Event_1035462605(1, flag=1035460615, target_entity=1035462606, animation=60471)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9011, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9011, dummy_id=100, vfx_id=800, right=0)
     CommonFunc_90005795(
         0,
         flag=7607,
@@ -94,7 +95,7 @@ def Constructor():
         message=80607,
         action_button_id=9000,
         asset=Assets.AEG099_090_9020,
-        dummy_id=30010,
+        vfx_id=30010,
     )
     if CeremonyActive(ceremony=40):
         CommonFunc_90005796(
@@ -157,7 +158,7 @@ def Event_1035462145():
     SetTeamType(Characters.BloodyFingerRavenmountAssassin, TeamType.Human)
     SetTeamType(Characters.YuraHunterofBloodyFingers0, TeamType.Enemy)
     DeleteAssetVFX(1035466700)
-    CreateAssetVFX(1035466700, vfx_id=200, dummy_id=806700)
+    CreateAssetVFX(1035466700, dummy_id=200, vfx_id=806700)
 
 
 @RestartOnRest(1035463700)
@@ -240,7 +241,7 @@ def Event_1035463701():
 
 
 @RestartOnRest(1035463702)
-def Event_1035463702(_, character: uint):
+def Event_1035463702(_, character: Character | int):
     """Event 1035463702"""
     if PlayerNotInOwnWorld():
         return
@@ -276,10 +277,10 @@ def Event_1035462600(
     anchor_entity: uint,
     area_id: uchar,
     block_id: uchar,
-    cc_id: char,
-    dd_id: char,
-    player_start: uint,
-    flag: uint,
+    cc_id: uchar,
+    dd_id: uchar,
+    player_start: PlayerStart | int,
+    flag: Flag | int,
     target_entity: uint,
     animation_id: int,
     action_button_id: int,
@@ -304,7 +305,7 @@ def Event_1035462600(
 
     # --- Label 1 --- #
     DefineLabel(1)
-    FaceEntity(PLAYER, target_entity, wait_for_completion=True)
+    FaceEntityAndForceAnimation(PLAYER, target_entity, wait_for_completion=True)
     ForceAnimation(PLAYER, animation_id)
     Wait(2.5)
     EnableFlag(flag)
@@ -312,7 +313,7 @@ def Event_1035462600(
 
 
 @RestartOnRest(1035462605)
-def Event_1035462605(_, flag: uint, target_entity: uint, animation: int):
+def Event_1035462605(_, flag: Flag | int, target_entity: uint, animation: int):
     """Event 1035462605"""
     if FlagDisabled(flag):
         return
@@ -320,5 +321,5 @@ def Event_1035462605(_, flag: uint, target_entity: uint, animation: int):
     MAIN.Await(FlagEnabled(flag))
     
     WaitFrames(frames=1)
-    FaceEntity(PLAYER, target_entity, animation=animation)
+    FaceEntityAndForceAnimation(PLAYER, target_entity, animation=animation)
     DisableFlag(flag)

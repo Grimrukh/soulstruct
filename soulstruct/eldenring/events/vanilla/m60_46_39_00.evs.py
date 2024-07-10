@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_46_39_00_enums import *
 
 
@@ -25,7 +26,7 @@ from .enums.m60_46_39_00_enums import *
 def Constructor():
     """Event 0"""
     Event_1035472602()
-    CommonFunc_90005300(0, flag=1046390210, character=Characters.Scarab, item_lot=40118, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1046390210, character=Characters.Scarab, item_lot=40118, seconds=0.0, left=0)
     Event_1035472200(
         0,
         asset=Assets.AEG099_510_9000,
@@ -57,15 +58,15 @@ def Event_1035472200(
     asset: uint,
     area_id: uchar,
     block_id: uchar,
-    cc_id: char,
-    dd_id: char,
-    player_start: uint,
+    cc_id: uchar,
+    dd_id: uchar,
+    player_start: PlayerStart | int,
     unk_8_12: int,
-    flag: uint,
-    left_flag: uint,
-    cancel_flag__right_flag: uint,
-    left: uint,
-    text: int,
+    flag: Flag | int,
+    left_flag: Flag | int,
+    cancel_flag__right_flag: Flag | int,
+    left: Flag | int,
+    text: EventText | int,
     seconds: float,
     seconds_1: float,
 ):
@@ -85,7 +86,7 @@ def Event_1035472200(
     GotoIfConditionTrue(Label.L1, input_condition=OR_10)
     GotoIfFlagEnabled(Label.L1, flag=flag)
     DeleteAssetVFX(asset)
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=806870)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=806870)
     EnableFlag(flag)
 
     # --- Label 1 --- #
@@ -163,7 +164,7 @@ def Event_1035472200(
     if OR_15:
         return RESTART
     EnableFlag(1051430210)
-    FaceEntity(PLAYER, asset, wait_for_completion=True)
+    FaceEntityAndForceAnimation(PLAYER, asset, wait_for_completion=True)
     ForceAnimation(PLAYER, 60490)
     Wait(3.0)
     WarpToMap(game_map=(area_id, block_id, cc_id, dd_id), player_start=player_start, unk_8_12=unk_8_12)

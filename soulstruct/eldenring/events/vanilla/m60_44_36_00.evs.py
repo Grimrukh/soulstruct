@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_44_36_00_enums import *
 
 
@@ -35,7 +36,7 @@ def Constructor():
     Event_1044362800()
     Event_1044362810()
     Event_1044362849()
-    CommonFunc_90005300(0, flag=1044360220, character=Characters.Scarab, item_lot=40112, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1044360220, character=Characters.Scarab, item_lot=40112, seconds=0.0, left=0)
     Event_1044362500()
     CommonFunc_90005704(
         0,
@@ -102,10 +103,10 @@ def Preconstructor():
         region=1044362200,
         radius=10.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
 
 
@@ -224,7 +225,7 @@ def Event_1044362300():
 
 
 @RestartOnRest(1044362650)
-def Event_1044362650(_, tutorial_param_id: int, flag: uint, flag_1: uint, flag_2: uint):
+def Event_1044362650(_, tutorial_param_id: int, flag: Flag | int, flag_1: Flag | int, flag_2: Flag | int):
     """Event 1044362650"""
     if Multiplayer():
         return
@@ -245,7 +246,7 @@ def Event_1044362650(_, tutorial_param_id: int, flag: uint, flag_1: uint, flag_2
 
 
 @RestartOnRest(1044362651)
-def Event_1044362651(_, tutorial_param_id: int, flag: uint, flag_1: uint):
+def Event_1044362651(_, tutorial_param_id: int, flag: Flag | int, flag_1: Flag | int):
     """Event 1044362651"""
     if Multiplayer():
         return
@@ -264,7 +265,7 @@ def Event_1044362651(_, tutorial_param_id: int, flag: uint, flag_1: uint):
 
 
 @RestartOnRest(1044362652)
-def Event_1044362652(_, tutorial_param_id: int, flag: uint, flag_1: uint):
+def Event_1044362652(_, tutorial_param_id: int, flag: Flag | int, flag_1: Flag | int):
     """Event 1044362652"""
     if Multiplayer():
         return
@@ -299,7 +300,7 @@ def Event_1044362652(_, tutorial_param_id: int, flag: uint, flag_1: uint):
 
 
 @RestartOnRest(1044362654)
-def Event_1044362654(_, tutorial_param_id: int, flag: uint):
+def Event_1044362654(_, tutorial_param_id: int, flag: Flag | int):
     """Event 1044362654"""
     if Multiplayer():
         return
@@ -338,10 +339,10 @@ def Event_1044363700(
     asset__character: uint,
     asset__character_1: uint,
     asset__character_2: uint,
-    flag: uint,
-    flag_1: uint,
-    flag_2: uint,
-    flag_3: uint,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
+    flag_3: Flag | int,
 ):
     """Event 1044363700"""
     WaitFrames(frames=1)
@@ -394,7 +395,14 @@ def Event_1044363700(
 
 
 @RestartOnRest(1044363701)
-def Event_1044363701(_, flag: uint, flag_1: uint, flag_2: uint, first_flag: uint, last_flag: uint):
+def Event_1044363701(
+    _,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
+    first_flag: Flag | int,
+    last_flag: Flag | int,
+):
     """Event 1044363701"""
     if PlayerNotInOwnWorld():
         return
@@ -413,7 +421,15 @@ def Event_1044363701(_, flag: uint, flag_1: uint, flag_2: uint, first_flag: uint
 
 
 @RestartOnRest(1044363702)
-def Event_1044363702(_, character: uint, flag: uint, first_flag: uint, flag_1: uint, last_flag: uint, flag_2: uint):
+def Event_1044363702(
+    _,
+    character: Character | int,
+    flag: Flag | int,
+    first_flag: Flag | int,
+    flag_1: Flag | int,
+    last_flag: Flag | int,
+    flag_2: Flag | int,
+):
     """Event 1044363702"""
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(FlagEnabled(flag))
@@ -486,13 +502,13 @@ def Event_1044363710(_, character: uint):
 @RestartOnRest(1044363711)
 def Event_1044363711(
     _,
-    character: uint,
-    flag: uint,
-    flag_1: uint,
-    flag_2: uint,
+    character: Character | int,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
     value: float,
-    first_flag: uint,
-    last_flag: uint,
+    first_flag: Flag | int,
+    last_flag: Flag | int,
     right: int,
 ):
     """Event 1044363711"""
@@ -509,7 +525,7 @@ def Event_1044363711(
     AND_1.Add(FlagDisabled(flag))
     AND_1.Add(FlagDisabled(flag_1))
     OR_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=PLAYER))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=40000))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=TORRENT))
     AND_2.Add(OR_1)
     AND_2.Add(HealthRatio(character) < value)
     OR_2.Add(AND_2)
@@ -573,7 +589,7 @@ def Event_1044363714(_, entity: uint):
     if PlayerNotInOwnWorld():
         return
     AND_1.Add(FlagEnabled(1044369231))
-    AND_1.Add(EntityWithinDistance(entity=entity, other_entity=20000, radius=50.0))
+    AND_1.Add(EntityWithinDistance(entity=entity, other_entity=ALL_PLAYERS, radius=50.0))
     AwaitConditionTrue(AND_1)
     EnableNetworkFlag(3478)
     End()
@@ -645,7 +661,7 @@ def Event_1044362849():
         flag_2=1044362806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=1044360800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=1044360800, asset=Assets.AEG099_001_9000, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=1044360800,
@@ -657,4 +673,4 @@ def Event_1044362849():
         left=0,
         left_1=0,
     )
-    CommonFunc_9005812(0, flag=1044360800, asset=Assets.AEG099_001_9001, dummy_id=3, right=0, dummy_id_1=0)
+    CommonFunc_9005812(0, flag=1044360800, asset=Assets.AEG099_001_9001, vfx_id=3, right=0, vfx_id_1=0)

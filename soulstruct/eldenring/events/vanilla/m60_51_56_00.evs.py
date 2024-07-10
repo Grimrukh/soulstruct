@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_51_56_00_enums import *
 
 
@@ -43,7 +44,7 @@ def Constructor():
         flag_10=78508,
         flag_11=78509,
     )
-    CommonFunc_90005300(0, flag=1051560210, character=Characters.LargeScarab, item_lot=1051560700, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1051560210, character=Characters.LargeScarab, item_lot=1051560700, seconds=0.0, left=0)
     Event_1051562200(0, character=1051565200)
     Event_1051562500()
     Event_1051562510()
@@ -173,9 +174,9 @@ def Event_1051562500():
     """Event 1051562500"""
     GotoIfFlagEnabled(Label.L0, flag=1051569206)
     DeleteAssetVFX(Assets.AEG099_251_9000)
-    CreateAssetVFX(Assets.AEG099_251_9000, vfx_id=200, dummy_id=1520)
+    CreateAssetVFX(Assets.AEG099_251_9000, dummy_id=200, vfx_id=1520)
     AwaitFlagEnabled(flag=1051569206)
-    DisplayDialog(text=30030, anchor_entity=0, display_distance=5.0)
+    DisplayDialog(text=30030, display_distance=5.0)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -278,12 +279,12 @@ def Event_1051563701(_, character: uint, radius: float):
         return
     if FlagEnabled(1051569206):
         return
-    OR_1.Add(CharacterHasSpecialEffect(35000, 14200))
-    OR_1.Add(CharacterHasSpecialEffect(35000, 14201))
+    OR_1.Add(CharacterHasSpecialEffect(ALL_SPIRIT_SUMMONS, 14200))
+    OR_1.Add(CharacterHasSpecialEffect(ALL_SPIRIT_SUMMONS, 14201))
     AND_1.Add(OR_1)
-    AND_1.Add(CharacterHasSpecialEffect(35000, 297000))
+    AND_1.Add(CharacterHasSpecialEffect(ALL_SPIRIT_SUMMONS, 297000))
     AND_1.Add(FlagDisabled(3841))
-    AND_1.Add(EntityWithinDistance(entity=character, other_entity=35000, radius=radius))
+    AND_1.Add(EntityWithinDistance(entity=character, other_entity=ALL_SPIRIT_SUMMONS, radius=radius))
     
     MAIN.Await(AND_1)
     
@@ -308,7 +309,7 @@ def Event_1051563701(_, character: uint, radius: float):
 
 
 @RestartOnRest(1051563702)
-def Event_1051563702(_, seconds: float, seconds_1: float, seconds_2: float, flag: uint):
+def Event_1051563702(_, seconds: float, seconds_1: float, seconds_2: float, flag: Flag | int):
     """Event 1051563702"""
     WaitFrames(frames=1)
     if PlayerNotInOwnWorld():
@@ -353,13 +354,13 @@ def Event_1051563703(_, entity: uint):
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=6590, entity=entity))
     
-    DisplayDialog(text=30090, anchor_entity=0, button_type=ButtonType.Yes_or_No)
+    DisplayDialog(text=30090, button_type=ButtonType.Yes_or_No)
     Wait(1.0)
     Restart()
 
 
 @RestartOnRest(1051563704)
-def Event_1051563704(_, character: uint):
+def Event_1051563704(_, character: Character | int):
     """Event 1051563704"""
     if PlayerNotInOwnWorld():
         return
@@ -376,7 +377,8 @@ def Event_1051563704(_, character: uint):
     
     MAIN.Await(OR_1)
     
-    EndIfLastConditionResultTrue(input_condition=AND_2)
+    if LastResult(AND_2):
+        return
     AND_6.Add(CharacterHasSpecialEffect(character, 14200))
     AND_7.Add(TimeElapsed(seconds=10.0))
     OR_6.Add(AND_6)
@@ -384,7 +386,8 @@ def Event_1051563704(_, character: uint):
     
     MAIN.Await(OR_6)
     
-    RestartIfLastConditionResultTrue(input_condition=AND_7)
+    if LastResult(AND_7):
+        return RESTART
     
     MAIN.Await(CharacterHasSpecialEffect(character, 14201))
     
@@ -572,7 +575,7 @@ def Event_1051563717(_, character: uint):
 
 
 @RestartOnRest(1051563720)
-def Event_1051563720(_, character: uint, region: uint, distance: float):
+def Event_1051563720(_, character: Character | int, region: uint, distance: float):
     """Event 1051563720"""
     WaitFrames(frames=1)
     DisableBackread(character)

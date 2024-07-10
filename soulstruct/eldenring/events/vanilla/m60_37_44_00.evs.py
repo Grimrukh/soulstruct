@@ -19,6 +19,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_37_44_00_enums import *
 
 
@@ -44,7 +45,7 @@ def Constructor():
         flag_10=78208,
         flag_11=78209,
     )
-    CommonFunc_90005300(0, flag=1037440210, character=Characters.Scarab, item_lot=40262, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1037440210, character=Characters.Scarab, item_lot=40262, seconds=0.0, left=0)
     CommonFunc_90005920(0, flag=1037440600, asset=1037441600, obj_act_id=1037443600)
     Event_1037442610(0, asset=1037441610, entity=1037441611, flag=82021)
     Event_1037443700(0, character=Characters.KnightDiallos, character_1=Characters.Human)
@@ -110,10 +111,10 @@ def Preconstructor():
 
 
 @RestartOnRest(1037442610)
-def Event_1037442610(_, asset: uint, entity: uint, flag: uint):
+def Event_1037442610(_, asset: Asset | int, entity: uint, flag: Flag | int):
     """Event 1037442610"""
     GotoIfFlagEnabled(Label.L0, flag=flag)
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=803220)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=803220)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -216,7 +217,7 @@ def Event_1037443700(_, character: uint, character_1: uint):
 
 
 @RestartOnRest(1037443701)
-def Event_1037443701(_, flag: uint, flag_1: uint):
+def Event_1037443701(_, flag: Flag | int, flag_1: Flag | int):
     """Event 1037443701"""
     WaitFrames(frames=1)
     if PlayerNotInOwnWorld():

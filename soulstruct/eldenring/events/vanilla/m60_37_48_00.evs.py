@@ -17,6 +17,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_37_48_00_enums import *
 
 
@@ -24,8 +25,8 @@ from .enums.m60_37_48_00_enums import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1037480000, asset=Assets.AEG099_060_9000)
-    CommonFunc_90005300(0, flag=1037480200, character=Characters.Scarab1, item_lot=40236, seconds=0.0, item_is_dropped=0)
-    CommonFunc_90005300(0, flag=1037480210, character=Characters.Scarab0, item_lot=40254, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1037480200, character=Characters.Scarab1, item_lot=40236, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1037480210, character=Characters.Scarab0, item_lot=40254, seconds=0.0, left=0)
 
 
 @ContinueOnRest(50)

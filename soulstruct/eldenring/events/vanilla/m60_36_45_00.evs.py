@@ -19,6 +19,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_36_45_00_enums import *
 
 
@@ -43,7 +44,7 @@ def Constructor():
         item_lot=1036450400,
         seconds=0.0,
     )
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.DeathRiteBird, name=904980604, npc_threat_level=24)
+    CommonFunc_90005870(0, character=Characters.DeathRiteBird, name=904980604, npc_threat_level=24)
     CommonFunc_90005605(
         0,
         asset=Assets.AEG099_510_9000,

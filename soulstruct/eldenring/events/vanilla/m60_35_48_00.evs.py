@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_35_48_00_enums import *
 
 
@@ -121,7 +122,7 @@ def Preconstructor():
 
 
 @RestartOnRest(1035482210)
-def Event_1035482210(_, character: uint):
+def Event_1035482210(_, character: Character | int):
     """Event 1035482210"""
     Kill(character)
 
@@ -129,9 +130,9 @@ def Event_1035482210(_, character: uint):
 @RestartOnRest(1035482260)
 def Event_1035482260(
     _,
-    flag: uint,
+    flag: Flag | int,
     destination: uint,
-    character: uint,
+    character: Character | int,
     seconds: float,
     seconds_1: float,
     seconds_2: float,
@@ -143,7 +144,7 @@ def Event_1035482260(
     """Event 1035482260"""
     if FlagEnabled(flag):
         return
-    AND_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=20000))
+    AND_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=ALL_PLAYERS))
     if AND_1:
         return
     ForceAnimation(destination, 0)
@@ -162,7 +163,7 @@ def Event_1035482260(
 @RestartOnRest(1035482261)
 def Event_1035482261(
     _,
-    flag: uint,
+    flag: Flag | int,
     asset: uint,
     character: uint,
     character_1: uint,
@@ -172,7 +173,7 @@ def Event_1035482261(
     seconds_3: float,
     seconds_4: float,
     item_lot: int,
-    flag_1: uint,
+    flag_1: Flag | int,
 ):
     """Event 1035482261"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
@@ -196,14 +197,14 @@ def Event_1035482261(
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=803160)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=803160)
     AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=20000))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=ALL_PLAYERS))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -235,7 +236,7 @@ def Event_1035482262(
     _,
     character: uint,
     seconds: float,
-    attacked_entity: uint,
+    attacked_entity: Character | int,
     seconds_1: float,
     character_1: uint,
     animation_id: int,
@@ -243,7 +244,7 @@ def Event_1035482262(
     radius: float,
     seconds_2: float,
     seconds_3: float,
-    flag: uint,
+    flag: Flag | int,
 ):
     """Event 1035482262"""
     if FlagEnabled(character):
@@ -256,14 +257,14 @@ def Event_1035482262(
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.Alive))
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.GrayPhantom))
     OR_1.Add(CharacterIsType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=20000))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character_1, attacker=20000))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=ALL_PLAYERS))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character_1, attacker=ALL_PLAYERS))
     OR_2.Add(CharacterHasStateInfo(character=character_1, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character_1, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character_1, state_info=5))
     OR_2.Add(CharacterHasStateInfo(character=character_1, state_info=6))
     OR_2.Add(CharacterHasStateInfo(character=character_1, state_info=260))
-    OR_2.Add(EntityWithinDistance(entity=character_1, other_entity=20000, radius=radius))
+    OR_2.Add(EntityWithinDistance(entity=character_1, other_entity=ALL_PLAYERS, radius=radius))
     AND_1.Add(OR_2)
     AND_4.Add(CharacterHasSpecialEffect(character, 481))
     AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))

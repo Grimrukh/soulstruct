@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_50_53_00_enums import *
 
 
@@ -25,10 +26,10 @@ from .enums.m60_50_53_00_enums import *
 def Constructor():
     """Event 0"""
     Event_1050532200(0, character=1050535200)
-    CommonFunc_90005300(0, flag=1050530210, character=Characters.Scarab, item_lot=1050530700, seconds=0.0, item_is_dropped=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=1050538620)
-    CommonFunc_90005683(0, flag=62511, asset=Assets.AEG099_057_1000, vfx_id=211, flag_1=78592, flag_2=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, dummy_id=800, right=1050538600)
+    CommonFunc_90005300(0, flag=1050530210, character=Characters.Scarab, item_lot=1050530700, seconds=0.0, left=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=1050538620)
+    CommonFunc_90005683(0, flag=62511, asset=Assets.AEG099_057_1000, dummy_id=211, flag_1=78592, flag_2=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, dummy_id=100, vfx_id=800, right=1050538600)
     CommonFunc_90005620(
         0,
         flag=1050530570,

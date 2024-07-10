@@ -18,10 +18,11 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m12_02_00_00_enums import *
-from .enums.m60_35_45_00_enums import Characters as m60_35_Characters
-from .enums.m60_45_37_00_enums import Assets as m60_45_Assets
-from .enums.m60_49_40_00_enums import Assets as m60_49_Assets
+from .enums.m60_35_45_00_enums import Characters as m60_35_45_00_Characters
+from .enums.m60_45_37_00_enums import Assets as m60_45_37_00_Assets
+from .enums.m60_49_40_00_enums import Assets as m60_49_40_00_Assets
 
 
 @ContinueOnRest(0)
@@ -52,8 +53,8 @@ def Constructor():
     Event_12022503()
     Event_12022580()
     CommonFunc_90005920(0, flag=12020900, asset=12021900, obj_act_id=12023900)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, vfx_id=100, dummy_id=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, dummy_id=100, vfx_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, dummy_id=100, vfx_id=800, right=0)
     Event_12022800()
     Event_12022810()
     Event_12022849()
@@ -69,7 +70,7 @@ def Constructor():
         flag_1=12021520,
         left=5,
         asset=Assets.AEG239_010_0501,
-        asset_1=m60_49_Assets.AEG239_020_2000,
+        asset_1=m60_49_40_00_Assets.AEG239_020_2000,
         asset_2=Assets.AEG239_021_0501,
         flag_2=12020522,
     )
@@ -170,19 +171,19 @@ def Constructor():
     Event_12022621(5, flag=12020625, asset=Assets.AEG237_055_9012, asset_1=Assets.AEG237_039_3001)
     Event_12022621(6, flag=12020626, asset=12021626, asset_1=12021636)
     Event_12022621(7, flag=12020627, asset=12021627, asset_1=12021637)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.NoxFighter, region=12022211, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.NoxFighter, region=12022211, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=12020220, region=12022220, radius=70.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.RedWolf, region=12022220, radius=70.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005300(0, flag=12020221, character=Characters.RedWolf, item_lot=0, seconds=0.0, item_is_dropped=-1)
+    CommonFunc_90005300(0, flag=12020221, character=Characters.RedWolf, item_lot=0, seconds=0.0, left=-1)
     Event_12022300(0, character=12020300, region=12022300, seconds=0.0)
     Event_12022300(1, character=12020301, region=12022300, seconds=0.0)
     Event_12022300(2, character=Characters.AncestralFollower3, region=12022302, seconds=0.0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AncestralFollower3, region=12022302, seconds=0.0, animation_id=3006)
+    CommonFunc_90005250(0, character=Characters.AncestralFollower3, region=12022302, seconds=0.0, animation_id=3006)
     Event_12022300(3, character=12025303, region=12022303, seconds=0.0)
     Event_12022300(4, character=12025304, region=12022304, seconds=0.0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Dummy0, region=12022304, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Dummy0, region=12022304, seconds=0.0, animation_id=-1)
     Event_12022300(5, character=12025305, region=12022305, seconds=0.0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AncestralFollower6, region=12022305, seconds=2.0, animation_id=3011)
+    CommonFunc_90005250(0, character=Characters.AncestralFollower6, region=12022305, seconds=2.0, animation_id=3011)
     Event_12022300(6, character=12025306, region=12022306, seconds=0.0)
     Event_12022300(7, character=12025307, region=12022307, seconds=0.0)
     Event_12022300(8, character=12025308, region=12022308, seconds=0.0)
@@ -199,18 +200,18 @@ def Constructor():
     Event_12022300(13, character=Characters.AncestralFollower2, region=12022313, seconds=0.0)
     Event_12022300(15, character=12025315, region=12022315, seconds=0.0)
     Event_12022300(16, character=Characters.AncestralFollower5, region=12022316, seconds=0.0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AncestralFollower5, region=12022316, seconds=0.0, animation_id=3006)
+    CommonFunc_90005250(0, character=Characters.AncestralFollower5, region=12022316, seconds=0.0, animation_id=3006)
     Event_12022300(17, character=Characters.AncestralFollower4, region=12022317, seconds=0.0)
     Event_12022300(18, character=12025318, region=12022318, seconds=0.0)
     Event_12022300(19, character=Characters.AncestralFollower0, region=12022319, seconds=0.0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AncestralFollower0, region=12022319, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AncestralFollower0, region=12022319, seconds=0.0, animation_id=-1)
     Event_12022300(20, character=Characters.AncestralFollower7, region=12022331, seconds=0.0)
     Event_12022300(21, character=Characters.AncestralFollower9, region=12022334, seconds=0.0)
     Event_12022300(22, character=Characters.AncestralFollower10, region=12022334, seconds=0.0)
     Event_12022300(23, character=12020336, region=12022336, seconds=3.0)
     Event_12022300(24, character=Characters.AncestralFollower8, region=12022336, seconds=0.0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=12020336, region=12022336, seconds=0.0, animation_id=3006)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AncestralFollower8, region=12022336, seconds=0.0, animation_id=3006)
+    CommonFunc_90005250(0, character=12020336, region=12022336, seconds=0.0, animation_id=3006)
+    CommonFunc_90005250(0, character=Characters.AncestralFollower8, region=12022336, seconds=0.0, animation_id=3006)
     Event_12022300(25, character=12025324, region=12022314, seconds=0.0)
     Event_12022300(26, character=12025325, region=12022314, seconds=0.0)
     Event_12022300(29, character=12025329, region=12022329, seconds=0.0)
@@ -267,17 +268,17 @@ def Constructor():
     Event_12022360(0, character=12020390, character_1=12025350)
     Event_12022370()
     Event_12022371()
-    CommonFunc_AITrigger_RegionOrHurt(0, character=12020390, region=12022350, seconds=3.0, animation_id=-1)
+    CommonFunc_90005250(0, character=12020390, region=12022350, seconds=3.0, animation_id=-1)
     Event_12022372()
     Event_12022373()
     Event_12022350(1, character=Characters.AncestralFollowerShaman0, character_1=12025351)
     Event_12022360(1, character=Characters.AncestralFollowerShaman0, character_1=12025351)
     Event_12022350(2, character=Characters.AncestralFollowerShaman1, character_1=12025352)
     Event_12022360(2, character=Characters.AncestralFollowerShaman1, character_1=12025352)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AncestralFollower11, region=12022350, seconds=3.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AncestralFollower12, region=12022350, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AncestralFollower16, region=12022366, seconds=0.0, animation_id=3006)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.AncestralFollower16, region=12022368, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AncestralFollower11, region=12022350, seconds=3.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AncestralFollower12, region=12022350, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AncestralFollower16, region=12022366, seconds=0.0, animation_id=3006)
+    CommonFunc_90005250(0, character=Characters.AncestralFollower16, region=12022368, seconds=0.0, animation_id=-1)
     CommonFunc_90005860(
         0,
         flag=12020830,
@@ -287,22 +288,22 @@ def Constructor():
         item_lot=30620,
         seconds=0.0,
     )
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.DragonkinSoldier, name=904650600, npc_threat_level=25)
+    CommonFunc_90005870(0, character=Characters.DragonkinSoldier, name=904650600, npc_threat_level=25)
     CommonFunc_90005251(0, character=Characters.GiantOctopus, radius=30.0, seconds=0.0, animation_id=3009)
-    CommonFunc_90005300(0, flag=12020470, character=Characters.Scarab2, item_lot=40648, seconds=1.5, item_is_dropped=0)
-    CommonFunc_90005300(0, flag=12020472, character=Characters.Scarab0, item_lot=40630, seconds=1.5, item_is_dropped=0)
-    CommonFunc_90005300(0, flag=12020474, character=Characters.Scarab4, item_lot=40610, seconds=1.5, item_is_dropped=0)
-    CommonFunc_90005300(0, flag=12020477, character=Characters.Scarab3, item_lot=40642, seconds=1.5, item_is_dropped=0)
-    CommonFunc_90005300(0, flag=12020479, character=Characters.Scarab1, item_lot=40646, seconds=1.5, item_is_dropped=0)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=12020420, region=12022420, seconds=0.0, animation_id=-1)
+    CommonFunc_90005300(0, flag=12020470, character=Characters.Scarab2, item_lot=40648, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12020472, character=Characters.Scarab0, item_lot=40630, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12020474, character=Characters.Scarab4, item_lot=40610, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12020477, character=Characters.Scarab3, item_lot=40642, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12020479, character=Characters.Scarab1, item_lot=40646, seconds=1.5, left=0)
+    CommonFunc_90005250(0, character=12020420, region=12022420, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=12020421, radius=60.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.Dummy1, radius=100.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.Dummy3, region=12022422, radius=45.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.Dummy1, radius=60.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.CrucibleKnight1, radius=10.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005300(0, flag=12020430, character=Characters.CrucibleKnight0, item_lot=12020435, seconds=1.5, item_is_dropped=0)
-    CommonFunc_90005300(0, flag=12020431, character=Characters.CrucibleKnight1, item_lot=12020445, seconds=1.5, item_is_dropped=0)
-    CommonFunc_90005300(0, flag=12020434, character=Characters.CrucibleKnight2, item_lot=0, seconds=1.5, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=12020430, character=Characters.CrucibleKnight0, item_lot=12020435, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12020431, character=Characters.CrucibleKnight1, item_lot=12020445, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12020434, character=Characters.CrucibleKnight2, item_lot=0, seconds=1.5, left=0)
     CommonFunc_90005261(
         0,
         character=Characters.FallenHawksSoldier0,
@@ -367,12 +368,12 @@ def Constructor():
         character_1=Characters.FallenHawksSoldier8,
         patrol_information_id=12023444,
     )
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Rat0, region=12022450, seconds=1.5, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Rat1, region=12022450, seconds=2.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Rat2, region=12022450, seconds=3.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Rat3, region=12022450, seconds=2.5, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Rat4, region=12022450, seconds=0.0, animation_id=-1)
-    CommonFunc_AITrigger_RegionOrHurt(0, character=Characters.Rat5, region=12022450, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Rat0, region=12022450, seconds=1.5, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Rat1, region=12022450, seconds=2.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Rat2, region=12022450, seconds=3.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Rat3, region=12022450, seconds=2.5, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Rat4, region=12022450, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Rat5, region=12022450, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=12025461, radius=20.0, seconds=0.0, animation_id=-1)
     Event_12022419(0, character=Characters.SilverTear5, character_1=Characters.Troll, region=12022400)
     Event_12022400(1, character=Characters.SilverTear6, character_1=Characters.SilverTear0, region=12022401)
@@ -393,7 +394,7 @@ def Constructor():
         asset_1=Assets.AEG099_320_9001,
     )
     Event_12020701(0, entity=12022716)
-    CommonFunc_90005752(0, asset=12021710, vfx_id=200, dummy_id=120, seconds=3.0)
+    CommonFunc_90005752(0, asset=Assets.AEG099_320_9001, dummy_id=200, vfx_id=120, seconds=3.0)
     Event_12023720(0, character=Characters.Blaidd)
     CommonFunc_90005703(
         0,
@@ -417,7 +418,7 @@ def Constructor():
         flag_2=4803,
         flag_3=12029105,
         character=Characters.Merchant,
-        character_1=m60_35_Characters.NomadMule,
+        character_1=m60_35_45_00_Characters.NomadMule,
         asset=12026700,
     )
     CommonFunc_90005703(
@@ -498,7 +499,7 @@ def Event_12022698():
 
 
 @RestartOnRest(12022569)
-def Event_12022569(_, flag: uint, flag_1: uint):
+def Event_12022569(_, flag: Flag | int, flag_1: Flag | int):
     """Event 12022569"""
     DisableNetworkSync()
     if FlagEnabled(flag):
@@ -512,7 +513,7 @@ def Event_12022569(_, flag: uint, flag_1: uint):
 
 
 @ContinueOnRest(12022568)
-def Event_12022568(_, flag: uint, asset: uint):
+def Event_12022568(_, flag: Flag | int, asset: uint):
     """Event 12022568"""
     DisableNetworkSync()
     GotoIfFlagDisabled(Label.L0, flag=flag)
@@ -521,7 +522,7 @@ def Event_12022568(_, flag: uint, asset: uint):
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=101, dummy_id=806043)
+    CreateAssetVFX(asset, dummy_id=101, vfx_id=806043)
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(FlagEnabled(flag))
     
@@ -534,7 +535,7 @@ def Event_12022568(_, flag: uint, asset: uint):
 
 
 @ContinueOnRest(12022567)
-def Event_12022567(_, flag: uint, region: uint):
+def Event_12022567(_, flag: Flag | int, region: Region | int):
     """Event 12022567"""
     DisableNetworkSync()
     AND_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
@@ -552,7 +553,7 @@ def Event_12022600():
     """Event 12022600"""
     GotoIfFlagDisabled(Label.L0, flag=12020609)
     DeleteAssetVFX(Assets.AEG237_062_1000)
-    CreateAssetVFX(Assets.AEG237_062_1000, vfx_id=200, dummy_id=812600)
+    CreateAssetVFX(Assets.AEG237_062_1000, dummy_id=200, vfx_id=812600)
     End()
 
     # --- Label 0 --- #
@@ -570,20 +571,20 @@ def Event_12022600():
     
     EnableNetworkFlag(12020609)
     DeleteAssetVFX(Assets.AEG237_062_1000)
-    CreateAssetVFX(Assets.AEG237_062_1000, vfx_id=200, dummy_id=812600)
+    CreateAssetVFX(Assets.AEG237_062_1000, dummy_id=200, vfx_id=812600)
     Wait(3.0)
-    DisplayDialog(text=30010, anchor_entity=0, display_distance=5.0)
+    DisplayDialog(text=30010, display_distance=5.0)
 
 
 @RestartOnRest(12022601)
-def Event_12022601(_, flag: uint, asset: uint, asset_1: uint):
+def Event_12022601(_, flag: Flag | int, asset: uint, asset_1: Asset | int):
     """Event 12022601"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     DeleteAssetVFX(asset)
     DeleteAssetVFX(asset_1)
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=812070)
-    CreateAssetVFX(asset, vfx_id=201, dummy_id=812070)
-    CreateAssetVFX(asset_1, vfx_id=200, dummy_id=812070)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=812070)
+    CreateAssetVFX(asset, dummy_id=201, vfx_id=812070)
+    CreateAssetVFX(asset_1, dummy_id=200, vfx_id=812070)
     End()
 
     # --- Label 0 --- #
@@ -596,15 +597,15 @@ def Event_12022601(_, flag: uint, asset: uint, asset_1: uint):
     MAIN.Await(AND_2)
     
     DisableAnimations(PLAYER)
-    FaceEntity(PLAYER, asset, wait_for_completion=True)
+    FaceEntityAndForceAnimation(PLAYER, asset, wait_for_completion=True)
     ForceAnimation(PLAYER, 60010)
     Wait(1.2999999523162842)
     EnableNetworkFlag(flag)
     DeleteAssetVFX(asset)
     DeleteAssetVFX(asset_1)
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=812070)
-    CreateAssetVFX(asset, vfx_id=201, dummy_id=812070)
-    CreateAssetVFX(asset_1, vfx_id=200, dummy_id=812070)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=812070)
+    CreateAssetVFX(asset, dummy_id=201, vfx_id=812070)
+    CreateAssetVFX(asset_1, dummy_id=200, vfx_id=812070)
     Wait(2.0)
     EnableAnimations(PLAYER)
     End()
@@ -617,9 +618,9 @@ def Event_12022601(_, flag: uint, asset: uint, asset_1: uint):
     Wait(1.2999999523162842)
     DeleteAssetVFX(asset)
     DeleteAssetVFX(asset_1)
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=812070)
-    CreateAssetVFX(asset, vfx_id=201, dummy_id=812070)
-    CreateAssetVFX(asset_1, vfx_id=200, dummy_id=812070)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=812070)
+    CreateAssetVFX(asset, dummy_id=201, vfx_id=812070)
+    CreateAssetVFX(asset_1, dummy_id=200, vfx_id=812070)
     End()
 
 
@@ -635,13 +636,13 @@ def Event_12022609():
     MAIN.Await(AND_2)
     
     EnableNetworkFlag(12022610)
-    FaceEntity(PLAYER, Assets.AEG237_062_1000, wait_for_completion=True)
+    FaceEntityAndForceAnimation(PLAYER, Assets.AEG237_062_1000, wait_for_completion=True)
     ForceAnimation(PLAYER, 60010)
     Wait(0.4000000059604645)
     BanishInvaders(unknown=0)
     Wait(1.0)
     MoveCharacterAndCopyDrawParentWithFadeout(
-        character=PLAYER,
+        character=ALL_PLAYERS,
         destination_type=CoordEntityType.Region,
         destination=12082400,
         dummy_id=-1,
@@ -668,7 +669,7 @@ def Event_12022609():
     MAIN.Await(FlagEnabled(12022610))
     
     MoveCharacterAndCopyDrawParentWithFadeout(
-        character=PLAYER,
+        character=ALL_PLAYERS,
         destination_type=CoordEntityType.Region,
         destination=12022202,
         dummy_id=-1,
@@ -678,7 +679,7 @@ def Event_12022609():
     )
     Wait(5.0)
     MoveCharacterAndCopyDrawParentWithFadeout(
-        character=PLAYER,
+        character=ALL_PLAYERS,
         destination_type=CoordEntityType.Region,
         destination=12082401,
         dummy_id=-1,
@@ -694,7 +695,7 @@ def Event_12022620():
     """Event 12022620"""
     GotoIfFlagDisabled(Label.L0, flag=12020629)
     DeleteAssetVFX(Assets.AEG237_062_3000)
-    CreateAssetVFX(Assets.AEG237_062_3000, vfx_id=200, dummy_id=812600)
+    CreateAssetVFX(Assets.AEG237_062_3000, dummy_id=200, vfx_id=812600)
     End()
 
     # --- Label 0 --- #
@@ -710,20 +711,20 @@ def Event_12022620():
     
     EnableNetworkFlag(12020629)
     DeleteAssetVFX(Assets.AEG237_062_3000)
-    CreateAssetVFX(Assets.AEG237_062_3000, vfx_id=200, dummy_id=812600)
+    CreateAssetVFX(Assets.AEG237_062_3000, dummy_id=200, vfx_id=812600)
     Wait(3.0)
-    DisplayDialog(text=30010, anchor_entity=0, display_distance=5.0)
+    DisplayDialog(text=30010, display_distance=5.0)
 
 
 @RestartOnRest(12022621)
-def Event_12022621(_, flag: uint, asset: uint, asset_1: uint):
+def Event_12022621(_, flag: Flag | int, asset: uint, asset_1: Asset | int):
     """Event 12022621"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     DeleteAssetVFX(asset)
     DeleteAssetVFX(asset_1)
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=812070)
-    CreateAssetVFX(asset, vfx_id=201, dummy_id=812070)
-    CreateAssetVFX(asset_1, vfx_id=200, dummy_id=812070)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=812070)
+    CreateAssetVFX(asset, dummy_id=201, vfx_id=812070)
+    CreateAssetVFX(asset_1, dummy_id=200, vfx_id=812070)
     End()
 
     # --- Label 0 --- #
@@ -735,16 +736,16 @@ def Event_12022621(_, flag: uint, asset: uint, asset_1: uint):
     
     MAIN.Await(AND_2)
     
-    FaceEntity(PLAYER, asset, wait_for_completion=True)
+    FaceEntityAndForceAnimation(PLAYER, asset, wait_for_completion=True)
     ForceAnimation(PLAYER, 60010)
     DisableAnimations(PLAYER)
     Wait(1.2999999523162842)
     EnableNetworkFlag(flag)
     DeleteAssetVFX(asset)
     DeleteAssetVFX(asset_1)
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=812070)
-    CreateAssetVFX(asset, vfx_id=201, dummy_id=812070)
-    CreateAssetVFX(asset_1, vfx_id=200, dummy_id=812070)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=812070)
+    CreateAssetVFX(asset, dummy_id=201, vfx_id=812070)
+    CreateAssetVFX(asset_1, dummy_id=200, vfx_id=812070)
     Wait(2.0)
     EnableAnimations(PLAYER)
     End()
@@ -757,9 +758,9 @@ def Event_12022621(_, flag: uint, asset: uint, asset_1: uint):
     Wait(1.2999999523162842)
     DeleteAssetVFX(asset)
     DeleteAssetVFX(asset_1)
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=812070)
-    CreateAssetVFX(asset, vfx_id=201, dummy_id=812070)
-    CreateAssetVFX(asset_1, vfx_id=200, dummy_id=812070)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=812070)
+    CreateAssetVFX(asset, dummy_id=201, vfx_id=812070)
+    CreateAssetVFX(asset_1, dummy_id=200, vfx_id=812070)
     End()
 
 
@@ -774,7 +775,7 @@ def Event_12022629():
     
     MAIN.Await(AND_2)
     
-    FaceEntity(PLAYER, Assets.AEG237_062_3000, wait_for_completion=True)
+    FaceEntityAndForceAnimation(PLAYER, Assets.AEG237_062_3000, wait_for_completion=True)
     ForceAnimation(PLAYER, 60010)
     EnableNetworkFlag(12022630)
     Wait(0.4000000059604645)
@@ -785,7 +786,7 @@ def Event_12022629():
         BanishInvaders(unknown=0)
     Wait(2.0)
     MoveCharacterAndCopyDrawParentWithFadeout(
-        character=PLAYER,
+        character=ALL_PLAYERS,
         destination_type=CoordEntityType.Region,
         destination=12092400,
         dummy_id=-1,
@@ -812,7 +813,7 @@ def Event_12022629():
     MAIN.Await(FlagEnabled(12022630))
     
     MoveCharacterAndCopyDrawParentWithFadeout(
-        character=PLAYER,
+        character=ALL_PLAYERS,
         destination_type=CoordEntityType.Region,
         destination=12022209,
         dummy_id=-1,
@@ -822,7 +823,7 @@ def Event_12022629():
     )
     Wait(5.0)
     MoveCharacterAndCopyDrawParentWithFadeout(
-        character=PLAYER,
+        character=ALL_PLAYERS,
         destination_type=CoordEntityType.Region,
         destination=12092401,
         dummy_id=-1,
@@ -838,7 +839,7 @@ def Event_12022670():
     """Event 12022670"""
     if ThisEventSlotFlagDisabled():
         DeleteAssetVFX(Assets.AEG099_510_9000)
-        CreateAssetVFX(Assets.AEG099_510_9000, vfx_id=200, dummy_id=806870)
+        CreateAssetVFX(Assets.AEG099_510_9000, dummy_id=200, vfx_id=806870)
     DisableFlag(12022670)
     DisableFlag(12022671)
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -865,11 +866,11 @@ def Event_12022670():
     DefineLabel(6)
     EnableNetworkFlag(12022670)
     BanishInvaders(unknown=0)
-    FaceEntity(PLAYER, Assets.AEG099_510_9000, wait_for_completion=True)
+    FaceEntityAndForceAnimation(PLAYER, Assets.AEG099_510_9000, wait_for_completion=True)
     ForceAnimation(PLAYER, 60490)
     Wait(3.0)
     MoveCharacterAndCopyDrawParentWithFadeout(
-        character=PLAYER,
+        character=ALL_PLAYERS,
         destination_type=CoordEntityType.Region,
         destination=12022670,
         dummy_id=-1,
@@ -886,7 +887,7 @@ def Event_12022670():
     
     Wait(3.0)
     MoveCharacterAndCopyDrawParentWithFadeout(
-        character=PLAYER,
+        character=ALL_PLAYERS,
         destination_type=CoordEntityType.Region,
         destination=12022671,
         dummy_id=-1,
@@ -908,12 +909,12 @@ def Event_12022580():
 @RestartOnRest(12022680)
 def Event_12022680():
     """Event 12022680"""
-    CreateAssetVFX(Assets.AEG099_090_9002, vfx_id=100, dummy_id=800)
-    CreateAssetVFX(Assets.AEG099_090_9003, vfx_id=100, dummy_id=800)
+    CreateAssetVFX(Assets.AEG099_090_9002, dummy_id=100, vfx_id=800)
+    CreateAssetVFX(Assets.AEG099_090_9003, dummy_id=100, vfx_id=800)
 
 
 @RestartOnRest(12022200)
-def Event_12022200(_, region: uint, character: uint, special_effect: int):
+def Event_12022200(_, region: Region | int, character: Character | int, special_effect: int):
     """Event 12022200"""
     if ThisEventSlotFlagEnabled():
         return
@@ -947,7 +948,7 @@ def Event_12022404():
 
 
 @RestartOnRest(12022300)
-def Event_12022300(_, character: uint, region: uint, seconds: float):
+def Event_12022300(_, character: Character | int, region: Region | int, seconds: float):
     """Event 12022300"""
     if ThisEventSlotFlagEnabled():
         EnableCharacter(character)
@@ -970,7 +971,7 @@ def Event_12022300(_, character: uint, region: uint, seconds: float):
 
 
 @RestartOnRest(12022350)
-def Event_12022350(_, character: uint, character_1: uint):
+def Event_12022350(_, character: uint, character_1: Character | int):
     """Event 12022350"""
     AND_1.Add(EntityWithinDistance(entity=character, other_entity=PLAYER, radius=60.0))
     AND_1.Add(CharacterHasSpecialEffect(character, 5080))
@@ -984,7 +985,7 @@ def Event_12022350(_, character: uint, character_1: uint):
 
 
 @RestartOnRest(12022360)
-def Event_12022360(_, character: uint, character_1: uint):
+def Event_12022360(_, character: uint, character_1: Character | int):
     """Event 12022360"""
     AND_1.Add(EntityWithinDistance(entity=character, other_entity=PLAYER, radius=60.0))
     AND_1.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
@@ -1226,7 +1227,7 @@ def Event_12022373():
 
 
 @RestartOnRest(12022400)
-def Event_12022400(_, character: uint, character_1: uint, region: uint):
+def Event_12022400(_, character: uint, character_1: uint, region: Region | int):
     """Event 12022400"""
     AND_15.Add(CharacterAlive(character_1))
     SkipLinesIfConditionTrue(1, AND_15)
@@ -1269,7 +1270,7 @@ def Event_12022400(_, character: uint, character_1: uint, region: uint):
 
 
 @RestartOnRest(12022419)
-def Event_12022419(_, character: uint, character_1: uint, region: uint):
+def Event_12022419(_, character: uint, character_1: uint, region: Region | int):
     """Event 12022419"""
     AND_15.Add(CharacterAlive(character_1))
     SkipLinesIfConditionTrue(1, AND_15)
@@ -1311,7 +1312,7 @@ def Event_12022419(_, character: uint, character_1: uint, region: uint):
 
 
 @RestartOnRest(12022440)
-def Event_12022440(_, character: uint, character_1: uint, patrol_information_id: uint):
+def Event_12022440(_, character: Character | int, character_1: Character | int, patrol_information_id: uint):
     """Event 12022440"""
     MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Battle))
     
@@ -1360,7 +1361,7 @@ def Event_12022503():
     MAIN.Await(FlagEnabled(71220))
     
     DeleteAssetVFX(Assets.AEG099_060_9000)
-    CreateAssetVFX(Assets.AEG099_060_9000, vfx_id=100, dummy_id=6400)
+    CreateAssetVFX(Assets.AEG099_060_9000, dummy_id=100, vfx_id=6400)
 
 
 @ContinueOnRest(12020510)
@@ -1372,7 +1373,7 @@ def Event_12020510():
         flag_1=12020521,
         left=5,
         asset=Assets.AEG239_010_0501,
-        asset_1=m60_49_Assets.AEG239_020_2000,
+        asset_1=m60_49_40_00_Assets.AEG239_020_2000,
         obj_act_id=1049403521,
         asset_2=Assets.AEG239_021_0501,
         obj_act_id_1=12023522,
@@ -1388,7 +1389,7 @@ def Event_12020510():
         flag_1=12020526,
         left=4,
         asset=Assets.AEG239_010_0502,
-        asset_1=m60_45_Assets.AEG239_020_2000,
+        asset_1=m60_45_37_00_Assets.AEG239_020_2000,
         obj_act_id=1045373526,
         asset_2=Assets.AEG239_021_0500,
         obj_act_id_1=12023527,
@@ -1417,11 +1418,11 @@ def Event_12020500():
     if FlagEnabled(12020570):
         return
     Wait(0.5)
-    DisableAssetActivation(m60_49_Assets.AEG239_020_2000, obj_act_id=239020)
+    DisableAssetActivation(m60_49_40_00_Assets.AEG239_020_2000, obj_act_id=239020)
     
     MAIN.Await(FlagEnabled(12020570))
     
-    EnableAssetActivation(m60_49_Assets.AEG239_020_2000, obj_act_id=239020)
+    EnableAssetActivation(m60_49_40_00_Assets.AEG239_020_2000, obj_act_id=239020)
 
 
 @RestartOnRest(12022850)
@@ -1530,7 +1531,7 @@ def Event_12022860():
 
 
 @RestartOnRest(12022865)
-def Event_12022865(_, character: uint, character_1: uint, region: uint):
+def Event_12022865(_, character: uint, character_1: uint, region: Region | int):
     """Event 12022865"""
     AND_1.Add(ThisEventSlotFlagEnabled())
     AND_1.Add(PlayerNotInOwnWorld())
@@ -1571,14 +1572,14 @@ def Event_12022865(_, character: uint, character_1: uint, region: uint):
 @RestartOnRest(12022869)
 def Event_12022869(
     _,
-    flag: uint,
+    flag: Flag | int,
     entity: uint,
     region: uint,
-    flag_1: uint,
-    character: uint,
+    flag_1: Flag | int,
+    character: Character | int,
     action_button_id: int,
-    left: uint,
-    region_1: uint,
+    left: Flag | int,
+    region_1: Region | int,
 ):
     """Event 12022869"""
     GotoIfFlagEnabled(Label.L10, flag=flag)
@@ -1614,9 +1615,9 @@ def Event_12022869(
     if FlagEnabled(flag):
         return RESTART
     if CharacterDoesNotHaveSpecialEffect(character=PLAYER, special_effect=4250):
-        FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+        FaceEntityAndForceAnimation(PLAYER, region, animation=60060, wait_for_completion=True)
     else:
-        FaceEntity(PLAYER, region, animation=60060)
+        FaceEntityAndForceAnimation(PLAYER, region, animation=60060)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -1634,7 +1635,8 @@ def Event_12022869(
     
     if FlagEnabled(flag):
         return RESTART
-    RestartIfLastConditionResultTrue(input_condition=OR_4)
+    if LastResult(OR_4):
+        return RESTART
 
     # --- Label 1 --- #
     DefineLabel(1)
@@ -1662,7 +1664,7 @@ def Event_12022869(
     
     MAIN.Await(AND_10)
     
-    FaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    FaceEntityAndForceAnimation(PLAYER, region, animation=60060, wait_for_completion=True)
     BanishInvaders(unknown=0)
     Restart()
 
@@ -1690,8 +1692,8 @@ def Event_12022899():
         flag_2=12022856,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=12020850, asset=Assets.AEG099_002_9000, dummy_id=8, right=0)
-    CommonFunc_9005812(0, flag=12020850, asset=Assets.AEG099_002_9001, dummy_id=8, right=0, dummy_id_1=0)
+    CommonFunc_9005811(0, flag=12020850, asset=Assets.AEG099_002_9000, vfx_id=8, right=0)
+    CommonFunc_9005812(0, flag=12020850, asset=Assets.AEG099_002_9001, vfx_id=8, right=0, vfx_id_1=0)
     CommonFunc_9005822(
         0,
         flag=12020850,
@@ -1821,7 +1823,7 @@ def Event_12022821():
 @RestartOnRest(12022849)
 def Event_12022849():
     """Event 12022849"""
-    CommonFunc_9005811(0, flag=12020800, asset=Assets.AEG099_002_9003, dummy_id=5, right=12020801)
+    CommonFunc_9005811(0, flag=12020800, asset=Assets.AEG099_002_9003, vfx_id=5, right=12020801)
     CommonFunc_9005822(
         0,
         flag=12020800,
@@ -1853,7 +1855,7 @@ def Event_12022849():
         flag_2=12022806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=12020800, asset=Assets.AEG099_002_9002, dummy_id=3, right=12020801)
+    CommonFunc_9005811(0, flag=12020800, asset=Assets.AEG099_002_9002, vfx_id=3, right=12020801)
     CommonFunc_9005822(
         0,
         flag=12020800,
@@ -1868,7 +1870,7 @@ def Event_12022849():
 
 
 @RestartOnRest(12020700)
-def Event_12020700(_, character: uint, asset: uint, asset_1: uint):
+def Event_12020700(_, character: uint, asset: Asset | int, asset_1: Asset | int):
     """Event 12020700"""
     DisableNetworkSync()
     WaitFrames(frames=1)
@@ -1946,7 +1948,7 @@ def Event_12020701(_, entity: uint):
 
 
 @RestartOnRest(12023710)
-def Event_12023710(_, character: uint, character_1: uint):
+def Event_12023710(_, character: Character | int, character_1: Character | int):
     """Event 12023710"""
     WaitFrames(frames=1)
     DisableCharacter(character)
@@ -1956,7 +1958,7 @@ def Event_12023710(_, character: uint, character_1: uint):
 
 
 @RestartOnRest(12023711)
-def Event_12023711(_, other_entity: uint, flag: uint):
+def Event_12023711(_, other_entity: uint, flag: Flag | int):
     """Event 12023711"""
     if PlayerNotInOwnWorld():
         return
@@ -2029,7 +2031,7 @@ def Event_12023720(_, character: uint):
 
 
 @RestartOnRest(12023721)
-def Event_12023721(_, other_entity: uint, radius: float, special_effect: int, flag: uint):
+def Event_12023721(_, other_entity: uint, radius: float, special_effect: int, flag: Flag | int):
     """Event 12023721"""
     DisableNetworkSync()
     if PlayerNotInOwnWorld():

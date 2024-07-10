@@ -18,13 +18,14 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_41_36_00_enums import *
 
 
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, dummy_id=100, vfx_id=800, right=0)
     CommonFunc_90005460(0, character=Characters.GiantOctopus0)
     CommonFunc_90005461(0, character=Characters.GiantOctopus0)
     CommonFunc_90005462(0, character=Characters.GiantOctopus0)
@@ -87,7 +88,7 @@ def Preconstructor():
 
 
 @RestartOnRest(1041362650)
-def Event_1041362650(_, tutorial_param_id: int, flag: uint):
+def Event_1041362650(_, tutorial_param_id: int, flag: Flag | int):
     """Event 1041362650"""
     if Multiplayer():
         return
@@ -119,7 +120,13 @@ def Event_1041362650(_, tutorial_param_id: int, flag: uint):
 
 
 @RestartOnRest(1041363700)
-def Event_1041363700(_, character: uint, character_1: uint, character_2: uint, asset: uint):
+def Event_1041363700(
+    _,
+    character: uint,
+    character_1: Character | int,
+    character_2: Character | int,
+    asset: Asset | int,
+):
     """Event 1041363700"""
     WaitFrames(frames=1)
     DisableFlag(1041369200)
@@ -189,12 +196,12 @@ def Event_1041363700(_, character: uint, character_1: uint, character_2: uint, a
 
 
 @RestartOnRest(1041363706)
-def Event_1041363706(_, attacked_entity: uint):
+def Event_1041363706(_, attacked_entity: Character | int):
     """Event 1041363706"""
     if PlayerNotInOwnWorld():
         return
-    OR_1.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=20000))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=40000))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=ALL_PLAYERS))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=TORRENT))
     AND_1.Add(OR_1)
     AND_1.Add(FlagDisabled(1041362701))
     
@@ -208,12 +215,12 @@ def Event_1041363706(_, attacked_entity: uint):
 def Event_1041363707(
     _,
     character: uint,
-    first_flag: uint,
-    flag: uint,
-    flag_1: uint,
-    last_flag: uint,
-    character_1: uint,
-    flag_2: uint,
+    first_flag: Flag | int,
+    flag: Flag | int,
+    flag_1: Flag | int,
+    last_flag: Flag | int,
+    character_1: Character | int,
+    flag_2: Flag | int,
 ):
     """Event 1041363707"""
     WaitFrames(frames=1)
@@ -224,12 +231,12 @@ def Event_1041363707(
     DisableNetworkFlag(flag_2)
     OR_1.Add(FlagEnabled(flag))
     OR_1.Add(FlagEnabled(flag_1))
-    AND_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=20000))
+    AND_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=ALL_PLAYERS))
     AND_1.Add(HealthValue(character) < 1)
     OR_2.Add(OR_1)
     OR_2.Add(AND_1)
     OR_3.Add(FlagEnabled(flag_2))
-    AND_3.Add(AttackedWithDamageType(attacked_entity=character_1, attacker=20000))
+    AND_3.Add(AttackedWithDamageType(attacked_entity=character_1, attacker=ALL_PLAYERS))
     AND_3.Add(HealthValue(character_1) < 1)
     OR_4.Add(OR_3)
     OR_4.Add(AND_3)

@@ -506,6 +506,7 @@ __all__ = [
     "IfArenaTeamScoreComparison",  # 3[43]
     "IfArenaMatchType",  # 3[44]
     "IfPlayerRespawnedInArena",  # 3[45]
+    "IfTutorialShown",  # 3[46]
     "IfCharacterProportionDeathState",  # 4[15]
     "IfCharacterProportionDead",
     "IfCharacterProportionAlive",
@@ -1035,6 +1036,7 @@ __all__ = [
     "ArenaTeamScoreComparison",
     "ArenaMatchType",
     "PlayerRespawnedInArena",
+    "TutorialShown",
     "CharacterProportionDeathState",
     "CharacterProportionDead",
     "CharacterProportionAlive",
@@ -5375,6 +5377,14 @@ def IfPlayerRespawnedInArena(condition: ConditionGroup | int, event_layers=()):
     """
 
 
+# (3, 46)
+
+def IfTutorialShown(condition: ConditionGroup | int, tutorial_param_id: int, event_layers=()):
+    """
+    Checks if given `TutorialParam` has been shown yet.
+    """
+
+
 # (4, 15)
 def IfCharacterProportionDeathState(
     condition: ConditionGroup | int,
@@ -9390,6 +9400,10 @@ def ArenaMatchType(match_type: ArenaMatchType | int, has_spirit_summon: bool | i
 
 
 def PlayerRespawnedInArena(event_layers=()) -> bool:
+    ...
+
+
+def TutorialShown(tutorial_param_id: int, event_layers=()) -> bool:
     ...
 
 

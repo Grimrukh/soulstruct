@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_42_37_00_enums import *
 
 
@@ -43,8 +44,8 @@ def Constructor():
         flag_10=78108,
         flag_11=78109,
     )
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, vfx_id=100, dummy_id=800, right=0)
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, dummy_id=100, vfx_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, dummy_id=100, vfx_id=800, right=0)
     CommonFunc_90005880(
         0,
         flag=1042370800,
@@ -126,7 +127,7 @@ def Event_1042372610():
 
 
 @RestartOnRest(1042372620)
-def Event_1042372620(_, asset: uint, entity: uint, flag: uint):
+def Event_1042372620(_, asset: Asset | int, entity: uint, flag: Flag | int):
     """Event 1042372620"""
     DisableNetworkSync()
     GotoIfFlagDisabled(Label.L0, flag=flag)
@@ -136,7 +137,7 @@ def Event_1042372620(_, asset: uint, entity: uint, flag: uint):
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateAssetVFX(asset, vfx_id=200, dummy_id=803220)
+    CreateAssetVFX(asset, dummy_id=200, vfx_id=803220)
     
     MAIN.Await(FlagEnabled(flag))
     
@@ -148,11 +149,11 @@ def Event_1042372620(_, asset: uint, entity: uint, flag: uint):
 def Event_1042372651(
     _,
     tutorial_param_id: int,
-    flag: uint,
+    flag: Flag | int,
     tutorial_param_id_1: int,
-    flag_1: uint,
-    flag_2: uint,
-    flag_3: uint,
+    flag_1: Flag | int,
+    flag_2: Flag | int,
+    flag_3: Flag | int,
 ):
     """Event 1042372651"""
     DisableNetworkSync()
@@ -184,7 +185,7 @@ def Event_1042372651(
 
 
 @RestartOnRest(1042373700)
-def Event_1042373700(_, flag: uint, other_entity: uint, flag_1: uint):
+def Event_1042373700(_, flag: Flag | int, other_entity: uint, flag_1: Flag | int):
     """Event 1042373700"""
     WaitFrames(frames=1)
     if PlayerNotInOwnWorld():
@@ -192,14 +193,14 @@ def Event_1042373700(_, flag: uint, other_entity: uint, flag_1: uint):
     if FlagEnabled(1042379203):
         return
     AND_1.Add(FlagEnabled(flag))
-    AND_1.Add(EntityWithinDistance(entity=20000, other_entity=other_entity, radius=5.0))
+    AND_1.Add(EntityWithinDistance(entity=ALL_PLAYERS, other_entity=other_entity, radius=5.0))
     AND_1.Add(FlagDisabled(flag_1))
     
     MAIN.Await(AND_1)
     
     EnableFlag(1042372701)
     OR_1.Add(FlagDisabled(flag))
-    OR_1.Add(EntityBeyondDistance(entity=20000, other_entity=other_entity, radius=5.0))
+    OR_1.Add(EntityBeyondDistance(entity=ALL_PLAYERS, other_entity=other_entity, radius=5.0))
     OR_1.Add(FlagEnabled(flag_1))
     
     MAIN.Await(OR_1)
@@ -209,7 +210,7 @@ def Event_1042373700(_, flag: uint, other_entity: uint, flag_1: uint):
 
 
 @RestartOnRest(1042373701)
-def Event_1042373701(_, other_entity: uint, flag: uint):
+def Event_1042373701(_, other_entity: uint, flag: Flag | int):
     """Event 1042373701"""
     WaitFrames(frames=1)
     if PlayerNotInOwnWorld():
@@ -219,14 +220,14 @@ def Event_1042373701(_, other_entity: uint, flag: uint):
     
     MAIN.Await(FlagEnabled(4680))
     
-    AND_2.Add(EntityWithinDistance(entity=20000, other_entity=other_entity, radius=5.0))
+    AND_2.Add(EntityWithinDistance(entity=ALL_PLAYERS, other_entity=other_entity, radius=5.0))
     SkipLinesIfConditionFalse(1, AND_2)
     EnableFlag(flag)
     End()
 
 
 @RestartOnRest(1042373702)
-def Event_1042373702(_, other_entity: uint, flag: uint):
+def Event_1042373702(_, other_entity: uint, flag: Flag | int):
     """Event 1042373702"""
     WaitFrames(frames=1)
     if PlayerNotInOwnWorld():
@@ -236,28 +237,28 @@ def Event_1042373702(_, other_entity: uint, flag: uint):
     
     MAIN.Await(FlagEnabled(1042379203))
     
-    AND_2.Add(EntityWithinDistance(entity=20000, other_entity=other_entity, radius=5.0))
+    AND_2.Add(EntityWithinDistance(entity=ALL_PLAYERS, other_entity=other_entity, radius=5.0))
     SkipLinesIfConditionFalse(1, AND_2)
     EnableFlag(flag)
     End()
 
 
 @RestartOnRest(1042373703)
-def Event_1042373703(_, other_entity: uint, flag: uint):
+def Event_1042373703(_, other_entity: uint, flag: Flag | int):
     """Event 1042373703"""
     WaitFrames(frames=1)
     if PlayerNotInOwnWorld():
         return
     if FlagEnabled(1042379207):
         return
-    AND_1.Add(EntityWithinDistance(entity=20000, other_entity=other_entity, radius=5.0))
+    AND_1.Add(EntityWithinDistance(entity=ALL_PLAYERS, other_entity=other_entity, radius=5.0))
     AND_1.Add(FlagEnabled(flag))
     
     MAIN.Await(AND_1)
     
     EnableFlag(1042372702)
     
-    MAIN.Await(EntityBeyondDistance(entity=20000, other_entity=other_entity, radius=5.0))
+    MAIN.Await(EntityBeyondDistance(entity=ALL_PLAYERS, other_entity=other_entity, radius=5.0))
     
     DisableFlag(1042372702)
     Restart()

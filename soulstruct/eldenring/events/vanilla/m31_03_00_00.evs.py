@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m31_03_00_00_enums import *
 
 
@@ -55,10 +56,10 @@ def Preconstructor():
         region=31032210,
         radius=6.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -68,10 +69,10 @@ def Preconstructor():
         region=31032210,
         radius=8.0,
         seconds=0.30000001192092896,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -81,15 +82,15 @@ def Preconstructor():
         region=31032216,
         radius=2.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
 
 
 @RestartOnRest(31032650)
-def Event_31032650(_, tutorial_param_id: int, flag: uint):
+def Event_31032650(_, tutorial_param_id: int, flag: Flag | int):
     """Event 31032650"""
     if Multiplayer():
         return
@@ -109,7 +110,7 @@ def Event_31032650(_, tutorial_param_id: int, flag: uint):
 
 
 @RestartOnRest(31032651)
-def Event_31032651(_, tutorial_param_id: int, flag: uint, flag_1: uint):
+def Event_31032651(_, tutorial_param_id: int, flag: Flag | int, flag_1: Flag | int):
     """Event 31032651"""
     if Multiplayer():
         return
@@ -223,7 +224,7 @@ def Event_31032849():
         flag_2=31032806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=31030800, asset=Assets.AEG099_001_9000, dummy_id=3, right=0)
+    CommonFunc_9005811(0, flag=31030800, asset=Assets.AEG099_001_9000, vfx_id=3, right=0)
     CommonFunc_9005822(
         0,
         flag=31030800,

@@ -45,3 +45,5 @@ class GameEnumsManager(_BaseGameEnumsManager):
         10008: "CLIENT_PLAYER_8",
         10009: "CLIENT_PLAYER_9",
     }
+
+    USE_AA_BB_ABBREVIATION = True

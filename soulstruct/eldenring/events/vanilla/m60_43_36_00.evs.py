@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_43_36_00_enums import *
 
 
@@ -53,17 +54,17 @@ def Constructor():
     Event_1043362340(10, character=Characters.FlyingDragonAgheel, region=1043362350, destination=1043362370)
     Event_1043362340(11, character=Characters.FlyingDragonAgheel, region=1043362351, destination=1043362371)
     Event_1043362340(12, character=Characters.FlyingDragonAgheel, region=1043362352, destination=1043362372)
-    CommonFunc_KillFieldDragonWyrm(
+    CommonFunc_90005861(
         0,
         flag=1043360800,
-        extra_flag=0,
+        left=0,
         character=Characters.FlyingDragonAgheel,
-        felled_banner_rank=1,
+        left_1=1,
         item_lot=30110,
         text=30060,
         seconds=0.0,
     )
-    CommonFunc_FieldBattleHealthBar(0, boss=Characters.FlyingDragonAgheel, name=904500600, npc_threat_level=25)
+    CommonFunc_90005870(0, character=Characters.FlyingDragonAgheel, name=904500600, npc_threat_level=25)
     Event_1043362380()
     Event_1043362510(0, asset=Assets.AEG099_290_9001, region=1043362510, flag=1043362500, obj_act_id=1043363600)
     CommonFunc_90005781(
@@ -137,12 +138,12 @@ def Event_1043362210(_, character: uint, radius: float, sound_id: int):
 def Event_1043362220(
     _,
     character: uint,
-    asset: uint,
-    flag: uint,
-    flag_1: uint,
+    asset: Asset | int,
+    flag: Flag | int,
+    flag_1: Flag | int,
     radius: float,
     animation_id: int,
-    asset_1: uint,
+    asset_1: Asset | int,
 ):
     """Event 1043362220"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
@@ -174,7 +175,7 @@ def Event_1043362220(
 
 
 @RestartOnRest(1043362221)
-def Event_1043362221(_, character: uint, flag: uint, flag_1: uint, animation_id: int, asset: uint):
+def Event_1043362221(_, character: uint, flag: Flag | int, flag_1: Flag | int, animation_id: int, asset: uint):
     """Event 1043362221"""
     if FlagEnabled(flag):
         return
@@ -198,7 +199,7 @@ def Event_1043362221(_, character: uint, flag: uint, flag_1: uint, animation_id:
 
 
 @RestartOnRest(1043362340)
-def Event_1043362340(_, character: uint, region: uint, destination: uint):
+def Event_1043362340(_, character: uint, region: Region | int, destination: uint):
     """Event 1043362340"""
     if FlagEnabled(1043360340):
         EnableCharacter(character)
@@ -255,7 +256,7 @@ def Event_1043362380():
 
 
 @RestartOnRest(1043362510)
-def Event_1043362510(_, asset: uint, region: uint, flag: uint, obj_act_id: uint):
+def Event_1043362510(_, asset: uint, region: Region | int, flag: Flag | int, obj_act_id: uint):
     """Event 1043362510"""
     DisableNetworkSync()
     GotoIfMultiplayerPending(Label.L1)
@@ -280,7 +281,7 @@ def Event_1043362510(_, asset: uint, region: uint, flag: uint, obj_act_id: uint)
     GotoIfMultiplayerPending(Label.L2)
     GotoIfMultiplayer(Label.L2)
     FadeToBlack(strength=0.0, duration=0.0, freeze_player=True, freeze_player_delay=-1.0)
-    DisplayDialog(text=20700, anchor_entity=0, display_distance=5.0, button_type=ButtonType.Yes_or_No)
+    DisplayDialog(text=20700, display_distance=5.0, button_type=ButtonType.Yes_or_No)
     Wait(0.699999988079071)
     AddSpecialEffect(PLAYER, 4090)
     PlaySoundEffect(PLAYER, 8700, sound_type=SoundType.c_CharacterMotion)
@@ -348,7 +349,7 @@ def Event_1043362510(_, asset: uint, region: uint, flag: uint, obj_act_id: uint)
 
 
 @RestartOnRest(1043362651)
-def Event_1043362651(_, tutorial_param_id: int, flag: uint, flag_1: uint, flag_2: uint):
+def Event_1043362651(_, tutorial_param_id: int, flag: Flag | int, flag_1: Flag | int, flag_2: Flag | int):
     """Event 1043362651"""
     if Multiplayer():
         return
@@ -371,7 +372,7 @@ def Event_1043362651(_, tutorial_param_id: int, flag: uint, flag_1: uint, flag_2
 
 
 @RestartOnRest(1043362652)
-def Event_1043362652(_, tutorial_param_id: int, flag: uint, flag_1: uint):
+def Event_1043362652(_, tutorial_param_id: int, flag: Flag | int, flag_1: Flag | int):
     """Event 1043362652"""
     if Multiplayer():
         return
@@ -406,7 +407,7 @@ def Event_1043362652(_, tutorial_param_id: int, flag: uint, flag_1: uint):
 
 
 @RestartOnRest(1043362653)
-def Event_1043362653(_, tutorial_param_id: int, flag: uint, flag_1: uint, tutorial_param_id_1: int):
+def Event_1043362653(_, tutorial_param_id: int, flag: Flag | int, flag_1: Flag | int, tutorial_param_id_1: int):
     """Event 1043362653"""
     if Multiplayer():
         return
@@ -429,7 +430,7 @@ def Event_1043362653(_, tutorial_param_id: int, flag: uint, flag_1: uint, tutori
 
 
 @RestartOnRest(1043362654)
-def Event_1043362654(_, tutorial_param_id: int, flag: uint):
+def Event_1043362654(_, tutorial_param_id: int, flag: Flag | int):
     """Event 1043362654"""
     if Multiplayer():
         return
@@ -477,7 +478,7 @@ def Event_1043363700():
 
 
 @RestartOnRest(1043363701)
-def Event_1043363701(_, character: uint):
+def Event_1043363701(_, character: Character | int):
     """Event 1043363701"""
     DisableCharacter(character)
     EnableBackread(character)
@@ -499,7 +500,7 @@ def Event_1043363702(_, entity: uint):
     SkipLinesIfConditionTrue(2, OR_1)
     DisableFlag(1043369200)
     End()
-    AND_1.Add(EntityWithinDistance(entity=entity, other_entity=20000, radius=10.0))
+    AND_1.Add(EntityWithinDistance(entity=entity, other_entity=ALL_PLAYERS, radius=10.0))
     AND_1.Add(FlagEnabled(1043360340))
     AND_1.Add(FlagEnabled(1043359256))
     
@@ -514,7 +515,7 @@ def Event_1043363702(_, entity: uint):
 
 
 @RestartOnRest(1043363703)
-def Event_1043363703(_, character: uint, other_entity: uint):
+def Event_1043363703(_, character: Character | int, other_entity: uint):
     """Event 1043363703"""
     WaitFrames(frames=1)
     if PlayerNotInOwnWorld():

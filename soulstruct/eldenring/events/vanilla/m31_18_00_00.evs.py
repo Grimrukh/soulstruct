@@ -18,6 +18,7 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m31_18_00_00_enums import *
 
 
@@ -43,17 +44,17 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    Event_31182500(0, asset=31181500, vfx_id=200, dummy_id=800023, dummy_id_1=402001)
-    Event_31182500(1, asset=31181501, vfx_id=200, dummy_id=800023, dummy_id_1=402001)
-    Event_31182500(2, asset=31181502, vfx_id=200, dummy_id=800023, dummy_id_1=402001)
-    Event_31182500(3, asset=31181503, vfx_id=200, dummy_id=800023, dummy_id_1=402001)
-    Event_31182500(4, asset=31181504, vfx_id=200, dummy_id=800023, dummy_id_1=402001)
-    Event_31182500(5, asset=31181505, vfx_id=200, dummy_id=800023, dummy_id_1=402001)
-    Event_31182500(6, asset=31181506, vfx_id=200, dummy_id=800023, dummy_id_1=402001)
-    Event_31182500(7, asset=31181507, vfx_id=200, dummy_id=800023, dummy_id_1=402001)
-    Event_31182500(8, asset=31181508, vfx_id=200, dummy_id=800023, dummy_id_1=402001)
+    Event_31182500(0, asset=31181500, dummy_id=200, vfx_id=800023, vfx_id_1=402001)
+    Event_31182500(1, asset=31181501, dummy_id=200, vfx_id=800023, vfx_id_1=402001)
+    Event_31182500(2, asset=31181502, dummy_id=200, vfx_id=800023, vfx_id_1=402001)
+    Event_31182500(3, asset=31181503, dummy_id=200, vfx_id=800023, vfx_id_1=402001)
+    Event_31182500(4, asset=31181504, dummy_id=200, vfx_id=800023, vfx_id_1=402001)
+    Event_31182500(5, asset=31181505, dummy_id=200, vfx_id=800023, vfx_id_1=402001)
+    Event_31182500(6, asset=31181506, dummy_id=200, vfx_id=800023, vfx_id_1=402001)
+    Event_31182500(7, asset=31181507, dummy_id=200, vfx_id=800023, vfx_id_1=402001)
+    Event_31182500(8, asset=31181508, dummy_id=200, vfx_id=800023, vfx_id_1=402001)
     Event_31182515()
-    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, dummy_id=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, dummy_id=100, vfx_id=800, right=0)
 
 
 @ContinueOnRest(50)
@@ -83,10 +84,10 @@ def Preconstructor():
         region=31182203,
         radius=2.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -96,10 +97,10 @@ def Preconstructor():
         region=31182207,
         radius=2.0,
         seconds=2.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     Event_31182200(0, character=Characters.DepravedPerfumer0, region=31182250)
     Event_31182200(1, character=Characters.DepravedPerfumer1, region=31182251)
@@ -130,10 +131,10 @@ def Preconstructor():
         region=31182310,
         radius=0.0,
         seconds=9.0,
-        do_disable_gravity_and_collision=1,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=1,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -143,10 +144,10 @@ def Preconstructor():
         region=31182310,
         radius=0.0,
         seconds=10.0,
-        do_disable_gravity_and_collision=1,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=1,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005261(
         0,
@@ -189,15 +190,15 @@ def Preconstructor():
         animation_id=3012,
         region_1=32052401,
     )
-    CommonFunc_90005300(0, flag=31180400, character=Characters.MalformedStar, item_lot=0, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=31180400, character=Characters.MalformedStar, item_lot=0, seconds=0.0, left=0)
     Event_31182400()
 
 
 @RestartOnRest(31182500)
-def Event_31182500(_, asset: uint, vfx_id: int, dummy_id: int, dummy_id_1: int):
+def Event_31182500(_, asset: Asset | int, dummy_id: int, vfx_id: int, vfx_id_1: int):
     """Event 31182500"""
-    CreateAssetVFX(asset, vfx_id=vfx_id, dummy_id=dummy_id)
-    CreateAssetVFX(asset, vfx_id=vfx_id, dummy_id=dummy_id_1)
+    CreateAssetVFX(asset, dummy_id=dummy_id, vfx_id=vfx_id)
+    CreateAssetVFX(asset, dummy_id=dummy_id, vfx_id=vfx_id_1)
 
 
 @RestartOnRest(31182515)
@@ -207,7 +208,7 @@ def Event_31182515():
 
 
 @RestartOnRest(31182200)
-def Event_31182200(_, character: uint, region: uint):
+def Event_31182200(_, character: uint, region: Region | int):
     """Event 31182200"""
     OR_15.Add(ThisEventSlotFlagEnabled())
     if OR_15:
@@ -289,7 +290,15 @@ def Event_31182401():
 
 
 @RestartOnRest(31182402)
-def Event_31182402(_, character: uint, region: uint, radius: float, seconds: float, animation_id: int, region_1: uint):
+def Event_31182402(
+    _,
+    character: uint,
+    region: Region | int,
+    radius: float,
+    seconds: float,
+    animation_id: int,
+    region_1: Region | int,
+):
     """Event 31182402"""
     if ThisEventSlotFlagEnabled():
         return
@@ -470,7 +479,7 @@ def Event_31182849():
         flag_2=31182806,
         action_button_id=10000,
     )
-    CommonFunc_9005811(0, flag=31180800, asset=Assets.AEG099_002_9000, dummy_id=5, right=0)
+    CommonFunc_9005811(0, flag=31180800, asset=Assets.AEG099_002_9000, vfx_id=5, right=0)
     CommonFunc_9005822(
         0,
         flag=31180800,

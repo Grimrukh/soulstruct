@@ -18,13 +18,14 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
 from .enums.m60_42_53_00_enums import *
 
 
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005300(0, flag=1042530501, character=1042530501, item_lot=1042530300, seconds=0.0, item_is_dropped=0)
+    CommonFunc_90005300(0, flag=1042530501, character=1042530501, item_lot=1042530300, seconds=0.0, left=0)
     CommonFunc_90005390(
         0,
         flag=1042530350,
@@ -68,10 +69,10 @@ def Preconstructor():
         region=1042532305,
         radius=5.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -81,10 +82,10 @@ def Preconstructor():
         region=1042532305,
         radius=5.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005211(
         0,
@@ -94,10 +95,10 @@ def Preconstructor():
         region=1042532305,
         radius=5.0,
         seconds=0.0,
-        do_disable_gravity_and_collision=0,
-        only_battle_state=0,
-        only_ai_state_5=0,
-        only_ai_state_4=0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
     CommonFunc_90005261(0, character=1042530319, region=1042532202, radius=5.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=1042530320, region=1042532202, radius=5.0, seconds=0.0, animation_id=0)
