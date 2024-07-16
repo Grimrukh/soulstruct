@@ -526,7 +526,9 @@ def write_marked_string(writer: BinaryWriter, marker: int, string: str):
 
 @dataclass(slots=True)
 class MTDBND(Binder):
-    """NOTE: This is NOT an abstract class. It can be used for any game (so far), but will lack `from_bundled()`."""
+    """NOTE: This is NOT an abstract class. It can be used for any supported game (i.e. up to Sekiro)."""
+
+    _BUNDLED: tp.ClassVar[dict[Game, MTDBND]] = {}
 
     mtds: dict[str, MTD] = field(default_factory=dict)
 
@@ -546,6 +548,8 @@ class MTDBND(Binder):
     @classmethod
     def from_bundled(cls, game_or_name: Game | str) -> MTDBND:
         game = get_game(game_or_name)
+        if game in cls._BUNDLED:
+            return cls._BUNDLED[game]
         mtdbnd = None  # type: MTDBND | None
         for resource_key, resource_path in game.bundled_resource_paths.items():
             if resource_key.endswith("MTDBND"):
@@ -555,6 +559,7 @@ class MTDBND(Binder):
                     mtdbnd |= cls.from_path(resource_path)
         if mtdbnd is None:
             raise FileNotFoundError(f"No bundled MTDBND found for {game.name}.")
+        cls._BUNDLED[game] = mtdbnd
         return mtdbnd
 
     @classmethod

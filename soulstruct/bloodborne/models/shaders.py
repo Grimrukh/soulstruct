@@ -10,7 +10,7 @@ import typing as tp
 from dataclasses import dataclass
 from enum import IntEnum
 
-from soulstruct.base.models.flver.shaders import MatDef as MatDef
+from soulstruct.base.models.shaders import MatDef as _BaseMatDef
 from soulstruct.base.models.flver.vertex_array import *
 from soulstruct.utilities.future import StrEnum
 
@@ -18,7 +18,7 @@ _LOGGER = logging.getLogger("soulstruct")
 
 
 @dataclass(slots=True)
-class MatDef(MatDef):
+class MatDef(_BaseMatDef):
 
     class ShaderCategory(StrEnum):
         """Categories of MTD shaders. TODO: Copied from DS1 currently. Change prefix to SPRJ?"""

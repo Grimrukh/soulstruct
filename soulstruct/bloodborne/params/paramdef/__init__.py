@@ -3,7 +3,6 @@ from __future__ import annotations
 __all__ = [
     "ParamDef",
     "ParamDefBND",
-    "GET_BUNDLED_PARAMDEFBND",
 
     "ACTIONBUTTON_PARAM_ST",
     "AI_SOUND_PARAM_ST",

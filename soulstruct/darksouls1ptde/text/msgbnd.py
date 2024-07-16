@@ -5,8 +5,7 @@ __all__ = ["MSGBND"]
 import typing as tp
 from dataclasses import dataclass
 
-from soulstruct.base.text.msgbnd import MSGBND as _BaseMSGBND
-from soulstruct.containers import BinderVersion
+from soulstruct.containers import Binder, BinderVersion
 from soulstruct.games import DARK_SOULS_PTDE
 
 try:
@@ -16,16 +15,14 @@ except AttributeError:
 
 
 @dataclass(slots=True)
-class MSGBND(_BaseMSGBND):
+class MSGBND(Binder):
     """Subclassed by games to set default binder/entry path.
 
     Does NOT handle FMGs; `MSGDirectory` does that by managing both `item` and `menu` MSGBNDs together.
     """
 
+    DEFAULT_ENTRY_ROOT: tp.ClassVar[str] = f"{DARK_SOULS_PTDE.interroot_prefix}\\Msb\\Data_ENGLISH\\win32"
+
     dcx_type = DARK_SOULS_PTDE.default_dcx_type
     version: BinderVersion = BinderVersion.V3
     v4_info = None
-
-    @classmethod
-    def get_default_new_entry_path(cls, entry_name: str):
-        return f"N:\\FRPG\\data\\Msg\\Data_ENGLISH\\win32\\{entry_name}"

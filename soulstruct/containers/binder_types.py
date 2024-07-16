@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 __all__ = [
-    "InterrootBinder",
     "FLVERBinder",
 ]
 
@@ -19,30 +18,20 @@ _LOGGER = logging.getLogger("soulstruct")
 
 
 @dataclass(slots=True)
-class InterrootBinder(Binder, abc.ABC):
-    """Base class for Binders whose entries are in some 'interroot' folder (e.g. `chr`, `obj`, `parts`)."""
-
-    INTERROOT_STEM: tp.ClassVar[str] = NotImplemented
-
-    def get_entry_path(self, relative_path: str) -> str:
-        return f"{self.INTERROOT_STEM}\\{relative_path}"
-
-
-@dataclass(slots=True)
-class FLVERBinder(InterrootBinder, abc.ABC):
+class FLVERBinder(Binder, abc.ABC):
     """Base class for Binders that contain one or more FLVER files and an optional TPF file."""
 
-    TPF_ENTRY_ID: tp.ClassVar[int] = 100
+    TPF_ENTRY_ID: tp.ClassVar[int] = 100  # -1 if no TPF ever exists
     FLVER_FIRST_ENTRY_ID: tp.ClassVar[int] = 200
     MAX_FLVER_COUNT: tp.ClassVar[int] = 1
 
     model_stem: str = ""  # will be extracted from `path` field if left empty
-    tpf: TPF | None = None
+    tpf: TPF | None = None  # not available in all subclasses
     flvers: dict[str, FLVER] = field(default_factory=dict)
 
     def __post_init__(self):
         super(FLVERBinder, self).__post_init__()
-        if not self.tpf:
+        if not self.tpf and self.TPF_ENTRY_ID >= 0:
             try:
                 tpf_entry = self.find_entry_id(self.TPF_ENTRY_ID)
             except EntryNotFoundError:
@@ -92,10 +81,10 @@ class FLVERBinder(InterrootBinder, abc.ABC):
         self.flvers[self.model_stem] = value
 
     def get_tpf_entry_path(self, model_stem: str) -> str:
-        return f"{self.INTERROOT_STEM}\\{model_stem}\\{model_stem}.tpf"
+        return self.get_default_entry_path(f"{model_stem}\\{model_stem}.tpf")
 
     def get_flver_entry_path(self, model_stem: str) -> str:
-        return f"{self.INTERROOT_STEM}\\{model_stem}\\{model_stem}.flver"
+        return self.get_default_entry_path(f"{model_stem}\\{model_stem}.flver")
 
     def _get_model_stem(self) -> str:
         """Get model stem from `model_stem` field or `path` name as a backup."""

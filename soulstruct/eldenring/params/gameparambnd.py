@@ -29,6 +29,7 @@ except AttributeError:
 @dataclass(slots=True)
 class GameParamBND(_BaseGameParamBND):
 
+    DEFAULT_ENTRY_ROOT: tp.ClassVar[str] = "N:\\GR\\data\\Param\\param\\GameParam"
     PARAMDEF_MODULE: tp.ClassVar = paramdef
 
     signature: str = "10811000"
@@ -65,12 +66,6 @@ class GameParamBND(_BaseGameParamBND):
         self.write(temp_decrypted, make_dirs=False, check_hash=False)
         ParamCrypt(temp_decrypted, "encrypt", "er", file_path)
         # temp_decrypted.unlink()
-
-    @classmethod
-    def get_default_new_entry_path(cls, entry_name: str) -> str:
-        if not entry_name.endswith(".param"):
-            raise ValueError(f"Expected `GameParamBND` entry name to end in '.param': {entry_name}")
-        return f"N:\\GR\\data\\Param\\param\\GameParam\\{entry_name}"
 
     # TODO: `rename_entries_from_text` and other utilities
 

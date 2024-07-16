@@ -102,7 +102,7 @@ class TalkESDBND(Binder, abc.ABC):
                 self.remove_entry_name(entry_name)
 
         for talk_entry_name, talk_esd in zip(current_entry_names, self.talk.values(), strict=True):
-            entry_path = self.get_default_new_entry_path(talk_entry_name)
+            entry_path = self.get_default_entry_path(talk_entry_name)
             entry = self.set_default_entry(entry_path)
             if not entry.data:
                 _LOGGER.debug(f"New ESD entry added to `TalkESDBND`: {talk_entry_name}")

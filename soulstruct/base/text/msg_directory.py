@@ -16,7 +16,6 @@ from soulstruct.base.game_file_directory import GameFileDirectory
 from soulstruct.utilities.files import read_json, write_json
 
 from .fmg import FMG
-from .msgbnd import MSGBND
 
 try:
     Self = tp.Self
@@ -34,7 +33,7 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
     entries.
     """
     FILE_NAME_PATTERN: tp.ClassVar[str] = r".*\.msgbnd"
-    FILE_CLASS: tp.ClassVar[type[MSGBND]] = MSGBND
+    FILE_CLASS: tp.ClassVar[type[Binder]] = NotImplemented
     FILE_EXTENSION: tp.ClassVar[str] = ".msgbnd"
 
     # These are text categories you are likely to want to change in mod projects (in display order).
@@ -139,7 +138,7 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
                     raise FileNotFoundError(f"Could not find text (FMG) JSON file: {directory / json_name}")
                 fmg.dcx_type = cls.FMG_DCX_TYPE
                 fmg_stem = cls.DEFAULT_ENTRY_STEMS[(msgbnd_name, entry_id)]
-                entry_path = cls.FILE_CLASS.get_default_new_entry_path(fmg_stem + ".fmg")
+                entry_path = cls.FILE_CLASS.get_default_entry_path(fmg_stem + ".fmg")
                 entry = BinderEntry(bytes(fmg), entry_id, entry_path, cls.FILE_CLASS.DEFAULT_ENTRY_FLAGS)
                 entries.append(entry)
                 fmgs[(msgbnd_name, entry_id)] = fmg

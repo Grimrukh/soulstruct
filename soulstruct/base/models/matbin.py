@@ -306,7 +306,7 @@ class MATBINSampler:
 @dataclass(slots=True)
 class MATBINBND(Binder):
 
-    _BUNDLED: tp.ClassVar[MATBINBND] = None
+    _BUNDLED: tp.ClassVar[dict[Game, MATBINBND]] = {}
 
     use_lazy_load: bool = True  # if True, entries will only be loaded into `MATBIN` instances when requested
     matbins: dict[str, MATBIN] = field(default_factory=dict)
@@ -347,6 +347,8 @@ class MATBINBND(Binder):
     @classmethod
     def from_bundled(cls, game_or_name: Game | str) -> MATBINBND:
         game = get_game(game_or_name)
+        if game in cls._BUNDLED:
+            return cls._BUNDLED[game]
         matbinbnd = None  # type: MATBINBND | None
         for resource_key, resource_path in game.bundled_resource_paths.items():
             if resource_key.endswith("MATBINBND"):
@@ -356,6 +358,7 @@ class MATBINBND(Binder):
                     matbinbnd |= cls.from_path(resource_path)
         if not matbinbnd:
             raise FileNotFoundError(f"No bundled MATBINBND found for {game.name}.")
+        cls._BUNDLED[game] = matbinbnd
         return matbinbnd
 
     @classmethod

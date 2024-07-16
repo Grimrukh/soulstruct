@@ -1,16 +1,12 @@
 """Script that generates modules and classes in Soulstruct for a game's `ParamDef`s."""
 import logging
 import textwrap
-import typing as tp
 
 from soulstruct.base.params.param_row import *
 from soulstruct.base.params.paramdef.paramdefbnd import ParamDefBND
 from soulstruct.utilities.files import PACKAGE_PATH, read_json, write_json
 
 _LOGGER = logging.getLogger("soulstruct")
-
-GET_BUNDLED_PARAMDEFBND: tp.Callable
-
 
 # ParamDef field names with miserable weird characters that I've redirected.
 BAD_NAMES = {
@@ -38,7 +34,7 @@ DSR_PARAMDEFS = (
 )
 
 
-def create_paramdef_info(game_submodule, template_info: dict = None):
+def create_paramdef_info(paramdefbnd: ParamDefBND, game_submodule, template_info: dict = None):
     """Create default info JSON, with nicknames generated from field names and no tooltips/defaults/etc."""
     paramdef_dir = PACKAGE_PATH(f"{game_submodule}/params/paramdef")
     json_path = paramdef_dir / "paramdef_info.json"
@@ -47,7 +43,7 @@ def create_paramdef_info(game_submodule, template_info: dict = None):
 
     if template_info is None:
         template_info = {}
-    paramdefbnd = GET_BUNDLED_PARAMDEFBND()  # type: ParamDefBND
+
     json_dict = {}
     for paramdef_stem, paramdef in paramdefbnd.paramdefs.items():
         paramdef_dict = json_dict[paramdef_stem] = {}
@@ -71,10 +67,9 @@ def create_paramdef_info(game_submodule, template_info: dict = None):
     write_json(json_path, json_dict)
 
 
-def create_game_classes(game_submodule: str, no_info: bool = False):
+def create_game_classes(paramdefbnd: ParamDefBND, game_submodule: str, no_info: bool = False):
     """My script to convert these 'display info' dictionaries to BinaryStruct representations of ParamDefs."""
     paramdef_dir = PACKAGE_PATH(f"{game_submodule}/params/paramdef")
-    paramdefbnd = GET_BUNDLED_PARAMDEFBND()  # type: ParamDefBND
 
     if no_info:
         paramdefbnd_info = {}
@@ -272,7 +267,7 @@ def modify_paramdef_info(game_submodule):
 
 
 if __name__ == '__main__':
-    from soulstruct.eldenring.params.paramdef import GET_BUNDLED_PARAMDEFBND
+    from soulstruct.eldenring.params.paramdef import ParamDefBND
     modify_paramdef_info("eldenring")
-    GET_BUNDLED_PARAMDEFBND = GET_BUNDLED_PARAMDEFBND
-    create_game_classes("eldenring")
+    _paramdefbnd = ParamDefBND.from_bundled("ELDEN_RING")
+    create_game_classes(_paramdefbnd, "eldenring")

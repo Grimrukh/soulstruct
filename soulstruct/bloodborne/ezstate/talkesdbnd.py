@@ -15,12 +15,10 @@ from .esd import TalkESD
 
 @dataclass(slots=True)
 class TalkESDBND(_BaseTalkESDBND):
+
+    DEFAULT_ENTRY_ROOT: tp.ClassVar[str] = f"{BLOODBORNE.interroot_prefix}\\script\\talk"
     TALK_ESD_CLASS: tp.ClassVar = TalkESD
 
     dcx_type: DCXType = BLOODBORNE.default_dcx_type
     version: BinderVersion = BinderVersion.V4
     v4_info: BinderVersion4Info = field(default_factory=lambda: BinderVersion4Info(False, False, True, 0))
-
-    @classmethod
-    def get_default_new_entry_path(cls, entry_name: str):
-        return f"N:\\SPRJ\\data\\INTERROOT_ps4\\script\\talk\\{entry_name}"

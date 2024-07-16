@@ -10,7 +10,7 @@ import typing as tp
 from dataclasses import dataclass
 from enum import IntEnum
 
-from soulstruct.base.models.flver.shaders import MatDef as MatDef
+from soulstruct.base.models.shaders import MatDef as _BaseMatDef
 from soulstruct.base.models.flver.vertex_array import *
 from soulstruct.utilities.future import StrEnum
 
@@ -18,7 +18,7 @@ _LOGGER = logging.getLogger("soulstruct")
 
 
 @dataclass(slots=True)
-class MatDef(MatDef):
+class MatDef(_BaseMatDef):
 
     class ShaderCategory(StrEnum):
         """Categories of DS1 MTD shaders."""
@@ -148,7 +148,7 @@ class MatDef(MatDef):
 
     @classmethod
     def from_mtd_name(cls, mtd_name: str):
-        matdef = super().from_mtd_name(mtd_name)
+        matdef = super(MatDef, cls).from_mtd_name(mtd_name)
 
         if matdef.get_sampler_with_alias("Main 0 Normal"):
             # Add useless "Detail 0 Normal" sampler for completion.

@@ -3,7 +3,6 @@ from __future__ import annotations
 __all__ = [
     "ParamDef",
     "ParamDefBND",
-    "GET_BUNDLED_PARAMDEFBND",
 
     "ACTIONBUTTON_PARAM_ST",
     "AI_ANIM_TBL_PARAM",
@@ -192,7 +191,7 @@ __all__ = [
     "WWISE_VALUE_TO_STR_CONVERT_PARAM_ST",
 ]
 
-from .core import ParamDefBND, GET_BUNDLED_PARAMDEFBND
+from .core import ParamDef, ParamDefBND
 from .ACTIONBUTTON_PARAM_ST import ACTIONBUTTON_PARAM_ST
 from .AI_ANIM_TBL_PARAM import AI_ANIM_TBL_PARAM
 from .AI_ATTACK_PARAM_ST import AI_ATTACK_PARAM_ST

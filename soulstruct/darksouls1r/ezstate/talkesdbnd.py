@@ -15,6 +15,8 @@ from .esd import TalkESD
 
 @dataclass(slots=True)
 class TalkESDBND(_BaseTalkESDBND):
+
+    DEFAULT_ENTRY_ROOT: tp.ClassVar[str] = f"{DARK_SOULS_DSR.interroot_prefix}\\script\\talk"
     TALK_ESD_CLASS: tp.ClassVar = TalkESD
 
     dcx_type: DCXType = DARK_SOULS_DSR.default_dcx_type
@@ -25,7 +27,3 @@ class TalkESDBND(_BaseTalkESDBND):
     version: BinderVersion = BinderVersion.V3
     v4_info: BinderVersion4Info | None = None
     is_split_bxf: bool = False
-
-    @classmethod
-    def get_default_new_entry_path(cls, entry_name: str):
-        return f"N:\\FRPG\\data\\INTERROOT_x64\\script\\talk\\{entry_name}"

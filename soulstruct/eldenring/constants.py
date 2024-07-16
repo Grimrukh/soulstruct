@@ -246,7 +246,7 @@ CHARACTER_MODELS = {
     4680: "Fallingstar Beast",
     4690: "Grafted Scion",
     4710: "God-Devouring Serpent / Rykard",
-    4711: "Writhing Mass",
+    4711: "Rykard Slime",
     4720: "Godfrey",  # golden and real variants
     4721: "Hoarah Loux",
     4730: "Starscourge Radahn",

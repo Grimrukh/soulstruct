@@ -209,11 +209,23 @@ class BinderVersion4Info:
     unknown1: bool = False
     unknown2: bool = False
     unicode: bool = True
-    hash_table_type: int = 0  # 4 is also very common
+    hash_table_type: int = 4
 
     most_recent_hash_table: bytes = field(init=False, repr=False, default=b"")
     most_recent_entry_count: int = field(init=False, repr=False, default=0)
     most_recent_paths: list[str] = field(init=False, repr=False, default_factory=list)
+
+    @classmethod
+    def bloodborne_default(cls):
+        return cls(False, False, True, 0)
+
+    @classmethod
+    def darksouls3_default(cls):
+        return cls(False, False, True, 4)
+
+    @classmethod
+    def elden_ring_default(cls):
+        return cls(False, False, True, 4)
 
 
 @dataclass(slots=True, kw_only=True)
@@ -254,6 +266,11 @@ class Binder(BaseBinaryFile):
     # Default `BinderEntry.flags` to use when creating new entries with `Binder` utility methods.
     # Default (2) is the most common observed value by far.
     DEFAULT_ENTRY_FLAGS: tp.ClassVar[int] = 0b0000_0010  # 2
+
+    # Can be defined by subclasses to enable use of `get_default_entry_path(entry_name)` class method. For more
+    # complicated logic (i.e. where part of the path of the entry depends on its name), override the method itself.
+    # Typically set to something like `{game.interroot_prefix}\\some\\extra\\folders`.
+    DEFAULT_ENTRY_ROOT: tp.ClassVar[str] = ""
 
     signature: str = "07D7R6"
     flags: BinderFlags = BinderFlags(0b00101110)  # most common flags by far (IDs, names1, names2, compression)
@@ -1091,7 +1108,7 @@ class Binder(BaseBinaryFile):
         At least one of `entry_name` and `entry_path` should be given. If both are given (e.g. because the name was
         given as a spec to `set_default_entry()` but a "preferred" path was also given for a new entry), only
         `entry_path` will be used. If only `entry_name` is given, `entry_path` will be created from it using the
-        subclass's `get_default_new_entry_path()` method. A `Binder` subclass must explicitly define this method for
+        subclass's `get_default_entry_path()` method. A `Binder` subclass must explicitly define this method for
         this to work; we don't assume that rooted entry paths are acceptable in general.
 
         Does NOT add the created entry to this Binder automatically.
@@ -1099,7 +1116,7 @@ class Binder(BaseBinaryFile):
         if entry_path is None:
             # Path not given. Create from name.
             if entry_name is not None:
-                entry_path = self.get_default_new_entry_path(entry_name)
+                entry_path = self.get_default_entry_path(entry_name)
             else:
                 raise ValueError("At least one of `entry_name` or `entry_path` must be given.")
         elif entry_name is None:
@@ -1360,16 +1377,21 @@ class Binder(BaseBinaryFile):
         )
 
     @classmethod
-    def get_default_new_entry_path(cls, entry_name: str) -> str:
-        """Optional method that can be overridden (usually by a game subclass) to generate a full entry path.
+    def get_default_entry_path(cls, entry_name: str) -> str:
+        """Guess full entry path from `entry_name` and `DEFAULT_ENTRY_ROOT`.
+
+        `entry_name` does not have to be literally just the name -- it could contain additional folders.
         
         NOTE: Some simple binders, like TPFBHD map texture binders, do not even need their entries to have full paths.
         However, to avoid dangerous silent problems caused by binders doing this in general, this method does NOT do
-        that by default.
+        that by default, and `DEFAULT_ENTRY_ROOT` must NOT be empty.
         """
-        raise BinderError(
-            f"`get_default_new_entry_path()` not defined on this `Binder` class/subclass: `{cls.__name__}`"
-        )
+        if not cls.DEFAULT_ENTRY_ROOT:
+            raise BinderError(
+                f"Neither `DEFAULT_ENTRY_ROOT` nor `get_default_entry_path()` are defined on this `Binder` class: "
+                f"`{cls.__name__}`"
+            )
+        return f"{cls.DEFAULT_ENTRY_ROOT}\\{entry_name}"
 
     def get_default_new_entry_id(self, entry_name: str) -> int:
         """Method that can be overridden (usually by a game subclass) to generate a default new entry ID.

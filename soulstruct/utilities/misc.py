@@ -3,6 +3,7 @@ from __future__ import annotations
 __all__ = [
     "MISSING_REF",
     "traverse_path_tree",
+    "setdefault_lambda",
     "BiDict",
     "get_startupinfo",
     "Flags8",
@@ -50,6 +51,16 @@ def traverse_path_tree(tree, cur=()):
                     yield path
     else:
         raise ValueError(f"Invalid type encountered in path tree: {type(tree)}")
+
+
+def setdefault_lambda(dictionary: dict, key, default: tp.Callable[[], tp.Any]):
+    """Avoids a 'gotcha' with `dict.setdefault`.
+
+    If the default is expensive to compute, we only want to do that when it's actually needed!
+    """
+    if key not in dictionary:
+        dictionary[key] = default()
+    return dictionary[key]
 
 
 class BiDict(dict):

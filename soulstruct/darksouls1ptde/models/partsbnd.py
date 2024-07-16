@@ -14,7 +14,7 @@ from soulstruct.games import DARK_SOULS_PTDE
 @dataclass(slots=True)
 class PARTSBND(FLVERBinder):
 
-    INTERROOT_STEM = f"{DARK_SOULS_PTDE.interroot_prefix}\\parts"
+    DEFAULT_ENTRY_ROOT = f"{DARK_SOULS_PTDE.interroot_prefix}\\parts"
 
     dcx_type: DCXType = DARK_SOULS_PTDE.default_dcx_type
     version: BinderVersion = BinderVersion.V3

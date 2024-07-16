@@ -14,7 +14,7 @@ from soulstruct.games import BLOODBORNE
 @dataclass(slots=True)
 class OBJBND(FLVERBinder):
 
-    INTERROOT_STEM = f"{BLOODBORNE.interroot_prefix}\\obj"
+    DEFAULT_ENTRY_ROOT = f"{BLOODBORNE.interroot_prefix}\\obj"
     MAX_FLVER_COUNT = 99
 
     dcx_type: DCXType = BLOODBORNE.default_dcx_type

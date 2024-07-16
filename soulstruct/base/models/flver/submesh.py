@@ -373,6 +373,10 @@ class Submesh:
         return self.vertex_arrays[0].array
 
     @property
+    def vertices_dtype(self) -> np.dtype:
+        return self.vertices.dtype
+
+    @property
     def layout(self) -> VertexArrayLayout:
         """Shortcut for accessing the layout of the first vertex array (generally the only array)."""
         return self.vertex_arrays[0].layout

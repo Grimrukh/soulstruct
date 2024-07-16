@@ -2,8 +2,7 @@ import os
 import shutil
 import unittest
 
-from soulstruct.darksouls1ptde.params import GameParamBND
-from soulstruct.darksouls1ptde.params.paramdef import GET_BUNDLED_PARAMDEFBND
+from soulstruct.darksouls1ptde.params import GameParamBND, ParamDefBND
 from soulstruct.utilities.inspection import Timer
 
 
@@ -22,7 +21,7 @@ class ParamsTest(unittest.TestCase):
 
     def test(self):
         with Timer("ParamDef read"):
-            paramdef_bnd = GET_BUNDLED_PARAMDEFBND()
+            paramdef_bnd = ParamDefBND.from_bundled("DARK_SOULS_PTDE")
         with Timer("GameParamBND read"):
             game_param = GameParamBND.from_path("resources/GameParam.parambnd")
             print(game_param.entries[0].path)

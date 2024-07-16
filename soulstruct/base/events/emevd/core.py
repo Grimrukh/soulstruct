@@ -14,7 +14,7 @@ from soulstruct.dcx import DCXType
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.conversion import floatify
 
-from .event import Event as BaseEvent, EventSignature
+from .event import Event as _BaseEvent, EventSignature
 from .event_layers import EventLayers
 from .exceptions import EMEVDError
 from .numeric import build_numeric
@@ -84,14 +84,14 @@ class EMEVD(GameFile, abc.ABC):
     `script_directory` can be detected automatically.)
     """
 
-    EVENT_CLASS: tp.ClassVar[type[BaseEvent]]
+    EVENT_CLASS: tp.ClassVar[type[_BaseEvent]]
     ENTITY_ENUMS_MANAGER: tp.ClassVar[type[GameEnumsManager]]
     EVS_PARSER: tp.ClassVar[type[EVSParser]]
     STRING_ENCODING: tp.ClassVar[str]
     HEADER_VERSION_INFO: tp.ClassVar[tuple[bool, int, int]] = (False, 0, 204)  # DS1 default
     LONG_VARINTS: tp.ClassVar[bool]
 
-    events: dict[int, BaseEvent] = field(default_factory=dict)
+    events: dict[int, _BaseEvent] = field(default_factory=dict)
     packed_strings: bytes = b""
     # TODO: Should actually read the linked strings so they can be modified.
     #  But then I'd have to check all packed strings used by logging instructions as well...
@@ -197,7 +197,7 @@ class EMEVD(GameFile, abc.ABC):
             )
 
         reader.seek(header.events_offset)
-        event_dict = {}  # type: dict[int, BaseEvent]
+        event_dict = {}  # type: dict[int, _BaseEvent]
         for _ in range(header.events_count):
             event = cls.EVENT_CLASS.from_emevd_reader(
                 reader,

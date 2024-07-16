@@ -15,7 +15,7 @@ from soulstruct.games import DARK_SOULS_DSR
 @dataclass(slots=True)
 class CHRBND(FLVERBinder):
 
-    INTERROOT_STEM = f"{DARK_SOULS_DSR.interroot_prefix}\\chr"
+    DEFAULT_ENTRY_ROOT = f"{DARK_SOULS_DSR.interroot_prefix}\\chr"
 
     # NOTE: ID is defined here, but because the BDT is written outside the CHRBND, reading/writing is not managed here.
     CHRTPFBHD_ENTRY_ID: tp.ClassVar[int] = 800

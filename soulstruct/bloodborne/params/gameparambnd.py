@@ -156,8 +156,6 @@ class GameParamBND(_BaseGameParamBND):
         "Wind": WindParam,
     }
 
-    GET_BUNDLED_PARAMDEFBND: tp.ClassVar[tp.Callable] = GET_BUNDLED_PARAMDEFBND
-
     dcx_type = BLOODBORNE.default_dcx_type
     version: BinderVersion = BinderVersion.V4
     v4_info: BinderVersion4Info = field(default_factory=lambda: BinderVersion4Info(False, False, True, 0))

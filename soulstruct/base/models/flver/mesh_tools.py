@@ -8,7 +8,10 @@ __all__ = [
 
 import logging
 import typing as tp
+from collections import defaultdict
 from dataclasses import dataclass, field
+
+from soulstruct.utilities.misc import setdefault_lambda
 
 import numpy as np
 
@@ -100,8 +103,8 @@ class MergedMesh:
     loop_bitangents: np.ndarray  # four columns for 'x', 'y', and 'z' (float32)
     loop_vertex_colors: list[np.ndarray]  # four columns per array for 'r', 'g', 'b', and 'a' (float32)
     # Maps UV layer names (which default to just 'UVMap{i}') to UV data arrays. UV layer names per merged mesh material
-    # need to be passed in.
-    loop_uvs: dict[str, np.ndarray]  # two columns per array for 'u' and 'v' (float32)  # TODO: ignoring `uv_w`
+    # need to be passed in. Column count may vary from 2D (almost always the case) to 4D.
+    loop_uvs: dict[str, np.ndarray]  # 2-4 columns per array for 'u', 'v', etc. (float32) (depending on max UV dim)
 
     faces: np.ndarray  # integer array of `[loop0, loop1, loop2, material_index]` rows (uint32)
 
@@ -266,14 +269,14 @@ class MergedMesh:
                 if name.startswith("tangent_"):
                     # TODO: Might want to default to, say, a rightward unit vector rather than zeroes.
                     t_i = int(name[-1])
-                    tangent_array = loop_tangents_dict.setdefault(
-                        t_i, np.zeros((total_vertex_count, 4), dtype=np.float32)
+                    tangent_array = setdefault_lambda(
+                        loop_tangents_dict, t_i, lambda: np.zeros((total_vertex_count, 4), dtype=np.float32)
                     )
                     tangent_array[i:j] = vertices[f"tangent_{t_i}"]
                 elif name.startswith("color_"):
                     c_i = int(name[-1])
-                    color_array = loop_vertex_colors_dict.setdefault(
-                        c_i, np.zeros((total_vertex_count, 4), dtype=np.float32)
+                    color_array = setdefault_lambda(
+                        loop_vertex_colors_dict, c_i, lambda: np.zeros((total_vertex_count, 4), dtype=np.float32)
                     )
                     color_array[i:j] = vertices[f"color_{c_i}"]
                 elif name.startswith("uv_"):
@@ -281,12 +284,31 @@ class MergedMesh:
                     uv_layer_name = f"UVMap{uv_i}"  # default
                     if material_uv_layer_names:
                         try:
+                            # Real UV names are generally 'UVTexture{i}', 'UVFur', 'UVWindA', etc.
                             uv_layer_name = material_uv_layer_names[material_index][uv_i]
                         except IndexError:
                             _LOGGER.warning(f"No UV layer name for material index {material_index} (UV {uv_i}).")
-                    uv_array = loop_uvs.setdefault(
-                        uv_layer_name, np.zeros((total_vertex_count, 2), dtype=np.float32)  # TODO: support `uv[2]`
-                    )
+                    uv_dim = vertices[name].shape[1]
+                    if uv_layer_name in loop_uvs:
+                        # UV layer array already created. However, we need to check its size.
+                        uv_array = loop_uvs[uv_layer_name]
+                        if uv_array.shape[1] < uv_dim:
+                            old_uv_dim = uv_array.shape[1]
+                            _LOGGER.warning(
+                                f"UV array for layer '{uv_layer_name}' in MergedMesh required a dimension upgrade from "
+                                f"{old_uv_dim} to {uv_dim}. This is unusual, as named layer dimensions should be "
+                                f"consistent across their usage in submeshes."
+                            )
+                            new_uv_array = np.zeros((total_vertex_count, uv_dim), dtype=np.float32)
+                            # Copy old array into new array. No need to copy past row `i`.
+                            new_uv_array[:i, :old_uv_dim] = uv_array
+                            uv_array = loop_uvs[uv_layer_name] = new_uv_array
+                    else:
+                        # First use of this UV layer name. Create loop array.
+                        new_uv_array = np.zeros((total_vertex_count, uv_dim), dtype=np.float32)
+                        uv_array = loop_uvs[uv_layer_name] = new_uv_array
+
+                    # Write rows into (possibly just created or column-upgraded) UV array.
                     uv_array[i:j] = vertices[name]
 
         # Could be empty lists.
@@ -471,18 +493,24 @@ class MergedMesh:
         if bitangents:
             self.loop_bitangents = self.loop_bitangents[:, [0, 2, 1, 3]]
 
-    def invert_vertex_uv(self, invert_u=False, invert_v=True):
+    def invert_vertex_uv(self, invert_u=False, invert_v=True, invert_w=False, invert_3=False):
         """Transform loop UV data in place by subtracting UV coordinates from 1.
 
         Inverts only V by default, as this is standard for Blender.
 
-        TODO: `uv_w` support.
+        TODO: Should later indices be inverted in Blender?
         """
         for loop_uv_array in self.loop_uvs.values():
             if invert_u:
                 loop_uv_array[:, 0] = 1.0 - loop_uv_array[:, 0]
             if invert_v:
                 loop_uv_array[:, 1] = 1.0 - loop_uv_array[:, 1]
+            if invert_w:
+                # Does not check shape. User should know UV dimensionality.
+                loop_uv_array[:, 2] = 1.0 - loop_uv_array[:, 2]
+            if invert_3:
+                # Does not check shape. User should know UV dimensionality.
+                loop_uv_array[:, 3] = 1.0 - loop_uv_array[:, 3]
 
     def normalize_normals(self):
         """Transform loop normal data in place by normalizing them.
@@ -517,8 +545,7 @@ class MergedMesh:
         """UVs will likely need less rounding (and less often), but it may still cause issues if tiny differences in
         UVs that will disappear under FLVER compression anyway were inflating the vertex counts of submeshes.
 
-        Note that the default value of `decimals` is higher here, as these are typically compressed to 16-bit, not
-        8-bit.
+        Note that the default value of `decimals` is higher here, as these are usually compressed to 16-bit, not 8-bit.
         """
         for key, loop_uv_array in self.loop_uvs.items():
             self.loop_uvs[key] = np.round(loop_uv_array, decimals=decimals)
@@ -649,9 +676,11 @@ class MergedMesh:
             # custom data (like true loops from a Blender mesh). This array will always have length `(3 * n, 3)`, where
             # `n` is the face count; faces with overlapping loop indices will just have duplicate rows, all of which
             # will be reduced to unique rows below. The face indices at this stage are also implicit: [0, 1, 2, 3, ...]
-            dtype_view = merged_loop_views.setdefault(
-                global_uv_material_dtype.names, merged_loops[list(global_uv_material_dtype.names)]
-            )
+            if global_uv_material_dtype.names not in merged_loop_views:
+                # No point extracting the same view multiple times.
+                merged_loop_views[global_uv_material_dtype.names] = merged_loops[list(global_uv_material_dtype.names)]
+            dtype_view = merged_loop_views[global_uv_material_dtype.names]
+
             # Every three rows corresponds to a single face (will have many duplicates that are removed below).
             submesh_loops = dtype_view[submesh_loop_indices]
 
@@ -774,7 +803,7 @@ class MergedMesh:
         """
         submesh_vertices = []
         submesh_vertices_dict = {}  # type: dict[int, int]  # maps vertex hashes to indices
-        submesh_vertices_by_position = {}  # type: dict[tuple, list[tuple[tp.Any, int]]]
+        submesh_vertices_by_position = defaultdict(lambda: [])  # type: defaultdict[tuple, list[tuple[tp.Any, int]]]
         face_vertex_indices = []
 
         vector_fields = [f for f in submesh_loops.dtype.names if f.startswith(("normal", "tangent_", "bitangent"))]
@@ -811,7 +840,7 @@ class MergedMesh:
             vertex_index = len(submesh_vertices)
             submesh_vertices.append(loop)
             submesh_vertices_dict[vertex_hash] = vertex_index
-            submesh_vertices_by_position.setdefault(pos, []).append((loop, vertex_index))
+            submesh_vertices_by_position[pos].append((loop, vertex_index))
             face_vertex_indices.append(vertex_index)
 
         submesh_vertices_array = np.array(submesh_vertices, dtype=submesh_loops.dtype)

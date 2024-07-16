@@ -7,15 +7,15 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from soulstruct.base.models.mtd import MTD
-from soulstruct.darksouls1ptde.models.shaders import MatDef as PTDE_MatDef
+from soulstruct.darksouls1ptde.models.shaders import MatDef as _PTDE_MatDef
 
 
 @dataclass(slots=True)
-class MatDef(PTDE_MatDef):
+class MatDef(_PTDE_MatDef):
     """Identical to PTDE except for the possibility of a tertiary normal map in some snow shaders."""
 
     # DSR snow shaders may have an extra normal texture.
-    SAMPLER_ALIASES: tp.ClassVar[dict[str, str]] = PTDE_MatDef.SAMPLER_ALIASES | {
+    SAMPLER_ALIASES: tp.ClassVar[dict[str, str]] = _PTDE_MatDef.SAMPLER_ALIASES | {
         "g_Bumpmap_3": "Main 3 Normal",
     }
 
@@ -29,7 +29,7 @@ class MatDef(PTDE_MatDef):
             - There are only a couple dozen different shaders (SPX) used by all MTDs.
             - All FLVER vertex arrays have normals, at least one vertex color.
         """
-        matdef = super().from_mtd(mtd)
+        matdef = super(MatDef, cls).from_mtd(mtd)
 
         if matdef.shader_category == cls.ShaderCategory.SNOW:
             # In DS1R, some snow shaders (those with "Snow Metal Mask" MTD param) have a THIRD normal texture. I believe
@@ -45,7 +45,7 @@ class MatDef(PTDE_MatDef):
     @classmethod
     def from_mtd_name(cls, mtd_name: str):
         mtd_stem = Path(mtd_name).stem
-        matdef = super().from_mtd_name(mtd_name)
+        matdef = super(MatDef, cls).from_mtd_name(mtd_name)
         if matdef.shader_category == cls.ShaderCategory.SNOW and mtd_stem in cls.SNOW_METAL_MASK_STEMS:
             matdef.add_sampler(alias="Main 2 Normal", uv_layer=cls.UVLayer.UVTexture1)
             if snow_secondary_normal := matdef.get_sampler_with_alias("Main 1 Normal"):

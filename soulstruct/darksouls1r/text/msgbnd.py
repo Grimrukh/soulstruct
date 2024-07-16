@@ -5,8 +5,7 @@ __all__ = ["MSGBND"]
 import typing as tp
 from dataclasses import dataclass
 
-from soulstruct.base.text.msgbnd import MSGBND as _BaseMSGBND
-from soulstruct.containers import BinderVersion, BinderFlags, BinderVersion4Info
+from soulstruct.containers import Binder, BinderVersion, BinderFlags, BinderVersion4Info
 from soulstruct.dcx import DCXType
 from soulstruct.games import DARK_SOULS_DSR
 
@@ -17,8 +16,10 @@ except AttributeError:
 
 
 @dataclass(slots=True)
-class MSGBND(_BaseMSGBND):
+class MSGBND(Binder):
     """Subclassed by games to set default binder/entry path."""
+
+    DEFAULT_ENTRY_ROOT: tp.ClassVar[str] = f"{DARK_SOULS_DSR.interroot_prefix}\\Msg\\Data_ENGLISH"
 
     dcx_type: DCXType = DARK_SOULS_DSR.default_dcx_type
     signature: str = "07D7R6"
@@ -28,7 +29,3 @@ class MSGBND(_BaseMSGBND):
     version: BinderVersion = BinderVersion.V3
     v4_info: BinderVersion4Info | None = None
     is_split_bxf: bool = False
-
-    @classmethod
-    def get_default_new_entry_path(cls, entry_name: str):
-        return f"N:\\FRPG\\data\\Msg\\Data_ENGLISH\\{entry_name}"

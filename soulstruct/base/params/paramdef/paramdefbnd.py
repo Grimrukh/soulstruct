@@ -9,7 +9,6 @@ import typing as tp
 from dataclasses import dataclass, field
 
 from soulstruct.containers import Binder
-from soulstruct.utilities.files import PACKAGE_PATH
 from soulstruct.games import Game, get_game
 
 from .core import ParamDef
@@ -35,6 +34,9 @@ class ParamDefBND(Binder, abc.ABC):
     If you want to modify a `ParamDefBND`, you are far too powerful a modder for Soulstruct, and I cannot make that
     journey with you at this time.
     """
+
+    _BUNDLED: tp.ClassVar[dict[Game, ParamDefBND]] = {}
+
     PARAMDEF_CLASS: tp.ClassVar[type[ParamDef]] = None
 
     paramdefs: dict[str, ParamDef] = field(default_factory=dict)
@@ -63,29 +65,21 @@ class ParamDefBND(Binder, abc.ABC):
                 self.paramdefs[paramdef.param_type] = paramdef
 
     @classmethod
-    def from_bundled(cls, game: Game | str = None) -> Self:
-        """Load vanilla ParamDefBND bundled with Soulstruct (easiest)."""
-        if game is None:
-            game = cls.get_game()
-        elif isinstance(game, str):
-            game = get_game(game)
-
-        if not game.bundled_paramdef_path:
-            raise NotImplementedError(
-                f"Soulstruct does not have a bundled `paramdefbnd` file for game {game.name}."
-            )
-        paramdefbnd_path = PACKAGE_PATH(game.bundled_paramdef_path)
-        if not paramdefbnd_path.is_file():
-            raise FileNotFoundError(
-                f"Could not find bundled `paramdefbnd` file for game {game.name} in Soulstruct.\n"
-                "Update/reinstall Soulstruct or copy the ParamDef files in yourself."
-            )
-
-        return cls.from_path(paramdefbnd_path)
+    def from_bundled(cls, game_or_name: Game | str) -> Self:
+        game = get_game(game_or_name)
+        if game in cls._BUNDLED:
+            return cls._BUNDLED[game]
+        if "PARAMDEFBND" not in game.bundled_resource_paths.items():
+            raise FileNotFoundError(f"No bundled PARAMDEFBND found for {game.name}.")
+        try:
+            paramdefbnd = cls.from_path(game.bundled_resource_paths["PARAMDEF"])
+        except Exception as ex:
+            raise FileNotFoundError(f"Could not load bundled PARAMDEFBND for {game.name}.") from ex
+        cls._BUNDLED[game] = paramdefbnd
+        return paramdefbnd
 
     def __getitem__(self, param_type) -> ParamDef:
         try:
             return self.paramdefs[param_type]
         except KeyError:
-            raise KeyError(
-                f"No ParamDef with type {param_type}. The available types are:\n    {list(self.paramdefs)}")
+            raise KeyError(f"No ParamDef with type {param_type}. The available types are:\n    {list(self.paramdefs)}")

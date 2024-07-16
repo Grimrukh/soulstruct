@@ -32,11 +32,15 @@ class MatDefSampler:
 
     name: str  # e.g. 'g_Diffuse'
     alias: str  # e.g. 'ALBEDO_0'; used for Blender node names, etc., to improve porting
-    uv_layer: IntEnum | None  # game-specific UV layer enum (or `None` if not detectable)
+    uv_layer: IntEnum | None  # game-specific UV layer enum (could be `None` for non-textured samplers)
     sampler_group: int = 0  # given explicitly in Elden Ring; inferred in earlier games
     uv_scale: Vector2 | None = None  # added from sampler group in later games
     default_texture_path: str = ""
     matbin_texture_path: str = ""  # only used in Elden Ring, where FLVERs only rarely override texture paths
+
+    @property
+    def uv_layer_name(self) -> str:
+        return self.uv_layer.name if self.uv_layer is not None else ""
 
     @property
     def matbin_texture_stem(self) -> str:
@@ -45,7 +49,7 @@ class MatDefSampler:
         return ""  # no path
 
     def __repr__(self):
-        s = f"Sampler({self.name} -> {self.alias}, {self.uv_layer.name}"
+        s = f"Sampler({self.name} -> {self.alias}, UV '{self.uv_layer_name}'"
         if self.sampler_group > 0:
             s += f", Group {self.sampler_group}"
         if self.uv_scale is not None:
@@ -84,22 +88,19 @@ class MatDef(abc.ABC):
     # Game-specific mapping of shader categories to `MatDef` names known to use that category, which aids in creating
     # `MatDef`s from material definition names alone when files are unavailable.
     KNOWN_SHADER_MTD_STEMS: tp.ClassVar[dict[str, list[str | re.Pattern]]] = {}
-
     # Game-specific mapping of `ShaderCategory` values to lists of extra `UVLayer` members.
     EXTRA_SHADER_UV_LAYERS: tp.ClassVar[dict[str, list[UVLayer]]] = {}
-
     # Earlier games can easily have their sampler names mapped to global aliases.
     # Later games may not use this, as they have more complex sampler groups that need shaders to determine function.
     SAMPLER_ALIASES: tp.ClassVar[dict[str, str]]
-
     # Maps aliases back to game-specific sampler names.
     SAMPLER_GAME_NAMES: tp.ClassVar[dict[str, str]]
-
     # Detects [T] style tags in MTD names.
     NAME_TAG_RE: tp.ClassVar[dict[str, re.Pattern]]
-
     # Detects '_Label' style suffixes in MTD names.
     NAME_SUFFIX_RE: tp.ClassVar[dict[str, re.Pattern]]
+    # True if this game uses `MATBIN` material definition files rather than old `MTD`.
+    USES_MATBIN: tp.ClassVar[bool] = False
 
     # Stem of shader name, if available.
     shader_stem: str = ""
@@ -186,9 +187,8 @@ class MatDef(abc.ABC):
                 continue
             break
         else:
-            # Failed to find category. Assume PHN.
-            # TODO: Can't distinguish between `Phn` and `Sfx` based on name? `Sfx` should be rare.
-            matdef.shader_category = cls.ShaderCategory.PHN
+            # Failed to find category.
+            matdef.shader_category = ""
 
         # Detect used sampler names.
         if (
@@ -281,7 +281,7 @@ class MatDef(abc.ABC):
     def get_used_uv_layers(self) -> list[IntEnum]:
         """Value-sorted list of unique UV layer enums used by all samplers and any additional, otherwise undetectable
         shader function (e.g. foliage wind animation) specified in `cls.EXTRA_SHADER_UV_LAYERS`."""
-        all_uv_layers = set(sampler.uv_layer for sampler in self.samplers)
+        all_uv_layers = set(sampler.uv_layer for sampler in self.samplers) - {None}
         for extra_uv_layer in self.EXTRA_SHADER_UV_LAYERS.get(self.shader_category, []):
             all_uv_layers.add(extra_uv_layer)
         return sorted(all_uv_layers, key=lambda x: x.value)
@@ -333,7 +333,7 @@ class MatDef(abc.ABC):
         self,
         name="",
         alias="",
-        uv_layer: UVLayer = None,
+        uv_layer: UVLayer | None = None,
         sampler_group=0,
         uv_scale: Vector2 | None = None,
         default_texture_path="",
@@ -351,8 +351,6 @@ class MatDef(abc.ABC):
                 alias = self.SAMPLER_ALIASES[name]
             except KeyError:
                 raise ValueError(f"Could not find sampler alias for game name '{name}'.")
-        if uv_layer is None:
-            uv_layer = self.UVLayer(0)
         self.samplers.append(
             MatDefSampler(
                 name=name,

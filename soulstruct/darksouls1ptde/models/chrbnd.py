@@ -14,7 +14,7 @@ from soulstruct.games import DARK_SOULS_PTDE
 @dataclass(slots=True)
 class CHRBND(FLVERBinder):
 
-    INTERROOT_STEM = f"{DARK_SOULS_PTDE.interroot_prefix}\\chr"
+    DEFAULT_ENTRY_ROOT = f"{DARK_SOULS_PTDE.interroot_prefix}\\chr"
 
     dcx_type: DCXType = DARK_SOULS_PTDE.default_dcx_type
     version: BinderVersion = BinderVersion.V3

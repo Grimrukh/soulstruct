@@ -87,6 +87,9 @@ class Game:
         except AttributeError:
             raise ImportError(f"Game submodule {module_name} does not have an attribute named {name}.")
 
+    def __hash__(self):
+        return hash(self.name)
+
     def __eq__(self, other: Game):
         return self.name == other.name
 

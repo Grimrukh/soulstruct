@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from types import ModuleType
 
-from soulstruct.containers import Binder, BinderEntry, BinderVersion
+from soulstruct.containers import Binder, BinderEntry, BinderVersion, BinderVersion4Info
 from soulstruct.darksouls1ptde.game_types.param_types import *
 from soulstruct.exceptions import SoulstructError
 from soulstruct.games import DARK_SOULS_PTDE
@@ -46,8 +46,9 @@ class DrawParamBND(Binder):
     """Structure that manages double-slots and DrawParam nicknames for one `DrawParamBND` file (i.e. one map "area")."""
 
     EXT: tp.ClassVar[str] = ".parambnd"
+    DEFAULT_ENTRY_ROOT: tp.ClassVar[str] = f"{DARK_SOULS_PTDE.interroot_prefix}\\param\\DrawParam"
     PARAMDEF_MODULE: tp.ClassVar[ModuleType] = paramdef
-    GET_BUNDLED_PARAMDEFBND: tp.ClassVar[tp.Callable] = staticmethod(GET_BUNDLED_PARAMDEFBND)
+
     PARAM_NICKNAMES: tp.ClassVar[BiDict[str, str]] = BiDict(
         ("DofBank", "DepthOfField"),
         ("EnvLightTexBank", "EnvLightTex"),  # unused
@@ -87,18 +88,17 @@ class DrawParamBND(Binder):
 
     dcx_type = DARK_SOULS_PTDE.default_dcx_type
     version: BinderVersion = BinderVersion.V3
-    v4_info = None
+    v4_info: BinderVersion4Info = None
 
     # Map area whose lighting is defined by this `DrawParamBND` (e.g. `m15` for Sen's Fortress and Anor Londo). Used to
     # generate correct file names when writing; will raise a `ValueError` if it is still empty at that time. Note that
     # the `DrawParamBND` file stems use `aXX` instead of the `mXX` stored here (as used in the `DrawParam` names). `sXX`
     # prefixed `DrawParam` names are handled automatically.
     map_area: str = ""
-    # Maps DrawParam game stems, e.g. 'LightBank', to a pair of two `DrawParam`s for the two slots. These `DrawParam`s
-    # (usually the second) may be `None` if that slot is not used.
-    draw_params: dict[str, list[DrawParam | ParamDict | None, DrawParam | ParamDict | None]] = field(
-        default_factory=dict
-    )
+    # Maps DrawParam game stems, e.g. 'LightBank', to a `DrawParam` for first slot.
+    draw_params_0: dict[str, DrawParam | ParamDict | None] = field(default_factory=dict)
+    # Maps DrawParam game stems, e.g. 'LightBank', to a `DrawParam` for second slot.
+    draw_params_1: dict[str, DrawParam | ParamDict | None] = field(default_factory=dict)
 
     DepthOfField = draw_param_property("DofBank")  # type: list[DrawParam[DOF_BANK]]
     EnvLightTex = draw_param_property("EnvLightTexBank")  # type: list[DrawParam[ENV_LIGHT_TEX_BANK]]
@@ -116,7 +116,7 @@ class DrawParamBND(Binder):
 
     def __post_init__(self):
         super(Binder, self).__post_init__()
-        if self.draw_params:
+        if self.draw_params_0:
             return
         for entry in self.entries:
             self.load_from_entry(entry)
@@ -147,7 +147,8 @@ class DrawParamBND(Binder):
         if match.group(1).startswith("s"):
             param_stem = "s_" + param_stem
 
-        self.draw_params.setdefault(param_stem, [None, None])
+        self.draw_params_0.setdefault(param_stem, None)
+        self.draw_params_1.setdefault(param_stem, None)
 
         try:
             typed_draw_param_class = self.get_typed_draw_param_class(entry)
@@ -158,15 +159,23 @@ class DrawParamBND(Binder):
                 f"(You can omit the `paramdefbnd` argument to use Soulstruct's bundled `.paramdefbnd` file for "
                 f"this game, but if you're seeing this warning, it's possible the bundled file is outdated.)"
             )
-            self.draw_params[param_stem][slot] = entry.to_binary_file(ParamDict)
+            if slot == 0:
+                self.draw_params_0[param_stem] = entry.to_binary_file(ParamDict)
+            else:
+                self.draw_params_1[param_stem] = entry.to_binary_file(ParamDict)
         else:
             self.assign_param_from_entry(entry, param_stem, slot, typed_draw_param_class)
 
     def assign_param_from_entry(
         self, entry: BinderEntry, param_stem: str, slot: int, typed_draw_param_class: type[DrawParam]
     ):
+        if slot not in {0, 1}:
+            raise ValueError(f"Invalid `DrawParamBND` slot: {slot}. Must be 0 or 1.")
         try:
-            self.draw_params[param_stem][slot] = entry.to_binary_file(typed_draw_param_class)
+            if slot == 0:
+                self.draw_params_0[param_stem] = entry.to_binary_file(typed_draw_param_class)
+            else:
+                self.draw_params_1[param_stem] = entry.to_binary_file(typed_draw_param_class)
         except Exception as ex:
             _LOGGER.error(
                 f"Could not load `DrawParam` from `DrawParamBND` entry '{entry.name}'.\n  Error: {ex}"
@@ -192,22 +201,30 @@ class DrawParamBND(Binder):
     def unpack_all_param_rows(self, paramdefbnd: ParamDefBND = None):
         """Unpack all row data of all `Param` entries with `paramdefbnd` (defaults to bundled file)."""
         if paramdefbnd is None:
-            paramdefbnd = self.GET_BUNDLED_PARAMDEFBND()
-        for draw_param_0, draw_param_1 in self.draw_params.values():
-            if draw_param_0:
-                draw_param_0.unpack_rows(paramdefbnd)
-            if draw_param_1:
-                draw_param_1.unpack_rows(paramdefbnd)
+            paramdefbnd = ParamDefBND.from_bundled(self.get_game())
+        for draw_param in self.draw_params_0.values():
+            if draw_param:
+                draw_param.unpack_rows(paramdefbnd)
+        for draw_param in self.draw_params_1.values():
+            if draw_param:
+                draw_param.unpack_rows(paramdefbnd)
 
     def get_draw_param_slot(self, draw_param_stem: str, slot: int) -> DrawParam | None:
         """Get `DrawParam` of given name and slot. Name can be internal or Soulstruct nickname.
 
-        Could return `None` for absent slots."""
+        Could return `None` for absent slots.
+        """
+        if slot not in {0, 1}:
+            raise ValueError(f"Invalid `DrawParam` slot: {slot}. Must be 0 or 1.")
         draw_param_stem = draw_param_stem.removesuffix(".param")
         if draw_param_stem in self.PARAM_NICKNAMES.keys():
-            return self.draw_params[draw_param_stem][slot]
+            if slot == 0:
+                return self.draw_params_0[draw_param_stem]
+            return self.draw_params_1[draw_param_stem]
         if draw_param_stem in self.PARAM_NICKNAMES.values():
-            return self.draw_params[self.PARAM_NICKNAMES[draw_param_stem]][slot]
+            if slot == 0:
+                return self.draw_params_0[self.PARAM_NICKNAMES[draw_param_stem]]
+            return self.draw_params_1[self.PARAM_NICKNAMES[draw_param_stem]]
         raise KeyError(f"Invalid `DrawParam` name or nickname: {draw_param_stem}")
 
     def get_draw_param_entry_path(self, draw_param_stem: str, slot: int) -> str:
@@ -225,7 +242,7 @@ class DrawParamBND(Binder):
             entry_name = f"{map_area}_1_{draw_param_stem}.param"
         else:
             raise ValueError(f"Invalid `DrawParamBND` slot: {slot}. Must be 0 or 1.")
-        return self.get_default_new_entry_path(entry_name)
+        return self.get_default_entry_path(entry_name)
 
     def regenerate_entries(self):
         """Regenerate Binder entries from `draw_params` dictionary."""
@@ -233,8 +250,8 @@ class DrawParamBND(Binder):
         # Any existing Binder entries not regenerated here will be removed below.
         regenerated_entry_paths = set()
 
-        for draw_param_stem, draw_param_slots in self.draw_params.items():
-            for slot, draw_param in enumerate(draw_param_slots):
+        for slot, draw_params in enumerate((self.draw_params_0, self.draw_params_1)):
+            for draw_param_stem, draw_param in draw_params.items():
                 if draw_param is None:
                     continue  # slot missing
                 entry_path = self.get_draw_param_entry_path(draw_param_stem, slot)
@@ -250,10 +267,6 @@ class DrawParamBND(Binder):
                 self.remove_entry(entry)
 
         self._alphabetize_entry_names()
-
-    @classmethod
-    def get_default_new_entry_path(cls, entry_name: str) -> str:
-        return f"N:\\FRPG\\data\\INTERROOT_win32\\param\\DrawParam\\{entry_name}"
 
     @classmethod
     def resolve_draw_param_stem(cls, draw_param_stem_or_nickname: str):
@@ -294,15 +307,15 @@ class DrawParamBND(Binder):
             raise ValueError(f"`map_area` key not in `DrawParamBND` JSON manifest: {manifest_path}")
         if "entries" not in manifest:
             raise ValueError(f"`entries` key not in `DrawParamBND` JSON manifest: {manifest_path}")
-        kwargs = cls.process_manifest_header(manifest) | {"draw_params": {}}
+        kwargs = cls.process_manifest_header(manifest) | {"draw_params_0": {}, "draw_params_1": {}}
 
         for json_nickname_stem in kwargs.pop("entries"):
             if json_nickname_stem.endswith("_1"):
                 param_stem = cls.PARAM_NICKNAMES[json_nickname_stem[:-2]]
-                slot = 1
+                slot_attr = "draw_params_1"
             else:
                 param_stem = cls.PARAM_NICKNAMES[json_nickname_stem]
-                slot = 0
+                slot_attr = "draw_params_0"
 
             # Open JSON file to get 'param_type'.
             param_dict = read_json(directory / f"{json_nickname_stem}.json")
@@ -315,8 +328,8 @@ class DrawParamBND(Binder):
                     f"Unknown 'param_type' `{param_dict['param_type']} in DrawParam JSON: {json_nickname_stem}.json"
                 )
             typed_draw_param_class = TypedDrawParam(row_type)
-            kwargs["draw_params"].setdefault(param_stem, [None, None])
-            draw_param = kwargs["draw_params"][param_stem][slot] = typed_draw_param_class.from_dict(param_dict)
+            kwargs[slot_attr].setdefault(param_stem, None)
+            draw_param = kwargs[slot_attr][param_stem] = typed_draw_param_class.from_dict(param_dict)
             draw_param.path = Path(f"{draw_param.get_file_path(param_stem)}")
 
         drawparambnd = cls.from_dict(kwargs)
@@ -335,22 +348,19 @@ class DrawParamBND(Binder):
             )
         directory = Path(directory)
         directory.mkdir(parents=True, exist_ok=True)
-        manifest = self.get_manifest_header() | {"map_area": self.map_area}
+        manifest = self.get_manifest_header() | {"map_area": self.map_area}  # type: dict[str, tp.Any]
         manifest.pop("use_id_prefix")
         manifest["entries"] = []
 
-        for draw_param_stem, draw_param_slots in self.draw_params.items():
-            for slot, draw_param in enumerate(draw_param_slots):
+        for slot, draw_params in enumerate((self.draw_params_0, self.draw_params_1)):
+            for draw_param_stem, draw_param in draw_params.items():
                 if draw_param is None:
                     continue  # empty slot
                 json_stem = self.PARAM_NICKNAMES[draw_param_stem]
                 if slot == 1:
                     json_stem += "_1"
-                elif slot != 0:
-                    raise ValueError(f"Invalid `DrawParam` slot: {slot}")
-                draw_param.write_json(
-                    directory / f"{json_stem}.json", ignore_pads=ignore_pads, ignore_defaults=ignore_defaults
-                )
+                json_path = directory / f"{json_stem}.json"
+                draw_param.write_json(json_path, ignore_pads=ignore_pads, ignore_defaults=ignore_defaults)
                 manifest["entries"].append(json_stem)
 
         write_json(directory / "DrawParamBND_manifest.json", manifest)
@@ -374,10 +384,10 @@ class DrawParamBND(Binder):
         If `override_existing_slot_1=False` (default), skips any `DrawParam`s that already have slot 1 data, or have no
         slot 0 data (unusual).
         """
-        for draw_param_stem, draw_param_slots in self.draw_params.items():
-            if not override_existing_slot_1 and draw_param_slots[1] is not None:
+        for draw_param_stem, draw_param in self.draw_params_0.items():
+            if not override_existing_slot_1 and self.draw_params_1[draw_param_stem] is not None:
                 continue  # skip
-            if draw_param_slots[0] is None:
+            if draw_param is None:
                 _LOGGER.warning(f"No slot 0 data for `{draw_param_stem}`. Ignoring.")
                 continue
-            draw_param_slots[1] = draw_param_slots[0].copy()
+            self.draw_params_1[draw_param_stem] = draw_param.copy()

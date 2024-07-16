@@ -4,7 +4,6 @@ from __future__ import annotations
 __all__ = [
     "ParamDef",
     "ParamDefBND",
-    "GET_BUNDLED_PARAMDEFBND",
 
     "AI_STANDARD_INFO_BANK",
     "ATK_PARAM_ST",

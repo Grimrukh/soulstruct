@@ -216,7 +216,6 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
     """
     ROW_TYPE: tp.ClassVar[type[ParamRow]] = None
     PARAMDEF_MODULE: tp.ClassVar[ModuleType] = None
-    GET_BUNDLED_PARAMDEFBND: tp.ClassVar[tp.Callable] = None
 
     EXT: tp.ClassVar[str] = ".param"
 
@@ -687,7 +686,7 @@ class ParamDict(Param):
             return
 
         if paramdef_or_paramdefbnd is None:
-            paramdef_or_paramdefbnd = self.GET_BUNDLED_PARAMDEFBND()
+            paramdef_or_paramdefbnd = ParamDefBND.from_bundled(self.get_game())
         if isinstance(paramdef_or_paramdefbnd, ParamDefBND):
             try:
                 paramdef = paramdef_or_paramdefbnd[self.param_type]

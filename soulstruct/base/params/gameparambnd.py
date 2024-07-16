@@ -35,7 +35,6 @@ class GameParamBND(Binder, abc.ABC):
 
     EXT: tp.ClassVar[str] = ".parambnd"
     PARAMDEF_MODULE: tp.ClassVar[ModuleType]
-    GET_BUNDLED_PARAMDEFBND: tp.ClassVar[tp.Callable[[], ParamDefBND]]
 
     # Maps internal param names (some game-specific) to more friendly Soulstruct names. Two-way dictionary.
     # Values should match the names of getter properties on game subclass.
@@ -94,7 +93,7 @@ class GameParamBND(Binder, abc.ABC):
     def unpack_all_param_rows(self, paramdefbnd: ParamDefBND = None):
         """Unpack all row data of all `Param` entries with `paramdefbnd` (defaults to bundled file)."""
         if paramdefbnd is None:
-            paramdefbnd = self.GET_BUNDLED_PARAMDEFBND()
+            paramdefbnd = ParamDefBND.from_bundled(self.get_game())
         unpacked = []
         for param_stem, param in self.params.values():
             if isinstance(param, ParamDict):
@@ -115,7 +114,7 @@ class GameParamBND(Binder, abc.ABC):
                 self.remove_entry_name(entry_name)
 
         for param_name, param in zip(current_entry_names, self.params.values(), strict=True):
-            entry_path = self.get_default_new_entry_path(param_name)
+            entry_path = self.get_default_entry_path(param_name)
             entry = self.set_default_entry(
                 entry_path, new_id=self.get_first_new_entry_id_in_range(0, 1000000)
             )

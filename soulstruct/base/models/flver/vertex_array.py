@@ -189,6 +189,17 @@ class VertexDataType(abc.ABC):
         self.unk_x00 = unk_x00
         self.data_offset = data_offset
 
+    def __eq__(self, other: VertexDataType):
+        """Ignores `data_offset`."""
+        if not isinstance(other, VertexDataType):
+            return False
+        return (
+            self.type_int == other.type_int
+            and self.format_enum == other.format_enum
+            and self.instance_index == other.instance_index
+            and self.unk_x00 == other.unk_x00
+        )
+
     def __repr__(self):
         suffix = f" (unk_x00 = {self.unk_x00})" if self.unk_x00 != 0 else ""
         name = self.__class__.__name__
@@ -213,7 +224,7 @@ class VertexDataType(abc.ABC):
         return VERTEX_FORMAT_ENUM_SIZES[self.format_enum]
 
 
-@dataclass(slots=True, init=False, repr=False)
+@dataclass(slots=True, init=False, repr=False, eq=False)
 class VertexPosition(VertexDataType):
     type_int = 0
     formats = {
@@ -226,7 +237,7 @@ class VertexPosition(VertexDataType):
     }
 
 
-@dataclass(slots=True, init=False, repr=False)
+@dataclass(slots=True, init=False, repr=False, eq=False)
 class VertexBoneWeights(VertexDataType):
     type_int = 1
     unique = True
@@ -249,7 +260,7 @@ class VertexBoneWeights(VertexDataType):
     }
 
 
-@dataclass(slots=True, init=False, repr=False)
+@dataclass(slots=True, init=False, repr=False, eq=False)
 class VertexBoneIndices(VertexDataType):
     """Bones to which the vertex is attached.
 
@@ -282,7 +293,7 @@ class VertexBoneIndices(VertexDataType):
     }
 
 
-@dataclass(slots=True, init=False, repr=False)
+@dataclass(slots=True, init=False, repr=False, eq=False)
 class VertexNormal(VertexDataType):
     """Vertex normal.
 
@@ -320,7 +331,7 @@ class VertexNormal(VertexDataType):
     }
 
 
-@dataclass(slots=True, init=False, repr=False)
+@dataclass(slots=True, init=False, repr=False, eq=False)
 class VertexUV(VertexDataType):
     """Texture coordinates.
 
@@ -358,7 +369,7 @@ class VertexUV(VertexDataType):
     }
 
 
-@dataclass(slots=True, init=False, repr=False)
+@dataclass(slots=True, init=False, repr=False, eq=False)
 class VertexTangent(VertexDataType):
     """Perpendicular to normal.
 
@@ -379,7 +390,7 @@ class VertexTangent(VertexDataType):
     }
 
 
-@dataclass(slots=True, init=False, repr=False)
+@dataclass(slots=True, init=False, repr=False, eq=False)
 class VertexBitangent(VertexDataType):
     """Pendicular to both normal and tangent. Generally only used by multi-texture materials in DS1."""
 
@@ -394,7 +405,7 @@ class VertexBitangent(VertexDataType):
     }
 
 
-@dataclass(slots=True, init=False, repr=False)
+@dataclass(slots=True, init=False, repr=False, eq=False)
 class VertexColor(VertexDataType):
     """Used to blend between two textures slots for '[M]' MTD materials, and for alpha for '_Alpha' and '_Edge'.
 
@@ -618,6 +629,18 @@ class VertexArrayLayout(list[VertexDataType]):
             if isinstance(data_type, VertexUV):
                 uv_count += 2 if data_type.format_enum.has_two_uvs() else 1
         return uv_count
+
+    def set_unk_x00(self, unk_x00: int):
+        for data_type in self:
+            data_type.unk_x00 = unk_x00
+
+    def __eq__(self, other: VertexArrayLayout):
+        if not isinstance(other, VertexArrayLayout) or len(self) != len(other):
+            return False
+        for self_data_type, other_data_type in zip(self, other):
+            if self_data_type != other_data_type:
+                return False
+        return True
 
     def __repr__(self):
         data_types = ",\n    ".join(repr(data_type) for data_type in self)

@@ -1,7 +1,7 @@
 """Elden Ring Paramdefs can only be loaded from Paramdex XML files."""
 from __future__ import annotations
 
-__all__ = ["ParamDef", "ParamDefBND", "GET_BUNDLED_PARAMDEFBND"]
+__all__ = ["ParamDef", "ParamDefBND"]
 
 import logging
 import typing as tp
@@ -9,11 +9,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from soulstruct.base.params.paramdef import ParamDef, ParamDefBND as _BaseParamDefBND
-from soulstruct.config import PARAMDEX_PATH
 from soulstruct.utilities.files import PACKAGE_PATH
 
 _LOGGER = logging.getLogger("soulstruct")
-_BUNDLED = None
 
 
 @dataclass(slots=True)
@@ -57,11 +55,3 @@ class ParamDefBND(_BaseParamDefBND):
             paramdefs[paramdef.param_type] = paramdef
 
         return cls(path=paramdex_er_defs_path, paramdefs=paramdefs)
-
-
-def GET_BUNDLED_PARAMDEFBND() -> ParamDefBND:
-    global _BUNDLED
-    if _BUNDLED is None:
-        _LOGGER.info(f"Loading bundled `ParamDefBND` for {ParamDefBND.get_game().name}.")
-        _BUNDLED = ParamDefBND.from_paramdex()
-    return _BUNDLED
