@@ -7,10 +7,10 @@ __all__ = [
     "MSBCharacter",
     "MSBPlayerStart",
     "MSBCollision",
-    "MSBUnusedObject",
-    "MSBUnusedCharacter",
+    "MSBDummyObject",
+    "MSBDummyCharacter",
     "MSBNavmesh",
-    "MSBMapConnection",
+    "MSBConnectCollision",
 ]
 
 from soulstruct.darksouls1ptde.maps.parts import (
@@ -20,8 +20,8 @@ from soulstruct.darksouls1ptde.maps.parts import (
     MSBCharacter,
     MSBPlayerStart,
     MSBCollision,
-    MSBUnusedObject,
-    MSBUnusedCharacter,
+    MSBDummyObject,
+    MSBDummyCharacter,
     MSBNavmesh,
-    MSBMapConnection,
+    MSBConnectCollision,
 )

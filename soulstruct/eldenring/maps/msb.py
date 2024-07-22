@@ -140,8 +140,8 @@ MSB_ENTRY_SUBTYPES = {
         "PlayerStart": MSBSubtypeInfo(MSBPartSubtype.PlayerStart, MSBPlayerStart, "player_starts"),
         "Collision": MSBSubtypeInfo(MSBPartSubtype.Collision, MSBCollision, "collisions"),
         "UnusedAsset": MSBSubtypeInfo(MSBPartSubtype.UnusedAsset, MSBUnusedAsset, "unused_assets"),
-        "UnusedCharacter": MSBSubtypeInfo(MSBPartSubtype.UnusedCharacter, MSBUnusedCharacter, "unused_characters"),
-        "MapConnection": MSBSubtypeInfo(MSBPartSubtype.MapConnection, MSBMapConnection, "map_connections"),
+        "DummyCharacter": MSBSubtypeInfo(MSBPartSubtype.DummyCharacter, MSBDummyCharacter, "unused_characters"),
+        "ConnectCollision": MSBSubtypeInfo(MSBPartSubtype.ConnectCollision, MSBConnectCollision, "connect_collisions"),
     },
 }
 
@@ -280,9 +280,9 @@ class MSB(_BaseMSB):
     characters: MSBEntryList[MSBCharacter] = field(default_factory=empty_list("PARTS", "Character"))
     player_starts: MSBEntryList[MSBPlayerStart] = field(default_factory=empty_list("PARTS", "PlayerStart"))
     collisions: MSBEntryList[MSBCollision] = field(default_factory=empty_list("PARTS", "Collision"))
-    map_connections: MSBEntryList[MSBMapConnection] = field(default_factory=empty_list("PARTS", "MapConnection"))
+    connect_collisions: MSBEntryList[MSBConnectCollision] = field(default_factory=empty_list("PARTS", "ConnectCollision"))
     unused_assets: MSBEntryList[MSBUnusedAsset] = field(default_factory=empty_list("PARTS", "UnusedAsset"))
-    unused_characters: MSBEntryList[MSBUnusedCharacter] = field(default_factory=empty_list("PARTS", "UnusedCharacter"))
+    unused_characters: MSBEntryList[MSBDummyCharacter] = field(default_factory=empty_list("PARTS", "DummyCharacter"))
 
     # TODO: Need to check all part `model_instance_id` values are unique.
     #  Can get first one and increment from there. Unfortunately, first value seems sort of arbitrary (7000, 9000, etc).
@@ -322,12 +322,12 @@ class MSB(_BaseMSB):
 
     # region Utility Methods
 
-    def create_map_connection_from_collision(
+    def create_connect_collision_from_collision(
         self, collision: MSBCollision | str, connected_map, name=None, draw_groups=None, display_groups=None
     ):
-        """Creates a new `MapConnection` that references and copies the transform of the given `collision`.
+        """Creates a new `ConnectCollision` that references and copies the transform of the given `collision`.
 
-        The `name` and `map_id` of the new `MapConnection` must be given. You can also specify its `draw_groups` and
+        The `name` and `map_id` of the new `ConnectCollision` must be given. You can also specify its `draw_groups` and
         `display_groups`. Otherwise, it will leave them as the extensive default values: [0, ..., 127].
         """
         if not isinstance(collision, MSBCollision):
@@ -335,9 +335,9 @@ class MSB(_BaseMSB):
         if name is None:
             game_map = get_map(connected_map)
             name = collision.name + f"_[{game_map.area_id:02d}_{game_map.block_id:02d}]"
-        if name in self.map_connections.get_entry_names():
-            raise ValueError(f"{repr(name)} is already the name of an existing `MSBMapConnection`.")
-        map_connection = self.map_connections.new(
+        if name in self.connect_collisions.get_entry_names():
+            raise ValueError(f"{repr(name)} is already the name of an existing `MSBConnectCollision`.")
+        connect_collision = self.connect_collisions.new(
             name=name,
             connected_map=connected_map,
             collision=collision,
@@ -347,10 +347,10 @@ class MSB(_BaseMSB):
             model=collision.model,
         )
         if draw_groups is not None:  # otherwise keep same draw groups
-            map_connection.draw_groups = draw_groups
+            connect_collision.draw_groups = draw_groups
         if display_groups is not None:  # otherwise keep same display groups
-            map_connection.display_groups = display_groups
-        return map_connection
+            connect_collision.display_groups = display_groups
+        return connect_collision
 
     def new_c1000(self, name: str, **kwargs) -> MSBCharacter:
         """Useful to create basic c1000 instances as debug warp points."""

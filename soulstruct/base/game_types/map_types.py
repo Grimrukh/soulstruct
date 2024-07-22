@@ -47,10 +47,10 @@ __all__ = [
     "Collision",
     "PlayerStart",
     "Navmesh",
-    "UnusedObject",
+    "DummyObject",
     "UnusedAsset",
-    "UnusedCharacter",
-    "MapConnection",
+    "DummyCharacter",
+    "ConnectCollision",
 
     "MapTyping",
     "RegionTyping",
@@ -148,7 +148,7 @@ class Map(GameObject):
             block_id,
             -1 if self.cc_id <= 0 else self.cc_id,
             -1 if self.dd_id <= 0 else self.dd_id,
-        )  # for `MSBMapConnection`
+        )  # for `MSBConnectCollision`
 
         self.variable_name = variable_name
         self.verbose_name = self.name if verbose_name is None else verbose_name
@@ -541,36 +541,36 @@ class Navmesh(MapPart):
         return ("Parts", "Navmeshes") if pluralized_subtype else ("Parts", "Navmesh")
 
 
-class UnusedObject(Object):
+class DummyObject(Object):
     """Unused (or cutscene-only) object in MSB."""
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
-        return ("Parts", "UnusedObjects") if pluralized_subtype else ("Parts", "UnusedObject")
+        return ("Parts", "DummyObjects") if pluralized_subtype else ("Parts", "DummyObject")
 
 
 class UnusedAsset(Asset):
     """Unused (or cutscene-only) asset in MSB."""
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
-        return ("Parts", "UnusedObjects") if pluralized_subtype else ("Parts", "UnusedObject")
+        return ("Parts", "DummyObjects") if pluralized_subtype else ("Parts", "DummyObject")
 
 
-class UnusedCharacter(Character):
+class DummyCharacter(Character):
     """Unused (or cutscene-only) character in MSB."""
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
-        return ("Parts", "UnusedCharacters") if pluralized_subtype else ("Parts", "UnusedCharacter")
+        return ("Parts", "DummyCharacters") if pluralized_subtype else ("Parts", "DummyCharacter")
 
 
-class MapConnection(MapPart):
-    """MapConnection added in MSB. No additional state."""
+class ConnectCollision(MapPart):
+    """ConnectCollision added in MSB. No additional state."""
     @classmethod
     def get_event_arg_fmt(cls):
         return None  # not valid
 
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
-        return ("Parts", "MapConnections") if pluralized_subtype else ("Parts", "MapConnection")
+        return ("Parts", "ConnectCollisions") if pluralized_subtype else ("Parts", "ConnectCollision")
 
 # endregion
 

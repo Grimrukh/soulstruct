@@ -72,9 +72,9 @@ class MSBPartSubtype(BaseMSBPartSubtype):
     # 6 is unused.
     # 7 is unused.
     Navmesh = 8
-    UnusedObject = 9
-    UnusedCharacter = 10
-    MapConnection = 11
+    DummyObject = 9
+    DummyCharacter = 10
+    ConnectCollision = 11
 
     @classmethod
     def get_plural_supertype_name(cls):

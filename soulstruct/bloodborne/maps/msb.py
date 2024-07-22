@@ -75,9 +75,9 @@ MSB_ENTRY_SUBTYPES = {
         # 6 unused.
         # 7 unused.
         "Navmesh": MSBSubtypeInfo(MSBPartSubtype.Navmesh, MSBNavmesh, "navmeshes"),
-        "UnusedObject": MSBSubtypeInfo(MSBPartSubtype.UnusedObject, MSBUnusedObject, "unused_objects"),
-        "UnusedCharacter": MSBSubtypeInfo(MSBPartSubtype.UnusedCharacter, MSBUnusedCharacter, "unused_characters"),
-        "MapConnection": MSBSubtypeInfo(MSBPartSubtype.MapConnection, MSBMapConnection, "map_connections"),
+        "DummyObject": MSBSubtypeInfo(MSBPartSubtype.DummyObject, MSBDummyObject, "unused_objects"),
+        "DummyCharacter": MSBSubtypeInfo(MSBPartSubtype.DummyCharacter, MSBDummyCharacter, "unused_characters"),
+        "ConnectCollision": MSBSubtypeInfo(MSBPartSubtype.ConnectCollision, MSBConnectCollision, "connect_collisions"),
         "OtherPart": MSBSubtypeInfo(MSBPartSubtype.OtherPart, MSBOtherPart, "other_parts"),
     },
 }
@@ -144,9 +144,9 @@ class MSB(_BaseMSB):
     player_starts: MSBEntryList[MSBPlayerStart] = field(default_factory=empty_list("PARTS", "PlayerStart"))
     collisions: MSBEntryList[MSBCollision] = field(default_factory=empty_list("PARTS", "Collision"))
     navmeshes: MSBEntryList[MSBNavmesh] = field(default_factory=empty_list("PARTS", "Navmesh"))
-    unused_objects: MSBEntryList[MSBUnusedObject] = field(default_factory=empty_list("PARTS", "UnusedObject"))
-    unused_characters: MSBEntryList[MSBUnusedCharacter] = field(default_factory=empty_list("PARTS", "UnusedCharacter"))
-    map_connections: MSBEntryList[MSBMapConnection] = field(default_factory=empty_list("PARTS", "MapConnection"))
+    unused_objects: MSBEntryList[MSBDummyObject] = field(default_factory=empty_list("PARTS", "DummyObject"))
+    unused_characters: MSBEntryList[MSBDummyCharacter] = field(default_factory=empty_list("PARTS", "DummyCharacter"))
+    connect_collisions: MSBEntryList[MSBConnectCollision] = field(default_factory=empty_list("PARTS", "ConnectCollision"))
     other_parts: MSBEntryList[MSBOtherPart] = field(default_factory=empty_list("PARTS", "OtherPart"))
 
     def pack_supertype_name(self, writer: BinaryWriter, supertype_name: str):
@@ -179,12 +179,12 @@ class MSB(_BaseMSB):
         new_collision.environment_event = new_event
         return new_collision
 
-    def create_map_connection_from_collision(
+    def create_connect_collision_from_collision(
         self, collision: MSBCollision | str, connected_map, name=None, draw_groups=None, display_groups=None
     ):
-        """Creates a new `MapConnection` that references and copies the transform of the given `collision`.
+        """Creates a new `ConnectCollision` that references and copies the transform of the given `collision`.
 
-        The `name` and `map_id` of the new `MapConnection` must be given. You can also specify its `draw_groups` and
+        The `name` and `map_id` of the new `ConnectCollision` must be given. You can also specify its `draw_groups` and
         `display_groups`. Otherwise, it will leave them as the extensive default values: [0, ..., 127].
         """
         if not isinstance(collision, MSBCollision):
@@ -192,9 +192,9 @@ class MSB(_BaseMSB):
         if name is None:
             game_map = get_map(connected_map)
             name = collision.name + f"_[{game_map.area_id:02d}_{game_map.block_id:02d}]"
-        if name in self.map_connections.get_entry_names():
-            raise ValueError(f"{repr(name)} is already the name of an existing `MSBMapConnection`.")
-        map_connection = self.map_connections.new(
+        if name in self.connect_collisions.get_entry_names():
+            raise ValueError(f"{repr(name)} is already the name of an existing `MSBConnectCollision`.")
+        connect_collision = self.connect_collisions.new(
             name=name,
             connected_map=connected_map,
             collision=collision,
@@ -204,10 +204,10 @@ class MSB(_BaseMSB):
             model=collision.model,
         )
         if draw_groups is not None:  # otherwise keep same draw groups
-            map_connection.draw_groups = draw_groups
+            connect_collision.draw_groups = draw_groups
         if display_groups is not None:  # otherwise keep same display groups
-            map_connection.display_groups = display_groups
-        return map_connection
+            connect_collision.display_groups = display_groups
+        return connect_collision
 
     def new_c1000(self, name: str, **kwargs) -> MSBCharacter:
         """Useful to create basic c1000 instances as debug warp points."""

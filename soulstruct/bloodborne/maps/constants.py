@@ -13,7 +13,7 @@ __all__ = [
     "FORBIDDEN_WOODS",
     "YAHARGUL",
     "CHALICE_DUNGEON",
-    "UNKNOWN_MAP_30",  # referenced by some unused `MSBMapConnection` instances
+    "UNKNOWN_MAP_30",  # referenced by some unused `MSBConnectCollision` instances
     "BYRGENWERTH",
     "NIGHTMARE_FRONTIER",
     "HUNTERS_NIGHTMARE",
@@ -144,7 +144,7 @@ CHALICE_DUNGEON = Map(
     variable_name="CHALICE_DUNGEON",
     verbose_name="Chalice Dungeon",
 )
-UNKNOWN_MAP_30 = Map(  # Referenced by one vanilla (cut) MapConnection at the start of Castle Cainhurst.
+UNKNOWN_MAP_30 = Map(  # Referenced by one vanilla (cut) ConnectCollision at the start of Castle Cainhurst.
     30,
     0,
     emevd_file_stem=None,

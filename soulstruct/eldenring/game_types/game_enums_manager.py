@@ -13,7 +13,7 @@ class GameEnumsManager(_BaseGameEnumsManager):
         Character,
         PlayerStart,
         Collision,
-        UnusedCharacter,
+        DummyCharacter,
         UnusedAsset,
         SoundEvent,
         VFXEvent,

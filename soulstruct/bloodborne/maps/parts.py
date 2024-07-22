@@ -7,10 +7,10 @@ __all__ = [
     "MSBCharacter",
     "MSBPlayerStart",
     "MSBCollision",
-    "MSBUnusedObject",
-    "MSBUnusedCharacter",
+    "MSBDummyObject",
+    "MSBDummyCharacter",
     "MSBNavmesh",
-    "MSBMapConnection",
+    "MSBConnectCollision",
     "MSBOtherPart",
 ]
 
@@ -574,20 +574,20 @@ class MSBNavmesh(MSBPart):
     model: MSBNavmeshModel = None
 
 
-class MSBUnusedObject(MSBObject):
+class MSBDummyObject(MSBObject):
     """Unused object. May be used in cutscenes; disabled otherwise. Identical structure to `MSBObject`."""
 
-    SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.UnusedObject
+    SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.DummyObject
 
 
-class MSBUnusedCharacter(MSBCharacter):
+class MSBDummyCharacter(MSBCharacter):
     """Unused character. May be used in cutscenes; disabled otherwise. Identical structure to `MSBCharacter`."""
 
-    SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.UnusedCharacter
+    SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.DummyCharacter
 
 
 @dataclass(slots=True, eq=False, repr=False)
-class MSBMapConnection(MSBPart):
+class MSBConnectCollision(MSBPart):
     """Links to an `MSBCollision` entry and causes another specified map to load into backread when the linked collision
     is itself in backread in the current map.
 
@@ -596,7 +596,7 @@ class MSBMapConnection(MSBPart):
 
     Uses collision models, and almost always has the same model as the linked `MSBCollision`.
     """
-    SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.MapConnection
+    SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.ConnectCollision
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model", "collision"]
 
     @dataclass(slots=True)
@@ -624,7 +624,7 @@ class MSBMapConnection(MSBPart):
         )
 
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
-        super(MSBMapConnection, self).indices_to_objects(entry_lists)
+        super(MSBConnectCollision, self).indices_to_objects(entry_lists)
         self._consume_index(entry_lists, "collisions", "collision")
 
     def get_connected_map(self, get_map_func: tp.Callable):

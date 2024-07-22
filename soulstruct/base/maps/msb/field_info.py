@@ -401,11 +401,11 @@ FIELD_INFO = {
         "Controls collision backread.",
     ),
 
-    "MapConnection[collision]": (
+    "ConnectCollision[collision]": (
         "Collision Part Name",
         "Collision part that triggers this map connection.",
     ),
-    "MapConnection[connected_map_id]": (
+    "ConnectCollision[connected_map_id]": (
         "Map ID",
         "(AA, BB, CC, DD) sequence of the map to be loaded (corresponding to file 'mAA_BB_CC_DD). "
         "-1 and 0 mean the same thing.",

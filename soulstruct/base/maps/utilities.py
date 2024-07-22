@@ -57,7 +57,7 @@ def get_map(source: MAP_SOURCE_TYPING, game_maps: tp.Sequence[Map]) -> Map:
             area_id, block_id, cc_id, dd_id = source
         else:
             raise ValueError(f"Map source sequence must be 2, 3, or 4 elements, not: {source}")
-        # Values of -1 in BB/CC/DD can match 0 (these appear in `MSBMapConnection`s sometimes).
+        # Values of -1 in BB/CC/DD can match 0 (these appear in `MSBConnectCollision`s sometimes).
         if block_id == -1:
             block_id = 0
         if cc_id == -1:

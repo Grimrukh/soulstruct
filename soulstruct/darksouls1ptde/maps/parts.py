@@ -7,10 +7,10 @@ __all__ = [
     "MSBCharacter",
     "MSBPlayerStart",
     "MSBCollision",
-    "MSBUnusedObject",
-    "MSBUnusedCharacter",
+    "MSBDummyObject",
+    "MSBDummyCharacter",
     "MSBNavmesh",
-    "MSBMapConnection",
+    "MSBConnectCollision",
 ]
 
 import abc
@@ -601,23 +601,29 @@ class MSBNavmesh(MSBPart):
 
 
 @dataclass(slots=True, eq=False, repr=False)
-class MSBUnusedObject(MSBObject):
-    """Unused object. May be used in cutscenes; disabled otherwise. Identical structure to `MSBObject`."""
+class MSBDummyObject(MSBObject):
+    """Object not loaded in normal gameplay.
 
-    SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.UnusedObject
+    May be used in cutscenes; disabled otherwise. Identical structure to `MSBObject`.
+    """
+
+    SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.DummyObject
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = ""  # no SIB path, unlike real objects
 
 
 @dataclass(slots=True, eq=False, repr=False)
-class MSBUnusedCharacter(MSBCharacter):
-    """Unused character. May be used in cutscenes; disabled otherwise. Identical structure to `MSBCharacter`."""
+class MSBDummyCharacter(MSBCharacter):
+    """Character not loaded in normal gameplay.
 
-    SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.UnusedCharacter
+    May be used in cutscenes; disabled otherwise. Identical structure to `MSBCharacter`.
+    """
+
+    SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.DummyCharacter
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = ""
 
 
 @dataclass(slots=True, eq=False, repr=False)
-class MSBMapConnection(MSBPart):
+class MSBConnectCollision(MSBPart):
     """Links to an `MSBCollision` entry and causes another specified map to load into backread when the linked collision
     is itself in backread in the current map.
 
@@ -626,7 +632,7 @@ class MSBMapConnection(MSBPart):
 
     Uses collision models, and almost always has the same model as the linked `MSBCollision`.
     """
-    SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.MapConnection
+    SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.ConnectCollision
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = ""
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model", "collision"]
 
@@ -655,8 +661,20 @@ class MSBMapConnection(MSBPart):
         )
 
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
-        super(MSBMapConnection, self).indices_to_objects(entry_lists)
+        super(MSBConnectCollision, self).indices_to_objects(entry_lists)
         self._consume_index(entry_lists, "collisions", "collision")
+
+    @property
+    def connected_map_stem(self) -> str:
+        aa, bb, cc, dd = self.connected_map_id
+        return f"m{aa:02d}_{bb:02d}_{cc:02d}_{dd:02d}"
+
+    @connected_map_stem.setter
+    def connected_map_stem(self, value: str):
+        if not value.startswith("m"):
+            raise ValueError(f"Connected map stem must start with 'm'.")
+        aa, bb, cc, dd = value[1:].split("_")
+        self.connected_map_id = [int(aa), int(bb), int(cc), int(dd)]
 
     def get_connected_map(self, get_map_func: tp.Callable):
         return get_map_func(self.connected_map_id)

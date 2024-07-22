@@ -38,8 +38,8 @@ __all__ = [
     "PlayerStart",
     "Navmesh",
     "UnusedAsset",
-    "UnusedCharacter",
-    "MapConnection",
+    "DummyCharacter",
+    "ConnectCollision",
 
     "Region",
     "InvasionPointRegion",

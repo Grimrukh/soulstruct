@@ -604,21 +604,21 @@ class MSBEntry(abc.ABC):
 
         # Special exceptions (with warnings) for unused character/object models, which have been known
         # to reference the wrong model type in Undead Burg in DSR (thanks QLOC?).
-        if self.cls_name == "MSBUnusedCharacter" and value.__class__.__name__ == "MSBObjectModel":
+        if self.cls_name == "MSBDummyCharacter" and value.__class__.__name__ == "MSBObjectModel":
             # TODO: Could do a hash check for vanilla DSR file to skip m10_01 warning. But that seems REALLY try-hard.
             # _LOGGER.warning(
-            #     f"`MSBUnusedCharacter` '{self.name}' uses an `MSBObjectModel`: '{value.name}'.\n"
+            #     f"`MSBDummyCharacter` '{self.name}' uses an `MSBObjectModel`: '{value.name}'.\n"
             #     f"    This happens, e.g., in m10_01_00_00 in vanilla DSR (unused bonfire 'o0200_0004')."
             # )
             return True
-        if self.cls_name == "MSBUnusedCharacter" and value.__class__.__name__ == "MSBAssetModel":
+        if self.cls_name == "MSBDummyCharacter" and value.__class__.__name__ == "MSBAssetModel":
             # Happens in Elden Ring: e.g. 'AEG099_320'
             return True
         if self.cls_name == "MSBUnusedAsset" and value.__class__.__name__ == "MSBCharacterModel":
             # Happens in Elden Ring.
             return True
-        if self.cls_name == "MSBMapConnection" and value.__class__.__name__ == "MSBMapPieceModel":
-            # Happens in Elden Ring. TODO: Seems that 'MapConnection' class can attach to Map Pieces...
+        if self.cls_name == "MSBConnectCollision" and value.__class__.__name__ == "MSBMapPieceModel":
+            # Happens in Elden Ring. TODO: Seems that 'ConnectCollision' class can attach to Map Pieces...
             # In Agheel's Lake, for map (32, 0, 0, 1), which is CLOSE to Sellia Crystal Tunnel (32, 8, 0, 0)...
             return True
         return False

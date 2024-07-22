@@ -132,8 +132,8 @@ class MSBPartSubtype(BaseMSBPartSubtype):
     Collision = 5
     Navmesh = 8
     UnusedAsset = 9
-    UnusedCharacter = 10
-    MapConnection = 11
+    DummyCharacter = 10
+    ConnectCollision = 11
     Asset = 13
 
     @classmethod

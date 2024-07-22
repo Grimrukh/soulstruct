@@ -118,3 +118,7 @@ class BaseMSBModel(MSBEntry, abc.ABC):
         except KeyError:
             keys = [i[1] for i in Formatter().parse(self.SIB_PATH_TEMPLATE) if i[1] is not None and i[1] != "name"]
             raise TypeError(f"Setting `sib_path` automatically for type `{self.cls_name}` requires more kwargs: {keys}")
+
+    def get_model_file_stem(self, map_stem: str):
+        """Allows subclasses to depend on `map_stem` when generating model file stem. Default is just name."""
+        return self.name

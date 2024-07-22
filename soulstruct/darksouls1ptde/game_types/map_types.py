@@ -36,9 +36,9 @@ __all__ = [
     "Collision",
     "PlayerStart",
     "Navmesh",
-    "UnusedObject",
-    "UnusedCharacter",
-    "MapConnection",
+    "DummyObject",
+    "DummyCharacter",
+    "ConnectCollision",
 
     "Region",
     "RegionVolume",

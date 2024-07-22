@@ -160,6 +160,18 @@ class FLVERBone:
             rotate @= Matrix3.from_euler_angles(bone.rotate, radians=True, order="xzy")
         return absolute_translate, rotate, self.scale.copy()
 
+    @property
+    def is_default_origin(self):
+        """Checks whether this bone has only default (non-auto-generated) data."""
+        zero = Vector3.zero()
+        one = Vector3.one()
+        return (
+            self.translate == zero
+            and self.rotate == zero
+            and self.scale == one
+            and self.usage_flags == 0
+        )
+
     def __repr__(self):
         lines = [
             f"FLVERBone(\n"
