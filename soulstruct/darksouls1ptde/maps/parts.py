@@ -300,7 +300,7 @@ class MSBCharacter(MSBPart):
     patrol_type: int = 0
     player_id: int = field(default=-1, **MapFieldInfo(game_type=PlayerParam))
     draw_parent: MSBPart = None
-    patrol_regions: list[MSBRegion] = field(
+    patrol_regions: list[MSBRegion | None] = field(
         default_factory=lambda: [None] * 8, **MapFieldInfo(game_type=GameObjectIntSequence((Region, 8)))
     )
     default_animation: int = -1

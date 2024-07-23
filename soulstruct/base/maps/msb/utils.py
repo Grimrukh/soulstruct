@@ -130,7 +130,10 @@ class GroupBitSet(abc.ABC):
         return bit_set_to_int_group(enabled_flags=self.enabled_bits, group_size=self.BIT_COUNT // 32)
 
     def __iter__(self):
-        """Enables seamless `BinaryStruct` field packing."""
+        """Enables seamless `BinaryStruct` field packing.
+
+        BEWARE: Do NOT use this to try to iterate over all `enabled_bits`. You must access that field directly.
+        """
         return iter(self.to_uints())
 
     def __contains__(self, bit: int) -> bool:

@@ -306,7 +306,7 @@ class MSBPatrolRouteEvent(MSBEvent):
         _patrol_regions_indices: list[short] = field(**BinaryArray(32))
 
     unk_x00_x04: int = -1
-    patrol_regions: list[MSBRegion] = field(
+    patrol_regions: list[MSBRegion | None] = field(
         default_factory=lambda: [None] * 32, **MapFieldInfo(game_type=GameObjectIntSequence((Region, 32))))
 
     _patrol_regions_indices: list[int] = field(default=None, **BinaryArray(32))

@@ -370,7 +370,7 @@ class MSBCharacter(MSBPart):
     talk_id: int = field(default=0, **MapFieldInfo(game_type=TalkScript))
     player_id: int = field(default=0, **MapFieldInfo(game_type=PlayerParam))
     draw_parent: MSBPart = None
-    patrol_regions: list[MSBRegion] = field(
+    patrol_regions: list[MSBRegion | None] = field(
         default_factory=lambda: [None] * 8, **MapFieldInfo(game_type=GameObjectIntSequence((Region, 8)))
     )
     default_animation: int = -1
