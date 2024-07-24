@@ -9,11 +9,6 @@ from soulstruct.containers import Binder, BinderVersion, BinderFlags, BinderVers
 from soulstruct.dcx import DCXType
 from soulstruct.games import DARK_SOULS_DSR
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "MSGBND"
-
 
 @dataclass(slots=True)
 class MSGBND(Binder):

@@ -404,7 +404,7 @@ def Event_11305391():
     """Event 11305391"""
     AND_1.Add(FlagDisabled(6))
     AND_1.Add(FlagEnabled(11305393))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1302998,
@@ -1648,8 +1648,8 @@ def Event_11300850(_, character: int, item_lot: int):
     
     if ValueEqual(left=item_lot, right=0):
         return
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     if not OR_7:
         return
     AwardItemLot(item_lot, host_only=True)
@@ -1767,7 +1767,7 @@ def Event_11305025():
     if FlagEnabled(6):
         return
     AND_1.Add(Host())
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(CharacterBackreadEnabled(6550))
     
     MAIN.Await(AND_1)

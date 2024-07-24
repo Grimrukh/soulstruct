@@ -43,7 +43,7 @@ class BinderHashTable:
             raise ValueError("Hash group count could not be determined.")
 
         hashes = []
-        hash_lists = [[] for _ in range(group_count)]  # type: list[list[tuple[int, int]], ...]
+        hash_lists = [[] for _ in range(group_count)]  # type: list[list[tuple[int, int]]]
 
         for entry_index, entry in enumerate(entries):
             hashes.append(cls.path_hash(entry.path))
@@ -66,7 +66,7 @@ class BinderHashTable:
 
         packed_hash_groups = HashGroup.join_bytes(hash_groups)
         packed_hash_table_header = bytes(HashTableHeader(
-            path_hashes_offset=long(HashTableHeader.get_cls_size() + len(packed_hash_groups)),
+            path_hashes_offset=long(HashTableHeader.get_size() + len(packed_hash_groups)),
             hash_group_count=uint(group_count),
         ))
         packed_path_hashes = PathHash.join_bytes(path_hashes)

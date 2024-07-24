@@ -1,16 +1,12 @@
 from enum import IntEnum
 
-from soulstruct.darksouls1ptde.game_types.map_types import CoordEntityTyping, SoundEvent
+from soulstruct.darksouls1ptde.game_types.map_types import SoundEvent
 
 __all__ = ["Sound", "MusicSound", "SFXSound", "ObjectSound", "VoiceSound", "CharacterMotionSound", "SoundEvent"]
 
 
 class Sound(IntEnum):
     """Base class for a sound event that can be played transiently at a given anchor entity."""
-
-    def play(self, anchor_entity: CoordEntityTyping):
-        from ..events.emevd.compiler import compile_instruction
-        return compile_instruction("PlaySoundEffect", anchor_entity, self.get_sound_enum(), self.value)
 
     @classmethod
     def get_sound_enum(cls):

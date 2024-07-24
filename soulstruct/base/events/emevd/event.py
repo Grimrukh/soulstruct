@@ -18,11 +18,6 @@ from .event_layers import EventLayers
 from ..enums import OnRestBehavior
 from ..evs.adv_decompiler import AdvancedDecompiler
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "Event"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 
@@ -258,7 +253,7 @@ class Event(abc.ABC):
         base_arg_data_offset: int,
         event_arg_table_offset: int,
         event_layers_table_offset: int,
-    ) -> Self:
+    ) -> tp.Self:
         event_struct = EventStruct.from_bytes(reader)
 
         # Defined here in case there are no instructions.

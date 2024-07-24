@@ -12,11 +12,6 @@ from soulstruct.utilities.text import pad_chars
 
 from .enums import MSBSupertype, MSBRouteSubtype
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "MSBRoute"
-
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBRoute(MSBEntry):
@@ -37,7 +32,7 @@ class MSBRoute(MSBEntry):
     route_unkh_0c: int = 0
 
     @classmethod
-    def from_msb_reader(cls, reader: BinaryReader) -> Self:
+    def from_msb_reader(cls, reader: BinaryReader) -> tp.Self:
         """Regions do not have 'supertype data'. Just a header (with some supertype data) and optional subtype data."""
         entry_offset = reader.position
         kwargs = cls.unpack_header(reader, entry_offset)

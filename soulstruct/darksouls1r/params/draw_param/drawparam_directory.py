@@ -13,11 +13,6 @@ from pathlib import Path
 from soulstruct.base.game_file_directory import GameFileDirectory
 from .drawparambnd import DrawParamBND
 
-try:
-    Self = tp.Self
-except AttributeError:  # < Python 3.11
-    Self = "DrawParamDirectory"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 
@@ -141,7 +136,7 @@ class DrawParamDirectory(GameFileDirectory[DrawParamBND], abc.ABC):
         return written_paths
 
     @classmethod
-    def from_json_directory(cls, directory: Path | str) -> Self:
+    def from_json_directory(cls, directory: Path | str) -> tp.Self:
         directory = Path(directory)
         files = {}
 

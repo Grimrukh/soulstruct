@@ -10,15 +10,23 @@ scripted changes).
 
 Currently only made for Dark Souls Remastered. (PTDE is identical, but with 32-bit offsets, I believe.)
 """
+import typing as tp
 from dataclasses import dataclass
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.binary import BinaryReader, BinaryWriter
-from soulstruct.utilities.maths import Vector3
 
 
+@dataclass(slots=True)
 class TAE(GameFile):
     """TODO"""
+
+    def to_writer(self) -> BinaryWriter:
+        pass
+
+    @classmethod
+    def from_reader(cls, reader: BinaryReader) -> tp.Self:
+        pass
 
     def unpack(self, reader: BinaryReader, **kwargs):
         pass

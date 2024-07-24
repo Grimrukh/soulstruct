@@ -14,11 +14,6 @@ from soulstruct.utilities.maths import Vector3, Matrix3
 
 import numpy as np
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "NVM"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 
@@ -237,7 +232,7 @@ class NVM(GameFile):
         _pad2: bytes = field(init=False, **BinaryPad(92))
 
     @classmethod
-    def from_reader(cls, reader: BinaryReader) -> Self:
+    def from_reader(cls, reader: BinaryReader) -> tp.Self:
         endian_byte = reader.peek("i")
         if endian_byte == 1:
             reader.default_byte_order = ByteOrder.LittleEndian

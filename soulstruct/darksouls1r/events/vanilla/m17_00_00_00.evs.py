@@ -576,7 +576,7 @@ def Event_11705381():
     """Event 11705381"""
     AND_1.Add(FlagDisabled(11700000))
     AND_1.Add(FlagEnabled(11705386))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1702898,
@@ -709,7 +709,7 @@ def Event_11705391():
     """Event 11705391"""
     AND_1.Add(FlagDisabled(14))
     AND_1.Add(FlagEnabled(11705393))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(CharacterAlive(1700800))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
@@ -875,8 +875,8 @@ def Event_11705397():
     ForceAnimation(1700801, 8100)
     AICommand(1700800, command_id=20, command_slot=0)
     ReplanAI(1700800)
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     if not OR_7:
         return
     AwardItemLot(52910000, host_only=True)
@@ -1540,8 +1540,8 @@ def Event_11700810(_, character: int, left: int, item_lot: int):
     MAIN.Await(CharacterDead(character))
     
     if ValueNotEqual(left=left, right=0):
-        OR_7.Add(CharacterHuman(PLAYER))
-        OR_7.Add(CharacterHollow(PLAYER))
+        OR_7.Add(CharacterIsHuman(PLAYER))
+        OR_7.Add(CharacterIsHollow(PLAYER))
         if not OR_7:
             return
         AwardItemLot(item_lot, host_only=True)
@@ -1555,8 +1555,8 @@ def Event_11705280(_, character: int):
     
     MAIN.Await(CharacterDead(character))
     
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     if not OR_7:
         return
     AwardItemLot(32300100, host_only=True)
@@ -1764,8 +1764,8 @@ def Event_11700700():
     
     MAIN.Await(AND_1)
     
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     if not OR_7:
         return
     AwardItemLot(27100200, host_only=True)

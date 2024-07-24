@@ -1,22 +1,22 @@
-from soulstruct.game_types import *
+from soulstruct.darksouls3.game_types import *
 
 
-class FLAG(Flag):
+class Flags(Flag):
     pass
 
 
-class CHR(Character):
+class Characters(Character):
     PrinceLorianWithoutLothric = 3410832
     PrinceLorianWithLothric = 3410830
     PrinceLothric = 3410831
 
 
-class TEXT(EventText):
+class EventTexts(EventText):
     PrinceLorianName = 905250
     PrinceLothicName = 905251
 
 
-class SOUND(SFXSound):
+class SFXSounds(SFXSound):
     BossDeath = 777777777
 
 

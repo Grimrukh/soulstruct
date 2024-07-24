@@ -375,7 +375,7 @@ def Event_11605391():
     """Event 11605391"""
     AND_1.Add(FlagDisabled(13))
     AND_1.Add(FlagEnabled(11605393))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1602998,
@@ -732,7 +732,7 @@ def Event_11605381():
     DisableNetworkSync()
     AND_1.Add(FlagDisabled(11600900))
     AND_1.Add(FlagEnabled(11605380))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1602898,
@@ -1565,8 +1565,8 @@ def Event_11600810():
     
     MAIN.Await(CharacterDead(1600500))
     
-    OR_1.Add(CharacterHuman(PLAYER))
-    OR_1.Add(CharacterHollow(PLAYER))
+    OR_1.Add(CharacterIsHuman(PLAYER))
+    OR_1.Add(CharacterIsHollow(PLAYER))
     if not OR_1:
         return
     AwardItemLot(34200200, host_only=True)
@@ -1883,7 +1883,7 @@ def Event_11605029():
     AND_1.Add(Host())
     AND_1.Add(FlagDisabled(11605031))
     AND_1.Add(FlagDisabled(11605034))
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(FlagEnabled(11200300))
     AND_1.Add(CharacterBackreadEnabled(6520))
     AND_1.Add(EntityWithinDistance(entity=6520, other_entity=PLAYER, radius=5.0))
@@ -1913,7 +1913,7 @@ def Event_11605030():
     if FlagEnabled(13):
         return
     AND_1.Add(Host())
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(FlagEnabled(11200300))
     AND_1.Add(CharacterBackreadEnabled(6520))
     AND_1.Add(EntityWithinDistance(entity=6520, other_entity=PLAYER, radius=5.0))

@@ -19,11 +19,6 @@ from soulstruct.containers import Binder
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.future import StrEnum
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "MTDBND"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 

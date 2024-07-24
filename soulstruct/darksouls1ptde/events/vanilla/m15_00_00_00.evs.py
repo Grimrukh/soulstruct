@@ -647,7 +647,7 @@ def Event_11505391():
     """Event 11505391"""
     AND_1.Add(FlagDisabled(11))
     AND_1.Add(FlagEnabled(11505393))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1502998,
@@ -2664,7 +2664,7 @@ def Event_11505030():
     if FlagEnabled(11):
         return
     AND_1.Add(Host())
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(CharacterBackreadEnabled(6510))
     AND_1.Add(EntityWithinDistance(entity=6510, other_entity=PLAYER, radius=10.0))
     

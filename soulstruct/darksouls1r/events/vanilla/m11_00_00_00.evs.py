@@ -310,7 +310,7 @@ def Event_11105391():
     """Event 11105391"""
     AND_1.Add(FlagDisabled(4))
     AND_1.Add(FlagEnabled(11105393))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1102998,
@@ -479,8 +479,8 @@ def Event_11105396():
         copy_draw_parent=1100160,
     )
     ForceAnimation(1100161, 8100)
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     SkipLinesIfConditionFalse(1, OR_7)
     AwardItemLot(27310000, host_only=True)
     EnableFlag(11105396)
@@ -1896,7 +1896,7 @@ def Event_11105030():
     if FlagEnabled(4):
         return
     AND_1.Add(Host())
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(FlagDisabled(11100810))
     if ThisEventFlagDisabled():
         AND_1.Add(CharacterInsideRegion(PLAYER, region=1102011))

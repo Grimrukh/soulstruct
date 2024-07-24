@@ -11,11 +11,6 @@ from pathlib import Path
 
 from soulstruct.base.game_file_directory import GameFileMapDirectory
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "TalkDirectory"
-
 if tp.TYPE_CHECKING:
     from .talkesdbnd import TalkESDBND
 

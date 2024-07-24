@@ -15,11 +15,6 @@ from soulstruct.base.params.exceptions import ParamError
 
 from .exceptions import ParamDefError
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "ParamDefField"
-
 if tp.TYPE_CHECKING:
     from soulstruct.base.params.param_row import ParamRow
 
@@ -212,7 +207,7 @@ class ParamDefField:
         return cls(**kwargs)
 
     @classmethod
-    def from_paramdex_xml(cls, index: int, xml_node, param_type: str) -> Self:
+    def from_paramdex_xml(cls, index: int, xml_node, param_type: str) -> tp.Self:
         """Load field information from Paramdex XML node."""
         kwargs = {
             "index": index,

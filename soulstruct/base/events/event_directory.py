@@ -146,5 +146,5 @@ class EventDirectory(GameFileMapDirectory[EMEVD], abc.ABC):
             event_directory = self.directory
         event_directory = Path(event_directory)
         for emevd in self.files.values():
-            emevd.write_numeric(event_directory / emevd.path.name.split(".")[0] + ".txt")
+            emevd.write_numeric(event_directory / (emevd.path_minimal_stem + ".txt"))
         _LOGGER.info("All EMEVD files written to numeric TXT format successfully.")

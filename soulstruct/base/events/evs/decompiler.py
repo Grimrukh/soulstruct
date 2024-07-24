@@ -8,11 +8,9 @@ __all__ = [
     "base_decompile_run_event",
     "base_decompile_run_common_event",
     "Variable",
-    "high_level_evs_decompile",
 ]
 
 import logging
-import re
 import struct
 import typing as tp
 

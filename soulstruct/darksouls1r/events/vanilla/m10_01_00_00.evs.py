@@ -561,7 +561,7 @@ def Event_11015391():
     """Event 11015391"""
     AND_1.Add(FlagDisabled(3))
     AND_1.Add(FlagEnabled(11015393))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1012998,
@@ -733,8 +733,8 @@ def Event_11015397(_, character: int, npc_part_id: short, npc_part_id_1: int, ch
     AddSpecialEffect(character, 5434)
     AICommand(character, command_id=20, command_slot=0)
     ReplanAI(character)
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     if not OR_7:
         return
     AwardItemLot(53520000, host_only=True)
@@ -761,8 +761,8 @@ def Event_11010750(_, character: int, item_lot: int):
     
     MAIN.Await(CharacterDead(character))
     
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     if not OR_7:
         return
     AwardItemLot(item_lot, host_only=True)
@@ -793,7 +793,7 @@ def Event_11015381():
     """Event 11015381"""
     AND_1.Add(FlagDisabled(11010901))
     AND_1.Add(FlagEnabled(11015383))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1012898,
@@ -942,7 +942,7 @@ def Event_11015371():
     """Event 11015371"""
     AND_1.Add(FlagDisabled(11010902))
     AND_1.Add(FlagEnabled(11015373))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1012888,
@@ -1172,8 +1172,8 @@ def Event_11010710():
     
     MAIN.Await(CharacterDead(1010400))
     
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     if not OR_7:
         return
     AwardItemLot(33006000, host_only=True)
@@ -1748,8 +1748,8 @@ def Event_11010860(_, character: int, left: int, item_lot: int):
     MAIN.Await(CharacterDead(character))
     
     if ValueNotEqual(left=left, right=0):
-        OR_7.Add(CharacterHuman(PLAYER))
-        OR_7.Add(CharacterHollow(PLAYER))
+        OR_7.Add(CharacterIsHuman(PLAYER))
+        OR_7.Add(CharacterIsHollow(PLAYER))
         if not OR_7:
             return
         AwardItemLot(item_lot, host_only=True)
@@ -1973,8 +1973,8 @@ def Event_11015301():
     ForceAnimation(1010301, 8100)
     AICommand(1010300, command_id=20, command_slot=0)
     ReplanAI(1010300)
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     if not OR_7:
         return
     AwardItemLot(34310000, host_only=True)
@@ -1984,7 +1984,7 @@ def Event_11015301():
 def Event_11015302():
     """Event 11015302"""
     OR_7.Add(Host())
-    OR_7.Add(CharacterWhitePhantom(PLAYER))
+    OR_7.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(OR_7)
     AND_1.Add(FlagDisabled(11015310))
     AND_1.Add(FlagEnabled(11010791))
@@ -2742,8 +2742,8 @@ def Event_11010583():
 @ContinueOnRest(11010580)
 def Event_11010580():
     """Event 11010580"""
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     AND_1.Add(OR_7)
     AND_1.Add(FlagEnabled(11015030))
     AND_1.Add(FlagDisabled(11015031))
@@ -2822,7 +2822,7 @@ def Event_11015100():
         return
     If_Unknown_3_24(AND_1, unk1=5, unk2=2)
     AND_1.Add(Host())
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(FlagDisabled(11015102))
     AND_1.Add(FlagDisabled(11015106))
     OR_1.Add(FlagEnabled(1004))
@@ -2880,7 +2880,7 @@ def Event_11015103():
         return
     If_Unknown_3_24(AND_1, unk1=5, unk2=2)
     AND_1.Add(Host())
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(FlagDisabled(11015105))
     AND_1.Add(FlagDisabled(11015107))
     AND_1.Add(FlagEnabled(11020607))
@@ -2947,7 +2947,7 @@ def Event_11015900():
         return
     If_Unknown_3_24(AND_1, unk1=4, unk2=3)
     AND_1.Add(Host())
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(FlagDisabled(11015102))
     AND_1.Add(FlagDisabled(11015106))
     OR_1.Add(FlagEnabled(1004))
@@ -2985,7 +2985,7 @@ def Event_11015901():
         return
     If_Unknown_3_24(AND_1, unk1=4, unk2=3)
     AND_1.Add(Host())
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(FlagDisabled(11015105))
     AND_1.Add(FlagDisabled(11015107))
     AND_1.Add(FlagEnabled(11020607))

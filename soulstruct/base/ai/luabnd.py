@@ -20,11 +20,6 @@ from .luainfo import LuaInfo
 from .luagnl import LuaGNL
 from .lua_scripts import LuaScriptBase, GoalType, LuaGoalScript, LuaUnknownScript
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "LuaBND"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 _SNAKE_CASE_RE = re.compile(r"(?<!^)(?=[A-Z])")
@@ -42,12 +37,12 @@ class LuaBND(Binder):
     is_lua_32: bool = False  # as opposed to 64-bit (can't decompile 32-bit at present)
 
     @classmethod
-    def from_reader(cls, reader: BinaryReader, bdt_reader: BinaryReader | None = None) -> Self:
+    def from_reader(cls, reader: BinaryReader, bdt_reader: BinaryReader | None = None) -> tp.Self:
         if bdt_reader is not None:
             raise TypeError("Cannot read `LuaBND` from a split `BXF` file.")
 
         # TODO: This seems dodgy, type-wise. Will `luabnd` be a `Binder` object?
-        luabnd = super(LuaBND, cls).from_reader(reader)  # type: Self
+        luabnd = super(LuaBND, cls).from_reader(reader)  # type: tp.Self
 
         # Load goals and unknown scripts.
         try:

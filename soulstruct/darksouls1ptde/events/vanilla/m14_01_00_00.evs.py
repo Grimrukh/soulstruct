@@ -610,7 +610,7 @@ def Event_11415391():
     DisableNetworkSync()
     AND_1.Add(FlagDisabled(10))
     AND_1.Add(FlagEnabled(11415393))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1412998,
@@ -1071,7 +1071,7 @@ def Event_11415371():
     """Event 11415371"""
     AND_1.Add(FlagDisabled(11410900))
     AND_1.Add(FlagEnabled(11415373))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1412698,
@@ -1316,7 +1316,7 @@ def Event_11415381():
     """Event 11415381"""
     AND_1.Add(FlagDisabled(11410901))
     AND_1.Add(FlagEnabled(11415383))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1412898,
@@ -1469,8 +1469,8 @@ def Event_11415386():
     
     MAIN.Await(OR_1)
     
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     if not OR_7:
         return
     AwardItemLot(2670, host_only=True)
@@ -1777,7 +1777,7 @@ def Event_11415341():
     """Event 11415341"""
     AND_1.Add(FlagDisabled(11410410))
     AND_1.Add(FlagEnabled(11415343))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1412411,
@@ -2236,8 +2236,8 @@ def Event_11410100(_, character: int):
     
     if ValueNotEqual(left=character, right=1410110):
         return
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     if not OR_7:
         return
     AwardItemLot(33002000, host_only=True)
@@ -2251,8 +2251,8 @@ def Event_11410150(_, character: int, item_lot: int):
     
     MAIN.Await(CharacterDead(character))
     
-    OR_1.Add(CharacterHuman(PLAYER))
-    OR_1.Add(CharacterHollow(PLAYER))
+    OR_1.Add(CharacterIsHuman(PLAYER))
+    OR_1.Add(CharacterIsHollow(PLAYER))
     if not OR_1:
         return
     AwardItemLot(item_lot, host_only=True)
@@ -2681,7 +2681,7 @@ def Event_11415030():
     if FlagEnabled(10):
         return
     AND_1.Add(Host())
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(FlagDisabled(1004))
     AND_1.Add(FlagEnabled(1007))
     AND_1.Add(CharacterBackreadEnabled(6542))
@@ -2730,7 +2730,7 @@ def Event_11415035():
     if FlagEnabled(11410410):
         return
     AND_1.Add(Host())
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(FlagDisabled(11410810))
     if ThisEventFlagDisabled():
         AND_1.Add(CharacterInsideRegion(PLAYER, region=1412010))
@@ -2759,7 +2759,7 @@ def Event_11415038():
     if FlagEnabled(10):
         return
     AND_1.Add(Host())
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(FlagDisabled(11410811))
     if ThisEventFlagDisabled():
         AND_1.Add(CharacterInsideRegion(PLAYER, region=1412520))

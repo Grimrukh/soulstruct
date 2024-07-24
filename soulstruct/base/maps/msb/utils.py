@@ -29,11 +29,6 @@ if tp.TYPE_CHECKING:
     from .parts import BaseMSBPart
     from .regions import BaseMSBRegion
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "GroupBitSet"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 
@@ -98,18 +93,18 @@ class GroupBitSet(abc.ABC):
             raise TypeError(f"Cannot initialize `{self.__class__.__name__}` from {type(uint_list_or_bit_set)}.")
 
     @classmethod
-    def from_range(cls, first_bit: int, last_bit: int) -> Self:
+    def from_range(cls, first_bit: int, last_bit: int) -> tp.Self:
         """Create a `GroupBitSet` with all bits in the given range enabled (inclusive at both ends)."""
         if not 0 <= first_bit <= last_bit <= cls.BIT_COUNT:
             raise ValueError(f"Invalid range for `{cls.__name__}`: {first_bit} to {last_bit} (max {cls.BIT_COUNT}).")
         return cls(set(range(first_bit, last_bit + 1)))
 
     @classmethod
-    def all_off(cls) -> Self:
+    def all_off(cls) -> tp.Self:
         return cls(set())
 
     @classmethod
-    def all_on(cls) -> Self:
+    def all_on(cls) -> tp.Self:
         return cls(set(range(cls.BIT_COUNT)))
 
     @classmethod
@@ -145,7 +140,7 @@ class GroupBitSet(abc.ABC):
         bit_tuple = "(" + ", ".join(str(i) for i in sorted(self.enabled_bits)) + ")"
         return f"{self.__class__.__name__}{bit_tuple}"
 
-    def copy(self) -> Self:
+    def copy(self) -> tp.Self:
         return self.__class__(self.enabled_bits)
 
     def add(self, bit: int):
@@ -158,7 +153,7 @@ class GroupBitSet(abc.ABC):
             raise ValueError(f"Bit {bit} is out of range for {self.BIT_COUNT}-bit `{self.__class__.__name__}`.")
         self.enabled_bits.remove(bit)
 
-    def intersection(self, other: Self | set[int]) -> Self:
+    def intersection(self, other: tp.Self | set[int]) -> tp.Self:
         cls = self.__class__
         if isinstance(other, cls):
             return cls(self.enabled_bits & other.enabled_bits)
@@ -166,15 +161,21 @@ class GroupBitSet(abc.ABC):
             return cls(self.enabled_bits & other)
         raise TypeError(f"Cannot intersect `{cls.__name__}` with {type(other)}. Must be a `set` or the same type.")
 
-    def __or__(self, other: Self | set[int]) -> Self:
+    def __and__(self, other: tp.Self | set[int]) -> tp.Self:
+        return self.intersection(other)
+
+    def union(self, other: tp.Self | set[int]) -> tp.Self:
         cls = self.__class__
         if isinstance(other, cls):
             return cls(self.enabled_bits | other.enabled_bits)
         elif isinstance(other, set):
             return cls(self.enabled_bits | other)
-        raise TypeError(f"Cannot combine `{cls.__name__}` with {type(other)}. Must be a `set` or the same type.")
+        raise TypeError(f"Cannot union `{cls.__name__}` with {type(other)}. Must be a `set` or the same type.")
 
-    def __sub__(self, other: Self | set[int]) -> Self:
+    def __or__(self, other: tp.Self | set[int]) -> tp.Self:
+        return self.union(other)
+
+    def without(self, other: tp.Self | set[int]) -> tp.Self:
         cls = self.__class__
         if isinstance(other, cls):
             return cls(self.enabled_bits - other.enabled_bits)
@@ -182,7 +183,8 @@ class GroupBitSet(abc.ABC):
             return cls(self.enabled_bits - other)
         raise TypeError(f"Cannot subtract `{cls.__name__}` from {type(other)}. Must be a `set` or the same type.")
 
-    # TODO: Add more set methods here, like union and intersection.
+    def __sub__(self, other: tp.Self | set[int]) -> tp.Self:
+        return self.without(other)
 
 
 @dataclass(slots=True, init=False, repr=False)

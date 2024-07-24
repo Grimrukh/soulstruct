@@ -8,11 +8,6 @@ from dataclasses import dataclass, field
 from soulstruct.containers import Binder, BinderVersion, BinderVersion4Info
 from soulstruct.games import ELDEN_RING
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "MSGBND"
-
 
 @dataclass(slots=True)
 class MSGBND(Binder):

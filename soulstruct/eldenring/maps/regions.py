@@ -63,11 +63,6 @@ if tp.TYPE_CHECKING:
     from soulstruct.base.maps.msb import MSBEntry
     from .parts import MSBPart
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "MSBRegion"
-
 
 @dataclass(slots=True)
 class RegionHeader(BinaryStruct):
@@ -129,7 +124,7 @@ class MSBRegion(BaseMSBRegion, abc.ABC):
     _attached_part_index: int = None
 
     @classmethod
-    def from_msb_reader(cls, reader: BinaryReader) -> Self:
+    def from_msb_reader(cls, reader: BinaryReader) -> tp.Self:
         """Regions do not have 'supertype data'. Just a header (with some supertype data) and optional subtype data."""
         entry_offset = reader.position
         kwargs = cls.unpack_header(reader, entry_offset)

@@ -21,11 +21,6 @@ from .param_row import ParamRow
 from .flags import ParamFlags1, ParamFlags2
 from .paramdef import ParamDef, ParamDefField, ParamDefBND, field_types as ft
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "Param"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 
@@ -462,7 +457,7 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
         return writer
 
     @classmethod
-    def from_dict(cls, data: dict) -> Self:
+    def from_dict(cls, data: dict) -> tp.Self:
         """Try to find `TypeParam`, and convert flags integers to `ParamFlagsX`."""
         if cls.ROW_TYPE is None:
             raise TypeError("Cannot read `Param` dictionary of unknown type. Use `TypedParam` first.")
@@ -510,7 +505,7 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
         return data
 
     @classmethod
-    def from_json(cls, json_path: str | Path) -> Self:
+    def from_json(cls, json_path: str | Path) -> tp.Self:
         if cls.ROW_TYPE is None:
             raise TypeError("Cannot call `Param.from_json()` on `Param` of unknown row type.")
         # noinspection PyTypeChecker

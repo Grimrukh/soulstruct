@@ -11,11 +11,6 @@ from soulstruct.utilities.binary import *
 from .functions import COMMANDS
 from .ezl_parser import decompile
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "Command"
-
 
 @dataclass(slots=True)
 class CommandStruct(BinaryStruct):
@@ -40,7 +35,7 @@ class Command:
     _indent: int = 0
 
     @classmethod
-    def from_esd_reader(cls, reader: BinaryReader) -> Self:
+    def from_esd_reader(cls, reader: BinaryReader) -> tp.Self:
         """ Returns a list of Command instances. """
         header = CommandStruct.from_bytes(reader)
 

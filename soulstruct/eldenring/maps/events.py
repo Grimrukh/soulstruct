@@ -29,11 +29,6 @@ from .enums import MSBEventSubtype
 from .regions import MSBRegion
 from .parts import MSBPart
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "MSBEvent"
-
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBEvent(BaseMSBEvent, abc.ABC):
@@ -81,7 +76,7 @@ class MSBEvent(BaseMSBEvent, abc.ABC):
     unk_0c: int = 0
 
     @classmethod
-    def from_msb_reader(cls, reader: BinaryReader) -> Self:
+    def from_msb_reader(cls, reader: BinaryReader) -> tp.Self:
         """Default minimal method. Most subclasses can just override one of the header/data unpack methods."""
         entry_offset = reader.position
         kwargs = cls.unpack_header(reader, entry_offset)

@@ -27,11 +27,6 @@ from soulstruct.utilities.maths import Vector3
 from .enums import *
 from .models import *
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "MSBPart"
-
 if tp.TYPE_CHECKING:
     from .events import MSBPatrolRouteEvent
 
@@ -246,7 +241,7 @@ class MSBPart(BaseMSBPart, abc.ABC):
     part_unkd_3e: int = 0
 
     @classmethod
-    def from_msb_reader(cls, reader: BinaryReader) -> Self:
+    def from_msb_reader(cls, reader: BinaryReader) -> tp.Self:
         entry_offset = reader.position
 
         kwargs = cls.unpack_header(reader, entry_offset)

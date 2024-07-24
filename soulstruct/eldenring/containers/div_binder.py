@@ -13,11 +13,6 @@ from soulstruct.utilities.binary import BinaryReader, BinaryWriter
 
 _LOGGER = logging.getLogger("soulstruct")
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "DivBinder"
-
 
 @dataclass(slots=True, kw_only=True, repr=False)
 class DivBinder(Binder):
@@ -36,7 +31,7 @@ class DivBinder(Binder):
     write_blf_division: bool = True
 
     @classmethod
-    def from_path(cls, path: str | Path, bdt_path: str | Path | None = None) -> Self:
+    def from_path(cls, path: str | Path, bdt_path: str | Path | None = None) -> tp.Self:
         """`path` should be the path to the core Binder containing BLF files.
 
         Does NOT support `bdt_path` of base class currently, as no split div Binders have been encountered.
@@ -47,7 +42,7 @@ class DivBinder(Binder):
 
         # Read base Binder (as `DivBinder` instance).
         # noinspection PyTypeChecker
-        core_binder = super(DivBinder, cls).from_path(path, bdt_path)  # type: Self
+        core_binder = super(DivBinder, cls).from_path(path, bdt_path)  # type: tp.Self
 
         # We only need the stems of BLF entries to find those files next to `path`. No need to read BLFs.
         blf_stems = [entry.minimal_stem for entry in core_binder.entries if entry.name.endswith(".blf")]

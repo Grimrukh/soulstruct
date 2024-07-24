@@ -318,7 +318,7 @@ def Event_11005391():
     DisableNetworkSync()
     AND_1.Add(FlagDisabled(2))
     AND_1.Add(FlagEnabled(11005393))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1002998,
@@ -443,8 +443,8 @@ def Event_11005396():
     SetDisplayMask(1000800, bit_index=0, switch_type=OnOffChange.On)
     SetCollisionMask(1000800, bit_index=1, switch_type=OnOffChange.Off)
     AICommand(1000800, command_id=20, command_slot=0)
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     if not OR_7:
         return
     AwardItemLot(52610000, host_only=True)
@@ -916,7 +916,7 @@ def Event_11005030():
     if FlagEnabled(2):
         return
     AND_1.Add(Host())
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     OR_1.Add(FlagEnabled(1004))
     OR_1.Add(FlagEnabled(1005))
     OR_1.Add(FlagEnabled(1006))
@@ -970,7 +970,7 @@ def Event_11005033():
     if FlagEnabled(2):
         return
     AND_1.Add(Host())
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(FlagEnabled(11020607))
     OR_1.Add(FlagEnabled(1572))
     OR_1.Add(FlagEnabled(1573))
@@ -1025,7 +1025,7 @@ def Event_11005039():
     if FlagEnabled(2):
         return
     AND_1.Add(Host())
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(FlagDisabled(11000810))
     if ThisEventFlagDisabled():
         AND_1.Add(CharacterInsideRegion(PLAYER, region=1002005))

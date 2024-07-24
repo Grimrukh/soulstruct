@@ -49,6 +49,7 @@ strings:
 1502: 
 """
 from soulstruct.bloodborne.events import *
+from soulstruct.bloodborne.events.instructions import *
 
 
 def Constructor():
@@ -164,7 +165,7 @@ def Event12900078(_, arg_0_3: int, arg_4_7: int):
     CreatePlayLog(0)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=90,
         behavior_id=6051,
         launch_angle_x=270,
@@ -174,7 +175,7 @@ def Event12900078(_, arg_0_3: int, arg_4_7: int):
     Wait(2.0)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=90,
         behavior_id=6053,
         launch_angle_x=270,
@@ -184,7 +185,7 @@ def Event12900078(_, arg_0_3: int, arg_4_7: int):
     Wait(2.0)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=90,
         behavior_id=6055,
         launch_angle_x=270,
@@ -194,7 +195,7 @@ def Event12900078(_, arg_0_3: int, arg_4_7: int):
     Wait(2.0)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=90,
         behavior_id=6055,
         launch_angle_x=270,
@@ -204,7 +205,7 @@ def Event12900078(_, arg_0_3: int, arg_4_7: int):
     Wait(2.0)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=90,
         behavior_id=6055,
         launch_angle_x=270,
@@ -399,14 +400,14 @@ def Event12900192(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12900192: Event 12900192 """
     SkipLinesIfFlagDisabled(3, arg_4_7)
     DisableObjectActivation(arg_8_11, obj_act_id=2902000)
-    CreateObjectVFX(929136, obj=arg_8_11, dummy_id=703)
+    CreateObjectVFX(obj=arg_8_11, vfx_id=929136, dummy_id=703)
     End()
-    CreateObjectVFX(929134, obj=arg_8_11, dummy_id=703)
+    CreateObjectVFX(obj=arg_8_11, vfx_id=929134, dummy_id=703)
     IfObjectActivated(0, obj_act_id=arg_0_3)
     WaitFrames(56)
     EnableFlag(arg_4_7)
     DeleteObjectVFX(arg_8_11, erase_root=True)
-    CreateObjectVFX(929136, obj=arg_8_11, dummy_id=703)
+    CreateObjectVFX(obj=arg_8_11, vfx_id=929136, dummy_id=703)
     DisplayBanner(BannerType.YouWin)
     PlaySoundEffect(anchor_entity=PLAYER, sound_type=SoundType.v_Voice, sound_id=888880000)
     WaitFrames(44)
@@ -467,23 +468,23 @@ def Event12900229(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12900229: Event 12900229 """
     WaitFrames(2)
     SkipLinesIfFlagDisabled(2, arg_8_11)
-    CreateObjectVFX(929136, obj=arg_0_3, dummy_id=703)
+    CreateObjectVFX(obj=arg_0_3, vfx_id=929136, dummy_id=703)
     End()
     GotoIfThisEventSlotFlagDisabled(Label.L0)
     EndOfAnimation(arg_0_3, 1)
-    CreateObjectVFX(929136, obj=arg_0_3, dummy_id=703)
+    CreateObjectVFX(obj=arg_0_3, vfx_id=929136, dummy_id=703)
     EnableObjectActivation(arg_0_3, obj_act_id=2900100)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
     DisableObjectActivation(arg_0_3, obj_act_id=2900100)
-    CreateObjectVFX(929134, obj=arg_0_3, dummy_id=703)
+    CreateObjectVFX(obj=arg_0_3, vfx_id=929134, dummy_id=703)
     IfFlagEnabled(0, arg_4_7)
     DeleteObjectVFX(arg_0_3, erase_root=True)
     ForceAnimation(arg_0_3, 1)
     Wait(2.5)
-    CreateObjectVFX(929136, obj=arg_0_3, dummy_id=703)
+    CreateObjectVFX(obj=arg_0_3, vfx_id=929136, dummy_id=703)
     EnableObjectActivation(arg_0_3, obj_act_id=2900100)
     Wait(0.5)
 
@@ -571,7 +572,7 @@ def Event12900239(_, arg_0_3: int, arg_4_7: int):
     Wait(1.5)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=120,
         behavior_id=6020,
         launch_angle_x=270,
@@ -735,15 +736,15 @@ def Event12900304(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 def Event12901732(_, arg_0_3: int, arg_4_7: int):
     """ 12901732: Event 12901732 """
     GotoIfThisEventSlotFlagDisabled(Label.L0)
-    CreateObjectVFX(929102, obj=arg_4_7, dummy_id=700)
-    CreateObjectVFX(929102, obj=arg_4_7, dummy_id=702)
+    CreateObjectVFX(obj=arg_4_7, vfx_id=929102, dummy_id=700)
+    CreateObjectVFX(obj=arg_4_7, vfx_id=929102, dummy_id=702)
 
     # --- 0 --- #
     DefineLabel(0)
     IfFlagEnabled(0, arg_0_3)
     GotoIfThisEventSlotFlagEnabled(Label.L1)
-    CreateObjectVFX(929102, obj=arg_4_7, dummy_id=700)
-    CreateObjectVFX(929102, obj=arg_4_7, dummy_id=702)
+    CreateObjectVFX(obj=arg_4_7, vfx_id=929102, dummy_id=700)
+    CreateObjectVFX(obj=arg_4_7, vfx_id=929102, dummy_id=702)
 
     # --- 1 --- #
     DefineLabel(1)
@@ -1467,7 +1468,7 @@ def Event12900377(_, arg_0_3: int, arg_4_7: int):
 
 def Event12900395(_, arg_0_3: int, arg_4_7: int):
     """ 12900395: Event 12900395 """
-    CreateObjectVFX(900110, obj=arg_0_3, dummy_id=704)
+    CreateObjectVFX(obj=arg_0_3, vfx_id=900110, dummy_id=704)
     GotoIfFlagEnabled(Label.L7, 92905107)
     GotoIfFlagEnabled(Label.L6, 92905106)
     GotoIfFlagEnabled(Label.L5, 92905105)
@@ -1612,12 +1613,12 @@ def Event12900430(_, arg_0_3: int):
 def Event12901000(_, arg_0_3: int, arg_4_7: int):
     """ 12901000: Event 12901000 """
     DisableSpawner(arg_4_7)
-    IfCharacterDrawGroupActive(1, arg_0_3)
+    IfCharacterDrawGroupEnabled(1, arg_0_3)
     IfHasAIStatus(1, arg_0_3, ai_status=AIStatusType.Normal)
     IfCharacterHasTAEEvent(1, arg_0_3, tae_event_id=100)
     IfConditionTrue(0, input_condition=1)
     EnableSpawner(arg_4_7)
-    IfCharacterDrawGroupInactive(-1, arg_0_3)
+    IfCharacterDrawGroupDisabled(-1, arg_0_3)
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Battle)
     IfConditionTrue(0, input_condition=-1)
     Restart()
@@ -1703,7 +1704,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLinesIfFlagEnabled(2, 92905202)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6200,
         launch_angle_x=0,
@@ -1713,7 +1714,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(5)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6210,
         launch_angle_x=0,
@@ -1723,7 +1724,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(3)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6220,
         launch_angle_x=0,
@@ -1733,7 +1734,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(1)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6230,
         launch_angle_x=0,
@@ -1746,7 +1747,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLinesIfFlagEnabled(2, 92905202)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6201,
         launch_angle_x=0,
@@ -1756,7 +1757,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(5)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6211,
         launch_angle_x=0,
@@ -1766,7 +1767,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(3)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6221,
         launch_angle_x=0,
@@ -1776,7 +1777,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(1)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6231,
         launch_angle_x=0,
@@ -1789,7 +1790,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLinesIfFlagEnabled(2, 92905202)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6202,
         launch_angle_x=0,
@@ -1799,7 +1800,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(5)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6212,
         launch_angle_x=0,
@@ -1809,7 +1810,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(3)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6222,
         launch_angle_x=0,
@@ -1819,7 +1820,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(1)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6232,
         launch_angle_x=0,
@@ -1832,7 +1833,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLinesIfFlagEnabled(2, 92905202)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6203,
         launch_angle_x=0,
@@ -1842,7 +1843,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(5)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6213,
         launch_angle_x=0,
@@ -1852,7 +1853,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(3)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6223,
         launch_angle_x=0,
@@ -1862,7 +1863,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(1)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6233,
         launch_angle_x=0,
@@ -1875,7 +1876,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLinesIfFlagEnabled(2, 92905202)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6204,
         launch_angle_x=0,
@@ -1885,7 +1886,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(5)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6214,
         launch_angle_x=0,
@@ -1895,7 +1896,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(3)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6224,
         launch_angle_x=0,
@@ -1905,7 +1906,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(1)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6234,
         launch_angle_x=0,
@@ -1918,7 +1919,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLinesIfFlagEnabled(2, 92905202)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6205,
         launch_angle_x=0,
@@ -1928,7 +1929,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(5)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6215,
         launch_angle_x=0,
@@ -1938,7 +1939,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(3)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6225,
         launch_angle_x=0,
@@ -1948,7 +1949,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(1)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6235,
         launch_angle_x=0,
@@ -1961,7 +1962,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLinesIfFlagEnabled(2, 92905202)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6206,
         launch_angle_x=0,
@@ -1971,7 +1972,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(5)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6216,
         launch_angle_x=0,
@@ -1981,7 +1982,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(3)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6226,
         launch_angle_x=0,
@@ -1991,7 +1992,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(1)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6236,
         launch_angle_x=0,
@@ -2004,7 +2005,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLinesIfFlagEnabled(2, 92905202)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6207,
         launch_angle_x=0,
@@ -2014,7 +2015,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(5)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6217,
         launch_angle_x=0,
@@ -2024,7 +2025,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(3)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6227,
         launch_angle_x=0,
@@ -2034,7 +2035,7 @@ def Event12901400(_, arg_0_3: int, arg_4_7: int):
     SkipLines(1)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6237,
         launch_angle_x=0,
@@ -2456,7 +2457,7 @@ def Event12901599(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfCharacterBackreadEnabled(0, arg_0_3)
     ForceAnimation(arg_0_3, arg_8_11, loop=True, skip_transition=True)
     IfCharacterInsideRegion(0, PLAYER, region=arg_4_7)
-    FaceEntity(arg_0_3, PLAYER, animation=arg_12_15, wait_for_completion=False)
+    FaceEntityAndForceAnimation(arg_0_3, PLAYER, animation=arg_12_15, wait_for_completion=False)
 
 
 def Event12901600(_, arg_0_3: int, arg_4_7: int):
@@ -2476,12 +2477,12 @@ def Event12901601(_, arg_0_3: int):
 
 def Event12901602(_, arg_0_3: int, arg_4_7: int):
     """ 12901602: Event 12901602 """
-    CreateObjectVFX(8020, obj=arg_4_7, dummy_id=200)
+    CreateObjectVFX(obj=arg_4_7, vfx_id=8020, dummy_id=200)
     ForceAnimation(arg_4_7, 200, loop=True, wait_for_completion=True)
     SkipLinesIfThisEventSlotFlagEnabled(1)
     IfCharacterInsideRegion(0, PLAYER, region=arg_0_3)
     ForceAnimation(arg_4_7, 1000000, wait_for_completion=True)
-    CreateObjectVFX(8023, obj=arg_4_7, dummy_id=100)
+    CreateObjectVFX(obj=arg_4_7, vfx_id=8023, dummy_id=100)
     ForceAnimation(arg_4_7, 1000100, loop=True, wait_for_completion=True)
 
 
@@ -2851,7 +2852,7 @@ def Event12901697(
     IfCharacterHasTAEEvent(-1, PLAYER, tae_event_id=700)
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(0, input_condition=1)
-    FaceEntity(arg_0_3, PLAYER, animation=arg_12_15, wait_for_completion=False)
+    FaceEntityAndForceAnimation(arg_0_3, PLAYER, animation=arg_12_15, wait_for_completion=False)
     EnableFlag(arg_20_23)
     EnableFlag(arg_24_27)
 
@@ -2899,7 +2900,7 @@ def Event12901705(
     IfCharacterHasTAEEvent(-1, PLAYER, tae_event_id=700)
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(0, input_condition=1)
-    FaceEntity(arg_0_3, PLAYER, animation=arg_12_15, wait_for_completion=False)
+    FaceEntityAndForceAnimation(arg_0_3, PLAYER, animation=arg_12_15, wait_for_completion=False)
     EnableFlag(arg_20_23)
     EnableFlag(arg_24_27)
 
@@ -3505,7 +3506,7 @@ def Event12901754(_, arg_0_3: int):
 def Event12904000(_, arg_0_3: int, arg_4_7: int):
     """ 12904000: Event 12904000 """
     DisableCharacter(arg_4_7)
-    IfHealthLessThanOrEqual(1, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(1, arg_0_3, 0.0)
     IfCharacterHasTAEEvent(1, arg_0_3, tae_event_id=10)
     IfConditionTrue(0, input_condition=1)
     Move(arg_4_7, destination=arg_0_3, destination_type=CoordEntityType.Character, dummy_id=90, short_move=True)
@@ -3553,9 +3554,9 @@ def Event12904027(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 def Event12904028(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12904028: Event 12904028 """
     EndIfFlagEnabled(arg_12_15)
-    IfHealthLessThanOrEqual(0, arg_0_3, 0.4000000059604645)
-    AICommand(arg_4_7, command_id=100, slot=1)
-    AICommand(arg_8_11, command_id=100, slot=1)
+    IfHealthRatioLessThanOrEqual(0, arg_0_3, 0.4000000059604645)
+    AICommand(arg_4_7, command_id=100, command_slot=1)
+    AICommand(arg_8_11, command_id=100, command_slot=1)
 
 
 def Event12904029(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
@@ -3819,7 +3820,7 @@ def Event12904041(_, arg_0_3: int, arg_4_7: int):
     SkipLinesIfThisEventSlotFlagEnabled(2)
     IfCharacterBackreadEnabled(0, arg_0_3)
     Wait(1.0)
-    IfHealthLessThanOrEqual(1, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(1, arg_0_3, 0.0)
     SkipLinesIfConditionFalse(2, 1)
     DisableBackread(arg_4_7)
     End()
@@ -3833,9 +3834,9 @@ def Event12904041(_, arg_0_3: int, arg_4_7: int):
 def Event12904042(_, arg_0_3: int, arg_4_7: int):
     """ 12904042: Event 12904042 """
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=100)
-    AICommand(arg_4_7, command_id=100, slot=0)
+    AICommand(arg_4_7, command_id=100, command_slot=0)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=90)
-    AICommand(arg_4_7, command_id=-1, slot=0)
+    AICommand(arg_4_7, command_id=-1, command_slot=0)
     Restart()
 
 
@@ -3881,7 +3882,7 @@ def Event12904070(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     # --- 0 --- #
     DefineLabel(0)
     IfCharacterDead(0, arg_0_3)
-    IfCharacterDrawGroupInactive(0, arg_4_7)
+    IfCharacterDrawGroupDisabled(0, arg_4_7)
     CreatePlayLog(768)
     EnableCharacter(arg_4_7)
     ReplanAI(arg_4_7)
@@ -3920,21 +3921,21 @@ def Event12904210(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12904210: Event 12904210 """
     GotoIfFlagEnabled(Label.L0, arg_12_15)
     IfFlagEnabled(0, arg_0_3)
-    AICommand(arg_4_7, command_id=100, slot=0)
+    AICommand(arg_4_7, command_id=100, command_slot=0)
     ReplanAI(arg_4_7)
     EnableFlag(arg_12_15)
     IfTimeElapsed(0, 2.0)
-    AICommand(arg_4_7, command_id=-1, slot=0)
+    AICommand(arg_4_7, command_id=-1, command_slot=0)
 
     # --- 0 --- #
     DefineLabel(0)
     IfFlagEnabled(1, arg_0_3)
     IfEventValueComparison(1, arg_8_11, bit_count=3, comparison_type=ComparisonType.GreaterThanOrEqual, value=3)
     IfConditionTrue(0, input_condition=1)
-    AICommand(arg_4_7, command_id=100, slot=0)
+    AICommand(arg_4_7, command_id=100, command_slot=0)
     ReplanAI(arg_4_7)
     IfTimeElapsed(0, 2.0)
-    AICommand(arg_4_7, command_id=-1, slot=0)
+    AICommand(arg_4_7, command_id=-1, command_slot=0)
     IfTimeElapsed(0, 3.0)
     Restart()
 
@@ -3992,10 +3993,10 @@ def Event12904274(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfEventValueComparison(1, arg_8_11, bit_count=3, comparison_type=ComparisonType.LessThanOrEqual, value=2)
     IfConditionTrue(0, input_condition=1)
     ForceAnimation(arg_4_7, 3011)
-    AICommand(arg_4_7, command_id=10, slot=2)
+    AICommand(arg_4_7, command_id=10, command_slot=2)
     ReplanAI(arg_4_7)
     IfTimeElapsed(0, 2.0)
-    AICommand(arg_4_7, command_id=-1, slot=2)
+    AICommand(arg_4_7, command_id=-1, command_slot=2)
     IfTimeElapsed(0, 3.0)
     Restart()
 
@@ -4343,12 +4344,12 @@ def Event12904345(_, arg_0_3: int):
     IfEntityWithinDistance(1, PLAYER, arg_0_3, radius=9.0)
     IfConditionTrue(0, input_condition=1)
     ForceAnimation(arg_0_3, 7007)
-    AICommand(arg_0_3, command_id=10, slot=1)
+    AICommand(arg_0_3, command_id=10, command_slot=1)
     ReplanAI(arg_0_3)
     IfCharacterDoesNotHaveSpecialEffect(-1, PLAYER, 404)
     IfTimeElapsed(-1, 10.0)
     IfConditionTrue(0, input_condition=-1)
-    AICommand(arg_0_3, command_id=-1, slot=1)
+    AICommand(arg_0_3, command_id=-1, command_slot=1)
     ReplanAI(arg_0_3)
 
 
@@ -4375,7 +4376,7 @@ def Event12904361(_, arg_0_3: int, arg_4_7: int):
     SetNPCPartEffects(arg_0_3, npc_part_id=10, material_sfx_id=59, material_vfx_id=59)
     DisableCharacter(arg_4_7)
     IfCharacterPartHealthLessThanOrEqual(-1, arg_0_3, npc_part_id=10, value=0)
-    IfHealthLessThanOrEqual(-1, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(-1, arg_0_3, 0.0)
     IfConditionTrue(0, input_condition=-1)
     SetAIParamID(arg_0_3, 121001)
     DisableGravity(arg_4_7)
@@ -4402,7 +4403,7 @@ def Event12904369(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 
     # --- 0 --- #
     DefineLabel(0)
-    CreateObjectVFX(900201, obj=arg_4_7, dummy_id=90)
+    CreateObjectVFX(obj=arg_4_7, vfx_id=900201, dummy_id=90)
     ForceAnimation(arg_4_7, arg_16_19)
     IfObjectDestroyed(0, arg_0_3)
     ForceAnimation(arg_4_7, arg_20_23, wait_for_completion=True)
@@ -4904,7 +4905,7 @@ def Event12904477(_, arg_0_3: int, arg_4_7: int):
 def Event12904487(_, arg_0_3: int, arg_4_7: int):
     """ 12904487: Event 12904487 """
     DisableGravity(arg_4_7)
-    IfHealthLessThanOrEqual(0, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(0, arg_0_3, 0.0)
     Wait(1.0)
     ForceAnimation(arg_4_7, 2200, wait_for_completion=True)
     DisableCharacter(arg_4_7)
@@ -4945,7 +4946,7 @@ def Event12904506(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -4967,13 +4968,13 @@ def Event12904506(
     RemoveSpecialEffect(arg_0_3, arg_28_31)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=arg_16_19, overwrite_max=True)
     AddSpecialEffect(arg_0_3, arg_28_31, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, arg_24_27)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -5004,7 +5005,7 @@ def Event12904540(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=60, material_vfx_id=60)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -5046,7 +5047,7 @@ def Event12904568(_, arg_0_3: int, arg_4_7: int):
     PlaySoundEffect(anchor_entity=arg_4_7, sound_type=SoundType.o_Object, sound_id=43000000)
     EnableCharacter(arg_0_3)
     IfFramesElapsed(0, 3)
-    FaceEntity(arg_0_3, PLAYER, animation=3024, wait_for_completion=False)
+    FaceEntityAndForceAnimation(arg_0_3, PLAYER, animation=3024, wait_for_completion=False)
     IfFramesElapsed(0, 1)
     EnableAI(arg_0_3)
 
@@ -5074,7 +5075,7 @@ def Event12904579(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     PlaySoundEffect(anchor_entity=arg_4_7, sound_type=SoundType.o_Object, sound_id=43000000)
     EnableCharacter(arg_0_3)
     IfFramesElapsed(0, 3)
-    FaceEntity(arg_0_3, PLAYER, animation=arg_12_15, wait_for_completion=False)
+    FaceEntityAndForceAnimation(arg_0_3, PLAYER, animation=arg_12_15, wait_for_completion=False)
     IfFramesElapsed(0, 1)
     EnableAI(arg_0_3)
 
@@ -5102,7 +5103,7 @@ def Event12904584(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     EnableCharacter(arg_0_3)
     Move(arg_0_3, destination=arg_8_11, destination_type=CoordEntityType.Character, dummy_id=101, short_move=True)
     IfFramesElapsed(0, 3)
-    FaceEntity(arg_0_3, PLAYER, animation=arg_12_15, wait_for_completion=False)
+    FaceEntityAndForceAnimation(arg_0_3, PLAYER, animation=arg_12_15, wait_for_completion=False)
     IfFramesElapsed(0, 1)
     EnableAI(arg_0_3)
 
@@ -5121,7 +5122,7 @@ def Event12904594(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     # --- 0 --- #
     DefineLabel(0)
     SetNest(arg_0_3, arg_8_11)
-    AICommand(arg_0_3, command_id=arg_12_15, slot=0)
+    AICommand(arg_0_3, command_id=arg_12_15, command_slot=0)
     ReplanAI(arg_0_3)
 
 
@@ -5142,7 +5143,7 @@ def Event12904595(_, arg_0_3: int, arg_4_7: int):
 
     # --- 0 --- #
     DefineLabel(0)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
 
 
@@ -5159,7 +5160,7 @@ def Event12904596(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfConditionTrue(-2, input_condition=2)
     IfConditionTrue(0, input_condition=-2)
     EndIfLastConditionResultTrue(2)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     IfHasAIStatus(3, arg_0_3, ai_status=AIStatusType.Normal)
     IfFlagEnabled(4, arg_8_11)
@@ -5167,7 +5168,7 @@ def Event12904596(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfConditionTrue(-3, input_condition=4)
     IfConditionTrue(0, input_condition=-3)
     EndIfLastConditionResultTrue(4)
-    AICommand(arg_0_3, command_id=arg_4_7, slot=0)
+    AICommand(arg_0_3, command_id=arg_4_7, command_slot=0)
     ReplanAI(arg_0_3)
     Restart()
 
@@ -5239,18 +5240,18 @@ def Event12904643(_, arg_0_3: int):
     WaitFrames(40)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6064,
         launch_angle_x=270,
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    IfHealthNotEqual(7, arg_0_3, 1.0)
+    IfHealthRatioNotEqual(7, arg_0_3, 1.0)
     SkipLinesIfConditionTrue(5, 7)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=205,
         behavior_id=6051,
         launch_angle_x=270,
@@ -5258,11 +5259,11 @@ def Event12904643(_, arg_0_3: int):
         launch_angle_z=0,
     )
     WaitFrames(60)
-    IfHealthNotEqual(8, arg_0_3, 1.0)
+    IfHealthRatioNotEqual(8, arg_0_3, 1.0)
     SkipLinesIfConditionTrue(1, 8)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=205,
         behavior_id=6053,
         launch_angle_x=270,
@@ -5314,7 +5315,7 @@ def Event12904736(_, arg_0_3: int, arg_4_7: int, arg_8_11: float):
     SkipLinesIfLastConditionResultFalse(6, 1)
     ForceAnimation(arg_0_3, 3007)
     WaitFrames(50)
-    FaceEntity(arg_0_3, PLAYER, animation=3006, wait_for_completion=False)
+    FaceEntityAndForceAnimation(arg_0_3, PLAYER, animation=3006, wait_for_completion=False)
     EnableAI(arg_0_3)
     ReplanAI(arg_0_3)
     End()
@@ -5334,7 +5335,7 @@ def Event12904737(_, arg_0_3: int):
     PlaySoundEffect(anchor_entity=arg_0_3, sound_type=SoundType.a_Ambient, sound_id=24011006)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6063,
         launch_angle_x=270,
@@ -5344,7 +5345,7 @@ def Event12904737(_, arg_0_3: int):
     WaitFrames(10)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6055,
         launch_angle_x=270,
@@ -5354,7 +5355,7 @@ def Event12904737(_, arg_0_3: int):
     WaitFrames(90)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6059,
         launch_angle_x=270,
@@ -5364,7 +5365,7 @@ def Event12904737(_, arg_0_3: int):
     WaitFrames(80)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=101,
         behavior_id=6062,
         launch_angle_x=270,
@@ -5402,11 +5403,11 @@ def Event12904755(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     EnableCharacter(arg_0_3)
     CreateTemporaryVFX(arg_12_15, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, dummy_id=203)
     Wait(1.0)
-    AICommand(arg_0_3, command_id=10, slot=0)
+    AICommand(arg_0_3, command_id=10, command_slot=0)
     SetNest(arg_0_3, arg_16_19)
     ReplanAI(arg_0_3)
     IfCharacterInsideRegion(0, arg_0_3, region=arg_16_19)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
 
 
@@ -5438,10 +5439,10 @@ def Event12904772(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(0, input_condition=1)
     SetCharacterEventTarget(arg_8_11, arg_12_15)
-    AICommand(arg_8_11, command_id=100, slot=0)
+    AICommand(arg_8_11, command_id=100, command_slot=0)
     ReplanAI(arg_8_11)
     IfCharacterHasTAEEvent(0, arg_8_11, tae_event_id=100)
-    AICommand(arg_8_11, command_id=-1, slot=0)
+    AICommand(arg_8_11, command_id=-1, command_slot=0)
     ReplanAI(arg_8_11)
     End()
 
@@ -5451,7 +5452,7 @@ def Event12904773(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfFlagDisabled(1, arg_8_11)
     IfActionButtonParamActivated(1, action_button_id=2900010, entity=arg_4_7)
     IfConditionTrue(0, input_condition=1)
-    FaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
+    FaceEntityAndForceAnimation(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     Restart()
 
 
@@ -5473,7 +5474,7 @@ def Event12904775(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfCharacterIsType(1, PLAYER, CharacterType.WhitePhantom)
     IfActionButtonParamActivated(1, action_button_id=2900010, entity=arg_4_7)
     IfConditionTrue(0, input_condition=1)
-    FaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
+    FaceEntityAndForceAnimation(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     Restart()
 
 
@@ -5505,7 +5506,7 @@ def Event12904776(
     ActivateMultiplayerBuffs(arg_0_3)
     EnableAI(arg_0_3)
     ReplanAI(arg_0_3)
-    EnableBossHealthBar(arg_0_3, name=arg_12_15, slot=0)
+    EnableBossHealthBar(arg_0_3, name=arg_12_15, bar_slot=0)
     EnableFlag(arg_16_19)
 
 
@@ -5530,11 +5531,11 @@ def Event12904778(_, arg_0_3: int, arg_4_7: int):
     """ 12904778: Event 12904778 """
     EndIfFlagEnabled(arg_4_7)
     DisableNetworkSync()
-    IfHealthGreaterThan(1, arg_0_3, 0.0)
+    IfHealthRatioGreaterThan(1, arg_0_3, 0.0)
     IfEntityWithinDistance(1, PLAYER, arg_0_3, radius=5.5)
     IfConditionTrue(0, input_condition=1)
     SetLockedCameraSlot(game_map=CHALICE_DUNGEON, camera_slot=1)
-    IfHealthGreaterThan(1, arg_0_3, 0.0)
+    IfHealthRatioGreaterThan(1, arg_0_3, 0.0)
     IfEntityBeyondDistance(0, PLAYER, arg_0_3, radius=6.0)
     IfConditionTrue(0, input_condition=1)
     SetLockedCameraSlot(game_map=CHALICE_DUNGEON, camera_slot=0)
@@ -5584,9 +5585,9 @@ def Event12904858(_, arg_0_3: int):
     """ 12904858: Event 12904858 """
     IfCharacterHasSpecialEffect(0, PLAYER, 5630)
     AddSpecialEffect(arg_0_3, 5631, affect_npc_part_hp=False)
-    AICommand(arg_0_3, command_id=100, slot=0)
+    AICommand(arg_0_3, command_id=100, command_slot=0)
     IfCharacterDoesNotHaveSpecialEffect(0, PLAYER, 5630)
-    AICommand(arg_0_3, command_id=110, slot=0)
+    AICommand(arg_0_3, command_id=110, command_slot=0)
     Restart()
 
 
@@ -5630,7 +5631,7 @@ def Event12904861(_, arg_0_3: int, arg_4_7: int):
 
 def Event12904862(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12904862: Event 12904862 """
-    IfHealthLessThanOrEqual(0, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(0, arg_0_3, 0.0)
     Kill(arg_4_7, award_souls=False)
     Kill(arg_8_11, award_souls=False)
 
@@ -5653,7 +5654,7 @@ def Event12904863(
     DisableHealthBar(arg_4_7)
     ReferDamageToEntity(arg_0_3, arg_8_11)
     ReferDamageToEntity(arg_4_7, arg_8_11)
-    EnableBossHealthBar(arg_8_11, name=arg_24_27, slot=0)
+    EnableBossHealthBar(arg_8_11, name=arg_24_27, bar_slot=0)
     CreatePlayLog(1260)
     SkipLinesIfValueNotEqual(1, left=arg_20_23, right=12901800)
     StartPlayLogMeasurement(2900010, 1316, overwrite=True)
@@ -5701,7 +5702,7 @@ def Event12904865(_, arg_0_3: int, arg_4_7: float, arg_8_11: int):
     """ 12904865: Event 12904865 """
     DisableCharacter(arg_0_3)
     IfCharacterHasTAEEvent(1, arg_8_11, tae_event_id=20)
-    IfHealthLessThanOrEqual(1, arg_8_11, arg_4_7)
+    IfHealthRatioLessThanOrEqual(1, arg_8_11, arg_4_7)
     IfConditionTrue(0, input_condition=1)
     EnableCharacter(arg_0_3)
 
@@ -5726,8 +5727,8 @@ def Event12904867(_, arg_0_3: int, arg_4_7: int):
 
 def Event12904868(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12904868: Event 12904868 """
-    IfHealthLessThanOrEqual(0, arg_0_3, 0.75)
-    AICommand(arg_0_3, command_id=100, slot=0)
+    IfHealthRatioLessThanOrEqual(0, arg_0_3, 0.75)
+    AICommand(arg_0_3, command_id=100, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=10)
     DisableCharacter(arg_0_3)
@@ -5735,10 +5736,10 @@ def Event12904868(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     Move(arg_0_3, destination=arg_4_7, destination_type=CoordEntityType.Region, short_move=True)
     EnableCharacter(arg_0_3)
     ForceAnimation(arg_0_3, 3021)
-    AICommand(arg_0_3, command_id=101, slot=0)
+    AICommand(arg_0_3, command_id=101, command_slot=0)
     ReplanAI(arg_0_3)
-    IfHealthLessThanOrEqual(0, arg_0_3, 0.5)
-    AICommand(arg_0_3, command_id=110, slot=0)
+    IfHealthRatioLessThanOrEqual(0, arg_0_3, 0.5)
+    AICommand(arg_0_3, command_id=110, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=10)
     DisableCharacter(arg_0_3)
@@ -5746,7 +5747,7 @@ def Event12904868(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     Move(arg_0_3, destination=arg_8_11, destination_type=CoordEntityType.Region, short_move=True)
     EnableCharacter(arg_0_3)
     ForceAnimation(arg_0_3, 3021)
-    AICommand(arg_0_3, command_id=111, slot=0)
+    AICommand(arg_0_3, command_id=111, command_slot=0)
     ReplanAI(arg_0_3)
 
 
@@ -5765,7 +5766,7 @@ def Event12904869(_, arg_0_3: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=2, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(1, arg_0_3, npc_part_id=2, value=0)
-    IfHealthLessThanOrEqual(2, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(2, arg_0_3, 0.0)
     IfCharacterHasTAEEvent(3, arg_0_3, tae_event_id=20)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -5777,7 +5778,7 @@ def Event12904869(_, arg_0_3: int):
     ForceAnimation(arg_0_3, 7000)
     SetNPCPartHealth(arg_0_3, npc_part_id=2, desired_health=100, overwrite_max=True)
     IfCharacterPartHealthLessThanOrEqual(4, arg_0_3, npc_part_id=2, value=0)
-    IfHealthLessThanOrEqual(5, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(5, arg_0_3, 0.0)
     IfCharacterHasTAEEvent(6, arg_0_3, tae_event_id=20)
     IfConditionTrue(-2, input_condition=4)
     IfConditionTrue(-2, input_condition=5)
@@ -5789,7 +5790,7 @@ def Event12904869(_, arg_0_3: int):
     ForceAnimation(arg_0_3, 7001)
     SetNPCPartHealth(arg_0_3, npc_part_id=2, desired_health=50, overwrite_max=True)
     IfCharacterPartHealthLessThanOrEqual(7, arg_0_3, npc_part_id=2, value=0)
-    IfHealthLessThanOrEqual(8, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(8, arg_0_3, 0.0)
     IfCharacterHasTAEEvent(9, arg_0_3, tae_event_id=20)
     IfConditionTrue(-3, input_condition=7)
     IfConditionTrue(-3, input_condition=8)
@@ -5836,7 +5837,7 @@ def Event12904870(_, arg_0_3: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=3, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(1, arg_0_3, npc_part_id=3, value=0)
-    IfHealthLessThanOrEqual(2, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(2, arg_0_3, 0.0)
     IfCharacterHasTAEEvent(3, arg_0_3, tae_event_id=20)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -5848,7 +5849,7 @@ def Event12904870(_, arg_0_3: int):
     ForceAnimation(arg_0_3, 7005)
     SetNPCPartHealth(arg_0_3, npc_part_id=3, desired_health=100, overwrite_max=True)
     IfCharacterPartHealthLessThanOrEqual(4, arg_0_3, npc_part_id=3, value=0)
-    IfHealthLessThanOrEqual(5, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(5, arg_0_3, 0.0)
     IfCharacterHasTAEEvent(6, arg_0_3, tae_event_id=20)
     IfConditionTrue(-2, input_condition=4)
     IfConditionTrue(-2, input_condition=5)
@@ -5860,7 +5861,7 @@ def Event12904870(_, arg_0_3: int):
     ForceAnimation(arg_0_3, 7006)
     SetNPCPartHealth(arg_0_3, npc_part_id=3, desired_health=50, overwrite_max=True)
     IfCharacterPartHealthLessThanOrEqual(7, arg_0_3, npc_part_id=3, value=0)
-    IfHealthLessThanOrEqual(8, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(8, arg_0_3, 0.0)
     IfCharacterHasTAEEvent(9, arg_0_3, tae_event_id=20)
     IfConditionTrue(-3, input_condition=7)
     IfConditionTrue(-3, input_condition=8)
@@ -5978,13 +5979,13 @@ def Event12904877(
     # --- 4 --- #
     DefineLabel(4)
     EnableAI(arg_0_3)
-    EnableBossHealthBar(arg_0_3, name=304001, slot=0)
+    EnableBossHealthBar(arg_0_3, name=304001, bar_slot=0)
     DisableHealthBar(arg_0_3)
     EnableAI(arg_12_15)
-    EnableBossHealthBar(arg_12_15, name=304002, slot=1)
+    EnableBossHealthBar(arg_12_15, name=304002, bar_slot=1)
     DisableHealthBar(arg_12_15)
     EnableAI(arg_28_31)
-    EnableBossHealthBar(arg_28_31, name=304003, slot=2)
+    EnableBossHealthBar(arg_28_31, name=304003, bar_slot=2)
     DisableHealthBar(arg_28_31)
     EnableFlag(arg_16_19)
 
@@ -5995,7 +5996,7 @@ def Event12904878(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfFlagDisabled(1, arg_8_11)
     IfActionButtonParamActivated(1, action_button_id=2900010, entity=arg_4_7)
     IfConditionTrue(0, input_condition=1)
-    FaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
+    FaceEntityAndForceAnimation(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     Restart()
 
 
@@ -6017,7 +6018,7 @@ def Event12904880(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfCharacterIsType(1, PLAYER, CharacterType.WhitePhantom)
     IfActionButtonParamActivated(1, action_button_id=2900010, entity=arg_4_7)
     IfConditionTrue(0, input_condition=1)
-    FaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
+    FaceEntityAndForceAnimation(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     Restart()
 
 
@@ -6050,7 +6051,7 @@ def Event12904881(
     SkipLinesIfFlagEnabled(2, arg_16_19)
     EnableObject(arg_24_27)
     CreateVFX(arg_8_11)
-    FaceEntity(arg_0_3, PLAYER, animation=7021, wait_for_completion=False)
+    FaceEntityAndForceAnimation(arg_0_3, PLAYER, animation=7021, wait_for_completion=False)
     GotoIfCoopClientCountComparison(Label.L1, ComparisonType.Equal, 0)
     GotoIfCoopClientCountComparison(Label.L2, ComparisonType.Equal, 1)
     GotoIfCoopClientCountComparison(Label.L3, ComparisonType.Equal, 2)
@@ -6071,7 +6072,7 @@ def Event12904881(
     # --- 4 --- #
     DefineLabel(4)
     EnableAI(arg_0_3)
-    EnableBossHealthBar(arg_0_3, name=arg_12_15, slot=0)
+    EnableBossHealthBar(arg_0_3, name=arg_12_15, bar_slot=0)
     DisableHealthBar(arg_0_3)
     EnableFlag(arg_16_19)
 
@@ -6097,11 +6098,11 @@ def Event12904883(_, arg_0_3: int, arg_4_7: int):
     """ 12904883: Event 12904883 """
     DisableNetworkSync()
     EndIfFlagEnabled(arg_4_7)
-    IfHealthGreaterThan(1, arg_0_3, 0.0)
+    IfHealthRatioGreaterThan(1, arg_0_3, 0.0)
     IfEntityWithinDistance(1, PLAYER, arg_0_3, radius=5.5)
     IfConditionTrue(0, input_condition=1)
     SetLockedCameraSlot(game_map=CHALICE_DUNGEON, camera_slot=1)
-    IfHealthGreaterThan(2, arg_0_3, 0.0)
+    IfHealthRatioGreaterThan(2, arg_0_3, 0.0)
     IfEntityBeyondDistance(2, PLAYER, arg_0_3, radius=6.0)
     IfConditionTrue(0, input_condition=2)
     SetLockedCameraSlot(game_map=CHALICE_DUNGEON, camera_slot=0)
@@ -6122,22 +6123,22 @@ def Event12904887(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     """ 12904887: Event 12904887 """
     DisableCharacter(arg_0_3)
     IfFlagEnabled(1, arg_8_11)
-    IfHealthLessThanOrEqual(1, arg_4_7, arg_20_23)
+    IfHealthRatioLessThanOrEqual(1, arg_4_7, arg_20_23)
     IfConditionTrue(0, input_condition=1)
     Move(arg_0_3, destination=arg_4_7, destination_type=CoordEntityType.Character, dummy_id=-1, short_move=True)
     Move(arg_0_3, destination=arg_12_15, destination_type=CoordEntityType.Region, short_move=True)
     EnableCharacter(arg_0_3)
-    EnableBossHealthBar(arg_0_3, name=arg_16_19, slot=1)
+    EnableBossHealthBar(arg_0_3, name=arg_16_19, bar_slot=1)
     CreateTemporaryVFX(929203, anchor_entity=arg_0_3, anchor_type=CoordEntityType.Character, dummy_id=203)
 
 
 @RestartOnRest
 def Event12904888(_, arg_0_3: int):
     """ 12904888: Event 12904888 """
-    IfHealthLessThan(0, arg_0_3, 0.5)
-    AICommand(arg_0_3, command_id=1, slot=1)
+    IfHealthRatioLessThan(0, arg_0_3, 0.5)
+    AICommand(arg_0_3, command_id=1, command_slot=1)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=100)
-    AICommand(arg_0_3, command_id=-1, slot=1)
+    AICommand(arg_0_3, command_id=-1, command_slot=1)
 
 
 def Event12904890(
@@ -6168,7 +6169,7 @@ def Event12904890(
     ForceAnimation(arg_0_3, 7010, wait_for_completion=True)
     EnableAI(arg_0_3)
     ReplanAI(arg_0_3)
-    EnableBossHealthBar(arg_0_3, name=arg_12_15, slot=0)
+    EnableBossHealthBar(arg_0_3, name=arg_12_15, bar_slot=0)
     EnableFlag(arg_16_19)
 
 
@@ -6201,7 +6202,7 @@ def Event12904891(
     ForceAnimation(arg_0_3, 7010, wait_for_completion=True)
     EnableAI(arg_0_3)
     ReplanAI(arg_0_3)
-    EnableBossHealthBar(arg_0_3, name=arg_12_15, slot=0)
+    EnableBossHealthBar(arg_0_3, name=arg_12_15, bar_slot=0)
     EnableFlag(arg_16_19)
 
 
@@ -6213,10 +6214,10 @@ def Event12904892(_, arg_0_3: int, arg_4_7: int):
 
 def Event12904893(_, arg_0_3: int):
     """ 12904893: Event 12904893 """
-    IfHealthLessThan(0, arg_0_3, 0.5)
-    AICommand(arg_0_3, command_id=1, slot=1)
+    IfHealthRatioLessThan(0, arg_0_3, 0.5)
+    AICommand(arg_0_3, command_id=1, command_slot=1)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
-    AICommand(arg_0_3, command_id=-1, slot=1)
+    AICommand(arg_0_3, command_id=-1, command_slot=1)
 
 
 def Event12904894(_, arg_0_3: int, arg_4_7: int):
@@ -6426,7 +6427,7 @@ def Event12904898(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -6450,7 +6451,7 @@ def Event12904898(
     RemoveSpecialEffect(arg_0_3, 490)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -6458,7 +6459,7 @@ def Event12904898(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 490, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 480)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -6482,7 +6483,7 @@ def Event12904899(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -6506,13 +6507,13 @@ def Event12904899(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     RemoveSpecialEffect(arg_0_3, 490)
     ReplanAI(arg_0_3)
     Wait(10.0)
-    AICommand(arg_0_3, command_id=110, slot=0)
+    AICommand(arg_0_3, command_id=110, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=130, overwrite_max=True)
     AddSpecialEffect(arg_0_3, 490, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 480)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=1)
     Restart()
@@ -6545,7 +6546,7 @@ def Event12904900(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=64, material_vfx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -6569,7 +6570,7 @@ def Event12904900(
     RemoveSpecialEffect(arg_0_3, 490)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -6577,7 +6578,7 @@ def Event12904900(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 490, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 480)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -6610,7 +6611,7 @@ def Event12904901(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -6634,7 +6635,7 @@ def Event12904901(
     RemoveSpecialEffect(arg_0_3, 491)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -6642,7 +6643,7 @@ def Event12904901(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 491, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 481)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -6666,7 +6667,7 @@ def Event12904902(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -6690,13 +6691,13 @@ def Event12904902(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     RemoveSpecialEffect(arg_0_3, 491)
     ReplanAI(arg_0_3)
     Wait(10.0)
-    AICommand(arg_0_3, command_id=110, slot=0)
+    AICommand(arg_0_3, command_id=110, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=150, overwrite_max=True)
     AddSpecialEffect(arg_0_3, 491, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 481)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=1)
     Restart()
@@ -6729,7 +6730,7 @@ def Event12904903(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=64, material_vfx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -6753,7 +6754,7 @@ def Event12904903(
     RemoveSpecialEffect(arg_0_3, 491)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -6761,7 +6762,7 @@ def Event12904903(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 491, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 481)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -6794,7 +6795,7 @@ def Event12904904(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -6818,7 +6819,7 @@ def Event12904904(
     RemoveSpecialEffect(arg_0_3, 492)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -6826,7 +6827,7 @@ def Event12904904(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 492, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 482)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -6850,7 +6851,7 @@ def Event12904905(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -6874,13 +6875,13 @@ def Event12904905(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     RemoveSpecialEffect(arg_0_3, 492)
     ReplanAI(arg_0_3)
     Wait(10.0)
-    AICommand(arg_0_3, command_id=110, slot=0)
+    AICommand(arg_0_3, command_id=110, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=150, overwrite_max=True)
     AddSpecialEffect(arg_0_3, 492, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 482)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=1)
     Restart()
@@ -6913,7 +6914,7 @@ def Event12904906(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=64, material_vfx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -6937,7 +6938,7 @@ def Event12904906(
     RemoveSpecialEffect(arg_0_3, 492)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -6945,7 +6946,7 @@ def Event12904906(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 492, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 482)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -6978,7 +6979,7 @@ def Event12904907(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -7002,7 +7003,7 @@ def Event12904907(
     RemoveSpecialEffect(arg_0_3, 493)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -7010,7 +7011,7 @@ def Event12904907(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 493, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 483)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -7034,7 +7035,7 @@ def Event12904908(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -7058,13 +7059,13 @@ def Event12904908(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     RemoveSpecialEffect(arg_0_3, 493)
     ReplanAI(arg_0_3)
     Wait(10.0)
-    AICommand(arg_0_3, command_id=110, slot=0)
+    AICommand(arg_0_3, command_id=110, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=200, overwrite_max=True)
     AddSpecialEffect(arg_0_3, 493, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 483)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=1)
     Restart()
@@ -7097,7 +7098,7 @@ def Event12904909(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=64, material_vfx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -7121,7 +7122,7 @@ def Event12904909(
     RemoveSpecialEffect(arg_0_3, 493)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -7129,7 +7130,7 @@ def Event12904909(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 493, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 483)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -7162,7 +7163,7 @@ def Event12904910(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -7186,7 +7187,7 @@ def Event12904910(
     RemoveSpecialEffect(arg_0_3, 494)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -7194,7 +7195,7 @@ def Event12904910(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 494, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 484)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -7218,7 +7219,7 @@ def Event12904913(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -7242,13 +7243,13 @@ def Event12904913(_, arg_0_3: int, arg_4_5: short, arg_8_11: int, arg_12_15: int
     RemoveSpecialEffect(arg_0_3, 494)
     ReplanAI(arg_0_3)
     Wait(10.0)
-    AICommand(arg_0_3, command_id=110, slot=0)
+    AICommand(arg_0_3, command_id=110, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=200, overwrite_max=True)
     AddSpecialEffect(arg_0_3, 494, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 484)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=1)
     Restart()
@@ -7281,7 +7282,7 @@ def Event12904911(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=64, material_vfx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -7305,7 +7306,7 @@ def Event12904911(
     RemoveSpecialEffect(arg_0_3, 494)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -7313,7 +7314,7 @@ def Event12904911(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 494, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 484)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -7322,23 +7323,23 @@ def Event12904911(
 @RestartOnRest
 def Event12904912(_, arg_0_3: int):
     """ 12904912: Event 12904912 """
-    IfHealthLessThan(0, arg_0_3, 0.6700000166893005)
+    IfHealthRatioLessThan(0, arg_0_3, 0.6700000166893005)
     Wait(0.10000000149011612)
     ResetAnimation(arg_0_3, disable_interpolation=True)
     ForceAnimation(arg_0_3, 7010)
-    AICommand(arg_0_3, command_id=100, slot=0)
+    AICommand(arg_0_3, command_id=100, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=10)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
-    IfHealthLessThan(0, arg_0_3, 0.33000001311302185)
+    IfHealthRatioLessThan(0, arg_0_3, 0.33000001311302185)
     Wait(0.10000000149011612)
     ResetAnimation(arg_0_3, disable_interpolation=True)
     ForceAnimation(arg_0_3, 7011)
-    AICommand(arg_0_3, command_id=101, slot=0)
+    AICommand(arg_0_3, command_id=101, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=20)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
 
 
@@ -7388,7 +7389,7 @@ def Event12904917(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: in
         is_invincible=False,
         start_in_stop_state=False,
     )
-    IfHealthLessThanOrEqual(2, arg_20_23, 0.0)
+    IfHealthRatioLessThanOrEqual(2, arg_20_23, 0.0)
     IfCharacterPartHealthLessThanOrEqual(3, arg_20_23, npc_part_id=arg_4_7, value=0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -8472,7 +8473,7 @@ def Event12905337(_, arg_0_3: int, arg_4_7: int):
     SkipLinesIfThisEventSlotFlagEnabled(2)
     IfCharacterBackreadEnabled(0, arg_0_3)
     Wait(1.0)
-    IfHealthLessThanOrEqual(1, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(1, arg_0_3, 0.0)
     SkipLinesIfConditionFalse(3, 1)
     DisableAI(arg_4_7)
     ForceAnimation(arg_4_7, 3002, wait_for_completion=True)
@@ -8487,9 +8488,9 @@ def Event12905337(_, arg_0_3: int, arg_4_7: int):
 def Event12905347(_, arg_0_3: int, arg_4_7: int):
     """ 12905347: Event 12905347 """
     IfCharacterHasSpecialEffect(0, arg_0_3, 5401)
-    AICommand(arg_4_7, command_id=100, slot=0)
+    AICommand(arg_4_7, command_id=100, command_slot=0)
     IfCharacterHasSpecialEffect(0, arg_0_3, 5400)
-    AICommand(arg_4_7, command_id=-1, slot=0)
+    AICommand(arg_4_7, command_id=-1, command_slot=0)
     Restart()
 
 
@@ -8501,7 +8502,7 @@ def Event12905357(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     SetAIParamID(arg_0_3, arg_16_19)
     ForceAnimation(arg_0_3, arg_4_7, loop=True)
     IfAttacked(-1, arg_0_3, attacker=PLAYER)
-    IfHealthNotEqual(-1, arg_0_3, 1.0)
+    IfHealthRatioNotEqual(-1, arg_0_3, 1.0)
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Search)
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Battle)
@@ -8520,7 +8521,7 @@ def Event12905369(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     End()
     ForceAnimation(arg_0_3, arg_4_7, loop=True)
     IfAttacked(-1, arg_0_3, attacker=PLAYER)
-    IfHealthNotEqual(-1, arg_0_3, 1.0)
+    IfHealthRatioNotEqual(-1, arg_0_3, 1.0)
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Battle)
     IfConditionTrue(0, input_condition=-1)
     ForceAnimation(arg_0_3, arg_8_11, wait_for_completion=True)
@@ -8635,7 +8636,7 @@ def Event12906400(_, arg_0_3: int):
     WaitFrames(10)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=200,
         behavior_id=6051,
         launch_angle_x=270,
@@ -8645,7 +8646,7 @@ def Event12906400(_, arg_0_3: int):
     WaitFrames(45)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=200,
         behavior_id=6053,
         launch_angle_x=270,
@@ -8658,7 +8659,7 @@ def Event12906400(_, arg_0_3: int):
     IfFlagEnabled(0, 92905100)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=200,
         behavior_id=6150,
         launch_angle_x=0,
@@ -8669,7 +8670,7 @@ def Event12906400(_, arg_0_3: int):
     IfFlagEnabled(0, 92905101)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=200,
         behavior_id=6151,
         launch_angle_x=0,
@@ -8680,7 +8681,7 @@ def Event12906400(_, arg_0_3: int):
     IfFlagEnabled(0, 92905102)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=200,
         behavior_id=6152,
         launch_angle_x=0,
@@ -8691,7 +8692,7 @@ def Event12906400(_, arg_0_3: int):
     IfFlagEnabled(0, 92905103)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=200,
         behavior_id=6153,
         launch_angle_x=0,
@@ -8702,7 +8703,7 @@ def Event12906400(_, arg_0_3: int):
     IfFlagEnabled(0, 92905104)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=200,
         behavior_id=6154,
         launch_angle_x=0,
@@ -8713,7 +8714,7 @@ def Event12906400(_, arg_0_3: int):
     IfFlagEnabled(0, 92905105)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=200,
         behavior_id=6155,
         launch_angle_x=0,
@@ -8724,7 +8725,7 @@ def Event12906400(_, arg_0_3: int):
     IfFlagEnabled(0, 92905106)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=200,
         behavior_id=6156,
         launch_angle_x=0,
@@ -8735,7 +8736,7 @@ def Event12906400(_, arg_0_3: int):
     IfFlagEnabled(0, 92905107)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=200,
         behavior_id=6157,
         launch_angle_x=0,
@@ -8753,7 +8754,7 @@ def Event12906400(_, arg_0_3: int):
     SkipLinesIfConditionTrue(1, -2)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=200,
         behavior_id=6000,
         launch_angle_x=0,
@@ -8762,7 +8763,7 @@ def Event12906400(_, arg_0_3: int):
     )
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=200,
         behavior_id=6055,
         launch_angle_x=270,
@@ -9951,7 +9952,7 @@ def Event12906541(
     PlaySoundEffect(anchor_entity=arg_24_27, sound_type=SoundType.a_Ambient, sound_id=290000002)
     PlaySoundEffect(anchor_entity=arg_24_27, sound_type=SoundType.a_Ambient, sound_id=290000003)
     ForceAnimation(arg_4_7, 20)
-    CreateObjectVFX(900260, obj=arg_4_7, dummy_id=100)
+    CreateObjectVFX(obj=arg_4_7, vfx_id=900260, dummy_id=100)
     WaitFrames(30)
     SkipLinesIfFlagDisabled(2, 92905100)
     IfFlagEnabled(0, 92905100)
@@ -10103,7 +10104,7 @@ def Event12906543(
     PlaySoundEffect(anchor_entity=arg_24_27, sound_type=SoundType.a_Ambient, sound_id=290000002)
     PlaySoundEffect(anchor_entity=arg_24_27, sound_type=SoundType.a_Ambient, sound_id=290000003)
     ForceAnimation(arg_4_7, 30)
-    CreateObjectVFX(900260, obj=arg_4_7, dummy_id=100)
+    CreateObjectVFX(obj=arg_4_7, vfx_id=900260, dummy_id=100)
     WaitFrames(30)
     SkipLinesIfFlagDisabled(2, 92905100)
     IfFlagEnabled(0, 92905100)
@@ -10255,7 +10256,7 @@ def Event12906545(
     PlaySoundEffect(anchor_entity=arg_24_27, sound_type=SoundType.a_Ambient, sound_id=290000002)
     PlaySoundEffect(anchor_entity=arg_24_27, sound_type=SoundType.a_Ambient, sound_id=290000003)
     ForceAnimation(arg_4_7, 40)
-    CreateObjectVFX(900260, obj=arg_4_7, dummy_id=100)
+    CreateObjectVFX(obj=arg_4_7, vfx_id=900260, dummy_id=100)
     WaitFrames(30)
     SkipLinesIfFlagDisabled(2, 92905100)
     IfFlagEnabled(0, 92905100)
@@ -10388,10 +10389,10 @@ def Event12906548(_, arg_0_3: int, arg_4_7: int):
     IfEntityWithinDistance(1, arg_0_3, arg_4_7, radius=25.0)
     IfCharacterAlive(1, arg_4_7)
     IfConditionTrue(0, input_condition=1)
-    AICommand(arg_4_7, command_id=200, slot=1)
+    AICommand(arg_4_7, command_id=200, command_slot=1)
     IfCharacterHasTAEEvent(0, arg_4_7, tae_event_id=20)
     AddSpecialEffect(arg_4_7, 5645, affect_npc_part_hp=False)
-    AICommand(arg_4_7, command_id=-1, slot=1)
+    AICommand(arg_4_7, command_id=-1, command_slot=1)
     Restart()
 
 
@@ -10485,13 +10486,13 @@ def Event12906654(_, arg_0_3: int, arg_4_7: int):
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Battle)
     IfConditionTrue(0, input_condition=-1)
     SetNest(arg_0_3, arg_4_7)
-    AICommand(arg_0_3, command_id=10, slot=0)
+    AICommand(arg_0_3, command_id=10, command_slot=0)
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ReplanAI(arg_0_3)
     Wait(3.0)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=32,
         behavior_id=210200599,
         launch_angle_x=0,
@@ -10504,7 +10505,7 @@ def Event12906654(_, arg_0_3: int, arg_4_7: int):
     PlaySoundEffect(anchor_entity=arg_0_3, sound_type=SoundType.a_Ambient, sound_id=225000000)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=32,
         behavior_id=210200599,
         launch_angle_x=0,
@@ -10512,7 +10513,7 @@ def Event12906654(_, arg_0_3: int, arg_4_7: int):
         launch_angle_z=0,
     )
     ForceAnimation(arg_0_3, 7004, wait_for_completion=True)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
 
 
@@ -10551,18 +10552,18 @@ def Event12906656(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     WaitFrames(40)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_8_11,
+        source_entity=arg_8_11,
         dummy_id=101,
         behavior_id=6064,
         launch_angle_x=270,
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    IfHealthNotEqual(4, arg_0_3, 1.0)
+    IfHealthRatioNotEqual(4, arg_0_3, 1.0)
     SkipLinesIfConditionTrue(17, 4)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_8_11,
+        source_entity=arg_8_11,
         dummy_id=101,
         behavior_id=6051,
         launch_angle_x=270,
@@ -10570,11 +10571,11 @@ def Event12906656(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
         launch_angle_z=0,
     )
     WaitFrames(90)
-    IfHealthNotEqual(5, arg_0_3, 1.0)
+    IfHealthRatioNotEqual(5, arg_0_3, 1.0)
     SkipLinesIfConditionTrue(13, 5)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_8_11,
+        source_entity=arg_8_11,
         dummy_id=101,
         behavior_id=6054,
         launch_angle_x=270,
@@ -10582,11 +10583,11 @@ def Event12906656(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
         launch_angle_z=0,
     )
     WaitFrames(90)
-    IfHealthNotEqual(6, arg_0_3, 1.0)
+    IfHealthRatioNotEqual(6, arg_0_3, 1.0)
     SkipLinesIfConditionTrue(9, 6)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_8_11,
+        source_entity=arg_8_11,
         dummy_id=101,
         behavior_id=6056,
         launch_angle_x=270,
@@ -10594,11 +10595,11 @@ def Event12906656(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
         launch_angle_z=0,
     )
     WaitFrames(60)
-    IfHealthNotEqual(7, arg_0_3, 1.0)
+    IfHealthRatioNotEqual(7, arg_0_3, 1.0)
     SkipLinesIfConditionTrue(5, 7)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_8_11,
+        source_entity=arg_8_11,
         dummy_id=101,
         behavior_id=6056,
         launch_angle_x=270,
@@ -10606,11 +10607,11 @@ def Event12906656(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
         launch_angle_z=0,
     )
     WaitFrames(60)
-    IfHealthNotEqual(8, arg_0_3, 1.0)
+    IfHealthRatioNotEqual(8, arg_0_3, 1.0)
     SkipLinesIfConditionTrue(1, 8)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_8_11,
+        source_entity=arg_8_11,
         dummy_id=101,
         behavior_id=6056,
         launch_angle_x=270,
@@ -10626,17 +10627,17 @@ def Event12906660(_, arg_0_3: int):
     EndIfObjectDestroyed(arg_0_3)
     GotoIfFlagEnabled(Label.L1, 92905310)
     GotoIfFlagEnabled(Label.L0, 92905301)
-    CreateObjectVFX(929302, obj=arg_0_3, dummy_id=600)
+    CreateObjectVFX(obj=arg_0_3, vfx_id=929302, dummy_id=600)
     IfObjectDamaged(0, arg_0_3, attacker=-1)
     Goto(Label.L3)
 
     # --- 0 --- #
     DefineLabel(0)
     SkipLinesIfThisEventSlotFlagEnabled(1)
-    CreateObjectVFX(929305, obj=arg_0_3, dummy_id=600)
+    CreateObjectVFX(obj=arg_0_3, vfx_id=929305, dummy_id=600)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=100,
         behavior_id=6090,
         launch_angle_x=0,
@@ -10648,7 +10649,7 @@ def Event12906660(_, arg_0_3: int):
     # --- 1 --- #
     DefineLabel(1)
     SkipLinesIfThisEventSlotFlagEnabled(1)
-    CreateObjectVFX(929304, obj=arg_0_3, dummy_id=600)
+    CreateObjectVFX(obj=arg_0_3, vfx_id=929304, dummy_id=600)
     SkipLinesIfFlagEnabled(21, 92905107)
     SkipLinesIfFlagEnabled(18, 92905106)
     SkipLinesIfFlagEnabled(15, 92905105)
@@ -10659,7 +10660,7 @@ def Event12906660(_, arg_0_3: int):
     SkipLinesIfFlagEnabled(0, 92905100)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=100,
         behavior_id=6120,
         launch_angle_x=0,
@@ -10669,7 +10670,7 @@ def Event12906660(_, arg_0_3: int):
     Goto(Label.L2)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=100,
         behavior_id=6121,
         launch_angle_x=0,
@@ -10679,7 +10680,7 @@ def Event12906660(_, arg_0_3: int):
     Goto(Label.L2)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=100,
         behavior_id=6122,
         launch_angle_x=0,
@@ -10689,7 +10690,7 @@ def Event12906660(_, arg_0_3: int):
     Goto(Label.L2)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=100,
         behavior_id=6123,
         launch_angle_x=0,
@@ -10699,7 +10700,7 @@ def Event12906660(_, arg_0_3: int):
     Goto(Label.L2)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=100,
         behavior_id=6124,
         launch_angle_x=0,
@@ -10709,7 +10710,7 @@ def Event12906660(_, arg_0_3: int):
     Goto(Label.L2)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=100,
         behavior_id=6125,
         launch_angle_x=0,
@@ -10719,7 +10720,7 @@ def Event12906660(_, arg_0_3: int):
     Goto(Label.L2)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=100,
         behavior_id=6126,
         launch_angle_x=0,
@@ -10729,7 +10730,7 @@ def Event12906660(_, arg_0_3: int):
     Goto(Label.L2)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=100,
         behavior_id=6127,
         launch_angle_x=0,
@@ -10784,7 +10785,7 @@ def Event12906738(_, arg_0_3: int):
 def Event12906740(_, arg_0_3: int, arg_4_7: int):
     """ 12906740: Event 12906740 """
     EndIfFlagRangeAnyEnabled((1431, 1432))
-    IfHealthLessThan(1, arg_0_3, 0.8999999761581421)
+    IfHealthRatioLessThan(1, arg_0_3, 0.8999999761581421)
     IfAttacked(1, arg_0_3, attacker=PLAYER)
     IfFlagEnabled(2, arg_4_7)
     IfConditionTrue(-1, input_condition=1)
@@ -10828,7 +10829,7 @@ def Event12906748(_, arg_0_3: int):
     """ 12906748: Event 12906748 """
     IfAttacked(1, arg_0_3, attacker=PLAYER)
     IfCharacterHasSpecialEffect(1, arg_0_3, 5543)
-    IfHealthGreaterThan(1, arg_0_3, 0.0)
+    IfHealthRatioGreaterThan(1, arg_0_3, 0.0)
     IfConditionTrue(0, input_condition=1)
     ForceAnimation(arg_0_3, 7021, wait_for_completion=True)
 
@@ -10873,7 +10874,7 @@ def Event12906764(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=75, material_vfx_id=75)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -10898,7 +10899,7 @@ def Event12906764(
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=True)
     AddSpecialEffect(arg_0_3, arg_24_27, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, arg_20_23)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -10931,7 +10932,7 @@ def Event12906765(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -10956,7 +10957,7 @@ def Event12906765(
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=True)
     AddSpecialEffect(arg_0_3, arg_24_27, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, arg_20_23)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -10966,13 +10967,13 @@ def Event12906766(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12906766: Event 12906766 """
     EndIfFlagEnabled(arg_4_7)
     EndIfThisEventSlotFlagEnabled()
-    IfHealthLessThan(0, arg_0_3, 0.699999988079071)
+    IfHealthRatioLessThan(0, arg_0_3, 0.699999988079071)
     Wait(0.10000000149011612)
     ResetAnimation(arg_0_3, disable_interpolation=True)
-    AICommand(arg_0_3, command_id=100, slot=0)
+    AICommand(arg_0_3, command_id=100, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=10)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     EnableFlag(arg_8_11)
 
@@ -10981,15 +10982,15 @@ def Event12906767(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12906767: Event 12906767 """
     EndIfFlagEnabled(arg_4_7)
     EndIfThisEventSlotFlagEnabled()
-    IfHealthLessThan(1, arg_0_3, 0.30000001192092896)
+    IfHealthRatioLessThan(1, arg_0_3, 0.30000001192092896)
     IfFlagEnabled(1, arg_8_11)
     IfConditionTrue(0, input_condition=1)
     Wait(0.10000000149011612)
     ResetAnimation(arg_0_3, disable_interpolation=True)
-    AICommand(arg_0_3, command_id=110, slot=0)
+    AICommand(arg_0_3, command_id=110, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=10)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
 
 
@@ -11047,7 +11048,7 @@ def Event12906769(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -11071,7 +11072,7 @@ def Event12906769(
     RemoveSpecialEffect(arg_0_3, 490)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -11079,7 +11080,7 @@ def Event12906769(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 490, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 480)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -11112,7 +11113,7 @@ def Event12906770(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -11136,7 +11137,7 @@ def Event12906770(
     RemoveSpecialEffect(arg_0_3, 491)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -11144,7 +11145,7 @@ def Event12906770(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 491, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 481)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -11177,7 +11178,7 @@ def Event12906771(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -11201,7 +11202,7 @@ def Event12906771(
     RemoveSpecialEffect(arg_0_3, 492)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -11209,7 +11210,7 @@ def Event12906771(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 492, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 482)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -11242,7 +11243,7 @@ def Event12906772(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -11266,7 +11267,7 @@ def Event12906772(
     RemoveSpecialEffect(arg_0_3, 493)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -11274,7 +11275,7 @@ def Event12906772(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 493, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 483)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -11307,7 +11308,7 @@ def Event12906773(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -11331,7 +11332,7 @@ def Event12906773(
     RemoveSpecialEffect(arg_0_3, 494)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -11339,7 +11340,7 @@ def Event12906773(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 494, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 484)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -11372,7 +11373,7 @@ def Event12906774(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -11396,7 +11397,7 @@ def Event12906774(
     RemoveSpecialEffect(arg_0_3, 490)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -11404,7 +11405,7 @@ def Event12906774(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 490, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 480)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -11437,7 +11438,7 @@ def Event12906775(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -11461,7 +11462,7 @@ def Event12906775(
     RemoveSpecialEffect(arg_0_3, 491)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -11469,7 +11470,7 @@ def Event12906775(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 491, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 481)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -11502,7 +11503,7 @@ def Event12906776(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -11526,7 +11527,7 @@ def Event12906776(
     RemoveSpecialEffect(arg_0_3, 492)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -11534,7 +11535,7 @@ def Event12906776(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 492, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 482)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -11567,7 +11568,7 @@ def Event12906777(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -11591,7 +11592,7 @@ def Event12906777(
     RemoveSpecialEffect(arg_0_3, 493)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -11599,7 +11600,7 @@ def Event12906777(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 493, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 483)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -11632,7 +11633,7 @@ def Event12906778(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -11656,7 +11657,7 @@ def Event12906778(
     RemoveSpecialEffect(arg_0_3, 494)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -11664,7 +11665,7 @@ def Event12906778(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 494, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 484)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -11697,7 +11698,7 @@ def Event12906779(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -11721,7 +11722,7 @@ def Event12906779(
     RemoveSpecialEffect(arg_0_3, 490)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -11729,7 +11730,7 @@ def Event12906779(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 490, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 480)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -11762,7 +11763,7 @@ def Event12906780(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -11786,7 +11787,7 @@ def Event12906780(
     RemoveSpecialEffect(arg_0_3, 491)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -11794,7 +11795,7 @@ def Event12906780(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 491, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 481)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -11827,7 +11828,7 @@ def Event12906781(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -11851,7 +11852,7 @@ def Event12906781(
     RemoveSpecialEffect(arg_0_3, 492)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -11859,7 +11860,7 @@ def Event12906781(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 492, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 482)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -11892,7 +11893,7 @@ def Event12906782(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -11916,7 +11917,7 @@ def Event12906782(
     RemoveSpecialEffect(arg_0_3, 493)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -11924,7 +11925,7 @@ def Event12906782(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 493, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 483)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -11957,7 +11958,7 @@ def Event12906783(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -11981,7 +11982,7 @@ def Event12906783(
     RemoveSpecialEffect(arg_0_3, 494)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -11989,7 +11990,7 @@ def Event12906783(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 494, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 484)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -12022,7 +12023,7 @@ def Event12906784(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -12046,7 +12047,7 @@ def Event12906784(
     RemoveSpecialEffect(arg_0_3, 490)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -12054,7 +12055,7 @@ def Event12906784(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 490, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 480)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -12087,7 +12088,7 @@ def Event12906785(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -12111,7 +12112,7 @@ def Event12906785(
     RemoveSpecialEffect(arg_0_3, 491)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -12119,7 +12120,7 @@ def Event12906785(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 491, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 481)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -12152,7 +12153,7 @@ def Event12906786(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -12176,7 +12177,7 @@ def Event12906786(
     RemoveSpecialEffect(arg_0_3, 492)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -12184,7 +12185,7 @@ def Event12906786(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 492, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 482)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -12217,7 +12218,7 @@ def Event12906787(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -12241,7 +12242,7 @@ def Event12906787(
     RemoveSpecialEffect(arg_0_3, 493)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -12249,7 +12250,7 @@ def Event12906787(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 493, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 483)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -12282,7 +12283,7 @@ def Event12906788(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_20_23, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_20_23, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -12306,7 +12307,7 @@ def Event12906788(
     RemoveSpecialEffect(arg_0_3, 494)
     ReplanAI(arg_0_3)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_20_23, desired_health=arg_28_31, overwrite_max=True)
@@ -12314,7 +12315,7 @@ def Event12906788(
     EnableFlag(arg_8_11)
     AddSpecialEffect(arg_0_3, 494, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 484)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     WaitFrames(10)
     Restart()
@@ -12334,7 +12335,7 @@ def Event12906827(_, arg_0_3: int, arg_4_5: short, arg_6_7: short, arg_8_11: int
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -12387,7 +12388,7 @@ def Event12906828(
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=60, material_vfx_id=60)
     IfCharacterPartHealthLessThanOrEqual(1, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(2, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(2, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
@@ -12440,7 +12441,7 @@ def Event12906789(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfLastConditionResultTrue(3)
-    FaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
+    FaceEntityAndForceAnimation(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     IfCharacterIsHuman(4, PLAYER)
     IfCharacterInsideRegion(-2, PLAYER, region=arg_0_3)
     IfCharacterHasTAEEvent(-2, PLAYER, tae_event_id=700)
@@ -12468,7 +12469,7 @@ def Event12906790(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfCharacterIsType(1, PLAYER, CharacterType.WhitePhantom)
     IfActionButtonParamActivated(1, action_button_id=2900010, entity=arg_4_7)
     IfConditionTrue(0, input_condition=1)
-    FaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
+    FaceEntityAndForceAnimation(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     IfCharacterIsType(2, PLAYER, CharacterType.WhitePhantom)
     IfCharacterInsideRegion(-1, PLAYER, region=arg_0_3)
     IfCharacterHasTAEEvent(-1, PLAYER, tae_event_id=700)
@@ -12522,7 +12523,7 @@ def Event12906791(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     DefineLabel(4)
     EnableAI(arg_0_3)
     DisableInvincibility(arg_0_3)
-    EnableBossHealthBar(arg_0_3, name=arg_4_7, slot=0)
+    EnableBossHealthBar(arg_0_3, name=arg_4_7, bar_slot=0)
     SetNetworkUpdateRate(arg_0_3, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     EnableFlag(arg_16_19)
     CreatePlayLog(1260)
@@ -12571,11 +12572,11 @@ def Event12906794(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: flo
     """ 12906794: Event 12906794 """
     DisableNetworkSync()
     EndIfFlagEnabled(arg_4_7)
-    IfHealthGreaterThan(1, arg_0_3, 0.0)
+    IfHealthRatioGreaterThan(1, arg_0_3, 0.0)
     IfEntityWithinDistance(1, PLAYER, arg_0_3, radius=arg_8_11)
     IfConditionTrue(0, input_condition=1)
     SetLockedCameraSlot(game_map=CHALICE_DUNGEON, camera_slot=1)
-    IfHealthGreaterThan(2, arg_0_3, 0.0)
+    IfHealthRatioGreaterThan(2, arg_0_3, 0.0)
     IfEntityBeyondDistance(2, PLAYER, arg_0_3, radius=arg_12_15)
     IfConditionTrue(0, input_condition=2)
     SetLockedCameraSlot(game_map=CHALICE_DUNGEON, camera_slot=0)
@@ -12638,9 +12639,9 @@ def Event12906795(
     DisableInvincibility(arg_0_3)
     DisableInvincibility(arg_20_23)
     DisableInvincibility(arg_24_27)
-    EnableBossHealthBar(arg_0_3, name=arg_4_7, slot=0)
-    EnableBossHealthBar(arg_20_23, name=304002, slot=1)
-    EnableBossHealthBar(arg_24_27, name=304003, slot=2)
+    EnableBossHealthBar(arg_0_3, name=arg_4_7, bar_slot=0)
+    EnableBossHealthBar(arg_20_23, name=304002, bar_slot=1)
+    EnableBossHealthBar(arg_24_27, name=304003, bar_slot=2)
     EnableFlag(arg_16_19)
     CreatePlayLog(1260)
     SkipLinesIfValueNotEqual(1, left=arg_8_11, right=12901800)
@@ -12690,7 +12691,7 @@ def Event12906796(
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfLastConditionResultTrue(3)
-    FaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
+    FaceEntityAndForceAnimation(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     IfCharacterIsHuman(4, PLAYER)
     IfCharacterInsideRegion(-2, PLAYER, region=arg_0_3)
     IfCharacterHasTAEEvent(-2, PLAYER, tae_event_id=700)
@@ -12731,7 +12732,7 @@ def Event12906800(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     EndIfLastConditionResultTrue(3)
-    FaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
+    FaceEntityAndForceAnimation(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     IfCharacterIsHuman(4, PLAYER)
     IfCharacterInsideRegion(-2, PLAYER, region=arg_0_3)
     IfCharacterHasTAEEvent(-2, PLAYER, tae_event_id=700)
@@ -12759,7 +12760,7 @@ def Event12906802(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfCharacterIsType(1, PLAYER, CharacterType.WhitePhantom)
     IfActionButtonParamActivated(1, action_button_id=2900010, entity=arg_4_7)
     IfConditionTrue(0, input_condition=1)
-    FaceEntity(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
+    FaceEntityAndForceAnimation(PLAYER, arg_0_3, animation=101130, wait_for_completion=False)
     IfCharacterIsType(2, PLAYER, CharacterType.WhitePhantom)
     IfCharacterInsideRegion(-1, PLAYER, region=2412801)
     IfCharacterHasTAEEvent(-1, PLAYER, tae_event_id=700)
@@ -12815,7 +12816,7 @@ def Event12906806(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     DefineLabel(4)
     EnableAI(arg_0_3)
     DisableInvincibility(arg_0_3)
-    EnableBossHealthBar(arg_0_3, name=arg_4_7, slot=0)
+    EnableBossHealthBar(arg_0_3, name=arg_4_7, bar_slot=0)
     SetNetworkUpdateRate(arg_0_3, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     EnableFlag(arg_16_19)
     CreatePlayLog(1260)
@@ -12895,11 +12896,11 @@ def Event12906818(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: flo
     """ 12906818: Event 12906818 """
     DisableNetworkSync()
     EndIfFlagEnabled(arg_4_7)
-    IfHealthGreaterThan(1, arg_0_3, 0.0)
+    IfHealthRatioGreaterThan(1, arg_0_3, 0.0)
     IfEntityWithinDistance(1, PLAYER, arg_0_3, radius=arg_8_11)
     IfConditionTrue(0, input_condition=1)
     SetLockedCameraSlot(game_map=CHALICE_DUNGEON, camera_slot=1)
-    IfHealthGreaterThan(2, arg_0_3, 0.0)
+    IfHealthRatioGreaterThan(2, arg_0_3, 0.0)
     IfEntityBeyondDistance(2, PLAYER, arg_0_3, radius=arg_12_15)
     IfConditionTrue(0, input_condition=2)
     SetLockedCameraSlot(game_map=CHALICE_DUNGEON, camera_slot=0)
@@ -12910,22 +12911,22 @@ def Event12906822(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: flo
     """ 12906822: Event 12906822 """
     DisableNetworkSync()
     EndIfFlagEnabled(arg_4_7)
-    IfHealthGreaterThan(1, arg_0_3, 0.0)
+    IfHealthRatioGreaterThan(1, arg_0_3, 0.0)
     IfEntityWithinDistance(1, PLAYER, arg_0_3, radius=arg_8_11)
-    IfHealthGreaterThan(2, arg_16_19, 0.0)
+    IfHealthRatioGreaterThan(2, arg_16_19, 0.0)
     IfEntityWithinDistance(2, PLAYER, arg_16_19, radius=arg_8_11)
-    IfHealthGreaterThan(3, arg_20_23, 0.0)
+    IfHealthRatioGreaterThan(3, arg_20_23, 0.0)
     IfEntityWithinDistance(3, PLAYER, arg_20_23, radius=arg_8_11)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     SetLockedCameraSlot(game_map=CHALICE_DUNGEON, camera_slot=1)
-    IfHealthGreaterThan(4, arg_0_3, 0.0)
+    IfHealthRatioGreaterThan(4, arg_0_3, 0.0)
     IfEntityWithinDistance(4, PLAYER, arg_0_3, radius=arg_12_15)
-    IfHealthGreaterThan(5, arg_16_19, 0.0)
+    IfHealthRatioGreaterThan(5, arg_16_19, 0.0)
     IfEntityWithinDistance(5, PLAYER, arg_16_19, radius=arg_12_15)
-    IfHealthGreaterThan(6, arg_20_23, 0.0)
+    IfHealthRatioGreaterThan(6, arg_20_23, 0.0)
     IfEntityWithinDistance(6, PLAYER, arg_20_23, radius=arg_12_15)
     IfConditionTrue(-2, input_condition=4)
     IfConditionTrue(-2, input_condition=5)
@@ -12939,18 +12940,18 @@ def Event12906823(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: flo
     """ 12906823: Event 12906823 """
     DisableNetworkSync()
     EndIfFlagEnabled(arg_4_7)
-    IfHealthGreaterThan(1, arg_0_3, 0.0)
+    IfHealthRatioGreaterThan(1, arg_0_3, 0.0)
     IfEntityWithinDistance(1, PLAYER, arg_0_3, radius=arg_8_11)
-    IfHealthGreaterThan(2, arg_16_19, 0.0)
+    IfHealthRatioGreaterThan(2, arg_16_19, 0.0)
     IfFlagEnabled(2, arg_20_23)
     IfEntityWithinDistance(2, PLAYER, arg_16_19, radius=arg_8_11)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
     SetLockedCameraSlot(game_map=CHALICE_DUNGEON, camera_slot=1)
-    IfHealthGreaterThan(3, arg_0_3, 0.0)
+    IfHealthRatioGreaterThan(3, arg_0_3, 0.0)
     IfEntityWithinDistance(3, PLAYER, arg_0_3, radius=arg_12_15)
-    IfHealthGreaterThan(4, arg_16_19, 0.0)
+    IfHealthRatioGreaterThan(4, arg_16_19, 0.0)
     IfFlagEnabled(4, arg_20_23)
     IfEntityWithinDistance(4, PLAYER, arg_16_19, radius=arg_12_15)
     IfConditionTrue(-2, input_condition=3)
@@ -12987,7 +12988,7 @@ def Event12906825(
     GotoIfFlagEnabled(Label.L1, arg_24_27)
     DisableCharacter(arg_0_3)
     IfFlagEnabled(1, arg_8_11)
-    IfHealthLessThanOrEqual(1, arg_4_7, arg_20_23)
+    IfHealthRatioLessThanOrEqual(1, arg_4_7, arg_20_23)
     IfConditionTrue(0, input_condition=1)
     Move(arg_0_3, destination=arg_12_15, destination_type=CoordEntityType.Region, short_move=True)
     EnableCharacter(arg_0_3)
@@ -12995,7 +12996,7 @@ def Event12906825(
 
     # --- 1 --- #
     DefineLabel(1)
-    EnableBossHealthBar(arg_0_3, name=arg_16_19, slot=1)
+    EnableBossHealthBar(arg_0_3, name=arg_16_19, bar_slot=1)
     EnableFlag(arg_24_27)
 
 
@@ -13014,7 +13015,7 @@ def Event12906841(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=64, material_vfx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -13036,12 +13037,12 @@ def Event12906841(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8000, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 490, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 480)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -13063,7 +13064,7 @@ def Event12906843(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=64, material_vfx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -13085,12 +13086,12 @@ def Event12906843(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8010, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 491, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 481)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -13112,7 +13113,7 @@ def Event12906845(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=64, material_vfx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -13134,12 +13135,12 @@ def Event12906845(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8030, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 492, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 482)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -13161,7 +13162,7 @@ def Event12906847(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=64, material_vfx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -13183,12 +13184,12 @@ def Event12906847(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8020, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 493, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 483)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -13210,7 +13211,7 @@ def Event12906849(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=64, material_vfx_id=64)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -13232,12 +13233,12 @@ def Event12906849(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8040, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 494, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 484)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -13271,7 +13272,7 @@ def Event12906853(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -13293,12 +13294,12 @@ def Event12906853(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8000, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 490, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 480)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -13320,7 +13321,7 @@ def Event12906855(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -13342,12 +13343,12 @@ def Event12906855(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8010, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 491, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 481)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -13369,7 +13370,7 @@ def Event12906857(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -13391,12 +13392,12 @@ def Event12906857(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8030, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 492, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 482)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -13418,7 +13419,7 @@ def Event12906859(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -13440,12 +13441,12 @@ def Event12906859(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8010, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 493, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 483)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -13467,7 +13468,7 @@ def Event12906861(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=72, material_vfx_id=72)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -13489,12 +13490,12 @@ def Event12906861(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8040, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 494, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 484)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -13516,7 +13517,7 @@ def Event12906831(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -13538,12 +13539,12 @@ def Event12906831(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8020, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 490, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 480)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -13565,7 +13566,7 @@ def Event12906833(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -13587,12 +13588,12 @@ def Event12906833(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8000, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 491, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 481)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -13614,7 +13615,7 @@ def Event12906835(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -13636,12 +13637,12 @@ def Event12906835(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8010, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 492, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 482)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -13663,7 +13664,7 @@ def Event12906837(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -13685,12 +13686,12 @@ def Event12906837(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8030, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 493, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 483)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -13712,7 +13713,7 @@ def Event12906839(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -13734,12 +13735,12 @@ def Event12906839(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8040, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 494, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 484)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -13772,15 +13773,15 @@ def Event12906869(_, arg_0_3: int, arg_4_7: int):
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
     EndIfThisEventSlotFlagEnabled()
-    IfHealthLessThan(2, arg_0_3, 0.699999988079071)
-    IfHealthNotEqual(2, arg_0_3, 0.0)
+    IfHealthRatioLessThan(2, arg_0_3, 0.699999988079071)
+    IfHealthRatioNotEqual(2, arg_0_3, 0.0)
     IfConditionTrue(0, input_condition=2)
     Wait(0.10000000149011612)
     ResetAnimation(arg_0_3, disable_interpolation=True)
-    AICommand(arg_0_3, command_id=100, slot=0)
+    AICommand(arg_0_3, command_id=100, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=10)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     EnableFlag(arg_4_7)
 
@@ -13791,16 +13792,16 @@ def Event12906870(_, arg_0_3: int, arg_4_7: int):
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
     EndIfThisEventSlotFlagEnabled()
-    IfHealthLessThan(2, arg_0_3, 0.33000001311302185)
-    IfHealthNotEqual(2, arg_0_3, 0.0)
+    IfHealthRatioLessThan(2, arg_0_3, 0.33000001311302185)
+    IfHealthRatioNotEqual(2, arg_0_3, 0.0)
     IfFlagEnabled(2, arg_4_7)
     IfConditionTrue(0, input_condition=2)
     Wait(0.10000000149011612)
     ResetAnimation(arg_0_3, disable_interpolation=True)
-    AICommand(arg_0_3, command_id=110, slot=0)
+    AICommand(arg_0_3, command_id=110, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=10)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
 
 
@@ -13849,7 +13850,7 @@ def Event12906871(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=75, material_vfx_id=75)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -13871,12 +13872,12 @@ def Event12906871(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8000, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=100, slot=1)
+    AICommand(arg_0_3, command_id=100, command_slot=1)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 490, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 480)
-    AICommand(arg_0_3, command_id=-1, slot=1)
+    AICommand(arg_0_3, command_id=-1, command_slot=1)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -13901,7 +13902,7 @@ def Event12906879(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -13923,12 +13924,12 @@ def Event12906879(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8030, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=100, slot=1)
+    AICommand(arg_0_3, command_id=100, command_slot=1)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 498, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 488)
-    AICommand(arg_0_3, command_id=-1, slot=1)
+    AICommand(arg_0_3, command_id=-1, command_slot=1)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -13953,7 +13954,7 @@ def Event12906872(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -13975,12 +13976,12 @@ def Event12906872(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8020, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=100, slot=1)
+    AICommand(arg_0_3, command_id=100, command_slot=1)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 495, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 485)
-    AICommand(arg_0_3, command_id=-1, slot=1)
+    AICommand(arg_0_3, command_id=-1, command_slot=1)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -14005,7 +14006,7 @@ def Event12906875(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -14027,12 +14028,12 @@ def Event12906875(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8010, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=100, slot=1)
+    AICommand(arg_0_3, command_id=100, command_slot=1)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 491, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 481)
-    AICommand(arg_0_3, command_id=-1, slot=1)
+    AICommand(arg_0_3, command_id=-1, command_slot=1)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -14057,7 +14058,7 @@ def Event12906873(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -14079,12 +14080,12 @@ def Event12906873(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8020, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=100, slot=1)
+    AICommand(arg_0_3, command_id=100, command_slot=1)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 496, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 486)
-    AICommand(arg_0_3, command_id=-1, slot=1)
+    AICommand(arg_0_3, command_id=-1, command_slot=1)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -14109,7 +14110,7 @@ def Event12906876(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -14131,12 +14132,12 @@ def Event12906876(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8010, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=100, slot=1)
+    AICommand(arg_0_3, command_id=100, command_slot=1)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 492, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 482)
-    AICommand(arg_0_3, command_id=-1, slot=1)
+    AICommand(arg_0_3, command_id=-1, command_slot=1)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -14161,7 +14162,7 @@ def Event12906874(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -14183,12 +14184,12 @@ def Event12906874(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8020, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=100, slot=1)
+    AICommand(arg_0_3, command_id=100, command_slot=1)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 497, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 487)
-    AICommand(arg_0_3, command_id=-1, slot=1)
+    AICommand(arg_0_3, command_id=-1, command_slot=1)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -14213,7 +14214,7 @@ def Event12906877(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -14235,12 +14236,12 @@ def Event12906877(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8010, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=100, slot=1)
+    AICommand(arg_0_3, command_id=100, command_slot=1)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 494, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 484)
-    AICommand(arg_0_3, command_id=-1, slot=1)
+    AICommand(arg_0_3, command_id=-1, command_slot=1)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -14265,7 +14266,7 @@ def Event12906878(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -14287,12 +14288,12 @@ def Event12906878(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8010, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=100, slot=1)
+    AICommand(arg_0_3, command_id=100, command_slot=1)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 493, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 483)
-    AICommand(arg_0_3, command_id=-1, slot=1)
+    AICommand(arg_0_3, command_id=-1, command_slot=1)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -14317,7 +14318,7 @@ def Event12906880(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -14339,12 +14340,12 @@ def Event12906880(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8040, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=100, slot=1)
+    AICommand(arg_0_3, command_id=100, command_slot=1)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 498, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 488)
-    AICommand(arg_0_3, command_id=-1, slot=1)
+    AICommand(arg_0_3, command_id=-1, command_slot=1)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -14369,7 +14370,7 @@ def Event12906881(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -14391,12 +14392,12 @@ def Event12906881(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8030, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=100, slot=1)
+    AICommand(arg_0_3, command_id=100, command_slot=1)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     AddSpecialEffect(arg_0_3, 498, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 488)
-    AICommand(arg_0_3, command_id=-1, slot=1)
+    AICommand(arg_0_3, command_id=-1, command_slot=1)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -14409,18 +14410,18 @@ def Event12904889(_, arg_0_3: int):
     WaitFrames(1)
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
-    AICommand(arg_0_3, command_id=2, slot=1)
-    IfHealthLessThan(2, arg_0_3, 0.6700000166893005)
+    AICommand(arg_0_3, command_id=2, command_slot=1)
+    IfHealthRatioLessThan(2, arg_0_3, 0.6700000166893005)
     IfCharacterHasSpecialEffect(2, arg_0_3, 5402)
     IfConditionTrue(0, input_condition=2)
     Wait(0.10000000149011612)
-    AICommand(arg_0_3, command_id=100, slot=2)
+    AICommand(arg_0_3, command_id=100, command_slot=2)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=20)
-    AICommand(arg_0_3, command_id=-1, slot=2)
+    AICommand(arg_0_3, command_id=-1, command_slot=2)
     ReplanAI(arg_0_3)
     Wait(0.10000000149011612)
-    AICommand(arg_0_3, command_id=3, slot=1)
+    AICommand(arg_0_3, command_id=3, command_slot=1)
 
 
 @RestartOnRest
@@ -14442,7 +14443,7 @@ def Event12904723(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -14466,13 +14467,13 @@ def Event12904723(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     RemoveSpecialEffect(arg_0_3, 490)
     ReplanAI(arg_0_3)
     Wait(10.0)
-    AICommand(arg_0_3, command_id=110, slot=0)
+    AICommand(arg_0_3, command_id=110, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=130, overwrite_max=True)
     AddSpecialEffect(arg_0_3, 490, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 480)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=1)
     Restart()
@@ -14497,7 +14498,7 @@ def Event12904724(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -14521,13 +14522,13 @@ def Event12904724(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     RemoveSpecialEffect(arg_0_3, 491)
     ReplanAI(arg_0_3)
     Wait(10.0)
-    AICommand(arg_0_3, command_id=110, slot=0)
+    AICommand(arg_0_3, command_id=110, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=150, overwrite_max=True)
     AddSpecialEffect(arg_0_3, 491, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 481)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=1)
     Restart()
@@ -14552,7 +14553,7 @@ def Event12904725(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -14576,13 +14577,13 @@ def Event12904725(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     RemoveSpecialEffect(arg_0_3, 492)
     ReplanAI(arg_0_3)
     Wait(10.0)
-    AICommand(arg_0_3, command_id=110, slot=0)
+    AICommand(arg_0_3, command_id=110, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=150, overwrite_max=True)
     AddSpecialEffect(arg_0_3, 492, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 482)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=1)
     Restart()
@@ -14607,7 +14608,7 @@ def Event12904726(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -14631,13 +14632,13 @@ def Event12904726(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     RemoveSpecialEffect(arg_0_3, 493)
     ReplanAI(arg_0_3)
     Wait(10.0)
-    AICommand(arg_0_3, command_id=110, slot=0)
+    AICommand(arg_0_3, command_id=110, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=200, overwrite_max=True)
     AddSpecialEffect(arg_0_3, 493, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 483)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=1)
     Restart()
@@ -14662,7 +14663,7 @@ def Event12904727(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=77, material_vfx_id=77)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -14686,13 +14687,13 @@ def Event12904727(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     RemoveSpecialEffect(arg_0_3, 494)
     ReplanAI(arg_0_3)
     Wait(10.0)
-    AICommand(arg_0_3, command_id=110, slot=0)
+    AICommand(arg_0_3, command_id=110, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=300)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=200, overwrite_max=True)
     AddSpecialEffect(arg_0_3, 494, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 484)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     ChangeCharacterCloth(arg_0_3, 10, state_id=1)
     Restart()
@@ -14725,36 +14726,36 @@ def Event12906863(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     WaitFrames(1)
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
-    IfHealthLessThanOrEqual(2, arg_0_3, 0.75)
-    IfHealthNotEqual(2, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(2, arg_0_3, 0.75)
+    IfHealthRatioNotEqual(2, arg_0_3, 0.0)
     IfConditionTrue(0, input_condition=2)
-    AICommand(arg_0_3, command_id=100, slot=0)
+    AICommand(arg_0_3, command_id=100, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(3, arg_0_3, tae_event_id=10)
-    IfHealthNotEqual(3, arg_0_3, 0.0)
+    IfHealthRatioNotEqual(3, arg_0_3, 0.0)
     IfConditionTrue(0, input_condition=3)
     DisableCharacter(arg_0_3)
     Wait(2.0)
     Move(arg_0_3, destination=arg_4_7, destination_type=CoordEntityType.Region, short_move=True)
     EnableCharacter(arg_0_3)
     ForceAnimation(arg_0_3, 3021)
-    AICommand(arg_0_3, command_id=101, slot=0)
+    AICommand(arg_0_3, command_id=101, command_slot=0)
     ReplanAI(arg_0_3)
     EnableFlag(arg_12_15)
-    IfHealthLessThanOrEqual(4, arg_0_3, 0.5)
-    IfHealthNotEqual(4, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(4, arg_0_3, 0.5)
+    IfHealthRatioNotEqual(4, arg_0_3, 0.0)
     IfConditionTrue(0, input_condition=4)
-    AICommand(arg_0_3, command_id=110, slot=0)
+    AICommand(arg_0_3, command_id=110, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(5, arg_0_3, tae_event_id=10)
-    IfHealthNotEqual(5, arg_0_3, 0.0)
+    IfHealthRatioNotEqual(5, arg_0_3, 0.0)
     IfConditionTrue(0, input_condition=5)
     DisableCharacter(arg_0_3)
     Wait(2.0)
     Move(arg_0_3, destination=arg_8_11, destination_type=CoordEntityType.Region, short_move=True)
     EnableCharacter(arg_0_3)
     ForceAnimation(arg_0_3, 3021)
-    AICommand(arg_0_3, command_id=111, slot=0)
+    AICommand(arg_0_3, command_id=111, command_slot=0)
     ReplanAI(arg_0_3)
     EnableFlag(arg_16_19)
 
@@ -14790,7 +14791,7 @@ def Event12906864(_, arg_0_3: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=2, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(1, arg_0_3, npc_part_id=2, value=0)
-    IfHealthLessThanOrEqual(2, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(2, arg_0_3, 0.0)
     IfCharacterHasTAEEvent(3, arg_0_3, tae_event_id=20)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -14802,7 +14803,7 @@ def Event12906864(_, arg_0_3: int):
     ForceAnimation(arg_0_3, 7000)
     SetNPCPartHealth(arg_0_3, npc_part_id=2, desired_health=100, overwrite_max=True)
     IfCharacterPartHealthLessThanOrEqual(4, arg_0_3, npc_part_id=2, value=0)
-    IfHealthLessThanOrEqual(5, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(5, arg_0_3, 0.0)
     IfCharacterHasTAEEvent(6, arg_0_3, tae_event_id=20)
     IfConditionTrue(-2, input_condition=4)
     IfConditionTrue(-2, input_condition=5)
@@ -14814,7 +14815,7 @@ def Event12906864(_, arg_0_3: int):
     ForceAnimation(arg_0_3, 7001)
     SetNPCPartHealth(arg_0_3, npc_part_id=2, desired_health=50, overwrite_max=True)
     IfCharacterPartHealthLessThanOrEqual(7, arg_0_3, npc_part_id=2, value=0)
-    IfHealthLessThanOrEqual(8, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(8, arg_0_3, 0.0)
     IfCharacterHasTAEEvent(9, arg_0_3, tae_event_id=20)
     IfConditionTrue(-3, input_condition=7)
     IfConditionTrue(-3, input_condition=8)
@@ -14860,7 +14861,7 @@ def Event12906867(_, arg_0_3: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=3, material_sfx_id=59, material_vfx_id=59)
     IfCharacterPartHealthLessThanOrEqual(1, arg_0_3, npc_part_id=3, value=0)
-    IfHealthLessThanOrEqual(2, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(2, arg_0_3, 0.0)
     IfCharacterHasTAEEvent(3, arg_0_3, tae_event_id=20)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -14872,7 +14873,7 @@ def Event12906867(_, arg_0_3: int):
     ForceAnimation(arg_0_3, 7005)
     SetNPCPartHealth(arg_0_3, npc_part_id=3, desired_health=100, overwrite_max=True)
     IfCharacterPartHealthLessThanOrEqual(4, arg_0_3, npc_part_id=3, value=0)
-    IfHealthLessThanOrEqual(5, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(5, arg_0_3, 0.0)
     IfCharacterHasTAEEvent(6, arg_0_3, tae_event_id=20)
     IfConditionTrue(-2, input_condition=4)
     IfConditionTrue(-2, input_condition=5)
@@ -14884,7 +14885,7 @@ def Event12906867(_, arg_0_3: int):
     ForceAnimation(arg_0_3, 7006)
     SetNPCPartHealth(arg_0_3, npc_part_id=3, desired_health=50, overwrite_max=True)
     IfCharacterPartHealthLessThanOrEqual(7, arg_0_3, npc_part_id=3, value=0)
-    IfHealthLessThanOrEqual(8, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(8, arg_0_3, 0.0)
     IfCharacterHasTAEEvent(9, arg_0_3, tae_event_id=20)
     IfConditionTrue(-3, input_condition=7)
     IfConditionTrue(-3, input_condition=8)
@@ -14932,7 +14933,7 @@ def Event12906868(_, arg_0_3: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=1, material_sfx_id=61, material_vfx_id=61)
     IfCharacterPartHealthLessThanOrEqual(1, arg_0_3, npc_part_id=1, value=0)
-    IfHealthLessThanOrEqual(2, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(2, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
@@ -14975,7 +14976,7 @@ def Event12904873(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 def Event12904875(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12904875: Event 12904875 """
     EndIfFlagEnabled(arg_8_11)
-    IfHealthLessThanOrEqual(0, arg_0_3, 0.5)
+    IfHealthRatioLessThanOrEqual(0, arg_0_3, 0.5)
     ForceAnimation(arg_4_7, 3000)
 
 
@@ -14985,23 +14986,23 @@ def Event12904884(_, arg_0_3: int):
     WaitFrames(1)
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
-    IfHealthLessThan(0, arg_0_3, 0.6700000166893005)
+    IfHealthRatioLessThan(0, arg_0_3, 0.6700000166893005)
     Wait(0.10000000149011612)
     ResetAnimation(arg_0_3, disable_interpolation=True)
     ForceAnimation(arg_0_3, 7010)
-    AICommand(arg_0_3, command_id=100, slot=0)
+    AICommand(arg_0_3, command_id=100, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=10)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
-    IfHealthLessThan(0, arg_0_3, 0.33000001311302185)
+    IfHealthRatioLessThan(0, arg_0_3, 0.33000001311302185)
     Wait(0.10000000149011612)
     ResetAnimation(arg_0_3, disable_interpolation=True)
     ForceAnimation(arg_0_3, 7011)
-    AICommand(arg_0_3, command_id=101, slot=0)
+    AICommand(arg_0_3, command_id=101, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=20)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
 
 
@@ -15016,7 +15017,7 @@ def Event12904734(_, arg_0_3: int):
     IfConditionTrue(0, input_condition=2)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=arg_0_3,
+        source_entity=arg_0_3,
         dummy_id=6,
         behavior_id=225100310,
         launch_angle_x=0,
@@ -15032,11 +15033,11 @@ def Event12904735(_, arg_0_3: int):
     WaitFrames(1)
     IfCharacterDead(1, arg_0_3)
     EndIfConditionTrue(1)
-    IfHealthLessThan(0, arg_0_3, 0.5)
-    AICommand(arg_0_3, command_id=100, slot=0)
+    IfHealthRatioLessThan(0, arg_0_3, 0.5)
+    AICommand(arg_0_3, command_id=100, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=500)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
 
 
@@ -15059,7 +15060,7 @@ def Event12904728(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=75, material_vfx_id=75)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -15081,12 +15082,12 @@ def Event12904728(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8040, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=500)
     AddSpecialEffect(arg_0_3, 490, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 480)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -15112,7 +15113,7 @@ def Event12904729(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -15134,12 +15135,12 @@ def Event12904729(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8010, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=500)
     AddSpecialEffect(arg_0_3, 491, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 481)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -15165,7 +15166,7 @@ def Event12904730(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -15187,12 +15188,12 @@ def Event12904730(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8000, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=500)
     AddSpecialEffect(arg_0_3, 492, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 482)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -15218,7 +15219,7 @@ def Event12904731(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -15240,12 +15241,12 @@ def Event12904731(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8030, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=500)
     AddSpecialEffect(arg_0_3, 493, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 483)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -15271,7 +15272,7 @@ def Event12904732(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     )
     SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=74, material_vfx_id=74)
     IfCharacterPartHealthLessThanOrEqual(2, arg_0_3, npc_part_id=arg_8_11, value=0)
-    IfHealthLessThanOrEqual(3, arg_0_3, 0.0)
+    IfHealthRatioLessThanOrEqual(3, arg_0_3, 0.0)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -15293,12 +15294,12 @@ def Event12904732(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
     ResetAnimation(arg_0_3, disable_interpolation=False)
     ForceAnimation(arg_0_3, 8020, wait_for_completion=True)
     Wait(30.0)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    AICommand(arg_0_3, command_id=1, command_slot=0)
     ReplanAI(arg_0_3)
     IfCharacterHasTAEEvent(0, arg_0_3, tae_event_id=500)
     AddSpecialEffect(arg_0_3, 494, affect_npc_part_hp=True)
     RemoveSpecialEffect(arg_0_3, 484)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
     SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
     WaitFrames(15)
@@ -15380,7 +15381,7 @@ def Event12907010(_, arg_0_3: int, arg_4_7: int):
     """ 12907010: Event 12907010 """
     EndIfFlagEnabled(arg_0_3)
     IfFlagEnabled(0, arg_0_3)
-    FaceEntity(PLAYER, arg_4_7, animation=101170, wait_for_completion=False)
+    FaceEntityAndForceAnimation(PLAYER, arg_4_7, animation=101170, wait_for_completion=False)
     WaitFrames(32)
     InitializeWarpObject(arg_4_7)
 
@@ -15390,7 +15391,7 @@ def Event12907020(_, arg_0_3: int, arg_4_7: int):
     EndIfClient()
     IfFlagEnabled(0, arg_0_3)
     DisableFlag(arg_0_3)
-    FaceEntity(PLAYER, arg_4_7, animation=101160, wait_for_completion=False)
+    FaceEntityAndForceAnimation(PLAYER, arg_4_7, animation=101160, wait_for_completion=False)
     Wait(1.0)
     CreateTemporaryVFX(100320, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, dummy_id=100)
     Wait(3.0)
@@ -15783,7 +15784,7 @@ def Event12906970(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfFlagDisabled(1, arg_12_15)
     IfFlagEnabled(1, arg_16_19)
     IfConditionTrue(0, input_condition=1)
-    AICommand(arg_0_3, command_id=990, slot=0)
+    AICommand(arg_0_3, command_id=990, command_slot=0)
     ReplanAI(arg_0_3)
 
 
@@ -15801,18 +15802,18 @@ def Event12906974(
     DisableGravity(arg_0_3)
     DisableCharacterCollision(arg_0_3)
     ResetAnimation(arg_0_3, disable_interpolation=False)
-    FaceEntity(arg_0_3, arg_8_11, animation=arg_16_19, wait_for_completion=True)
+    FaceEntityAndForceAnimation(arg_0_3, arg_8_11, animation=arg_16_19, wait_for_completion=True)
     IfCharacterInsideRegion(2, arg_0_3, region=arg_12_15)
     RestartIfConditionFalse(2)
     SetEventPoint(arg_0_3, region=arg_8_11, reaction_range=1.0)
-    AICommand(arg_0_3, command_id=990, slot=0)
+    AICommand(arg_0_3, command_id=990, command_slot=0)
     ReplanAI(arg_0_3)
     DisableGravity(arg_0_3)
     DisableCharacterCollision(arg_0_3)
     IfCharacterInsideRegion(0, arg_0_3, region=arg_24_27)
     EnableGravity(arg_0_3)
     EnableCharacterCollision(arg_0_3)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(arg_0_3, command_id=-1, command_slot=0)
     ReplanAI(arg_0_3)
 
 

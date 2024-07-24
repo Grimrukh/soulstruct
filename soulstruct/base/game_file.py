@@ -11,17 +11,10 @@ from pathlib import Path
 
 from .base_binary_file import BaseBinaryFile
 
-try:
-    Self = tp.Self
-except AttributeError:  # < Python 3.11
-    Self = "GameFile"
-
 if tp.TYPE_CHECKING:
     from soulstruct.containers import Binder
 
 _LOGGER = logging.getLogger("soulstruct")
-
-GAME_FILE_T = tp.TypeVar("GAME_FILE_T", bound="GameFile")
 
 
 @dataclass(slots=True)
@@ -29,7 +22,7 @@ class GameFile(BaseBinaryFile, abc.ABC):
     """Non-binder file in a FromSoftware game installation."""
 
     @classmethod
-    def from_binder(cls, binder: Binder, entry_spec: int | Path | str | re.Pattern = None) -> Self:
+    def from_binder(cls, binder: Binder, entry_spec: int | Path | str | re.Pattern = None) -> tp.Self:
         """Load a single instance of this type from the specified `entry_spec`.
 
         The type of `entry_spec` determines how the entry is found. An integer will be interpreted as an entry ID, a
@@ -46,7 +39,7 @@ class GameFile(BaseBinaryFile, abc.ABC):
     @classmethod
     def from_binder_path(
         cls, binder_path: Path | str, entry_spec: int | Path | str | re.Pattern = None, from_bak=False
-    ) -> Self:
+    ) -> tp.Self:
         """Open a file of this type from the given `entry_id_or_name` (`str` or `int`) of the given `Binder` source."""
         from soulstruct.containers import Binder
         binder = Binder.from_bak(binder_path) if from_bak else Binder.from_path(binder_path)
@@ -55,9 +48,12 @@ class GameFile(BaseBinaryFile, abc.ABC):
     @classmethod
     def multiple_from_binder_path(
         cls, binder_path: Path | str, entry_specs: tp.Sequence[int | Path | str | re.Pattern], from_bak=False
-    ) -> list[Self]:
+    ) -> list[tp.Self]:
         """Open multiple files of this type from the given `entry_ids_or_names` (each can be a `str` or `int`) from
         Binder read from `binder_path`."""
         from soulstruct.containers import Binder
         binder = Binder.from_bak(binder_path) if from_bak else Binder.from_path(binder_path)
         return [binder[entry_spec].to_binary_file(cls) for entry_spec in entry_specs]
+
+
+GAME_FILE_T = tp.TypeVar("GAME_FILE_T", bound=GameFile)

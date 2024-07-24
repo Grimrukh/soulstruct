@@ -17,11 +17,6 @@ if tp.TYPE_CHECKING:
     from .game_types.map_types import Map
     from .maps.utilities import GET_MAP_TYPING
 
-try:
-    Self = tp.Self
-except AttributeError:  # < Python 3.11
-    Self = "GameFileDirectory"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 

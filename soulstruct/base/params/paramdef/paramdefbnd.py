@@ -13,11 +13,6 @@ from soulstruct.games import Game, get_game
 
 from .core import ParamDef
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "ParamDefBND"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 _PARAMDEF_RE = re.compile(r".*\.paramdef")
@@ -65,7 +60,7 @@ class ParamDefBND(Binder, abc.ABC):
                 self.paramdefs[paramdef.param_type] = paramdef
 
     @classmethod
-    def from_bundled(cls, game_or_name: Game | str) -> Self:
+    def from_bundled(cls, game_or_name: Game | str) -> tp.Self:
         game = get_game(game_or_name)
         if game in cls._BUNDLED:
             return cls._BUNDLED[game]

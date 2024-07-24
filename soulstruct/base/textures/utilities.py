@@ -29,7 +29,7 @@ def convert_dds_dump(source_dds_dump: Path, dest_dds_dump: Path, output_format="
     for source_file in source_dds_dump.glob("*.dds"):
         dds = DDS.from_path(source_file)
         dest_file = dest_dds_dump / source_file.name
-        if dds.header.fourcc == b"DX10":
+        if dds.fourcc == "DX10":
             convert_dds_file(source_file, dest_dds_dump, output_format)
             print(f"Converted DX10 DDS file to {output_format}: {source_file.name}")
         else:

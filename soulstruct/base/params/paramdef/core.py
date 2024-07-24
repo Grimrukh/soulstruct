@@ -13,11 +13,6 @@ from soulstruct.utilities.binary import *
 
 from .paramdef_field import ParamDefField
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "ParamDef"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 
@@ -49,7 +44,7 @@ class ParamDef(GameFile):
     format_version: int = 104  # Dark Souls 1 default (TODO: game subclass override)
 
     @classmethod
-    def from_reader(cls, reader: BinaryReader) -> Self:
+    def from_reader(cls, reader: BinaryReader) -> tp.Self:
         """Unpack `ParamDef` from reader.
 
         NOTE: `ParamDef structure is just flexible enough (based on `format_version` to make `BinaryStruct difficult,
@@ -106,7 +101,7 @@ class ParamDef(GameFile):
         )
 
     @classmethod
-    def from_paramdex_xml(cls, xml_path: Path | str) -> Self:
+    def from_paramdex_xml(cls, xml_path: Path | str) -> tp.Self:
         root = ElementTree.parse(xml_path).getroot()
 
         # Find `ParamType` tag first.
@@ -139,7 +134,7 @@ class ParamDef(GameFile):
         return paramdef
 
     @classmethod
-    def from_field_sequence(cls, fields: tp.Sequence[ParamDefField], param_type: str) -> Self:
+    def from_field_sequence(cls, fields: tp.Sequence[ParamDefField], param_type: str) -> tp.Self:
         """NOTE: Version fields will be set to their defaults (which should be fine for this game class)."""
         fields_dict = {f.name: f for f in fields}
         if len(fields) != len(fields_dict):

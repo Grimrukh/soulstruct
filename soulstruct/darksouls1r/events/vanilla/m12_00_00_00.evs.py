@@ -468,8 +468,8 @@ def Event_11200000():
     DisableCharacter(1200800)
     DisableObject(1201990)
     DeleteVFX(1201991, erase_root_only=False)
-    OR_1.Add(CharacterHuman(PLAYER))
-    OR_1.Add(CharacterHollow(PLAYER))
+    OR_1.Add(CharacterIsHuman(PLAYER))
+    OR_1.Add(CharacterIsHollow(PLAYER))
     AND_1.Add(OR_1)
     AND_1.Add(FlagDisabled(11210021))
     AND_1.Add(CharacterInsideRegion(PLAYER, region=1202999))
@@ -516,8 +516,8 @@ def Event_11200002():
         return
     if FlagEnabled(11200000):
         return
-    OR_1.Add(CharacterHuman(PLAYER))
-    OR_1.Add(CharacterHollow(PLAYER))
+    OR_1.Add(CharacterIsHuman(PLAYER))
+    OR_1.Add(CharacterIsHollow(PLAYER))
     AND_1.Add(OR_1)
     AND_1.Add(FlagEnabled(11210021))
     AND_1.Add(CharacterInsideRegion(PLAYER, region=1202999))
@@ -582,7 +582,7 @@ def Event_11205391():
     """Event 11205391"""
     AND_1.Add(FlagDisabled(5))
     AND_1.Add(FlagEnabled(11205393))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1202998,
@@ -705,7 +705,7 @@ def Event_11205381():
     """Event 11205381"""
     AND_1.Add(FlagDisabled(11200900))
     AND_1.Add(FlagEnabled(11205383))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1202898,
@@ -1110,8 +1110,8 @@ def Event_11200801():
     MAIN.Await(OR_1)
     
     Kill(1200010, award_souls=True)
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     if not OR_7:
         return
     AwardItemLot(35300100, host_only=True)
@@ -1202,8 +1202,8 @@ def Event_11200810(_, character: int, left: int, item_lot: int):
     
     if ValueEqual(left=item_lot, right=0):
         return
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     if not OR_7:
         return
     AwardItemLot(item_lot, host_only=True)
@@ -1592,8 +1592,8 @@ def Event_11200540(_, character: int, first_flag: int, last_flag: int, flag: int
 def Event_11205054():
     """Event 11205054"""
     AND_7.Add(PlayerCovenant(Covenant.ForestHunter))
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     AND_1.Add(FlagDisabled(11205055))
     AND_1.Add(FlagEnabled(11205053))
     AND_1.Add(OR_7)
@@ -1647,8 +1647,8 @@ def Event_11205054():
 def Event_11205056():
     """Event 11205056"""
     AND_7.Add(PlayerCovenant(Covenant.ForestHunter))
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     AND_1.Add(FlagEnabled(11205051))
     AND_1.Add(OR_7)
     AND_1.Add(AND_7)
@@ -1663,8 +1663,8 @@ def Event_11205056():
     DisableFlag(11205051)
     DisableFlag(11205053)
     SkipLinesIfLastConditionResultTrue(9, input_condition=AND_2)
-    OR_6.Add(CharacterHuman(PLAYER))
-    OR_6.Add(CharacterHollow(PLAYER))
+    OR_6.Add(CharacterIsHuman(PLAYER))
+    OR_6.Add(CharacterIsHollow(PLAYER))
     SkipLinesIfConditionFalse(3, OR_6)
     BetrayCurrentCovenant()
     if FlagDisabled(9001):
@@ -1748,8 +1748,8 @@ def Event_11205060(_, character: int):
     """Event 11205060"""
     if FlagEnabled(746):
         SetTeamType(character, TeamType.Enemy)
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     AND_1.Add(OR_7)
     AND_1.Add(PlayerCovenant(Covenant.ForestHunter))
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
@@ -1773,7 +1773,7 @@ def Event_11205030():
     if FlagEnabled(11200900):
         return
     AND_1.Add(Host())
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(CharacterBackreadEnabled(6521))
     AND_1.Add(EntityWithinDistance(entity=6521, other_entity=PLAYER, radius=10.0))
     
@@ -1804,7 +1804,7 @@ def Event_11205035():
     AND_1.Add(Host())
     AND_1.Add(FlagDisabled(11205031))
     AND_1.Add(FlagDisabled(11205033))
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(CharacterBackreadEnabled(6521))
     AND_1.Add(EntityWithinDistance(entity=6521, other_entity=PLAYER, radius=10.0))
     AND_1.Add(CharacterHasSpecialEffect(PLAYER, 28))

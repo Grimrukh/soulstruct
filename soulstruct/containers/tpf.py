@@ -31,11 +31,6 @@ from soulstruct.utilities.binary import *
 from soulstruct.utilities.files import read_json, write_json
 
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "TPF"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 
@@ -554,7 +549,7 @@ class TPF(GameFile):
         )
 
     @classmethod
-    def from_unpacked_path(cls, path: str | Path) -> Self:
+    def from_unpacked_path(cls, path: str | Path) -> tp.Self:
         """Load manifest JSON or unpacked TPF directory containing a manifest JSON."""
         path = Path(path)
         if path.is_dir():

@@ -30,11 +30,6 @@ from .enums import *
 from .models import *
 from .regions import MSBRegion
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "MSBPart"
-
 if tp.TYPE_CHECKING:
     from .events import MSBEnvironmentEvent
 
@@ -93,8 +88,8 @@ class MSBPart(BaseMSBPart, abc.ABC):
     # Subclasses may also use more appropriate defaults for convenience, as these Part supertype fields in DS1 are
     # really sporadic in which Part subtypes actually use each of them.
     sib_path: str = ""
-    draw_groups: GroupBitSet128 = field(default_factory=set)
-    display_groups: GroupBitSet128 = field(default_factory=set)
+    draw_groups: GroupBitSet128 = field(default_factory=GroupBitSet128.all_off)
+    display_groups: GroupBitSet128 = field(default_factory=GroupBitSet128.all_off)
     ambient_light_id: int = field(default=-1, **MapFieldInfo(game_type=BakedLightParam))
     fog_id: int = field(default=-1, **MapFieldInfo(game_type=FogParam))
     scattered_light_id: int = field(default=-1, **MapFieldInfo(game_type=ScatteredLightParam))

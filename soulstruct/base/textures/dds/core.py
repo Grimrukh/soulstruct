@@ -26,11 +26,6 @@ from soulstruct.utilities.binary import *
 from soulstruct.base.textures.texconv import texconv
 from .enums import *
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "DDS"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 
@@ -142,7 +137,7 @@ class DDS(GameFile):
     dcx_type: DCXType = DCXType.Null
 
     @classmethod
-    def from_reader(cls, reader: BinaryReader) -> Self:
+    def from_reader(cls, reader: BinaryReader) -> tp.Self:
         header = DDSHeader.from_bytes(reader)
         dx10_header = DX10Header.from_bytes(reader) if header.pixelformat.fourcc == b"DX10" else None
         data = reader.read()  # all remaining bytes
@@ -246,6 +241,6 @@ def convert_dds_file(
         # Check that DDS starts with the asserted format.
         from soulstruct.base.textures.dds import DDS
         dds = DDS.from_path(dds_path)
-        if dds.header.fourcc.decode() != input_fourcc:
-            raise ValueError(f"DDS format {dds.header.fourcc} does not match `input_format` {input_fourcc}")
+        if dds.fourcc != input_fourcc:
+            raise ValueError(f"DDS format {dds.fourcc} does not match `input_format` {input_fourcc}")
     return texconv("-f", output_format, "-o", output_dir, "-y", dds_path)

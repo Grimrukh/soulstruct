@@ -12,11 +12,6 @@ from soulstruct.utilities.binary import *
 from .enums import BaseMSBModelSubtype, MSBSupertype
 from .msb_entry import MSBEntry
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "BaseMSBModel"
-
 
 @dataclass(slots=True, eq=False, repr=False)
 class BaseMSBModel(MSBEntry, abc.ABC):
@@ -33,7 +28,7 @@ class BaseMSBModel(MSBEntry, abc.ABC):
     sib_path: str = ""
 
     @classmethod
-    def from_msb_reader(cls, reader: BinaryReader) -> Self:
+    def from_msb_reader(cls, reader: BinaryReader) -> tp.Self:
         """Models have no supertype or subtype data, just a header."""
         entry_offset = reader.position
         kwargs = cls.unpack_header(reader, entry_offset)

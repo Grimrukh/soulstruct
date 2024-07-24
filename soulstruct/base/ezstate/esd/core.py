@@ -20,11 +20,6 @@ from .state import State
 from .esp_compiler import ESPCompiler
 from .ezl_parser import SET_INTERNAL_SYMBOLS
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "ESD"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 
@@ -165,7 +160,7 @@ class ESD(GameFile, abc.ABC):
             raise TypeError(f"Could not load binary `esd_source` as an ESD: {ex}")
 
     @classmethod
-    def from_reader(cls, reader: BinaryReader) -> Self:
+    def from_reader(cls, reader: BinaryReader) -> tp.Self:
 
         # We need to consume the entire reader to handle the offsets (non-painfully), so this class does NOT support
         # the very rare usage case of reading it from some kind of conjoined data.
@@ -232,7 +227,7 @@ class ESD(GameFile, abc.ABC):
         return cls(magic=internal_header.magic, esd_name=esd_name, state_machines=state_machines)
 
     @classmethod
-    def from_esp_directory(cls, esp_directory: Path | str) -> Self:
+    def from_esp_directory(cls, esp_directory: Path | str) -> tp.Self:
         """Load `ESD` instance from a directory of ESP scripts (one per state machine) with an `ESD_Header` file."""
         esp_directory = Path(esp_directory)
 
@@ -263,7 +258,7 @@ class ESD(GameFile, abc.ABC):
         return esd
 
     @classmethod
-    def from_esp_file(cls, esp_file: Path | str) -> Self:
+    def from_esp_file(cls, esp_file: Path | str) -> tp.Self:
         """TODO: Surely I can put magic in ESP file docstring?"""
         esp_file = Path(esp_file)
         _LOGGER.debug(f"Compiling single-file ESD state machine: {esp_file.name}")

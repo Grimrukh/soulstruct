@@ -7,11 +7,6 @@ from dataclasses import dataclass, field
 
 from soulstruct.containers import Binder, BinderVersion, BinderVersion4Info
 from soulstruct.games import BLOODBORNE
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "MSGBND"
-
 
 @dataclass(slots=True)
 class MSGBND(Binder):

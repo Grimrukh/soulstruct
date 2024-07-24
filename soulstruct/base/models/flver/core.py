@@ -23,11 +23,6 @@ from .vertex_array import VertexArrayHeaderStruct, VertexArrayLayout, VertexArra
 
 import numpy as np
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "FLVER"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 
@@ -117,7 +112,7 @@ class FLVER(GameFile):
     # of its `GXItem` list in the FLVER.
 
     @classmethod
-    def from_reader(cls, reader: BinaryReader) -> Self:
+    def from_reader(cls, reader: BinaryReader) -> tp.Self:
         byte_order = ByteOrder.from_reader_peek(reader, 2, 6, b"R\0", b"L\0")
         reader.default_byte_order = byte_order  # applies to all FLVER structs
         header = FLVERStruct.from_bytes(reader)
@@ -222,7 +217,7 @@ class FLVER(GameFile):
         )
 
     @classmethod
-    def from_path(cls, path: str | Path) -> Self:
+    def from_path(cls, path: str | Path) -> tp.Self:
         """Reports invalid array layouts."""
         flver = super(FLVER, cls).from_path(path)
         assert isinstance(flver, FLVER)
@@ -231,7 +226,7 @@ class FLVER(GameFile):
         return flver
 
     @classmethod
-    def from_binder_path(cls, binder_path: str | Path, entry_id_or_name: int | str = None, from_bak=False) -> Self:
+    def from_binder_path(cls, binder_path: str | Path, entry_id_or_name: int | str = None, from_bak=False) -> tp.Self:
         """If not `entry_id_or_name` is given, will search for a lone '.flver{.dcx}' entry in the binder. In this case,
         will raise an exception if no FLVER files or multiple FLVER files exist in the BND.
         """
@@ -244,7 +239,7 @@ class FLVER(GameFile):
     @classmethod
     def multiple_from_binder_path(
         cls, binder_path: Path | str, entry_ids_or_names: tp.Sequence[int | str] = None, from_bak=False
-    ) -> list[Self]:
+    ) -> list[tp.Self]:
         """If not `entry_ids_or_names` is given, will search for ALL '.flver{.dcx}' entries in the binder and return a
         list of loaded FLVERs. Will raise an exception if no FLVER files are found."""
         binder = Binder.from_bak(binder_path) if from_bak else Binder.from_path(binder_path)

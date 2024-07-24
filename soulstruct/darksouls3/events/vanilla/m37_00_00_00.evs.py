@@ -1392,8 +1392,8 @@ def Event_13705240():
         return
     GotoIfFlagEnabled(Label.L1, flag=13700240)
     GotoIfFlagEnabled(Label.L0, flag=13705241)
-    OR_15.Add(CharacterHuman(PLAYER))
-    OR_15.Add(CharacterHollow(PLAYER))
+    OR_15.Add(CharacterIsHuman(PLAYER))
+    OR_15.Add(CharacterIsHollow(PLAYER))
     AND_1.Add(OR_15)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=3702240))
     
@@ -1413,8 +1413,8 @@ def Event_13705240():
 
     # --- Label 0 --- #
     DefineLabel(0)
-    OR_14.Add(CharacterHuman(PLAYER))
-    OR_14.Add(CharacterHollow(PLAYER))
+    OR_14.Add(CharacterIsHuman(PLAYER))
+    OR_14.Add(CharacterIsHollow(PLAYER))
     AND_2.Add(OR_14)
     OR_3.Add(CharacterInsideRegion(character=PLAYER, region=3702249))
     OR_3.Add(FlagEnabled(13700240))
@@ -1431,8 +1431,8 @@ def Event_13705240():
     # --- Label 1 --- #
     DefineLabel(1)
     GotoIfFlagEnabled(Label.L2, flag=13705251)
-    OR_13.Add(CharacterHuman(PLAYER))
-    OR_13.Add(CharacterHollow(PLAYER))
+    OR_13.Add(CharacterIsHuman(PLAYER))
+    OR_13.Add(CharacterIsHollow(PLAYER))
     AND_3.Add(OR_13)
     AND_3.Add(CharacterInsideRegion(character=PLAYER, region=3702242))
     
@@ -1454,8 +1454,8 @@ def Event_13705240():
 
     # --- Label 2 --- #
     DefineLabel(2)
-    OR_12.Add(CharacterHuman(PLAYER))
-    OR_12.Add(CharacterHollow(PLAYER))
+    OR_12.Add(CharacterIsHuman(PLAYER))
+    OR_12.Add(CharacterIsHollow(PLAYER))
     AND_4.Add(OR_12)
     OR_1.Add(CharacterInsideRegion(character=PLAYER, region=3704340))
     OR_1.Add(CharacterInsideRegion(character=PLAYER, region=3704350))
@@ -1564,8 +1564,8 @@ def Event_13705246():
     if FlagEnabled(13700240):
         return
     OR_1.Add(FlagEnabled(13700004))
-    OR_15.Add(CharacterHuman(PLAYER))
-    OR_15.Add(CharacterHollow(PLAYER))
+    OR_15.Add(CharacterIsHuman(PLAYER))
+    OR_15.Add(CharacterIsHollow(PLAYER))
     AND_1.Add(OR_15)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=3704321))
     OR_2.Add(OR_1)
@@ -1719,9 +1719,9 @@ def Event_13705360(_, character: int, animation_id: int, animation_id_1: int, re
     AND_9.Add(CharacterIsType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_1.Add(AND_9)
-    OR_1.Add(CharacterHuman(PLAYER))
-    OR_1.Add(CharacterHollow(PLAYER))
-    OR_1.Add(CharacterWhitePhantom(PLAYER))
+    OR_1.Add(CharacterIsHuman(PLAYER))
+    OR_1.Add(CharacterIsHollow(PLAYER))
+    OR_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(CharacterBackreadEnabled(character))
     AND_1.Add(CharacterHasSpecialEffect(character, 5450))

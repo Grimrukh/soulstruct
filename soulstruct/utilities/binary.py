@@ -57,11 +57,6 @@ from soulstruct.utilities.maths import Vector2, Vector3, Vector4
 if tp.TYPE_CHECKING:
     from soulstruct.containers.entry import BinderEntry
 
-try:
-    Self = tp.Self
-except AttributeError:  # < Python 3.11
-    Self = "BinaryStruct"
-
 
 _LOGGER = logging.getLogger("soulstruct")
 
@@ -1142,7 +1137,7 @@ class BinaryStruct:
         data: bytes | bytearray | BinaryReader | tp.BinaryIO,
         byte_order: ByteOrder | str = None,
         long_varints: bool = None,
-    ) -> Self:
+    ) -> tp.Self:
         """Create an instance of this class from binary `data`, by parsing its fields.
 
         Note that field defaults do not matter here, as ALL fields must be unpacked.
@@ -1546,10 +1541,10 @@ class BinaryStruct:
             if value is not None and (not ignore_underscore_prefix or not name.startswith("_"))
         }
 
-    def copy(self) -> Self:
+    def copy(self) -> tp.Self:
         return copy.copy(self)
 
-    def deepcopy(self) -> Self:
+    def deepcopy(self) -> tp.Self:
         return copy.deepcopy(self)
 
     def pop(self, field_name: str) -> tp.Any:

@@ -1,4 +1,5 @@
-__all__ = ["FMG", "MSGDirectory"]
+__all__ = ["FMG", "MSGBND", "MSGDirectory"]
 
-from .fmg import FMG
+from soulstruct.base.text.fmg import FMG
+from .msgbnd import MSGBND
 from .msg_directory import MSGDirectory

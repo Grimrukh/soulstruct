@@ -23,11 +23,6 @@ from .core import DrawParam, TypedDrawParam
 from .. import paramdef
 from ..paramdef import *
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "DrawParamBND"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 _DRAW_PARAM_FILE_NAME_RE = re.compile(r"([ms]\d\d|default)(_\d)?(_\w+)\.param")  # e.g. 'm12_1_LensFlare.param'
@@ -291,7 +286,7 @@ class DrawParamBND(Binder):
         return super(DrawParamBND, self).write(file_path, make_dirs=make_dirs, check_hash=check_hash)
 
     @classmethod
-    def from_json_directory(cls, directory: Path | str) -> Self:
+    def from_json_directory(cls, directory: Path | str) -> tp.Self:
         """Load individual DrawParam JSON files from an unpacked Binder folder (e.g. from `write_json_directory()`).
 
         The stems of the DrawParam JSON files to be loaded from the folder are recorded in the `entries` key of the

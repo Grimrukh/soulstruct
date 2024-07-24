@@ -28,11 +28,6 @@ from .parts import BaseMSBPart
 from .regions import BaseMSBRegion
 from .utils import MSBSubtypeInfo, MSB_JSONEncoder
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "MSB"
-
 if tp.TYPE_CHECKING:
     from .enums import BaseMSBSubtype
 
@@ -105,7 +100,7 @@ class MSB(GameFile, abc.ABC):
     # Subclasses define lists of entry subtypes here (`characters`, `sound_events`, `object_models`, etc.).
 
     @classmethod
-    def from_reader(cls, reader: BinaryReader) -> Self:
+    def from_reader(cls, reader: BinaryReader) -> tp.Self:
         """Unpack an MSB from the given reader."""
 
         if cls.HAS_HEADER:
@@ -510,7 +505,7 @@ class MSB(GameFile, abc.ABC):
         write_json(file_path, json_dict, indent=indent, encoding=encoding, encoder=MSB_JSONEncoder)
 
     @classmethod
-    def from_dict(cls, data: dict) -> Self:
+    def from_dict(cls, data: dict) -> tp.Self:
         """Load MSB from dictionary of version info and entries (sorted by supertype and nested subtype keys)."""
 
         if "version" not in data:

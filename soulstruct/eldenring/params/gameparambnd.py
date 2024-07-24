@@ -17,11 +17,6 @@ from . import paramdef
 
 _LOGGER = logging.getLogger("soulstruct")
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "GameParamBND"
-
 # if tp.TYPE_CHECKING:
 #     from ..text.msg_directory import MSGDirectory
 
@@ -38,7 +33,7 @@ class GameParamBND(_BaseGameParamBND):
     v4_info: BinderVersion4Info = field(default_factory=lambda: BinderVersion4Info(hash_table_type=4))
 
     @classmethod
-    def from_encrypted_path(cls, encrypted_path: Path | str) -> Self:
+    def from_encrypted_path(cls, encrypted_path: Path | str) -> tp.Self:
         """Load `GameParamBND` from encrypted DCX-compressed Binder, generally `regulation.bin`."""
         encrypted_path = Path(encrypted_path)
         temp_decrypted = PACKAGE_PATH("__ParamCrypt__.parambnd.dcx")

@@ -567,7 +567,7 @@ def Event_11215001():
     """Event 11215001"""
     AND_1.Add(FlagDisabled(11210000))
     AND_1.Add(FlagEnabled(11215003))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1212888,
@@ -703,8 +703,8 @@ def Event_11215006(_, character: int, character_1: int, item_lot: int):
     SetCollisionMask(character_1, bit_index=1, switch_type=OnOffChange.Off)
     AICommand(character_1, command_id=20, command_slot=0)
     ReplanAI(character_1)
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     if not OR_7:
         return
     AwardItemLot(item_lot, host_only=True)
@@ -831,7 +831,7 @@ def Event_11215011():
     """Event 11215011"""
     AND_1.Add(FlagDisabled(11210001))
     AND_1.Add(FlagEnabled(11215013))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1212898,
@@ -1006,7 +1006,7 @@ def Event_11215021():
     """Event 11215021"""
     AND_1.Add(FlagDisabled(11210002))
     AND_1.Add(FlagEnabled(11215023))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1212998,
@@ -1196,7 +1196,7 @@ def Event_11215061():
     AND_1.Add(FlagEnabled(11210592))
     AND_1.Add(FlagDisabled(11210004))
     AND_1.Add(FlagEnabled(11215062))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1212908,
@@ -1283,7 +1283,7 @@ def Event_11215066():
     AND_1.Add(FlagEnabled(11210592))
     AND_1.Add(FlagDisabled(11210004))
     AND_1.Add(FlagEnabled(11215062))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1212908,
@@ -1502,7 +1502,7 @@ def Event_11215040():
     DisableCharacter(1210500)
     AND_1.Add(FlagDisabled(17))
     AND_1.Add(FlagEnabled(11210021))
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=50000000,
         anchor_entity=1212300,
@@ -1543,7 +1543,7 @@ def Event_11215041():
     AND_1.Add(FlagEnabled(11210021))
     AND_1.Add(FlagDisabled(17))
     AND_1.Add(CharacterInsideRegion(PLAYER, region=1212300))
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     
     MAIN.Await(AND_1)
     
@@ -1570,14 +1570,14 @@ def Event_11215044():
         return
     AND_1.Add(FlagDisabled(17))
     AND_1.Add(FlagEnabled(11210021))
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     
     MAIN.Await(AND_1)
     
     CreateVFX(1213100)
     AND_2.Add(FlagDisabled(17))
     AND_2.Add(FlagEnabled(11210021))
-    AND_2.Add(CharacterHuman(PLAYER))
+    AND_2.Add(CharacterIsHuman(PLAYER))
     
     MAIN.Await(not AND_2)
     
@@ -1798,8 +1798,8 @@ def Event_11210350(_, character: int, item_lot: int):
     
     if ValueEqual(left=item_lot, right=0):
         return
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     if not OR_7:
         return
     AwardItemLot(item_lot, host_only=True)
@@ -2693,7 +2693,7 @@ def Event_11210041():
 def Event_11210042():
     """Event 11210042"""
     AND_1.Add(Client())
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     OR_1.Add(CharacterInsideRegion(PLAYER, region=1212054))
     OR_1.Add(CharacterInsideRegion(PLAYER, region=1212062))
     AND_1.Add(OR_1)
@@ -2711,7 +2711,7 @@ def Event_11210042():
 def Event_11210043():
     """Event 11210043"""
     AND_1.Add(Client())
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(CharacterInsideRegion(PLAYER, region=1212055))
     AND_1.Add(FramesElapsed(frames=30))
     
@@ -2809,8 +2809,8 @@ def Event_11215051():
     AddSpecialEffect(1210401, 5434)
     AICommand(1210401, command_id=20, command_slot=0)
     ReplanAI(1210401)
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     if not OR_7:
         return
     AwardItemLot(45110000, host_only=True)
@@ -3360,7 +3360,7 @@ def Event_11215030(
     if FlagEnabled(17):
         return
     AND_1.Add(Host())
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(FlagDisabled(flag_2))
     AND_1.Add(FlagDisabled(1842))
     AND_1.Add(CharacterInsideRegion(PLAYER, region=region))

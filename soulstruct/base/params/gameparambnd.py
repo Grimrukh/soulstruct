@@ -18,11 +18,6 @@ from soulstruct.utilities.misc import BiDict
 from .param import Param, TypedParam, ParamDict
 from .paramdef.paramdefbnd import ParamDefBND
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "GameParamBND"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 
@@ -145,7 +140,7 @@ class GameParamBND(Binder, abc.ABC):
         return written
 
     @classmethod
-    def from_dict(cls, data: dict) -> Self:
+    def from_dict(cls, data: dict) -> tp.Self:
         if "params" not in data:
             raise KeyError("Field `params` not specified in `GameParamBND` dict.")
 
@@ -177,7 +172,7 @@ class GameParamBND(Binder, abc.ABC):
             binder_kwargs["params"][param_stem] = param
 
         # noinspection PyTypeChecker
-        gameparambnd = super(GameParamBND, cls).from_dict(binder_kwargs)  # type: Self
+        gameparambnd = super(GameParamBND, cls).from_dict(binder_kwargs)  # type: tp.Self
 
         # gameparambnd.regenerate_binder_entries()  # TODO: no need to create entries until needed, right?
 
@@ -197,7 +192,7 @@ class GameParamBND(Binder, abc.ABC):
         return data
 
     @classmethod
-    def from_json_directory(cls, directory: Path | str) -> Self:
+    def from_json_directory(cls, directory: Path | str) -> tp.Self:
         """Load individual Param JSON files from an unpacked Binder folder (e.g. produced by `write_json_directory()`).
 
         The stems of the Param JSON files to be loaded from the folder are recorded in the `entries` key of the

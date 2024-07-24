@@ -502,7 +502,7 @@ def Event_12100000():
     if Client():
         return
     AND_1.Add(FlagEnabled(12101800))
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     OR_1.Add(PlayerStandingOnCollision(2103601))
     OR_1.Add(PlayerStandingOnCollision(2103602))
     OR_1.Add(PlayerStandingOnCollision(2103603))
@@ -623,7 +623,7 @@ def Event_12100010():
 def Event_12100020(_, item: int, flag: int, left: int):
     """Event 12100020"""
     DisableNetworkSync()
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     if not AND_1:
         return
     if ValueNotEqual(left=left, right=0):
@@ -789,7 +789,7 @@ def Event_12100111():
 def Event_12100112():
     """Event 12100112"""
     DisableNetworkSync()
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     
@@ -797,11 +797,11 @@ def Event_12100112():
     
     GotoIfFlagEnabled(Label.L0, flag=1003)
     GotoIfFlagEnabled(Label.L1, flag=12105100)
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=2100700, radius=1.0))
     GotoIfConditionTrue(Label.L2, input_condition=AND_1)
-    FaceEntity(PLAYER, 2100700, animation=101290)
-    AND_2.Add(CharacterHuman(PLAYER))
+    FaceEntityAndForceAnimation(PLAYER, 2100700, animation=101290)
+    AND_2.Add(CharacterIsHuman(PLAYER))
     AND_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=2100700, radius=1.0))
     OR_1.Add(AND_2)
     OR_1.Add(FramesElapsed(frames=89))
@@ -810,7 +810,7 @@ def Event_12100112():
 
     # --- Label 2 --- #
     DefineLabel(2)
-    FaceEntity(PLAYER, 2100700, animation=101270)
+    FaceEntityAndForceAnimation(PLAYER, 2100700, animation=101270)
     WaitFrames(frames=0)
     EnableFlag(72100101)
     WaitFrames(frames=54)
@@ -824,11 +824,11 @@ def Event_12100112():
 
     # --- Label 0 --- #
     DefineLabel(0)
-    AND_3.Add(CharacterHuman(PLAYER))
+    AND_3.Add(CharacterIsHuman(PLAYER))
     AND_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=2100700, radius=1.5))
     GotoIfConditionTrue(Label.L3, input_condition=AND_3)
-    FaceEntity(PLAYER, 2100700, animation=101290)
-    AND_4.Add(CharacterHuman(PLAYER))
+    FaceEntityAndForceAnimation(PLAYER, 2100700, animation=101290)
+    AND_4.Add(CharacterIsHuman(PLAYER))
     AND_4.Add(EntityWithinDistance(entity=PLAYER, other_entity=2100700, radius=1.5))
     OR_2.Add(AND_4)
     OR_2.Add(FramesElapsed(frames=89))
@@ -837,7 +837,7 @@ def Event_12100112():
 
     # --- Label 3 --- #
     DefineLabel(3)
-    FaceEntity(PLAYER, 2100700, animation=101280)
+    FaceEntityAndForceAnimation(PLAYER, 2100700, animation=101280)
     WaitFrames(frames=0)
     EnableFlag(72100101)
     WaitFrames(frames=54)
@@ -851,18 +851,18 @@ def Event_12100112():
 
     # --- Label 1 --- #
     DefineLabel(1)
-    AND_5.Add(CharacterHuman(PLAYER))
+    AND_5.Add(CharacterIsHuman(PLAYER))
     AND_5.Add(EntityWithinDistance(entity=PLAYER, other_entity=2100700, radius=2.0))
     GotoIfConditionTrue(Label.L4, input_condition=AND_5)
-    FaceEntity(PLAYER, 2100700, animation=101290)
-    AND_6.Add(CharacterHuman(PLAYER))
+    FaceEntityAndForceAnimation(PLAYER, 2100700, animation=101290)
+    AND_6.Add(CharacterIsHuman(PLAYER))
     AND_6.Add(EntityWithinDistance(entity=PLAYER, other_entity=2100700, radius=2.0))
     
     MAIN.Await(AND_6)
 
     # --- Label 4 --- #
     DefineLabel(4)
-    FaceEntity(PLAYER, 2100700, animation=101270)
+    FaceEntityAndForceAnimation(PLAYER, 2100700, animation=101270)
     WaitFrames(frames=0)
     EnableFlag(72100101)
     WaitFrames(frames=54)
@@ -879,7 +879,7 @@ def Event_12100112():
 def Event_12100113():
     """Event 12100113"""
     DisableNetworkSync()
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     WaitFrames(frames=1)
@@ -894,7 +894,7 @@ def Event_12100113():
     
     MAIN.Await(FlagEnabled(72100100))
     
-    FaceEntity(2100700, PLAYER, animation=7021)
+    FaceEntityAndForceAnimation(2100700, PLAYER, animation=7021)
     WaitFrames(frames=0)
     EnableFlag(72100102)
     WaitFrames(frames=89)
@@ -912,7 +912,7 @@ def Event_12100113():
 def Event_12100114():
     """Event 12100114"""
     DisableNetworkSync()
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     
@@ -927,11 +927,11 @@ def Event_12100114():
 def Event_12100115():
     """Event 12100115"""
     DisableNetworkSync()
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     WaitFrames(frames=2)
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=2100700, radius=8.0))
     
     MAIN.Await(AND_1)
@@ -943,11 +943,11 @@ def Event_12100115():
         return
     AND_2.Add(CharacterHasSpecialEffect(2100700, 151))
     GotoIfConditionFalse(Label.L0, input_condition=AND_2)
-    FaceEntity(2100700, PLAYER, animation=7010)
+    FaceEntityAndForceAnimation(2100700, PLAYER, animation=7010)
     WaitFrames(frames=89)
     AND_3.Add(CharacterHasSpecialEffect(2100700, 152))
     GotoIfConditionFalse(Label.L0, input_condition=AND_3)
-    FaceEntity(2100700, PLAYER, animation=7012)
+    FaceEntityAndForceAnimation(2100700, PLAYER, animation=7012)
     WaitFrames(frames=0)
 
     # --- Label 0 --- #
@@ -959,7 +959,7 @@ def Event_12100115():
 def Event_12100116():
     """Event 12100116"""
     DisableNetworkSync()
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     
@@ -968,7 +968,7 @@ def Event_12100116():
     DisableFlag(72100108)
     AND_1.Add(CharacterHasSpecialEffect(2100700, 151))
     GotoIfConditionFalse(Label.L0, input_condition=AND_1)
-    FaceEntity(2100700, PLAYER, animation=7011)
+    FaceEntityAndForceAnimation(2100700, PLAYER, animation=7011)
     WaitFrames(frames=89)
     End()
 
@@ -976,7 +976,7 @@ def Event_12100116():
     DefineLabel(0)
     AND_2.Add(CharacterHasSpecialEffect(2100700, 152))
     GotoIfConditionFalse(Label.L1, input_condition=AND_2)
-    FaceEntity(2100700, PLAYER, animation=7013)
+    FaceEntityAndForceAnimation(2100700, PLAYER, animation=7013)
     WaitFrames(frames=0)
     End()
 
@@ -984,7 +984,7 @@ def Event_12100116():
     DefineLabel(1)
     AND_3.Add(CharacterHasSpecialEffect(2100700, 153))
     GotoIfConditionFalse(Label.L2, input_condition=AND_3)
-    FaceEntity(2100700, PLAYER, animation=7019)
+    FaceEntityAndForceAnimation(2100700, PLAYER, animation=7019)
     WaitFrames(frames=89)
 
     # --- Label 2 --- #
@@ -996,12 +996,12 @@ def Event_12100116():
 def Event_12100117():
     """Event 12100117"""
     DisableNetworkSync()
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     AND_1.Add(CharacterHasSpecialEffect(2100700, 160))
     AND_1.Add(FlagEnabled(12100118))
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_2.Add(CharacterHasSpecialEffect(PLAYER, 161))
     AND_3.Add(CharacterHasSpecialEffect(PLAYER, 162))
     AND_4.Add(CharacterHasSpecialEffect(PLAYER, 163))
@@ -1014,21 +1014,21 @@ def Event_12100117():
     
     GotoIfLastConditionResultTrue(Label.L1, input_condition=AND_4)
     GotoIfLastConditionResultTrue(Label.L0, input_condition=AND_3)
-    FaceEntity(2100700, PLAYER, animation=7001)
+    FaceEntityAndForceAnimation(2100700, PLAYER, animation=7001)
     WaitFrames(frames=1)
     Restart()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    FaceEntity(2100700, PLAYER, animation=7000)
+    FaceEntityAndForceAnimation(2100700, PLAYER, animation=7000)
     WaitFrames(frames=1)
     Restart()
 
     # --- Label 1 --- #
     DefineLabel(1)
-    FaceEntity(2100700, PLAYER, animation=7026)
+    FaceEntityAndForceAnimation(2100700, PLAYER, animation=7026)
     WaitFrames(frames=39)
-    FaceEntity(2100700, PLAYER, animation=7025)
+    FaceEntityAndForceAnimation(2100700, PLAYER, animation=7025)
     Restart()
 
 
@@ -1058,7 +1058,7 @@ def Event_12100123():
     DisableNetworkSync()
     if ThisEventFlagEnabled():
         return
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     DisableFlag(72100114)
@@ -1152,7 +1152,7 @@ def Event_12100145(_, first_flag: int, last_flag: int):
 @ContinueOnRest(12100146)
 def Event_12100146():
     """Event 12100146"""
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     SetDistanceLimitForConversationStateChanges(character=2100800, distance=17.0)
@@ -1304,7 +1304,7 @@ def Event_12100164():
 def Event_12100165():
     """Event 12100165"""
     DisableNetworkSync()
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     DisableFlag(72100136)
@@ -1438,7 +1438,7 @@ def Event_12100310():
 @ContinueOnRest(12100330)
 def Event_12100330():
     """Event 12100330"""
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     if not AND_1:
         return
     OR_1.Add(FlagEnabled(5051))
@@ -1495,7 +1495,7 @@ def Event_12100410(_, action_button_id: int, anchor_entity: int, flag: int, text
 def Event_12100450():
     """Event 12100450"""
     DisableNetworkSync()
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     AND_1.Add(PlayerDoesNotHaveGood(4103))
@@ -1786,7 +1786,7 @@ def Event_12101800():
     DisableNetworkSync()
     GotoIfClient(Label.L1)
     
-    MAIN.Await(CharacterHuman(PLAYER))
+    MAIN.Await(CharacterIsHuman(PLAYER))
     
     RunEvent(9350, slot=0, args=(3,))
     if FlagDisabled(6642):
@@ -1822,7 +1822,7 @@ def Event_12101800():
     # --- Label 1 --- #
     DefineLabel(1)
     
-    MAIN.Await(CharacterWhitePhantom(PLAYER))
+    MAIN.Await(CharacterIsWhitePhantom(PLAYER))
     
     Wait(0.0)
 
@@ -1875,7 +1875,7 @@ def Event_12101802():
 @ContinueOnRest(12101803)
 def Event_12101803():
     """Event 12101803"""
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(FlagEnabled(12104800))
     
     MAIN.Await(AND_1)
@@ -1905,7 +1905,7 @@ def Event_12104810():
     # --- Label 0 --- #
     DefineLabel(0)
     AND_2.Add(FlagDisabled(12101800))
-    AND_2.Add(CharacterHuman(PLAYER))
+    AND_2.Add(CharacterIsHuman(PLAYER))
     AND_2.Add(ActionButtonParamActivated(action_button_id=2100800, entity=2101800))
     AND_3.Add(FlagEnabled(12101800))
     OR_1.Add(AND_2)
@@ -1914,10 +1914,10 @@ def Event_12104810():
     MAIN.Await(OR_1)
     
     EndIfLastConditionResultTrue(input_condition=AND_3)
-    FaceEntity(PLAYER, 2102800, animation=101130)
-    AND_4.Add(CharacterHuman(PLAYER))
+    FaceEntityAndForceAnimation(PLAYER, 2102800, animation=101130)
+    AND_4.Add(CharacterIsHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=2102801))
-    AND_5.Add(CharacterHuman(PLAYER))
+    AND_5.Add(CharacterIsHuman(PLAYER))
     AND_5.Add(TimeElapsed(seconds=2.0))
     OR_2.Add(AND_4)
     OR_2.Add(AND_5)
@@ -1938,15 +1938,15 @@ def Event_12104811():
     AND_1.Add(FlagDisabled(12101800))
     AND_1.Add(FlagEnabled(12101802))
     AND_1.Add(FlagEnabled(12104800))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButtonParamActivated(action_button_id=2100800, entity=2101800))
     
     MAIN.Await(AND_1)
     
-    FaceEntity(PLAYER, 2102800, animation=101130)
-    AND_2.Add(CharacterWhitePhantom(PLAYER))
+    FaceEntityAndForceAnimation(PLAYER, 2102800, animation=101130)
+    AND_2.Add(CharacterIsWhitePhantom(PLAYER))
     AND_2.Add(CharacterInsideRegion(PLAYER, region=2102801))
-    AND_3.Add(CharacterWhitePhantom(PLAYER))
+    AND_3.Add(CharacterIsWhitePhantom(PLAYER))
     AND_3.Add(TimeElapsed(seconds=2.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
@@ -2134,7 +2134,7 @@ def Event_12101850():
     DisableNetworkSync()
     GotoIfClient(Label.L1)
     
-    MAIN.Await(CharacterHuman(PLAYER))
+    MAIN.Await(CharacterIsHuman(PLAYER))
     
     RunEvent(9350, slot=0, args=(5,))
     StopPlayLogMeasurement(measurement_id=2100011)
@@ -2164,7 +2164,7 @@ def Event_12101850():
     # --- Label 1 --- #
     DefineLabel(1)
     
-    MAIN.Await(CharacterWhitePhantom(PLAYER))
+    MAIN.Await(CharacterIsWhitePhantom(PLAYER))
     
     Wait(0.0)
 
@@ -2195,7 +2195,7 @@ def Event_12101852():
     if ThisEventFlagEnabled():
         return
     AND_1.Add(FlagEnabled(12101800))
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     OR_1.Add(PlayerStandingOnCollision(2103601))
     OR_1.Add(PlayerStandingOnCollision(2103602))
     OR_1.Add(PlayerStandingOnCollision(2103603))
@@ -2258,7 +2258,7 @@ def Event_12101852():
 @ContinueOnRest(12101853)
 def Event_12101853():
     """Event 12101853"""
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(FlagEnabled(12104850))
     
     MAIN.Await(AND_1)
@@ -2291,7 +2291,7 @@ def Event_12104880():
     # --- Label 0 --- #
     DefineLabel(0)
     AND_2.Add(FlagDisabled(12101850))
-    AND_2.Add(CharacterHuman(PLAYER))
+    AND_2.Add(CharacterIsHuman(PLAYER))
     AND_2.Add(ActionButtonParamActivated(action_button_id=2100800, entity=2101800))
     AND_3.Add(FlagEnabled(12101850))
     OR_1.Add(AND_2)
@@ -2300,10 +2300,10 @@ def Event_12104880():
     MAIN.Await(OR_1)
     
     EndIfLastConditionResultTrue(input_condition=AND_3)
-    FaceEntity(PLAYER, 2102800, animation=101130)
-    AND_4.Add(CharacterHuman(PLAYER))
+    FaceEntityAndForceAnimation(PLAYER, 2102800, animation=101130)
+    AND_4.Add(CharacterIsHuman(PLAYER))
     AND_4.Add(CharacterInsideRegion(PLAYER, region=2102801))
-    AND_5.Add(CharacterHuman(PLAYER))
+    AND_5.Add(CharacterIsHuman(PLAYER))
     AND_5.Add(TimeElapsed(seconds=2.0))
     OR_2.Add(AND_4)
     OR_2.Add(AND_5)
@@ -2324,15 +2324,15 @@ def Event_12104881():
     AND_1.Add(FlagDisabled(12101850))
     AND_1.Add(FlagEnabled(12101852))
     AND_1.Add(FlagEnabled(12104850))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButtonParamActivated(action_button_id=2100800, entity=2101800))
     
     MAIN.Await(AND_1)
     
-    FaceEntity(PLAYER, 2102800, animation=101130)
-    AND_2.Add(CharacterWhitePhantom(PLAYER))
+    FaceEntityAndForceAnimation(PLAYER, 2102800, animation=101130)
+    AND_2.Add(CharacterIsWhitePhantom(PLAYER))
     AND_2.Add(CharacterInsideRegion(PLAYER, region=2102801))
-    AND_3.Add(CharacterWhitePhantom(PLAYER))
+    AND_3.Add(CharacterIsWhitePhantom(PLAYER))
     AND_3.Add(TimeElapsed(seconds=2.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
@@ -2545,7 +2545,7 @@ def Event_12104870():
 def Event_12105000(_, entity: int, flag: int):
     """Event 12105000"""
     DisableNetworkSync()
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     
@@ -2566,7 +2566,7 @@ def Event_12105000(_, entity: int, flag: int):
 def Event_12105004(_, character: int, flag: int):
     """Event 12105004"""
     DisableNetworkSync()
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     
@@ -3873,7 +3873,7 @@ def Event_12101000(_, item: int, character: int, bit_index: uchar, bit_index_1: 
 def Event_12101010():
     """Event 12101010"""
     DisableNetworkSync()
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     if not AND_1:
         return
     if FlagEnabled(9800):
@@ -3894,7 +3894,7 @@ def Event_12101010():
 def Event_12105043():
     """Event 12105043"""
     DisableNetworkSync()
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     GotoIfFlagEnabled(Label.L0, flag=12100320)
@@ -3935,7 +3935,7 @@ def Event_12101020():
     ForceAnimation(2100215, 7013, loop=True)
     ForceAnimation(2100220, 7013, loop=True)
     AND_1.Add(CharacterBackreadEnabled(2100215))
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=2100215, radius=6.0))
     
     MAIN.Await(AND_1)
@@ -3972,7 +3972,7 @@ def Event_12101021():
     ForceAnimation(2100216, 7023, loop=True)
     ForceAnimation(2100221, 7023, loop=True)
     AND_1.Add(CharacterBackreadEnabled(2100216))
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=2100216, radius=6.0))
     
     MAIN.Await(AND_1)
@@ -4009,7 +4009,7 @@ def Event_12101021():
     
     MAIN.Await(EventValue(flag=0, bit_count=1) == 0)
     
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     SkipLinesIfConditionFalse(1, AND_15)
     GivePlayerItemAmountSpecifiedByFlagValue(item_type=ItemType.Good, item=900, flag=12104010, bit_count=8)
     DisableFlag(12105051)
@@ -4030,7 +4030,7 @@ def Event_12101022():
     GotoIfFlagEnabled(Label.L0, flag=6620)
     ForceAnimation(2100230, 7053, loop=True)
     AND_1.Add(CharacterBackreadEnabled(2100230))
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=2100230, radius=6.0))
     
     MAIN.Await(AND_1)
@@ -4043,7 +4043,7 @@ def Event_12101022():
     
     MAIN.Await(FlagEnabled(12101023))
     
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     SkipLinesIfConditionFalse(1, AND_15)
     AwardItemLot(10000, host_only=False)
     DisableFlag(12105052)
@@ -4073,7 +4073,7 @@ def Event_12101024():
     
     MAIN.Await(FlagEnabled(12101025))
     
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     SkipLinesIfConditionFalse(1, AND_15)
     AwardItemLot(10010, host_only=False)
     DisableFlag(12105054)
@@ -4104,7 +4104,7 @@ def Event_12101026():
     
     MAIN.Await(FlagEnabled(12101027))
     
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     SkipLinesIfConditionFalse(1, AND_15)
     AwardItemLot(10050, host_only=False)
     DisableFlag(12105056)
@@ -4124,7 +4124,7 @@ def Event_12101028():
     AND_1.Add(FlagEnabled(12101024))
     AND_1.Add(FlagEnabled(9801))
     AND_1.Add(FlagEnabled(6899))
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     
     MAIN.Await(AND_1)
     
@@ -4137,7 +4137,7 @@ def Event_12101028():
     
     MAIN.Await(FlagEnabled(12101029))
     
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     SkipLinesIfConditionFalse(1, AND_15)
     AwardItemLot(10040, host_only=False)
     DisableFlag(12105058)
@@ -4153,7 +4153,7 @@ def Event_12101028():
 def Event_12101100():
     """Event 12101100"""
     DisableNetworkSync()
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     AND_1.Add(FlagEnabled(6899))
@@ -4168,7 +4168,7 @@ def Event_12101100():
 def Event_12105060():
     """Event 12105060"""
     DisableNetworkSync()
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     DisableFlag(12105061)
@@ -4178,7 +4178,7 @@ def Event_12105060():
     EnableFlag(12105061)
     DisableFlag(72100140)
     DisableFlagRange((6011, 6025))
-    FaceEntity(PLAYER, 2100218, animation=101310)
+    FaceEntityAndForceAnimation(PLAYER, 2100218, animation=101310)
     Wait(1.0)
     ForceAnimation(2100218, 7003)
     WaitFrames(frames=39)
@@ -4203,7 +4203,7 @@ def Event_12105062():
     DisableNetworkSync()
     GotoIfFlagEnabled(Label.L0, flag=12105063)
     ForceAnimation(2100218, 0, loop=True)
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     if FlagEnabled(6011):
@@ -4248,7 +4248,7 @@ def Event_12105062():
     # --- Label 0 --- #
     DefineLabel(0)
     ForceAnimation(2100218, 7001, loop=True)
-    AND_14.Add(CharacterHuman(PLAYER))
+    AND_14.Add(CharacterIsHuman(PLAYER))
     if not AND_14:
         return
     EnableFlag(12105063)
@@ -4299,7 +4299,7 @@ def Event_12105064():
     WaitFrames(frames=30)
     WaitFrames(frames=79)
     ForceAnimation(2100232, 7051, loop=True)
-    AND_4.Add(CharacterHuman(PLAYER))
+    AND_4.Add(CharacterIsHuman(PLAYER))
     AND_4.Add(ActionButtonParamActivated(action_button_id=6025, entity=2100232))
     
     MAIN.Await(AND_4)
@@ -4328,7 +4328,7 @@ def Event_12105064():
 def Event_12105070(_, flag: int, flag_1: int, bit_index: uchar):
     """Event 12105070"""
     DisableNetworkSync()
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     DisableFlag(12105061)
@@ -4338,7 +4338,7 @@ def Event_12105070(_, flag: int, flag_1: int, bit_index: uchar):
     EnableFlag(12105061)
     DisableFlag(flag)
     DisableFlagRange((6011, 6025))
-    FaceEntity(PLAYER, 2100218, animation=101310)
+    FaceEntityAndForceAnimation(PLAYER, 2100218, animation=101310)
     Wait(1.0)
     ForceAnimation(2100218, 7003)
     WaitFrames(frames=39)
@@ -4373,7 +4373,7 @@ def Event_12105200():
 def Event_12105210():
     """Event 12105210"""
     DisableNetworkSync()
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     
@@ -4449,7 +4449,7 @@ def Event_12107000(_, flag: int, target_entity: int, respawn_point_id: int):
     
     MAIN.Await(FlagEnabled(flag))
     
-    FaceEntity(PLAYER, target_entity, animation=101164)
+    FaceEntityAndForceAnimation(PLAYER, target_entity, animation=101164)
     Wait(4.0)
     WarpPlayerToRespawnPoint(respawn_point_id)
 
@@ -4473,7 +4473,7 @@ def Event_12107100(_, flag: int, target_entity: int, flag_1: int):
     EnableFlag(flag_1)
     DisableFlag(flag)
     End()
-    FaceEntity(PLAYER, target_entity, animation=101164)
+    FaceEntityAndForceAnimation(PLAYER, target_entity, animation=101164)
 
 
 @ContinueOnRest(12107200)

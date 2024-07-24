@@ -19,11 +19,6 @@ from soulstruct.dcx import DCXType, compress, decompress, is_dcx
 if tp.TYPE_CHECKING:
     from soulstruct.containers.entry import BinderEntry
 
-try:
-    Self = tp.Self
-except AttributeError:  # < Python 3.11
-    Self = "BaseBinaryFile"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 
@@ -63,7 +58,7 @@ class BaseBinaryFile:
 
     @classmethod
     @abc.abstractmethod
-    def from_reader(cls, reader: BinaryReader) -> Self:
+    def from_reader(cls, reader: BinaryReader) -> tp.Self:
         pass
 
     @abc.abstractmethod
@@ -79,7 +74,7 @@ class BaseBinaryFile:
         return packed
 
     @classmethod
-    def from_path(cls, path: str | Path) -> Self:
+    def from_path(cls, path: str | Path) -> tp.Self:
         path = Path(path)
         try:
             binary_file = cls.from_bytes(BinaryReader(path))
@@ -94,7 +89,7 @@ class BaseBinaryFile:
         return binary_file
 
     @classmethod
-    def from_bytes(cls, data: bytes | bytearray | tp.BinaryIO | BinaryReader | BinderEntry) -> Self:
+    def from_bytes(cls, data: bytes | bytearray | tp.BinaryIO | BinaryReader | BinderEntry) -> tp.Self:
         """Load instance from binary data or binary stream (or `BinderEntry.data`)."""
         reader = BinaryReader(data) if not isinstance(data, BinaryReader) else data  # type: BinaryReader
 
@@ -118,18 +113,18 @@ class BaseBinaryFile:
         return binary_file
 
     @classmethod
-    def from_binder_entry(cls, binder_entry: BinderEntry) -> Self:
+    def from_binder_entry(cls, binder_entry: BinderEntry) -> tp.Self:
         """Load instance from a `BinderEntry`."""
         return binder_entry.to_binary_file(cls)
 
     @classmethod
-    def from_dict(cls, data: dict) -> Self:
+    def from_dict(cls, data: dict) -> tp.Self:
         """Load file from given `data` dictionary. Simply calls initializer by default."""
         # noinspection PyArgumentList
         return cls(**data)
 
     @classmethod
-    def from_json(cls, json_path: str | Path) -> Self:
+    def from_json(cls, json_path: str | Path) -> tp.Self:
         json_dict = read_json(json_path)
         # TODO: Some kind of fancy recursive JSON reader that checks field types and converts dictionaries to
         #  `BaseBinaryFile` subclasses.
@@ -244,7 +239,7 @@ class BaseBinaryFile:
         return self.dcx_type
 
     @classmethod
-    def from_bak(cls, file_path: Path | str, create_bak_if_missing=True) -> Self:
+    def from_bak(cls, file_path: Path | str, create_bak_if_missing=True) -> tp.Self:
         """Looks for a `.bak` version of the given path to open preferentially, or optionally creates it if missing."""
         file_path = Path(file_path)
         bak_path = file_path.with_name(file_path.name + ".bak")
@@ -296,6 +291,9 @@ class BaseBinaryFile:
         elif not isinstance(dcx_type, DCXType) and dcx_type is not None:
             raise TypeError(f"DCX type must be a string or `None` or `DCXType` enum, not {dcx_type}.")
         self._dcx_type = dcx_type
+
+    def get_field_names(self) -> list[str]:
+        return [f.name for f in fields(self)]
 
     def __repr__(self) -> str:
         lines = [f"{self.cls_name}("]

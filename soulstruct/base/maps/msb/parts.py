@@ -14,11 +14,6 @@ from .enums import BaseMSBPartSubtype, MSBSupertype
 from .models import BaseMSBModel
 from .msb_entry import MSBEntry
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "BaseMSBPart"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 

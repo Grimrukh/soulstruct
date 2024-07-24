@@ -13,11 +13,6 @@ import numpy as np
 
 from .constants import SINGLE_MIN, SINGLE_MAX
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "Vector"
-
 if tp.TYPE_CHECKING:
     from .matrix import Matrix3, Matrix4
 
@@ -54,25 +49,25 @@ class BaseVector(abc.ABC):
     def __eq__(self, other_vector: BaseVector):
         return np.array_equal(self._data, other_vector._data)
 
-    def __add__(self, other) -> Self:
+    def __add__(self, other) -> tp.Self:
         return self.__class__(np.add(self, other))
 
-    def __radd__(self, other) -> Self:
+    def __radd__(self, other) -> tp.Self:
         return self.__class__(np.add(other, self))
 
-    def __sub__(self, other) -> Self:
+    def __sub__(self, other) -> tp.Self:
         return self.__class__(np.subtract(self, other))
 
-    def __mul__(self, other) -> Self:
+    def __mul__(self, other) -> tp.Self:
         return self.__class__(np.multiply(self, other))
 
-    def __rmul__(self, other) -> Self:
+    def __rmul__(self, other) -> tp.Self:
         return self.__class__(np.multiply(other, self))
 
-    def __truediv__(self, other) -> Self:
+    def __truediv__(self, other) -> tp.Self:
         return self.__class__(np.true_divide(self, other))
 
-    def __rtruediv__(self, other) -> Self:
+    def __rtruediv__(self, other) -> tp.Self:
         return self.__class__(np.true_divide(other, self))
 
     def __iter__(self):
@@ -103,36 +98,36 @@ class BaseVector(abc.ABC):
     def get_squared_magnitude(self) -> float:
         return sum(v ** 2 for v in self._data)
 
-    def normalize(self) -> Self:
+    def normalize(self) -> tp.Self:
         """Return a copy of this `Vector` with unit magnitude."""
         return self.copy() / abs(self)
 
-    def __neg__(self) -> Self:
+    def __neg__(self) -> tp.Self:
         return self.__class__(-self._data)
 
     def dot(self, other_vector: BaseVector) -> float:
         return float(np.inner(self._data, other_vector._data))
 
-    def copy(self) -> Self:
+    def copy(self) -> tp.Self:
         return self.__class__(self._data.copy())
 
     def is_close(self, other: BaseVector, rtol: float = 1e-05, atol: float = 1e-08) -> bool:
         return np.allclose(self._data, other._data, rtol=rtol, atol=atol)
 
     @classmethod
-    def zero(cls) -> Self:
+    def zero(cls) -> tp.Self:
         return cls(np.zeros(cls.LENGTH, dtype=float))
 
     @classmethod
-    def one(cls) -> Self:
+    def one(cls) -> tp.Self:
         return cls(np.ones(cls.LENGTH, dtype=float))
 
     @classmethod
-    def single_min(cls) -> Self:
+    def single_min(cls) -> tp.Self:
         return cls(np.full(cls.LENGTH, SINGLE_MIN, dtype=float))
 
     @classmethod
-    def single_max(cls) -> Self:
+    def single_max(cls) -> tp.Self:
         return cls(np.full(cls.LENGTH, SINGLE_MAX, dtype=float))
 
     @property

@@ -434,8 +434,8 @@ def Event_11325001():
     SetCollisionMask(1320800, bit_index=1, switch_type=OnOffChange.Off)
     AICommand(1320800, command_id=20, command_slot=0)
     ReplanAI(1320800)
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     if not OR_7:
         return
     AwardItemLot(34510000, host_only=True)
@@ -468,8 +468,8 @@ def Event_11320300(_, character: int, first_flag: uint, last_flag: uint, flag: i
     
     MAIN.Await(CharacterDead(character))
     
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     if not OR_7:
         return
     AwardItemLot(33000000, host_only=True)

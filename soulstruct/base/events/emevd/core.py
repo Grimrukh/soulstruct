@@ -23,11 +23,6 @@ if tp.TYPE_CHECKING:
     from soulstruct.base.events.evs import EVSParser
     from soulstruct.base.game_types.game_enums_manager import GameEnumsManager
 
-try:
-    Self = tp.Self
-except AttributeError:  # < Python 3.11
-    Self = "EMEVD"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 _EVENT_CALL_RE = re.compile(r"( *)(Event|CommonFunc)_(\d+)\(([\d\-,. \n]+)\) *(\n|$)?")
@@ -108,7 +103,7 @@ class EMEVD(GameFile, abc.ABC):
     # region Numeric/EVS Read Methods
 
     @classmethod
-    def from_numeric_string(cls, numeric_string: str, map_name: str = "") -> Self:
+    def from_numeric_string(cls, numeric_string: str, map_name: str = "") -> tp.Self:
         events, linked_file_offsets, packed_strings = build_numeric(numeric_string, cls.EVENT_CLASS)
         emevd = cls(
             events=events, packed_strings=packed_strings, linked_file_offsets=linked_file_offsets, map_name=map_name
@@ -116,11 +111,11 @@ class EMEVD(GameFile, abc.ABC):
         return emevd
 
     @classmethod
-    def from_numeric_path(cls, numeric_path: Path | str, map_name: str = "") -> Self:
+    def from_numeric_path(cls, numeric_path: Path | str, map_name: str = "") -> tp.Self:
         return cls.from_numeric_string(numeric_path.read_text(), map_name)
 
     @classmethod
-    def from_evs_parser(cls, evs_parser: EVSParser) -> Self:
+    def from_evs_parser(cls, evs_parser: EVSParser) -> tp.Self:
         return cls.from_numeric_string(evs_parser.numeric_emevd, evs_parser.map_name)
 
     @classmethod
@@ -130,7 +125,7 @@ class EMEVD(GameFile, abc.ABC):
         map_name: str = None,
         script_directory: Path | str = None,
         common_func_evs: EVSParser | None = None,
-    ) -> Self:
+    ) -> tp.Self:
         try:
             parser = cls.EVS_PARSER(
                 evs_string, map_name=map_name, script_directory=script_directory, common_func_evs=common_func_evs
@@ -148,7 +143,7 @@ class EMEVD(GameFile, abc.ABC):
         map_name: str = None,
         script_directory: Path | str = None,
         common_func_evs: EVSParser | None = None,
-    ) -> Self:
+    ) -> tp.Self:
         evs_path = Path(evs_path)
         if script_directory is None:
             script_directory = evs_path.parent
@@ -173,15 +168,15 @@ class EMEVD(GameFile, abc.ABC):
     # endregion
 
     @classmethod
-    def from_path(cls, path: str | Path) -> Self:
+    def from_path(cls, path: str | Path) -> tp.Self:
         """Adds `map_name` attribute to the unpacked binary EMEVD."""
         # noinspection PyTypeChecker
-        emevd = super(EMEVD, cls).from_path(path)  # type: Self
+        emevd = super(EMEVD, cls).from_path(path)  # type: tp.Self
         emevd.map_name = emevd.path.name.split(".")[0]
         return emevd
 
     @classmethod
-    def from_reader(cls, reader: BinaryReader) -> Self:
+    def from_reader(cls, reader: BinaryReader) -> tp.Self:
         byte_order = ByteOrder.from_reader_peek(reader, 1, 4, b"\01", b"\00")
         reader.default_byte_order = byte_order
         reader.long_varints = cls.LONG_VARINTS
@@ -658,7 +653,7 @@ class EMEVD(GameFile, abc.ABC):
         other_emevd: EMEVD,
         merge_events=(0, 50),
         event_id_offset=0,
-    ) -> Self:
+    ) -> tp.Self:
         """Return a new `EMEVD` creating by emerging all events of this instance with those of `other_emevd_source`.
 
         Event IDs in `merge_events` will have their instruction sets merged (with this instance's instrutions appearing

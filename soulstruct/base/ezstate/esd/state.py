@@ -13,11 +13,6 @@ from .command import Command
 from .condition import Condition
 from .ezl_parser import CLEAR_REGISTERS
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "State"
-
 
 @dataclass(slots=True)
 class StateStruct(BinaryStruct):
@@ -49,7 +44,7 @@ class State:
     ongoing_commands: list[Command] = field(default_factory=list)
 
     @classmethod
-    def from_esd_reader(cls, reader: BinaryReader) -> Self:
+    def from_esd_reader(cls, reader: BinaryReader) -> tp.Self:
         """Unpack a `State` from ESD file binary."""
 
         header = StateStruct.from_bytes(reader)
@@ -86,7 +81,7 @@ class State:
         reader.seek(next_state_offset)
         return cls(header.state_id, conditions, enter_commands, exit_commands, ongoing_commands)
 
-    def copy(self) -> Self:
+    def copy(self) -> tp.Self:
         """Create a deep copy of this `State`. (Needed for writing dummy duplicates of first state.)"""
         return copy.deepcopy(self)
 

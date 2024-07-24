@@ -24,11 +24,6 @@ from .utilities import import_matplotlib_plt
 if tp.TYPE_CHECKING:
     from soulstruct.darksouls1r.maps.parts import MSBNavmesh
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "MCP"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 MAP_STEM_RE = re.compile(r"^m(?P<area>\d\d)_(?P<block>\d\d)_(?P<cc>\d\d)_(?P<dd>\d\d)$")
@@ -238,7 +233,7 @@ class MCP(GameFile):
         nvmbnd_path: Path | str = None,
         aabb_padding: tp.Sequence[float, float, float] = None,
         custom_connected_navmeshes: tp.Sequence[tuple[MSBNavmesh, MSBNavmesh]] = None,
-    ) -> Self:
+    ) -> tp.Self:
         """Automatically generate MCP file from other map navmesh component files.
 
         Returns the new `MCP` instance, which the caller will presumably want to write immediately.

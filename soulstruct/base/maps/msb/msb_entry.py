@@ -20,11 +20,6 @@ from .enums import BaseMSBSubtype, MSBSupertype
 from .field_info import MapFieldMetadata, FIELD_INFO
 from .utils import MSBBrokenEntryReference, GroupBitSet128, GroupBitSet256, GroupBitSet1024
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "MSBEntry"
-
 if tp.TYPE_CHECKING:
     from .core import MSB
 
@@ -98,7 +93,7 @@ class MSBEntry(abc.ABC):
     description: str = field(default="", kw_only=True)  # not actually present in MSB until DS2
 
     @classmethod
-    def from_msb_reader(cls, reader: BinaryReader) -> Self:
+    def from_msb_reader(cls, reader: BinaryReader) -> tp.Self:
         """Default minimal method. Most subclasses can just override one of the header/data unpack methods."""
         entry_offset = reader.position
         kwargs = cls.unpack_header(reader, entry_offset)
@@ -297,7 +292,7 @@ class MSBEntry(abc.ABC):
             raise TypeError(f"MSB entry class `{self.__class__.__name__}` has no `entity_id` field.")
 
     @classmethod
-    def from_dict(cls, data: dict[str, tp.Any]) -> Self:
+    def from_dict(cls, data: dict[str, tp.Any]) -> tp.Self:
         """Standard dictionary loader."""
         cls.SETATTR_CHECKS_DISABLED = True
         msb_entry = cls(**data)
@@ -305,7 +300,7 @@ class MSBEntry(abc.ABC):
         return msb_entry
 
     @classmethod
-    def from_json_dict(cls, data: dict[str, tp.Any]) -> tuple[Self, dict[str, dict]]:
+    def from_json_dict(cls, data: dict[str, tp.Any]) -> tuple[tp.Self, dict[str, dict]]:
         """Defers conversion of reference dictionaries to entries: returns both the incomplete `MSBEntry` and a
         dictionary mapping field names to reference dicts."""
         try:

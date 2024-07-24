@@ -18,11 +18,6 @@ from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "SIBCAM"
-
 
 @dataclass(slots=True)
 class FrameRef:
@@ -80,7 +75,7 @@ class SIBCAM(GameFile):
     unknowns: SIBCAMUnknownBytes = None
 
     @classmethod
-    def from_reader(cls, reader: BinaryReader) -> Self:
+    def from_reader(cls, reader: BinaryReader) -> tp.Self:
         """NOTE: File contains a null-terminated `camera_name` string early on and is hence not amenable to structs.
 
         (It's also full of unknown chunks of data, so a struct may be premature.)

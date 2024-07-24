@@ -10,11 +10,6 @@ from soulstruct.utilities.binary import *
 from .enums import BaseMSBEventSubtype, MSBSupertype
 from .msb_entry import MSBEntry
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "BaseMSBEvent"
-
 
 @dataclass(slots=True, eq=False, repr=False)
 class BaseMSBEvent(MSBEntry, abc.ABC):

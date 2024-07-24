@@ -401,7 +401,7 @@ def Event_11405391():
     """Event 11405391"""
     AND_1.Add(FlagDisabled(9))
     AND_1.Add(FlagEnabled(11405393))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1402998,
@@ -568,8 +568,8 @@ def Event_11400800():
     DisableSoundEvent(sound_id=1403801)
     DisableMapCollision(collision=1403100)
     DisableMapCollision(collision=1403101)
-    OR_1.Add(CharacterHuman(PLAYER))
-    OR_1.Add(CharacterHollow(PLAYER))
+    OR_1.Add(CharacterIsHuman(PLAYER))
+    OR_1.Add(CharacterIsHollow(PLAYER))
     AND_1.Add(OR_1)
     AND_1.Add(PlayerCovenant(Covenant.ChaosServant))
     if not AND_1:
@@ -997,8 +997,8 @@ def Event_11400850(_, character: int, item_lot: int):
     
     if ValueEqual(left=item_lot, right=0):
         return
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     if not OR_7:
         return
     AwardItemLot(item_lot, host_only=True)
@@ -1262,8 +1262,8 @@ def Event_11400504(_, character: int, flag: int, character_1: int):
     SetTeamTypeAndExitStandbyAnimation(character_1, team_type=TeamType.Enemy)
     if ThisEventFlagEnabled():
         return
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     AND_7.Add(OR_7)
     AND_7.Add(PlayerCovenant(Covenant.ForestHunter))
     if not AND_7:
@@ -1577,7 +1577,7 @@ def Event_11405030():
     if FlagEnabled(9):
         return
     AND_1.Add(Host())
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(FlagEnabled(11400901))
     AND_1.Add(CharacterBackreadEnabled(6531))
     
@@ -1624,7 +1624,7 @@ def Event_11405035():
     if FlagEnabled(9):
         return
     AND_1.Add(Host())
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(FlagDisabled(11400901))
     if ThisEventFlagDisabled():
         AND_1.Add(CharacterInsideRegion(PLAYER, region=1402061))

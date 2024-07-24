@@ -413,7 +413,7 @@ def Preconstructor():
 def Event_3500(_, item: int, flag: int, flag_1: int, flag_2: int):
     """Event 3500"""
     DisableNetworkSync()
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     AND_1.Add(FlagDisabled(flag))
@@ -429,7 +429,7 @@ def Event_3500(_, item: int, flag: int, flag_1: int, flag_2: int):
 def Event_3503():
     """Event 3503"""
     DisableNetworkSync()
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     
@@ -478,7 +478,7 @@ def Event_6002():
 def Event_5500(_, item: int):
     """Event 5500"""
     DisableNetworkSync()
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     if not AND_1:
         return
     if ThisEventSlotFlagEnabled():
@@ -493,7 +493,7 @@ def Event_5500(_, item: int):
 def Event_6680():
     """Event 6680"""
     DisableNetworkSync()
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     GotoIfConditionFalse(Label.L0, input_condition=AND_1)
     if FlagEnabled(6680):
         return
@@ -526,7 +526,7 @@ def Event_6680():
 def Event_6681():
     """Event 6681"""
     DisableNetworkSync()
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     GotoIfConditionFalse(Label.L0, input_condition=AND_1)
     if FlagEnabled(6681):
         return
@@ -559,7 +559,7 @@ def Event_6681():
 def Event_6682():
     """Event 6682"""
     DisableNetworkSync()
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     GotoIfConditionFalse(Label.L0, input_condition=AND_1)
     if FlagEnabled(6682):
         return
@@ -592,7 +592,7 @@ def Event_6682():
 def Event_6683():
     """Event 6683"""
     DisableNetworkSync()
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     GotoIfConditionFalse(Label.L0, input_condition=AND_1)
     if FlagEnabled(6683):
         return
@@ -625,7 +625,7 @@ def Event_6683():
 def Event_6684():
     """Event 6684"""
     DisableNetworkSync()
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     GotoIfConditionFalse(Label.L0, input_condition=AND_1)
     if FlagEnabled(6684):
         return
@@ -658,7 +658,7 @@ def Event_6684():
 def Event_6685():
     """Event 6685"""
     DisableNetworkSync()
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     GotoIfConditionFalse(Label.L0, input_condition=AND_1)
     if FlagEnabled(6685):
         return
@@ -691,7 +691,7 @@ def Event_6685():
 def Event_6686():
     """Event 6686"""
     DisableNetworkSync()
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     GotoIfConditionFalse(Label.L0, input_condition=AND_1)
     if FlagEnabled(6686):
         return
@@ -724,7 +724,7 @@ def Event_6686():
 def Event_6687():
     """Event 6687"""
     DisableNetworkSync()
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     GotoIfConditionFalse(Label.L0, input_condition=AND_1)
     if FlagEnabled(6687):
         return
@@ -757,7 +757,7 @@ def Event_6687():
 def Event_6688():
     """Event 6688"""
     DisableNetworkSync()
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     GotoIfConditionFalse(Label.L0, input_condition=AND_1)
     if FlagEnabled(6688):
         return
@@ -790,7 +790,7 @@ def Event_6688():
 def Event_6689():
     """Event 6689"""
     DisableNetworkSync()
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     GotoIfConditionFalse(Label.L0, input_condition=AND_1)
     if FlagEnabled(6689):
         return
@@ -823,7 +823,7 @@ def Event_6689():
 def Event_6690():
     """Event 6690"""
     DisableNetworkSync()
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     GotoIfConditionFalse(Label.L0, input_condition=AND_1)
     if FlagEnabled(6690):
         return
@@ -856,7 +856,7 @@ def Event_6690():
 def Event_6691():
     """Event 6691"""
     DisableNetworkSync()
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     GotoIfConditionFalse(Label.L0, input_condition=AND_1)
     if FlagEnabled(6691):
         return
@@ -889,7 +889,7 @@ def Event_6691():
 def Event_6692():
     """Event 6692"""
     DisableNetworkSync()
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     GotoIfConditionFalse(Label.L0, input_condition=AND_1)
     if FlagEnabled(6692):
         return
@@ -922,7 +922,7 @@ def Event_6692():
 def Event_6693():
     """Event 6693"""
     DisableNetworkSync()
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     GotoIfConditionFalse(Label.L0, input_condition=AND_1)
     if FlagEnabled(6693):
         return
@@ -955,7 +955,7 @@ def Event_6693():
 def Event_6694():
     """Event 6694"""
     DisableNetworkSync()
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     GotoIfConditionFalse(Label.L0, input_condition=AND_1)
     if FlagEnabled(6694):
         return
@@ -988,7 +988,7 @@ def Event_6694():
 def Event_6695():
     """Event 6695"""
     DisableNetworkSync()
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     GotoIfConditionFalse(Label.L0, input_condition=AND_1)
     if FlagEnabled(6695):
         return
@@ -1021,7 +1021,7 @@ def Event_6695():
 def Event_6696():
     """Event 6696"""
     DisableNetworkSync()
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     GotoIfConditionFalse(Label.L0, input_condition=AND_1)
     if FlagEnabled(6696):
         return
@@ -1054,7 +1054,7 @@ def Event_6696():
 def Event_6697():
     """Event 6697"""
     DisableNetworkSync()
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     GotoIfConditionFalse(Label.L0, input_condition=AND_1)
     if FlagEnabled(6697):
         return
@@ -1223,14 +1223,14 @@ def Event_7100(_, flag: int, warp_object_id: int):
     
     MAIN.Await(FlagEnabled(flag))
     
-    FaceEntity(PLAYER, warp_object_id, animation=101170)
+    FaceEntityAndForceAnimation(PLAYER, warp_object_id, animation=101170)
     WaitFrames(frames=32)
     InitializeWarpObject(warp_object_id=warp_object_id)
     if FlagEnabled(6715):
         return
     WaitFrames(frames=58)
     EnableFlag(70000030)
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     EnableFlag(6715)
@@ -1245,7 +1245,7 @@ def Event_7200(_, flag: int, anchor_entity: int, respawn_point_id: int):
     MAIN.Await(FlagEnabled(flag))
     
     DisableFlag(flag)
-    FaceEntity(PLAYER, anchor_entity, animation=101160)
+    FaceEntityAndForceAnimation(PLAYER, anchor_entity, animation=101160)
     Wait(1.0)
     CreateTemporaryVFX(vfx_id=100320, anchor_entity=anchor_entity, dummy_id=100, anchor_type=CoordEntityType.Object)
     Wait(3.0)
@@ -1315,13 +1315,13 @@ def Event_9035(_, special_effect: int, special_effect_1: int):
     """Event 9035"""
     DisableNetworkSync()
     AND_1.Add(CharacterHasSpecialEffect(PLAYER, special_effect))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     
     MAIN.Await(AND_1)
     
     AddSpecialEffect(PLAYER, special_effect_1)
     AND_2.Add(CharacterHasSpecialEffect(PLAYER, special_effect))
-    AND_2.Add(CharacterWhitePhantom(PLAYER))
+    AND_2.Add(CharacterIsWhitePhantom(PLAYER))
     
     MAIN.Await(not AND_2)
     
@@ -1334,7 +1334,7 @@ def Event_9040(_, flag: int, item_lot: int):
     """Event 9040"""
     if FlagEnabled(flag):
         return
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     
@@ -1346,7 +1346,7 @@ def Event_9040(_, flag: int, item_lot: int):
 @ContinueOnRest(9100)
 def Event_9100(_, flag: int, item_lot: int):
     """Event 9100"""
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     
@@ -1376,7 +1376,7 @@ def Event_9110(_, flag: int, item_lot: int, item_lot_1: int, flag_1: int):
 @ContinueOnRest(9181)
 def Event_9181():
     """Event 9181"""
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     
@@ -1392,7 +1392,7 @@ def Event_9181():
 @ContinueOnRest(9182)
 def Event_9182():
     """Event 9182"""
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     DisableFlag(9184)
@@ -1415,7 +1415,7 @@ def Event_9182():
 @ContinueOnRest(9183)
 def Event_9183():
     """Event 9183"""
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     AND_1.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 9000))
@@ -1436,7 +1436,7 @@ def Event_9186():
     """Event 9186"""
     DisableNetworkSync()
     EnableFlag(9187)
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     if not AND_1:
         return
     EnableFlag(9187)
@@ -1543,7 +1543,7 @@ def Event_9193():
 def Event_9198():
     """Event 9198"""
     GotoIfFlagEnabled(Label.L0, flag=9199)
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(CharacterHasSpecialEffect(PLAYER, 9000))
     
     MAIN.Await(AND_1)
@@ -1557,7 +1557,7 @@ def Event_9198():
 
     # --- Label 0 --- #
     DefineLabel(0)
-    AND_2.Add(CharacterHuman(PLAYER))
+    AND_2.Add(CharacterIsHuman(PLAYER))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 9000))
     
     MAIN.Await(AND_2)
@@ -1631,7 +1631,7 @@ def Event_9220(_, character: int, flag: int, flag_1: int, flag_2: int, area_id: 
     AND_1.Add(CharacterAlive(character))
     AND_1.Add(FlagDisabled(flag_2))
     AND_1.Add(InsideMap(game_map=(area_id, block_id)))
-    AND_2.Add(CharacterHuman(PLAYER))
+    AND_2.Add(CharacterIsHuman(PLAYER))
     AND_2.Add(PlayerLevel() >= 30)
     AND_2.Add(ClientTypeCountComparison(client_type=ClientType.Coop, comparison_type=ComparisonType.GreaterThanOrEqual, value=1))
     AND_3.Add(CharacterHasSpecialEffect(PLAYER, 9025))
@@ -1663,7 +1663,7 @@ def Event_9240(_, character: int, flag: int, flag_1: int, flag_2: int, area_id: 
     
     MAIN.Await(AND_1)
     
-    AND_2.Add(CharacterHuman(PLAYER))
+    AND_2.Add(CharacterIsHuman(PLAYER))
     AND_2.Add(RandomTimeElapsed(min_seconds=10.0, max_seconds=10.0))
     
     MAIN.Await(AND_2)
@@ -1694,7 +1694,7 @@ def Event_9260(_, character: int, flag: int, flag_1: int, flag_2: int, area_id: 
     
     MAIN.Await(AND_1)
     
-    MAIN.Await(CharacterHuman(PLAYER))
+    MAIN.Await(CharacterIsHuman(PLAYER))
     
     RemoveSpecialEffect(PLAYER, 9020)
     RemoveSpecialEffect(character, 9100)
@@ -1819,8 +1819,8 @@ def Event_9360(_, flag: int, flag_1: int, flag_2: int, flag_3: int):
     MAIN.Await(OR_2)
     
     EndIfLastConditionResultTrue(input_condition=AND_2)
-    OR_3.Add(CharacterHuman(PLAYER))
-    OR_3.Add(CharacterWhitePhantom(PLAYER))
+    OR_3.Add(CharacterIsHuman(PLAYER))
+    OR_3.Add(CharacterIsWhitePhantom(PLAYER))
     AND_3.Add(OR_3)
     AND_3.Add(CharacterHasSpecialEffect(PLAYER, 6100))
     if not AND_3:
@@ -1868,7 +1868,7 @@ def Event_9410():
     if ThisEventFlagEnabled():
         return
     AND_1.Add(FlagEnabled(13201803))
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(CharacterInsideRegion(PLAYER, region=2802010))
     
     MAIN.Await(AND_1)
@@ -1947,8 +1947,8 @@ def Event_9480(_, flag: int, flag_1: int, flag_2: int, flag_3: int, flag_4: int)
     MAIN.Await(OR_2)
     
     EndIfLastConditionResultTrue(input_condition=AND_2)
-    OR_3.Add(CharacterHuman(PLAYER))
-    OR_3.Add(CharacterWhitePhantom(PLAYER))
+    OR_3.Add(CharacterIsHuman(PLAYER))
+    OR_3.Add(CharacterIsWhitePhantom(PLAYER))
     AND_3.Add(OR_3)
     AND_3.Add(CharacterHasSpecialEffect(PLAYER, 6100))
     if not AND_3:
@@ -2091,7 +2091,7 @@ def Event_9721():
 @ContinueOnRest(9722)
 def Event_9722():
     """Event 9722"""
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     AND_1.Add(FlagEnabled(1373))
@@ -2107,7 +2107,7 @@ def Event_9722():
 @ContinueOnRest(9723)
 def Event_9723():
     """Event 9723"""
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     AND_1.Add(FlagEnabled(1374))
@@ -2199,7 +2199,7 @@ def Event_9781():
     """Event 9781"""
     if ThisEventFlagEnabled():
         return
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(InsideMap(game_map=FORBIDDEN_WOODS))
     
     MAIN.Await(AND_1)
@@ -2253,7 +2253,7 @@ def Event_9905(_, special_effect: int):
 def Event_9910():
     """Event 9910"""
     DisableNetworkSync()
-    AND_15.Add(CharacterHuman(PLAYER))
+    AND_15.Add(CharacterIsHuman(PLAYER))
     if not AND_15:
         return
     if ThisEventFlagEnabled():

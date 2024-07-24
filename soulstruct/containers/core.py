@@ -27,11 +27,6 @@ from soulstruct.utilities.files import read_json, write_json
 from .binder_hash import BinderHashTable
 from .entry import BinderEntry, BinderEntryHeader
 
-try:
-    Self = tp.Self
-except AttributeError:  # < Python 3.11
-    Self = "Binder"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 
@@ -293,7 +288,7 @@ class Binder(BaseBinaryFile):
         cls,
         data: bytes | bytearray | tp.BinaryIO | BinaryReader | BinderEntry,
         bdt_data: bytes | bytearray | tp.BinaryIO | BinaryReader | BinderEntry | None = None,
-    ) -> Self:
+    ) -> tp.Self:
         """Load `Binder` from just `data` (BND file) or split `data` and `bdt_data` (BXF file)."""
         reader = BinaryReader(data) if not isinstance(data, BinaryReader) else data  # type: BinaryReader
 
@@ -346,7 +341,7 @@ class Binder(BaseBinaryFile):
         return instance
 
     @classmethod
-    def from_path(cls, path: str | Path, bdt_path: str | Path | None = None) -> Self:
+    def from_path(cls, path: str | Path, bdt_path: str | Path | None = None) -> tp.Self:
         path = Path(path)
         reader = BinaryReader(path)
         first_four_bytes = reader.peek(4)
@@ -391,7 +386,7 @@ class Binder(BaseBinaryFile):
         return binder
 
     @classmethod
-    def from_reader(cls, reader: BinaryReader, bdt_reader: BinaryReader | None = None) -> Self:
+    def from_reader(cls, reader: BinaryReader, bdt_reader: BinaryReader | None = None) -> tp.Self:
         version_bytes = reader.peek(4)
 
         if version_bytes[:3] == b"BHF":
@@ -498,7 +493,7 @@ class Binder(BaseBinaryFile):
         return header_kwargs, entry_headers
 
     @classmethod
-    def from_unpacked_path(cls, path: str | Path) -> Self:
+    def from_unpacked_path(cls, path: str | Path) -> tp.Self:
         """Load manifest JSON or unpacked directory containing a manifest JSON."""
         path = Path(path)
         if path.is_dir():

@@ -13,11 +13,6 @@ from .enums import MSBSupertype
 from .msb_entry import MSBEntry
 from .utils import MSBSubtypeInfo
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "MSBEntryList"
-
 if tp.TYPE_CHECKING:
     from .core import MSB
 
@@ -43,7 +38,7 @@ class MSBEntryList(IDList[MSBEntryType]):
         self.subtype_info = subtype_info
         super().__init__(entries)
 
-    def copy(self) -> Self:
+    def copy(self) -> tp.Self:
         return copy.deepcopy(self)
 
     def find_entry_intenum(self, entry_intenum: IntEnum) -> MSBEntryType:

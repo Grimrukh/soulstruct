@@ -25,4 +25,4 @@ class CHRBND(FLVERBinder):
     v4_info = None
 
     def get_chrtpfbhd_entry_path(self, model_stem: str) -> str:
-        return self.get_entry_path(f"{model_stem}\\{model_stem}.chrtpfbhd")
+        return self.get_default_entry_path(f"{model_stem}\\{model_stem}.chrtpfbhd")

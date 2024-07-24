@@ -8,7 +8,6 @@ from pathlib import Path
 
 from soulstruct.base.maps.utilities import MAP_SOURCE_TYPING
 from soulstruct.darksouls1ptde.maps.msb import MSB as _PTDE_MSB, MSBSupertype
-from soulstruct.utilities.files import create_bak
 
 from .constants import VANILLA_MSB_TRANSLATIONS, get_map
 from .models import MSBModel

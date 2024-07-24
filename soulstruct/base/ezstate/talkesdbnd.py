@@ -12,11 +12,6 @@ from pathlib import Path
 from soulstruct.containers import Binder
 from .esd import ESD, ESDType
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "TalkESDBND"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 _TALK_RE = re.compile(r"t(\d+)")
@@ -55,7 +50,7 @@ class TalkESDBND(Binder, abc.ABC):
         return self.get_first_new_entry_id_in_range(0, 1000000)
 
     @classmethod
-    def from_esp_directory(cls, esp_directory: Path | str) -> Self:
+    def from_esp_directory(cls, esp_directory: Path | str) -> tp.Self:
         """Load from directory of individual ESP files/folders."""
         esp_directory = Path(esp_directory)
 
@@ -80,7 +75,7 @@ class TalkESDBND(Binder, abc.ABC):
         return cls(path=esp_directory.with_suffix(cls.EXT), talk=talk)
 
     @classmethod
-    def from_talk_dict(cls, talk_dict: dict[int, ESD]) -> Self:
+    def from_talk_dict(cls, talk_dict: dict[int, ESD]) -> tp.Self:
         return cls(talk=talk_dict.copy())
 
     def write_esp_directory(self, esp_directory: Path | str):
@@ -137,6 +132,6 @@ class TalkESDBND(Binder, abc.ABC):
     @classmethod
     def write_from_dict(cls, talk_dict, talkesdbnd_path, make_dirs=True):
         """Shortcut to immediately load given dictionary and write to given `.talkesdbnd` path."""
-        talkesdbnd = cls.from_talk_dict(talk_dict)  # type: Self
+        talkesdbnd = cls.from_talk_dict(talk_dict)  # type: tp.Self
         # Skip regeneneration in this class's `write`.
         Binder.write(talkesdbnd, talkesdbnd_path, make_dirs=make_dirs)

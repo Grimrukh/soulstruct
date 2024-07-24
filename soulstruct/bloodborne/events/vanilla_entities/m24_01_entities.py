@@ -1,3 +1,5 @@
+from enum import IntEnum
+
 from soulstruct.bloodborne.game_types import *
 
 

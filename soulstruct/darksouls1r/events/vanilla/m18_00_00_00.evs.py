@@ -217,7 +217,7 @@ def Event_11805391():
     """Event 11805391"""
     AND_1.Add(FlagDisabled(15))
     AND_1.Add(FlagEnabled(11805393))
-    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(CharacterIsWhitePhantom(PLAYER))
     AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1802998,
@@ -592,8 +592,8 @@ def Event_11805100(_, character: int, item_lot: int):
     
     MAIN.Await(CharacterDead(character))
     
-    OR_7.Add(CharacterHuman(PLAYER))
-    OR_7.Add(CharacterHollow(PLAYER))
+    OR_7.Add(CharacterIsHuman(PLAYER))
+    OR_7.Add(CharacterIsHollow(PLAYER))
     if not OR_7:
         return
     AwardItemLot(item_lot, host_only=True)
@@ -879,7 +879,7 @@ def Event_11805029():
         return
     If_Unknown_3_24(AND_1, unk1=4, unk2=3)
     AND_1.Add(Host())
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(FlagDisabled(11805031))
     AND_1.Add(FlagDisabled(11805033))
     AND_1.Add(FlagEnabled(1012))
@@ -923,7 +923,7 @@ def Event_11805030():
     if FlagEnabled(15):
         return
     AND_1.Add(Host())
-    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterIsHuman(PLAYER))
     AND_1.Add(FlagEnabled(1012))
     AND_1.Add(CharacterBackreadEnabled(6544))
     AND_1.Add(EntityWithinDistance(entity=6544, other_entity=PLAYER, radius=30.0))

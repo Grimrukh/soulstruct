@@ -8,11 +8,6 @@ from dataclasses import dataclass
 from soulstruct.containers import Binder, BinderVersion
 from soulstruct.games import DARK_SOULS_PTDE
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "MSGBND"
-
 
 @dataclass(slots=True)
 class MSGBND(Binder):

@@ -31,11 +31,6 @@ from .enums import *
 from .models import *
 from .regions import MSBRegion
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "MSBPart"
-
 if tp.TYPE_CHECKING:
     from .events import MSBEnvironmentEvent
 
@@ -163,7 +158,7 @@ class MSBPart(BaseMSBPart, abc.ABC):
         "Unknown Parts Data [x0f-x10]", "Unknown parts integer. Common values: 0"))
 
     @classmethod
-    def from_msb_reader(cls, reader: BinaryReader) -> Self:
+    def from_msb_reader(cls, reader: BinaryReader) -> tp.Self:
         entry_offset = reader.position
         kwargs = cls.unpack_header(reader, entry_offset)
         reader.seek(entry_offset + kwargs.pop("supertype_data_offset"))

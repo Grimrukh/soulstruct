@@ -14,11 +14,6 @@ from soulstruct.utilities.text import pad_chars
 from .enums import BaseMSBRegionSubtype, MSBSupertype
 from .msb_entry import MSBEntry
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "BaseMSBRegion"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 
@@ -37,7 +32,7 @@ class BaseMSBRegion(MSBEntry, abc.ABC):
     rotate: Vector3 = field(default_factory=Vector3.zero)
 
     @classmethod
-    def from_msb_reader(cls, reader: BinaryReader) -> Self:
+    def from_msb_reader(cls, reader: BinaryReader) -> tp.Self:
         """Regions do not have 'supertype data'. Just a header (with some supertype data) and optional subtype data."""
         entry_offset = reader.position
         kwargs = cls.unpack_header(reader, entry_offset)

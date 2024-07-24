@@ -17,11 +17,6 @@ from soulstruct.utilities.files import read_json, write_json
 
 from .fmg import FMG
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "MSGDirectory"
-
 _LOGGER = logging.getLogger("soulstruct")
 
 
@@ -91,14 +86,14 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
         return cls(directory=directory_path, files=files, fmgs=fmgs)
 
     @classmethod
-    def from_item_menu_binders(cls, item_msgbnd: Binder, menu_msgbnd: Binder) -> Self:
+    def from_item_menu_binders(cls, item_msgbnd: Binder, menu_msgbnd: Binder) -> tp.Self:
 
         files = {"item": item_msgbnd, "menu": menu_msgbnd}
         fmgs = cls.create_fmgs(item_msgbnd, menu_msgbnd)
         return cls(directory=None, files=files, fmgs=fmgs)
 
     @classmethod
-    def from_json_directory(cls, directory: Path | str) -> Self:
+    def from_json_directory(cls, directory: Path | str) -> tp.Self:
         """Load individual text (FMG) JSON files from an unpacked Binder folder (e.g. from `write_json_directory()`).
 
         The names of the JSON files to be loaded from the folder are recorded in the "entries" key of the

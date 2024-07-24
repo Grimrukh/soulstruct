@@ -11,11 +11,6 @@ from soulstruct.utilities.binary import *
 from .command import Command
 from .ezl_parser import decompile
 
-try:
-    Self = tp.Self
-except AttributeError:
-    Self = "Condition"
-
 
 @dataclass(slots=True)
 class ConditionStruct(BinaryStruct):
@@ -39,7 +34,7 @@ class Condition:
     _indent: int = 0
 
     @classmethod
-    def from_esd_reader(cls, reader: BinaryReader) -> Self:
+    def from_esd_reader(cls, reader: BinaryReader) -> tp.Self:
         header = ConditionStruct.from_bytes(reader)
 
         if header.pass_commands_offset > 0:
