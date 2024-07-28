@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-__all__ = ["TexconvError", "texconv", "texconv_to_dds", "batch_texconv_to_dds"]
+__all__ = ["TexconvError", "TexconvConfig", "texconv", "texconv_to_dds", "batch_texconv_to_dds"]
 
 import multiprocessing
 import subprocess
+import typing as tp
 from pathlib import Path
 
 from soulstruct.exceptions import SoulstructError
@@ -26,51 +27,49 @@ def texconv(*args):
     )
 
 
-def texconv_to_dds(output_dir: str, dds_format: str, is_dx10: bool, mipmap_count: int, input_path: str) -> bytes | None:
+class TexconvConfig(tp.NamedTuple):
+    output_dir: str
+    dds_format: str
+    is_dx10: bool
+    mipmap_count: int
+    input_path: Path | str
+
+
+def texconv_to_dds(config: TexconvConfig) -> bytes | None:
     """Run `texconv` on a single file, returning the output DDS data."""
+    if "TYPELESS" in config.dds_format:
+        # `texconv` does not support TYPELESS. Caller must resolve it first (probably to 'UNORM').
+        raise TexconvError(
+            f"DDS format '{config.dds_format}' is not supported by `texconv`. (Try UNORM instead of TYPELESS.)"
+        )
     args = [
-        "-o", output_dir, "-ft", "dds", "-f", dds_format,
-        "-m", str(mipmap_count), "-nologo", input_path
+        "-o", config.output_dir, "-ft", "dds", "-f", config.dds_format,
+        "-m", str(config.mipmap_count), "-nologo", str(config.input_path)
     ]
-    if is_dx10:
+    if config.is_dx10:
         args.insert(4, "-dx10")  # use extended DX10 header
     texconv_result = texconv(*args)
-    output_name = Path(input_path).with_suffix(".dds").name
+    output_name = Path(config.input_path).with_suffix(".dds").name
     try:
-        return Path(output_dir, output_name).read_bytes()
+        return Path(config.output_dir, output_name).read_bytes()
     except FileNotFoundError:
         print(f"Could not find converted DDS file. Stdout: {texconv_result.stdout.decode()}")
         return None
 
 
-def batch_texconv_to_dds(output_dir: Path, dds_kwargs: dict[str, dict]) -> dict[str, bytes]:
+def batch_texconv_to_dds(configs: list[TexconvConfig]) -> list[bytes]:
     """Run `texconv` in parallel on multiple files, returning a dictionary of output DDS data.
 
     `output_dir` should be a temporary location that can be used to write the DDS files (which are immediately read).
 
     `dds_format`, `is_dx10`, `mipmap_count`, and `input_path` are all required in `dds_kwargs` for each key.
     """
-
-    dds_args = []
-    for input_path, kwargs in dds_kwargs.items():
-        dds_args.append((
-            str(output_dir),
-            kwargs["dds_format"],
-            kwargs["is_dx10"],
-            kwargs["mipmap_count"],
-            kwargs["input_path"],
-        ))
+    for config in configs:
+        if "TYPELESS" in config.dds_format:
+            # `texconv` does not support TYPELESS. Caller must resolve it first (probably to 'UNORM').
+            raise TexconvError(
+                f"DDS format '{config.dds_format}' is not supported by `texconv`. (Try UNORM instead of TYPELESS.)"
+            )
 
     with multiprocessing.Pool() as pool:
-        all_dds_bytes = pool.starmap(texconv_to_dds, dds_args)
-
-    failed_keys = []
-    dds_dict = {}
-    for dds_key, dds_bytes in zip(dds_kwargs.keys(), all_dds_bytes):
-        if dds_bytes is None:
-            failed_keys.append(dds_key)
-            dds_dict[dds_key] = b""
-        else:
-            dds_dict[dds_key] = dds_bytes
-
-    return dds_dict
+        return list(pool.starmap(texconv_to_dds, configs))

@@ -1244,6 +1244,10 @@ class Binder(BaseBinaryFile):
         """Return the first entry with the given `entry_name`."""
         return self._find_entry_by_attr("name", entry_name, assert_unique)
 
+    def find_entry_minimal_stem(self, entry_minimal_stem: str, assert_unique=False):
+        """Return the first entry with the given `entry_minimal_stem`."""
+        return self._find_entry_by_attr("minimal_stem", entry_minimal_stem, assert_unique)
+
     def find_entry_path(self, entry_path: str | Path, assert_unique=False):
         """Return the first entry with the given `entry_path`."""
         return self._find_entry_by_attr("path", str(entry_path), assert_unique)

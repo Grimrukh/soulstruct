@@ -49,6 +49,8 @@ class MSBMapPieceModel(MSBModel):
         self.sib_path = self.SIB_PATH_TEMPLATE.format(map_stem=map_stem, name=self.name)
 
     def get_model_file_stem(self, map_stem: str):
+        if not map_stem:
+            raise ValueError("Map stem must be provided to get model file stem of Map Piece.")
         return f"{map_stem}_{self.name[1:]}"  # drop 'm' prefix from model name
 
     def set_name_from_model_file_stem(self, model_stem: str):

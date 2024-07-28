@@ -47,6 +47,8 @@ class MSBMapPieceModel(MSBModel):
         self.sib_path = self.SIB_PATH_TEMPLATE.format(map_stem=map_stem, name=self.name)
 
     def get_model_file_stem(self, map_stem: str):
+        if not map_stem:
+            raise ValueError("Map stem must be provided to get model file stem of Map Piece.")
         area = map_stem[1:3]
         return f"{self.name}A{area}"
 
@@ -90,6 +92,8 @@ class MSBCollisionModel(MSBModel):
         self.sib_path = self.SIB_PATH_TEMPLATE.format(map_stem=map_stem, name=self.name)
 
     def get_model_file_stem(self, map_stem: str):
+        if not map_stem:
+            raise ValueError("Map stem must be provided to get model file stem of Collision.")
         area = map_stem[1:3]
         return f"{self.name}A{area}"
 
@@ -107,6 +111,8 @@ class MSBNavmeshModel(MSBModel):
         self.sib_path = self.SIB_PATH_TEMPLATE.format(map_stem=map_stem, name=self.name)
 
     def get_model_file_stem(self, map_stem: str):
+        if not map_stem:
+            raise ValueError("Map stem must be provided to get model file stem of Navmesh.")
         area = map_stem[1:3]
         return f"{self.name}A{area}"
 
