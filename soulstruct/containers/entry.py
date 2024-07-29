@@ -231,6 +231,10 @@ class BinderEntry:
         return Path(self.path).name.split(".")[0]
 
     @property
+    def suffix(self) -> str:
+        return Path(self.path).suffix
+
+    @property
     def path_with_forward_slashes(self) -> str:
         return self.path.replace("\\", "/")
 
