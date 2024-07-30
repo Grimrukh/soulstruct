@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["build_ffxbnd", "get_map", "import_map_piece_flver", "find_flver_textures", "dump_all_map_textures"]
+__all__ = ["build_ffxbnd", "import_map_piece_flver", "find_flver_textures", "dump_all_map_textures"]
 
 import logging
 import re
@@ -9,7 +9,6 @@ import typing as tp
 from pathlib import Path
 
 from soulstruct.containers import Binder, BinderEntry
-from soulstruct.base.maps.utilities import get_map
 from soulstruct.base.models.flver import FLVER
 from soulstruct.config import DSR_PATH
 

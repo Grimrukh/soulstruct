@@ -52,8 +52,9 @@ class MSBMapPieceModel(MSBModel):
         area = map_stem[1:3]
         return f"{self.name}A{area}"
 
-    def set_name_from_model_file_stem(self, model_stem: str):
-        self.name = model_stem[:7]
+    @classmethod
+    def model_file_stem_to_model_name(cls, model_stem: str) -> str:
+        return model_stem[:7]
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -97,8 +98,9 @@ class MSBCollisionModel(MSBModel):
         area = map_stem[1:3]
         return f"{self.name}A{area}"
 
-    def set_name_from_model_file_stem(self, model_stem: str):
-        self.name = model_stem[:7]
+    @classmethod
+    def model_file_stem_to_model_name(cls, model_stem: str) -> str:
+        return model_stem[:7]
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -116,5 +118,6 @@ class MSBNavmeshModel(MSBModel):
         area = map_stem[1:3]
         return f"{self.name}A{area}"
 
-    def set_name_from_model_file_stem(self, model_stem: str):
-        self.name = model_stem[:7]
+    @classmethod
+    def model_file_stem_to_model_name(cls, model_stem: str) -> str:
+        return model_stem[:7]

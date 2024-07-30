@@ -76,6 +76,8 @@ from .basic_types import GameObject, GameObjectInt
 
 
 class Map(GameObject):
+    """Represents a game map with associated naming information. Used as an argument in EVS instructions."""
+
     def __init__(
         self,
         area_id: tp.Optional[int],
@@ -163,6 +165,10 @@ class Map(GameObject):
             for stem in (self.emevd_file_stem, self.msb_file_stem, self.ai_file_stem, self.esd_file_stem)
             if stem
         }
+
+    def __hash__(self):
+        """Map is unique defined by its MSB stem."""
+        return hash(self.msb_file_stem)
 
     def __eq__(self, other_map: Map):
         return self.area_id == other_map.area_id and self.block_id == other_map.block_id

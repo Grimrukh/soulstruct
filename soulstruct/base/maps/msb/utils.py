@@ -75,8 +75,11 @@ class GroupBitSet(abc.ABC):
     # Only field.
     enabled_bits: set[int]
 
-    def __init__(self, uint_list_or_bit_set: GroupBitSet | list[int] | set[int]):
-        if isinstance(uint_list_or_bit_set, self.__class__):
+    def __init__(self, uint_list_or_bit_set: GroupBitSet | list[int] | set[int] | None):
+        if uint_list_or_bit_set is None:
+            # Default is no enabled bits.
+            self.enabled_bits = set()
+        elif isinstance(uint_list_or_bit_set, self.__class__):
             # Just copy bits from other instance.
             self.enabled_bits = uint_list_or_bit_set.enabled_bits.copy()
         elif isinstance(uint_list_or_bit_set, list):

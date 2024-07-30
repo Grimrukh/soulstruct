@@ -53,8 +53,9 @@ class MSBMapPieceModel(MSBModel):
             raise ValueError("Map stem must be provided to get model file stem of Map Piece.")
         return f"{map_stem}_{self.name[1:]}"  # drop 'm' prefix from model name
 
-    def set_name_from_model_file_stem(self, model_stem: str):
-        self.name = model_stem[13:]  # e.g. strip 'm10_00_00_00_' prefix
+    @classmethod
+    def model_file_stem_to_model_name(cls, model_stem: str):
+        return model_stem[13:]  # e.g. strip 'm10_00_00_00_' prefix
 
 
 @dataclass(slots=True, eq=False, repr=False)

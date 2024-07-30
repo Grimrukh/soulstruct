@@ -118,6 +118,11 @@ class BaseMSBModel(MSBEntry, abc.ABC):
         """Allows subclasses to depend on `map_stem` when generating model file stem. Default is just name."""
         return self.name
 
+    @classmethod
+    def model_file_stem_to_model_name(cls, model_stem: str) -> str:
+        """Allows subclasses to convert a model file stem to a model name. Default is just stem."""
+        return model_stem
+
     def set_name_from_model_file_stem(self, model_stem: str):
-        """Allows subclasses to set `name` from a model file stem (which may contain map info). Default is just stem."""
-        self.name = model_stem
+        """Set name immediately using class method above."""
+        self.name = self.model_file_stem_to_model_name(model_stem)

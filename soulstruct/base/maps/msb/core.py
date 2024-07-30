@@ -308,7 +308,10 @@ class MSB(GameFile, abc.ABC):
 
         if supertypes:
             supertype_names = [self.resolve_supertype_name(name) for name in supertypes]
-            entry_lists = [entry_list for entry_list in entry_lists if entry_list.supertype in supertype_names]
+            entry_lists = [
+                entry_list for entry_list in entry_lists
+                if entry_list.supertype in supertype_names
+            ]
 
         results = []
         for subtype_list in entry_lists:
@@ -585,7 +588,10 @@ class MSB(GameFile, abc.ABC):
     def get_subtype_list_names(cls) -> tuple[str, ...]:
         if cls._SUBTYPE_LIST_NAMES is not None:
             return cls._SUBTYPE_LIST_NAMES
-        cls._SUBTYPE_LIST_NAMES = tuple(f.name for f in fields(cls) if f.name not in {"path", "_dcx_type", "dcx_type"})
+        cls._SUBTYPE_LIST_NAMES = tuple(
+            f.name for f in fields(cls)
+            if f.name not in {"_path", "path", "_dcx_type", "dcx_type"}
+        )
         return cls._SUBTYPE_LIST_NAMES
 
     def get_all_subtype_lists(self) -> list[MSBEntryList]:

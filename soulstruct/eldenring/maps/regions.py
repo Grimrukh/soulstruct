@@ -54,10 +54,10 @@ from soulstruct.base.maps.msb.regions import *
 from soulstruct.eldenring.game_types import GameObjectIntSequence, Region, MapPart
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3
+from soulstruct.utilities.text import pad_chars
 
 from .enums import MSBRegionSubtype
 from .region_shapes import *
-from ...utilities.text import pad_chars
 
 if tp.TYPE_CHECKING:
     from soulstruct.base.maps.msb import MSBEntry

@@ -163,18 +163,18 @@ class Flags8(abc.ABC):
         return cls(0)
 
 
-IDListElementType = tp.TypeVar("IDListElementType")
+ElementType = tp.TypeVar("ElementType")
 
 
-class IDList(list[IDListElementType]):
+class IDList(list[ElementType]):
     """List that checks for membership by object ID instead of equality."""
-    def __contains__(self, item: IDListElementType):
+    def __contains__(self, item: ElementType):
         for i in self:
             if id(i) == id(item):
                 return True
         return False
 
-    def index(self, item: IDListElementType, start=None, stop=None) -> int:
+    def index(self, item: ElementType, start=None, stop=None) -> int:
         """Index exact instance `entry`. Returns -1 if absent rather than raising an error."""
         for i, e in enumerate(self):
             if start is not None and i < start:
@@ -185,7 +185,7 @@ class IDList(list[IDListElementType]):
                 return i
         return -1
 
-    def remove(self, item: IDListElementType):
+    def remove(self, item: ElementType):
         """Remove entry from this list, by ID, not `__eq__`."""
         for i, e in enumerate(self):
             if e is item:
@@ -193,7 +193,7 @@ class IDList(list[IDListElementType]):
                 return
         raise ValueError(f"Item `{item}` is not in list.")
 
-    def count(self, item: IDListElementType):
+    def count(self, item: ElementType):
         """Counts the number of times the exact instance `item` appears in this list."""
         return sum(1 for i in self if id(i) == id(item))
 

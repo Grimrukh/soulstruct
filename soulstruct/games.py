@@ -88,13 +88,13 @@ class Game:
             raise ImportError(f"Game submodule {module_name} does not have an attribute named {name}.")
 
     def __hash__(self):
-        return hash(self.name)
+        return hash(self.variable_name)
 
     def __eq__(self, other: Game):
-        return self.name == other.name
+        return self.variable_name == other.variable_name
 
     def __repr__(self):
-        return f"Game(\"{self.name}\")"
+        return f"Game(\"{self.variable_name}\")"
 
 
 DEMONS_SOULS = Game(

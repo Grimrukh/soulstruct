@@ -30,7 +30,6 @@ class FLVERBinder(Binder, abc.ABC):
     flvers: dict[str, FLVER] = field(default_factory=dict)
 
     def __post_init__(self):
-        super(FLVERBinder, self).__post_init__()
         if not self.tpf and self.TPF_ENTRY_ID >= 0:
             try:
                 tpf_entry = self.find_entry_id(self.TPF_ENTRY_ID)

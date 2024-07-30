@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["get_map", "GET_MAP_TYPING", "MAP_SOURCE_TYPING"]
+__all__ = ["Map", "get_map", "GET_MAP_TYPING", "MAP_SOURCE_TYPING"]
 
 import logging
 import typing as tp

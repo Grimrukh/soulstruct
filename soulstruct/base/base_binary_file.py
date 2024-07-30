@@ -42,17 +42,15 @@ class BaseBinaryFile:
     # If given, this `re.Pattern` will be used to check file names. Usually just `EXT` plus optional DCX extension.
     PATTERN: tp.ClassVar[re.Pattern | None] = None
 
-    # Internal type wrapped by `dcx_type` property, which converts string values to `DCXType`. TODO: attrs validator?
+    # Internal field wrapped by `dcx_type` property, which converts string values to `DCXType`.
     _dcx_type: DCXType | None = field(init=False, repr=False)  # default will be handled by `dcx_type` property below
+    # Internal field wrapped by `path` property, which ensures any string is converted to a `Path`.
+    _path: Path | None = field(init=False, repr=False)
 
     # Default DCX compression type for file. If `None`, then `get_game().default_dcx_type` will be used.
     dcx_type: DCXType | None = field(default=None, kw_only=True)
     # Records origin path of file if loaded from disk (or a `BinderEntry`). Not always available.
     path: Path | None = field(default=None, kw_only=True)
-
-    def __post_init__(self):
-        if not hasattr(self, "_dcx_type"):
-            self._dcx_type = None  # needed in Python 3.10
 
     # region Read Methods
 
@@ -164,8 +162,11 @@ class BaseBinaryFile:
         return [file_path]
 
     def to_dict(self) -> dict[str, tp.Any]:
-        """Create a dictionary from file instance. Uses `dataclasses.asdict()` by default and ignores '_dcx_type'."""
-        return asdict(self, dict_factory=lambda d: {k: v for (k, v) in d if k != "_dcx_type"})
+        """Create a dictionary from file instance. Uses `dataclasses.asdict()` by default and ignores internals."""
+        return asdict(
+            self,
+            dict_factory=lambda d: {k: v for (k, v) in d if k != "_dcx_type" and k != "_path"},
+        )
 
     def write_json(self, file_path: None | str | Path, encoding="utf-8", indent=4):
         """Create a dictionary from instance and write it to a JSON file.
@@ -281,8 +282,6 @@ class BaseBinaryFile:
         return self.path.stem.split(".")[0] if self.path else None
 
     def get_dcx_type(self) -> DCXType:
-        if not hasattr(self, "_dcx_type"):
-            self._dcx_type = None  # for Python 3.10
         return self._dcx_type
 
     def set_dcx_type(self, dcx_type: DCXType):
@@ -298,7 +297,7 @@ class BaseBinaryFile:
     def __repr__(self) -> str:
         lines = [f"{self.cls_name}("]
         for f in fields(self):
-            if f.name != "_dcx_type":
+            if f.name != "_dcx_type" and f.name != "_path":
                 lines.append(f"    {f.name}={repr(getattr(self, f.name))},")
         lines.append(")")
         return "\n".join(lines)
@@ -311,6 +310,11 @@ class BaseBinaryFile:
 # noinspection PyTypeChecker
 BaseBinaryFile.dcx_type = property(
     BaseBinaryFile.get_dcx_type, BaseBinaryFile.set_dcx_type
+)
+
+BaseBinaryFile.path = property(
+    fget=lambda self: self._path,
+    fset=lambda self, path: setattr(self, "_path", Path(path) if path else None),
 )
 
 

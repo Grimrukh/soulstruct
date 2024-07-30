@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["MSBEntry", "MSBFieldDisplayInfo"]
+__all__ = ["MSBEntry", "MSBEntryReference", "MSBFieldDisplayInfo"]
 
 import abc
 import copy
@@ -54,6 +54,12 @@ class MSBFieldDisplayInfo(tp.NamedTuple):
     display_type: type[tp.Any]
 
 
+class MSBEntryReference(tp.NamedTuple):
+    referrer: MSBEntry
+    field_name: str
+    array_index: int | None = None
+
+
 @dataclass(slots=True, eq=False, repr=False)
 class MSBEntry(abc.ABC):
     """Base class for entries of any type and subtype that appear in an `MSB` (under one of four entry superlists)."""
@@ -91,6 +97,10 @@ class MSBEntry(abc.ABC):
     # Basic data fields.
     name: str
     description: str = field(default="", kw_only=True)  # not actually present in MSB until DS2
+
+    # Internal field that tracks other entries/fields/array indices that refer to this one (when indices are consumed)
+    # so that those references can be maintained if this entry is, say, replaced by a new one.
+    _referring_entry_fields: list[MSBEntryReference] = field(init=False, default_factory=list)
 
     @classmethod
     def from_msb_reader(cls, reader: BinaryReader) -> tp.Self:
@@ -428,7 +438,7 @@ class MSBEntry(abc.ABC):
         return cls._FIELD_DEFAULTS
 
     def __setattr__(self, key: str, value: tp.Any):
-        """Enforces correct type and field presence.
+        """Enforces correct type and field presence. Also records `MSBEntry` references.
 
         This is slow and is deactivated when reading binary MSBs.
         """
@@ -451,6 +461,8 @@ class MSBEntry(abc.ABC):
             super(MSBEntry, self).__setattr__(key, value)
             return
 
+        entry_type_and_length_re = re.compile(r"([\w |]+)(\[\d+])?")
+
         for field_name, field_type in field_types.items():
             if key == field_name:
 
@@ -468,7 +480,7 @@ class MSBEntry(abc.ABC):
                     super(MSBEntry, self).__setattr__(field_name, value)
                     return
 
-                entry_type_name, length_str = re.match(r"([\w |]+)(\[\d+])?", field_type).groups()
+                entry_type_name, length_str = entry_type_and_length_re.match(field_type).groups()
 
                 if length_str is not None:
                     # List of entry subclasses or integers.
@@ -509,11 +521,13 @@ class MSBEntry(abc.ABC):
                                 f"Maximum size of entry list field `{self.cls_name}.{field_name}` is {length}."
                             )
                         list_value = []
-                        for element in value:
+                        for i, element in enumerate(value):
                             if element is None:
                                 list_value.append(None)
                             elif self._is_subtype(element, entry_type_name):
                                 list_value.append(element)
+                                # Record `MSBEntry` reference with index.
+                                element.referring_entry_fields.append(MSBEntryReference(self, field_name, i))
                             else:
                                 raise TypeError(
                                     f"Invalid type for entry list field `{self.cls_name}.{field_name}`: "
@@ -535,6 +549,9 @@ class MSBEntry(abc.ABC):
                                 f"{value.__class__.__name__} ({value})"
                             )
                     super(MSBEntry, self).__setattr__(field_name, value)
+                    if value is not None:
+                        # Record `MSBEntry` reference.
+                        value.referring_entry_fields.append(MSBEntryReference(self, field_name))
                     return
 
                 if field_type in {"GroupBitSet128", "GroupBitSet256", "GroupBitSet1024"}:
@@ -853,16 +870,23 @@ class MSBEntry(abc.ABC):
         return True
 
     def _consume_index(self, entry_lists: dict[str, list[MSBEntry]], list_name: str, field_name: str):
+        """Resolve index to entry in `entry_lists` and set it as the field value."""
         index_field_name = f"_{field_name}_index"
         index = getattr(self, index_field_name)
         try:
             entry = entry_lists[list_name][index] if index != -1 else None
         except IndexError:
             entry = MSBBrokenEntryReference(list_name, index)
+        else:
+            if entry:
+                entry.referring_entry_fields.append(MSBEntryReference(self, field_name))
+
+        # Avoid using `MSBEntry.__setattr__` machinery.
         object.__setattr__(self, field_name, entry)
         object.__setattr__(self, index_field_name, None)
 
     def _consume_indices(self, entry_lists: dict[str, list[MSBEntry]], list_name: str, field_name: str):
+        """Resolve all indices to entries in `entry_lists` and set them as the field value."""
         indices_field_name = f"_{field_name}_indices"
         indices = getattr(self, indices_field_name)
         entry_list = entry_lists[list_name]
@@ -875,7 +899,11 @@ class MSBEntry(abc.ABC):
                     entry = entry_list[index]
                 except IndexError:
                     entry = MSBBrokenEntryReference(list_name, index)
+                else:
+                    entry.referring_entry_fields.append(MSBEntryReference(self, field_name, index))
             entries.append(entry)
+
+        # Avoid using `MSBEntry.__setattr__` machinery.
         object.__setattr__(self, field_name, entries)
         object.__setattr__(self, indices_field_name, None)
 
@@ -922,5 +950,46 @@ class MSBEntry(abc.ABC):
     @property
     def cls_name(self) -> str:
         return self.__class__.__name__
+
+    @property
+    def referring_entry_fields(self) -> list[MSBEntryReference]:
+        return self._referring_entry_fields
+
+    def inherit_referrers(self, old_entry: MSBEntry):
+        """Update all referrers of `old_entry` to refer to `self` instead, then clear `old_entry`'s references.
+
+        Usually only called when `old_entry` is being completely replaced in the MSB with this one.
+        """
+        if type(old_entry) is not type(self):
+            raise TypeError(
+                f"Cannot inherit referrers from a different MSB entry type "
+                f"({type(old_entry).__name__} -/-> {type(self).__name__})."
+            )
+        for referrer, field_name, index in old_entry.referring_entry_fields:
+            # Double-check that referrer still refers to old entry.
+            if index is not None:
+                ref_array = getattr(referrer, field_name)
+                ref_value = ref_array[index]  # I don't believe this can ever raise an `IndexError` by type check
+            else:
+                ref_array = None
+                ref_value = getattr(referrer, field_name)
+
+            if ref_value is not old_entry:
+                _LOGGER.warning(
+                    f"Entry field '{referrer.name}.{field_name}' no longer refers to entry '{old_entry.name}'. "
+                    f"Not inheriting this stale reference (still removed with all others)."
+                )
+                continue
+
+            referring_entry_fields = self.referring_entry_fields
+            if ref_array is not None:
+                ref_array[index] = self
+                referring_entry_fields.append(MSBEntryReference(referrer, field_name, index))
+            else:
+                setattr(referrer, field_name, self)
+                referring_entry_fields.append(MSBEntryReference(referrer, field_name))
+
+        # These old references are no longer valid.
+        old_entry.referring_entry_fields.clear()
 
     # NOTE: No `_set_index` method needed, as indices for packing can be constructed temporarily.
