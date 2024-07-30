@@ -313,8 +313,6 @@ class MATBINBND(Binder):
 
     def __post_init__(self):
         """Loads FIRST instance of each entry name as an MATBIN."""
-        super(MATBINBND, self).__post_init__()
-
         if self.matbins or self.use_lazy_load:
             return  # already passed in, or lazy loading enabled
 

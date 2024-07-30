@@ -529,8 +529,6 @@ class MTDBND(Binder):
 
     def __post_init__(self):
         """Loads FIRST instance of each entry name as an MTD."""
-        super(MTDBND, self).__post_init__()
-
         if self.mtds:
             return  # already passed in
 

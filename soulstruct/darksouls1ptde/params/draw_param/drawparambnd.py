@@ -110,7 +110,6 @@ class DrawParamBND(Binder):
     Lods = draw_param_property("LodBank")  # type: list[DrawParam[LOD_BANK]]
 
     def __post_init__(self):
-        super(Binder, self).__post_init__()
         if self.draw_params_0:
             return
         for entry in self.entries:

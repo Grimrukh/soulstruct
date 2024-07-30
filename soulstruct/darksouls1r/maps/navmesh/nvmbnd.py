@@ -23,8 +23,6 @@ class NVMBND(Binder):
 
     def __post_init__(self):
         """Loads FIRST instance of each entry name as an MTD."""
-        super(NVMBND, self).__post_init__()
-
         if self.nvms:
             return  # already passed in
 

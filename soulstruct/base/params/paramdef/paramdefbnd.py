@@ -37,7 +37,6 @@ class ParamDefBND(Binder, abc.ABC):
     paramdefs: dict[str, ParamDef] = field(default_factory=dict)
 
     def __post_init__(self):
-        super(Binder, self).__post_init__()
         if self.paramdefs:
             return
 
