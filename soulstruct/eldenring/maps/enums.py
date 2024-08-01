@@ -8,10 +8,9 @@ __all__ = [
     "CollisionHitFilter",
 ]
 
-from enum import IntEnum
+from enum import IntEnum, StrEnum
 
 from soulstruct.base.maps.msb.enums import *
-from soulstruct.utilities.future import StrEnum
 
 
 class MSBSupertype(StrEnum):

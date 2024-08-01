@@ -2,11 +2,13 @@ from __future__ import annotations
 
 __all__ = ["FLVERBone"]
 
-from dataclasses import dataclass, field
+import typing as tp
+from dataclasses import dataclass, field, fields
 from enum import IntEnum
 
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3, Matrix3
+from soulstruct.utilities.misc import IDList
 
 
 @dataclass(slots=True)
@@ -19,7 +21,7 @@ class FLVERBoneStruct(BinaryStruct):
     _child_bone_index: short
     scale: Vector3
     _next_sibling_bone_index: short
-    _prev_sibling_bone_index: short
+    _previous_sibling_bone_index: short
     bounding_box_min: Vector3
     usage_flags: int
     bounding_box_max: Vector3
@@ -51,25 +53,50 @@ class FLVERBone:
     bounding_box_max: Vector3 = field(default_factory=Vector3.single_min)
     usage_flags: int = 0
 
+    # Bone indices, which are only re-referenced just prior to pickling (in `FLVER.__getstate__()`) or FLVER export.
+    # This is necessary to avoid pickling recursion limit issues with large skeletons.
+    _parent_bone_index: int = -1
+    _child_bone_index: int = -1
+    _next_sibling_bone_index: int = -1
+    _previous_sibling_bone_index: int = -1
+
+    # Deferenced connected bones from above indices.
     parent_bone: FLVERBone | None = None
-    # NOTE: Only indicates first child, but bone can have many children (can use this and its siblings to navigate).
-    child_bone: FLVERBone | None = None
+    child_bone: FLVERBone | None = None  # bone can have many children; this is the 'first' (with no previous sibling)
     next_sibling_bone: FLVERBone | None = None
     previous_sibling_bone: FLVERBone | None = None
 
     @classmethod
-    def from_flver_reader(cls, reader: BinaryReader, encoding: str) -> tuple[FLVERBone, tuple[int, int, int, int]]:
-        """Returns `FLVERBone` instance and tuple of four indices: parent, child, next sibling, previous sibling."""
+    def from_flver_reader(cls, reader: BinaryReader, encoding: str) -> FLVERBone:
+        """Returns `FLVERBone` instance without dereferenced connected bones."""
         bone_struct = FLVERBoneStruct.from_bytes(reader)
         name = reader.unpack_string(offset=bone_struct.pop("_name_offset"), encoding=encoding)
-        flver_bone = bone_struct.to_object(cls, name=name)
-        indices = (
-            bone_struct.pop("_parent_bone_index"),
-            bone_struct.pop("_child_bone_index"),
-            bone_struct.pop("_next_sibling_bone_index"),
-            bone_struct.pop("_prev_sibling_bone_index"),
-        )
-        return flver_bone, indices
+        flver_bone = bone_struct.to_object(cls, name=name)  # connected bone indices included
+        return flver_bone
+
+    def __getstate__(self) -> tuple[None, dict[str, tp.Any]]:
+        """We don't pickle direct bone references. `FLVER.__setstate__()` will dereference them again.
+
+        Return signature is standard for classes with `__slots__` and no `__dict__`.
+        """
+        return None, {f.name: getattr(self, f.name) for f in fields(self) if not f.name.endswith("_bone")}
+
+    def set_bones(self, bones: IDList[FLVERBone]):
+        for connection_name in ("parent", "child", "next_sibling", "previous_sibling"):
+            index = getattr(self, f"_{connection_name}_bone_index")
+            if index < 0:
+                bone = None
+            else:
+                try:
+                    bone = bones[index]
+                except IndexError:
+                    raise ValueError(f"Bone index {index} on '{self.name}' exceeds length of loaded `FLVER` bone list.")
+            setattr(self, f"{connection_name}_bone", bone)
+
+    def set_bone_indices(self, bones: IDList[FLVERBone]):
+        for connection_name in ("parent", "child", "next_sibling", "previous_sibling"):
+            bone = getattr(self, f"{connection_name}_bone")
+            setattr(self, f"_{connection_name}_bone_index", -1 if bone is None else bone.get_bone_index(bones))
 
     def to_flver_writer(self, writer: BinaryWriter, bones: list[FLVERBone]):
         """Write this `FLVERBone` into FLVER `writer`.
@@ -95,17 +122,15 @@ class FLVERBone:
         writer.fill_with_position("_name_offset", obj=self)
         writer.pack_z_string(self.name, encoding)
 
-    def get_bone_index(self, bones: list[FLVERBone]) -> int:
-        """Get index of this `FLVERBone` in given list (usually from `FLVER`).
+    def get_bone_index(self, bones: IDList[FLVERBone]) -> int:
+        """Get index of this `FLVERBone` in given `IDList` (usually from `FLVER`).
 
-        As FLVERs can include bones that are 100% identical in their name and data, we can't use `index()` here, as
-        dataclass equality would cause only the first of those identical bones to be returned. Instead, we check the
-        instance ID of the bone object itself.
+        As FLVERs can include bones that are 100% identical in their name and data, `bones` has to be an `IDList`.
         """
-        for i, bone in enumerate(bones):
-            if bone is self:
-                return i
-        raise ValueError(f"`FLVERBone` {self.name} is not in given list.")
+        index = bones.index(self)
+        if index == -1:
+            raise ValueError(f"`FLVERBone` {self.name} is not in given `bones` list. Cannot set index.")
+        return index
 
     def get_root_parent(self) -> FLVERBone:
         """Get the highest parent of this bone (may be itself)."""

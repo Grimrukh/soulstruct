@@ -307,9 +307,9 @@ class MSB(_BaseMSB):
         return self.find_entry_name(name, supertypes=[MSBSupertype.ROUTES], subtypes=subtypes)
 
     @classmethod
-    def get_display_type_dict(cls) -> dict[str, tuple[BaseMSBSubtype]]:
+    def get_display_type_dict(cls) -> dict[str, tuple[BaseMSBSubtype, ...]]:
         """Return a nested dictionary mapping MSB type names (in typical display order) to tuples of subtype enums."""
-        display_dict = {}  # type: dict[str, tuple[BaseMSBSubtype]]
+        display_dict = {}  # type: dict[str, tuple[BaseMSBSubtype, ...]]
         for supertype_name, subtypes_info in cls.MSB_ENTRY_SUBTYPES.items():
             display_dict[supertype_name] = tuple(info.subtype_enum for info in subtypes_info.values())
         return {

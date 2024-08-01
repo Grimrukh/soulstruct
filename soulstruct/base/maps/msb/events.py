@@ -5,10 +5,11 @@ import abc
 import typing as tp
 from dataclasses import dataclass
 
-from soulstruct.utilities.binary import *
-
 from .enums import BaseMSBEventSubtype, MSBSupertype
 from .msb_entry import MSBEntry
+
+if tp.TYPE_CHECKING:
+    from soulstruct.utilities.misc import IDList
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -29,14 +30,6 @@ class BaseMSBEvent(MSBEntry, abc.ABC):
     _attached_part_index: int = None
     _attached_region_index: int = None
 
-    def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
+    def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         self._consume_index(entry_lists, "PARTS_PARAM_ST", "attached_part")
         self._consume_index(entry_lists, "POINT_PARAM_ST", "attached_region")
-
-    def pack_supertype_data(self, writer: BinaryWriter, entry_offset: int, entry_lists: dict[str, list[MSBEntry]]):
-        self.SUPERTYPE_DATA_STRUCT.object_to_writer(
-            self,
-            writer,
-            _attached_part_index=self.try_index(entry_lists["PARTS_PARAM_ST"], "attached_part"),
-            _attached_region_index=self.try_index(entry_lists["POINT_PARAM_ST"], "attached_region"),
-        )

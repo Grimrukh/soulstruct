@@ -97,7 +97,7 @@ def check_ds1_layouts(
 
                 if mtd_name in OTHER_CORRECTED_QLOC_LAYOUTS:
                     guessed_layout = OTHER_CORRECTED_QLOC_LAYOUTS[mtd_name]()
-                    _LOGGER.info(f"Known layout: {guessed_layout}")
+                    # _LOGGER.info(f"Known layout: {guessed_layout}")
                 elif mtd_name in CORRECTED_UNSHADED_QLOC_LAYOUTS:
                     guessed_layout = VertexArrayLayout([
                         VertexPosition(VertexDataFormatEnum.Float3, 0),

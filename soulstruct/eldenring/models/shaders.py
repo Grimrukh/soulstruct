@@ -196,6 +196,13 @@ class MatDef(_BaseMatDef):
     """
 
     @classmethod
+    def get_shader_category(cls, shader_stem: str) -> str:
+        """Not supremely useful. We get everything up to first closing square bracket, e.g. 'M[Water]' or 'C[c2000]'."""
+        if "]" not in shader_stem:
+            return shader_stem
+        return shader_stem.split("]")[0] + "]"
+
+    @classmethod
     def from_matbin(cls, matbin: MATBIN):
         """Extract critical material information directly from MATBIN.
 
@@ -392,14 +399,6 @@ class MatDef(_BaseMatDef):
                 continue
             layer_sampler_paths.setdefault(sampler.sampler_group, {})[sampler.name] = (path, sampler.uv_layer)
         return layer_sampler_paths
-
-    @property
-    def is_water(self):
-        return "[Water]" in self.shader_stem
-
-    @property
-    def is_snow(self):
-        return "[Snow]" in self.shader_stem
 
     def get_map_piece_layout(self) -> VertexArrayLayout:
         """Get a standard ER map piece layout.

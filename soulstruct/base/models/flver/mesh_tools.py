@@ -7,6 +7,7 @@ __all__ = [
 ]
 
 import logging
+import multiprocessing
 import typing as tp
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -96,6 +97,7 @@ class MergedMesh:
     vertex_data: np.ndarray  # holds `position`, `bone_weights`, and `bone_indices` fields
 
     loop_vertex_indices: np.ndarray  # 1D array indexing into `vertex_data` (uint32)
+    vertices_merged: bool  # enabled to mark when vertices are merged (making `loop_vertex_indices` trivial)
 
     loop_normals: np.ndarray  # three columns for 'x', 'y', and 'z' (float32)
     loop_normals_w: np.ndarray  # one column for 'w' (uint8)
@@ -118,8 +120,9 @@ class MergedMesh:
     def from_flver(
         cls,
         flver: FLVER,
-        submesh_material_indices: list[int] = None,
-        material_uv_layer_names: list[list[str]] = None,
+        submesh_material_indices: tp.Sequence[int] = None,
+        material_uv_layer_names: tp.Sequence[tp.Sequence[str]] = None,
+        merge_vertices=True,
     ):
         """Construct merged mesh data from all `flver` submeshes.
 
@@ -135,6 +138,10 @@ class MergedMesh:
         compatible as possible, e.g. second texture UVs go into one map, lightmap UVs go into one map, etc. If not
         given, UV data will be assigned to default 'UVMap{i}' names created directly from the vertex array indices,
         which may lead to clashes and a more difficult 3D workflow (though no lost information, theoretically).
+
+        If `merge_vertices` is False, the merged mesh will be created without any vertex merging, which is useful for
+        importing FLVERs more quickly, but makes the models a lot more painful to edit, adjacent faces with different
+        materials (even the most innocent of differences) will not share vertices or edges.
         """
         if not flver.submeshes:
             raise ValueError("FLVER has no submeshes. Cannot create `MergedMesh`.")
@@ -158,23 +165,51 @@ class MergedMesh:
             valid_submesh_material_indices.append(submesh_material_indices[i])
 
         all_vertices, loop_data_dict = cls.build_stacked_loops(
-            valid_submeshes, valid_submesh_material_indices, material_uv_layer_names
+            valid_submeshes, valid_submesh_material_indices, material_uv_layer_names, flver_name=flver.path_name
         )
 
-        vertex_data, loop_vertex_indices, faces = cls.merge_vertices(
-            valid_submeshes,
-            all_vertices,
-            valid_submesh_material_indices,
-            loop_data_dict["loop_normals"],
-        )
+        if merge_vertices:
+            vertex_data, loop_vertex_indices, faces = cls.get_merged_vertices(
+                valid_submeshes,
+                all_vertices,
+                valid_submesh_material_indices,
+                loop_data_dict["loop_normals"],
+            )
+        else:
+            # Vertices not reduced. We just need to stack faces, add materials, and offset their loop/vertex indices.
+            total_vertex_count = all_vertices.shape[0]
+            vertex_data = all_vertices
+            loop_vertex_indices = np.arange(total_vertex_count, dtype=np.uint32)
+            faces = cls.get_stacked_faces(valid_submeshes, valid_submesh_material_indices)
 
         return cls(
             vertex_data=vertex_data,
             loop_vertex_indices=loop_vertex_indices,
+            vertices_merged=merge_vertices,
             **loop_data_dict,
             faces=faces,
             flver=flver,
         )
+
+    @classmethod
+    def from_flver_batch(
+        cls,
+        flvers: list[FLVER],
+        merged_mesh_args: list[tuple[tuple[int, ...], tuple[tuple[str, ...], ...], bool]],
+        processes: int = None,
+    ) -> list[MergedMesh | None]:
+        """Use multiprocessing to create `MergedMesh` instances from given `FLVER` instances and args in parallel.
+
+        Failed conversions will put `None` into list rather than `MergedMesh`.
+        """
+        mp_args = [
+            (flver, *args) for flver, args in zip(flvers, merged_mesh_args, strict=True)
+        ]
+
+        with multiprocessing.Pool(processes=processes) as pool:
+            merged_meshes = pool.starmap(_from_flver_mp, mp_args)  # blocks here until all done
+
+        return merged_meshes
 
     @classmethod
     def build_stacked_loops(
@@ -182,6 +217,7 @@ class MergedMesh:
         submeshes: list[Submesh],
         material_indices: list[int],
         material_uv_layer_names: list[list[str]] | None,
+        flver_name: str,
     ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
         """Row-stack all submesh vertices' position and bone data in a single structured array for reduction (true
         'vertex' information rather than loop information) and return it along with a dictionary of loop data arrays or
@@ -224,7 +260,9 @@ class MergedMesh:
             if "position" in field_names:
                 submesh_vertices["position"] = vertices["position"]
             else:
-                _LOGGER.warning("Submesh vertices have no 'position' data. This is very unusual. Using zeroes.")
+                _LOGGER.warning(
+                    f"Submesh vertices have no 'position' data. This is unusual. Using zeroes. (FLVER {flver_name})"
+                )
                 submesh_vertices["position"] = 0.0
 
             if "bone_weights" in field_names:
@@ -287,7 +325,9 @@ class MergedMesh:
                             # Real UV names are generally 'UVTexture{i}', 'UVFur', 'UVWindA', etc.
                             uv_layer_name = material_uv_layer_names[material_index][uv_i]
                         except IndexError:
-                            _LOGGER.warning(f"No UV layer name for material index {material_index} (UV {uv_i}).")
+                            _LOGGER.warning(
+                                f"No UV layer name for material index {material_index} (UV {uv_i}, FLVER {flver_name})."
+                            )
                     uv_dim = vertices[name].shape[1]
                     if uv_layer_name in loop_uvs:
                         # UV layer array already created. However, we need to check its size.
@@ -297,7 +337,7 @@ class MergedMesh:
                             _LOGGER.warning(
                                 f"UV array for layer '{uv_layer_name}' in MergedMesh required a dimension upgrade from "
                                 f"{old_uv_dim} to {uv_dim}. This is unusual, as named layer dimensions should be "
-                                f"consistent across their usage in submeshes."
+                                f"consistent across their usage in submeshes. (FLVER {flver_name})"
                             )
                             new_uv_array = np.zeros((total_vertex_count, uv_dim), dtype=np.float32)
                             # Copy old array into new array. No need to copy past row `i`.
@@ -326,16 +366,49 @@ class MergedMesh:
         )
 
     @classmethod
-    def merge_vertices(
+    def get_stacked_faces(
+        cls,
+        submeshes: list[Submesh],
+        submesh_material_indices: list[int],
+    ) -> np.ndarray:
+        """Simply stacks vertices and loops and adjusts loop indices into faces. No merging.
+
+        Faster, but makes models painful to edit. Returned vertex data and loop indices will have the same first
+        dimension, since loops and vertices remain 1:1 as in the FLVER.
+        """
+
+        # Loops are 1:1 with vertices and so this is literally just `arange` of the total FLVER vertex count.
+
+        # List of final faces: `(loop0, loop1, loop2)`, which naturally excludes duplicates. Material index added later.
+        all_submesh_faces = []  # type: list[np.ndarray]
+        loop_offset = 0
+        for i, (submesh, material_index) in enumerate(zip(submeshes, submesh_material_indices)):
+            submesh: Submesh
+
+            # We just need to triangulate the face set and add the material index column.
+            triangles = submesh.face_sets[0].triangulate(allow_primitive_restarts=False)  # `(n, 3)` array
+            triangles += loop_offset
+            submesh_faces = np.column_stack([triangles, np.full(triangles.shape[0], material_index, dtype=np.uint32)])
+            all_submesh_faces.append(submesh_faces)
+            loop_offset += submesh.vertices.shape[0]
+
+        faces = np.row_stack(all_submesh_faces)
+        return faces
+
+    @classmethod
+    def get_merged_vertices(
         cls,
         submeshes: list[Submesh],
         all_vertices: np.ndarray,
         submesh_material_indices: list[int],
         loop_normals: np.ndarray,
-    ):
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """FLVER models are optimized for rendering, and so they often have many duplicate vertices across submeshes,
         particularly along edges between faces that have different materials. This function attempts to re-optimize the
         mesh for modelling by merging identical vertices in `all_vertices` where appropriate.
+
+        Returns vertex data (position and bone indices/weights), a 1D array mapping loops to that vertex data, and
+        face (triangle) data (index triplets into loop data and material indices). All FLVER faces are triangles.
 
         The definition of 'identical vertices' is where the real difficulty lies here. Cases to consider:
 
@@ -386,7 +459,7 @@ class MergedMesh:
         # Array of loop vertex indices. Same length as other loop data, as face loop indices are not modified (beyond
         # offsetting them for each merged submesh).
         loop_vertex_indices = np.empty(len(loop_normals), dtype=np.uint32)
-        assigned_loop_indices = set()
+        resolved_loop_indices = set()
 
         loop_offset = 0
         for i, (submesh, material_index) in enumerate(zip(submeshes, submesh_material_indices)):
@@ -396,16 +469,13 @@ class MergedMesh:
             triangles = submesh.face_sets[0].triangulate(allow_primitive_restarts=False)  # `(n, 3)` array
             triangles += loop_offset
 
-            submesh_faces_list = []  # type: list[np.ndarray]
-
             for triangle in triangles:
                 for loop_index in triangle:
-
-                    # If two FLVER faces already use the same FLVER 'vertex' (loop) index, then even the aggressively
-                    # non-merged FLVER file already says that these vertices are the same, and there's nothing to merge.
-                    if loop_index in assigned_loop_indices:
-                        continue
-                    assigned_loop_indices.add(loop_index)
+                    # We inspect each FLVER loop index as it appears, and figure out if we can redirect it to an
+                    # existing 'true vertex'. Otherwise, we create a new 'true vertex' for it.
+                    if loop_index in resolved_loop_indices:
+                        continue  # true FLVER face connectivity
+                    resolved_loop_indices.add(loop_index)
 
                     triangle_vert = all_vertices[loop_index]
                     vert_normal = loop_normals[loop_index]
@@ -448,10 +518,8 @@ class MergedMesh:
                     # faces use the exact same three vertices, they will be treated as a true 'duplicate face'.
                     loop_vertex_indices[loop_index] = existing_vertex_index
 
-                submesh_faces_list.append(triangle)
-
             submesh_faces = np.column_stack(
-                [submesh_faces_list, np.full(len(submesh_faces_list), material_index, dtype=np.uint32)]
+                [triangles, np.full(triangles.shape[0], material_index, dtype=np.uint32)]
             )
             all_submesh_faces.append(submesh_faces)
 
@@ -1001,3 +1069,19 @@ class SplitSubmesh:
             vertex_count=0,
             face_vertex_indices=[],
         )
+
+
+def _from_flver_mp(
+    flver: FLVER,
+    submesh_material_indices: list[int],
+    material_uv_layer_names: list[list[str]],
+    merge_vertices: bool,
+) -> MergedMesh | None:
+    if not flver.submeshes:
+        _LOGGER.info(f"FLVER '{flver.path_name}' has no submeshes. No MergedMesh created.")
+        return None
+    try:
+        return MergedMesh.from_flver(flver, submesh_material_indices, material_uv_layer_names, merge_vertices)
+    except Exception as ex:
+        _LOGGER.error(f"Failed to load FLVER '{flver.path_name}' as MergedMesh: {ex}")
+        return None

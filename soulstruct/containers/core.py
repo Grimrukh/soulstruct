@@ -1264,6 +1264,9 @@ class Binder(BaseBinaryFile):
         """Shared code to match single/multiple entry names or paths."""
         if escape:
             pattern = re.escape(pattern)
+        if isinstance(pattern, re.Pattern) and flags:
+            _LOGGER.warning("Regex flags cannot be used when `pattern` is already compiled. Ignoring.")
+            flags = 0
         matches = [entry for entry in self.entries if re.match(pattern, getattr(entry, attr), flags=flags)]
         if return_multiple:
             return matches

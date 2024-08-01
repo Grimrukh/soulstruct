@@ -10,6 +10,7 @@ from soulstruct.darksouls1ptde.game_types.map_types import *
 from soulstruct.dcx import DCXType
 from soulstruct.base.maps.msb import MSB as _BaseMSB, MSBSupertype, MSBEntryList
 from soulstruct.base.maps.msb.utils import MSBSubtypeInfo
+from soulstruct.base.maps.msb.region_shapes import *
 from soulstruct.utilities.maths import Vector3
 from soulstruct.utilities.binary import *
 
@@ -53,12 +54,7 @@ MSB_ENTRY_SUBTYPES = {
         "NPCInvasion": MSBSubtypeInfo(MSBEventSubtype.NPCInvasion, MSBNPCInvasionEvent, "npc_invasions"),
     },
     MSBSupertype.REGIONS: {
-        "Point": MSBSubtypeInfo(MSBRegionSubtype.Point, MSBRegionPoint, "points"),
-        "Circle": MSBSubtypeInfo(MSBRegionSubtype.Circle, MSBRegionCircle, "circles"),
-        "Sphere": MSBSubtypeInfo(MSBRegionSubtype.Sphere, MSBRegionSphere, "spheres"),
-        "Cylinder": MSBSubtypeInfo(MSBRegionSubtype.Cylinder, MSBRegionCylinder, "cylinders"),
-        "Rect": MSBSubtypeInfo(MSBRegionSubtype.Rect, MSBRegionRect, "rects"),
-        "Box": MSBSubtypeInfo(MSBRegionSubtype.Box, MSBRegionBox, "boxes"),
+        # No subtype lists for regions.
     },
     MSBSupertype.PARTS: {
         "MapPiece": MSBSubtypeInfo(MSBPartSubtype.MapPiece, MSBMapPiece, "map_pieces"),
@@ -77,7 +73,7 @@ MSB_ENTRY_SUBTYPES = {
 }
 
 
-def empty_list(supertype_prefix: str, subtype_enum_name: str) -> tp.Callable[[], MSBEntryList]:
+def empty(supertype_prefix: str, subtype_enum_name: str) -> tp.Callable[[], MSBEntryList]:
     supertype = MSBSupertype(f"{supertype_prefix}_PARAM_ST")
     subtype_info = MSB_ENTRY_SUBTYPES[supertype][subtype_enum_name]
     return lambda: MSBEntryList(supertype=supertype, subtype_info=subtype_info)
@@ -105,10 +101,7 @@ class MSB(_BaseMSB):
         "messages": MessageEvent,
         "spawn_points": SpawnPointEvent,
         "navigation": NavigationEvent,
-        "points": RegionPoint,
-        "spheres": RegionSphere,
-        "cylinders": RegionCylinder,
-        "boxes": RegionBox,
+        "regions": Region,
     }
 
     # Callables with `map_base_id` to get prescribed DS1 entity ID range for each MSB entity type, as class kwargs.
@@ -141,43 +134,38 @@ class MSB(_BaseMSB):
 
     dcx_type: DCXType | None = field(default=DCXType.Null, kw_only=True)
 
-    map_piece_models: MSBEntryList[MSBMapPieceModel] = field(default_factory=empty_list("MODEL", "MapPieceModel"))
-    object_models: MSBEntryList[MSBObjectModel] = field(default_factory=empty_list("MODEL", "ObjectModel"))
-    character_models: MSBEntryList[MSBCharacterModel] = field(default_factory=empty_list("MODEL", "CharacterModel"))
-    player_models: MSBEntryList[MSBPlayerModel] = field(default_factory=empty_list("MODEL", "PlayerModel"))
-    collision_models: MSBEntryList[MSBCollisionModel] = field(default_factory=empty_list("MODEL", "CollisionModel"))
-    navmesh_models: MSBEntryList[MSBNavmeshModel] = field(default_factory=empty_list("MODEL", "NavmeshModel"))
+    map_piece_models: MSBEntryList[MSBMapPieceModel] = field(default_factory=empty("MODEL", "MapPieceModel"))
+    object_models: MSBEntryList[MSBObjectModel] = field(default_factory=empty("MODEL", "ObjectModel"))
+    character_models: MSBEntryList[MSBCharacterModel] = field(default_factory=empty("MODEL", "CharacterModel"))
+    player_models: MSBEntryList[MSBPlayerModel] = field(default_factory=empty("MODEL", "PlayerModel"))
+    collision_models: MSBEntryList[MSBCollisionModel] = field(default_factory=empty("MODEL", "CollisionModel"))
+    navmesh_models: MSBEntryList[MSBNavmeshModel] = field(default_factory=empty("MODEL", "NavmeshModel"))
 
-    lights: MSBEntryList[MSBLightEvent] = field(default_factory=empty_list("EVENT", "Light"))
-    sounds: MSBEntryList[MSBSoundEvent] = field(default_factory=empty_list("EVENT", "Sound"))
-    vfx: MSBEntryList[MSBVFXEvent] = field(default_factory=empty_list("EVENT", "VFX"))
-    wind: MSBEntryList[MSBWindEvent] = field(default_factory=empty_list("EVENT", "Wind"))
-    treasures: MSBEntryList[MSBTreasureEvent] = field(default_factory=empty_list("EVENT", "Treasure"))
-    spawners: MSBEntryList[MSBSpawnerEvent] = field(default_factory=empty_list("EVENT", "Spawner"))
-    messages: MSBEntryList[MSBMessageEvent] = field(default_factory=empty_list("EVENT", "Message"))
-    obj_acts: MSBEntryList[MSBObjActEvent] = field(default_factory=empty_list("EVENT", "ObjAct"))
-    spawn_points: MSBEntryList[MSBSpawnPointEvent] = field(default_factory=empty_list("EVENT", "SpawnPoint"))
-    map_offsets: MSBEntryList[MSBMapOffsetEvent] = field(default_factory=empty_list("EVENT", "MapOffset"))
-    navigation: MSBEntryList[MSBNavigationEvent] = field(default_factory=empty_list("EVENT", "Navigation"))
-    environments: MSBEntryList[MSBEnvironmentEvent] = field(default_factory=empty_list("EVENT", "Environment"))
-    npc_invasions: MSBEntryList[MSBNPCInvasionEvent] = field(default_factory=empty_list("EVENT", "NPCInvasion"))
+    lights: MSBEntryList[MSBLightEvent] = field(default_factory=empty("EVENT", "Light"))
+    sounds: MSBEntryList[MSBSoundEvent] = field(default_factory=empty("EVENT", "Sound"))
+    vfx: MSBEntryList[MSBVFXEvent] = field(default_factory=empty("EVENT", "VFX"))
+    wind: MSBEntryList[MSBWindEvent] = field(default_factory=empty("EVENT", "Wind"))
+    treasures: MSBEntryList[MSBTreasureEvent] = field(default_factory=empty("EVENT", "Treasure"))
+    spawners: MSBEntryList[MSBSpawnerEvent] = field(default_factory=empty("EVENT", "Spawner"))
+    messages: MSBEntryList[MSBMessageEvent] = field(default_factory=empty("EVENT", "Message"))
+    obj_acts: MSBEntryList[MSBObjActEvent] = field(default_factory=empty("EVENT", "ObjAct"))
+    spawn_points: MSBEntryList[MSBSpawnPointEvent] = field(default_factory=empty("EVENT", "SpawnPoint"))
+    map_offsets: MSBEntryList[MSBMapOffsetEvent] = field(default_factory=empty("EVENT", "MapOffset"))
+    navigation: MSBEntryList[MSBNavigationEvent] = field(default_factory=empty("EVENT", "Navigation"))
+    environments: MSBEntryList[MSBEnvironmentEvent] = field(default_factory=empty("EVENT", "Environment"))
+    npc_invasions: MSBEntryList[MSBNPCInvasionEvent] = field(default_factory=empty("EVENT", "NPCInvasion"))
 
-    points: MSBEntryList[MSBRegionPoint] = field(default_factory=empty_list("POINT", "Point"))
-    circles: MSBEntryList[MSBRegionCircle] = field(default_factory=empty_list("POINT", "Circle"))
-    spheres: MSBEntryList[MSBRegionSphere] = field(default_factory=empty_list("POINT", "Sphere"))
-    cylinders: MSBEntryList[MSBRegionCylinder] = field(default_factory=empty_list("POINT", "Cylinder"))
-    rects: MSBEntryList[MSBRegionRect] = field(default_factory=empty_list("POINT", "Rect"))
-    boxes: MSBEntryList[MSBRegionBox] = field(default_factory=empty_list("POINT", "Box"))
+    regions: MSBEntryList[MSBRegion] = field(default_factory=empty("POINT", "All"))
 
-    map_pieces: MSBEntryList[MSBMapPiece] = field(default_factory=empty_list("PARTS", "MapPiece"))
-    objects: MSBEntryList[MSBObject] = field(default_factory=empty_list("PARTS", "Object"))
-    characters: MSBEntryList[MSBCharacter] = field(default_factory=empty_list("PARTS", "Character"))
-    player_starts: MSBEntryList[MSBPlayerStart] = field(default_factory=empty_list("PARTS", "PlayerStart"))
-    collisions: MSBEntryList[MSBCollision] = field(default_factory=empty_list("PARTS", "Collision"))
-    navmeshes: MSBEntryList[MSBNavmesh] = field(default_factory=empty_list("PARTS", "Navmesh"))
-    unused_objects: MSBEntryList[MSBDummyObject] = field(default_factory=empty_list("PARTS", "DummyObject"))
-    unused_characters: MSBEntryList[MSBDummyCharacter] = field(default_factory=empty_list("PARTS", "DummyCharacter"))
-    connect_collisions: MSBEntryList[MSBConnectCollision] = field(default_factory=empty_list("PARTS", "ConnectCollision"))
+    map_pieces: MSBEntryList[MSBMapPiece] = field(default_factory=empty("PARTS", "MapPiece"))
+    objects: MSBEntryList[MSBObject] = field(default_factory=empty("PARTS", "Object"))
+    characters: MSBEntryList[MSBCharacter] = field(default_factory=empty("PARTS", "Character"))
+    player_starts: MSBEntryList[MSBPlayerStart] = field(default_factory=empty("PARTS", "PlayerStart"))
+    collisions: MSBEntryList[MSBCollision] = field(default_factory=empty("PARTS", "Collision"))
+    navmeshes: MSBEntryList[MSBNavmesh] = field(default_factory=empty("PARTS", "Navmesh"))
+    unused_objects: MSBEntryList[MSBDummyObject] = field(default_factory=empty("PARTS", "DummyObject"))
+    unused_characters: MSBEntryList[MSBDummyCharacter] = field(default_factory=empty("PARTS", "DummyCharacter"))
+    connect_collisions: MSBEntryList[MSBConnectCollision] = field(default_factory=empty("PARTS", "ConnectCollision"))
 
     def pack_supertype_name(self, writer: BinaryWriter, supertype_name: str):
         packed_name = supertype_name.encode(self.NAME_ENCODING)
@@ -316,10 +304,11 @@ class MSB(_BaseMSB):
         if "base_region_name" in light_event_kwargs:
             raise KeyError("`base_region_name` will be created and assigned automatically.")
         light = self.lights.new(**light_event_kwargs)
-        light.attached_region = self.points.new(
+        light.attached_region = self.regions.new(
             name=f"_LightEvent_{light.name}",
             translate=translate,
             rotate=rotate,
+            shape=MSBRegionPoint(),
         )
         return light
 
@@ -335,13 +324,15 @@ class MSB(_BaseMSB):
         if "attached_region" in sound_event_kwargs:
             raise KeyError("`attached_region` will be created and assigned automatically.")
         sound = self.sounds.new(**sound_event_kwargs)
-        sound.attached_region = self.boxes.new(
+        sound.attached_region = self.regions.new(
             name=f"_SoundEvent_{sound.name.lstrip('_')}",
             translate=translate,
             rotate=rotate,
-            width=width,
-            depth=depth,
-            height=height,
+            shape=MSBRegionBox(
+                width=width,
+                depth=depth,
+                height=height,
+            )
         )
         return sound
 
@@ -355,11 +346,13 @@ class MSB(_BaseMSB):
         if "attached_region" in sound_event_kwargs:
             raise KeyError("`attached_region` will be created and assigned automatically.")
         sound = self.sounds.new(**sound_event_kwargs)
-        sphere = self.spheres.new(
+        sphere = self.regions.new(
             name=f"_SoundEvent_{sound.name.lstrip('_')}",
             translate=translate,
             rotate=rotate,
-            radius=radius,
+            shape=MSBRegionSphere(
+                radius=radius,
+            ),
         )
         sound.attached_region = sphere
         return sound
@@ -381,11 +374,12 @@ class MSB(_BaseMSB):
             point_entity_id = point_entity_enum.value
         else:
             point_entity_id = -1
-        point = self.points.new(
+        point = self.regions.new(
             name=point_name,
             entity_id=point_entity_id,
             translate=translate,
             rotate=rotate,
+            shape=MSBRegionPoint(),
         )
         vfx.attached_region = point
         return vfx
@@ -399,10 +393,11 @@ class MSB(_BaseMSB):
         if "attached_region" in spawn_point_event_kwargs:
             raise KeyError("`attached_region` will be created and assigned automatically.")
         spawn_point = self.spawn_points.new(**spawn_point_event_kwargs)
-        point = self.points.new(
+        point = self.regions.new(
             name=f"_SpawnPointEvent_{spawn_point.name.lstrip('_')}",
             translate=translate,
             rotate=rotate,
+            shape=MSBRegionPoint(),
         )
         spawn_point.spawn_point_region = point
         return spawn_point
@@ -416,10 +411,11 @@ class MSB(_BaseMSB):
         if "attached_region" in message_event_kwargs:
             raise KeyError("`attached_region` will be created and assigned automatically.")
         message = self.messages.new(**message_event_kwargs)
-        point = self.points.new(
+        point = self.regions.new(
             name=f"_MessageEvent_{message.name.lstrip('_')}",
             translate=translate,
             rotate=rotate,
+            shape=MSBRegionPoint(),
         )
         message.attached_region = point
         return message

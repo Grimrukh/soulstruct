@@ -31,7 +31,7 @@ class MatDef(_PTDE_MatDef):
         """
         matdef = super(MatDef, cls).from_mtd(mtd)
 
-        if matdef.shader_category == cls.ShaderCategory.SNOW:
+        if matdef.shader_category == "Snow":
             # In DS1R, some snow shaders (those with "Snow Metal Mask" MTD param) have a THIRD normal texture. I believe
             # QLOC changed `g_Bumpmap_2` to use the first UV index in the shader so that the new `g_Bumpmap_3` could
             # use the second UV index) WITHOUT changing the sampler's UV index in the MTD. We update it here.
@@ -46,7 +46,7 @@ class MatDef(_PTDE_MatDef):
     def from_mtd_name(cls, mtd_name: str):
         mtd_stem = Path(mtd_name).stem
         matdef = super(MatDef, cls).from_mtd_name(mtd_name)
-        if matdef.shader_category == cls.ShaderCategory.SNOW and mtd_stem in cls.SNOW_METAL_MASK_STEMS:
+        if matdef.shader_category == "Snow" and mtd_stem in cls.SNOW_METAL_MASK_STEMS:
             matdef.add_sampler(alias="Main 2 Normal", uv_layer=cls.UVLayer.UVTexture1)
             if snow_secondary_normal := matdef.get_sampler_with_alias("Main 1 Normal"):
                 snow_secondary_normal.uv_layer = cls.UVLayer.UVTexture0

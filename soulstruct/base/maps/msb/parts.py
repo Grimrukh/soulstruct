@@ -14,6 +14,10 @@ from .enums import BaseMSBPartSubtype, MSBSupertype
 from .models import BaseMSBModel
 from .msb_entry import MSBEntry
 
+if tp.TYPE_CHECKING:
+    from soulstruct.utilities.misc import IDList
+
+
 _LOGGER = logging.getLogger("soulstruct")
 
 
@@ -40,7 +44,7 @@ class BaseMSBPart(MSBEntry, abc.ABC):
 
     # Game structures diverge too much for useful read/write base methods here.
 
-    def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
+    def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         """Defined by most subclasses."""
         self._consume_index(entry_lists, "MODEL_PARAM_ST", "model")
 

@@ -12,6 +12,9 @@ from soulstruct.utilities.text import pad_chars
 
 from .enums import MSBSupertype, MSBRouteSubtype
 
+if tp.TYPE_CHECKING:
+    from soulstruct.utilities.misc import IDList
+
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBRoute(MSBEntry):
@@ -20,7 +23,7 @@ class MSBRoute(MSBEntry):
     SUPERTYPE_ENUM: tp.ClassVar = MSBSupertype.ROUTES
 
     @dataclass(slots=True)
-    class SUPERTYPE_HEADER_STRUCT(BinaryStruct):
+    class HEADER_STRUCT(BinaryStruct):
         name_offset: long
         route_unkh_08: int
         route_unkh_0c: int
@@ -30,19 +33,6 @@ class MSBRoute(MSBEntry):
 
     route_unkh_08: int = 0
     route_unkh_0c: int = 0
-
-    @classmethod
-    def from_msb_reader(cls, reader: BinaryReader) -> tp.Self:
-        """Regions do not have 'supertype data'. Just a header (with some supertype data) and optional subtype data."""
-        entry_offset = reader.position
-        kwargs = cls.unpack_header(reader, entry_offset)
-
-        # No supertype or subtype data.
-
-        cls.SETATTR_CHECKS_DISABLED = True
-        msb_route = cls(**kwargs)
-        cls.SETATTR_CHECKS_DISABLED = False
-        return msb_route
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -75,7 +65,7 @@ class MSBOtherRoute(MSBRoute):
 
     @classmethod
     def unpack_header(cls, reader: BinaryReader, entry_offset: int) -> dict[str, tp.Any]:
-        header = cls.SUPERTYPE_HEADER_STRUCT.from_bytes(reader)
+        header = cls.HEADER_STRUCT.from_bytes(reader)
         header_subtype_int = header.pop("_subtype_int")
         if header_subtype_int != cls.SUBTYPE_ENUM.value:
             raise ValueError(f"Unexpected MSB event subtype index for `{cls.__name__}`: {header_subtype_int}")
@@ -89,10 +79,10 @@ class MSBOtherRoute(MSBRoute):
         entry_offset: int,
         supertype_index: int,
         subtype_index: int,
-        entry_lists: [dict[str, list[MSBEntry]]],
+        entry_lists: [dict[str, IDList[MSBEntry]]],
     ):
         header_offset = writer.position
-        self.SUPERTYPE_HEADER_STRUCT.object_to_writer(
+        self.HEADER_STRUCT.object_to_writer(
             self,
             writer,
             name_offset=RESERVED,

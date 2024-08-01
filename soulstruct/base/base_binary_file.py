@@ -1,11 +1,16 @@
 from __future__ import annotations
 
-__all__ = ["BaseBinaryFile", "BASE_BINARY_FILE_T", "BaseJSONEncoder"]
+__all__ = [
+    "BaseBinaryFile",
+    "BASE_BINARY_FILE_T",
+    "BaseJSONEncoder",
+]
 
 import abc
 import copy
 import json
 import logging
+import multiprocessing
 import re
 import typing as tp
 from dataclasses import dataclass, asdict, field, fields
@@ -71,6 +76,21 @@ class BaseBinaryFile:
             return compress(packed, dcx_type)
         return packed
 
+    def to_bytes(self) -> bytes:
+        """More explicit version of `__bytes__`."""
+        return bytes(self)
+
+    @classmethod
+    def to_bytes_batch(cls, files: list[BASE_BINARY_FILE_T], processes: int = None) -> list[bytes | None]:
+        """Use multiprocessing to pack all `BaseBinaryFile`s in parallel.
+
+        Failed conversions will put `None` into list rather than `bytes`.
+        """
+        mp_args = [(file,) for file in files]
+        with multiprocessing.Pool(processes=processes) as pool:
+            file_data = pool.starmap(_to_bytes_mp, mp_args)  # blocks here until all done
+        return file_data
+
     @classmethod
     def from_path(cls, path: str | Path) -> tp.Self:
         path = Path(path)
@@ -85,6 +105,20 @@ class BaseBinaryFile:
         else:
             binary_file.path = path
         return binary_file
+
+    @classmethod
+    def from_path_batch(cls, paths: list[Path | str], processes: int = None) -> list[BASE_BINARY_FILE_T | None]:
+        """Use multiprocessing to read `BaseBinaryFile` of given subtype from each path in `paths` in parallel.
+
+        Failed conversions will put `None` into list rather than a `BaseBinaryFile` instance.
+        """
+
+        mp_args = [(cls, Path(path)) for path in paths]
+
+        with multiprocessing.Pool(processes=processes) as pool:
+            files = pool.starmap(_from_path_mp, mp_args)  # blocks here until all done
+
+        return files
 
     @classmethod
     def from_bytes(cls, data: bytes | bytearray | tp.BinaryIO | BinaryReader | BinderEntry) -> tp.Self:
@@ -109,6 +143,17 @@ class BaseBinaryFile:
         finally:
             reader.close()
         return binary_file
+
+    @classmethod
+    def from_bytes_batch(cls, data_list: list[bytes], processes: int = None) -> list[BASE_BINARY_FILE_T | None]:
+        """Use multiprocessing to read `BaseBinaryFile` of given subtype from each `bytes` in `datas` in parallel.
+
+        Failed conversions will put `None` into list rather than a `BaseBinaryFile` instance.
+        """
+        mp_args = [(cls, data) for data in data_list]
+        with multiprocessing.Pool(processes=processes) as pool:
+            files = pool.starmap(_from_bytes_mp, mp_args)  # blocks here until all done
+        return files
 
     @classmethod
     def from_binder_entry(cls, binder_entry: BinderEntry) -> tp.Self:
@@ -326,3 +371,30 @@ class BaseJSONEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, DCXType):
             return o.name
+
+
+def _from_path_mp(file_type: type[BASE_BINARY_FILE_T], path: Path) -> BASE_BINARY_FILE_T | None:
+    """Function for batch operator."""
+    try:
+        return file_type.from_path(path)
+    except Exception as ex:
+        _LOGGER.error(f"Failed to load `{file_type.__name__}` instance from path '{path}'. Error: {str(ex)}")
+        return None
+
+
+def _from_bytes_mp(file_type: type[BASE_BINARY_FILE_T], data: bytes) -> BASE_BINARY_FILE_T | None:
+    """Function for batch operator."""
+    try:
+        return file_type.from_bytes(data)
+    except Exception as ex:
+        _LOGGER.error(f"Failed to load `{file_type.__name__}` instance from data. Error: {str(ex)}")
+        return None
+
+
+def _to_bytes_mp(file: BASE_BINARY_FILE_T) -> bytes | None:
+    """Function for batch operator."""
+    try:
+        return bytes(file)
+    except Exception as ex:
+        _LOGGER.error(f"Failed to pack `{file.cls_name}` instance with path name '{file.path_name}'. Error: {str(ex)}")
+        return None

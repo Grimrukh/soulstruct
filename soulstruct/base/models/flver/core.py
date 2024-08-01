@@ -10,8 +10,9 @@ from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.containers import Binder, TPF
-from soulstruct.utilities.maths import Vector3, Vector4, Matrix3, SINGLE_MIN, SINGLE_MAX
 from soulstruct.utilities.binary import *
+from soulstruct.utilities.maths import Vector3, Vector4, Matrix3, SINGLE_MIN, SINGLE_MAX
+from soulstruct.utilities.misc import IDList
 
 from .bone import FLVERBone
 from .dummy import Dummy
@@ -101,7 +102,7 @@ class FLVER(GameFile):
     unk_x68: int = 0
 
     dummies: list[Dummy] = field(default_factory=list)
-    bones: list[FLVERBone] = field(default_factory=list)
+    bones: IDList[FLVERBone] = field(default_factory=IDList)
     submeshes: list[Submesh] = field(default_factory=list)
 
     # NOTE: `Material` instances are assigned to their submeshes and are not stored separately in the FLVER.
@@ -133,17 +134,12 @@ class FLVER(GameFile):
             for _ in range(header.material_count)
         ]
 
-        bones = []
-        bone_indices = []
+        bones = IDList()  # type: IDList[FLVERBone]
         for _ in range(header.bone_count):
-            bone, indices = FLVERBone.from_flver_reader(reader, encoding=encoding)
+            bone = FLVERBone.from_flver_reader(reader, encoding=encoding)
             bones.append(bone)
-            bone_indices.append(indices)
-        for bone, indices in zip(bones, bone_indices):
-            bone.parent_bone = bones[indices[0]] if indices[0] >= 0 else None
-            bone.child_bone = bones[indices[1]] if indices[1] >= 0 else None
-            bone.next_sibling_bone = bones[indices[2]] if indices[2] >= 0 else None
-            bone.previous_sibling_bone = bones[indices[3]] if indices[3] >= 0 else None
+        for bone in bones:
+            bone.set_bones(bones)
 
         submeshes = [
             Submesh.from_flver_reader(
@@ -358,6 +354,7 @@ class FLVER(GameFile):
 
         # Pack bones.
         for bone in self.bones:
+            bone.set_bone_indices(self.bones)
             bone.to_flver_writer(writer, self.bones)
 
         # Pack submesh headers.
@@ -537,6 +534,17 @@ class FLVER(GameFile):
             ")"
         )
 
+    def __setstate__(self, state: tuple[None, dict[str, tp.Any]]):
+        """Dereference bone connections after restoring state."""
+        _, slot_dict = state
+        for field_name, field_value in slot_dict.items():
+            setattr(self, field_name, field_value)
+        for bone in self.bones:
+            bone.set_bones(self.bones)
+
+    def __repr__(self) -> str:
+        return f"FLVER({len(self.submeshes)} submeshes, {len(self.bones)} bones, {len(self.dummies)} dummies)"
+
     def draw(self, auto_show=False, show_mesh_face_sets=(), show_origin=False, axes=None, **kwargs):
         import matplotlib.pyplot as plt
         if show_mesh_face_sets == "all":
@@ -570,11 +578,11 @@ class FLVER(GameFile):
             dummy.translate *= scale_factor
         for bone in self.bones:
             bone.translate *= scale_factor
+        if isinstance(scale_factor, (int, float)):
+            scale_factor = Vector3((scale_factor, scale_factor, scale_factor))
         for submesh in self.submeshes:
             for vertex_array in submesh.vertex_arrays:
                 # Scale all three position columns.
-                if isinstance(scale_factor, (int, float)):
-                    scale_factor = scale_factor * Vector3.one()
                 position = vertex_array["position"]
                 # TODO: Should be able to broadcast this in one line.
                 position[0] *= scale_factor.x
@@ -905,7 +913,10 @@ class FLVER(GameFile):
 
         if not default_bone_name:
             if self.path:
-                default_bone_name = self.path.name.split(".")[0][:7]  # drops 'AXX' suffix
+                # NOTE: Map Piece default bone names are sometimes FLVER model stems (with 'AXX' suffix, etc.) and
+                # sometimes the reduced model name that appears in MSB Map Piece models (without suffix/map). We use
+                # the full model name here, since this is going in the model file.
+                default_bone_name = self.path_minimal_stem
             else:
                 default_bone_name = "FLVER"
                 _LOGGER.warning(f"Could not get default bone name from FLVER path. Using bone name 'FLVER'.")
@@ -916,7 +927,7 @@ class FLVER(GameFile):
                 and self.bones[0].rotate == Vector3.zero()
                 and self.bones[0].scale == Vector3.one()
             ):
-                print(f"FLVER {self.path.name} is already deboned.")
+                print(f"FLVER {self.path.name} is already deboned (only has one bone at the origin).")
                 return
 
         bone_transforms = {}
@@ -958,7 +969,8 @@ class FLVER(GameFile):
                 submesh.bone_indices = np.array([0])
 
         # All bones baked into all submeshes. Remove all but the default bone (0).
-        self.bones = [FLVERBone(name=default_bone_name)]
+        self.bones.clear()
+        self.bones.append(FLVERBone(name=default_bone_name))
 
         if refresh_bone_bounding_boxes:
             self.refresh_bone_bounding_boxes(in_local_space=False)

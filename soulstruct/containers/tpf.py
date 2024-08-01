@@ -8,6 +8,7 @@ __all__ = [
     "TextureHeader",
     "TextureFloatStruct",
     "batch_get_tpf_texture_png_data",
+    "batch_get_tpf_texture_tga_data",
 ]
 
 import abc
@@ -87,7 +88,7 @@ class TPFTextureStruct(BinaryStruct, abc.ABC):
 @dataclass(slots=True)
 class TPFTexture:
 
-    name: str = ""  # no file extension (just stem)
+    name: str = ""  # no file extension (i.e. actually just stem)
     format: int = 1
     texture_type: TextureType = TextureType.Texture
     mipmap_count: int = 0
@@ -235,6 +236,15 @@ class TPFTexture:
         dds_header = DDSHeader.from_bytes(self.data)  # only need the header
         return dds_header.pixelformat.fourcc
 
+    def get_headerized_data(self, platform: TPFPlatform) -> bytes:
+        """Attempt to convert headerless DDS texture to TPFTexture with header. TPF platform is required to detect the
+        console source of the headerless data."""
+        if self.data[:4] == b"DDS ":
+            return self.data  # has header
+        if not self.header:
+            raise TexconvError("Cannot convert headerless DDS texture to TGA without a `TPFTexture` header.")
+        return bytes(self.get_headerized_dds(platform))
+
     def write_dds(self, dds_path: str | Path):
         Path(dds_path).write_bytes(self.data)
 
@@ -270,14 +280,7 @@ class TPFTexture:
     def get_png_data(self, fmt="rgba", platform=TPFPlatform.PC) -> bytes:
         with tempfile.TemporaryDirectory() as png_dir:
             temp_dds_path = Path(png_dir, "temp.dds")
-
-            if not self.data[:4] == b"DDS ":
-                if not self.header:
-                    raise TexconvError("Cannot convert headerless DDS texture to PNG without a `TPFTexture` header.")
-                dds_data = bytes(self.get_headerized_dds(platform))
-            else:
-                dds_data = self.data  # already has header
-
+            dds_data = self.get_headerized_data(platform)
             temp_dds_path.write_bytes(dds_data)
             Path("~/Documents/temp.dds").expanduser().write_bytes(dds_data)
             texconv_result = texconv("-o", png_dir, "-ft", "png", "-f", fmt, "-nologo", temp_dds_path)
@@ -290,6 +293,29 @@ class TPFTexture:
     def export_png(self, png_path: str | Path, fmt="rgba", platform=TPFPlatform.PC):
         png_data = self.get_png_data(fmt, platform)
         png_path.write_bytes(png_data)
+
+    def get_tga_data(self, platform=TPFPlatform.PC) -> bytes:
+        """Convert DDS to TGA.
+
+        NOTE: `texconv` has these TGA options, but I'm not using them at the moment:
+            -tga20
+            -tgazeroalpha
+        """
+        with tempfile.TemporaryDirectory() as tga_dir:
+            temp_dds_path = Path(tga_dir, "temp.dds")
+            dds_data = self.get_headerized_data(platform)
+            temp_dds_path.write_bytes(dds_data)
+            Path("~/Documents/temp.dds").expanduser().write_bytes(dds_data)
+            texconv_result = texconv("-o", tga_dir, "-ft", "tga", "-f", "RGBA", "-nologo", temp_dds_path)
+            try:
+                return Path(tga_dir, "temp.tga").read_bytes()
+            except FileNotFoundError:
+                stdout = texconv_result.stdout.decode()
+                raise TexconvError(f"Could not convert texture DDS to TGA:\n    {stdout}")
+
+    def export_tga(self, tga_path: str | Path, platform=TPFPlatform.PC):
+        tga_data = self.get_tga_data(platform)
+        tga_path.write_bytes(tga_data)
 
     def convert_dds_format(self, output_format: str, assert_input_format: str = None) -> bool:
         """Convert `data` DDS format in place. Returns `True` if conversion succeeds."""
@@ -759,7 +785,8 @@ class TPF(GameFile):
         return textures
 
 
-def get_png_data(tex: TPFTexture, fmt: str):
+def _get_png_data(tex: TPFTexture, fmt: str):
+    """Function for batch operator."""
     try:
         return tex.get_png_data(fmt=fmt)
     except (TexconvError, DDSDeswizzlerError) as ex:
@@ -770,11 +797,39 @@ def get_png_data(tex: TPFTexture, fmt: str):
 def batch_get_tpf_texture_png_data(
     tpf_textures: list[TPFTexture], fmt="rgba", processes: int = None
 ) -> list[bytes | None]:
-    """Use multiprocessing to retrieve PNG data (converted from DDS) for a collection of `TPFTexture`s."""
+    """Use multiprocessing to retrieve PNG data (converted from DDS) for a collection of `TPFTexture`s.
+
+    Failed conversions will put `None` into list rather than PNG bytes.
+    """
 
     mp_args = [(tpf_texture, fmt) for tpf_texture in tpf_textures]
 
     with multiprocessing.Pool(processes=processes) as pool:
-        png_data = pool.starmap(get_png_data, mp_args)  # blocks here until all done
+        png_data = pool.starmap(_get_png_data, mp_args)  # blocks here until all done
 
     return png_data
+
+
+def _get_tga_data(tex: TPFTexture):
+    """Function for batch operator."""
+    try:
+        return tex.get_tga_data()
+    except (TexconvError, DDSDeswizzlerError) as ex:
+        _LOGGER.error(f"Failed to get TPF texture as TGA: {str(ex)}")
+        return None
+
+
+def batch_get_tpf_texture_tga_data(
+    tpf_textures: list[TPFTexture], processes: int = None
+) -> list[bytes | None]:
+    """Use multiprocessing to retrieve TGA data (converted from DDS) for a collection of `TPFTexture`s.
+
+    Failed conversions will put `None` into list rather than TGA bytes.
+    """
+
+    mp_args = [(tpf_texture,) for tpf_texture in tpf_textures]
+
+    with multiprocessing.Pool(processes=processes) as pool:
+        tga_data = pool.starmap(_get_tga_data, mp_args)  # blocks here until all done
+
+    return tga_data

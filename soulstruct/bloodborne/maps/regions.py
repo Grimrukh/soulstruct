@@ -1,122 +1,117 @@
+from __future__ import annotations
+
 __all__ = [
     "MSBRegion",
-    "MSBRegionPoint",
-    "MSBRegionCircle",
-    "MSBRegionSphere",
-    "MSBRegionCylinder",
-    "MSBRegionRect",
-    "MSBRegionBox",
 ]
 
-import abc
+import logging
 import typing as tp
 from dataclasses import dataclass, field
 
+from soulstruct.base.maps.msb.msb_entry import *
 from soulstruct.base.maps.msb.regions import *
+from soulstruct.base.maps.msb.region_shapes import MSBRegionShape
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3
-
 from .enums import MSBRegionSubtype
+
+if tp.TYPE_CHECKING:
+    from soulstruct.utilities.misc import IDList
+    from soulstruct.base.maps.msb import MSBEntry
+
+_LOGGER = logging.getLogger("soulstruct")
 
 
 @dataclass(slots=True)
-class RegionHeader(BinaryStruct):
+class RegionHeaderStruct(MSBHeaderStruct):
     name_offset: long
     _pad1: bytes = field(init=False, **BinaryPad(4))
-    _supertype_index: int
+    supertype_index: int
     _subtype_int: int
     translate: Vector3
     rotate: Vector3  # Euler angles in radians
-    _pad2: bytes = field(init=False, **BinaryPad(4))
-    unknown_offset_1: long
-    unknown_offset_2: long
-    subtype_data_offset: long
-    entity_id_offset: long
+    null_struct_0_offset: long
+    null_struct_1_offset: long
+    shape_data_offset: long
+    supertype_data_offset: long  # just `entity_id` in DS1
+    # Not even an empty subtype offset in Bloodborne.
+
+    @classmethod
+    def reader_to_entry_kwargs(
+        cls,
+        reader: BinaryReader,
+        entry_type: type[MSBRegion],
+        entry_offset: int,
+    ) -> dict[str, tp.Any]:
+        kwargs = super(RegionHeaderStruct, cls).reader_to_entry_kwargs(reader, entry_type, entry_offset)
+
+        for i in (0, 1):
+            # Check that null structs are 4 null bytes.
+            null_struct_offset = kwargs.pop(f"null_struct_{i}_offset")
+            reader.seek(null_struct_offset)
+            zero = reader.read(2)
+            if zero.strip(b"\0"):
+                _LOGGER.warning(f"Null data entry in `{cls.__name__}` was not zero: {zero}.")
+
+        # Read shape struct.
+        shape_type_int = kwargs.pop("shape_type_int")
+        try:
+            shape_class = entry_type.SHAPE_TYPES[shape_type_int]  # type: type[MSBRegionShape]
+        except KeyError:
+            if shape_type_int == 6:
+                raise ValueError("Composite Region shape type (6) is not supported in older games.")
+            raise ValueError(f"Invalid MSB region shape type value: {shape_type_int}")
+        reader.seek(entry_offset + kwargs.pop("shape_data_offset"))
+        kwargs["shape"] = shape_class.from_msb_reader(reader)
+
+        return kwargs
+
+    @classmethod
+    def preprocess_write_kwargs(
+        cls,
+        entry: MSBRegion,
+        entry_lists: dict[str, IDList[MSBEntry]],
+        kwargs: dict[str, tp.Any],
+    ) -> None:
+        super(RegionHeaderStruct, cls).preprocess_write_kwargs(entry, entry_lists, kwargs)
+        kwargs["shape_type_int"] = entry.shape_type_int
+        kwargs["null_struct_0_offset"] = RESERVED
+        kwargs["null_struct_1_offset"] = RESERVED
+        kwargs.pop("subtype_index")  # not used by regions
+
+    @classmethod
+    def post_write(
+        cls,
+        writer: BinaryWriter,
+        entry: MSBRegion,
+        entry_offset: int,
+        entry_lists: dict[str, IDList[MSBEntry]],
+    ):
+        super(RegionHeaderStruct, cls).post_write(writer, entry, entry_offset, entry_lists)
+        writer.fill("null_struct_0_offset", writer.position - entry_offset, obj=entry)
+        writer.pad(4)
+        writer.fill("null_struct_1_offset", writer.position - entry_offset, obj=entry)
+        writer.pad(4)
+
+        shape_offset = writer.position - entry_offset
+        writer.fill("shape_data_offset", shape_offset, obj=entry)
+        entry.shape.to_msb_writer(writer)
+
+
+@dataclass(slots=True)
+class RegionSupertypeData(MSBBinaryStruct):
+    entity_id: int
 
 
 @dataclass(slots=True, eq=False, repr=False)
-class MSBRegion(BaseMSBRegion, abc.ABC):
+class MSBRegion(BaseMSBRegion):
+    """Only DS1 region subtype -- not abstract."""
 
-    SUPERTYPE_HEADER_STRUCT: tp.ClassVar[type[BinaryStruct]] = RegionHeader
-    NAME_ENCODING: tp.ClassVar[str] = "utf-16-le"
-    UNKNOWN_DATA_SIZE: tp.ClassVar[int] = 2
-
-
-@dataclass(slots=True, eq=False, repr=False)
-class MSBRegionPoint(MSBRegion):
-    """No shape attributes. Note that the rotate attribute is still meaningful for many uses (e.g. what way the player
-    will be facing when they spawn at or teleport to this point)."""
-
-    SUBTYPE_ENUM = MSBRegionSubtype.Point
-
-    SUBTYPE_DATA_STRUCT: tp.ClassVar = None
-
-
-@dataclass(slots=True, eq=False, repr=False)
-class MSBRegionCircle(MSBRegion):
-    """Almost never used (no volume)."""
-
-    SUBTYPE_ENUM = MSBRegionSubtype.Circle
-
-    @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(BinaryStruct):
-        radius: float
-
-    radius: float = 1.0
-
-
-@dataclass(slots=True, eq=False, repr=False)
-class MSBRegionSphere(MSBRegion):
-
-    SUBTYPE_ENUM = MSBRegionSubtype.Sphere
-
-    @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(BinaryStruct):
-        radius: float
-
-    radius: float = 1.0
-
-
-@dataclass(slots=True, eq=False, repr=False)
-class MSBRegionCylinder(MSBRegion):
-
-    SUBTYPE_ENUM = MSBRegionSubtype.Cylinder
-
-    @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(BinaryStruct):
-        radius: float
-        height: float
-
-    radius: float = 1.0
-    height: float = 1.0
-
-
-@dataclass(slots=True, eq=False, repr=False)
-class MSBRegionRect(MSBRegion):
-    """Almost never used (no volume)."""
-
-    SUBTYPE_ENUM = MSBRegionSubtype.Rect
-
-    @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(BinaryStruct):
-        width: float
-        height: float
-
-    width: float = 1.0
-    height: float = 1.0
-
-
-@dataclass(slots=True, eq=False, repr=False)
-class MSBRegionBox(MSBRegion):
-
-    SUBTYPE_ENUM = MSBRegionSubtype.Box
-
-    @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(BinaryStruct):
-        width: float
-        depth: float
-        height: float
-
-    width: float = 1.0
-    depth: float = 1.0
-    height: float = 1.0
+    HEADER_STRUCT = RegionHeaderStruct
+    NAME_ENCODING = "utf-16-le"
+    SUBTYPE_ENUM = MSBRegionSubtype.All
+    STRUCTS = {
+        # Shape data goes here (manual).
+        "supertype_data": RegionSupertypeData,
+        # No subtype data in BB.
+    }

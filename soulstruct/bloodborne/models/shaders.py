@@ -12,23 +12,12 @@ from enum import IntEnum
 
 from soulstruct.base.models.shaders import MatDef as _BaseMatDef
 from soulstruct.base.models.flver.vertex_array import *
-from soulstruct.utilities.future import StrEnum
 
 _LOGGER = logging.getLogger("soulstruct")
 
 
 @dataclass(slots=True)
 class MatDef(_BaseMatDef):
-
-    class ShaderCategory(StrEnum):
-        """Categories of MTD shaders. TODO: Copied from DS1 currently. Change prefix to SPRJ?"""
-        PHN = "FRPG_Phn"
-        SFX = "FRPG_Sfx"
-        NORMAL_TO_ALPHA = "FRPG_NormalToAlpha"  # used by mist, light shafts, and special 'M_Tree[D]_Edge.mtd'
-        WATER = "FRPG_Water"
-        SNOW = "FRPG_Snow"  # has 'g_SnowColor', 'g_SnowHeight', and other 'g_Snow*' params
-        FOLIAGE = "FRPG_Foliage"  # has 'g_Wind*' params and two extra UV slots for wind animation control
-        IVY = "FRPG_Ivy"  # has 'g_Wind*' params and two extra UV slots for wind animation control
 
     class UVLayer(IntEnum):
         # TODO: Same as DS1?
@@ -55,14 +44,6 @@ class MatDef(_BaseMatDef):
 
     SAMPLER_GAME_NAMES: tp.ClassVar[dict[str, str]] = {v: k for k, v in SAMPLER_ALIASES.items()}
 
-    @property
-    def is_water(self):
-        return self.shader_category == self.ShaderCategory.WATER
-
-    @property
-    def is_snow(self):
-        return self.shader_category == self.ShaderCategory.SNOW
-
     # Class regex patterns for MTD name parsing.
     NAME_BOOL_RE: tp.ClassVar[str, re.Pattern] = {
         "albedo": re.compile(r".*\[.*A.*\].*"),
@@ -83,6 +64,11 @@ class MatDef(_BaseMatDef):
     KNOWN_SHADER_STEMS: tp.ClassVar[dict[str, list[str | re.Pattern]]] = {
         # TODO
     }
+
+    @classmethod
+    def get_shader_category(cls, shader_stem: str) -> str:
+        """99% of Bloodborne shaders start with 'GXFlver'."""
+        return shader_stem.removeprefix("GXFlver_").split("_")[0]
 
     def get_map_piece_layout(self) -> VertexArrayLayout:
         """Get a standard BB map piece layout with the given number of UV layers.

@@ -54,12 +54,7 @@ class MSBEventSubtype(BaseMSBEventSubtype):
 
 
 class MSBRegionSubtype(BaseMSBRegionSubtype):
-    Point = 0
-    Circle = 1
-    Sphere = 2
-    Cylinder = 3
-    Rect = 4
-    Box = 5
+    All = 0
 
     @classmethod
     def get_plural_supertype_name(cls):

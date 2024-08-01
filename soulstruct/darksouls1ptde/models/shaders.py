@@ -12,7 +12,6 @@ from enum import IntEnum
 
 from soulstruct.base.models.shaders import MatDef as _BaseMatDef
 from soulstruct.base.models.flver.vertex_array import *
-from soulstruct.utilities.future import StrEnum
 
 _LOGGER = logging.getLogger("soulstruct")
 
@@ -20,22 +19,14 @@ _LOGGER = logging.getLogger("soulstruct")
 @dataclass(slots=True)
 class MatDef(_BaseMatDef):
 
-    class ShaderCategory(StrEnum):
-        """Categories of DS1 MTD shaders."""
-        PHN = "FRPG_Phn"
-        SFX = "FRPG_Sfx"
-        NORMAL_TO_ALPHA = "FRPG_NormalToAlpha"  # used by mist, light shafts, and special 'M_Tree[D]_Edge.mtd'
-        WATER = "FRPG_Water"  # any wet surface with normals only and splash effects
-        SNOW = "FRPG_Snow"  # has 'g_SnowColor', 'g_SnowHeight', and other 'g_Snow*' params (also used for tar/swamp)
-        FOLIAGE = "FRPG_Foliage"  # has 'g_Wind*' params and two extra UV slots for wind animation control
-        IVY = "FRPG_Ivy"  # has 'g_Wind*' params and two extra UV slots for wind animation control
-
     class UVLayer(IntEnum):
+        """Up to four of these are used by each shader in DS1, in the order they appear here."""
         UVTexture0 = 0
         UVTexture1 = 1
         UVLightmap = 2
-        UVWindData0 = 3
-        UVWindData1 = 4
+        UVWindDataIvy = 3  # used by Ivy (only two unique values)
+        UVWindDataMain = 4  # used by both Foliage and Ivy
+        UVWindDataEmpty = 5  # used by both Foliage and Ivy, always seems to be zeroed
 
     SAMPLER_ALIASES: tp.ClassVar[dict[str, str]] = {
         "g_Diffuse": "Main 0 Albedo",
@@ -50,14 +41,6 @@ class MatDef(_BaseMatDef):
     }
 
     SAMPLER_GAME_NAMES: tp.ClassVar[dict[str, str]] = {v: k for k, v in SAMPLER_ALIASES.items()}
-
-    @property
-    def is_water(self):
-        return self.shader_category == self.ShaderCategory.WATER
-
-    @property
-    def is_snow(self):
-        return self.shader_category == self.ShaderCategory.SNOW
 
     # Class regex patterns for MTD name parsing.
     NAME_TAG_RE: tp.ClassVar[str, re.Pattern] = {
@@ -79,12 +62,12 @@ class MatDef(_BaseMatDef):
     }
 
     EXTRA_SHADER_UV_LAYERS: tp.ClassVar[dict[str, list[UVLayer]]] = {
-        ShaderCategory.FOLIAGE: [UVLayer.UVWindData0, UVLayer.UVWindData1],
-        ShaderCategory.IVY: [UVLayer.UVWindData0, UVLayer.UVWindData1],
+        "Foliage": [UVLayer.UVWindDataMain, UVLayer.UVWindDataEmpty],
+        "Ivy": [UVLayer.UVWindDataIvy, UVLayer.UVWindDataMain, UVLayer.UVWindDataEmpty],
     }
 
     KNOWN_SHADER_MTD_STEMS: tp.ClassVar[dict[str, list[str | re.Pattern]]] = {
-        ShaderCategory.WATER: [
+        "Water": [
             "M_5Water[B]",  # FRPG_Water_Reflect
             "A10_00_Water_drainage",  # FRPG_Water_Reflect
             "A10_01_Water[B]",  # FRPG_Water_Reflect
@@ -101,7 +84,7 @@ class MatDef(_BaseMatDef):
             "A12_NewWater",  # FRPG_Water_Reflect
             "A12_Water_boss",  # FRPG_Water_Reflect
         ],
-        ShaderCategory.SNOW: [
+        "Snow": [
             "M_8Snow",  # FRPG_Snow
             "A10_slime[D][L]",  # FRPG_Snow_Lit
             "A11_Snow",  # FRPG_Snow
@@ -115,13 +98,13 @@ class MatDef(_BaseMatDef):
             "A19_Snow",  # FRPG_Snow
             "A19_Snow[L]",  # FRPG_Snow_Lit
         ],
-        ShaderCategory.FOLIAGE: [
+        "Foliage": [
             re.compile(r"^M_2Foliage.*"),
         ],
-        ShaderCategory.IVY: [
+        "Ivy": [
             re.compile(r"^M_3Ivy.*"),
         ],
-        ShaderCategory.NORMAL_TO_ALPHA: [
+        "NormalToAlpha": [
             "M_Tree[D]_Edge",
         ],
     }
@@ -144,7 +127,10 @@ class MatDef(_BaseMatDef):
     # TODO: Some shaders simply don't use the always-empty 'g_DetailBumpmap', but I can find no reliable way to detect
     #  this from their MTD names alone. I may have to guess that they do unless the MTD file is provided.
 
-    shader_category: ShaderCategory | None = ShaderCategory.PHN
+    @classmethod
+    def get_shader_category(cls, shader_stem: str) -> str:
+        """Parse stem as 'FRPG_{category}_*' and return the category."""
+        return shader_stem.removeprefix("FRPG_").split("_")[0]
 
     @classmethod
     def from_mtd_name(cls, mtd_name: str):

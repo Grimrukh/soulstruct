@@ -1,6 +1,14 @@
 from __future__ import annotations
 
-__all__ = ["MSBEntry", "MSBEntryReference", "MSBFieldDisplayInfo"]
+__all__ = [
+    "MSBEntry",
+    "MSBEntryReference",
+    "EntryRef",
+    "MSBBinaryStruct",
+    "MSBHeaderStruct",
+    "MSBFieldDisplayInfo",
+    "IDList",  # for convenience
+]
 
 import abc
 import copy
@@ -14,6 +22,7 @@ from types import MappingProxyType, ModuleType
 
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import BaseVector, Vector2, Vector3, Vector4
+from soulstruct.utilities.misc import IDList
 from soulstruct.utilities.text import pad_chars
 
 from .enums import BaseMSBSubtype, MSBSupertype
@@ -60,6 +69,124 @@ class MSBEntryReference(tp.NamedTuple):
     array_index: int | None = None
 
 
+def EntryRef(list_name: str, field_name="", array_size: int = None) -> dict[str, tp.Any]:
+    """Dataclass field metadata generator indicating a reference that should be resolved with `MSBEntry.try_index`.
+
+    If `field_name` is empty, it will be detected by just removing '_index' suffix from the field name.
+    """
+    metadata = BinaryArray(array_size) if array_size is not None else {"metadata": {}}
+    metadata["metadata"]["msf_ref"] = (list_name, field_name)
+    return metadata
+
+
+@dataclass(slots=True)
+class MSBBinaryStruct(BinaryStruct, abc.ABC):
+    """Allows more `MSBEntry` arguments for unpacking/packing."""
+
+    @classmethod
+    def reader_to_entry_kwargs(
+        cls,
+        reader: BinaryReader,
+        entry_type: type[MSBEntry],
+        entry_offset: int,
+    ) -> dict[str, tp.Any]:
+        """Default assumes 1:1 field name mapping."""
+        return cls.from_bytes(reader).to_dict(ignore_underscore_prefix=False)
+
+    @classmethod
+    def kwargs_to_msb_writer(
+        cls,
+        entry: MSBEntry,
+        writer: BinaryWriter,
+        entry_offset: int,
+        entry_lists: dict[str, IDList[MSBEntry]],
+        **kwargs,
+    ):
+        """Default assumes 1:1 field name mapping, aside from resolving MSB references."""
+        cls.preprocess_write_kwargs(entry, entry_lists, kwargs)
+        cls.object_to_writer(entry, writer, **kwargs)
+        cls.post_write(writer, entry, entry_offset, entry_lists)
+
+    @classmethod
+    def preprocess_write_kwargs(
+        cls,
+        entry: MSBEntry,
+        entry_lists: dict[str, IDList[MSBEntry]],
+        kwargs: dict[str, tp.Any],
+    ) -> None:
+        for fld in cls.get_binary_fields():
+            if "msb_ref" in fld.metadata:
+                msb_ref = fld.metadata["msb_ref"]
+                if msb_ref[1] == "":
+                    # Auto-resolve now (once, permanently).
+                    msb_ref[1] = fld.name.removesuffix("_index").lstrip("_")
+                kwargs[fld.name] = entry.try_index(entry_lists[msb_ref[0]], msb_ref[1])
+
+    @classmethod
+    def post_write(
+        cls,
+        writer: BinaryWriter,
+        entry: MSBEntry,
+        entry_offset: int,
+        entry_lists: dict[str, IDList[MSBEntry]],
+    ):
+        pass
+
+
+@dataclass(slots=True)
+class MSBHeaderStruct(MSBBinaryStruct, abc.ABC):
+    """Supports basic headers and allows easy extension. Must be inherited to define actual field order."""
+
+    @classmethod
+    def reader_to_entry_kwargs(
+        cls,
+        reader: BinaryReader,
+        entry_type: type[MSBEntry],
+        entry_offset: int,
+    ) -> dict[str, tp.Any]:
+        """Supports most known headers, as a base call at least."""
+        kwargs = cls.from_bytes(reader).to_dict(ignore_underscore_prefix=False)  # 'private' fields handled manually
+
+        # Neither of these is needed, if present.
+        kwargs.pop("supertype_index", None)
+        kwargs.pop("subtype_index", None)
+
+        # Validate and discard (always present).
+        subtype_int = kwargs.pop("_subtype_int")
+        if subtype_int != entry_type.SUBTYPE_ENUM.value:
+            raise ValueError(f"Unexpected MSB subtype index for `{cls.__name__}`: {subtype_int}")
+
+        name = reader.unpack_string(entry_offset + kwargs.pop("name_offset"), encoding=entry_type.NAME_ENCODING)
+        kwargs["name"] = name
+
+        return kwargs
+
+    @classmethod
+    def preprocess_write_kwargs(
+        cls,
+        entry: MSBEntry,
+        entry_lists: dict[str, IDList[MSBEntry]],
+        kwargs: dict[str, tp.Any],
+    ) -> None:
+        super(MSBHeaderStruct, cls).preprocess_write_kwargs(entry, entry_lists, kwargs)
+        for struct_name, struct_type in entry.STRUCTS.items():
+            kwargs[f"{struct_name}_offset"] = RESERVED if struct_type is not None else 0
+        kwargs["name_offset"] = RESERVED
+        kwargs["_subtype_int"] = entry.SUBTYPE_ENUM.value,
+
+    @classmethod
+    def post_write(
+        cls,
+        writer: BinaryWriter,
+        entry: MSBEntry,
+        entry_offset: int,
+        entry_lists: dict[str, IDList[MSBEntry]],
+    ):
+        # Name is always packed first.
+        writer.fill("name_offset", writer.position - entry_offset, obj=entry)
+        writer.append(pad_chars(entry.name, encoding=entry.NAME_ENCODING, alignment=4))
+
+
 @dataclass(slots=True, eq=False, repr=False)
 class MSBEntry(abc.ABC):
     """Base class for entries of any type and subtype that appear in an `MSB` (under one of four entry superlists)."""
@@ -89,14 +216,15 @@ class MSBEntry(abc.ABC):
     # and disabled by the user at will.
     SETATTR_CHECKS_DISABLED: tp.ClassVar[bool] = False
 
-    # Structs for header, supertype data, and (optional but common) subtype data.
-    SUPERTYPE_HEADER_STRUCT: tp.ClassVar[type[BinaryStruct]]
-    SUPERTYPE_DATA_STRUCT: tp.ClassVar[type[BinaryStruct]]
-    SUBTYPE_DATA_STRUCT: tp.ClassVar[type[BinaryStruct]]
+    # Header struct containing basic information and offsets to other structs.
+    HEADER_STRUCT: tp.ClassVar[type[MSBHeaderStruct]]
+    # Dictionary of structs with offsets in `HEADER_STRUCT`, in the order their data should be packed back into MSB.
+    # `None` indicates that a header offset should exist for that struct, but it should be zero.
+    STRUCTS: tp.ClassVar[dict[str, type[MSBBinaryStruct] | None]]
 
     # Basic data fields.
     name: str
-    description: str = field(default="", kw_only=True)  # not actually present in MSB until DS2
+    description: str = field(default="", kw_only=True)  # not actually present in all games, but here as an option
 
     # Internal field that tracks other entries/fields/array indices that refer to this one (when indices are consumed)
     # so that those references can be maintained if this entry is, say, replaced by a new one.
@@ -105,14 +233,7 @@ class MSBEntry(abc.ABC):
     @classmethod
     def from_msb_reader(cls, reader: BinaryReader) -> tp.Self:
         """Default minimal method. Most subclasses can just override one of the header/data unpack methods."""
-        entry_offset = reader.position
-        kwargs = cls.unpack_header(reader, entry_offset)
-        reader.seek(entry_offset + kwargs.pop("supertype_data_offset"))
-        kwargs |= cls.unpack_supertype_data(reader)
-        relative_subtype_data_offset = kwargs.pop("subtype_data_offset")
-        if relative_subtype_data_offset > 0:
-            reader.seek(entry_offset + relative_subtype_data_offset)
-            kwargs |= cls.unpack_subtype_data(reader)
+        kwargs = cls.reader_to_entry_kwargs(reader, entry_offset=reader.position)
 
         cls.SETATTR_CHECKS_DISABLED = True  # will be re-enabled in `__post_init__`
         msb_entry = cls(**kwargs)
@@ -120,70 +241,44 @@ class MSBEntry(abc.ABC):
         return msb_entry
 
     @classmethod
-    def unpack_header(cls, reader: BinaryReader, entry_offset: int) -> dict[str, tp.Any]:
-        header = cls.SUPERTYPE_HEADER_STRUCT.from_bytes(reader)
-        header_subtype_int = header.pop("_subtype_int")
-        if header_subtype_int != cls.SUBTYPE_ENUM.value:
-            raise ValueError(f"Unexpected MSB event subtype index for `{cls.__name__}`: {header_subtype_int}")
-        name = reader.unpack_string(offset=entry_offset + header.pop("name_offset"), encoding=cls.NAME_ENCODING)
-        return header.to_dict(ignore_underscore_prefix=True) | {"name": name}
+    def reader_to_entry_kwargs(cls, reader: BinaryReader, entry_offset: int) -> dict[str, tp.Any]:
+        """Allows for easier inheritance with the `setattr` disabling."""
+        kwargs = cls.HEADER_STRUCT.reader_to_entry_kwargs(reader, cls, entry_offset)
 
-    @classmethod
-    def unpack_supertype_data(cls, reader: BinaryReader) -> dict[str, tp.Any]:
-        """Returns dictionary of ALL struct fields by default. Subclasses may want to modify them first."""
-        return cls.SUPERTYPE_DATA_STRUCT.from_bytes(reader).to_dict(ignore_underscore_prefix=False)
+        for struct_name, struct_type in cls.STRUCTS.items():
+            struct_offset = entry_offset + kwargs.pop(f"{struct_name}_offset")
+            if struct_type is None:
+                if struct_offset != 0:
+                    raise ValueError(f"Offset for unused struct `{struct_name}` in `{cls.__name__}` is non-zero.")
+                continue
+            if struct_offset == 0:
+                # `STRUCTS` class attribute enforces which structs must be present in subtype.
+                raise ValueError(f"Offset for used struct `{struct_name}` in `{cls.__name__}` is 0.")
+            reader.seek(struct_offset)
+            kwargs |= struct_type.reader_to_entry_kwargs(reader, cls, entry_offset)
 
-    @classmethod
-    def unpack_subtype_data(cls, reader: BinaryReader) -> dict[str, tp.Any]:
-        """Returns dictionary of ALL struct fields by default. Subclasses may want to modify them first."""
-        return cls.SUBTYPE_DATA_STRUCT.from_bytes(reader).to_dict(ignore_underscore_prefix=False)
+        return kwargs
 
     def to_msb_writer(
-        self, writer: BinaryWriter, supertype_index: int, subtype_index: int, entry_lists: dict[str, list[MSBEntry]]
+        self, writer: BinaryWriter, supertype_index: int, subtype_index: int, entry_lists: dict[str, IDList[MSBEntry]]
     ):
         """Default: pack header (with name), base data, and type data in that order."""
         entry_offset = writer.position
-        try:
-            self.pack_header(writer, entry_offset, supertype_index, subtype_index, entry_lists)
-        except Exception:
-            print(self.to_dict(ignore_defaults=False))
-            raise
-        supertype_data_offset = writer.position - entry_offset if self.SUPERTYPE_DATA_STRUCT is not None else 0
-        writer.fill("supertype_data_offset", supertype_data_offset, obj=self)
-        self.pack_supertype_data(writer, entry_offset, entry_lists)
-        subtype_data_offset = writer.position - entry_offset if self.SUBTYPE_DATA_STRUCT is not None else 0
-        writer.fill("subtype_data_offset", subtype_data_offset, obj=self)
-        self.pack_subtype_data(writer, entry_lists)
-
-    def pack_header(
-        self,
-        writer: BinaryWriter,
-        entry_offset: int,
-        supertype_index: int,
-        subtype_index: int,
-        entry_lists: [dict[str, list[MSBEntry]]],
-    ):
-        header_offset = writer.position
-        self.SUPERTYPE_HEADER_STRUCT.object_to_writer(
+        self.HEADER_STRUCT.kwargs_to_msb_writer(
             self,
             writer,
-            name_offset=RESERVED,
-            _supertype_index=supertype_index,
-            _subtype_int=self.SUBTYPE_ENUM.value,
-            _subtype_index=subtype_index,
-            supertype_data_offset=RESERVED,
-            subtype_data_offset=RESERVED,
+            entry_offset,
+            entry_lists,
+            supertype_index=supertype_index,
+            subtype_index=subtype_index,
         )
-        writer.fill("name_offset", writer.position - header_offset, obj=self)
-        writer.append(pad_chars(self.name, encoding=self.NAME_ENCODING, alignment=4))
 
-    def pack_supertype_data(self, writer: BinaryWriter, entry_offset: int, entry_lists: dict[str, list[MSBEntry]]):
-        if self.SUPERTYPE_DATA_STRUCT is not None:
-            self.SUPERTYPE_DATA_STRUCT.object_to_writer(self, writer)
-
-    def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
-        if self.SUBTYPE_DATA_STRUCT is not None:
-            self.SUBTYPE_DATA_STRUCT.object_to_writer(self, writer)
+        for struct_name, struct_type in self.STRUCTS.items():
+            if struct_type is None:
+                continue  # not reserved in header
+            struct_offset = writer.position - entry_offset
+            writer.fill(f"{struct_name}_offset", struct_offset, obj=self)
+            struct_type.kwargs_to_msb_writer(self, writer, entry_offset, entry_lists)
 
     def __getitem__(self, field_name: str):
         try:
@@ -869,7 +964,7 @@ class MSBEntry(abc.ABC):
                     return False
         return True
 
-    def _consume_index(self, entry_lists: dict[str, list[MSBEntry]], list_name: str, field_name: str):
+    def _consume_index(self, entry_lists: dict[str, IDList[MSBEntry]], list_name: str, field_name: str):
         """Resolve index to entry in `entry_lists` and set it as the field value."""
         index_field_name = f"_{field_name}_index"
         index = getattr(self, index_field_name)
@@ -885,7 +980,7 @@ class MSBEntry(abc.ABC):
         object.__setattr__(self, field_name, entry)
         object.__setattr__(self, index_field_name, None)
 
-    def _consume_indices(self, entry_lists: dict[str, list[MSBEntry]], list_name: str, field_name: str):
+    def _consume_indices(self, entry_lists: dict[str, IDList[MSBEntry]], list_name: str, field_name: str):
         """Resolve all indices to entries in `entry_lists` and set them as the field value."""
         indices_field_name = f"_{field_name}_indices"
         indices = getattr(self, indices_field_name)
@@ -928,24 +1023,23 @@ class MSBEntry(abc.ABC):
                 if entry is None:
                     indices.append(-1)
                 else:
-                    for i, e in enumerate(entry_list):
-                        if e is entry:
-                            indices.append(i)
-                            break
-                    else:
+                    # `IDList.index` uses `is` (ID).
+                    try:
+                        indices.append(entry_list.index(entry))
+                    except ValueError:
                         raise ValueError(
                             f"Could not find referenced entry `{entry.name}` for "
                             f"`{self.name}.{source_field_name}` in MSB list while packing."
                         )
             return indices
         # Otherwise, single entry.
-        for i, e in enumerate(entry_list):
-            if e is entry_or_entry_list:
-                return i
-        raise ValueError(
-            f"Could not find referenced entry `{entry_or_entry_list.name}` for "
-            f"`{self.name}.{source_field_name}` in MSB list while packing."
-        )
+        try:
+            return entry_list.index(entry_or_entry_list)
+        except ValueError:
+            raise ValueError(
+                f"Could not find referenced entry `{entry_or_entry_list.name}` for "
+                f"`{self.name}.{source_field_name}` in MSB list while packing."
+            )
 
     @property
     def cls_name(self) -> str:

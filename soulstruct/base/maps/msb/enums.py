@@ -9,9 +9,7 @@ __all__ = [
     "BaseMSBPartSubtype",
 ]
 
-from enum import IntEnum
-
-from soulstruct.utilities.future import StrEnum
+from enum import IntEnum, StrEnum
 
 
 class MSBSupertype(StrEnum):

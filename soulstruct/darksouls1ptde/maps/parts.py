@@ -17,7 +17,7 @@ import abc
 import typing as tp
 from dataclasses import dataclass, field
 
-from soulstruct.base.maps.msb import MSBEntry
+from soulstruct.base.maps.msb.msb_entry import *
 from soulstruct.base.maps.msb.parts import *
 from soulstruct.base.maps.msb.field_info import MapFieldInfo
 from soulstruct.base.maps.msb.utils import GroupBitSet128
@@ -34,60 +34,108 @@ if tp.TYPE_CHECKING:
     from .events import MSBEnvironmentEvent
 
 
+@dataclass(slots=True)
+class PartHeaderStruct(MSBHeaderStruct):
+    # No description offset.
+    name_offset: int
+    # No supertype index.
+    _subtype_int: int
+    _subtype_index: int
+    _model_index: int = field(**EntryRef("MODEL_PARAM_ST"))
+    sib_path_offset: int
+    translate: Vector3
+    rotate: Vector3
+    scale: Vector3
+    draw_groups: GroupBitSet128 = field(**BinaryArray(4, uint))
+    display_groups: GroupBitSet128 = field(**BinaryArray(4, uint))
+    supertype_data_offset: int
+    subtype_data_offset: int
+    # No other structs (Gparam, SceneGparam, etc.).
+    _pad1: bytes = field(**BinaryPad(4))
+
+    @classmethod
+    def reader_to_entry_kwargs(
+        cls,
+        reader: BinaryReader,
+        entry_type: type[MSBEntry],
+        entry_offset: int,
+    ) -> dict[str, tp.Any]:
+        kwargs = super(PartHeaderStruct, cls).reader_to_entry_kwargs(reader, entry_type, entry_offset)
+        kwargs["sib_path"] = reader.unpack_string(
+            offset=entry_offset + kwargs.pop("sib_path_offset"), encoding=entry_type.NAME_ENCODING
+        )
+        return kwargs
+
+    @classmethod
+    def preprocess_write_kwargs(
+        cls,
+        entry: MSBEntry,
+        entry_lists: dict[str, IDList[MSBEntry]],
+        kwargs: dict[str, tp.Any],
+    ) -> None:
+        super(PartHeaderStruct, cls).preprocess_write_kwargs(entry, entry_lists, kwargs)
+        kwargs["sib_path_offset"] = RESERVED
+
+    @classmethod
+    def post_write(
+        cls,
+        entry: MSBPart,
+        writer: BinaryWriter,
+        entry_offset: int,
+        entry_lists: [dict[str, IDList[MSBEntry]]],  # may be required by subclasses
+    ):
+        """Trying to be as faithful to vanilla as possible with padding."""
+        strings_position = writer.position - entry_offset
+        writer.fill("name_offset", writer.position - entry_offset, obj=entry)
+        packed_name = entry.name.encode(entry.NAME_ENCODING) + b"\0"
+        writer.append(packed_name)
+        writer.fill("sib_path_offset", writer.position - entry_offset, obj=entry)
+        packed_sib_path = (entry.sib_path.encode(entry.NAME_ENCODING) + b"\0") if entry.sib_path else b"\0"
+        writer.append(packed_sib_path)
+        writer.pad_align(4)
+        # Minimum combined length of name and SIB path is 20 bytes, so pad if necessary.
+        if writer.position - strings_position < 20:
+            writer.pad(0x14 - (writer.position - strings_position))
+
+
+@dataclass(slots=True)
+class PartSupertypeData(MSBBinaryStruct):
+    """Uses old `DrawParam` fields here, rather than separate Gparam/SceneGparam structs."""
+    entity_id: int
+    ambient_light_id: sbyte
+    fog_id: sbyte
+    scattered_light_id: sbyte
+    lens_flare_id: sbyte
+    shadow_id: sbyte
+    dof_id: sbyte
+    tone_map_id: sbyte
+    tone_correction_id: sbyte
+    point_light_id: sbyte
+    lod_id: sbyte
+    _pad1: bytes = field(**BinaryPad(1))
+    is_shadow_source: bool
+    is_shadow_destination: bool
+    is_shadow_only: bool
+    draw_by_reflect_cam: bool
+    draw_only_reflect_cam: bool
+    use_depth_bias_float: bool
+    disable_point_light_effect: bool
+    _pad2: bytes = field(**BinaryPad(2))
+
+
 @dataclass(slots=True, eq=False, repr=False)
 class MSBPart(BaseMSBPart, abc.ABC):
 
-    @dataclass(slots=True)
-    class SUPERTYPE_HEADER_STRUCT(BinaryStruct):
-        # No description offset.
-        name_offset: int
-        # No instance index.
-        _subtype_int: int
-        _subtype_index: int
-        model_index: int
-        sib_path_offset: int
-        translate: Vector3
-        rotate: Vector3
-        scale: Vector3
-        draw_groups: GroupBitSet128 = field(**BinaryArray(4, uint))
-        display_groups: GroupBitSet128 = field(**BinaryArray(4, uint))
-        # No backread groups.
-        supertype_data_offset: int
-        subtype_data_offset: int
-        # No Gparam or SceneGparam structs.
-        _pad1: bytes = field(**BinaryPad(4))
-
-    @dataclass(slots=True)
-    class SUPERTYPE_DATA_STRUCT(BinaryStruct):
-        """Uses old `DrawParam` fields here, rather than separate Gparam/SceneGparam structs."""
-        entity_id: int
-        ambient_light_id: sbyte
-        fog_id: sbyte
-        scattered_light_id: sbyte
-        lens_flare_id: sbyte
-        shadow_id: sbyte
-        dof_id: sbyte
-        tone_map_id: sbyte
-        tone_correction_id: sbyte
-        point_light_id: sbyte
-        lod_id: sbyte
-        _pad1: bytes = field(**BinaryPad(1))
-        is_shadow_source: bool
-        is_shadow_destination: bool
-        is_shadow_only: bool
-        draw_by_reflect_cam: bool
-        draw_only_reflect_cam: bool
-        use_depth_bias_float: bool
-        disable_point_light_effect: bool
-        _pad2: bytes = field(**BinaryPad(2))
-
     NAME_ENCODING: tp.ClassVar[str] = "shift-jis"  # NOT `shift_jis_2004` (backslashes in SIB paths)
     GROUP_BIT_COUNT: tp.ClassVar[int] = 128  # 4 ints
+    STRUCTS: tp.ClassVar[dict[str, MSBBinaryStruct]] = {
+        "supertype_data": PartSupertypeData,
+        # Subtypes add more their own struct.
+    }
 
     # NOTE: `model` type overridden by subclasses.
     # Subclasses may also use more appropriate defaults for convenience, as these Part supertype fields in DS1 are
     # really sporadic in which Part subtypes actually use each of them.
-    sib_path: str = ""
     draw_groups: GroupBitSet128 = field(default_factory=GroupBitSet128.all_off)
     display_groups: GroupBitSet128 = field(default_factory=GroupBitSet128.all_off)
     ambient_light_id: int = field(default=-1, **MapFieldInfo(game_type=BakedLightParam))
@@ -108,53 +156,10 @@ class MSBPart(BaseMSBPart, abc.ABC):
     use_depth_bias_float: bool = False
     disable_point_light_effect: bool = False
 
-    @classmethod
-    def unpack_header(cls, reader: BinaryReader, entry_offset: int) -> dict[str, tp.Any]:
-        header = cls.SUPERTYPE_HEADER_STRUCT.from_bytes(reader)
-        header_subtype_int = header.pop("_subtype_int")
-        if header_subtype_int != cls.SUBTYPE_ENUM.value:
-            raise ValueError(f"Unexpected MSB event subtype index for `{cls.__name__}`: {header_subtype_int}")
 
-        name = reader.unpack_string(offset=entry_offset + header.pop("name_offset"), encoding=cls.NAME_ENCODING)
-        sib_path = reader.unpack_string(offset=entry_offset + header.pop("sib_path_offset"), encoding=cls.NAME_ENCODING)
-        kwargs = dict(
-            name=name,
-            description="",  # no packed description in DS1 (but user/JSON descriptions are still supported)
-            sib_path=sib_path,
-            _model_index=header.pop("model_index"),
-        )
-        return header.to_dict(ignore_underscore_prefix=True) | kwargs
-
-    def pack_header(
-        self,
-        writer: BinaryWriter,
-        entry_offset: int,
-        supertype_index: int,
-        subtype_index: int,
-        entry_lists: [dict[str, list[MSBEntry]]],
-    ):
-        self.SUPERTYPE_HEADER_STRUCT.object_to_writer(
-            self,
-            writer,
-            name_offset=RESERVED,
-            _subtype_int=self.SUBTYPE_ENUM.value,
-            _subtype_index=subtype_index,
-            model_index=self.try_index(entry_lists["MODEL_PARAM_ST"], "model"),
-            sib_path_offset=RESERVED,
-            supertype_data_offset=RESERVED,
-            subtype_data_offset=RESERVED,
-        )
-        strings_position = writer.position - entry_offset
-        writer.fill("name_offset", writer.position - entry_offset, obj=self)
-        packed_name = self.name.encode(self.NAME_ENCODING) + b"\0"
-        writer.append(packed_name)
-        writer.fill("sib_path_offset", writer.position - entry_offset, obj=self)
-        packed_sib_path = (self.sib_path.encode(self.NAME_ENCODING) + b"\0") if self.sib_path else b"\0"
-        writer.append(packed_sib_path)
-        writer.pad_align(4)
-        # Minimum combined length of name and SIB path is 20 bytes, so pad if necessary.
-        if writer.position - strings_position < 20:
-            writer.pad(0x14 - (writer.position - strings_position))
+@dataclass(slots=True)
+class MapPieceDataStruct(MSBBinaryStruct):
+    _pad1: bytes = field(**BinaryPad(8))
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -162,10 +167,7 @@ class MSBMapPiece(MSBPart):
     """Just a textured, visible mesh asset. Does not include any collision."""
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.MapPiece
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\FRPG\\data\\Model\\map\\{map_stem}\\sib\\layout.SIB"
-
-    @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(BinaryStruct):
-        _pad1: bytes = field(**BinaryPad(8))
+    STRUCTS = MSBPart.STRUCTS | {"subtype_data": MapPieceDataStruct}
 
     model: MSBMapPieceModel = None
 
@@ -191,6 +193,19 @@ class MSBMapPiece(MSBPart):
         self.scattered_light_id = value
 
 
+@dataclass(slots=True)
+class ObjectDataStruct(MSBBinaryStruct):
+    _pad1: bytes = field(init=False, **BinaryPad(4))
+    _draw_parent_index: int = field(**EntryRef("PARTS_PARAM_ST"))
+    break_term: sbyte
+    net_sync_type: sbyte
+    _pad2: bytes = field(init=False, **BinaryPad(2))
+    default_animation: short
+    unk_x0e_x10: short
+    unk_x10_x14: int
+    _pad3: bytes = field(init=False, **BinaryPad(4))
+
+
 @dataclass(slots=True, eq=False, repr=False)
 class MSBObject(MSBPart):
     """Instance of a physical object."""
@@ -198,18 +213,7 @@ class MSBObject(MSBPart):
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Object
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\FRPG\\data\\Model\\map\\{map_stem}\\sib\\o_layout.SIB"
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model", "draw_parent"]
-
-    @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(BinaryStruct):
-        _pad1: bytes = field(init=False, **BinaryPad(4))
-        _draw_parent_index: int
-        break_term: sbyte
-        net_sync_type: sbyte
-        _pad2: bytes = field(init=False, **BinaryPad(2))
-        default_animation: short
-        unk_x0e_x10: short
-        unk_x10_x14: int
-        _pad3: bytes = field(init=False, **BinaryPad(4))
+    STRUCTS = MSBPart.STRUCTS | {"subtype_data": ObjectDataStruct}
 
     HIDE_FIELDS: tp.ClassVar[tuple] = (
         "scale",  # NOTE: works, but only object visual FLVER will be scaled (not HKX collision or animations)
@@ -241,14 +245,7 @@ class MSBObject(MSBPart):
 
     _draw_parent_index: int = None
 
-    def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
-        self.SUBTYPE_DATA_STRUCT.object_to_writer(
-            self,
-            writer,
-            _draw_parent_index=self.try_index(entry_lists["PARTS_PARAM_ST"], "draw_parent"),
-        )
-
-    def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
+    def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBObject, self).indices_to_objects(entry_lists)
         self._consume_index(entry_lists, "PARTS_PARAM_ST", "draw_parent")
 
@@ -259,28 +256,30 @@ class MSBObject(MSBPart):
         self.scattered_light_id = value
 
 
+@dataclass(slots=True)
+class CharacterDataStruct(MSBBinaryStruct):
+    _pad1: bytes = field(init=False, **BinaryPad(8))
+    ai_id: int
+    character_id: int
+    talk_id: int
+    patrol_type: byte
+    _pad2: bytes = field(init=False, **BinaryPad(1))
+    platoon_id: ushort
+    player_id: int
+    _draw_parent_index: int = field(**EntryRef("PARTS_PARAM_ST"))
+    _pad3: bytes = field(init=False, **BinaryPad(8))
+    _patrol_regions_indices: list[short] = field(**EntryRef("POINT_PARAM_ST", array_size=8))
+    default_animation: int
+    damage_animation: int
+
+
 @dataclass(slots=True, eq=False, repr=False)
 class MSBCharacter(MSBPart):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Character
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = ""  # empty
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model", "draw_parent", "patrol_regions"]
-
-    @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(BinaryStruct):
-        _pad1: bytes = field(init=False, **BinaryPad(8))
-        ai_id: int
-        character_id: int
-        talk_id: int
-        patrol_type: byte
-        _pad2: bytes = field(init=False, **BinaryPad(1))
-        platoon_id: ushort
-        player_id: int
-        _draw_parent_index: int
-        _pad3: bytes = field(init=False, **BinaryPad(8))
-        _patrol_regions_indices: list[short] = field(**BinaryArray(8))
-        default_animation: int
-        damage_animation: int
+    STRUCTS = MSBPart.STRUCTS | {"subtype_data": CharacterDataStruct}
 
     # Override types/defaults.
     model: MSBCharacterModel | MSBPlayerModel = None
@@ -321,18 +320,15 @@ class MSBCharacter(MSBPart):
         "use_depth_bias_float",
     )
 
-    def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
-        self.SUBTYPE_DATA_STRUCT.object_to_writer(
-            self,
-            writer,
-            _draw_parent_index=self.try_index(entry_lists["PARTS_PARAM_ST"], "draw_parent"),
-            _patrol_regions_indices=self.try_index(entry_lists["POINT_PARAM_ST"], "patrol_regions"),
-        )
-
-    def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
+    def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBCharacter, self).indices_to_objects(entry_lists)
         self._consume_index(entry_lists, "PARTS_PARAM_ST", "draw_parent")
         self._consume_indices(entry_lists, "POINT_PARAM_ST", "patrol_regions")
+
+
+@dataclass(slots=True)
+class PlayerStartDataStruct(MSBBinaryStruct):
+    _pad1: bytes = field(init=False, **BinaryPad(16))
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -340,10 +336,7 @@ class MSBPlayerStart(MSBPart):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.PlayerStart
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = ""
-
-    @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(BinaryStruct):
-        _pad1: bytes = field(init=False, **BinaryPad(16))
+    STRUCTS = MSBPart.STRUCTS | {"subtype_data": PlayerStartDataStruct}
 
     HIDE_FIELDS: tp.ClassVar = (
         "scale",
@@ -376,6 +369,73 @@ class MSBPlayerStart(MSBPart):
     draw_by_reflect_cam: bool = True
 
 
+@dataclass(slots=True)
+class CollisionDataStruct(MSBBinaryStruct):
+    hit_filter_id: byte
+    sound_space_type: byte
+    _environment_event_index: short = field(**EntryRef("environments"))
+    reflect_plane_height: float
+    navmesh_groups: GroupBitSet128 = field(**BinaryArray(4, uint))
+    vagrant_entity_ids: list[int] = field(**BinaryArray(3))
+    _place_name_banner_id: short  # -1 means use map area/block, and any negative value means banner is forced
+    starts_disabled: bool
+    unk_x27_x28: byte
+    attached_bonfire: int
+    _minus_ones: list[int] = field(**BinaryArray(3, asserted=[-1, -1, -1]))  # never used
+    _play_region_id: int  # -10 or greater is real play region ID, less than -10 is a negated stable footing flag
+    camera_1_id: short
+    camera_2_id: short
+    _pad1: bytes = field(**BinaryPad(16))
+
+    @classmethod
+    def reader_to_entry_kwargs(
+        cls,
+        reader: BinaryReader,
+        entry_type: type[MSBEntry],
+        entry_offset: int,
+    ) -> dict[str, tp.Any]:
+        kwargs = super(CollisionDataStruct, cls).reader_to_entry_kwargs(reader, entry_type, entry_offset)
+
+        # Negative area name means that banner will appear (-1 means get area name from map area/block).
+        internal_place_name_banner_id = kwargs.pop("_place_name_banner_id")
+        if internal_place_name_banner_id != -1:
+            kwargs["place_name_banner_id"] = abs(internal_place_name_banner_id)
+        kwargs["force_place_name_banner"] = internal_place_name_banner_id < 0
+
+        # Play Region ID that is -10 or less is a stable footing flag (negated with 10 subtracted from it).
+        internal_play_region_id = kwargs.pop("_play_region_id")
+        if internal_play_region_id > -10:
+            kwargs["play_region_id"] = internal_play_region_id
+            kwargs["stable_footing_flag"] = 0
+        else:
+            kwargs["play_region_id"] = 0
+            kwargs["stable_footing_flag"] = -internal_play_region_id - 10
+
+        return kwargs
+
+    @classmethod
+    def preprocess_write_kwargs(
+        cls,
+        entry: MSBCollision,
+        entry_lists: dict[str, IDList[MSBEntry]],
+        kwargs: dict[str, tp.Any],
+    ) -> None:
+
+        # Determine internal banner ID (negative if forced).
+        if entry.place_name_banner_id == -1 and not entry._force_place_name_banner:
+            raise InvalidFieldValueError(
+                "`force_place_name_banner` must be enabled if `place_name_banner_id == -1` (default)."
+            )
+        place_name_sign = -1 if entry.place_name_banner_id >= 0 and entry._force_place_name_banner else 1
+        kwargs["_place_name_banner_id"] = entry.place_name_banner_id * place_name_sign
+
+        # Resolve play region ID or stable footing flag.
+        if entry._stable_footing_flag != 0:
+            kwargs["play_region_id"] = -entry._stable_footing_flag - 10
+        else:
+            kwargs["play_region_id"] = entry._play_region_id
+
+
 # noinspection PyRedeclaration
 @dataclass(slots=True, eq=False, repr=False)
 class MSBCollision(MSBPart):
@@ -383,24 +443,7 @@ class MSBCollision(MSBPart):
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Collision
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\FRPG\\data\\Model\\map\\{map_stem}\\sib\\h_layout.SIB"
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model", "environment_event"]
-
-    @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(BinaryStruct):
-        hit_filter_id: byte
-        sound_space_type: byte
-        _environment_event_index: short
-        reflect_plane_height: float
-        navmesh_groups: GroupBitSet128 = field(**BinaryArray(4, uint))
-        vagrant_entity_ids: list[int] = field(**BinaryArray(3))
-        _place_name_banner_id: short  # -1 means use map area/block, and any negative value means banner is forced
-        starts_disabled: bool
-        unk_x27_x28: byte
-        attached_bonfire: int
-        _minus_ones: list[int] = field(**BinaryArray(3, asserted=[-1, -1, -1]))  # never used
-        _play_region_id: int  # -10 or greater is real play region ID, less than -10 is a negated stable footing flag
-        camera_1_id: short
-        camera_2_id: short
-        _pad1: bytes = field(**BinaryPad(16))
+    STRUCTS = MSBPart.STRUCTS | {"subtype_data": CollisionDataStruct}
 
     # Internally managed. (It's important that these come before their wrapper fields!)
     _force_place_name_banner: bool = field(default=True, repr=False)
@@ -443,52 +486,7 @@ class MSBCollision(MSBPart):
         if self.navmesh_groups is None:
             self.navmesh_groups = self.display_groups.copy()
 
-    @classmethod
-    def unpack_subtype_data(cls, reader: BinaryReader) -> dict[str, tp.Any]:
-        data = cls.SUBTYPE_DATA_STRUCT.from_bytes(reader).to_dict(ignore_underscore_prefix=False)
-
-        # Negative area name means that banner will appear (-1 means get area name from map area/block).
-        internal_place_name_banner_id = data.pop("_place_name_banner_id")
-        if internal_place_name_banner_id != -1:
-            data["place_name_banner_id"] = abs(internal_place_name_banner_id)
-        data["force_place_name_banner"] = internal_place_name_banner_id < 0
-
-        # Play Region ID that is -10 or less is a stable footing flag (negated with 10 subtracted from it).
-        internal_play_region_id = data.pop("_play_region_id")
-        if internal_play_region_id > -10:
-            data["play_region_id"] = internal_play_region_id
-            data["stable_footing_flag"] = 0
-        else:
-            data["play_region_id"] = 0
-            data["stable_footing_flag"] = -internal_play_region_id - 10
-
-        return data
-
-    def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
-
-        # Determine internal banner ID (negative if forced).
-        if self.place_name_banner_id == -1 and not self._force_place_name_banner:
-            raise InvalidFieldValueError(
-                "`force_place_name_banner` must be enabled if `place_name_banner_id == -1` (default)."
-            )
-        place_name_sign = -1 if self.place_name_banner_id >= 0 and self._force_place_name_banner else 1
-        internal_place_name_banner_id = self.place_name_banner_id * place_name_sign
-
-        # Resolve play region ID or stable footing flag.
-        if self._stable_footing_flag != 0:
-            play_region_id = -self._stable_footing_flag - 10
-        else:
-            play_region_id = self._play_region_id
-
-        return self.SUBTYPE_DATA_STRUCT.object_to_writer(
-            self,
-            writer,
-            _environment_event_index=self.try_index(entry_lists["environments"], "environment_event"),
-            _place_name_banner_id=internal_place_name_banner_id,
-            _play_region_id=play_region_id,
-        )
-
-    def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
+    def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBCollision, self).indices_to_objects(entry_lists)
         self._consume_index(entry_lists, "environments", "environment_event")
 
@@ -543,15 +541,25 @@ class MSBCollision(MSBPart):
         self.tone_correction_id = value
 
 
+# Still slightly awkward to get dataclasses, properties, and `__init__` to interact well. This is the workaround.
 MSBCollision.force_place_name_banner = property(
-    MSBCollision.get_force_place_name_banner, MSBCollision.set_force_place_name_banner
+    lambda self: self.get_force_place_name_banner(),
+    lambda self, value: self.set_force_place_name_banner(value),
 )
 MSBCollision.stable_footing_flag = property(
-    MSBCollision.get_stable_footing_flag, MSBCollision.set_stable_footing_flag
+    lambda self: self.get_stable_footing_flag(),
+    lambda self, value: self.set_stable_footing_flag(value),
 )
 MSBCollision.play_region_id = property(
-    MSBCollision.get_play_region_id, MSBCollision.set_play_region_id
+    lambda self: self.get_play_region_id(),
+    lambda self, value: self.set_play_region_id(value),
 )
+
+
+@dataclass(slots=True)
+class NavmeshDataStruct(MSBBinaryStruct):
+    navmesh_groups: GroupBitSet128 = field(**BinaryArray(4, uint))
+    _pad1: bytes = field(**BinaryPad(16))
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -559,11 +567,7 @@ class MSBNavmesh(MSBPart):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Navmesh
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\FRPG\\data\\Model\\map\\{map_stem}\\sib\\n_layout.SIB"
-
-    @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(BinaryStruct):
-        navmesh_groups: GroupBitSet128 = field(**BinaryArray(4, uint))
-        _pad1: bytes = field(**BinaryPad(16))
+    STRUCTS = MSBPart.STRUCTS | {"subtype_data": NavmeshDataStruct}
 
     # Type/default overrides.
     model: MSBNavmeshModel = None
@@ -617,6 +621,13 @@ class MSBDummyCharacter(MSBCharacter):
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = ""
 
 
+@dataclass(slots=True)
+class ConnectCollisionDataStruct(MSBBinaryStruct):
+    _collision_index: int = field(**EntryRef("collisions"))
+    connected_map_id: list[sbyte] = field(**BinaryArray(4))
+    _pad1: bytes = field(**BinaryPad(8))
+
+
 @dataclass(slots=True, eq=False, repr=False)
 class MSBConnectCollision(MSBPart):
     """Links to an `MSBCollision` entry and causes another specified map to load into backread when the linked collision
@@ -630,12 +641,7 @@ class MSBConnectCollision(MSBPart):
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.ConnectCollision
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = ""
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model", "collision"]
-
-    @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(BinaryStruct):
-        _collision_index: int
-        connected_map_id: list[sbyte] = field(**BinaryArray(4))
-        _pad1: bytes = field(**BinaryPad(8))
+    STRUCTS = MSBPart.STRUCTS | {"subtype_data": ConnectCollisionDataStruct}
 
     model: MSBCollisionModel = None
     collision: MSBCollision = None
@@ -643,19 +649,7 @@ class MSBConnectCollision(MSBPart):
 
     _collision_index: int = None
 
-    @classmethod
-    def unpack_subtype_data(cls, reader: BinaryReader) -> dict[str, tp.Any]:
-        data = cls.SUBTYPE_DATA_STRUCT.from_bytes(reader).to_dict(ignore_underscore_prefix=False)
-        return data
-
-    def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
-        self.SUBTYPE_DATA_STRUCT.object_to_writer(
-            self,
-            writer,
-            _collision_index=self.try_index(entry_lists["collisions"], "collision"),
-        )
-
-    def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
+    def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBConnectCollision, self).indices_to_objects(entry_lists)
         self._consume_index(entry_lists, "collisions", "collision")
 

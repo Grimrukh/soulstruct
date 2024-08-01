@@ -16,7 +16,6 @@ from pathlib import Path
 from soulstruct.exceptions import SoulstructError
 from soulstruct.base.models.matbin import MATBIN, MATBINBND
 from soulstruct.base.models.mtd import MTD, MTDBND
-from soulstruct.utilities.future import StrEnum
 from soulstruct.utilities.maths import Vector2
 
 _LOGGER = logging.getLogger("soulstruct")
@@ -64,19 +63,6 @@ class MatDef(abc.ABC):
     """Various summarized properties that tell Soulstruct how to generate FLVER vertex array layouts and Blender
     shader node trees for optimal FLVER visualization."""
 
-    class ShaderCategory(StrEnum):
-        """Categories of SPX shaders."""
-        PHN = "Phn"
-        SFX = "Sfx"
-        NORMAL_TO_ALPHA = "NormalToAlpha"
-        WATER = "Water"
-        SNOW = "Snow"
-        FOLIAGE = "Foliage"
-        IVY = "Ivy"
-
-    # Subclasses can override the above shader categories.
-    ShaderCategory: tp.ClassVar[type[StrEnum]]
-
     class UVLayer(IntEnum):
         UVTexture0 = 0
         UVTexture1 = 1
@@ -88,7 +74,7 @@ class MatDef(abc.ABC):
     # Game-specific mapping of shader categories to `MatDef` names known to use that category, which aids in creating
     # `MatDef`s from material definition names alone when files are unavailable.
     KNOWN_SHADER_MTD_STEMS: tp.ClassVar[dict[str, list[str | re.Pattern]]] = {}
-    # Game-specific mapping of `ShaderCategory` values to lists of extra `UVLayer` members.
+    # Game-specific mapping of game-specific `shader_category` values to lists of extra `UVLayer` members.
     EXTRA_SHADER_UV_LAYERS: tp.ClassVar[dict[str, list[UVLayer]]] = {}
     # Earlier games can easily have their sampler names mapped to global aliases.
     # Later games may not use this, as they have more complex sampler groups that need shaders to determine function.
@@ -128,14 +114,13 @@ class MatDef(abc.ABC):
 
     def __post_init__(self):
         if self.shader_stem and not self.shader_category:
-            # Auto-detect shader category from prefix match.
-            for category in self.ShaderCategory:
-                if self.shader_stem.startswith(category):
-                    self.shader_category = category
-                    break
-            else:
-                # Unknown category.
-                self.shader_category = None
+            self.shader_category = self.get_shader_category(self.shader_stem)
+
+    @classmethod
+    def get_shader_category(cls, shader_stem: str) -> str:
+        """Subclasses can specify how they determine categories from full stems. Default is equal, so every unique
+        stem is a category."""
+        return shader_stem
 
     @classmethod
     def from_mtd(cls, mtd: MTD):
@@ -193,17 +178,17 @@ class MatDef(abc.ABC):
         # Detect used sampler names.
         if (
             matdef.has_name_tag("NormalToAlpha")
-            or mtd_stem in cls.KNOWN_SHADER_MTD_STEMS[cls.ShaderCategory.NORMAL_TO_ALPHA]
+            or mtd_stem in cls.KNOWN_SHADER_MTD_STEMS.get("NormalToAlpha", {})
         ):
             # Unshaded skyboxes, mist, some trees, etc.
-            matdef.shader_category = cls.ShaderCategory.NORMAL_TO_ALPHA
+            matdef.shader_category = "NormalToAlpha"
             matdef.add_sampler(alias="Primary Albedo", uv_layer=cls.UVLayer.UVTexture0)
         elif (
             matdef.has_name_tag("wet")
-            or mtd_stem in cls.KNOWN_SHADER_MTD_STEMS[cls.ShaderCategory.WATER]
+            or mtd_stem in cls.KNOWN_SHADER_MTD_STEMS.get("Water", {})
         ):
             # Water shaders with normals only.
-            matdef.shader_category = cls.ShaderCategory.WATER
+            matdef.shader_category = "Water"
             matdef.add_sampler(alias="Primary Normal", uv_layer=cls.UVLayer.UVTexture0)
         else:
             # Check for all other standard sampler types.
@@ -287,16 +272,6 @@ class MatDef(abc.ABC):
         return sorted(all_uv_layers, key=lambda x: x.value)
 
     # region Abstract Methods/Properties
-
-    @property
-    @abc.abstractmethod
-    def is_water(self):
-        ...
-
-    @property
-    @abc.abstractmethod
-    def is_snow(self):
-        ...
 
     @abc.abstractmethod
     def get_map_piece_layout(self):

@@ -11,15 +11,21 @@ import typing as tp
 from pathlib import Path
 
 from dataclasses import dataclass, field
-from enum import IntEnum
+from enum import IntEnum, StrEnum
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.games import Game, get_game
 from soulstruct.containers import Binder
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.future import StrEnum
 
 _LOGGER = logging.getLogger("soulstruct")
+
+
+class MTDBlock(tp.NamedTuple):
+    # Length is never kept.
+    data_type: int
+    version: int
+    marker: int
 
 
 @dataclass(slots=True)
@@ -79,23 +85,26 @@ class MTD(GameFile):
             mtd_samplers,
         )
 
+    FILE_BLOCK = MTDBlock(0, 3, 0x01)
+    HEADER_BLOCK = MTDBlock(1, 2, 0xB0)
+
     def to_writer(self) -> BinaryWriter:
         writer = BinaryWriter(byte_order=ByteOrder.LittleEndian)
 
-        file_block, file_block_offset = write_block(writer, 0, 3, 0x01)
-        header_block, header_block_offset = write_block(writer, 1, 2, 0xB0)
+        file_block, file_block_offset = write_block(writer, MTDBlock(0, 3, 0x01))
+        header_block, header_block_offset = write_block(writer, MTDBlock(1, 2, 0xB0))
 
         write_marked_string(writer, 0x34, "MTD ")
         writer.pack("i", 1000)
         header_block.fill(writer, "length", writer.position - header_block_offset)
         write_marker(writer, 0x01)
 
-        data_block, data_block_offset = write_block(writer, 2, 4, 0xA3)
+        data_block, data_block_offset = write_block(writer, MTDBlock(2, 4, 0xA3))
         write_marked_string(writer, 0xA3, self.shader_path)
         write_marked_string(writer, 0x03, self.description)
         writer.pack("i", 1)
 
-        lists_block, lists_block_offset = write_block(writer, 3, 4, 0xA3)
+        lists_block, lists_block_offset = write_block(writer, MTDBlock(3, 4, 0xA3))
         writer.pad(4)
         write_marker(writer, 0x03)
         writer.pack("i", len(self.params))
@@ -312,13 +321,13 @@ class MTDParam:
 
     def to_mtd_writer(self, mtd_writer: BinaryWriter):
 
-        param_block, param_block_offset = write_block(mtd_writer, 4, 4, 0xA3)
+        param_block, param_block_offset = write_block(mtd_writer, MTDBlock(4, 4, 0xA3))
         write_marked_string(mtd_writer, 0xA3, self.name)
         write_marked_string(mtd_writer, 0x04, self.param_type.value)  # lower case
         mtd_writer.pack("i", 1)
 
         data_type, marker = self.param_type.get_block_type_marker()
-        value_block, value_block_offset = write_block(mtd_writer, data_type, 1, marker)
+        value_block, value_block_offset = write_block(mtd_writer, MTDBlock(data_type, 1, marker))
 
         value_count = self.param_type.get_value_count()
         mtd_writer.pack("i", value_count)
@@ -397,7 +406,8 @@ class MTDSampler:
         )
 
     def to_mtd_writer(self, mtd_writer: BinaryWriter):
-        sampler_block, sampler_block_offset = write_block(mtd_writer, 0x2000, 5 if self.extended else 3, 0xA3)
+        sampler_block = MTDBlock(0x2000, 5 if self.extended else 3, 0xA3)
+        sampler_block_offset = write_block(mtd_writer, sampler_block)
 
         write_marked_string(mtd_writer, 0x35, self.sampler_type)
         mtd_writer.pack("i", self.uv_index)
@@ -412,7 +422,7 @@ class MTDSampler:
             mtd_writer.pack(f"{float_count}f", *self.unk_floats)
         # Otherwise, no more to write.
 
-        sampler_block.fill(mtd_writer, "length", mtd_writer.position - sampler_block_offset)
+        mtd_writer.fill("length", mtd_writer.position - sampler_block_offset, sampler_block)
 
     def __repr__(self):
         if self.extended:
@@ -459,36 +469,39 @@ class MTDLightingType(IntEnum):
     HemEnvDifSpc = 3
 
 
-@dataclass(slots=True)
-class MTDBlock(BinaryStruct):
-    _pad0: bytes = field(init=False, **BinaryPad(4))
-    length: uint
-    data_type: int  # may extend beyond listed `MTDParamType` values
-    version: int
-    marker: byte
-    # Always align to four afterward and ignore bytes.
-
-
-def assert_block(reader: BinaryReader, data_type: int = None, version: int = None, marker: int = None):
-    kwargs = {}
-    if data_type is not None:
-        kwargs["data_type"] = data_type
-    if version is not None:
-        kwargs["version"] = version
-    if marker is not None:
-        kwargs["marker"] = marker
-    block = MTDBlock.from_bytes(reader)
-    block.assert_field_values(**kwargs)
+def read_block(reader: BinaryReader) -> MTDBlock:
+    reader.assert_pad(4)
+    _ = reader["I"]  # length
+    data_type = reader["i"]  # may extend beyond listed `MTDParamType` values
+    version = reader["i"]
+    marker = reader["B"]
     reader.align(4)
-    return block  # so non-asserted fields can be inspected
+    return MTDBlock(data_type, version, marker)
 
 
-def write_block(writer: BinaryWriter, data_type: int, version: int, marker: int) -> tuple[MTDBlock, int]:
-    block_offset = writer.position + 8
-    block = MTDBlock(length=RESERVED, data_type=data_type, version=version, marker=marker)
-    block.to_writer(writer)
+def write_block(writer: BinaryWriter, block: MTDBlock) -> int:
+    writer.pad(4)
+    writer.reserve("length", "I", block)  # filled later
+    writer.pack("i", block.data_type)
+    # Length starts here (+8).
+    block_length_offset = writer.position
+    writer.pack("i", block.version)
+    writer.pack("B", block.marker)
     writer.pad_align(4)
-    return block, block_offset
+    return block_length_offset
+
+
+def assert_block(
+    reader: BinaryReader, data_type: int = None, version: int = None, marker: int = None
+) -> MTDBlock:
+    block = read_block(reader)
+    if data_type is not None and data_type != block.data_type:
+        raise AssertionError(f"MTD block data type {block.data_type} does not match asserted data type {data_type}.")
+    if version is not None and version != block.version:
+        raise AssertionError(f"MTD block version {block.version} does not match asserted version {version}.")
+    if marker is not None and marker != block.marker:
+        raise AssertionError(f"MTD block marker {block.marker} does not match asserted marker {marker}.")
+    return block
 
 
 def assert_marker(reader: BinaryReader, marker: int):

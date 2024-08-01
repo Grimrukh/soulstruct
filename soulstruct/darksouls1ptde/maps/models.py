@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = [
     "MSBModel",
     "MSBMapPieceModel",
@@ -11,6 +13,7 @@ __all__ = [
 import typing as tp
 from dataclasses import dataclass, field
 
+from soulstruct.base.maps.msb.msb_entry import *
 from soulstruct.base.maps.msb.models import BaseMSBModel
 from soulstruct.utilities.binary import *
 
@@ -18,23 +21,66 @@ from .enums import MSBModelSubtype
 
 
 @dataclass(slots=True)
-class ModelHeaderStruct(BinaryStruct):
+class ModelHeaderStruct(MSBHeaderStruct):
     name_offset: int
     _subtype_int: int
     _subtype_index: int
     sib_path_offset: int
-    _instance_count: int
+    instance_count: int
     _pad1: bytes = field(init=False, **BinaryPad(12))
+
+    @classmethod
+    def reader_to_entry_kwargs(
+        cls,
+        reader: BinaryReader,
+        entry_type: type[MSBEntry],
+        entry_offset: int,
+    ) -> dict[str, tp.Any]:
+        kwargs = super(ModelHeaderStruct, cls).reader_to_entry_kwargs(reader, entry_type, entry_offset)
+        sib_path = reader.unpack_string(entry_offset + kwargs.pop("sib_path_offset"), encoding=entry_type.NAME_ENCODING)
+        kwargs["sib_path"] = sib_path
+        kwargs.pop("instance_count")
+        return kwargs
+
+    @classmethod
+    def preprocess_write_kwargs(
+        cls,
+        entry: MSBEntry,
+        entry_lists: dict[str, IDList[MSBEntry]],
+        kwargs: dict[str, tp.Any],
+    ) -> None:
+        super(ModelHeaderStruct, cls).preprocess_write_kwargs(entry, entry_lists, kwargs)
+        kwargs["sib_path_offset"] = RESERVED
+        kwargs.pop("supertype_index")
+        if "instance_count" not in kwargs:
+            raise ValueError("MSBModel must have `instance_count` set in `kwargs_to_msb_writer`.")
+
+    @classmethod
+    def post_write(
+        cls,
+        writer: BinaryWriter,
+        entry: MSBModel,
+        entry_offset: int,
+        entry_lists: dict[str, IDList[MSBEntry]],
+    ):
+        # No super.
+        writer.fill("name_offset", writer.position - entry_offset, obj=entry)
+        packed_name = entry.name.encode(entry.NAME_ENCODING) + b"\0"
+        writer.append(packed_name)
+        writer.fill("sib_path_offset", writer.position - entry_offset, obj=entry)
+        if entry.sib_path:
+            packed_sib_path = entry.sib_path.encode(entry.NAME_ENCODING) + b"\0"
+        else:
+            packed_sib_path = b"\0\0\0\0\0\0"
+        while len(packed_name + packed_sib_path) % 4 != 0:
+            packed_sib_path += b"\0"
+        writer.append(packed_sib_path)
 
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBModel(BaseMSBModel):
-    """MSB model entry in Bloodborne."""
-
-    SUPERTYPE_HEADER_STRUCT: tp.ClassVar[type[BinaryStruct]] = ModelHeaderStruct
+    HEADER_STRUCT: tp.ClassVar[type[BinaryStruct]] = ModelHeaderStruct
     NAME_ENCODING = "shift-jis"
-    NULL = b"\0"
-    EMPTY_SIB_PATH = b"\0" * 6
 
 
 @dataclass(slots=True, eq=False, repr=False)
