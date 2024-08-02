@@ -90,6 +90,7 @@ class PartHeaderStruct(MSBHeaderStruct):
         if "model_instance_id" not in kwargs:
             raise ValueError("MSBPart must have `model_instance_id` set in `kwargs_to_msb_writer`.")
         kwargs["sib_path_offset"] = RESERVED
+        kwargs.pop("supertype_index")
 
     @classmethod
     def post_write(
@@ -170,7 +171,7 @@ class PartDataStruct(MSBBinaryStruct):
 
 
 @dataclass(slots=True)
-class GParamStruct(MSBBinaryStruct):  # 5
+class GParamDataStruct(MSBBinaryStruct):  # 5
     light_set_id: int
     fog_id: int
     light_scattering_id: int
@@ -179,7 +180,7 @@ class GParamStruct(MSBBinaryStruct):  # 5
 
 
 @dataclass(slots=True)
-class SceneGParamStruct(MSBBinaryStruct):  # 6
+class SceneGParamDataStruct(MSBBinaryStruct):  # 6
     _pad1: bytes = field(init=False, **BinaryPad(16))
     transition_time: float
     _zero: int = field(init=False, **Binary(asserted=0))
@@ -311,7 +312,7 @@ class MSBMapPiece(MSBPart):
     STRUCTS = {
         "unk1_data": UnkStruct1,
         "subtype_data": MapPieceDataStruct,
-        "gparam_data": GParamStruct,
+        "gparam_data": GParamDataStruct,
         "unk7_data": UnkStruct7,
         "unk8_data": UnkStruct8,
         "unk9_data": UnkStruct9,
@@ -417,10 +418,10 @@ class AssetDataStruct(MSBBinaryStruct):
     @classmethod
     def post_write(
         cls,
+        entry: MSBPart,
         writer: BinaryWriter,
-        entry: MSBEntry,
         entry_offset: int,
-        entry_lists: dict[str, IDList[MSBEntry]],
+        entry_lists: [dict[str, IDList[MSBEntry]]],  # may be required by subclasses
     ):
         AssetUnkStruct1.object_to_writer(entry, writer)
         AssetUnkStruct2.object_to_writer(entry, writer)
@@ -499,7 +500,7 @@ class MSBAsset(MSBPart):
         "unk1_data": UnkStruct1,
         "unk2_data": UnkStruct1,
         "subtype_data": AssetDataStruct,
-        "gparam_data": GParamStruct,
+        "gparam_data": GParamDataStruct,
     }
 
     # Assets use every struct except SceneGParam.
@@ -677,7 +678,7 @@ class MSBCharacter(MSBPart):
     STRUCTS = {
         "unk1_data": UnkStruct1,
         "subtype_data": CharacterDataStruct,
-        "gparam_data": GParamStruct,
+        "gparam_data": GParamDataStruct,
         "unk8_data": UnkStruct8,
         "unk10_data": UnkStruct10,
     }
@@ -838,8 +839,8 @@ class MSBCollision(MSBPart):
         "unk1_data": UnkStruct1,
         "unk2_data": UnkStruct2,
         "subtype_data": CollisionDataStruct,
-        "gparam_data": GParamStruct,
-        "scene_gparam_data": SceneGParamStruct,
+        "gparam_data": GParamDataStruct,
+        "scene_gparam_data": SceneGParamDataStruct,
         "unk8_data": UnkStruct8,
         "unk10_data": UnkStruct10,
         "unk11_data": UnkStruct11,
@@ -1023,7 +1024,7 @@ class MSBUnusedAsset(MSBPart):
     STRUCTS = {
         "unk1_data": UnkStruct1,
         "subtype_data": UnusedAssetDataStruct,
-        "gparam_data": GParamStruct,
+        "gparam_data": GParamDataStruct,
         "unk8_data": UnkStruct8,
         "unk10_data": UnkStruct10,
     }

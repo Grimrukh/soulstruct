@@ -166,43 +166,125 @@ class Flags8(abc.ABC):
 ElementType = tp.TypeVar("ElementType")
 
 
-class IDList(list[ElementType]):
-    """List that checks for membership by object ID instead of equality."""
-    def __contains__(self, item: ElementType):
-        for i in self:
-            if id(i) == id(item):
-                return True
-        return False
+class IDList(tp.Generic[ElementType]):
+    
+    _list: list[ElementType]  # list of objects
+    _index_dict: dict[int, int]  # maps object ID to list index (NOT ordered)
+    _size: int  # number of objects in list
+    
+    def __init__(self, seq=()):
+        self._list = []
+        self._index_dict = {}
+        self._size = 0
+        for item in seq:
+            # Need to watch for duplicates in `seq`.
+            self.append(item)
 
-    def index(self, item: ElementType, start=None, stop=None) -> int:
-        """Index exact instance `entry`. Returns -1 if absent rather than raising an error."""
-        for i, e in enumerate(self):
-            if start is not None and i < start:
-                continue
-            if stop is not None and i >= stop:
-                break
-            if e is item:
-                return i
-        return -1
+    def append(self, item: ElementType) -> None:
+        item_id = id(item)
+        if item_id not in self._index_dict:
+            self._index_dict[item_id] = self._size
+            self._list.append(item)
+            self._size += 1
+        else:
+            raise ValueError(f"Item `{item}` is already in `IDList`.")
 
-    def remove(self, item: ElementType):
-        """Remove entry from this list, by ID, not `__eq__`."""
-        for i, e in enumerate(self):
-            if e is item:
-                del self[i]
-                return
-        raise ValueError(f"Item `{item}` is not in list.")
+    def extend(self, items: tp.Iterable[ElementType]) -> None:
+        for item in items:
+            self.append(item)
 
-    def count(self, item: ElementType):
-        """Counts the number of times the exact instance `item` appears in this list."""
-        return sum(1 for i in self if id(i) == id(item))
+    def insert(self, index: int, item: ElementType) -> None:
+        item_id = id(item)
+        if item_id in self._index_dict:
+            raise ValueError(f"Item `{item}` is already in `IDList`.")
+        self._list.insert(index, item)
+        self._index_dict[item_id] = index
+        # Increment all later or equal indices in dict.
+        for id_key, list_index in self._index_dict.items():
+            if list_index >= index:
+                self._index_dict[id_key] = list_index + 1
+        self._size += 1
 
-    def __eq__(self, other):
-        return all(id(a) == id(b) for a, b in zip(self, other))
+    def pop(self, index: int = -1) -> ElementType:
+        item = self._list.pop(index)
+        self._index_dict.pop(id(item))
+        self._size -= 1
+        return item
 
-    def __ne__(self, other):
+    def remove(self, item: ElementType) -> None:
+        item_id = id(item)
+        if item_id in self._index_dict:
+            index = self._index_dict.pop(item_id)
+            self._list.pop(index)
+            self._size -= 1
+        else:
+            raise ValueError(f"Item `{item}` is not in `IDList`.")
+
+    def clear(self) -> None:
+        self._list.clear()
+        self._index_dict.clear()
+        self._size = 0
+
+    def index(self, item: ElementType) -> int:
+        item_id = id(item)
+        if item_id in self._index_dict:
+            return self._index_dict[item_id]
+        print("ITEMS:")
+        for o in self._list:
+            print("   ", o.name, id(o), id(o) in self._index_dict)
+        raise ValueError(f"Item `{item.name}` (ID {item_id}) is not in `IDList`.")
+
+    def copy(self) -> IDList[ElementType]:
+        new_list = IDList()
+        new_list._list = self._list.copy()
+        new_list._index_dict = self._index_dict.copy()
+        new_list._size = self._size
+        return new_list
+
+    def sort(self, key=None, reverse=False):
+        self._list.sort(key=key, reverse=reverse)
+        # Regenerate dictionary completely.
+        self._index_dict = {id(item): i for i, item in enumerate(self._list)}
+
+    def __getitem__(self, index: int) -> ElementType:
+        return self._list[index]
+
+    def __setitem__(self, index: int, item: ElementType) -> None:
+        item_id = id(item)
+        if item_id in self._index_dict:
+            raise ValueError(f"Item `{item}` is already in `IDList`.")
+        old_item = self._list[index]
+        self._list[index] = item
+        self._index_dict.pop(id(old_item))
+        self._index_dict[item_id] = index
+
+    def __len__(self) -> int:
+        return self._size
+
+    def __iter__(self) -> tp.Iterator[ElementType]:
+        return iter(self._list)
+
+    def __contains__(self, item: ElementType) -> bool:
+        return id(item) in self._index_dict
+
+    def __eq__(self, other: IDList) -> bool:
+        """Equal if dictionaries are exactly equal, ignoring dictionary order."""
+        return self._index_dict == other._index_dict
+
+    def __ne__(self, other: IDList) -> bool:
         return not self.__eq__(other)
 
-    def __hash__(self):
-        """Hash by ID, not `__eq__`."""
-        return hash(tuple(id(i) for i in self))
+    def __hash__(self) -> int:
+        """Hash by ID keys, not `__eq__`."""
+        return hash(tuple(self._index_dict))
+
+    def __setstate__(self, state):
+        """We need to reconstruct the index dictionary from the list."""
+        self._list = state["_list"]
+        self._index_dict = state["_index_dict"]
+        self._size = state["_size"]
+        # Refresh indices in dict.
+        self._index_dict = {id(item): i for i, item in enumerate(self._list)}
+
+    def __repr__(self) -> str:
+        return f"IDList({self._list})"

@@ -46,7 +46,7 @@ class EventHeaderStruct(MSBHeaderStruct):
 
 
 @dataclass(slots=True)
-class EventDataStruct(BinaryStruct):
+class EventDataStruct(MSBBinaryStruct):
     _attached_part_index: int = field(**EntryRef("PARTS_PARAM_ST"))
     _attached_region_index: int = field(**EntryRef("POINT_PARAM_ST"))
     entity_id: int
@@ -55,7 +55,7 @@ class EventDataStruct(BinaryStruct):
 
 
 @dataclass(slots=True)
-class EventExtraDataStruct(BinaryStruct):
+class EventExtraDataStruct(MSBBinaryStruct):
     map_id: int
     unk_04: int
     unk_08: int
@@ -70,7 +70,7 @@ class MSBEvent(BaseMSBEvent, abc.ABC):
     HEADER_STRUCT = EventHeaderStruct
     STRUCTS = {
         "supertype_data": EventDataStruct,
-        # NOTE: Subtype data is here when present, so this dictionary is fully replaced.
+        "subtype_data": None,
         "extra_data": EventExtraDataStruct,
     }
 
@@ -90,7 +90,7 @@ class MSBEvent(BaseMSBEvent, abc.ABC):
 
 
 @dataclass(slots=True)
-class TreasureEventDataStruct(BinaryStruct):
+class TreasureEventDataStruct(MSBBinaryStruct):
     _pad1: bytes = field(**BinaryPad(8))
     _treasure_part_index: int = field(**EntryRef("PARTS_PARAM_ST"))
     _pad2: bytes = field(**BinaryPad(4))
@@ -108,10 +108,8 @@ class MSBTreasureEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Treasure
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "treasure_part"]
-    STRUCTS = {
-        "supertype_data": EventDataStruct,
+    STRUCTS = MSBEvent.STRUCTS | {
         "subtype_data": TreasureEventDataStruct,
-        "extra_data": EventExtraDataStruct,
     }
 
     treasure_part: MSBPart = None
@@ -129,7 +127,7 @@ class MSBTreasureEvent(MSBEvent):
 
 
 @dataclass(slots=True)
-class SpawnerEventDataStruct(BinaryStruct):
+class SpawnerEventDataStruct(MSBBinaryStruct):
     max_count: byte
     spawner_type: sbyte
     limit_count: short
@@ -154,10 +152,8 @@ class MSBSpawnerEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Spawner
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "spawn_parts", "spawn_regions"]
-    STRUCTS = {
-        "supertype_data": EventDataStruct,
+    STRUCTS = MSBEvent.STRUCTS | {
         "subtype_data": SpawnerEventDataStruct,
-        "extra_data": EventExtraDataStruct,
     }
 
     max_count: int = 255
@@ -187,7 +183,7 @@ class MSBSpawnerEvent(MSBEvent):
 
 
 @dataclass(slots=True)
-class ObjActEventDataStruct(BinaryStruct):
+class ObjActEventDataStruct(MSBBinaryStruct):
     obj_act_entity_id: int
     _obj_act_part_index: int = field(**EntryRef("PARTS_PARAM_ST"))
     obj_act_param_id: int
@@ -203,10 +199,8 @@ class MSBObjActEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.ObjAct
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "obj_act_part"]
-    STRUCTS = {
-        "supertype_data": EventDataStruct,
+    STRUCTS = MSBEvent.STRUCTS | {
         "subtype_data": ObjActEventDataStruct,
-        "extra_data": EventExtraDataStruct,
     }
 
     obj_act_entity_id: int = -1
@@ -223,7 +217,7 @@ class MSBObjActEvent(MSBEvent):
 
 
 @dataclass(slots=True)
-class NavigationEventDataStruct(BinaryStruct):
+class NavigationEventDataStruct(MSBBinaryStruct):
     _navigation_region_index: int = field(**EntryRef("POINT_PARAM_ST"))
     _pad1: bytes = field(**BinaryPad(12))
 
@@ -233,11 +227,10 @@ class MSBNavigationEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Navigation
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "navigation_region"]
-    STRUCTS = {
-        "supertype_data": EventDataStruct,
+    STRUCTS = MSBEvent.STRUCTS | {
         "subtype_data": NavigationEventDataStruct,
-        "extra_data": EventExtraDataStruct,
     }
+
     navigation_region: MSBRegion = None
 
     _navigation_region_index: int = None
@@ -248,7 +241,7 @@ class MSBNavigationEvent(MSBEvent):
 
 
 @dataclass(slots=True)
-class NPCInvasionEventDataStruct(BinaryStruct):
+class NPCInvasionEventDataStruct(MSBBinaryStruct):
     host_entity_id: int
     invasion_flag_id: int
     activate_goods_id: int
@@ -264,10 +257,8 @@ class NPCInvasionEventDataStruct(BinaryStruct):
 class MSBNPCInvasionEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.NPCInvasion
-    STRUCTS = {
-        "supertype_data": EventDataStruct,
+    STRUCTS = MSBEvent.STRUCTS | {
         "subtype_data": NPCInvasionEventDataStruct,
-        "extra_data": EventExtraDataStruct,
     }
 
     host_entity_id: int = -1
@@ -281,7 +272,7 @@ class MSBNPCInvasionEvent(MSBEvent):
 
 
 @dataclass(slots=True)
-class PlatoonEventDataStruct(BinaryStruct):
+class PlatoonEventDataStruct(MSBBinaryStruct):
     platoon_id_script_activate: int
     state: int
     _pad1: bytes = field(**BinaryPad(8))
@@ -296,10 +287,8 @@ class MSBPlatoonEvent(MSBEvent):
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = [
         "attached_part", "attached_region", "platoon_parts"
     ]
-    STRUCTS = {
-        "supertype_data": EventDataStruct,
+    STRUCTS = MSBEvent.STRUCTS | {
         "subtype_data": PlatoonEventDataStruct,
-        "extra_data": EventExtraDataStruct,
     }
 
     platoon_id_script_activate: int = -1
@@ -316,7 +305,7 @@ class MSBPlatoonEvent(MSBEvent):
 
 
 @dataclass(slots=True)
-class PatrolRouteEventDataStruct(BinaryStruct):
+class PatrolRouteEventDataStruct(MSBBinaryStruct):
     patrol_type: byte
     _pad1: bytes = field(**BinaryPad(2))
     _one: byte = field(**Binary(asserted=1))
@@ -331,10 +320,8 @@ class MSBPatrolRouteEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.PatrolRouteEvent
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "patrol_regions"]
-    STRUCTS = {
-        "supertype_data": EventDataStruct,
+    STRUCTS = MSBEvent.STRUCTS | {
         "subtype_data": PatrolRouteEventDataStruct,
-        "extra_data": EventExtraDataStruct,
     }
 
     patrol_type: int = 0
@@ -350,7 +337,7 @@ class MSBPatrolRouteEvent(MSBEvent):
 
 
 @dataclass(slots=True)
-class MountEventDataStruct(BinaryStruct):
+class MountEventDataStruct(MSBBinaryStruct):
     _rider_part_index: int = field(**EntryRef("PARTS_PARAM_ST"))
     _mount_part_index: int = field(**EntryRef("PARTS_PARAM_ST"))
 
@@ -360,10 +347,8 @@ class MSBMountEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Mount
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "rider_part", "mount_part"]
-    STRUCTS = {
-        "supertype_data": EventDataStruct,
+    STRUCTS = MSBEvent.STRUCTS | {
         "subtype_data": MountEventDataStruct,
-        "extra_data": EventExtraDataStruct,
     }
 
     rider_part: MSBPart = None
@@ -379,7 +364,7 @@ class MSBMountEvent(MSBEvent):
 
 
 @dataclass(slots=True)
-class SignPoolEventDataStruct(BinaryStruct):
+class SignPoolEventDataStruct(MSBBinaryStruct):
     _sign_part_index: int = field(**EntryRef("PARTS_PARAM_ST"))
     sign_pool_unk_04: int
     _pad1: bytes = field(**BinaryPad(8))
@@ -390,10 +375,8 @@ class MSBSignPoolEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.SignPool
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "sign_part"]
-    STRUCTS = {
-        "supertype_data": EventDataStruct,
+    STRUCTS = MSBEvent.STRUCTS | {
         "subtype_data": SignPoolEventDataStruct,
-        "extra_data": EventExtraDataStruct,
     }
     sign_part: MSBPart = None
     sign_pool_unk_04: int = 0
@@ -406,7 +389,7 @@ class MSBSignPoolEvent(MSBEvent):
 
 
 @dataclass(slots=True)
-class RetryPointEventDataStruct(BinaryStruct):
+class RetryPointEventDataStruct(MSBBinaryStruct):
     _retry_part_index: int = field(**EntryRef("PARTS_PARAM_ST"))
     event_flag_id: uint
     retry_point_unk_08: float
@@ -419,10 +402,8 @@ class MSBRetryPointEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.RetryPoint
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "retry_part", "retry_region"]
-    STRUCTS = {
-        "supertype_data": EventDataStruct,
+    STRUCTS = MSBEvent.STRUCTS | {
         "subtype_data": RetryPointEventDataStruct,
-        "extra_data": EventExtraDataStruct,
     }
 
     retry_part: MSBPart = None

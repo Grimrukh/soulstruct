@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 __all__ = [
-    "MSB_JSONEncoder",
     "MSBBrokenEntryReference",
     "MSBSubtypeInfo",
     "GroupBitSet",
@@ -12,14 +11,13 @@ __all__ = [
 
 import abc
 import ast
-import json
 import logging
 import re
 import typing as tp
 from dataclasses import dataclass, fields
 
-from soulstruct.utilities.maths import Matrix3, Vector2, Vector3, Vector4, resolve_rotation
 from soulstruct.utilities.conversion import int_group_to_bit_set, bit_set_to_int_group
+from soulstruct.utilities.maths import Matrix3, Vector3, resolve_rotation
 
 if tp.TYPE_CHECKING:
     from .core import MSB
@@ -30,14 +28,6 @@ if tp.TYPE_CHECKING:
     from .regions import BaseMSBRegion
 
 _LOGGER = logging.getLogger("soulstruct")
-
-
-class MSB_JSONEncoder(json.JSONEncoder):
-    """Handles a few extra types that appear as `MSBEntry` field types."""
-
-    def default(self, obj):
-        if isinstance(obj, (Vector2, Vector3, Vector4, GroupBitSet)):
-            return repr(obj)
 
 
 @dataclass(slots=True)

@@ -4,6 +4,16 @@ they have built-in events) rather than just shapes.
 from __future__ import annotations
 
 __all__ = [
+    "RegionShapeType",
+    "RegionShape",
+    "PointShape",
+    "CircleShape",
+    "SphereShape",
+    "CylinderShape",
+    "RectShape",
+    "BoxShape",
+    "CompositeShape",
+
     "MSBRegion",
     "MSBInvasionPointRegion",
     "MSBEnvironmentMapPointRegion",
@@ -50,12 +60,12 @@ from dataclasses import dataclass, field
 from soulstruct.base.maps.msb.msb_entry import *
 from soulstruct.base.maps.msb.field_info import MapFieldInfo
 from soulstruct.base.maps.msb.regions import *
+from soulstruct.base.maps.msb.region_shapes import *
 from soulstruct.eldenring.game_types import GameObjectIntSequence, Region, MapPart
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3
 
 from .enums import MSBRegionSubtype
-from .region_shapes import *
 
 if tp.TYPE_CHECKING:
     from soulstruct.base.maps.msb import MSBEntry
@@ -106,7 +116,7 @@ class RegionHeaderStruct(MSBHeaderStruct):
         # Read shape struct.
         shape_type_int = kwargs.pop("shape_type_int")
         try:
-            shape_class = entry_type.SHAPE_TYPES[shape_type_int]  # type: type[MSBRegionShape]
+            shape_class = entry_type.SHAPE_CLASSES[shape_type_int]  # type: type[RegionShape]
         except KeyError:
             if shape_type_int == 6:
                 raise ValueError("Composite Region shape type (6) is not supported in older games.")
@@ -136,12 +146,12 @@ class RegionHeaderStruct(MSBHeaderStruct):
     @classmethod
     def post_write(
         cls,
-        writer: BinaryWriter,
         entry: MSBRegion,
+        writer: BinaryWriter,
         entry_offset: int,
-        entry_lists: dict[str, IDList[MSBEntry]],
+        entry_lists: [dict[str, IDList[MSBEntry]]],  # may be required by subclasses
     ):
-        super(RegionHeaderStruct, cls).post_write(writer, entry, entry_offset, entry_lists)
+        super(RegionHeaderStruct, cls).post_write(entry, writer, entry_offset, entry_lists)
         writer.fill("unk_shorts_a_offset", writer.position - entry_offset, obj=entry)
         writer.pack("h", len(entry.unk_shorts_a))
         writer.pack(f"{len(entry.unk_shorts_a)}h", *entry.unk_shorts_a)
@@ -152,7 +162,7 @@ class RegionHeaderStruct(MSBHeaderStruct):
         writer.pack(f"{len(entry.unk_shorts_b)}h", *entry.unk_shorts_b)
         writer.pad_align(8)
 
-        if isinstance(entry.shape, MSBRegionComposite):
+        if isinstance(entry.shape, CompositeShape):
             entry.shape.regions_to_indices(entry_lists, owner_region_name=entry.name)
         shape_offset = writer.position - entry_offset
         writer.fill("shape_data_offset", shape_offset, obj=entry)
@@ -180,16 +190,17 @@ class RegionExtraData(MSBBinaryStruct):
 class MSBRegion(BaseMSBRegion, abc.ABC):
 
     HEADER_STRUCT = RegionHeaderStruct
-    NAME_ENCODING = "utf-16-le"
     MSB_ENTRY_REFERENCES = ["attached_part"]
     STRUCTS = {
         "supertype_data": RegionSupertypeDataStruct,
         "subtype_data": None,  # no subtype data by default
     }
 
+    NAME_ENCODING = "utf-16-le"
+
     # Composite shape type added.
-    SHAPE_TYPES: tp.ClassVar[dict[int, type[MSBRegionShape]]] = BaseMSBRegion.SHAPE_TYPES | {
-        6: MSBRegionComposite
+    SHAPE_CLASSES: tp.ClassVar[dict[int, type[RegionShape]]] = BaseMSBRegion.SHAPE_CLASSES | {
+        6: CompositeShape
     }
 
     # HEADER DATA
@@ -213,7 +224,7 @@ class MSBRegion(BaseMSBRegion, abc.ABC):
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         self._consume_index(entry_lists, "PARTS_PARAM_ST", "attached_part")
-        if isinstance(self.shape, MSBRegionComposite):
+        if isinstance(self.shape, CompositeShape):
             self.shape.indices_to_regions(entry_lists, owner_region_name=self.name)
 
     def to_msb_writer(

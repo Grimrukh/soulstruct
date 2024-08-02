@@ -337,7 +337,7 @@ class DarkLockEventDataStruct(MSBBinaryStruct):
 
 
 @dataclass(slots=True, eq=False, repr=False)
-class DarkLockEventDataStruct(MSBEvent):
+class MSBDarkLockEvent(MSBEvent):
     """Unknown purpose. Has no event-specific data."""
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.DarkLock

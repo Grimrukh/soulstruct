@@ -161,6 +161,19 @@ class BaseBinaryFile:
         return binder_entry.to_binary_file(cls)
 
     @classmethod
+    def from_binder_entry_batch(
+        cls, entry_list: list[BinderEntry], processes: int = None
+    ) -> list[BASE_BINARY_FILE_T | None]:
+        """Use multiprocessing to read `BaseBinaryFile` of given subtype from each `BinderEntry` in parallel.
+
+        Failed conversions will put `None` into list rather than a `BaseBinaryFile` instance.
+        """
+        mp_args = [(cls, entry) for entry in entry_list]
+        with multiprocessing.Pool(processes=processes) as pool:
+            files = pool.starmap(_from_bytes_mp, mp_args)  # blocks here until all done
+        return files
+
+    @classmethod
     def from_dict(cls, data: dict) -> tp.Self:
         """Load file from given `data` dictionary. Simply calls initializer by default."""
         # noinspection PyArgumentList
@@ -388,6 +401,17 @@ def _from_bytes_mp(file_type: type[BASE_BINARY_FILE_T], data: bytes) -> BASE_BIN
         return file_type.from_bytes(data)
     except Exception as ex:
         _LOGGER.error(f"Failed to load `{file_type.__name__}` instance from data. Error: {str(ex)}")
+        return None
+
+
+def _from_binder_entry_mp(file_type: type[BASE_BINARY_FILE_T], entry: BinderEntry) -> BASE_BINARY_FILE_T | None:
+    """Function for batch operator."""
+    try:
+        return file_type.from_binder_entry(entry)
+    except Exception as ex:
+        _LOGGER.error(
+            f"Failed to load `{file_type.__name__}` instance from BinderEntry '{entry.name}'. Error: {str(ex)}"
+        )
         return None
 
 

@@ -16,7 +16,7 @@ import logging
 import re
 import typing as tp
 from collections import ChainMap
-from dataclasses import dataclass, field, fields, MISSING
+from dataclasses import dataclass, field, fields, Field, MISSING
 from enum import IntEnum
 from types import MappingProxyType, ModuleType
 
@@ -28,6 +28,7 @@ from soulstruct.utilities.text import pad_chars
 from .enums import BaseMSBSubtype, MSBSupertype
 from .field_info import MapFieldMetadata, FIELD_INFO
 from .utils import MSBBrokenEntryReference, GroupBitSet128, GroupBitSet256, GroupBitSet1024
+from .region_shapes import RegionShapeType, SHAPE_TYPE_CLASSES
 
 if tp.TYPE_CHECKING:
     from .core import MSB
@@ -75,13 +76,15 @@ def EntryRef(list_name: str, field_name="", array_size: int = None) -> dict[str,
     If `field_name` is empty, it will be detected by just removing '_index' suffix from the field name.
     """
     metadata = BinaryArray(array_size) if array_size is not None else {"metadata": {}}
-    metadata["metadata"]["msf_ref"] = (list_name, field_name)
+    metadata["metadata"]["msb_ref"] = (list_name, field_name)
     return metadata
 
 
 @dataclass(slots=True)
 class MSBBinaryStruct(BinaryStruct, abc.ABC):
     """Allows more `MSBEntry` arguments for unpacking/packing."""
+
+    _MSB_REF_FIELDS: tp.ClassVar[dict[str, tuple[str, ...]]] = None
 
     @classmethod
     def reader_to_entry_kwargs(
@@ -105,7 +108,7 @@ class MSBBinaryStruct(BinaryStruct, abc.ABC):
         """Default assumes 1:1 field name mapping, aside from resolving MSB references."""
         cls.preprocess_write_kwargs(entry, entry_lists, kwargs)
         cls.object_to_writer(entry, writer, **kwargs)
-        cls.post_write(writer, entry, entry_offset, entry_lists)
+        cls.post_write(entry, writer, entry_offset, entry_lists)
 
     @classmethod
     def preprocess_write_kwargs(
@@ -114,19 +117,27 @@ class MSBBinaryStruct(BinaryStruct, abc.ABC):
         entry_lists: dict[str, IDList[MSBEntry]],
         kwargs: dict[str, tp.Any],
     ) -> None:
-        for fld in cls.get_binary_fields():
-            if "msb_ref" in fld.metadata:
-                msb_ref = fld.metadata["msb_ref"]
-                if msb_ref[1] == "":
-                    # Auto-resolve now (once, permanently).
-                    msb_ref[1] = fld.name.removesuffix("_index").lstrip("_")
-                kwargs[fld.name] = entry.try_index(entry_lists[msb_ref[0]], msb_ref[1])
+        cls._resolve_msb_ref_fields()
+        for fld_name, (entry_list_name, field_name) in cls._MSB_REF_FIELDS.items():
+            kwargs[fld_name] = entry.try_index(entry_lists[entry_list_name], field_name)
+
+    @classmethod
+    def _resolve_msb_ref_fields(cls):
+        if cls._MSB_REF_FIELDS is None:
+            cls._MSB_REF_FIELDS = {}
+            for fld in cls.get_binary_fields():
+                if "msb_ref" in fld.metadata:
+                    msb_ref = list(fld.metadata["msb_ref"])
+                    if msb_ref[1] == "":
+                        # Auto-resolve now (once, permanently).
+                        msb_ref[1] = fld.name.removesuffix("_index").removesuffix("_indices").lstrip("_")
+                    cls._MSB_REF_FIELDS[fld.name] = tuple(msb_ref)
 
     @classmethod
     def post_write(
         cls,
-        writer: BinaryWriter,
         entry: MSBEntry,
+        writer: BinaryWriter,
         entry_offset: int,
         entry_lists: dict[str, IDList[MSBEntry]],
     ):
@@ -151,8 +162,8 @@ class MSBHeaderStruct(MSBBinaryStruct, abc.ABC):
         kwargs.pop("supertype_index", None)
         kwargs.pop("subtype_index", None)
 
-        # Validate and discard (always present).
-        subtype_int = kwargs.pop("_subtype_int")
+        # Validate and discard (ALMOST always present).
+        subtype_int = kwargs.pop("_subtype_int", entry_type.SUBTYPE_ENUM.value)
         if subtype_int != entry_type.SUBTYPE_ENUM.value:
             raise ValueError(f"Unexpected MSB subtype index for `{cls.__name__}`: {subtype_int}")
 
@@ -172,15 +183,15 @@ class MSBHeaderStruct(MSBBinaryStruct, abc.ABC):
         for struct_name, struct_type in entry.STRUCTS.items():
             kwargs[f"{struct_name}_offset"] = RESERVED if struct_type is not None else 0
         kwargs["name_offset"] = RESERVED
-        kwargs["_subtype_int"] = entry.SUBTYPE_ENUM.value,
+        kwargs["_subtype_int"] = entry.SUBTYPE_ENUM.value
 
     @classmethod
     def post_write(
         cls,
-        writer: BinaryWriter,
         entry: MSBEntry,
+        writer: BinaryWriter,
         entry_offset: int,
-        entry_lists: dict[str, IDList[MSBEntry]],
+        entry_lists: [dict[str, IDList[MSBEntry]]],  # may be required by subclasses
     ):
         # Name is always packed first.
         writer.fill("name_offset", writer.position - entry_offset, obj=entry)
@@ -212,6 +223,11 @@ class MSBEntry(abc.ABC):
     # Cached when first accessed. Maps field names to functions that convert JSON string values to that field's type.
     _CUSTOM_JSON_DECODERS: tp.ClassVar[MappingProxyType[str, tp.Callable[[str], tp.Any]]] = None
 
+    _FIELD_REGEX = {
+        "msb_ref": re.compile(r"^(MSB[A-Za-z0-9]+)$"),
+        "list": re.compile(r"list\[([\w |]+)\]"),
+    }
+
     # Prevents `__setattr__` type checks when creating instances from binary `MSB` (for efficiency). Can also be enabled
     # and disabled by the user at will.
     SETATTR_CHECKS_DISABLED: tp.ClassVar[bool] = False
@@ -228,7 +244,7 @@ class MSBEntry(abc.ABC):
 
     # Internal field that tracks other entries/fields/array indices that refer to this one (when indices are consumed)
     # so that those references can be maintained if this entry is, say, replaced by a new one.
-    _referring_entry_fields: list[MSBEntryReference] = field(init=False, default_factory=list)
+    __referring_entry_fields: list[MSBEntryReference] = field(init=False, default_factory=list)
 
     @classmethod
     def from_msb_reader(cls, reader: BinaryReader) -> tp.Self:
@@ -246,7 +262,10 @@ class MSBEntry(abc.ABC):
         kwargs = cls.HEADER_STRUCT.reader_to_entry_kwargs(reader, cls, entry_offset)
 
         for struct_name, struct_type in cls.STRUCTS.items():
-            struct_offset = entry_offset + kwargs.pop(f"{struct_name}_offset")
+            try:
+                struct_offset = entry_offset + kwargs.pop(f"{struct_name}_offset")
+            except KeyError:
+                raise ValueError(f"Struct offset not found for `{struct_name}` in `{cls.__name__}`.")
             if struct_type is None:
                 if struct_offset != 0:
                     raise ValueError(f"Offset for unused struct `{struct_name}` in `{cls.__name__}` is non-zero.")
@@ -336,7 +355,7 @@ class MSBEntry(abc.ABC):
     def copy(self):
         """Copy entry with only shallow copies of fields referencing other `MSBEntry`s."""
         copied_dict = {}
-        for f in fields(self):
+        for f in self.get_entry_fields():
             value = getattr(self, f.name)
             if isinstance(value, MSBEntry):
                 # Shallow copied reference.
@@ -357,7 +376,7 @@ class MSBEntry(abc.ABC):
     @classmethod
     def get_field_names(cls, visible_only=False) -> tuple[str, ...]:
         return tuple(
-            f.name for f in fields(cls)
+            f.name for f in cls.get_entry_fields()
             if f.name not in {"name", "description"}
             and not f.name.startswith("_")
             and (not visible_only or f.name not in cls.HIDE_FIELDS)
@@ -368,7 +387,7 @@ class MSBEntry(abc.ABC):
         """Get a dictionary mapping field names to string-parsing decoders for JSON."""
         if cls._CUSTOM_JSON_DECODERS is None:
             decoders = {}
-            for f in fields(cls):
+            for f in cls.get_entry_fields():
                 if f.type in (GroupBitSet128, GroupBitSet128.__name__):
                     decoders[f.name] = GroupBitSet128.from_repr
                 elif f.type in (GroupBitSet256, GroupBitSet256.__name__):
@@ -418,13 +437,18 @@ class MSBEntry(abc.ABC):
             if field_name in decoders:
                 kwargs[field_name] = decoders[field_name](field_value)
             elif isinstance(field_value, dict):
-                if (
-                    "subtype_list_name" not in field_value or "subtype_index" not in field_value
-                    or len(field_value) != 2
-                ):
+                if "shape_type" in field_value:
+                    # Load as shape.
+                    shape_type = RegionShapeType[field_value["shape_type"]]
+                    shape_class = SHAPE_TYPE_CLASSES[shape_type]
+                    kwargs[field_name] = shape_class.from_json_dict(field_value)
+                    continue
+
+                # Validate MSB entry reference dictionary.
+                if not cls.is_valid_ref_dict(field_value):
                     raise ValueError(
-                        "`MSBEntry` JSON `dict` fields must be references to other entries with exact keys:\n"
-                        "    'subtype_list_name', 'subtype_index'"
+                        "`MSBEntry` JSON `dict` fields must be references to other entries with key "
+                        "'subtype_list_name' and exactly one of 'subtype_index' or 'entry_name'."
                     )
                 deferred_refs[field_name] = field_value
             elif isinstance(field_value, list) and any(isinstance(element, dict) for element in field_value):
@@ -433,13 +457,10 @@ class MSBEntry(abc.ABC):
                     if element is None:
                         deferred_list.append(None)
                         continue
-                    if (
-                        "subtype_list_name" not in element or "subtype_index" not in element
-                        or len(element) != 2
-                    ):
+                    if not cls.is_valid_ref_dict(element):
                         raise ValueError(
-                            "`MSBEntry` JSON `list[dict]` fields must be references to other entries with exact keys:\n"
-                            "    'subtype_list_name', 'subtype_index'"
+                            "`MSBEntry` JSON `list[dict]` fields must be references to other entries with key "
+                            "'subtype_list_name' and exactly one of 'subtype_index' or 'entry_name'."
                         )
                     deferred_list.append(element)
                 deferred_refs[field_name] = deferred_list
@@ -451,6 +472,15 @@ class MSBEntry(abc.ABC):
         msb_entry = cls(**kwargs)
         cls.SETATTR_CHECKS_DISABLED = False
         return msb_entry, deferred_refs
+
+    @staticmethod
+    def is_valid_ref_dict(ref_dict: dict[str, tp.Any]) -> bool:
+        """JSON MSB entry reference can be by index or name."""
+        return (
+            len(ref_dict) == 2
+            and "subtype_list_name" in ref_dict
+            and ("subtype_index" in ref_dict or "entry_name" in ref_dict)
+        )
 
     def to_dict(self, ignore_defaults=True) -> dict[str, tp.Any]:
         """Similar to `asdict`, but optionally (and by default) omits fields with their default values for brevity.
@@ -472,9 +502,11 @@ class MSBEntry(abc.ABC):
     def to_json_dict(self, msb: MSB, ignore_defaults=True) -> dict[str, tp.Any]:
         """NOTE: This converts types to JSON-ready types. Use `.asdict()` for a straightforward field value mapping."""
         default_values = self.get_default_values() if ignore_defaults else {}
+
         data = {"name": self.name}
         if not ignore_defaults or self.description:
             data["description"] = self.description
+
         for name in self.get_field_names(visible_only=False):
             value = getattr(self, name)
             if default_values and value == default_values[name]:
@@ -487,10 +519,17 @@ class MSBEntry(abc.ABC):
                     raise ValueError(
                         f"Invalid MSB entry `{value.name}` referenced by `{self.name}`."
                     ) from ex
-                data[name] = {
-                    "subtype_list_name": subtype_list.subtype_info.subtype_list_name,
-                    "subtype_index": subtype_list.index(value)
-                }
+                if subtype_list.supertype == MSBSupertype.PARTS:
+                    # Parts have unique names, so we can safely reference those names instead of indices.
+                    data[name] = {
+                        "subtype_list_name": subtype_list.subtype_info.subtype_list_name,
+                        "entry_name": value.name,
+                    }
+                else:
+                    data[name] = {
+                        "subtype_list_name": subtype_list.subtype_info.subtype_list_name,
+                        "subtype_index": subtype_list.index(value),
+                    }
             elif isinstance(value, list) and any(isinstance(element, MSBEntry) for element in value):
                 # Construct a reference dictionary. (There are no real dictionary fields in `MSBEntry` subclasses.)
                 ref_list = []
@@ -509,7 +548,7 @@ class MSBEntry(abc.ABC):
             elif isinstance(value, BaseVector):
                 data[name] = list(value)
             else:
-                # Custom types like `Vector3` and `GroupBitSet` can decode their own string `repr`.
+                # Custom types like `Vector3`, `GroupBitSet`, and `RegionShape` can decode their own string `repr`.
                 data[name] = value
         return data
 
@@ -519,7 +558,7 @@ class MSBEntry(abc.ABC):
             return cls._FIELD_DEFAULTS  # NOTE: immutable mapping
 
         defaults = {}
-        for f in fields(cls):
+        for f in cls.get_entry_fields():
             if f.name in {"name", "description"}:
                 continue
             if f.default_factory is not MISSING:
@@ -531,6 +570,11 @@ class MSBEntry(abc.ABC):
 
         cls._FIELD_DEFAULTS = MappingProxyType(defaults)
         return cls._FIELD_DEFAULTS
+
+    @classmethod
+    def get_entry_fields(cls) -> list[Field]:
+        """Ignores all dataclass fields with dunders in them."""
+        return [f for f in fields(cls) if "__" not in f.name]
 
     def __setattr__(self, key: str, value: tp.Any):
         """Enforces correct type and field presence. Also records `MSBEntry` references.
@@ -641,7 +685,7 @@ class MSBEntry(abc.ABC):
                         if not self._is_permitted_wrong_msb_entry_type(value):
                             raise TypeError(
                                 f"Invalid type for entry field `{self.cls_name}.{field_name}` of '{self.name}': "
-                                f"{value.__class__.__name__} ({value})"
+                                f"{value.__class__.__name__} ({value}). Expected type `{entry_type_name}`."
                             )
                     super(MSBEntry, self).__setattr__(field_name, value)
                     if value is not None:
@@ -746,7 +790,7 @@ class MSBEntry(abc.ABC):
         #  - Can display fields as `GPARAM[Light Set ID]`, etc.
         field_types = cls.get_field_types()
         field_metadata = {}  # type: dict[str, MSBFieldDisplayInfo]
-        for f in fields(cls):
+        for f in cls.get_entry_fields():
             if f.name in {"name", "description"}:
                 # Dummy metadata (not treated as regular fields for display).
                 field_metadata[f.name] = MSBFieldDisplayInfo(f.name.capitalize(), f.name.capitalize(), str)
@@ -855,22 +899,27 @@ class MSBEntry(abc.ABC):
         f_annotations = cls.all_annotations()
 
         field_types = {}
-        for f in fields(cls):
+        for f in cls.get_entry_fields():
             ann = f_annotations[f.name]
             if not isinstance(ann, str):
                 ann = ann.__name__  # can't be certain when annotation types will be preserved, so we always use strings
 
             # Check `MSBEntry` types first.
-            if re.match(r"MSBEntry", ann):  # not allowed
+            if ann == "MSBEntry":
+                # Base class reference is not allowed.
                 raise TypeError(f"Field {cls.__name__}.{f.name} cannot have abstract `MSBEntry` type.")
-            elif re.match(r"MSB.*", ann):
-                # `MSBEntry` subclass. `__setattr__` will confirm that any set `value` has this name in its MRO.
-                # NOTE: Will match pipe unions and check them appropriately.
+            elif ann == "RegionShape":
+                # Singular `BaseMSBRegion.shape` field, referencing a simple shape struct.
                 field_types[f.name] = ann  # str
-            elif ann == "BaseShape":
-                field_types[f.name] = ann  # str
-            elif ann in {"list[int]", "list[float]"} or re.match(r"list\[MSB[\w, ]*]", ann):
-                # List of `MSBEntry` subclasses. Check binary metadata for length and store in type string.
+            elif list_match := cls._FIELD_REGEX["list"].match(ann):
+                element_ann = list_match.group(1)
+                if element_ann in {"int", "float", "bool"}:
+                    pass  # fine (including reference indices)
+                elif msb_ref_match := cls._FIELD_REGEX["msb_ref"].match(element_ann.removesuffix(" | None")):
+                    element_ann = msb_ref_match.group(1)  # `| None` suffix removed
+                else:
+                    raise TypeError(f"Invalid list element type annotation '{element_ann}' for `{cls.__name__}`.")
+                # Check binary metadata for length and store in type string.
                 try:
                     binary = f.metadata["binary"]  # type: BinaryMetadata
                     if isinstance(binary, BinaryArrayMetadata):
@@ -889,11 +938,25 @@ class MSBEntry(abc.ABC):
                         raise TypeError(
                             f"MSB entry type `{cls.__name__}` needs `Binary(length)` metadata for field `{f.name}`."
                         )
-                field_types[f.name] = f"{ann[5:-1]}[{length}]"
+                field_types[f.name] = f"{element_ann}[{length}]"
             elif ann in _BASIC_ENTRY_TYPES:
                 field_types[f.name] = ann
             else:
-                raise TypeError(f"Could not parse field type annotation '{ann}' for `{cls.__name__}.{f.name}`.")
+                # Try to parse as a type union of `MSBEntry` subclasses.
+                entry_types = [e.strip() for e in ann.split("|")]
+                parsed_types = []
+                for entry_type in entry_types:
+                    if entry_type == "None":
+                        continue  # ignore; `None` is permitted for all entry reference fields
+                    if entry_type == "MSBEntry":
+                        raise TypeError(f"Field {cls.__name__}.{f.name} cannot have abstract `MSBEntry` type.")
+                    if not cls._FIELD_REGEX["msb_ref"].match(entry_type):
+                        raise TypeError(f"Invalid field type annotation '{ann}' for `{cls.__name__}.{f.name}`.")
+                    parsed_types.append(entry_type)
+                    # `MSBEntry` subclass. `__setattr__` will confirm that any set `value` has this name in its MRO.
+                if not parsed_types:
+                    raise TypeError(f"Could not parse field type annotation '{ann}' for `{cls.__name__}.{f.name}`.")
+                field_types[f.name] = " | ".join(parsed_types)
 
         cls._FIELD_TYPES = MappingProxyType(field_types)
         return cls._FIELD_TYPES
@@ -913,7 +976,7 @@ class MSBEntry(abc.ABC):
             return False
         if not isinstance(entry, self.__class__):
             return False
-        for f in fields(self):
+        for f in self.get_entry_fields():
             value = getattr(self, f.name)
             other = getattr(entry, f.name)
             if isinstance(value, MSBEntry):
@@ -944,7 +1007,7 @@ class MSBEntry(abc.ABC):
             return False
         if not isinstance(entry, self.__class__):
             raise TypeError("Can only compare equality between MSB entries of the same type.")
-        for f in fields(self):
+        for f in self.get_entry_fields():
             value = getattr(self, f.name)
             other = getattr(entry, f.name)
             if isinstance(value, MSBEntry):
@@ -1004,7 +1067,7 @@ class MSBEntry(abc.ABC):
 
     def try_index(
         self,
-        entry_list: list,
+        entry_list: IDList[MSBEntry],
         source_field_name: str,
     ) -> int | list[int]:
         """Find index of single entry or indices of all entries in list.
@@ -1047,7 +1110,7 @@ class MSBEntry(abc.ABC):
 
     @property
     def referring_entry_fields(self) -> list[MSBEntryReference]:
-        return self._referring_entry_fields
+        return self.__referring_entry_fields
 
     def inherit_referrers(self, old_entry: MSBEntry):
         """Update all referrers of `old_entry` to refer to `self` instead, then clear `old_entry`'s references.

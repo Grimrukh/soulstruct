@@ -33,11 +33,6 @@ __all__ = [
     "Region",
     "RegionVolume",
     "RegionPoint",
-    "RegionCircle",
-    "RegionSphere",
-    "RegionCylinder",
-    "RegionRect",
-    "RegionBox",
 
     "MapPart",
     "MapPiece",
@@ -234,7 +229,7 @@ class ObjectModel(MapModel):
 
 
 class AssetModel(MapModel):
-    """Asset model (e.g. o0000). Used in Elden Ring onward."""
+    """Asset model (e.g. AEG123_456). Used in Elden Ring onward."""
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
         return ("Models", "AssetModels") if pluralized_subtype else ("Models", "AssetModel")
@@ -258,7 +253,7 @@ class PlayerModel(MapModel):
 
 
 class CollisionModel(MapModel):
-    """Map piece model (e.g. h0000)."""
+    """Collision model (e.g. h0000)."""
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
         return ("Models", "CollisionModels") if pluralized_subtype else ("Models", "CollisionModel")
@@ -429,54 +424,22 @@ class Region(MapEntity):
 
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
-        return "Regions", None
+        return ("Regions", "Regions") if pluralized_subtype else ("Regions", "Region")
 
 
 class RegionVolume(Region):
     """Soulstruct ABC for Spheres, Cylinders, and Boxes, which share an auto-enumeration schema separate from Points."""
 
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Regions", "RegionVolumes") if pluralized_subtype else ("Regions", "RegionVolume")
+
 
 class RegionPoint(Region):
-    """Single point region."""
+    """Shapeless point region."""
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
-        return ("Regions", "Points") if pluralized_subtype else ("Regions", "Point")
-
-
-class RegionCircle(Region):
-    """2D circle region. Never used."""
-    @classmethod
-    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
-        return ("Regions", "Circles") if pluralized_subtype else ("Regions", "Circle")
-
-
-class RegionSphere(RegionVolume):
-    """3D spherical region."""
-    @classmethod
-    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
-        return ("Regions", "Spheres") if pluralized_subtype else ("Regions", "Sphere")
-
-
-class RegionCylinder(RegionVolume):
-    """3D cylindrical region."""
-    @classmethod
-    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
-        return ("Regions", "Cylinders") if pluralized_subtype else ("Regions", "Cylinder")
-
-
-class RegionRect(Region):
-    """2D rectangular region. Never used."""
-    @classmethod
-    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
-        return ("Regions", "Rects") if pluralized_subtype else ("Regions", "Rect")
-
-
-class RegionBox(RegionVolume):
-    """3D box region."""
-    @classmethod
-    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
-        return ("Regions", "Boxes") if pluralized_subtype else ("Regions", "Box")
-
+        return ("Regions", "RegionPoints") if pluralized_subtype else ("Regions", "RegionPoint")
 
 # endregion
 

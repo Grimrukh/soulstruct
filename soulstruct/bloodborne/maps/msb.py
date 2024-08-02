@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["MSB"]
+__all__ = ["MSB", "MSBSubtypeInfo", "MSBSupertype"]
 
 import typing as tp
 from dataclasses import dataclass, field
@@ -26,7 +26,7 @@ class MSBEntrySuperlistHeader(BinaryStruct):
 
 
 MSB_ENTRY_SUBTYPES = {
-    "MODEL_PARAM_ST": {
+    MSBSupertype.MODELS: {
         "MapPieceModel": MSBSubtypeInfo(MSBModelSubtype.MapPieceModel, MSBMapPieceModel, "map_piece_models"),
         "ObjectModel": MSBSubtypeInfo(MSBModelSubtype.ObjectModel, MSBObjectModel, "object_models"),
         "CharacterModel": MSBSubtypeInfo(MSBModelSubtype.CharacterModel, MSBCharacterModel, "character_models"),
@@ -36,7 +36,7 @@ MSB_ENTRY_SUBTYPES = {
         "NavmeshModel": MSBSubtypeInfo(MSBModelSubtype.NavmeshModel, MSBNavmeshModel, "navmesh_models"),
         "OtherModel": MSBSubtypeInfo(MSBModelSubtype.OtherModel, MSBOtherModel, "other_models"),
     },
-    "EVENT_PARAM_ST": {
+    MSBSupertype.EVENTS: {
         # 0 (Light) unused.
         "Sound": MSBSubtypeInfo(MSBEventSubtype.Sound, MSBSoundEvent, "sounds"),
         "VFX": MSBSubtypeInfo(MSBEventSubtype.VFX, MSBVFXEvent, "vfx"),
@@ -57,15 +57,10 @@ MSB_ENTRY_SUBTYPES = {
         "MultiSummon": MSBSubtypeInfo(MSBEventSubtype.MultiSummon, MSBMultiSummonEvent, "multi_summons"),
         "OtherEvent": MSBSubtypeInfo(MSBEventSubtype.OtherEvent, MSBOtherEvent, "other_events"),
     },
-    "POINT_PARAM_ST": {
-        "Point": MSBSubtypeInfo(MSBRegionSubtype.Point, MSBRegionPoint, "points"),
-        "Circle": MSBSubtypeInfo(MSBRegionSubtype.Circle, MSBRegionCircle, "circles"),
-        "Sphere": MSBSubtypeInfo(MSBRegionSubtype.Sphere, MSBRegionSphere, "spheres"),
-        "Cylinder": MSBSubtypeInfo(MSBRegionSubtype.Cylinder, MSBRegionCylinder, "cylinders"),
-        "Rect": MSBSubtypeInfo(MSBRegionSubtype.Rect, MSBRegionRect, "rects"),
-        "Box": MSBSubtypeInfo(MSBRegionSubtype.Box, MSBRegionBox, "boxes"),
+    MSBSupertype.REGIONS: {
+        "All": MSBSubtypeInfo(MSBRegionSubtype.All, MSBRegion, "regions"),
     },
-    "PARTS_PARAM_ST": {
+    MSBSupertype.PARTS: {
         "MapPiece": MSBSubtypeInfo(MSBPartSubtype.MapPiece, MSBMapPiece, "map_pieces"),
         "Object": MSBSubtypeInfo(MSBPartSubtype.Object, MSBObject, "objects"),
         "Character": MSBSubtypeInfo(MSBPartSubtype.Character, MSBCharacter, "characters"),
@@ -83,10 +78,10 @@ MSB_ENTRY_SUBTYPES = {
 }
 
 
-def empty_list(supertype_prefix: str, subtype_enum_name: str) -> tp.Callable[[], MSBEntryList]:
+def empty(supertype_prefix: str, subtype_enum_name: str) -> tp.Callable[[], MSBEntryList]:
     supertype = MSBSupertype(f"{supertype_prefix}_PARAM_ST")
     subtype_info = MSB_ENTRY_SUBTYPES[supertype][subtype_enum_name]
-    return lambda: MSBEntryList(supertype=supertype, subtype_info=subtype_info)
+    return lambda: MSBEntryList((), supertype=supertype, subtype_info=subtype_info)
 
 
 @dataclass(slots=True, kw_only=True)
@@ -94,10 +89,10 @@ class MSB(_BaseMSB):
     SUPERTYPE_LIST_HEADER: tp.ClassVar[type[BinaryStruct]] = MSBEntrySuperlistHeader
     MSB_ENTRY_SUBTYPES: tp.ClassVar[dict[str, dict[str, MSBSubtypeInfo]]] = MSB_ENTRY_SUBTYPES
     MSB_ENTRY_SUBTYPE_OFFSETS: tp.ClassVar[dict[str, int]] = {
-        "MODEL_PARAM_ST": 8,
-        "EVENT_PARAM_ST": 12,
-        "POINT_PARAM_ST": 16,
-        "PARTS_PARAM_ST": 20,
+        MSBSupertype.MODELS: 8,
+        MSBSupertype.EVENTS: 12,
+        MSBSupertype.REGIONS: 8,  # always 0
+        MSBSupertype.PARTS: 20,
     }
     ENTITY_GAME_TYPES: tp.ClassVar[dict[str, MapEntity]] = {}  # TODO for Bloodborne
     
@@ -105,49 +100,44 @@ class MSB(_BaseMSB):
     LONG_VARINTS: tp.ClassVar[bool] = True
     NAME_ENCODING: tp.ClassVar[str] = "utf-16-le"
 
-    map_piece_models: MSBEntryList[MSBMapPieceModel] = field(default_factory=empty_list("MODEL", "MapPieceModel"))
-    object_models: MSBEntryList[MSBObjectModel] = field(default_factory=empty_list("MODEL", "ObjectModel"))
-    character_models: MSBEntryList[MSBCharacterModel] = field(default_factory=empty_list("MODEL", "CharacterModel"))
-    item_models: MSBEntryList[MSBItemModel] = field(default_factory=empty_list("MODEL", "ItemModel"))
-    player_models: MSBEntryList[MSBPlayerModel] = field(default_factory=empty_list("MODEL", "PlayerModel"))
-    collision_models: MSBEntryList[MSBCollisionModel] = field(default_factory=empty_list("MODEL", "CollisionModel"))
-    navmesh_models: MSBEntryList[MSBNavmeshModel] = field(default_factory=empty_list("MODEL", "NavmeshModel"))
-    other_models: MSBEntryList[MSBOtherModel] = field(default_factory=empty_list("MODEL", "OtherModel"))
+    map_piece_models: MSBEntryList[MSBMapPieceModel] = field(default_factory=empty("MODEL", "MapPieceModel"))
+    object_models: MSBEntryList[MSBObjectModel] = field(default_factory=empty("MODEL", "ObjectModel"))
+    character_models: MSBEntryList[MSBCharacterModel] = field(default_factory=empty("MODEL", "CharacterModel"))
+    item_models: MSBEntryList[MSBItemModel] = field(default_factory=empty("MODEL", "ItemModel"))
+    player_models: MSBEntryList[MSBPlayerModel] = field(default_factory=empty("MODEL", "PlayerModel"))
+    collision_models: MSBEntryList[MSBCollisionModel] = field(default_factory=empty("MODEL", "CollisionModel"))
+    navmesh_models: MSBEntryList[MSBNavmeshModel] = field(default_factory=empty("MODEL", "NavmeshModel"))
+    other_models: MSBEntryList[MSBOtherModel] = field(default_factory=empty("MODEL", "OtherModel"))
 
-    sounds: MSBEntryList[MSBSoundEvent] = field(default_factory=empty_list("EVENT", "Sound"))
-    vfx: MSBEntryList[MSBVFXEvent] = field(default_factory=empty_list("EVENT", "VFX"))
-    treasures: MSBEntryList[MSBTreasureEvent] = field(default_factory=empty_list("EVENT", "Treasure"))
-    spawners: MSBEntryList[MSBSpawnerEvent] = field(default_factory=empty_list("EVENT", "Spawner"))
-    messages: MSBEntryList[MSBMessageEvent] = field(default_factory=empty_list("EVENT", "Message"))
-    obj_acts: MSBEntryList[MSBObjActEvent] = field(default_factory=empty_list("EVENT", "ObjAct"))
-    spawn_points: MSBEntryList[MSBSpawnPointEvent] = field(default_factory=empty_list("EVENT", "SpawnPoint"))
-    map_offsets: MSBEntryList[MSBMapOffsetEvent] = field(default_factory=empty_list("EVENT", "MapOffset"))
-    navigation: MSBEntryList[MSBNavigationEvent] = field(default_factory=empty_list("EVENT", "Navigation"))
-    environments: MSBEntryList[MSBEnvironmentEvent] = field(default_factory=empty_list("EVENT", "Environment"))
-    wind_vfx: MSBEntryList[MSBWindVFXEvent] = field(default_factory=empty_list("EVENT", "WindVFX"))
-    patrol_routes: MSBEntryList[MSBPatrolRouteEvent] = field(default_factory=empty_list("EVENT", "PatrolRoute"))
-    dark_locks: MSBEntryList[MSBDarkLockEvent] = field(default_factory=empty_list("EVENT", "DarkLock"))
-    platoons: MSBEntryList[MSBPlatoonEvent] = field(default_factory=empty_list("EVENT", "Platoon"))
-    multi_summons: MSBEntryList[MSBMultiSummonEvent] = field(default_factory=empty_list("EVENT", "MultiSummon"))
-    other_events: MSBEntryList[MSBOtherEvent] = field(default_factory=empty_list("EVENT", "OtherEvent"))
+    sounds: MSBEntryList[MSBSoundEvent] = field(default_factory=empty("EVENT", "Sound"))
+    vfx: MSBEntryList[MSBVFXEvent] = field(default_factory=empty("EVENT", "VFX"))
+    treasures: MSBEntryList[MSBTreasureEvent] = field(default_factory=empty("EVENT", "Treasure"))
+    spawners: MSBEntryList[MSBSpawnerEvent] = field(default_factory=empty("EVENT", "Spawner"))
+    messages: MSBEntryList[MSBMessageEvent] = field(default_factory=empty("EVENT", "Message"))
+    obj_acts: MSBEntryList[MSBObjActEvent] = field(default_factory=empty("EVENT", "ObjAct"))
+    spawn_points: MSBEntryList[MSBSpawnPointEvent] = field(default_factory=empty("EVENT", "SpawnPoint"))
+    map_offsets: MSBEntryList[MSBMapOffsetEvent] = field(default_factory=empty("EVENT", "MapOffset"))
+    navigation: MSBEntryList[MSBNavigationEvent] = field(default_factory=empty("EVENT", "Navigation"))
+    environments: MSBEntryList[MSBEnvironmentEvent] = field(default_factory=empty("EVENT", "Environment"))
+    wind_vfx: MSBEntryList[MSBWindVFXEvent] = field(default_factory=empty("EVENT", "WindVFX"))
+    patrol_routes: MSBEntryList[MSBPatrolRouteEvent] = field(default_factory=empty("EVENT", "PatrolRoute"))
+    dark_locks: MSBEntryList[MSBDarkLockEvent] = field(default_factory=empty("EVENT", "DarkLock"))
+    platoons: MSBEntryList[MSBPlatoonEvent] = field(default_factory=empty("EVENT", "Platoon"))
+    multi_summons: MSBEntryList[MSBMultiSummonEvent] = field(default_factory=empty("EVENT", "MultiSummon"))
+    other_events: MSBEntryList[MSBOtherEvent] = field(default_factory=empty("EVENT", "OtherEvent"))
 
-    points: MSBEntryList[MSBRegionPoint] = field(default_factory=empty_list("POINT", "Point"))
-    circles: MSBEntryList[MSBRegionCircle] = field(default_factory=empty_list("POINT", "Circle"))
-    spheres: MSBEntryList[MSBRegionSphere] = field(default_factory=empty_list("POINT", "Sphere"))
-    cylinders: MSBEntryList[MSBRegionCylinder] = field(default_factory=empty_list("POINT", "Cylinder"))
-    rects: MSBEntryList[MSBRegionRect] = field(default_factory=empty_list("POINT", "Rect"))
-    boxes: MSBEntryList[MSBRegionBox] = field(default_factory=empty_list("POINT", "Box"))
+    regions: MSBEntryList[MSBRegion] = field(default_factory=empty("POINT", "All"))
 
-    map_pieces: MSBEntryList[MSBMapPiece] = field(default_factory=empty_list("PARTS", "MapPiece"))
-    objects: MSBEntryList[MSBObject] = field(default_factory=empty_list("PARTS", "Object"))
-    characters: MSBEntryList[MSBCharacter] = field(default_factory=empty_list("PARTS", "Character"))
-    player_starts: MSBEntryList[MSBPlayerStart] = field(default_factory=empty_list("PARTS", "PlayerStart"))
-    collisions: MSBEntryList[MSBCollision] = field(default_factory=empty_list("PARTS", "Collision"))
-    navmeshes: MSBEntryList[MSBNavmesh] = field(default_factory=empty_list("PARTS", "Navmesh"))
-    unused_objects: MSBEntryList[MSBDummyObject] = field(default_factory=empty_list("PARTS", "DummyObject"))
-    unused_characters: MSBEntryList[MSBDummyCharacter] = field(default_factory=empty_list("PARTS", "DummyCharacter"))
-    connect_collisions: MSBEntryList[MSBConnectCollision] = field(default_factory=empty_list("PARTS", "ConnectCollision"))
-    other_parts: MSBEntryList[MSBOtherPart] = field(default_factory=empty_list("PARTS", "OtherPart"))
+    map_pieces: MSBEntryList[MSBMapPiece] = field(default_factory=empty("PARTS", "MapPiece"))
+    objects: MSBEntryList[MSBObject] = field(default_factory=empty("PARTS", "Object"))
+    characters: MSBEntryList[MSBCharacter] = field(default_factory=empty("PARTS", "Character"))
+    player_starts: MSBEntryList[MSBPlayerStart] = field(default_factory=empty("PARTS", "PlayerStart"))
+    collisions: MSBEntryList[MSBCollision] = field(default_factory=empty("PARTS", "Collision"))
+    navmeshes: MSBEntryList[MSBNavmesh] = field(default_factory=empty("PARTS", "Navmesh"))
+    unused_objects: MSBEntryList[MSBDummyObject] = field(default_factory=empty("PARTS", "DummyObject"))
+    unused_characters: MSBEntryList[MSBDummyCharacter] = field(default_factory=empty("PARTS", "DummyCharacter"))
+    connect_collisions: MSBEntryList[MSBConnectCollision] = field(default_factory=empty("PARTS", "ConnectCollision"))
+    other_parts: MSBEntryList[MSBOtherPart] = field(default_factory=empty("PARTS", "OtherPart"))
 
     def pack_supertype_name(self, writer: BinaryWriter, supertype_name: str):
         packed_name = supertype_name.encode(self.NAME_ENCODING)

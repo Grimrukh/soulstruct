@@ -8,11 +8,12 @@ from enum import IntEnum
 
 from soulstruct.darksouls1ptde.game_types.map_types import *
 from soulstruct.dcx import DCXType
-from soulstruct.base.maps.msb import MSB as _BaseMSB, MSBSupertype, MSBEntryList
+from soulstruct.base.maps.msb import MSB as _BaseMSB, MSBEntryList
 from soulstruct.base.maps.msb.utils import MSBSubtypeInfo
 from soulstruct.base.maps.msb.region_shapes import *
-from soulstruct.utilities.maths import Vector3
 from soulstruct.utilities.binary import *
+from soulstruct.utilities.maths import Vector3
+from soulstruct.utilities.misc import IDList
 
 from .constants import get_map
 from .enums import *
@@ -54,7 +55,7 @@ MSB_ENTRY_SUBTYPES = {
         "NPCInvasion": MSBSubtypeInfo(MSBEventSubtype.NPCInvasion, MSBNPCInvasionEvent, "npc_invasions"),
     },
     MSBSupertype.REGIONS: {
-        # No subtype lists for regions.
+        "All": MSBSubtypeInfo(MSBRegionSubtype.All, MSBRegion, "regions"),
     },
     MSBSupertype.PARTS: {
         "MapPiece": MSBSubtypeInfo(MSBPartSubtype.MapPiece, MSBMapPiece, "map_pieces"),
@@ -76,7 +77,7 @@ MSB_ENTRY_SUBTYPES = {
 def empty(supertype_prefix: str, subtype_enum_name: str) -> tp.Callable[[], MSBEntryList]:
     supertype = MSBSupertype(f"{supertype_prefix}_PARAM_ST")
     subtype_info = MSB_ENTRY_SUBTYPES[supertype][subtype_enum_name]
-    return lambda: MSBEntryList(supertype=supertype, subtype_info=subtype_info)
+    return lambda: MSBEntryList((), supertype=supertype, subtype_info=subtype_info)
 
 
 @dataclass(slots=True, kw_only=True)
@@ -86,7 +87,7 @@ class MSB(_BaseMSB):
     MSB_ENTRY_SUBTYPE_OFFSETS: tp.ClassVar[dict[str, int]] = {
         MSBSupertype.MODELS: 4,
         MSBSupertype.EVENTS: 8,
-        MSBSupertype.REGIONS: 12,
+        MSBSupertype.REGIONS: 4,  # always 0
         MSBSupertype.PARTS: 4,
     }
     ENTITY_GAME_TYPES: tp.ClassVar[dict[str, MapEntity]] = {
@@ -101,7 +102,9 @@ class MSB(_BaseMSB):
         "messages": MessageEvent,
         "spawn_points": SpawnPointEvent,
         "navigation": NavigationEvent,
-        "regions": Region,
+        # Shape-based region sublist properties:
+        "region_points": RegionPoint,
+        "region_volumes": RegionVolume,
     }
 
     # Callables with `map_base_id` to get prescribed DS1 entity ID range for each MSB entity type, as class kwargs.
@@ -166,6 +169,23 @@ class MSB(_BaseMSB):
     unused_objects: MSBEntryList[MSBDummyObject] = field(default_factory=empty("PARTS", "DummyObject"))
     unused_characters: MSBEntryList[MSBDummyCharacter] = field(default_factory=empty("PARTS", "DummyCharacter"))
     connect_collisions: MSBEntryList[MSBConnectCollision] = field(default_factory=empty("PARTS", "ConnectCollision"))
+
+    @property
+    def region_points(self) -> MSBEntryList[MSBRegion]:
+        return MSBEntryList(
+            [region for region in self.regions if region.shape_type == RegionShapeType.Point],
+            supertype=MSBSupertype.REGIONS,
+            subtype_info=None,
+        )
+
+    @property
+    def region_volumes(self) -> MSBEntryList[MSBRegion]:
+        volume_types = RegionShapeType.get_volume_types()
+        return MSBEntryList(
+            [region for region in self.regions if region.shape_type in volume_types],
+            supertype=MSBSupertype.REGIONS,
+            subtype_info=None,
+        )
 
     def pack_supertype_name(self, writer: BinaryWriter, supertype_name: str):
         packed_name = supertype_name.encode(self.NAME_ENCODING)
@@ -308,7 +328,7 @@ class MSB(_BaseMSB):
             name=f"_LightEvent_{light.name}",
             translate=translate,
             rotate=rotate,
-            shape=MSBRegionPoint(),
+            shape=PointShape(),
         )
         return light
 
@@ -328,7 +348,7 @@ class MSB(_BaseMSB):
             name=f"_SoundEvent_{sound.name.lstrip('_')}",
             translate=translate,
             rotate=rotate,
-            shape=MSBRegionBox(
+            shape=BoxShape(
                 width=width,
                 depth=depth,
                 height=height,
@@ -350,7 +370,7 @@ class MSB(_BaseMSB):
             name=f"_SoundEvent_{sound.name.lstrip('_')}",
             translate=translate,
             rotate=rotate,
-            shape=MSBRegionSphere(
+            shape=SphereShape(
                 radius=radius,
             ),
         )
@@ -379,7 +399,7 @@ class MSB(_BaseMSB):
             entity_id=point_entity_id,
             translate=translate,
             rotate=rotate,
-            shape=MSBRegionPoint(),
+            shape=PointShape(),
         )
         vfx.attached_region = point
         return vfx
@@ -397,7 +417,7 @@ class MSB(_BaseMSB):
             name=f"_SpawnPointEvent_{spawn_point.name.lstrip('_')}",
             translate=translate,
             rotate=rotate,
-            shape=MSBRegionPoint(),
+            shape=PointShape(),
         )
         spawn_point.spawn_point_region = point
         return spawn_point
@@ -415,7 +435,7 @@ class MSB(_BaseMSB):
             name=f"_MessageEvent_{message.name.lstrip('_')}",
             translate=translate,
             rotate=rotate,
-            shape=MSBRegionPoint(),
+            shape=PointShape(),
         )
         message.attached_region = point
         return message

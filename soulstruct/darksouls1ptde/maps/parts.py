@@ -40,7 +40,7 @@ class PartHeaderStruct(MSBHeaderStruct):
     name_offset: int
     # No supertype index.
     _subtype_int: int
-    _subtype_index: int
+    subtype_index: int
     _model_index: int = field(**EntryRef("MODEL_PARAM_ST"))
     sib_path_offset: int
     translate: Vector3
@@ -75,6 +75,7 @@ class PartHeaderStruct(MSBHeaderStruct):
     ) -> None:
         super(PartHeaderStruct, cls).preprocess_write_kwargs(entry, entry_lists, kwargs)
         kwargs["sib_path_offset"] = RESERVED
+        kwargs.pop("supertype_index")
 
     @classmethod
     def post_write(
@@ -126,12 +127,14 @@ class PartSupertypeData(MSBBinaryStruct):
 @dataclass(slots=True, eq=False, repr=False)
 class MSBPart(BaseMSBPart, abc.ABC):
 
+    HEADER_STRUCT = PartHeaderStruct
+    STRUCTS = {
+        "supertype_data": PartSupertypeData,
+        # Subtypes add their own struct or lack thereof (`None`).
+    }
+
     NAME_ENCODING: tp.ClassVar[str] = "shift-jis"  # NOT `shift_jis_2004` (backslashes in SIB paths)
     GROUP_BIT_COUNT: tp.ClassVar[int] = 128  # 4 ints
-    STRUCTS: tp.ClassVar[dict[str, MSBBinaryStruct]] = {
-        "supertype_data": PartSupertypeData,
-        # Subtypes add more their own struct.
-    }
 
     # NOTE: `model` type overridden by subclasses.
     # Subclasses may also use more appropriate defaults for convenience, as these Part supertype fields in DS1 are
@@ -295,7 +298,8 @@ class MSBCharacter(MSBPart):
     player_id: int = field(default=-1, **MapFieldInfo(game_type=PlayerParam))
     draw_parent: MSBPart = None
     patrol_regions: list[MSBRegion | None] = field(
-        default_factory=lambda: [None] * 8, **MapFieldInfo(game_type=GameObjectIntSequence((Region, 8)))
+        default_factory=lambda: [None] * 8,
+        **MapFieldInfo(game_type=GameObjectIntSequence((Region, 8))),
     )
     default_animation: int = -1
     damage_animation: int = -1
@@ -377,12 +381,12 @@ class CollisionDataStruct(MSBBinaryStruct):
     reflect_plane_height: float
     navmesh_groups: GroupBitSet128 = field(**BinaryArray(4, uint))
     vagrant_entity_ids: list[int] = field(**BinaryArray(3))
-    _place_name_banner_id: short  # -1 means use map area/block, and any negative value means banner is forced
+    place_name_banner_id_: short  # -1 means use map area/block, and any negative value means banner is forced
     starts_disabled: bool
     unk_x27_x28: byte
     attached_bonfire: int
     _minus_ones: list[int] = field(**BinaryArray(3, asserted=[-1, -1, -1]))  # never used
-    _play_region_id: int  # -10 or greater is real play region ID, less than -10 is a negated stable footing flag
+    play_region_id_: int  # -10 or greater is real play region ID, less than -10 is a negated stable footing flag
     camera_1_id: short
     camera_2_id: short
     _pad1: bytes = field(**BinaryPad(16))
@@ -397,13 +401,13 @@ class CollisionDataStruct(MSBBinaryStruct):
         kwargs = super(CollisionDataStruct, cls).reader_to_entry_kwargs(reader, entry_type, entry_offset)
 
         # Negative area name means that banner will appear (-1 means get area name from map area/block).
-        internal_place_name_banner_id = kwargs.pop("_place_name_banner_id")
+        internal_place_name_banner_id = kwargs.pop("place_name_banner_id_")
         if internal_place_name_banner_id != -1:
             kwargs["place_name_banner_id"] = abs(internal_place_name_banner_id)
         kwargs["force_place_name_banner"] = internal_place_name_banner_id < 0
 
         # Play Region ID that is -10 or less is a stable footing flag (negated with 10 subtracted from it).
-        internal_play_region_id = kwargs.pop("_play_region_id")
+        internal_play_region_id = kwargs.pop("play_region_id_")
         if internal_play_region_id > -10:
             kwargs["play_region_id"] = internal_play_region_id
             kwargs["stable_footing_flag"] = 0
@@ -420,6 +424,7 @@ class CollisionDataStruct(MSBBinaryStruct):
         entry_lists: dict[str, IDList[MSBEntry]],
         kwargs: dict[str, tp.Any],
     ) -> None:
+        super(CollisionDataStruct, cls).preprocess_write_kwargs(entry, entry_lists, kwargs)
 
         # Determine internal banner ID (negative if forced).
         if entry.place_name_banner_id == -1 and not entry._force_place_name_banner:
@@ -427,13 +432,13 @@ class CollisionDataStruct(MSBBinaryStruct):
                 "`force_place_name_banner` must be enabled if `place_name_banner_id == -1` (default)."
             )
         place_name_sign = -1 if entry.place_name_banner_id >= 0 and entry._force_place_name_banner else 1
-        kwargs["_place_name_banner_id"] = entry.place_name_banner_id * place_name_sign
+        kwargs["place_name_banner_id_"] = entry.place_name_banner_id * place_name_sign
 
         # Resolve play region ID or stable footing flag.
         if entry._stable_footing_flag != 0:
-            kwargs["play_region_id"] = -entry._stable_footing_flag - 10
+            kwargs["play_region_id_"] = -entry._stable_footing_flag - 10
         else:
-            kwargs["play_region_id"] = entry._play_region_id
+            kwargs["play_region_id_"] = entry._play_region_id
 
 
 # noinspection PyRedeclaration

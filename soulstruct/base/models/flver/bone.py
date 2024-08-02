@@ -98,14 +98,14 @@ class FLVERBone:
             bone = getattr(self, f"{connection_name}_bone")
             setattr(self, f"_{connection_name}_bone_index", -1 if bone is None else bone.get_bone_index(bones))
 
-    def to_flver_writer(self, writer: BinaryWriter, bones: list[FLVERBone]):
+    def to_flver_writer(self, writer: BinaryWriter, bones: IDList[FLVERBone]):
         """Write this `FLVERBone` into FLVER `writer`.
 
         Full list of FLVER `bones` is required to get the indices of referenced bones (parent, child, siblings).
         """
         
         def get_index(bone_attr: str):
-            bone = getattr(self, bone_attr)
+            bone = getattr(self, bone_attr)  # type: FLVERBone
             return -1 if bone is None else bone.get_bone_index(bones)
         
         FLVERBoneStruct.object_to_writer(
@@ -127,9 +127,10 @@ class FLVERBone:
 
         As FLVERs can include bones that are 100% identical in their name and data, `bones` has to be an `IDList`.
         """
-        index = bones.index(self)
-        if index == -1:
-            raise ValueError(f"`FLVERBone` {self.name} is not in given `bones` list. Cannot set index.")
+        try:
+            index = bones.index(self)
+        except IndexError:
+            raise ValueError(f"`FLVERBone` {self.name} is not in given `bones` list. Cannot get index.")
         return index
 
     def get_root_parent(self) -> FLVERBone:

@@ -24,7 +24,7 @@ from .enums import MSBModelSubtype
 class ModelHeaderStruct(MSBHeaderStruct):
     name_offset: int
     _subtype_int: int
-    _subtype_index: int
+    subtype_index: int
     sib_path_offset: int
     instance_count: int
     _pad1: bytes = field(init=False, **BinaryPad(12))
@@ -58,8 +58,8 @@ class ModelHeaderStruct(MSBHeaderStruct):
     @classmethod
     def post_write(
         cls,
-        writer: BinaryWriter,
         entry: MSBModel,
+        writer: BinaryWriter,
         entry_offset: int,
         entry_lists: dict[str, IDList[MSBEntry]],
     ):
@@ -79,7 +79,7 @@ class ModelHeaderStruct(MSBHeaderStruct):
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBModel(BaseMSBModel):
-    HEADER_STRUCT: tp.ClassVar[type[BinaryStruct]] = ModelHeaderStruct
+    HEADER_STRUCT = ModelHeaderStruct
     NAME_ENCODING = "shift-jis"
 
 

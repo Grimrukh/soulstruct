@@ -141,6 +141,10 @@ class FLVER(GameFile):
         for bone in bones:
             bone.set_bones(bones)
 
+        for bone in bones:
+            if id(bone) not in bones._index_dict:
+                raise ValueError(f"Bone '{bone.name}' has a duplicate ID in the FLVER bone list?")
+
         submeshes = [
             Submesh.from_flver_reader(
                 reader,

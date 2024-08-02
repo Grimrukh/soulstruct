@@ -23,17 +23,17 @@ class MSBTest(unittest.TestCase):
         with Timer("Map Studio Directory Read"):
             msd = MapStudioDirectory.from_path(DSR_PATH + "/map/MapStudio")
 
-        # with Timer("Map Studio Directory Write"):
-        #     msd.write("_test_MapStudio")
+        with Timer("Map Studio Directory Write"):
+            msd.write("_test_MapStudio")
 
-        # with Timer("Map Studio Directory Reload"):
-        #     msd_reload = MapStudioDirectory.from_path("_test_MapStudio")
+        with Timer("Map Studio Directory Reload"):
+            msd_reload = MapStudioDirectory.from_path("_test_MapStudio")
 
         with Timer("Map Studio Directory JSON Write"):
             msd.write_json_directory("_test_MapStudio_json")
 
-        # with Timer("Map Studio Directory JSON Read"):
-        #     msd_json = MapStudioDirectory.from_json_directory("_test_MapStudio_json")
+        with Timer("Map Studio Directory JSON Read"):
+            msd_json = MapStudioDirectory.from_json_directory("_test_MapStudio_json")
 
         # TODO: assert equal
 
@@ -43,11 +43,12 @@ class MSBTest(unittest.TestCase):
         - Opening the (vanilla) Depths MSB.
         - Copying the main bonfire character, 'c1000_0000'.
         - Changing the entity ID, translate, and rotate of the new bonfire.
+        - Copying the first treasure.
         - Writing the MSB.
         - Re-opening that new MSB.
         - Comparing every entry field.
         """
-        msb = MSB.from_path("m10_00_00_00.msb")
+        msb = MSB.from_path("resources/m10_00_00_00.msb")
         source_chr = msb.characters.find_entry_name("c1000_0000")
         msb.characters.duplicate(
             source_chr, name="c1000_0000_COPY", entity_id=1000999, translate=Vector3([1.0, 2.0, 3.0])

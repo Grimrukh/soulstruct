@@ -146,10 +146,10 @@ MSB_ENTRY_SUBTYPES = {
 }
 
 
-def empty_list(supertype_prefix: str, subtype_enum_name: str) -> tp.Callable[[], MSBEntryList]:
+def empty(supertype_prefix: str, subtype_enum_name: str) -> tp.Callable[[], MSBEntryList]:
     supertype = MSBSupertype(f"{supertype_prefix}_PARAM_ST")
     subtype_info = MSB_ENTRY_SUBTYPES[supertype][subtype_enum_name]
-    return lambda: MSBEntryList(supertype=supertype, subtype_info=subtype_info)
+    return lambda: MSBEntryList((), supertype=supertype, subtype_info=subtype_info)
 
 
 @dataclass(slots=True, kw_only=True)
@@ -179,110 +179,110 @@ class MSB(_BaseMSB):
     LONG_VARINTS: tp.ClassVar[bool] = True
     NAME_ENCODING: tp.ClassVar[str] = "utf-16-le"
 
-    map_piece_models: MSBEntryList[MSBMapPieceModel] = field(default_factory=empty_list("MODEL", "MapPieceModel"))
-    asset_models: MSBEntryList[MSBAssetModel] = field(default_factory=empty_list("MODEL", "AssetModel"))
-    character_models: MSBEntryList[MSBCharacterModel] = field(default_factory=empty_list("MODEL", "CharacterModel"))
-    player_models: MSBEntryList[MSBPlayerModel] = field(default_factory=empty_list("MODEL", "PlayerModel"))
-    collision_models: MSBEntryList[MSBCollisionModel] = field(default_factory=empty_list("MODEL", "CollisionModel"))
+    map_piece_models: MSBEntryList[MSBMapPieceModel] = field(default_factory=empty("MODEL", "MapPieceModel"))
+    asset_models: MSBEntryList[MSBAssetModel] = field(default_factory=empty("MODEL", "AssetModel"))
+    character_models: MSBEntryList[MSBCharacterModel] = field(default_factory=empty("MODEL", "CharacterModel"))
+    player_models: MSBEntryList[MSBPlayerModel] = field(default_factory=empty("MODEL", "PlayerModel"))
+    collision_models: MSBEntryList[MSBCollisionModel] = field(default_factory=empty("MODEL", "CollisionModel"))
 
-    treasures: MSBEntryList[MSBTreasureEvent] = field(default_factory=empty_list("EVENT", "Treasure"))
-    spawners: MSBEntryList[MSBSpawnerEvent] = field(default_factory=empty_list("EVENT", "Spawner"))
-    obj_acts: MSBEntryList[MSBObjActEvent] = field(default_factory=empty_list("EVENT", "ObjAct"))
-    navigation: MSBEntryList[MSBNavigationEvent] = field(default_factory=empty_list("EVENT", "Navigation"))
-    npc_invasions: MSBEntryList[MSBNPCInvasionEvent] = field(default_factory=empty_list("EVENT", "NPCInvasion"))
-    platoons: MSBEntryList[MSBPlatoonEvent] = field(default_factory=empty_list("EVENT", "Platoon"))
+    treasures: MSBEntryList[MSBTreasureEvent] = field(default_factory=empty("EVENT", "Treasure"))
+    spawners: MSBEntryList[MSBSpawnerEvent] = field(default_factory=empty("EVENT", "Spawner"))
+    obj_acts: MSBEntryList[MSBObjActEvent] = field(default_factory=empty("EVENT", "ObjAct"))
+    navigation: MSBEntryList[MSBNavigationEvent] = field(default_factory=empty("EVENT", "Navigation"))
+    npc_invasions: MSBEntryList[MSBNPCInvasionEvent] = field(default_factory=empty("EVENT", "NPCInvasion"))
+    platoons: MSBEntryList[MSBPlatoonEvent] = field(default_factory=empty("EVENT", "Platoon"))
     # TODO: rename to 'patrol_routes' and change region name to 'patrol_route_points'
     patrol_route_events: MSBEntryList[MSBPatrolRouteEvent] = field(
-        default_factory=empty_list("EVENT", "PatrolRouteEvent")
+        default_factory=empty("EVENT", "PatrolRouteEvent")
     )
-    mounts: MSBEntryList[MSBMountEvent] = field(default_factory=empty_list("EVENT", "Mount"))
-    sign_pools: MSBEntryList[MSBSignPoolEvent] = field(default_factory=empty_list("EVENT", "SignPool"))
-    retry_points: MSBEntryList[MSBRetryPointEvent] = field(default_factory=empty_list("EVENT", "RetryPoint"))
-    other_events: MSBEntryList[MSBOtherEvent] = field(default_factory=empty_list("EVENT", "OtherEvent"))
+    mounts: MSBEntryList[MSBMountEvent] = field(default_factory=empty("EVENT", "Mount"))
+    sign_pools: MSBEntryList[MSBSignPoolEvent] = field(default_factory=empty("EVENT", "SignPool"))
+    retry_points: MSBEntryList[MSBRetryPointEvent] = field(default_factory=empty("EVENT", "RetryPoint"))
+    other_events: MSBEntryList[MSBOtherEvent] = field(default_factory=empty("EVENT", "OtherEvent"))
 
-    invasion_points: MSBEntryList[MSBInvasionPointRegion] = field(default_factory=empty_list("POINT", "InvasionPoint"))
+    invasion_points: MSBEntryList[MSBInvasionPointRegion] = field(default_factory=empty("POINT", "InvasionPoint"))
     environment_map_points: MSBEntryList[MSBEnvironmentMapPointRegion] = field(
-        default_factory=empty_list("POINT", "EnvironmentMapPoint")
+        default_factory=empty("POINT", "EnvironmentMapPoint")
     )
-    sounds: MSBEntryList[MSBSoundRegion] = field(default_factory=empty_list("POINT", "Sound"))
-    vfx: MSBEntryList[MSBVFXRegion] = field(default_factory=empty_list("POINT", "VFX"))
-    wind_vfx: MSBEntryList[MSBWindVFXRegion] = field(default_factory=empty_list("POINT", "WindVFX"))
-    spawn_points: MSBEntryList[MSBSpawnPointRegion] = field(default_factory=empty_list("POINT", "SpawnPoint"))
-    messages: MSBEntryList[MSBMessageRegion] = field(default_factory=empty_list("POINT", "Message"))
+    sounds: MSBEntryList[MSBSoundRegion] = field(default_factory=empty("POINT", "Sound"))
+    vfx: MSBEntryList[MSBVFXRegion] = field(default_factory=empty("POINT", "VFX"))
+    wind_vfx: MSBEntryList[MSBWindVFXRegion] = field(default_factory=empty("POINT", "WindVFX"))
+    spawn_points: MSBEntryList[MSBSpawnPointRegion] = field(default_factory=empty("POINT", "SpawnPoint"))
+    messages: MSBEntryList[MSBMessageRegion] = field(default_factory=empty("POINT", "Message"))
     environment_map_effect_boxes: MSBEntryList[MSBEnvironmentMapEffectBoxRegion] = field(
-        default_factory=empty_list("POINT", "EnvironmentMapEffectBox")
+        default_factory=empty("POINT", "EnvironmentMapEffectBox")
     )
-    wind_areas: MSBEntryList[MSBWindAreaRegion] = field(default_factory=empty_list("POINT", "WindArea"))
-    connections: MSBEntryList[MSBConnectionRegion] = field(default_factory=empty_list("POINT", "Connection"))
-    patrol_route22s: MSBEntryList[MSBPatrolRoute22Region] = field(default_factory=empty_list("POINT", "PatrolRoute22"))
+    wind_areas: MSBEntryList[MSBWindAreaRegion] = field(default_factory=empty("POINT", "WindArea"))
+    connections: MSBEntryList[MSBConnectionRegion] = field(default_factory=empty("POINT", "Connection"))
+    patrol_route22s: MSBEntryList[MSBPatrolRoute22Region] = field(default_factory=empty("POINT", "PatrolRoute22"))
     buddy_summon_points: MSBEntryList[MSBBuddySummonPointRegion] = field(
-        default_factory=empty_list("POINT", "BuddySummonPoint")
+        default_factory=empty("POINT", "BuddySummonPoint")
     )
-    muffling_boxes: MSBEntryList[MSBMufflingBoxRegion] = field(default_factory=empty_list("POINT", "MufflingBox"))
+    muffling_boxes: MSBEntryList[MSBMufflingBoxRegion] = field(default_factory=empty("POINT", "MufflingBox"))
     muffling_portals: MSBEntryList[MSBMufflingPortalRegion] = field(
-        default_factory=empty_list("POINT", "MufflingPortal")
+        default_factory=empty("POINT", "MufflingPortal")
     )
-    other_sounds: MSBEntryList[MSBOtherSoundRegion] = field(default_factory=empty_list("POINT", "OtherSound"))
-    muffling_planes: MSBEntryList[MSBMufflingPlaneRegion] = field(default_factory=empty_list("POINT", "MufflingPlane"))
-    patrol_routes: MSBEntryList[MSBPatrolRouteRegion] = field(default_factory=empty_list("POINT", "PatrolRoute"))
-    map_points: MSBEntryList[MSBMapPointRegion] = field(default_factory=empty_list("POINT", "MapPoint"))
+    other_sounds: MSBEntryList[MSBOtherSoundRegion] = field(default_factory=empty("POINT", "OtherSound"))
+    muffling_planes: MSBEntryList[MSBMufflingPlaneRegion] = field(default_factory=empty("POINT", "MufflingPlane"))
+    patrol_routes: MSBEntryList[MSBPatrolRouteRegion] = field(default_factory=empty("POINT", "PatrolRoute"))
+    map_points: MSBEntryList[MSBMapPointRegion] = field(default_factory=empty("POINT", "MapPoint"))
     weather_overrides: MSBEntryList[MSBWeatherOverrideRegion] = field(
-        default_factory=empty_list("POINT", "WeatherOverride")
+        default_factory=empty("POINT", "WeatherOverride")
     )
     auto_draw_group_points: MSBEntryList[MSBAutoDrawGroupPointRegion] = field(
-        default_factory=empty_list("POINT", "AutoDrawGroupPoint")
+        default_factory=empty("POINT", "AutoDrawGroupPoint")
     )
     group_defeat_rewards: MSBEntryList[MSBGroupDefeatRewardRegion] = field(
-        default_factory=empty_list("POINT", "GroupDefeatReward")
+        default_factory=empty("POINT", "GroupDefeatReward")
     )
     map_point_discovery_overrides: MSBEntryList[MSBMapPointDiscoveryOverrideRegion] = field(
-        default_factory=empty_list("POINT", "MapPointDiscoveryOverride")
+        default_factory=empty("POINT", "MapPointDiscoveryOverride")
     )
     map_point_participation_overrides: MSBEntryList[MSBMapPointParticipationOverrideRegion] = field(
-        default_factory=empty_list("POINT", "MapPointParticipationOverride")
+        default_factory=empty("POINT", "MapPointParticipationOverride")
     )
-    hitsets: MSBEntryList[MSBHitsetRegion] = field(default_factory=empty_list("POINT", "Hitset"))
+    hitsets: MSBEntryList[MSBHitsetRegion] = field(default_factory=empty("POINT", "Hitset"))
     fast_travel_restrictions: MSBEntryList[MSBFastTravelRestrictionRegion] = field(
-        default_factory=empty_list("POINT", "FastTravelRestriction")
+        default_factory=empty("POINT", "FastTravelRestriction")
     )
     weather_create_asset_points: MSBEntryList[MSBWeatherCreateAssetPointRegion] = field(
-        default_factory=empty_list("POINT", "WeatherCreateAssetPoint")
+        default_factory=empty("POINT", "WeatherCreateAssetPoint")
     )
-    play_areas: MSBEntryList[MSBPlayAreaRegion] = field(default_factory=empty_list("POINT", "PlayArea"))
+    play_areas: MSBEntryList[MSBPlayAreaRegion] = field(default_factory=empty("POINT", "PlayArea"))
     environment_map_outputs: MSBEntryList[MSBEnvironmentMapOutputRegion] = field(
-        default_factory=empty_list("POINT", "EnvironmentMapOutput")
+        default_factory=empty("POINT", "EnvironmentMapOutput")
     )
-    mount_jumps: MSBEntryList[MSBMountJumpRegion] = field(default_factory=empty_list("POINT", "MountJump"))
-    dummies: MSBEntryList[MSBDummyRegion] = field(default_factory=empty_list("POINT", "Dummy"))
+    mount_jumps: MSBEntryList[MSBMountJumpRegion] = field(default_factory=empty("POINT", "MountJump"))
+    dummies: MSBEntryList[MSBDummyRegion] = field(default_factory=empty("POINT", "Dummy"))
     fall_prevention_removals: MSBEntryList[MSBFallPreventionRemovalRegion] = field(
-        default_factory=empty_list("POINT", "FallPreventionRemoval")
+        default_factory=empty("POINT", "FallPreventionRemoval")
     )
     navmesh_cuttings: MSBEntryList[MSBNavmeshCuttingRegion] = field(
-        default_factory=empty_list("POINT", "NavmeshCutting")
+        default_factory=empty("POINT", "NavmeshCutting")
     )
     map_name_overrides: MSBEntryList[MSBMapNameOverrideRegion] = field(
-        default_factory=empty_list("POINT", "MapNameOverride")
+        default_factory=empty("POINT", "MapNameOverride")
     )
-    mount_jump_falls: MSBEntryList[MSBMountJumpFallRegion] = field(default_factory=empty_list("POINT", "MountJumpFall"))
+    mount_jump_falls: MSBEntryList[MSBMountJumpFallRegion] = field(default_factory=empty("POINT", "MountJumpFall"))
     horse_ride_overrides: MSBEntryList[MSBHorseRideOverrideRegion] = field(
-        default_factory=empty_list("POINT", "HorseRideOverride")
+        default_factory=empty("POINT", "HorseRideOverride")
     )
-    other_regions: MSBEntryList[MSBOtherRegion] = field(default_factory=empty_list("POINT", "OtherRegion"))
+    other_regions: MSBEntryList[MSBOtherRegion] = field(default_factory=empty("POINT", "OtherRegion"))
 
     muffling_portal_links: MSBEntryList[MSBMufflingPortalLink] = field(
-        default_factory=empty_list("ROUTE", "MufflingPortalLink")
+        default_factory=empty("ROUTE", "MufflingPortalLink")
     )
-    muffling_box_links: MSBEntryList[MSBMufflingBoxLink] = field(default_factory=empty_list("ROUTE", "MufflingBoxLink"))
-    other_routes: MSBEntryList[MSBOtherRoute] = field(default_factory=empty_list("ROUTE", "OtherRoute"))
+    muffling_box_links: MSBEntryList[MSBMufflingBoxLink] = field(default_factory=empty("ROUTE", "MufflingBoxLink"))
+    other_routes: MSBEntryList[MSBOtherRoute] = field(default_factory=empty("ROUTE", "OtherRoute"))
 
-    map_pieces: MSBEntryList[MSBMapPiece] = field(default_factory=empty_list("PARTS", "MapPiece"))
-    assets: MSBEntryList[MSBAsset] = field(default_factory=empty_list("PARTS", "Asset"))
-    characters: MSBEntryList[MSBCharacter] = field(default_factory=empty_list("PARTS", "Character"))
-    player_starts: MSBEntryList[MSBPlayerStart] = field(default_factory=empty_list("PARTS", "PlayerStart"))
-    collisions: MSBEntryList[MSBCollision] = field(default_factory=empty_list("PARTS", "Collision"))
-    connect_collisions: MSBEntryList[MSBConnectCollision] = field(default_factory=empty_list("PARTS", "ConnectCollision"))
-    unused_assets: MSBEntryList[MSBUnusedAsset] = field(default_factory=empty_list("PARTS", "UnusedAsset"))
-    unused_characters: MSBEntryList[MSBDummyCharacter] = field(default_factory=empty_list("PARTS", "DummyCharacter"))
+    map_pieces: MSBEntryList[MSBMapPiece] = field(default_factory=empty("PARTS", "MapPiece"))
+    assets: MSBEntryList[MSBAsset] = field(default_factory=empty("PARTS", "Asset"))
+    characters: MSBEntryList[MSBCharacter] = field(default_factory=empty("PARTS", "Character"))
+    player_starts: MSBEntryList[MSBPlayerStart] = field(default_factory=empty("PARTS", "PlayerStart"))
+    collisions: MSBEntryList[MSBCollision] = field(default_factory=empty("PARTS", "Collision"))
+    connect_collisions: MSBEntryList[MSBConnectCollision] = field(default_factory=empty("PARTS", "ConnectCollision"))
+    unused_assets: MSBEntryList[MSBUnusedAsset] = field(default_factory=empty("PARTS", "UnusedAsset"))
+    unused_characters: MSBEntryList[MSBDummyCharacter] = field(default_factory=empty("PARTS", "DummyCharacter"))
 
     # TODO: Need to check all part `model_instance_id` values are unique.
     #  Can get first one and increment from there. Unfortunately, first value seems sort of arbitrary (7000, 9000, etc).

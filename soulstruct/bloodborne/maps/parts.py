@@ -82,6 +82,7 @@ class PartHeaderStruct(MSBHeaderStruct):
         super(PartHeaderStruct, cls).preprocess_write_kwargs(entry, entry_lists, kwargs)
         kwargs["sib_path_offset"] = RESERVED
         kwargs["description_offset"] = RESERVED
+        kwargs.pop("supertype_index")
 
     @classmethod
     def post_write(
@@ -347,11 +348,11 @@ class CollisionDataStruct(MSBBinaryStruct):
     sound_space_type: byte
     _environment_event_index: short = field(**EntryRef("environments"))
     reflect_plane_height: float
-    _place_name_banner_id: short  # -1 means use map area/block, and any negative value means banner is forced
+    place_name_banner_id_: short  # -1 means use map area/block, and any negative value means banner is forced
     starts_disabled: bool
     unk_x0b_x0c: byte
     attached_lantern: int
-    _play_region_id: int  # -10 or greater is real play region ID, less than -10 is a negated stable footing flag
+    play_region_id_: int  # -10 or greater is real play region ID, less than -10 is a negated stable footing flag
     camera_1_id: short
     camera_2_id: short
 
@@ -365,13 +366,13 @@ class CollisionDataStruct(MSBBinaryStruct):
         kwargs = super(CollisionDataStruct, cls).reader_to_entry_kwargs(reader, entry_type, entry_offset)
 
         # Negative area name means that banner will appear (-1 means get area name from map area/block).
-        internal_place_name_banner_id = kwargs.pop("_place_name_banner_id")
+        internal_place_name_banner_id = kwargs.pop("place_name_banner_id_")
         if internal_place_name_banner_id != -1:
             kwargs["place_name_banner_id"] = abs(internal_place_name_banner_id)
         kwargs["force_place_name_banner"] = internal_place_name_banner_id < 0
 
         # Play Region ID that is -10 or less is a stable footing flag (negated with 10 subtracted from it).
-        internal_play_region_id = kwargs.pop("_play_region_id")
+        internal_play_region_id = kwargs.pop("play_region_id_")
         if internal_play_region_id > -10:
             kwargs["play_region_id"] = internal_play_region_id
             kwargs["stable_footing_flag"] = 0
@@ -388,6 +389,7 @@ class CollisionDataStruct(MSBBinaryStruct):
         entry_lists: dict[str, IDList[MSBEntry]],
         kwargs: dict[str, tp.Any],
     ) -> None:
+        super(CollisionDataStruct, cls).preprocess_write_kwargs(entry, entry_lists, kwargs)
 
         # Determine internal banner ID (negative if forced).
         if entry.place_name_banner_id == -1 and not entry._force_place_name_banner:
@@ -395,13 +397,13 @@ class CollisionDataStruct(MSBBinaryStruct):
                 "`force_place_name_banner` must be enabled if `place_name_banner_id == -1` (default)."
             )
         place_name_sign = -1 if entry.place_name_banner_id >= 0 and entry._force_place_name_banner else 1
-        kwargs["_place_name_banner_id"] = entry.place_name_banner_id * place_name_sign
+        kwargs["place_name_banner_id_"] = entry.place_name_banner_id * place_name_sign
 
         # Resolve play region ID or stable footing flag.
         if entry._stable_footing_flag != 0:
-            kwargs["play_region_id"] = -entry._stable_footing_flag - 10
+            kwargs["play_region_id_"] = -entry._stable_footing_flag - 10
         else:
-            kwargs["play_region_id"] = entry._play_region_id
+            kwargs["play_region_id_"] = entry._play_region_id
 
 
 @dataclass(slots=True, eq=False, repr=False)

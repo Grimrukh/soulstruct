@@ -1,20 +1,21 @@
 from __future__ import annotations
 
 __all__ = [
-    "MSBRegionShapeType",
-    "MSBRegionShape",
-    "MSBRegionPoint",
-    "MSBRegionCircle",
-    "MSBRegionSphere",
-    "MSBRegionCylinder",
-    "MSBRegionRect",
-    "MSBRegionBox",
-    "MSBRegionComposite",
+    "RegionShapeType",
+    "RegionShape",
+    "PointShape",
+    "CircleShape",
+    "SphereShape",
+    "CylinderShape",
+    "RectShape",
+    "BoxShape",
+    "CompositeShape",
+    "SHAPE_TYPE_CLASSES",
 ]
 
 import abc
 import typing as tp
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 from enum import IntEnum
 
 from soulstruct.base.maps.msb.utils import MSBBrokenEntryReference
@@ -26,8 +27,7 @@ if tp.TYPE_CHECKING:
     from .core import MSBEntry
 
 
-class MSBRegionShapeType(IntEnum):
-    """Correct for most games, up until `Composite` added."""
+class RegionShapeType(IntEnum):
     Point = 0
     Circle = 1
     Sphere = 2
@@ -36,130 +36,184 @@ class MSBRegionShapeType(IntEnum):
     Box = 5
     Composite = 6  # not supported by older games
 
-
-class MSBRegionShape(abc.ABC):
-    """Shape structure for any `MSBRegion` entry."""
-    SHAPE_TYPE: tp.ClassVar[IntEnum]
-    SHAPE_DATA_STRUCT: tp.ClassVar[type[BinaryStruct]]
-
     @classmethod
-    def from_msb_reader(cls, reader: BinaryReader) -> tp.Self:
-        """Straightforward for basic shapes, which are basically just 1-3 float structs."""
-        return cls.SHAPE_DATA_STRUCT.reader_to_object(reader, cls)
-
-    def to_msb_writer(self, writer: BinaryWriter):
-        self.SHAPE_DATA_STRUCT.object_to_writer(self, writer)
-
-
-@dataclass(slots=True, eq=False, repr=False)
-class MSBRegionPoint(MSBRegionShape):
-    """No shape attributes. Note that the rotate attribute is still meaningful for many uses (e.g. what way the player
-    will be facing when they spawn at or teleport to this point)."""
-
-    SHAPE_TYPE = MSBRegionShapeType.Point
-
-    SHAPE_DATA_STRUCT: tp.ClassVar = None  # no data
-
-
-@dataclass(slots=True, eq=False, repr=False)
-class MSBRegionCircle(MSBRegionShape):
-    """Almost never used (no volume)."""
-
-    SHAPE_TYPE = MSBRegionShapeType.Circle
-
-    @dataclass(slots=True)
-    class SHAPE_DATA_STRUCT(BinaryStruct):
-        radius: float
-
-    radius: float = 1.0
-
-
-@dataclass(slots=True, eq=False, repr=False)
-class MSBRegionSphere(MSBRegionShape):
-
-    SHAPE_TYPE = MSBRegionShapeType.Sphere
-
-    @dataclass(slots=True)
-    class SHAPE_DATA_STRUCT(BinaryStruct):
-        radius: float
-
-    radius: float = 1.0
-
-
-@dataclass(slots=True, eq=False, repr=False)
-class MSBRegionCylinder(MSBRegionShape):
-
-    SHAPE_TYPE = MSBRegionShapeType.Cylinder
-
-    @dataclass(slots=True)
-    class SHAPE_DATA_STRUCT(BinaryStruct):
-        radius: float
-        height: float
-
-    radius: float = 1.0
-    height: float = 1.0
-
-
-@dataclass(slots=True, eq=False, repr=False)
-class MSBRegionRect(MSBRegionShape):
-    """Almost never used (no volume)."""
-
-    SHAPE_TYPE = MSBRegionShapeType.Rect
-
-    @dataclass(slots=True)
-    class SHAPE_DATA_STRUCT(BinaryStruct):
-        width: float
-        height: float
-
-    width: float = 1.0
-    height: float = 1.0
-
-
-@dataclass(slots=True, eq=False, repr=False)
-class MSBRegionBox(MSBRegionShape):
-
-    SHAPE_TYPE = MSBRegionShapeType.Box
-
-    @dataclass(slots=True)
-    class SHAPE_DATA_STRUCT(BinaryStruct):
-        width: float
-        depth: float
-        height: float
-
-    width: float = 1.0
-    depth: float = 1.0
-    height: float = 1.0
+    def get_volume_types(cls) -> set[RegionShapeType]:
+        return {cls.Sphere, cls.Cylinder, cls.Box}
 
 
 @dataclass(slots=True)
-class MSBRegionComposite(MSBRegionShape):
+class RegionShape(abc.ABC):
+    """Shape structure for any `MSBRegion` entry."""
+    SHAPE_TYPE: tp.ClassVar[RegionShapeType]
 
-    SHAPE_TYPE = MSBRegionShapeType.Composite
+    @classmethod
+    @abc.abstractmethod
+    def from_msb_reader(cls, reader: BinaryReader) -> tp.Self:
+        """Straightforward for basic shapes, which are basically just 1-3 float structs."""
+        ...
 
-    @dataclass(slots=True)
-    class SHAPE_DATA_STRUCT(BinaryStruct):
-        """MSB global region indices and unknown values for eight different regions. -1 indices indicate unused."""
-        region_0_index: int
-        region_0_unk: int
-        region_1_index: int
-        region_1_unk: int
-        region_2_index: int
-        region_2_unk: int
-        region_3_index: int
-        region_3_unk: int
-        region_4_index: int
-        region_4_unk: int
-        region_5_index: int
-        region_5_unk: int
-        region_6_index: int
-        region_6_unk: int
-        region_7_index: int
-        region_7_unk: int
+    @abc.abstractmethod
+    def to_msb_writer(self, writer: BinaryWriter):
+        """Straightforward for basic shapes, which are basically just 1-3 float structs."""
+        ...
+
+    @classmethod
+    def from_json_dict(cls, json_dict: dict[str, str | float]):
+        if "shape_type" in json_dict:
+            if json_dict["shape_type"] != cls.SHAPE_TYPE.name.capitalize():
+                raise ValueError(
+                    f"JSON object shape type '{json_dict['shape_type']}' does not match this "
+                    f"`RegionShape` class '{cls.__name__}' ({cls.SHAPE_TYPE.name})."
+                )
+        json_dict = {k: v for k, v in json_dict.items() if k != "shape_type"}
+        # noinspection PyArgumentList
+        return cls(**json_dict)
+
+    def to_json_dict(self) -> dict[str, str | float]:
+        return {
+            "shape_type": self.SHAPE_TYPE.name,
+            **{f.name: getattr(self, f.name) for f in fields(self)},
+        }
+
+
+@dataclass(slots=True)
+class PointShape(RegionShape):
+    """No shape attributes. Note that the MSB region's `rotate` attribute is still meaningful for many uses (e.g. what
+    way the player will be facing when they spawn at or teleport to this point)."""
+
+    SHAPE_TYPE = RegionShapeType.Point
+
+    @classmethod
+    def from_msb_reader(cls, reader: BinaryReader) -> tp.Self:
+        """No data in this shape."""
+        return cls()
+
+    def to_msb_writer(self, writer: BinaryWriter):
+        """No data in this shape."""
+        pass
+
+
+@dataclass(slots=True)
+class CircleShape(RegionShape):
+    """Almost never used (no volume)."""
+
+    SHAPE_TYPE = RegionShapeType.Circle
+
+    radius: float = 1.0
+
+    @classmethod
+    def from_msb_reader(cls, reader: BinaryReader) -> tp.Self:
+        radius = reader["f"]
+        return cls(radius)
+
+    def to_msb_writer(self, writer: BinaryWriter):
+        writer.pack("f", self.radius)
+
+
+@dataclass(slots=True)
+class SphereShape(RegionShape):
+
+    SHAPE_TYPE = RegionShapeType.Sphere
+
+    radius: float = 1.0
+
+    @classmethod
+    def from_msb_reader(cls, reader: BinaryReader) -> tp.Self:
+        radius = reader["f"]
+        return cls(radius)
+
+    def to_msb_writer(self, writer: BinaryWriter):
+        writer.pack("f", self.radius)
+
+
+@dataclass(slots=True)
+class CylinderShape(RegionShape):
+
+    SHAPE_TYPE = RegionShapeType.Cylinder
+
+    radius: float = 1.0
+    height: float = 1.0
+
+    @classmethod
+    def from_msb_reader(cls, reader: BinaryReader) -> tp.Self:
+        radius = reader["f"]
+        height = reader["f"]
+        return cls(radius, height)
+
+    def to_msb_writer(self, writer: BinaryWriter):
+        writer.pack("f", self.radius)
+        writer.pack("f", self.height)
+
+
+@dataclass(slots=True)
+class RectShape(RegionShape):
+    """Almost never used (no volume)."""
+
+    SHAPE_TYPE = RegionShapeType.Rect
+
+    width: float = 1.0
+    depth: float = 1.0
+
+    @classmethod
+    def from_msb_reader(cls, reader: BinaryReader) -> tp.Self:
+        width = reader["f"]
+        depth = reader["f"]
+        return cls(width, depth)
+
+    def to_msb_writer(self, writer: BinaryWriter):
+        writer.pack("f", self.width)
+        writer.pack("f", self.depth)
+
+
+@dataclass(slots=True)
+class BoxShape(RegionShape):
+
+    SHAPE_TYPE = RegionShapeType.Box
+
+    width: float = 1.0  # game X
+    depth: float = 1.0  # game Z
+    height: float = 1.0  # game Y
+
+    @classmethod
+    def from_msb_reader(cls, reader: BinaryReader) -> tp.Self:
+        """NOTE: These dimensions are indeed in XZY order, not XYZ."""
+        width = reader["f"]
+        depth = reader["f"]
+        height = reader["f"]
+        return cls(width, depth, height)
+
+    def to_msb_writer(self, writer: BinaryWriter):
+        """NOTE: These dimensions are indeed in XZY order, not XYZ."""
+        writer.pack("f", self.width)
+        writer.pack("f", self.depth)
+        writer.pack("f", self.height)
+
+
+@dataclass(slots=True)
+class CompositeShape(RegionShape):
+
+    SHAPE_TYPE = RegionShapeType.Composite
 
     region_indices: list[int] = field(default_factory=lambda: [-1] * 8)
-    region_unks: list[int] = field(default_factory=lambda: [0] * 8)
+    region_unks: list[int] = field(default_factory=lambda: [0] * 8)  # TODO: is this the right default?
 
     regions: list[BaseMSBRegion | None] = field(default_factory=lambda: [None] * 8)
+
+    @classmethod
+    def from_msb_reader(cls, reader: BinaryReader) -> tp.Self:
+        """Eight pairs of region index and unknown value. -1 index indicates unused child region."""
+        region_indices = []
+        region_unks = []
+        for i in range(8):
+            region_indices.append(reader["i"])
+            region_unks.append(reader["i"])
+        return cls(region_indices, region_unks)
+
+    def to_msb_writer(self, writer: BinaryWriter):
+        """Eight pairs of region index and unknown value. -1 index indicates unused child region."""
+        for i in range(8):
+            writer.pack("i", self.region_indices[i])
+            writer.pack("i", self.region_unks[i])
 
     def indices_to_regions(self, entry_lists: dict[str, IDList[MSBEntry]], owner_region_name: str):
         regions_list = entry_lists["POINT_PARAM_ST"]
@@ -203,3 +257,15 @@ class MSBRegionComposite(MSBRegionShape):
         self.regions[index] = region
         self.region_indices[index] = -2  # indicates stale
         self.region_unks[index] = unk
+
+
+# For JSON mostly.
+SHAPE_TYPE_CLASSES = {
+    RegionShapeType.Point: PointShape,
+    RegionShapeType.Circle: CircleShape,
+    RegionShapeType.Sphere: SphereShape,
+    RegionShapeType.Cylinder: CylinderShape,
+    RegionShapeType.Rect: RectShape,
+    RegionShapeType.Box: BoxShape,
+    RegionShapeType.Composite: CompositeShape,
+}

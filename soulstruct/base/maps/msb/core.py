@@ -3,6 +3,7 @@ from __future__ import annotations
 __all__ = ["MSB"]
 
 import abc
+import json
 import logging
 import re
 import struct
@@ -16,8 +17,10 @@ from soulstruct.base.game_types import GAME_INT_TYPE
 from soulstruct.base.game_types.map_types import MapEntity
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.files import write_json
+from soulstruct.utilities.maths import Vector2, Vector3, Vector4
 from soulstruct.utilities.misc import IDList
 from soulstruct.utilities.text import PY_NAME_RE
+from .region_shapes import RegionShape
 
 from .msb_entry import MSBEntry
 from .msb_entry_list import MSBEntryList
@@ -26,7 +29,7 @@ from .events import BaseMSBEvent
 from .models import BaseMSBModel
 from .parts import BaseMSBPart
 from .regions import BaseMSBRegion
-from .utils import MSBSubtypeInfo, MSB_JSONEncoder
+from .utils import GroupBitSet, MSBSubtypeInfo
 
 if tp.TYPE_CHECKING:
     from .enums import BaseMSBSubtype
@@ -69,6 +72,16 @@ class MSB(GameFile, abc.ABC):
             when they are actually visible in the game. Some MSB Events reference Parts by index, so their order needs
             to be carefully managed internally.
     """
+
+    class JSONEncoder(json.JSONEncoder):
+        """Handles a few extra types that appear as `MSBEntry` field types."""
+
+        def default(self, obj):
+            if isinstance(obj, RegionShape):
+                return obj.to_json_dict()
+            if isinstance(obj, (Vector2, Vector3, Vector4, GroupBitSet)):
+                return repr(obj)
+
     EXT: tp.ClassVar[str] = ".msb"
 
     SUPERTYPE_LIST_HEADER: tp.ClassVar[type[BinaryStruct]]
@@ -83,7 +96,8 @@ class MSB(GameFile, abc.ABC):
     }
     # Maps MSB entry supertype names (e.g. 'POINT_PARAM_ST') to dicts that map subtype enum names to subtype info.
     MSB_ENTRY_SUBTYPES: tp.ClassVar[dict[MSBSupertype, dict[str, MSBSubtypeInfo]]]
-    # Maps MSB entry supertype names (parts, etc.) to the relative offsets of their subtype enums.
+    # Maps MSB entry supertype names (parts, etc.) to the relative offsets of their subtype enums, which we check in
+    # advance to determine which `MSBEntry` subclass to use.
     MSB_ENTRY_SUBTYPE_OFFSETS: tp.ClassVar[dict[MSBSupertype, int]]
     # Maps entry subtype names ("characters", "sounds", etc.) to their corresponding `BaseGameType`, if applicable.
     ENTITY_GAME_TYPES: tp.ClassVar[dict[str, type[MapEntity]]]
@@ -168,7 +182,7 @@ class MSB(GameFile, abc.ABC):
         # Put entry into appropriate supertype and subtype lists (creating if necessary).
         entry_lists[supertype].append(entry)
         if subtype_list_name not in entry_lists:
-            entry_lists[subtype_list_name] = MSBEntryList(supertype=supertype, subtype_info=subtype_info)
+            entry_lists[subtype_list_name] = MSBEntryList((), supertype=supertype, subtype_info=subtype_info)
         entry_lists[subtype_list_name].append(entry)
 
     @classmethod
@@ -518,7 +532,7 @@ class MSB(GameFile, abc.ABC):
         file_path = Path(file_path)
         if file_path.suffix != ".json":
             file_path = file_path.with_suffix(file_path.suffix + ".json")
-        write_json(file_path, json_dict, indent=indent, encoding=encoding, encoder=MSB_JSONEncoder)
+        write_json(file_path, json_dict, indent=indent, encoding=encoding, encoder=self.JSONEncoder)
 
     @classmethod
     def from_dict(cls, data: dict) -> tp.Self:
@@ -547,7 +561,7 @@ class MSB(GameFile, abc.ABC):
                         subtype_deferred.append((entry, deferred))
                     entries.append(entry)
                 subtype_lists[subtype_info.subtype_list_name] = MSBEntryList(
-                    *entries, supertype=supertype_name, subtype_info=subtype_info
+                    entries, supertype=supertype_name, subtype_info=subtype_info
                 )
 
         cls._resolve_deferred_json_refs(subtype_lists, deferred_refs)
@@ -557,19 +571,16 @@ class MSB(GameFile, abc.ABC):
     @classmethod
     def _resolve_deferred_json_refs(cls, subtype_lists: dict[str, MSBEntryList], deferred_refs: dict):
         """Resolve deferred entry references now that all lists are complete."""
+
+        subtype_cache = {}  # type: dict[str, tuple[dict[str, MSBEntry], set[str]]]
+
         for subtype_list_name, deferred_list in deferred_refs.items():
             for entry, deferred_dict in deferred_list:
                 for field_name, field_ref in deferred_dict.items():
                     if isinstance(field_ref, dict):
-                        ref_list_name = field_ref["subtype_list_name"]
-                        ref_index = field_ref["subtype_index"]
-                        try:
-                            ref_entry = subtype_lists[ref_list_name][ref_index]
-                        except (KeyError, IndexError):
-                            raise ValueError(
-                                f"Entry '{entry.name}' field `{field_name}` references invalid entry: "
-                                f"`{ref_list_name}[{ref_index}]`"
-                            )
+                        ref_entry = cls._resolve_json_entry_ref(
+                            entry, field_name, subtype_lists, field_ref, subtype_cache
+                        )
                         setattr(entry, field_name, ref_entry)
                     elif isinstance(field_ref, list):
                         entry_list = []
@@ -577,17 +588,56 @@ class MSB(GameFile, abc.ABC):
                             if ref is None:
                                 entry_list.append(None)
                             else:
-                                ref_list_name = ref["subtype_list_name"]
-                                ref_index = ref["subtype_index"]
-                                try:
-                                    ref_entry = subtype_lists[ref_list_name][ref_index]
-                                except (KeyError, IndexError):
-                                    raise ValueError(
-                                        f"Entry '{entry.name}' field `{field_name}` references invalid entry in list: "
-                                        f"`{ref_list_name}[{ref_index}]`"
-                                    )
+                                ref_entry = cls._resolve_json_entry_ref(
+                                    entry, field_name, subtype_lists, ref, subtype_cache, msg_field_str="array field"
+                                )
                                 entry_list.append(ref_entry)
                         setattr(entry, field_name, entry_list)
+
+    @staticmethod
+    def _resolve_json_entry_ref(
+        entry: MSBEntry,
+        field_name: str,
+        subtype_lists: dict[str, MSBEntryList],
+        field_ref: dict[str, str | int],
+        subtype_cache: dict[str, tuple[dict[str, MSBEntry], set[str]]],
+        msg_field_str="field",
+    ) -> MSBEntry:
+        ref_list_name = field_ref["subtype_list_name"]
+        try:
+            subtype_list = subtype_lists[ref_list_name]
+        except KeyError:
+            raise ValueError(
+                f"Entry '{entry.name}' {msg_field_str} `{field_name}` references missing subtype list: "
+                f"`{ref_list_name}`."
+            )
+        if "entry_name" in field_ref:
+            ref_name = field_ref["entry_name"]
+            if ref_list_name not in subtype_cache:
+                subtype_cache[ref_list_name] = subtype_list.get_entries_by_unique_name()
+            entries_by_name, ambiguous_names = subtype_cache[ref_list_name]
+            if ref_name in ambiguous_names:
+                raise ValueError(
+                    f"Entry '{entry.name}' {msg_field_str} `{field_name}` references ambiguous entry name: "
+                    f"`{ref_list_name}[\"{ref_name}\"]`. JSON must use 'subtype_index' instead or "
+                    f"referenced entry name must be made unique."
+                )
+            try:
+                return entries_by_name[ref_name]
+            except KeyError:
+                raise ValueError(
+                    f"Entry '{entry.name}' {msg_field_str} `{field_name}` references missing entry name: "
+                    f"`{ref_list_name}[\"{ref_name}\"]`"
+                )
+
+        ref_index = field_ref["subtype_index"]
+        try:
+            return subtype_lists[ref_list_name][ref_index]
+        except IndexError:
+            raise ValueError(
+                f"Entry '{entry.name}' {msg_field_str} `{field_name}` references invalid entry index: "
+                f"`{ref_list_name}[{ref_index}]`"
+            )
 
     @classmethod
     def get_version_dict(cls) -> dict[str, bool | str]:
@@ -807,15 +857,20 @@ class MSB(GameFile, abc.ABC):
             sorted_entity_id_dict = {
                 k: v for k, v in sorted(entity_id_dict.items(), key=sort_key)
             }
+            last_is_non_ascii = False
             for entity_id, entry in sorted_entity_id_dict.items():
                 # name = entry.name.replace(" ", "_")
                 try:
                     name = entry.name.encode("utf-8").decode("ascii")
                 except UnicodeDecodeError:
-                    class_text += f"    # TODO: Non-ASCII name characters.\n    # {entry.name} = {entity_id}"
+                    if not last_is_non_ascii:
+                        class_text += f"    # TODO: Non-ASCII name characters.\n"
+                        last_is_non_ascii = True
+                    class_text += f"    # {entry.name} = {entity_id}"
                 else:
+                    last_is_non_ascii = False
                     if not PY_NAME_RE.match(name):
-                        class_text += f"    # TODO: Invalid variable name.\n    # {entry.name} = {entity_id}"
+                        class_text += f"    # TODO: Invalid Python variable name.\n    # {entry.name} = {entity_id}"
                     else:
                         class_text += f"    {name} = {entity_id}"
                 if entry.description:

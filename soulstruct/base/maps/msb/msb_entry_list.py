@@ -26,13 +26,13 @@ MSBEntryType = tp.TypeVar("MSBEntryType", bound=MSBEntry)
 class MSBEntryList(IDList[MSBEntryType]):
 
     supertype: MSBSupertype
-    subtype_info: MSBSubtypeInfo
+    subtype_info: MSBSubtypeInfo | None
 
     def __init__(
         self,
-        *entries,
+        entries: tp.Iterable[MSBEntryType],
         supertype: MSBSupertype,
-        subtype_info: MSBSubtypeInfo,
+        subtype_info: MSBSubtypeInfo | None,
     ):
         self.supertype = supertype
         self.subtype_info = subtype_info
@@ -51,7 +51,7 @@ class MSBEntryList(IDList[MSBEntryType]):
         entries = [entry for entry in self if entry.name == entry_name]
         if not entries:
             raise KeyError(f"Entry name '{entry_name}' does not appear in MSB `{self.subtype_name}` list.")
-        elif len(entries) >= 2:
+        elif len(entries) > 1:
             print(entries)
             raise ValueError(
                 f"Entry name '{entry_name}' appears more than once in MSB `{self.subtype_name}` list. You must access "
@@ -77,6 +77,24 @@ class MSBEntryList(IDList[MSBEntryType]):
     def get_entry_names(self) -> list[str]:
         """Returns a list of `MSBEntry` names."""
         return [entry.name for entry in self]
+
+    def get_entries_by_unique_name(self) -> tuple[dict[str, MSBEntry], set[str]]:
+        """Returns a dictionary mapping `MSBEntry` names to the entries, but only for entries with unique names.
+
+        Also returns a set of non-unique names so users can tell if their references are missing or ambiguous.
+        """
+        unique_entries = {}
+        non_unique_names = set()
+        for entry in self:
+            if entry.name in non_unique_names:
+                continue
+            if entry.name in unique_entries:
+                # First duplicate name found.
+                non_unique_names.add(entry.name)
+                del unique_entries[entry.name]
+            else:
+                unique_entries[entry.name] = entry
+        return unique_entries, non_unique_names
 
     def get_entity_id_dict(self, sort_by_entity_id=False) -> dict[int, MSBEntry]:
         """Get a dictionary mapping entity IDs to `MSBEntry` instances for this subtype list.
@@ -110,9 +128,9 @@ class MSBEntryList(IDList[MSBEntryType]):
         if filter_func is None:
             return self.copy()
         return MSBEntryList(
+            [entry.copy() for entry in self if filter_func(entry)],
             supertype=self.supertype,
             subtype_info=self.subtype_info,
-            *[entry.copy() for entry in self if filter_func(entry)],
         )
 
     def default_entry(self) -> MSBEntryType:
@@ -219,4 +237,6 @@ class MSBEntryList(IDList[MSBEntryType]):
 
     @property
     def subtype_name(self):
+        if not self.subtype_info:
+            raise ValueError("MSBEntryList has no subtype info.")
         return self.subtype_info.subtype_enum.name

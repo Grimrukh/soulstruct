@@ -40,11 +40,6 @@ __all__ = [
     "Region",
     "RegionVolume",
     "RegionPoint",
-    "RegionCircle",
-    "RegionSphere",
-    "RegionCylinder",
-    "RegionRect",
-    "RegionBox",
 
     "MapPartTyping",
     "CoordEntityTyping",

@@ -5,6 +5,7 @@ __all__ = [
     "MSBMapPieceModel",
     "MSBObjectModel",
     "MSBCharacterModel",
+    "MSBItemModel",
     "MSBPlayerModel",
     "MSBCollisionModel",
     "MSBNavmeshModel",
@@ -25,7 +26,7 @@ from .enums import MSBModelSubtype
 class ModelHeaderStruct(MSBHeaderStruct):
     name_offset: long
     _subtype_int: int
-    _subtype_index: int
+    subtype_index: int
     sib_path_offset: long
     instance_count: int
     _pad1: bytes = field(init=False, **BinaryPad(12))
@@ -59,10 +60,10 @@ class ModelHeaderStruct(MSBHeaderStruct):
     @classmethod
     def post_write(
         cls,
-        writer: BinaryWriter,
         entry: MSBModel,
+        writer: BinaryWriter,
         entry_offset: int,
-        entry_lists: dict[str, IDList[MSBEntry]],
+        entry_lists: [dict[str, IDList[MSBEntry]]],  # may be required by subclasses
     ):
         # No super.
         writer.fill("name_offset", writer.position - entry_offset, obj=entry)
@@ -72,7 +73,7 @@ class ModelHeaderStruct(MSBHeaderStruct):
         if entry.sib_path:
             packed_sib_path = entry.sib_path.encode(entry.NAME_ENCODING) + b"\0\0"
         else:
-            packed_sib_path = b"\0\0\0\0\0\0"  # TODO: unconfirmed
+            packed_sib_path = b"\0\0\0\0\0\0"  # TODO: unconfirmed size
         while len(packed_name + packed_sib_path) % 4 != 0:
             packed_sib_path += b"\0"
         writer.append(packed_sib_path)
@@ -80,7 +81,7 @@ class ModelHeaderStruct(MSBHeaderStruct):
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBModel(BaseMSBModel):
-    HEADER_STRUCT: tp.ClassVar[type[BinaryStruct]] = ModelHeaderStruct
+    HEADER_STRUCT = ModelHeaderStruct
     NAME_ENCODING = "utf-16-le"
 
 

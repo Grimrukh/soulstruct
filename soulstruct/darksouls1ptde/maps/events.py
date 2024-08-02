@@ -60,8 +60,9 @@ class MSBEvent(BaseMSBEvent, abc.ABC):
     """MSB event entry in Dark Souls 1."""
 
     HEADER_STRUCT = EventHeaderStruct
-    NAME_ENCODING = "shift-jis"
     STRUCTS = {"supertype_data": EventDataStruct}
+
+    NAME_ENCODING = "shift-jis"
 
     # Field type overrides.
     attached_part: MSBPart = None
@@ -79,7 +80,7 @@ class LightEventDataStruct(MSBBinaryStruct):
 class MSBLightEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Light
-    STRUCTS = MSBEntry.STRUCTS | {"subtype_data": LightEventDataStruct}
+    STRUCTS = MSBEvent.STRUCTS | {"subtype_data": LightEventDataStruct}
 
     point_light_id: int = field(default=0, **MapFieldInfo(game_type=PointLightParam))
 
@@ -94,7 +95,7 @@ class SoundEventDataStruct(MSBBinaryStruct):
 class MSBSoundEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Sound
-    STRUCTS = MSBEntry.STRUCTS | {"subtype_data": SoundEventDataStruct}
+    STRUCTS = MSBEvent.STRUCTS | {"subtype_data": SoundEventDataStruct}
 
     sound_type: int = field(default=SoundType.m_Music.value, **MapFieldInfo(game_type=SoundType))
     sound_id: int = -1
@@ -109,7 +110,7 @@ class VFXEventDataStruct(MSBBinaryStruct):
 class MSBVFXEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.VFX
-    STRUCTS = MSBEntry.STRUCTS | {"subtype_data": VFXEventDataStruct}
+    STRUCTS = MSBEvent.STRUCTS | {"subtype_data": VFXEventDataStruct}
 
     vfx_id: int = 0
 
@@ -128,7 +129,7 @@ class WindEventDataStruct(MSBBinaryStruct):
 class MSBWindEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Wind
-    STRUCTS = MSBEntry.STRUCTS | {"subtype_data": WindEventDataStruct}
+    STRUCTS = MSBEvent.STRUCTS | {"subtype_data": WindEventDataStruct}
 
     wind_vector_min: Vector3 = field(default_factory=Vector3.zero)
     unk_x04_x08: float = 0.0
@@ -162,7 +163,7 @@ class MSBTreasureEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Treasure
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "treasure_part"]
-    STRUCTS = MSBEntry.STRUCTS | {"subtype_data": TreasureEventDataStruct}
+    STRUCTS = MSBEvent.STRUCTS | {"subtype_data": TreasureEventDataStruct}
 
     treasure_part: MSBPart = None
     item_lot_1: int = field(default=-1, **MapFieldInfo(game_type=ItemLotParam))
@@ -204,7 +205,7 @@ class MSBSpawnerEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Spawner
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "spawn_parts", "spawn_regions"]
-    STRUCTS = MSBEntry.STRUCTS | {"subtype_data": SpawnerEventDataStruct}
+    STRUCTS = MSBEvent.STRUCTS | {"subtype_data": SpawnerEventDataStruct}
 
     max_count: int = 255
     spawner_type: int = 0
@@ -242,7 +243,7 @@ class MessageEventDataStruct(MSBBinaryStruct):
 class MSBMessageEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Message
-    STRUCTS = MSBEntry.STRUCTS | {"subtype_data": MessageEventDataStruct}
+    STRUCTS = MSBEvent.STRUCTS | {"subtype_data": MessageEventDataStruct}
 
     text_id: int = field(default=-1, **MapFieldInfo(game_type=SoapstoneMessage))
     unk_x02_x04: int = 2
@@ -265,7 +266,7 @@ class MSBObjActEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.ObjAct
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "obj_act_part"]
-    STRUCTS = MSBEntry.STRUCTS | {"subtype_data": ObjActEventDataStruct}
+    STRUCTS = MSBEvent.STRUCTS | {"subtype_data": ObjActEventDataStruct}
 
     obj_act_entity_id: int = -1
     obj_act_part: MSBPart = None
@@ -291,7 +292,7 @@ class MSBSpawnPointEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.SpawnPoint
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "spawn_point_region"]
-    STRUCTS = MSBEntry.STRUCTS | {"subtype_data": SpawnPointEventData}
+    STRUCTS = MSBEvent.STRUCTS | {"subtype_data": SpawnPointEventData}
 
     spawn_point_region: MSBRegion = None
 
@@ -312,7 +313,7 @@ class MapOffsetEventDataStruct(MSBBinaryStruct):
 class MSBMapOffsetEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.MapOffset
-    STRUCTS = MSBEntry.STRUCTS | {"subtype_data": MapOffsetEventDataStruct}
+    STRUCTS = MSBEvent.STRUCTS | {"subtype_data": MapOffsetEventDataStruct}
 
     translate: Vector3 = field(default_factory=Vector3.zero)
     rotate_y: float = 0.0
@@ -329,7 +330,7 @@ class MSBNavigationEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Navigation
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "navigation_region"]
-    STRUCTS = MSBEntry.STRUCTS | {"subtype_data": NavigationEventDataStruct}
+    STRUCTS = MSBEvent.STRUCTS | {"subtype_data": NavigationEventDataStruct}
 
     navigation_region: MSBRegion = None
 
@@ -366,7 +367,7 @@ class MSBEnvironmentEvent(MSBEvent):
     """
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Environment
-    STRUCTS = MSBEntry.STRUCTS | {"subtype_data": EnvironmentEventDataStruct}
+    STRUCTS = MSBEvent.STRUCTS | {"subtype_data": EnvironmentEventDataStruct}
 
     unk_x00_x04: int = 0
     unk_x04_x08: float = 1.0
@@ -389,7 +390,7 @@ class MSBNPCInvasionEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.NPCInvasion
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "spawn_point_region"]
-    STRUCTS = MSBEntry.STRUCTS | {"subtype_data": SUBTYPE_DATA_STRUCT}
+    STRUCTS = MSBEvent.STRUCTS | {"subtype_data": SUBTYPE_DATA_STRUCT}
 
     host_entity_id: int = -1
     invasion_flag_id: int = field(default=-1, **MapFieldInfo(game_type=Flag))

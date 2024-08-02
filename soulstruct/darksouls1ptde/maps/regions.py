@@ -2,6 +2,14 @@ from __future__ import annotations
 
 __all__ = [
     "MSBRegion",
+    "RegionShape",
+    "RegionShapeType",
+    "PointShape",
+    "CircleShape",
+    "SphereShape",
+    "CylinderShape",
+    "RectShape",
+    "BoxShape",
 ]
 
 import logging
@@ -10,7 +18,7 @@ from dataclasses import dataclass, field
 
 from soulstruct.base.maps.msb.msb_entry import *
 from soulstruct.base.maps.msb.regions import *
-from soulstruct.base.maps.msb.region_shapes import MSBRegionShape
+from soulstruct.base.maps.msb.region_shapes import *
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3
 from .enums import MSBRegionSubtype
@@ -25,7 +33,7 @@ _LOGGER = logging.getLogger("soulstruct")
 @dataclass(slots=True)
 class RegionHeaderStruct(MSBHeaderStruct):
     name_offset: int
-    _subtype_int: int = field(init=False, **Binary(asserted=0))  # no subtypes in DS1
+    _subtype_int: int  # always 0 in DS1
     supertype_index: int
     shape_type_int: int
     translate: Vector3
@@ -34,7 +42,7 @@ class RegionHeaderStruct(MSBHeaderStruct):
     null_struct_1_offset: int
     shape_data_offset: int
     supertype_data_offset: int  # just `entity_id` in DS1
-    subtype_data_offset: bytes = field(init=False, **Binary(asserted=0))  # no subtype data in DS1 Regions
+    subtype_data_offset: int = field(init=False, **Binary(asserted=0))  # no subtype data in DS1 Regions
 
     @classmethod
     def reader_to_entry_kwargs(
@@ -48,7 +56,7 @@ class RegionHeaderStruct(MSBHeaderStruct):
         for i in (0, 1):
             # Check that null structs are 4 null bytes.
             null_struct_offset = kwargs.pop(f"null_struct_{i}_offset")
-            reader.seek(null_struct_offset)
+            reader.seek(entry_offset + null_struct_offset)
             zero = reader.read(4)
             if zero.strip(b"\0"):
                 _LOGGER.warning(f"Null data entry in `{cls.__name__}` was not zero: {zero}.")
@@ -56,7 +64,7 @@ class RegionHeaderStruct(MSBHeaderStruct):
         # Read shape struct.
         shape_type_int = kwargs.pop("shape_type_int")
         try:
-            shape_class = entry_type.SHAPE_TYPES[shape_type_int]  # type: type[MSBRegionShape]
+            shape_class = entry_type.SHAPE_CLASSES[shape_type_int]  # type: type[RegionShape]
         except KeyError:
             if shape_type_int == 6:
                 raise ValueError("Composite Region shape type (6) is not supported in older games.")
@@ -82,12 +90,12 @@ class RegionHeaderStruct(MSBHeaderStruct):
     @classmethod
     def post_write(
         cls,
-        writer: BinaryWriter,
         entry: MSBRegion,
+        writer: BinaryWriter,
         entry_offset: int,
-        entry_lists: dict[str, IDList[MSBEntry]],
+        entry_lists: [dict[str, IDList[MSBEntry]]],  # may be required by subclasses
     ):
-        super(RegionHeaderStruct, cls).post_write(writer, entry, entry_offset, entry_lists)
+        super(RegionHeaderStruct, cls).post_write(entry, writer, entry_offset, entry_lists)
         writer.fill("null_struct_0_offset", writer.position - entry_offset, obj=entry)
         writer.pad(4)
         writer.fill("null_struct_1_offset", writer.position - entry_offset, obj=entry)
@@ -113,5 +121,5 @@ class MSBRegion(BaseMSBRegion):
     STRUCTS = {
         # Shape data goes here (manual).
         "supertype_data": RegionSupertypeData,
-        "subtype_data": None,  # zero offset
+        # Subtype data offset is always zero and ignored in header.
     }

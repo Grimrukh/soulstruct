@@ -63,10 +63,10 @@ class ModelHeaderStruct(MSBHeaderStruct):
     @classmethod
     def post_write(
         cls,
-        writer: BinaryWriter,
         entry: MSBModel,
+        writer: BinaryWriter,
         entry_offset: int,
-        entry_lists: dict[str, IDList[MSBEntry]],
+        entry_lists: [dict[str, IDList[MSBEntry]]],  # may be required by subclasses
     ):
         # No super.
         writer.fill("name_offset", writer.position - entry_offset, obj=entry)

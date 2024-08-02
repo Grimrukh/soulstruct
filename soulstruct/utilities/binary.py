@@ -1168,7 +1168,6 @@ class BinaryStruct:
             raise TypeError("`data` must be `bytes`, `bytearray`, or opened `io.BufferedIOBase`.")
 
         cls_name = cls.__name__
-        field_values = {}  # type: dict[str, tp.Any]  # maps field names to final values
         bit_reader = BitFieldReader()
 
         full_fmt = cls.get_full_fmt()
@@ -1183,8 +1182,12 @@ class BinaryStruct:
         else:
             struct_output = None
 
+        init_values = {}
+        non_init_values = {}
+        all_field_values = {}
+
         for field, field_type, field_metadata, field_unpacker in zip(
-            cls._FIELDS, cls._FIELD_TYPES, cls._FIELD_METADATA, cls._FIELD_UNPACKERS
+            cls._FIELDS, cls._FIELD_TYPES, cls._FIELD_METADATA, cls._FIELD_UNPACKERS, strict=True
         ):
 
             if field_metadata.bit_count == -1 and not bit_reader.empty:
@@ -1192,8 +1195,12 @@ class BinaryStruct:
                 bit_reader.clear()
 
             if field_metadata.should_skip_func is not None:
-                if field_metadata.should_skip_func(long_varints, field_values):
-                    field_values[field.name] = None
+                if field_metadata.should_skip_func(long_varints, all_field_values):
+                    all_field_values[field.name] = None
+                    if not field.init:
+                        non_init_values[field.name] = None
+                    else:
+                        init_values[field.name] = None
                     continue
 
             if field_metadata.bit_count != -1:
@@ -1223,16 +1230,12 @@ class BinaryStruct:
                 except Exception as ex:
                     _LOGGER.error(
                         f"Error occurred while trying to unpack field `{cls_name}.{field.name}`: {ex}\n"
-                        f"  Unpacked field values: {field_values}"
+                        f"  Unpacked field values: {all_field_values}"
                     )
                     raise
 
-            field_values[field.name] = field_value
-
-        init_values = {}
-        non_init_values = {}
-        for field, field_value in zip(cls._FIELDS, field_values.values()):
-            if not field.init:  # assigned directly after initialization
+            all_field_values[field.name] = field_value
+            if not field.init:
                 non_init_values[field.name] = field_value
             else:
                 init_values[field.name] = field_value

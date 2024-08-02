@@ -11,7 +11,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from soulstruct.base.game_file_directory import GameFileMapDirectory
-from soulstruct.base.maps.msb.utils import MSB_JSONEncoder
 from soulstruct.utilities.files import write_json
 from .msb import MSB
 
@@ -108,7 +107,7 @@ class MapStudioDirectory(GameFileMapDirectory[MSB_T], abc.ABC):
         if no_partial_write:
             # All MSBs converted to dictionaries without error. Now write them all.
             for json_path, json_dict in json_dicts.items():
-                write_json(json_path, json_dict, indent=4, encoding="utf-8", encoder=MSB_JSONEncoder)
+                write_json(json_path, json_dict, indent=4, encoding="utf-8", encoder=MSB.JSONEncoder)
                 written_paths.append(json_path)
 
         return written_paths
