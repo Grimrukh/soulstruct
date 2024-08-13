@@ -464,7 +464,9 @@ class MSBCollision(MSBPart):
 
     hit_filter_id: int = field(default=CollisionHitFilter.Normal.value, **MapFieldInfo(game_type=CollisionHitFilter))
     sound_space_type: int = 0
-    environment_event: MSBEnvironmentEvent = None  # NOTE: imported under TYPE_CHECKING to avoid circular import
+    # NOTE: imported under TYPE_CHECKING to avoid circular import.
+    # I recommend ignoring this field and calling `MSB.set_collision_environment_references()` before exporting.
+    environment_event: MSBEnvironmentEvent = None
     reflect_plane_height: float = 0.0
     navmesh_groups: GroupBitSet128 = None  # defaults to being the same as `display_groups`
     vagrant_entity_ids: list[int] = field(default_factory=lambda: [-1, -1, -1])

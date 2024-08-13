@@ -690,6 +690,20 @@ class MSB(GameFile, abc.ABC):
                 raise TypeError(f"Invalid MSB entry specifier: {entry}. Must be a (unique) entry name or `MSBEntry`.")
         return resolved
 
+    def add_entry(self, msb_entry: MSBEntry):
+        """Detect subtype of entry and add to appropriate list.
+
+        Does NOT check if entry is from the same game submodule as this MSB class; matches subtype from name only.
+        """
+        msb_list_name = self.resolve_subtype_name(msb_entry.SUBTYPE_ENUM.name)
+        msb_list = getattr(self, msb_list_name)  # type: MSBEntryList
+        msb_list.append(msb_entry)
+
+    def set_auto_references(self):
+        """Some MSB subclasses have inter-entry references that are easily automated, such as `MSBCollision` references
+        to `MSBEnvironmentEvent` instances that already reference that same Collision."""
+        pass
+
     def get_repeated_entity_ids(self) -> dict[str, IDList[MSBEntry]]:
         """Scans all entries for repeated `entity_id` fields PER SUPERTYPE, not subtype.
 

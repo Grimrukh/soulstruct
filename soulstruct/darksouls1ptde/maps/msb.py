@@ -10,7 +10,6 @@ from soulstruct.darksouls1ptde.game_types.map_types import *
 from soulstruct.dcx import DCXType
 from soulstruct.base.maps.msb import MSB as _BaseMSB, MSBEntryList
 from soulstruct.base.maps.msb.utils import MSBSubtypeInfo
-from soulstruct.base.maps.msb.region_shapes import *
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3
 from soulstruct.utilities.misc import IDList
@@ -248,9 +247,48 @@ class MSB(_BaseMSB):
             navmesh_model.set_auto_sib_path(map_stem)
             return navmesh_model
 
+    def auto_model(self, msb_part: MSBPart, map_stem="") -> MSBModel | None:
+        """Detect model type and name from `msb_part` and call appropriate `auto_{subtype}_model()` method.
+
+        Places `MSBPlayerStart` models (c0000) under `MSBCharacterModel`, which is more common.
+
+        Returns `None` if part has no model.
+        """
+        if not msb_part.model:
+            return None
+        if isinstance(msb_part, MSBMapPiece):
+            return self.auto_map_piece_model(msb_part.model.name, map_stem)
+        if isinstance(msb_part, MSBObject):  # includes `MSBDummyObject`
+            return self.auto_object_model(msb_part.model.name)
+        if isinstance(msb_part, (MSBCharacter, MSBPlayerStart)):  # includes `MSBDummyCharacter`
+            return self.auto_character_model(msb_part.model.name)
+        if isinstance(msb_part, (MSBCollision, MSBConnectCollision)):
+            return self.auto_collision_model(msb_part.model.name, map_stem)
+        if isinstance(msb_part, MSBNavmesh):
+            return self.auto_navmesh_model(msb_part.model.name, map_stem)
+
+        raise TypeError(f"Cannot auto-create model for MSB part of type {msb_part.cls_name}.")
+
     # endregion
 
     # region Utility Methods
+    def set_auto_references(self):
+        """Look at all `MSBEnvironmentEvent` instances and update the `MSBCollision` they point to so it refers back
+        to the same Environment event (cubemap).
+
+        Raises a `ValueError` if multiple Environment events reference the same Collision, which should never happen.
+        """
+        done_collisions = IDList()
+        for environment in self.environments:
+            if not environment.attached_part:
+                continue
+            if environment.attached_part in done_collisions:
+                raise ValueError(
+                    f"Multiple Environment events reference the same Collision: {environment.attached_part.name}"
+                )
+            done_collisions.append(environment.attached_part)
+            environment.attached_part.environment_event = environment
+
     def duplicate_collision_with_environment_event(
         self, collision: MSBCollision | str, at_next_index=True, **kwargs,
     ) -> MSBCollision:
