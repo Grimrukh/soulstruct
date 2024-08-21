@@ -115,7 +115,7 @@ class FLVERBone:
             _parent_bone_index=get_index("parent_bone"),
             _child_bone_index=get_index("child_bone"),
             _next_sibling_bone_index=get_index("next_sibling_bone"),
-            _prev_sibling_bone_index=get_index("previous_sibling_bone"),
+            _previous_sibling_bone_index=get_index("previous_sibling_bone"),
         )
 
     def pack_name(self, writer: BinaryWriter, encoding: str):
