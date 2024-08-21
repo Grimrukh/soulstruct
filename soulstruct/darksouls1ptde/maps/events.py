@@ -381,23 +381,28 @@ class MSBEnvironmentEvent(MSBEvent):
 class SUBTYPE_DATA_STRUCT(MSBBinaryStruct):
     host_entity_id: int
     invasion_flag_id: int
-    _spawn_point_region_index: int = field(**EntryRef("POINT_PARAM_ST"))
+    activate_good_id: int
     _pad1: bytes = field(**BinaryPad(4))
 
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBNPCInvasionEvent(MSBEvent):
+    """NOTE: Once triggered, the game will treat this as a normal invasion and spawn the player (after the loading
+    screen) at the same point they would have used had they invaded another player, which will naturally be constrained
+    here by the boundaries of the attached trigger region."""
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.NPCInvasion
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "spawn_point_region"]
     STRUCTS = MSBEvent.STRUCTS | {"subtype_data": SUBTYPE_DATA_STRUCT}
 
     host_entity_id: int = -1
-    invasion_flag_id: int = field(default=-1, **MapFieldInfo(game_type=Flag))
-    spawn_point_region: MSBRegion = None
-
-    _spawn_point_region_index: int = None
-
-    def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
-        super(MSBNPCInvasionEvent, self).indices_to_objects(entry_lists)
-        self._consume_index(entry_lists, "POINT_PARAM_ST", "spawn_point_region")
+    invasion_flag_id: int = field(default=-1, **MapFieldInfo(
+        game_type=Flag,
+        tooltip="Flag automatically enabled when invasion begins, which allows parts to be enabled/disabled to set up "
+                "the invasion.",
+    ))
+    activate_good_id: int = field(default=-1, **MapFieldInfo(
+        game_type=GoodParam,
+        tooltip="Good ID that player must use inside attached region to begin NPC invasion (e.g. Black Eye Orb). Any "
+                "message like 'the orb is quivering' must be handled manually by EMEVD.",
+    ))

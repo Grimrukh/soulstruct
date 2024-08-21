@@ -28,7 +28,7 @@ from soulstruct.utilities.text import pad_chars
 from .enums import BaseMSBSubtype, MSBSupertype
 from .field_info import MapFieldMetadata, FIELD_INFO
 from .utils import MSBBrokenEntryReference, GroupBitSet128, GroupBitSet256, GroupBitSet1024
-from .region_shapes import RegionShapeType, SHAPE_TYPE_CLASSES
+from .region_shapes import RegionShape, RegionShapeType, SHAPE_TYPE_CLASSES
 
 if tp.TYPE_CHECKING:
     from .core import MSB
@@ -581,7 +581,7 @@ class MSBEntry(abc.ABC):
 
         This is slow and is deactivated when reading binary MSBs.
         """
-        if self.__class__.SETATTR_CHECKS_DISABLED:
+        if self.__class__.SETATTR_CHECKS_DISABLED or "__" in key:
             # Bypass validation.
             super(MSBEntry, self).__setattr__(key, value)
             return
@@ -691,6 +691,15 @@ class MSBEntry(abc.ABC):
                     if value is not None:
                         # Record `MSBEntry` reference.
                         value.referring_entry_fields.append(MSBEntryReference(self, field_name))
+                    return
+
+                if field_type == "RegionShape":
+                    # Region shape subclass.
+                    if not isinstance(value, RegionShape):
+                        raise TypeError(
+                            f"Invalid type for `RegionShape` field `{self.cls_name}.{field_name}`: {value}"
+                        )
+                    super(MSBEntry, self).__setattr__(field_name, value)
                     return
 
                 if field_type in {"GroupBitSet128", "GroupBitSet256", "GroupBitSet1024"}:

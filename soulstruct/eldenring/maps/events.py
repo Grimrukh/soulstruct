@@ -244,7 +244,7 @@ class MSBNavigationEvent(MSBEvent):
 class NPCInvasionEventDataStruct(MSBBinaryStruct):
     host_entity_id: int
     invasion_flag_id: int
-    activate_goods_id: int
+    activate_good_id: int
     npc_invasion_unk_0c: int
     npc_invasion_unk_10: int
     npc_invasion_unk_14: int
@@ -263,7 +263,7 @@ class MSBNPCInvasionEvent(MSBEvent):
 
     host_entity_id: int = -1
     invasion_flag_id: int = field(default=-1, **MapFieldInfo(game_type=Flag))
-    activate_goods_id: int = -1  # TODO: Goods Param?
+    activate_good_id: int = field(default=-1, **MapFieldInfo(game_type=GoodParam))
     npc_invasion_unk_0c: int = 0
     npc_invasion_unk_10: int = 0
     npc_invasion_unk_14: int = 0

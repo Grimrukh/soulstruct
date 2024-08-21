@@ -247,27 +247,34 @@ class MSB(_BaseMSB):
             navmesh_model.set_auto_sib_path(map_stem)
             return navmesh_model
 
-    def auto_model(self, msb_part: MSBPart, map_stem="") -> MSBModel | None:
-        """Detect model type and name from `msb_part` and call appropriate `auto_{subtype}_model()` method.
+    def auto_model(self, msb_part: MSBPart, model_name: str, map_stem="") -> MSBModel | None:
+        """Detect model type from `msb_part` and call appropriate `auto_{subtype}_model()` method to either find an
+        existing model of the expected type and name or create a new one and add it to the MSB automatically.
 
-        Places `MSBPlayerStart` models (c0000) under `MSBCharacterModel`, which is more common.
+        The found or created model is assigned to `msb_part.model` and returned in case the caller wishes to inspect or
+        modify it further (noting that it may be in use by other parts already).
 
-        Returns `None` if part has no model.
+        Creates `MSBCharacterModel` for `MSBPlayerStart` Parts (c0000), which is more common, but only after checking if
+        an `MSBPlayerModel` already exists.
         """
-        if not msb_part.model:
-            return None
         if isinstance(msb_part, MSBMapPiece):
-            return self.auto_map_piece_model(msb_part.model.name, map_stem)
-        if isinstance(msb_part, MSBObject):  # includes `MSBDummyObject`
-            return self.auto_object_model(msb_part.model.name)
-        if isinstance(msb_part, (MSBCharacter, MSBPlayerStart)):  # includes `MSBDummyCharacter`
-            return self.auto_character_model(msb_part.model.name)
-        if isinstance(msb_part, (MSBCollision, MSBConnectCollision)):
-            return self.auto_collision_model(msb_part.model.name, map_stem)
-        if isinstance(msb_part, MSBNavmesh):
-            return self.auto_navmesh_model(msb_part.model.name, map_stem)
+            model = self.auto_map_piece_model(model_name, map_stem)
+        elif isinstance(msb_part, MSBObject):  # includes `MSBDummyObject`
+            model = self.auto_object_model(model_name)
+        elif isinstance(msb_part, (MSBCharacter, MSBPlayerStart)):  # includes `MSBDummyCharacter`
+            try:
+                model = self.player_models[model_name]
+            except KeyError:
+                model = self.auto_character_model(model_name)
+        elif isinstance(msb_part, (MSBCollision, MSBConnectCollision)):
+            model = self.auto_collision_model(model_name, map_stem)
+        elif isinstance(msb_part, MSBNavmesh):
+            model = self.auto_navmesh_model(model_name, map_stem)
+        else:
+            raise TypeError(f"Cannot auto-create model for MSB part of type {msb_part.cls_name}.")
 
-        raise TypeError(f"Cannot auto-create model for MSB part of type {msb_part.cls_name}.")
+        msb_part.model = model
+        return model
 
     # endregion
 
