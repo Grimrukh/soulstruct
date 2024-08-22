@@ -89,10 +89,6 @@ class MergedMesh:
 
     TODO: Currently optimized for DS1, but likely works for other games (if `FLVER` class is supported for them). Also
      only acts on the first vertex array in each submesh, as I haven't encountered any multi-buffer FLVERs yet.
-
-    TODO: Big problem: this is currently deleting 'duplicate' faces that occur entirely across different materials. This
-     could be fine for normal materials, but for materials with a mask prefix '#XX#', it's definitely wrong, as these
-     materials frequently offer different options for the same face (e.g. different UVs and/or different textures).
     """
     vertex_data: np.ndarray  # holds `position`, `bone_weights`, and `bone_indices` fields
 
@@ -129,19 +125,21 @@ class MergedMesh:
         The merged `faces` array contains a fourth column (`faces[:, 3]`) that records the 'material index' of each
         face, which is sourced directly from argument `submesh_material_indices` (which should have the same length as
         `flver.submeshes`) rather than using the original FLVER material index. This allows the definition of 'material'
-        in the merged match to be set to match the caller's purposes, usually to preserve distinct submesh or face set
-        properties (e.g. `is_bind_pose` or `use_backface_culling`) that may be different for submeshes that share the
-        same FLVER material index.
+        in the `MergedMesh` to be set to match the caller's purposes, usually to preserve distinct combinations of
+        submesh AND face set properties (e.g. `is_bind_pose` or `use_backface_culling`) that may be different for
+        submeshes that share the same FLVER material index.
 
         If `material_uv_layer_names` is given, it should be a list of list of UV layer names that correspond to the UV
         subarrays in the submesh's vertex buffer. This ensures that the UV maps across the entire merged FLVER are as
         compatible as possible, e.g. second texture UVs go into one map, lightmap UVs go into one map, etc. If not
         given, UV data will be assigned to default 'UVMap{i}' names created directly from the vertex array indices,
-        which may lead to clashes and a more difficult 3D workflow (though no lost information, theoretically).
+        which may lead to clashes in UV usage and consequently a more difficult 3D workflow (though no lost information,
+        theoretically).
 
-        If `merge_vertices` is False, the merged mesh will be created without any vertex merging, which is useful for
-        importing FLVERs more quickly, but makes the models a lot more painful to edit, adjacent faces with different
-        materials (even the most innocent of differences) will not share vertices or edges.
+        If `merge_vertices = False`, the `MergedMesh` will be created without any vertex merging. This is useful for
+        importing FLVERs more quickly and faithfully, but makes the models a lot more painful to edit, as adjacent faces
+        with different materials -- even those that are clearly intended to represent a contiguous surface -- will not
+        share their vertices or edges.
         """
         if not flver.submeshes:
             raise ValueError("FLVER has no submeshes. Cannot create `MergedMesh`.")
@@ -158,7 +156,10 @@ class MergedMesh:
                 and np.isnan(vertex_array.array["position"]).any()
                 for vertex_array in submesh.vertex_arrays
             ):
-                _LOGGER.warning(f"Submesh {i} has NaN vertex position data and will be ignored by `MergedMesh`.")
+                _LOGGER.warning(
+                    f"Submesh {i} in FLVER with path '{flver.path_name}' has NaN vertex position data and will be "
+                    f"ignored by `MergedMesh`."
+                )
                 continue
 
             valid_submeshes.append(submesh)
@@ -219,7 +220,7 @@ class MergedMesh:
         material_uv_layer_names: list[list[str]] | None,
         flver_name: str,
     ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
-        """Row-stack all submesh vertices' position and bone data in a single structured array for reduction (true
+        """Row-stack all submesh vertices' position and bone data in a single structured array for later reduction (true
         'vertex' information rather than loop information) and return it along with a dictionary of loop data arrays or
         lists of arrays.
 
@@ -404,33 +405,36 @@ class MergedMesh:
         loop_normals: np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """FLVER models are optimized for rendering, and so they often have many duplicate vertices across submeshes,
-        particularly along edges between faces that have different materials. This function attempts to re-optimize the
-        mesh for modelling by merging identical vertices in `all_vertices` where appropriate.
+        particularly along edges between faces that have different materials. This function attempts to restore the mesh
+        to a state more suited for modelling by merging identical vertices in `all_vertices` where appropriate.
 
-        Returns vertex data (position and bone indices/weights), a 1D array mapping loops to that vertex data, and
-        face (triangle) data (index triplets into loop data and material indices). All FLVER faces are triangles.
+        TODO: Seems to be a new bug somewhere here, with loops not pointing to the right vertices, or something.
+
+        Returns vertex data (position and bone indices/weights), a 1D array mapping the original FLVER vertices (now
+        called 'loops') to that vertex data, and a 4-column array of face data (index triplets into loop data and
+        a 'material index' column). All FLVER mesh faces are triangles (and not strips).
 
         The definition of 'identical vertices' is where the real difficulty lies here. Cases to consider:
 
-            1. Two faces with different materials share one or two vertices. The shared vertices should definitely be
-            merged. This is the easiest and most common case.
+            1. Two faces with different materials share one or two vertices with identical positions and bone weights.
+            The shared vertices should definitely be merged. This is the easiest and most common case.
 
-            2. Two faces with the same material share all three vertices and have the SAME OR SIMILAR vertex normals
-            (say, within 90 degrees). These are genuine 'duplicate' faces and one of them should be deleted (the second
-            one). There's no way for the game to render both of these at the same time, so they are likely an artifact
-            of From's FLVER export process.
+            2. Two faces with the same material share all three vertices and have vertex normals with SIMILAR
+            ORIENTATION (separated by less than 90 degrees). These are genuine 'duplicate' faces and one of them should
+            be deleted (the second one). There's no way for the game to render only one of these at a time, so they are
+            likely an artifact of From's FLVER export process.
 
-            3. Two faces with the same material share all three vertices and have DIFFERENT vertex normals (say, more
-            than 90 degrees apart). These are NOT 'duplicate' faces because they are likely to be rendered from
-            different sides. We should NOT merge these vertices, as Blender does not support two faces (which we do want
-            here) sharing the same vertices.
+            3. Two faces with the same material share all three vertices and have vertex normals with DIFFERENT
+            ORIENTATION (separated by 90 degrees or more). These are NOT 'duplicate' faces because they are likely to be
+            rendered from different sides. We should NOT merge these vertices, as Blender does not support two faces
+            (which we do want here) sharing the exact same vertices. TODO: This was true when using BMesh, at least.
 
             4. Two faces with different materials share all three vertices. If the materials have mask prefixes (in
             particular, DIFFERENT mask prefixes) like '#00#' and '#01#', then this is likely a genuine case of two faces
-            that are used exclusively by different NPC Param mask configurations (e.g. two copies of a face mesh with
+            that are used exclusively by different GameParam mask configurations (e.g. two copies of a face mesh with
             different skin materials). We should NOT merge these vertices, regardless of normals. However, if the two
             meshes have the same mask prefix, then they will always be rendered simultaneously and we are basically in
-            the same position as above, in which case we should check the normals again.
+            the same situation as (3), in which case we should check the normals again.
 
         In practice, we can simplify these by simply ensuring that faces with different material display masks are NEVER
         merged, which is probably desirable anyway.
@@ -448,7 +452,7 @@ class MergedMesh:
         vertex_indices_normals = {}  # type: dict[tuple[int | None, bytes], tuple[int, np.ndarray]]
         inv_vertex_indices = {}  # type: dict[tuple[int | None, bytes], int]  # normal not needed here
 
-        # Actual vertex indices to extract from `all_indices`.
+        # Actual vertex indices (subset of row indices) to extract from `all_vertices`.
         reduced_vertex_indices = []  # type: list[int]
 
         vertex_count = 0  # rather than continually calling `len(reduced_vertex_indices)`
@@ -459,7 +463,6 @@ class MergedMesh:
         # Array of loop vertex indices. Same length as other loop data, as face loop indices are not modified (beyond
         # offsetting them for each merged submesh).
         loop_vertex_indices = np.empty(len(loop_normals), dtype=np.uint32)
-        resolved_loop_indices = set()
 
         loop_offset = 0
         for i, (submesh, material_index) in enumerate(zip(submeshes, submesh_material_indices)):
@@ -468,21 +471,24 @@ class MergedMesh:
 
             triangles = submesh.face_sets[0].triangulate(allow_primitive_restarts=False)  # `(n, 3)` array
             triangles += loop_offset
+            resolved_loop_indices = set()
 
             for triangle in triangles:
                 for loop_index in triangle:
                     # We inspect each FLVER loop index as it appears, and figure out if we can redirect it to an
                     # existing 'true vertex'. Otherwise, we create a new 'true vertex' for it.
+
                     if loop_index in resolved_loop_indices:
-                        continue  # true FLVER face connectivity
+                        # This loop has already been handled by a previous FLVER face that uses it.
+                        continue
                     resolved_loop_indices.add(loop_index)
 
                     triangle_vert = all_vertices[loop_index]
                     vert_normal = loop_normals[loop_index]
-                    vertex_hash = triangle_vert.tobytes()  # hash of position, bone indices, and bone weights
+                    vertex_hash = triangle_vert.tobytes()  # "hash" of position, bone indices, and bone weights
 
-                    # Check for an existing vertex with the same (position, bone_weights, bone_indices) data (and the
-                    # same display mask).
+                    # Check for an existing vertex with the same display mask and same hashed (position, bone_weights,
+                    # bone_indices) data.
                     try:
                         existing_vertex_index, existing_normal = vertex_indices_normals[display_mask, vertex_hash]
                     except KeyError:
@@ -518,6 +524,14 @@ class MergedMesh:
                     # faces use the exact same three vertices, they will be treated as a true 'duplicate face'.
                     loop_vertex_indices[loop_index] = existing_vertex_index
 
+            # Check for any unused FLVER vertices (now loops).
+            all_loop_indices = set(range(loop_offset, loop_offset + len(submesh.vertices)))
+            unresolved_loop_indices = all_loop_indices - resolved_loop_indices
+            if unresolved_loop_indices:
+                _LOGGER.warning(f"FLVER submesh {i} has {len(unresolved_loop_indices)} vertices never used by a face.")
+                for loop_index in unresolved_loop_indices:
+                    loop_vertex_indices[loop_index] = 2 ** 32 - 1  # mark as unused (-1)
+
             submesh_faces = np.column_stack(
                 [triangles, np.full(triangles.shape[0], material_index, dtype=np.uint32)]
             )
@@ -527,7 +541,6 @@ class MergedMesh:
 
         vertex_data = all_vertices[reduced_vertex_indices]
         faces = np.row_stack(all_submesh_faces)
-        loop_vertex_indices = np.array(loop_vertex_indices, dtype=np.uint32)
         return vertex_data, loop_vertex_indices, faces
 
     @staticmethod
