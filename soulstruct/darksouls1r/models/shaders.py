@@ -16,7 +16,7 @@ class MatDef(_PTDE_MatDef):
 
     # DSR snow shaders may have an extra normal texture.
     SAMPLER_ALIASES: tp.ClassVar[dict[str, str]] = _PTDE_MatDef.SAMPLER_ALIASES | {
-        "g_Bumpmap_3": "Main 3 Normal",
+        "g_Bumpmap_3": "Main 2 Normal",
     }
 
     SAMPLER_GAME_NAMES: tp.ClassVar[dict[str, str]] = {v: k for k, v in SAMPLER_ALIASES.items()}
