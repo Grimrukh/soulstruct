@@ -95,10 +95,10 @@ class MergedMesh:
     loop_vertex_indices: np.ndarray  # 1D array indexing into `vertex_data` (uint32)
     vertices_merged: bool  # enabled to mark when vertices are merged (making `loop_vertex_indices` trivial)
 
-    loop_normals: np.ndarray  # three columns for 'x', 'y', and 'z' (float32)
-    loop_normals_w: np.ndarray  # one column for 'w' (uint8)
+    loop_normals: np.ndarray | None  # three columns for 'x', 'y', and 'z' (float32)
+    loop_normals_w: np.ndarray | None  # one column for 'w' (uint8)
     loop_tangents: list[np.ndarray]  # four columns per array for 'x', 'y', 'z', and `w` (float32)
-    loop_bitangents: np.ndarray  # four columns for 'x', 'y', and 'z' (float32)
+    loop_bitangents: np.ndarray | None  # four columns for 'x', 'y', and 'z' (float32)
     loop_vertex_colors: list[np.ndarray]  # four columns per array for 'r', 'g', 'b', and 'a' (float32)
     # Maps UV layer names (which default to just 'UVMap{i}') to UV data arrays. UV layer names per merged mesh material
     # need to be passed in. Column count may vary from 2D (almost always the case) to 4D.
@@ -171,10 +171,10 @@ class MergedMesh:
 
         if merge_vertices:
             vertex_data, loop_vertex_indices, faces = cls.get_merged_vertices(
-                valid_submeshes,
-                all_vertices,
-                valid_submesh_material_indices,
-                loop_data_dict["loop_normals"],
+                submeshes=valid_submeshes,
+                all_vertices=all_vertices,
+                submesh_material_indices=valid_submesh_material_indices,
+                loop_normals=loop_data_dict["loop_normals"],
             )
         else:
             # Vertices not reduced. We just need to stack faces, add materials, and offset their loop/vertex indices.
@@ -219,7 +219,7 @@ class MergedMesh:
         material_indices: list[int],
         material_uv_layer_names: list[list[str]] | None,
         flver_name: str,
-    ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
+    ) -> tuple[np.ndarray, dict[str, np.ndarray | list[np.ndarray] | None]]:
         """Row-stack all submesh vertices' position and bone data in a single structured array for later reduction (true
         'vertex' information rather than loop information) and return it along with a dictionary of loop data arrays or
         lists of arrays.
@@ -236,13 +236,26 @@ class MergedMesh:
         ]
         total_vertex_count = sum(len(mesh.vertices) for mesh in submeshes)
 
+        all_field_names = set()
+        for submesh in submeshes:
+            all_field_names.update(submesh.vertex_arrays[0].array.dtype.names)
+
         # Structured array for mixed dtypes.
         all_vertices = np.empty(total_vertex_count, dtype=dtype)  # will be fully initialized
 
         # These four arrays will be fully initialized.
-        loop_normals = np.empty((total_vertex_count, 3), dtype=np.float32)
-        loop_normals_w = np.empty((total_vertex_count, 1), dtype=np.uint8)  # still 2D!
-        loop_bitangents = np.empty((total_vertex_count, 4), dtype=np.float32)
+        if "normal" in all_field_names:
+            loop_normals = np.empty((total_vertex_count, 3), dtype=np.float32)
+        else:
+            loop_normals = None
+        if "normal_w" in all_field_names:
+            loop_normals_w = np.empty((total_vertex_count, 1), dtype=np.uint8)  # still 2D!
+        else:
+            loop_normals_w = None
+        if "bitangent" in all_field_names:
+            loop_bitangents = np.empty((total_vertex_count, 4), dtype=np.float32)
+        else:
+            loop_bitangents = None
 
         loop_tangents_dict = {}  # new arrays added as new tangent indices are encountered
         loop_vertex_colors_dict = {}  # new arrays added as new color indices are encountered
@@ -286,19 +299,19 @@ class MergedMesh:
 
             if "normal" in field_names:
                 loop_normals[i:j] = vertices["normal"]
-            else:
+            elif loop_normals is not None:
                 # Default to upward (Y) vector.
                 loop_normals[i:j] = [0.0, 1.0, 0.0]
 
             if "normal_w" in field_names:
                 loop_normals_w[i:j] = vertices["normal_w"]
-            else:
+            elif loop_normals_w is not None:
                 # Default to 127.
                 loop_normals_w[i:j] = 127
 
             if "bitangent" in field_names:
                 loop_bitangents[i:j] = vertices["bitangent"]
-            else:
+            elif loop_bitangents is not None:
                 # Default to forward (Z) vector.
                 loop_bitangents[i:j] = [0.0, 0.0, 1.0, 1.0]
 
@@ -402,13 +415,11 @@ class MergedMesh:
         submeshes: list[Submesh],
         all_vertices: np.ndarray,
         submesh_material_indices: list[int],
-        loop_normals: np.ndarray,
+        loop_normals: np.ndarray | None,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """FLVER models are optimized for rendering, and so they often have many duplicate vertices across submeshes,
         particularly along edges between faces that have different materials. This function attempts to restore the mesh
         to a state more suited for modelling by merging identical vertices in `all_vertices` where appropriate.
-
-        TODO: Seems to be a new bug somewhere here, with loops not pointing to the right vertices, or something.
 
         Returns vertex data (position and bone indices/weights), a 1D array mapping the original FLVER vertices (now
         called 'loops') to that vertex data, and a 4-column array of face data (index triplets into loop data and
@@ -462,7 +473,7 @@ class MergedMesh:
 
         # Array of loop vertex indices. Same length as other loop data, as face loop indices are not modified (beyond
         # offsetting them for each merged submesh).
-        loop_vertex_indices = np.empty(len(loop_normals), dtype=np.uint32)
+        loop_vertex_indices = np.empty(all_vertices.shape[0], dtype=np.uint32)
 
         loop_offset = 0
         for i, (submesh, material_index) in enumerate(zip(submeshes, submesh_material_indices)):
@@ -484,8 +495,8 @@ class MergedMesh:
                     resolved_loop_indices.add(loop_index)
 
                     triangle_vert = all_vertices[loop_index]
-                    vert_normal = loop_normals[loop_index]
                     vertex_hash = triangle_vert.tobytes()  # "hash" of position, bone indices, and bone weights
+                    vert_normal = loop_normals[loop_index] if loop_normals else None
 
                     # Check for an existing vertex with the same display mask and same hashed (position, bone_weights,
                     # bone_indices) data.
@@ -501,7 +512,7 @@ class MergedMesh:
                         continue
 
                     # Compare normals to see if this vertex is suitable.
-                    if np.dot(vert_normal, existing_normal) < -0.9:
+                    if vert_normal is not None and np.dot(vert_normal, existing_normal) < -0.9:
                         # This face is inverted from the existing vertex. Use the inv dict (whether existing or new).
                         try:
                             existing_inv_vertex_index = inv_vertex_indices[display_mask, vertex_hash]
@@ -567,11 +578,12 @@ class MergedMesh:
         As a minor optimization for Blender import, has the option to ignore tangents or bitangents.
         """
         self.vertex_data["position"] = self.vertex_data["position"][:, [0, 2, 1]]
-        self.loop_normals = self.loop_normals[:, [0, 2, 1]]
+        if self.loop_normals is not None:
+            self.loop_normals = self.loop_normals[:, [0, 2, 1]]
         if tangents:
             for i, tangent_array in enumerate(self.loop_tangents):
                 self.loop_tangents[i] = tangent_array[:, [0, 2, 1, 3]]
-        if bitangents:
+        if bitangents and self.loop_bitangents is not None:
             self.loop_bitangents = self.loop_bitangents[:, [0, 2, 1, 3]]
 
     def invert_vertex_uv(self, invert_u=False, invert_v=True, invert_w=False, invert_3=False):
@@ -600,6 +612,8 @@ class MergedMesh:
         Soulstruct automatically, because this is lossy. However, Blender expects normalized vectors for its normal
         data, so this method is provided to normalize them in-place.
         """
+        if self.loop_normals is None:
+            return
         self.loop_normals /= np.linalg.norm(self.loop_normals, axis=1, keepdims=True)
 
     def normalize_tangents(self):
@@ -615,6 +629,8 @@ class MergedMesh:
         "unique" too aggressively when splitting meshes and creating vertex arrays. Rounding the normals to a lower
         resolution can help to mitigate this issue.
         """
+        if self.loop_normals is None:
+            return
         self.loop_normals = np.round(self.loop_normals, decimals=decimals)
 
     def round_tangents(self, decimals=3):
@@ -1020,10 +1036,16 @@ class MergedMesh:
             bone_indices = self.vertex_data["bone_indices"][self.loop_vertex_indices]  # (loop_count, 4)
             combined_array["bone_indices"] = bone_indices
         if "normal" in names:
+            if self.loop_normals is None:
+                raise ValueError("`MergedMesh.loop_normals` is None, but 'normal' appears in full FLVER dtype.")
             combined_array["normal"] = self.loop_normals
         if "normal_w" in names:
+            if self.loop_normals_w is None:
+                raise ValueError("`MergedMesh.loop_normals_w` is None, but 'normal_w' appears in full FLVER dtype.")
             combined_array["normal_w"] = self.loop_normals_w
         if "bitangent" in names:
+            if self.loop_bitangents is None:
+                raise ValueError("`MergedMesh.loop_bitangents` is None, but 'bitangent' appears in full FLVER dtype.")
             combined_array["bitangent"] = self.loop_bitangents
 
         tangent_names = [n for n in names if n.startswith("tangent_")]
