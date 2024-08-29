@@ -170,7 +170,7 @@ class BaseBinaryFile:
         """
         mp_args = [(cls, entry) for entry in entry_list]
         with multiprocessing.Pool(processes=processes) as pool:
-            files = pool.starmap(_from_bytes_mp, mp_args)  # blocks here until all done
+            files = pool.starmap(_from_binder_entry_mp, mp_args)  # blocks here until all done
         return files
 
     @classmethod
