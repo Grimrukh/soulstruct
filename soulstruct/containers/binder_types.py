@@ -40,7 +40,7 @@ class FLVERBinder(Binder, abc.ABC):
         if not self.flvers:
             for entry in self.find_entries_matching_name(r".*\.flver(\.dcx)?"):
                 self.flvers[entry.minimal_stem] = entry.to_binary_file(FLVER)
-            if len(self.flvers) >= self.MAX_FLVER_COUNT:
+            if len(self.flvers) > self.MAX_FLVER_COUNT:
                 _LOGGER.warning(f"More than {self.MAX_FLVER_COUNT} FLVERs loaded from Binder with path '{self.path}'.")
 
     def entry_autogen(self):
