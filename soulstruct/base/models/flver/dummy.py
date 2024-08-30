@@ -19,7 +19,7 @@ class DummyStruct(BinaryStruct):
     parent_bone_index: short
     upward: Vector3
     attach_bone_index: short
-    flag_1: bool
+    follows_attach_bone: bool
     use_upward_vector: bool
     unk_x30: int  # only used in Sekiro
     unk_x34: int  # only used in Sekiro
@@ -36,7 +36,7 @@ class Dummy:
     parent_bone_index: short = -1
     upward: Vector3 = field(default_factory=lambda: Vector3((0, 1, 0)))
     attach_bone_index: short = -1
-    flag_1: bool = True  # seems to be enabled more often than disabled
+    follows_attach_bone: bool = True  # not sure what the attach bone does if this is disabled
     use_upward_vector: bool = True  # seems more common
     unk_x30: int = 0  # only used in Sekiro+
     unk_x34: int = 0  # only used in Sekiro+
