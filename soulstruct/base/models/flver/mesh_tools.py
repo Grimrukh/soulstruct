@@ -496,7 +496,7 @@ class MergedMesh:
 
                     triangle_vert = all_vertices[loop_index]
                     vertex_hash = triangle_vert.tobytes()  # "hash" of position, bone indices, and bone weights
-                    vert_normal = loop_normals[loop_index] if loop_normals else None
+                    vert_normal = loop_normals[loop_index] if loop_normals is not None else None
 
                     # Check for an existing vertex with the same display mask and same hashed (position, bone_weights,
                     # bone_indices) data.
