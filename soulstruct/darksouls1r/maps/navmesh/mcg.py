@@ -13,7 +13,7 @@ from dataclasses import dataclass, field
 from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
-from soulstruct.utilities.misc import MISSING_REF
+from soulstruct.utilities.misc import MISSING_REF, IDList
 
 from .utilities import ExistingConnectionError, import_matplotlib_plt
 
@@ -79,7 +79,7 @@ class MCGNode:
             _connected_edge_indices=_connected_edge_indices,
         )
 
-    def set_dead_end_navmesh_reference(self, navmeshes: list[MSBNavmesh]):
+    def set_dead_end_navmesh_reference(self, navmeshes: list[MSBNavmesh] | IDList[MSBNavmesh]):
         """De-reference the dead end navmesh index to a navmesh instance. May be `None`."""
         if self.dead_end_navmesh_index is None:
             raise ValueError("Node dead-end navmesh index has already been set (ID consumed).")
@@ -106,7 +106,7 @@ class MCGNode:
                 f"Number of connected nodes ({node_count}) does not match number of connected edges ({edge_count})."
             )
 
-    def set_dead_end_navmesh_index(self, navmeshes: list[MSBNavmesh]):
+    def set_dead_end_navmesh_index(self, navmeshes: list[MSBNavmesh] | IDList[MSBNavmesh]):
         if self.dead_end_navmesh is MISSING_REF:
             raise ValueError("MCGNode has not had its dead-end navmesh deferenced.")
         self.dead_end_navmesh_index = navmeshes.index(self.dead_end_navmesh) if self.dead_end_navmesh else -1
@@ -182,15 +182,15 @@ class MCGNode:
         if self.dead_end_navmesh is not MISSING_REF:
             return (
                 f"MCGNode({self.translate}, "
-                f"connected_nodes=<{len(self.connected_nodes)}>, "
-                f"connected_edges=<{len(self.connected_edges)}>, "
+                f"connected_nodes=<{len(self.connected_nodes)} nodes>, "
+                f"connected_edges=<{len(self.connected_edges)} edges>, "
                 f"dead_end_navmesh=<{self.dead_end_navmesh.name if self.dead_end_navmesh else 'None'}>"
                 f")"
             )
         return (
             f"MCGNode({self.translate}, "
-            f"connected_nodes=<{len(self.connected_nodes)}>, "
-            f"connected_edges=<{len(self.connected_edges)}>, "
+            f"connected_nodes=<{len(self.connected_nodes)} nodes>, "
+            f"connected_edges=<{len(self.connected_edges)} edges>, "
             f"dead_end_navmesh_index={self.dead_end_navmesh_index}"
             f")"
         )
@@ -255,7 +255,7 @@ class MCGEdge:
             node_b_triangles=node_b_triangles,
         )
 
-    def set_navmesh_reference(self, navmeshes: list[MSBNavmesh]):
+    def set_navmesh_reference(self, navmeshes: list[MSBNavmesh] | IDList[MSBNavmesh]):
         if self.navmesh_index is None:
             raise ValueError("Edge navmesh reference has already been set (ID consumed).")
         self.navmesh = navmeshes[self.navmesh_index]
@@ -267,7 +267,7 @@ class MCGEdge:
         self.node_b = mcg_nodes[self._node_b_index]
         self._node_b_index = None  # consumed
 
-    def set_navmesh_index(self, navmeshes: list[MSBNavmesh]):
+    def set_navmesh_index(self, navmeshes: list[MSBNavmesh] | IDList[MSBNavmesh]):
         self.navmesh_index = navmeshes.index(self.navmesh)
         self.navmesh = MISSING_REF
 
@@ -313,6 +313,27 @@ class MCGEdge:
             or first_node is self.node_b and second_node is self.node_a
         )
 
+    def __repr__(self) -> str:
+        if self.navmesh is not MISSING_REF:
+            return (
+                f"MCGEdge(\n"
+                f"    node_a={self.node_a},\n"
+                f"    node_b={self.node_b},\n"
+                f"    navmesh=<{self.navmesh.name if self.navmesh else 'None'}>,\n"
+                f"    map_id={self.map_id},\n"
+                f"    cost={self.cost},\n"
+                f")"
+            )
+        return (
+            f"MCGEdge(\n"
+            f"    node_a={self.node_a},\n"
+            f"    node_b={self.node_b},\n"
+            f"    navmesh_index={self.navmesh_index},  # not dereferenced\n"
+            f"    map_id={self.map_id},\n"
+            f"    cost={self.cost},\n"
+            f")"
+        )
+
 
 @dataclass(slots=True)
 class MCG(GameFile):
@@ -346,7 +367,7 @@ class MCG(GameFile):
         # NOTE:
         return mcg
 
-    def set_navmesh_references(self, navmeshes: list[MSBNavmesh]):
+    def set_navmesh_references(self, navmeshes: list[MSBNavmesh] | IDList[MSBNavmesh]):
         for node in self.nodes:
             node.set_dead_end_navmesh_reference(navmeshes)
         for edge in self.edges:
@@ -358,7 +379,7 @@ class MCG(GameFile):
         for edge in self.edges:
             edge.set_node_references(self.nodes)
 
-    def set_navmesh_indices(self, navmeshes: list[MSBNavmesh]):
+    def set_navmesh_indices(self, navmeshes: list[MSBNavmesh] | IDList[MSBNavmesh]):
         """Convert dead-end navmesh references (MSB parts) to indices.
 
         Must be called just prior to `write()` or `bytes(mcg)`.
@@ -473,7 +494,7 @@ class MCG(GameFile):
                     navmesh_b_index = node_navmesh_dict["b"][0]
                     _LOGGER.warning(
                         f"Node {node} has edges in two navmesh indices ({navmesh_a_index}, {navmesh_b_index}) "
-                        f"AND a dead-end navmesh index ({node.dead_end_navmesh_index}). Ignoring dead-end navmesh index."
+                        f"AND a dead-end navmesh index ({node.dead_end_navmesh_index}). Ignoring dead-end index."
                     )
                 else:
                     # Use dead-end as navmesh B. Lack of triangle indices implies it's a dead end locally, and lack of
@@ -718,3 +739,6 @@ class MCG(GameFile):
             axes.plot3D(x, z, y, c="black", alpha=0.5)  # NOTE: y and z swapped
         if auto_show:
             plt.show()
+
+    def __repr__(self) -> str:
+        return f"MCG(nodes=<{len(self.nodes)} nodes>, edges=<{len(self.edges)} edges>)"
