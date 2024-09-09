@@ -320,6 +320,8 @@ class Submesh:
     layout_fixed: bool = False
     # Enabled by Soulstruct when trying to read a vertex array from a FLVCR (usually DS1R) with the wrong layout.
     invalid_layout: bool = False
+    # Set by `FLVER` on initial creation, for convenience. Can be updated with `flver.refresh_submesh_indices()`.
+    index: int = -1
 
     # Held temporarily while unpacking.
     _face_set_indices: list[int] | None = field(default=None, init=False)
@@ -330,7 +332,8 @@ class Submesh:
         cls,
         reader: BinaryReader,
         materials: list[Material],
-        bounding_box_has_unknown: bool = None,
+        bounding_box_has_unknown: bool,
+        index: int,
     ):
         mesh_struct = SubmeshStruct.from_bytes(reader)
 
@@ -361,6 +364,7 @@ class Submesh:
             cls,
             material=materials[_material_index],
             bone_indices=bone_indices,
+            index=index,
             **kwargs,
         )
         submesh._face_set_indices = _face_set_indices
@@ -497,34 +501,42 @@ class Submesh:
         self.bone_indices = self.bone_indices[sorted_indices]
 
         for vertex_array in self.vertex_arrays:
+            try:
+                bone_indices = vertex_array["bone_indices"]
+            except ValueError:  # no bone indices
+                continue
+
             # Check map piece 'pose' case, where weights are missing:
             try:
                 bone_weights = vertex_array["bone_weights"]
             except ValueError:  # no weights
-                # Map piece case: all four indices should be the same number (all used) and can be safely re-indexed.
-                vertex_array["bone_indices"] = sorted_indices[vertex_array["bone_indices"]]
+                # Map Piece case: all four indices should be the same number (all used) and can be safely re-indexed.
+                vertex_array["bone_indices"] = sorted_indices[bone_indices]
             else:
                 # Rigged case: at least one bone weight is non-zero, and we need to check which ones in order to
                 # distinguish use of bone 0 from an unused bone index, unfortunately.
 
                 # Get indices of all vertices with non-zero bone weights.
                 used_indices = np.nonzero(bone_weights)[0]  # (n, 4) mask array
-                vertex_array["bone_indices"][used_indices] = sorted_indices[vertex_array["bone_indices"][used_indices]]
+                vertex_array["bone_indices"][used_indices] = sorted_indices[bone_indices[used_indices]]
 
     def local_to_global_bone_indices(self):
-        """Transforms `vertex_array` in-place by replacing all `bone_index_{c}` indices with the global bone index in
-        `mesh.bone_indices` that the vertex indexes, and remove local bone indices from the mesh (consistent with later
-        games that use global bone indices by default).
+        """Transforms `vertex_array` in-place by replacing all vertex bone indices with the global bone index in
+        `mesh.bone_indices` that the vertex indexes, then clearing `self.bone_indices`.
 
         Will raise a `ValueError` if `mesh.bone_indices` is already None (implying vertex bone indices are already
         global).
         """
         if self.bone_indices is None:
-            raise ValueError("Cannot convert local vertex bone indices to global because `mesh.bone_indices` is None.")
+            raise ValueError(
+                "Cannot convert local vertex bone indices to global because `mesh.bone_indices` is None, suggesting "
+                "that the vertex bone indices are already global FLVER bone indices."
+            )
         for vertex_array in self.vertex_arrays:
-            for c in "abcd":
-                local_bone_index = vertex_array[f"bone_index_{c}"]
-                vertex_array[f"bone_index_{c}"] = self.bone_indices[local_bone_index]
+            if not vertex_array.has_field("bone_indices"):
+                continue
+            # Simple re-index into global indices.
+            vertex_array.array["bone_indices"] = self.bone_indices[vertex_array.array["bone_indices"]]
         self.bone_indices = None
 
     def to_obj(self, name="Submesh", vertex_offset=0, vertex_array=0) -> str:

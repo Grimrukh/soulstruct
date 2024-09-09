@@ -722,6 +722,19 @@ class VertexArray:
         writer.fill("array_offset", array_offset, obj=self)
         writer.append(self.layout.pack_vertex_array(self.array, uv_factor))
 
+    def has_field(self, name: str) -> bool:
+        return name in self.array.dtype.names
+
+    @property
+    def dtype(self) -> np.dtype:
+        """Wraps NumPy array dtype."""
+        return self.array.dtype
+
+    @property
+    def has_normal_w_bone_indices(self):
+        """Just checks if ANY `normal_w` values are not 127."""
+        return "normal_w" in self.array.dtype.names and not np.all(self.array["normal_w"] == 127)
+
     def __getitem__(self, key):
         """Wraps NumPy array indexing."""
         return self.array[key]

@@ -781,7 +781,11 @@ class MergedMesh:
             # Every three rows corresponds to a single face (will have many duplicates that are removed below).
             submesh_loops = dtype_view[submesh_loop_indices]
 
-            if use_submesh_bone_indices:
+            # Not all FLVER materials/submeshes use bone indices. (Some use `normal_w` as a single bone index.)
+            # TODO: Can `normal_w` bone indices still be local? I suspect (and currently assume) not.
+            uses_vertex_bone_indices = "bone_indices" in global_uv_material_dtype.names
+
+            if uses_vertex_bone_indices and use_submesh_bone_indices:
                 # We may need to split this submesh due to max bone count.
                 split_submesh_info += self.subsplit_faces(
                     material_index,
@@ -791,7 +795,7 @@ class MergedMesh:
                     unused_bone_indices_are_minus_one=unused_bone_indices_are_minus_one,
                 )
             else:
-                # Vertex bone indices are global and have no maximum count.
+                # Vertex bone indices are global and have no maximum count (or are missing altogether).
                 split_submesh_info.append((material_index, submesh_loops, None))
 
         split_submeshes = []
@@ -819,7 +823,7 @@ class MergedMesh:
                     f"{normal_tangent_dot_threshold})."
                 )
 
-            if unused_bone_indices_are_minus_one:
+            if submesh_bone_indices is not None and unused_bone_indices_are_minus_one:
                 # Replace -1 unused bone indices with 0 for FLVER.
                 bone_indices = submesh_vertices["bone_indices"]
                 bone_indices[bone_indices == -1] = 0
@@ -919,10 +923,12 @@ class MergedMesh:
             found_similar = False
             if pos in submesh_vertices_by_position:
                 for existing_vertex, existing_vertex_i in submesh_vertices_by_position[pos]:
-                    if not np.all(loop[non_vector_fields] == existing_vertex[non_vector_fields]):
+                    if non_vector_fields and not np.all(loop[non_vector_fields] == existing_vertex[non_vector_fields]):
                         # Not an exact match.
                         break
-                    if not all(np.dot(loop[f], existing_vertex[f]) > max_dot_product for f in vector_fields):
+                    if vector_fields and not all(
+                        np.dot(loop[f], existing_vertex[f]) > max_dot_product for f in vector_fields
+                    ):
                         # Not an approximate match.
                         break
                     # All vectors are similar enough and other fields match. Re-use this vertex.

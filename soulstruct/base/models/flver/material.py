@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["GXItem", "read_gx_item_list", "write_gx_item_list", "Material", "Texture"]
+__all__ = ["GXItem", "read_gx_item_list", "Material", "Texture"]
 
 import logging
 import re
@@ -22,20 +22,56 @@ _LOGGER = logging.getLogger("soulstruct")
 
 
 @dataclass(slots=True)
-class GXItem(BinaryStruct):
-    """Item that sets various material rendering properties."""
+class GXItem:
+    """Item that sets various material rendering properties.
 
-    category: bytes = field(**BinaryString(4))
-    index: int
-    size: int  # total size of struct (12) and `data`
-    data: bytes = field(init=False, metadata={"NOT_BINARY": True})  # `size - 12` bytes
+    Doesn't use `BinaryStruct` due to the way its header `size` and `data` interact.
+    """
+    # List of GXItems should end with a 'dummy' item that has one of these categories.
+    DUMMY_CATEGORIES: tp.ClassVar[set[bytes]] = {b'\xff\xff\xff\x7f', b'\xff\xff\xff\xff'}
+    HEADER_SIZE: tp.ClassVar[int] = 12  # category, index, size (all four bytes each)
+
+    category: bytes  # typically ASCII, but not decoded as it may be one of the 'dummy' values above
+    index: int  # index of `GXItem` 'subtype' (e.g. 100), NOT just its index in a FLVER list
+    # `size` appears here in header (`len(data) + 12`).
+    data: bytes  # packed 'argument' data; usage varies by category/index and is not managed here
+
+    @classmethod
+    def from_bytes(cls, reader: bytes | BinaryReader):
+        if isinstance(reader, bytes):
+            reader = BinaryReader(reader)
+        category = reader.unpack_value("4s")
+        index = reader.unpack_value("i")
+        size = reader.unpack_value("i")  # total size of struct (12) and raw `data`
+        data = reader.read(size - cls.HEADER_SIZE)
+        return cls(category, index, data)
+
+    def to_writer(self, writer: BinaryWriter):
+        if len(self.category) != 4:
+            raise ValueError(f"`GXItem.category` must be 4 bytes long, not {len(self.category)} bytes: {self.category}")
+        writer.append(self.category)
+        writer.pack("i", self.index)
+        writer.pack("i", len(self.data) + self.HEADER_SIZE)
+        writer.append(self.data)
 
     def __hash__(self):
-        return hash((self.category, self.index, self.size, self.data))
+        """For identifying unique lists of `GXItem`s."""
+        return hash((self.category, self.index, self.data))
 
     @property
     def is_dummy(self):
-        return self.category in {b'\xff\xff\xff\x7f', b'\xff\xff\xff\xff'}
+        return self.category in self.DUMMY_CATEGORIES
+
+    @classmethod
+    def new_dummy(cls):
+        """
+        TODO: This is valid for Bloodborne, DS3, Sekiro, and Elden Ring.
+         I think dummy items may have appeared somewhere (DS2? Other FLVERs?) with:
+            category = b"\xff\xff\xff\xff"
+            data     = b"\x00\x00\x00\x00"
+         But I can't find those FLVERs. And this dummy may work in those FLVERs anyway.
+        """
+        return cls(b"\xff\xff\xff\x7f", 100, b"")
 
 
 def read_gx_item_list(flver_reader: BinaryReader, flver_version: Version) -> list[GXItem]:
@@ -45,32 +81,24 @@ def read_gx_item_list(flver_reader: BinaryReader, flver_version: Version) -> lis
     The `FLVER` instance will maintain the final dummy item for byte-perfect rewrites.
     """
     if flver_version <= Version.DarkSouls2:
-        # Only one `GXItem` with no dummy item.
+        # Only one `GXItem` with no dummy item. TODO: Definitely no dummy item?
         gx_item = GXItem.from_bytes(flver_reader)
-        gx_item.data = flver_reader.read(gx_item.size - 12)
-        # TODO: Definitely no dummy item?
         return [gx_item]
 
-    # Keep unpacking `GXItem`s until we unpack one with a dummy ID.
+    # Keep unpacking `GXItem`s until we unpack one with a dummy category.
+    # The dummy item is still appended to the list, as its exact category and data may vary.
     gx_items = []
     while True:
         gx_item = GXItem.from_bytes(flver_reader)
-        gx_item.data = flver_reader.read(gx_item.size - 12)
         gx_items.append(gx_item)
-        if gx_item.category in {b'\xff\xff\xff\x7f', b'\xff\xff\xff\xff'}:
+        if gx_item.is_dummy:
+            # Warn user if contents of dummy `GXItem` are not as expected.
             if gx_item.index != 100:
-                _LOGGER.warning(f"Dummy `GXItem` at end of list has non-100 `unk_x04`: {gx_item.index}")
+                _LOGGER.warning(f"Dummy `GXItem` at end of list should have `index == 100`, not: {gx_item.index}")
             if gx_item.data.strip(b"\0"):
                 _LOGGER.warning(f"Dummy `GXItem` at end of list has non-null `data`: {gx_item.data}")
             break  # final dummy item found
     return gx_items  # including dummy item
-
-
-def write_gx_item_list(flver_writer: BinaryWriter, gx_items: list[GXItem]):
-    """Write all `GXItem`s to FLVER. It is up to the caller to pass in a dummy item if suitable."""
-    for gx_item in gx_items:
-        GXItem.object_to_writer(gx_item, flver_writer, size=len(gx_item.data) + 12)
-        flver_writer.append(gx_item.data)
 
 
 @dataclass(slots=True)
@@ -211,10 +239,14 @@ class Material:
     ):
         """Unpack a `Material`.
 
-        Each packed material may contain an offset to a list of `GXItem`s, but these can also be shared between
-        materials. The `gx_item_lists` dictionary maps these offsets to `GXItem` lists that have already been unpacked
-        due to usage by a previous `Material`. If the offset is new, the list is unpacked and added to this dictionary
-        for future materials.
+        Each packed material may contain an offset to a list of `GXItem`s, but these lists (NOT the individual items)
+        can also be shared between materials. The `gx_item_lists` dictionary maps these offsets to `GXItem` lists that
+        have already been unpacked due to usage by a previous `Material`. If the offset is new, the list is unpacked and
+        added to this dictionary in-place for future materials.
+
+        NOTE: The Python lists that represent the `GXItem` lists are shallow-copied when reused, so that modifying the
+        list for one material does NOT affect any others (by default). Upon export, any lists that turn out to be
+        identical will be written to the same shared offset in the FLVER file.
         """
         material_struct = MaterialStruct.from_bytes(reader)
         name = reader.unpack_string(offset=material_struct.pop("_name_offset"), encoding=encoding)
@@ -224,10 +256,11 @@ class Material:
             gx_item_list = []  # no `GXItem`s (older games)
         elif gx_offset in gx_item_lists:
             # Reuses a `GXItem` list first used by a prior `Material`.
-            # NOTE: The exact same `list` Python object is used, and any changes to it will affect all other materials.
-            gx_item_list = gx_item_lists[gx_offset]
+            gx_item_list = gx_item_lists[gx_offset].copy()  # shallow copy
         else:
             # Unpack first-time use of `GXItem` list.
+            # Final 'dummy' `GXItem` is NOT removed here. Management of it is up to the user. If absent on FLVER export,
+            # a default dummy item will be created and written.
             with reader.temp_offset(gx_offset):
                 gx_item_list = read_gx_item_list(reader, version)
                 gx_item_lists[gx_offset] = gx_item_list
@@ -384,6 +417,21 @@ class Material:
     def get_submesh_users(self, flver: FLVER) -> list[Submesh]:
         """Get all submeshes that use this material (by equality, not exact instance)."""
         return [submesh for submesh in flver.submeshes if submesh.material == self]
+
+    def get_non_dummy_gx_items(self) -> list[GXItem]:
+        """Return only the non-dummy (non-final) `GXItem`s in list.
+
+        Raises a `ValueError` if a dummy item appears anywhere except as the last element, but doesn't care if no dummy
+        item exists at all (as one can be created automatically on FLVER export).
+        """
+        non_dummy_gx_items = []
+        for i, gx_item in enumerate(self.gx_items):
+            if gx_item.is_dummy:
+                if i != len(self.gx_items) - 1:
+                    raise ValueError("Dummy `GXItem` found in non-final position in `Material`.")
+                break  # do not append this final dummy item
+            non_dummy_gx_items.append(gx_item)
+        return non_dummy_gx_items
 
     def __repr__(self):
         textures = ",\n".join(["    " + indent_lines(repr(texture)) for texture in self.textures])

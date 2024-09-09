@@ -29,7 +29,7 @@ class MatDefError(SoulstructError):
 @dataclass(slots=True)
 class MatDefSampler:
 
-    name: str  # e.g. 'g_Diffuse'
+    name: str  # e.g. 'g_Diffuse'; real, game-specific name of sampler
     alias: str  # e.g. 'ALBEDO_0'; used for Blender node names, etc., to improve porting
     uv_layer: IntEnum | None  # game-specific UV layer enum (could be `None` for non-textured samplers)
     sampler_group: int = 0  # given explicitly in Elden Ring; inferred in earlier games
@@ -61,14 +61,32 @@ class MatDefSampler:
 @dataclass(slots=True)
 class MatDef(abc.ABC):
     """Various summarized properties that tell Soulstruct how to generate FLVER vertex array layouts and Blender
-    shader node trees for optimal FLVER visualization."""
+    shader node trees for optimal FLVER visualization.
+
+    Probably its most important function is parsing the tightly-packed FLVER vertex UV arrays and properly matching them
+    up across all the materials in the FLVER, using the `UVLayer` class enum below (overridden by subclasses). The
+    integer values of this enum correspond to the `uv_index` property of samplers in the MTD files (except they are
+    zero-indexed here).
+
+    In Elden Ring, these UV indices are MUCH harder to find; they exist in the 'metadata' of 'sampler groups', which I
+    have pre-loaded for all known MATBINs into a bundled JSON with Meow's help.
+
+    The other function of this class is to map each known sampler name in each game to a game-agnostic 'alias' like
+    `ALBEDO_0` (which appears as 'g_Diffuse' in DS1, 'g_DiffuseTexture' in BB, etc.). This makes it easier to port
+    FLVER materials across games and determines how they are held in my Blender add-on.
+    """
 
     class UVLayer(IntEnum):
+        """Most basic version of UV layers; overridden in most subclasses.
+
+        Note that different FLVER types (Characters, Map Pieces, etc.) may conflict in their usage of these, and the
+        names of the re-used values may be a bit verbose like 'UVBloodOrLightmap' to indicate that.
+        """
         UVTexture0 = 0
         UVTexture1 = 1
         UVLightmap = 2
 
-    # Subclasses can override available UV layers.
+    # Game-specific subclasses can define their UV layer labels.
     UVLayer: tp.ClassVar[type[IntEnum]]
 
     # Game-specific mapping of shader categories to `MatDef` names known to use that category, which aids in creating

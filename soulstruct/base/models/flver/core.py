@@ -17,7 +17,7 @@ from soulstruct.utilities.misc import IDList
 from .bone import FLVERBone
 from .dummy import Dummy
 from .layout_repair import check_ds1_layouts
-from .material import GXItem, write_gx_item_list, Material, Texture
+from .material import GXItem, Material, Texture
 from .submesh import FaceSet, Submesh
 from .version import Version
 from .vertex_array import VertexArrayHeaderStruct, VertexArrayLayout, VertexArray, VertexDataSizeError
@@ -150,8 +150,9 @@ class FLVER(GameFile):
                 reader,
                 materials,
                 bounding_box_has_unknown=header.version == Version.Sekiro_EldenRing,
+                index=i,
             )
-            for _ in range(header.mesh_count)
+            for i in range(header.mesh_count)
         ]
 
         face_sets = {
@@ -324,7 +325,7 @@ class FLVER(GameFile):
                 if material.gx_items:
                     gx_items_hash = hash(tuple(material.gx_items))
                     if gx_items_hash in hashed_gx_list_indices:
-                        # GX item list already registered for packing.
+                        # GX item list with identical hash is already registered for packing.
                         material_gx_list_index = hashed_gx_list_indices[gx_items_hash]
                         gx_list_material_users[material_gx_list_index].append(material)
                     else:
@@ -430,26 +431,33 @@ class FLVER(GameFile):
             submesh.pack_vertex_array_indices(writer, first_vertex_array_index)
             first_vertex_array_index += len(submesh.vertex_arrays)
 
-        # Pack GX lists.
+        # Pack GX lists (only unique ones).
         writer.pad_align(16)
         for gx_list, material_users in zip(gx_lists_to_pack, gx_list_material_users):
             gx_list_offset = writer.position
-            write_gx_item_list(writer, gx_list)
+            for gx_item in gx_list:
+                gx_item.to_writer(writer)
+            if not gx_list[-1].is_dummy:  # list cannot be empty here
+                _LOGGER.warning("Final `GXItem` in list is not a dummy item. Appending new dummy item.")
+                dummy_gx_item = GXItem.new_dummy()
+                dummy_gx_item.to_writer(writer)
             for material in material_users:
                 # NOTE: Material only reserves this field if it has any GX items. Otherwise, already wrote offset -1.
                 material.fill_gx_offset(writer, gx_list_offset)
 
-        # Pack material and texture strings.
+        # Pack materials and texture strings.
         writer.pad_align(16)
         for material in materials_to_pack:
             material.pack_strings(writer, encoding)
             for texture in material.textures:
                 texture.pack_strings(writer, encoding=encoding)
 
+        # Pack bone names.
         writer.pad_align(16)
         for bone in self.bones:
             bone.pack_name(writer, encoding=encoding)
 
+        # Version-specific alignment/padding.
         alignment = 32 if self.version <= 0x2000E else 16
         writer.pad_align(alignment)
         if self.version in {Version.DarkSouls2_NT, Version.DarkSouls2}:
@@ -548,6 +556,10 @@ class FLVER(GameFile):
 
     def __repr__(self) -> str:
         return f"FLVER({len(self.submeshes)} submeshes, {len(self.bones)} bones, {len(self.dummies)} dummies)"
+
+    def refresh_submesh_indices(self):
+        for i, submesh in enumerate(self.submeshes):
+            submesh.index = i
 
     def draw(self, auto_show=False, show_mesh_face_sets=(), show_origin=False, axes=None, **kwargs):
         import matplotlib.pyplot as plt
@@ -692,9 +704,15 @@ class FLVER(GameFile):
             for vertex_array in submesh.vertex_arrays:
 
                 used_bone_vertex_indices = {}  # tracks vertex indices used by each bone
+                if vertex_array.has_normal_w_bone_indices:
+                    # Already global, but confirmed below.
+                    bone_indices = vertex_array["normal_w"]
+                else:
+                    try:
+                        bone_indices = vertex_array["bone_indices"]
+                    except ValueError:
+                        continue  # submesh vertex array has no bone indices (weird)
 
-                position = vertex_array["position"]
-                bone_indices = vertex_array["bone_indices"]
                 if submesh.bone_indices is not None:
                     # Remap bone indices to global indices.
                     bone_indices = submesh.bone_indices[bone_indices]
@@ -710,6 +728,8 @@ class FLVER(GameFile):
                     for bone_index in refresh_bone_indices:
                         used = ((bone_indices == bone_index) & (bone_weights > 0.0)).any(axis=1)
                         used_bone_vertex_indices[bone_index] = used
+
+                position = vertex_array["position"]
 
                 for bone_index, vertex_indices in used_bone_vertex_indices.items():
                     if not np.any(vertex_indices):
@@ -940,8 +960,19 @@ class FLVER(GameFile):
 
         for submesh in self.submeshes:
             for vertex_array in submesh.vertex_arrays:
+                if not vertex_array.has_field("bone_indices"):
+                    if vertex_array.has_normal_w_bone_indices:
+                        # These are always global, but that will be confirmed below.
+                        local_bone_indices = vertex_array["normal_w"][:, 0]
+                        using_normal_w = True
+                    else:
+                        # Submesh has no bone indices at all. (Weird.)
+                        continue
+                else:
+                    local_bone_indices = vertex_array["bone_indices"][:, 0]  # only first index needed
+                    using_normal_w = False
+
                 array = vertex_array.array
-                local_bone_indices = array["bone_indices"][:, 0]  # only first index needed
                 if submesh.bone_indices is not None:
                     global_bone_indices = submesh.bone_indices[local_bone_indices].tolist()
                 else:
@@ -966,7 +997,10 @@ class FLVER(GameFile):
                                 array[array_field][i][:3] = r.data @ array[array_field][i][:3]  # rotating a single row
 
                 # Now set all bone indices to zero.
-                array["bone_indices"][:, :] = 0
+                if using_normal_w:
+                    array["normal_w"][:, :] = 0
+                else:
+                    array["bone_indices"][:, :] = 0
 
             if submesh.bone_indices is not None:
                 # Set submesh local bones to [0].

@@ -115,8 +115,16 @@ class MATBIN(GameFile):
     def get_all_sampler_names(self) -> dict[str, str]:
         return {sampler.sampler_type: Path(sampler.path).name if sampler.path else "" for sampler in self.samplers}
 
-    def get_all_sampler_stems(self) -> dict[str, str]:
-        return {sampler.sampler_type: Path(sampler.path).stem if sampler.path else "" for sampler in self.samplers}
+    def get_all_sampler_stems(self, lower=False) -> dict[str, str]:
+        stems = {}
+        for sampler in self.samplers:
+            if not sampler.path:
+                stems[sampler.sampler_type] = ""
+            elif lower:
+                stems[sampler.sampler_type] = Path(sampler.path).stem.lower()
+            else:
+                stems[sampler.sampler_type] = Path(sampler.path).stem
+        return stems
 
     def get_sampler_path(self, matbin_sampler_type: str) -> str:
         for sampler in self.samplers:
