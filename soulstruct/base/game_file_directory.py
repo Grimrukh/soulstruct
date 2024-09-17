@@ -10,8 +10,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from .base_binary_file import BaseBinaryFile, BASE_BINARY_FILE_T
-from ..utilities.binary import get_blake2b_hash
-from ..utilities.files import create_bak
+from ..utilities.files import create_bak, get_blake2b_hash
 
 if tp.TYPE_CHECKING:
     from .game_types.map_types import Map

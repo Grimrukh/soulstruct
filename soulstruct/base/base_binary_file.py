@@ -18,7 +18,7 @@ from pathlib import Path
 
 from soulstruct.games import Game, get_game
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.files import create_bak, read_json, write_json
+from soulstruct.utilities.files import create_bak, read_json, write_json, get_blake2b_hash
 from soulstruct.dcx import DCXType, compress, decompress, is_dcx
 
 if tp.TYPE_CHECKING:

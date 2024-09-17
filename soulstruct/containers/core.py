@@ -22,7 +22,7 @@ from dataclasses import dataclass, field
 from soulstruct.base.base_binary_file import BaseBinaryFile
 from soulstruct.dcx import DCXType, compress, decompress, is_dcx
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.files import read_json, write_json
+from soulstruct.utilities.files import read_json, write_json, get_blake2b_hash
 
 from .binder_hash import BinderHashTable
 from .entry import BinderEntry, BinderEntryHeader

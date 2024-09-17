@@ -34,7 +34,7 @@ __all__ = [
 
     # UTILITY
     "read_chars_from_bytes",
-    "get_blake2b_hash",
+    "read_chars_from_buffer",
     "BitFieldReader",
     "BitFieldWriter",
 ]
@@ -42,7 +42,6 @@ __all__ = [
 import copy
 import dataclasses
 import enum
-import hashlib
 import io
 import logging
 import re
@@ -570,20 +569,6 @@ def read_chars_from_buffer(
                 return stripped_array
 
 
-def get_blake2b_hash(data: bytes | str | Path) -> bytes:
-    if isinstance(data, (str, Path)):
-        file_hash = hashlib.blake2b()
-        with Path(data).open("rb") as f:
-            chunk = f.read(8192)
-            while chunk:
-                file_hash.update(chunk)
-                chunk = f.read(8192)
-        return file_hash.digest()
-    elif isinstance(data, bytes):
-        return hashlib.blake2b(data).digest()
-    raise TypeError(f"Can only get hash of `bytes` or `str`/`Path` of file, not {type(data)}.")
-
-
 # BASIC FIELD TYPES
 # bool = bool
 byte = type("byte", (int,), {})
@@ -1046,6 +1031,9 @@ class BinaryStruct:
             metadata = field.metadata.get("binary", None)  # type: BinaryMetadata | None
             if metadata is None:
                 # NOTE: We can't add new keys to `field.metadata` now, but store it in `_FIELD_METADATA`.
+
+                # TODO: Allow user to specify a "metadata generator" function that allows the use of custom type
+                #  annotations like `Vector2` here. Then can remove the Vector classes from this utility.
 
                 # `Vector` types can be specified without needing any field metadata.
                 if field_type == Vector2:

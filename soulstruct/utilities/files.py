@@ -8,9 +8,11 @@ __all__ = [
     "import_arbitrary_module",
     "read_json",
     "write_json",
+    "get_blake2b_hash",
 ]
 
 import ctypes
+import hashlib
 import importlib.util
 import json
 import logging
@@ -148,3 +150,17 @@ def write_json(
     json_str = json.dumps(data, indent=indent, ensure_ascii=ensure_ascii, cls=encoder)
     with Path(json_path).open("w", encoding=encoding) as f:
         f.write(json_str)
+
+
+def get_blake2b_hash(data: bytes | str | Path) -> bytes:
+    if isinstance(data, (str, Path)):
+        file_hash = hashlib.blake2b()
+        with Path(data).open("rb") as f:
+            chunk = f.read(8192)
+            while chunk:
+                file_hash.update(chunk)
+                chunk = f.read(8192)
+        return file_hash.digest()
+    elif isinstance(data, bytes):
+        return hashlib.blake2b(data).digest()
+    raise TypeError(f"Can only get hash of `bytes` or `str`/`Path` of file, not {type(data)}.")
