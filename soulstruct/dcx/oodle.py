@@ -9,10 +9,11 @@ Adapted from `SoulsFormats` by TKGP:
 from __future__ import annotations
 
 __all__ = [
+    "MissingOodleDLLError",
     "OodleDLLError",
-    "LOAD_DLL",
     "compress",
     "decompress",
+    "LOAD_DLL",
 ]
 
 import ctypes as c
@@ -47,6 +48,11 @@ __DLL_Decompress = None  # type: tp.Optional[tp.Callable]
 __DLL_GetCompressedBufferSizeNeeded = None  # type: tp.Optional[tp.Callable]
 __DLL_CompressOptions_GetDefault = None  # type: tp.Optional[tp.Callable]
 __DLL_GetDecodeBufferSize = None  # type: tp.Optional[tp.Callable]
+
+
+class MissingOodleDLLError(Exception):
+    """Exception raised if the Oodle DLL cannot be found or loaded."""
+    pass
 
 
 class OodleDLLError(Exception):
@@ -180,96 +186,11 @@ class CompressOptions(c.Structure):
         )
 
 
-def LOAD_DLL(dll_path: str):
-    global __DLL
-    global __DLL_Compress, __DLL_Decompress
-    global __DLL_GetCompressedBufferSizeNeeded, __DLL_CompressOptions_GetDefault, __DLL_GetDecodeBufferSize
-
-    if not Path(dll_path).exists():
-        raise OodleDLLError(f"Oodle DLL path invalid: {dll_path}")
-
-    __DLL = c.WinDLL(dll_path)  # uses `stdcall` convention, not `cdecl`
-
-    __DLL_Compress = __DLL["OodleLZ_Compress"]
-    __DLL_Compress.restype = c.c_long
-    __DLL_Compress.argtypes = (
-        Compressor,  # compressor
-        c.POINTER(c.c_char),  # rawBuf
-        c.c_long,  # rawLen
-        c.POINTER(c.c_char),  # compBuf
-        CompressionLevel,  # level
-        c.POINTER(CompressOptions),  # pOptions
-        c.c_void_p,  # dictionaryBase
-        c.c_void_p,  # lrm
-        c.c_void_p,  # scratchMem
-        c.c_long,  # scratchSize
-    )
-
-    __DLL_CompressOptions_GetDefault = __DLL["OodleLZ_CompressOptions_GetDefault"]
-    __DLL_CompressOptions_GetDefault.restype = c.POINTER(CompressOptions)
-    __DLL_CompressOptions_GetDefault.argtypes = (
-        Compressor,  # compressor
-        CompressionLevel,  # lzLevel
-    )
-
-    __DLL_Decompress = __DLL["OodleLZ_Decompress"]
-    __DLL_Decompress.restype = c.c_long
-    __DLL_Decompress.argtypes = (
-        c.POINTER(c.c_char),  # compBuf
-        c.c_long,  # compBufSize
-        c.POINTER(c.c_char),  # rawBuf
-        c.c_long,  # rawLen (known uncompressed size)
-        c.c_int,  # fuzzSafe
-        CheckCRC,  # checkCRC
-        Verbosity,  # verbosity
-        c.c_void_p,  # decBufBase
-        c.c_long,  # decBufSize
-        c.c_void_p,  # fpCallback
-        c.c_void_p,  # callbackUserData
-        c.c_void_p,  # decoderMemory
-        c.c_long,  # decoderMemorySize
-        c.c_int,  # threadPhase
-    )
-
-    __DLL_GetCompressedBufferSizeNeeded = __DLL["OodleLZ_GetCompressedBufferSizeNeeded"]
-    __DLL_GetCompressedBufferSizeNeeded.restype = c.c_long
-    __DLL_GetCompressedBufferSizeNeeded.argtypes = (
-        c.c_long,  # rawSize
-    )
-
-    __DLL_GetDecodeBufferSize = __DLL["OodleLZ_GetDecodeBufferSize"]
-    __DLL_GetDecodeBufferSize.restype = c.c_long
-    __DLL_GetDecodeBufferSize.argtypes = (
-        c.c_long,  # rawSize
-        c.c_bool,  # corruptionPossible
-    )
-
-
-# Try to load DLL automatically from Soulstruct, Sekiro, or Elden Ring path.
-_auto_oodle_locations = (
-    PACKAGE_PATH(__DLL_NAME),
-    PACKAGE_PATH("..", __DLL_NAME),
-    Path(SEKIRO_PATH, __DLL_NAME),
-    Path(ELDEN_RING_PATH, __DLL_NAME),
-)
-for _location in _auto_oodle_locations:
-    if _location.exists():
-        LOAD_DLL(str(_location))
-        break
-else:
-    # DLL not found in one of these default locations.
-    print(
-        f"{YELLOW}# WARNING: Could not find `oo2core_6_win64.dll` in Soulstruct, Sekiro, or Elden Ring paths.\n"
-        f"# You will not be able to compress/decompress Sekiro or Elden Ring files using Soulstruct.\n"
-        f"# Call `oodle.LOAD_DLL(path)` to load the DLL from an arbitrary path.{RESET}"
-    )
-
-
 def _dll_func_wrapper(func):
     @wraps(func)
     def wrapped(*args, **kwargs):
         if __DLL is None:
-            raise OodleDLLError("`oo2core_6_win64.dll` not found or loaded.")
+            raise OodleDLLError("`oo2core_6_win64.dll` not found or loaded. Cannot handle DCX_KRAK compression.")
         return func(*args, **kwargs)
     return wrapped
 
@@ -343,18 +264,113 @@ def decompress(comp_buf: bytes, decompressed_size: int):
     return raw_buf_array.raw[:actual_raw_buf_size]
 
 
-def test():
-    raw_data = b"11112222333344445555"
-    compressed = compress(
-        raw_data,
-        Compressor.Kraken,
-        CompressionLevel.Fast,
+def find_oodle_dll() -> str:
+    """Try to find DLL at Soulstruct, Sekiro, or Elden Ring paths."""
+    _auto_oodle_locations = (
+        PACKAGE_PATH(__DLL_NAME),
+        PACKAGE_PATH("..", __DLL_NAME),
+        Path(SEKIRO_PATH, __DLL_NAME),
+        Path(ELDEN_RING_PATH, __DLL_NAME),
     )
-    print(f"Compress test: {raw_data} -> {compressed}")
-    decompressed = decompress(compressed, len(raw_data))
-    print(f"    Decompress test: -> {decompressed}")
-    print(f"    Test succeeded? {raw_data == decompressed}")
+    for _location in _auto_oodle_locations:
+        if _location.exists():
+            return str(_location)
+
+    # DLL not found in one of these default locations.
+    print(
+        f"{YELLOW}# WARNING: Could not find `oo2core_6_win64.dll` in Soulstruct, Sekiro, or Elden Ring paths.\n"
+        f"# You will not be able to compress/decompress Sekiro or Elden Ring files using Soulstruct.\n"
+        f"# Call `oodle.LOAD_DLL(path)` to load the DLL from an arbitrary path.{RESET}"
+    )
+    return ""
 
 
-if __name__ == '__main__':
-    test()
+def LOAD_DLL(dll_path: str = ""):
+    """Load Oodle DLL from specified path, or search for it in default locations."""
+
+    if not hasattr(c, "WinDLL"):
+        raise MissingOodleDLLError(
+            "Can currently only load Oodle DLL on Windows. Oodle (DCX_KRAK) compression unavailable."
+        )
+
+    if not dll_path:
+        dll_path = find_oodle_dll()
+        if not dll_path:
+            raise MissingOodleDLLError(
+                "Could not find `oo2core_6_win64.dll` in Soulstruct, Sekiro, or Elden Ring paths."
+            )
+
+    global __DLL
+    global __DLL_Compress, __DLL_Decompress
+    global __DLL_GetCompressedBufferSizeNeeded, __DLL_CompressOptions_GetDefault, __DLL_GetDecodeBufferSize
+
+    if not Path(dll_path).exists():
+        raise MissingOodleDLLError(f"Oodle DLL path invalid: {dll_path}")
+
+    try:
+        __DLL = c.WinDLL(dll_path)  # uses `stdcall` convention, not `cdecl`
+    except Exception as ex:
+        raise MissingOodleDLLError(f"Failed to load Oodle DLL from path '{dll_path}'. Error: {ex}")
+
+    __DLL_Compress = __DLL["OodleLZ_Compress"]
+    __DLL_Compress.restype = c.c_long
+    __DLL_Compress.argtypes = (
+        Compressor,  # compressor
+        c.POINTER(c.c_char),  # rawBuf
+        c.c_long,  # rawLen
+        c.POINTER(c.c_char),  # compBuf
+        CompressionLevel,  # level
+        c.POINTER(CompressOptions),  # pOptions
+        c.c_void_p,  # dictionaryBase
+        c.c_void_p,  # lrm
+        c.c_void_p,  # scratchMem
+        c.c_long,  # scratchSize
+    )
+
+    __DLL_CompressOptions_GetDefault = __DLL["OodleLZ_CompressOptions_GetDefault"]
+    __DLL_CompressOptions_GetDefault.restype = c.POINTER(CompressOptions)
+    __DLL_CompressOptions_GetDefault.argtypes = (
+        Compressor,  # compressor
+        CompressionLevel,  # lzLevel
+    )
+
+    __DLL_Decompress = __DLL["OodleLZ_Decompress"]
+    __DLL_Decompress.restype = c.c_long
+    __DLL_Decompress.argtypes = (
+        c.POINTER(c.c_char),  # compBuf
+        c.c_long,  # compBufSize
+        c.POINTER(c.c_char),  # rawBuf
+        c.c_long,  # rawLen (known uncompressed size)
+        c.c_int,  # fuzzSafe
+        CheckCRC,  # checkCRC
+        Verbosity,  # verbosity
+        c.c_void_p,  # decBufBase
+        c.c_long,  # decBufSize
+        c.c_void_p,  # fpCallback
+        c.c_void_p,  # callbackUserData
+        c.c_void_p,  # decoderMemory
+        c.c_long,  # decoderMemorySize
+        c.c_int,  # threadPhase
+    )
+
+    __DLL_GetCompressedBufferSizeNeeded = __DLL["OodleLZ_GetCompressedBufferSizeNeeded"]
+    __DLL_GetCompressedBufferSizeNeeded.restype = c.c_long
+    __DLL_GetCompressedBufferSizeNeeded.argtypes = (
+        c.c_long,  # rawSize
+    )
+
+    __DLL_GetDecodeBufferSize = __DLL["OodleLZ_GetDecodeBufferSize"]
+    __DLL_GetDecodeBufferSize.restype = c.c_long
+    __DLL_GetDecodeBufferSize.argtypes = (
+        c.c_long,  # rawSize
+        c.c_bool,  # corruptionPossible
+    )
+
+
+# Load DLL automatically.
+try:
+    LOAD_DLL()
+except MissingOodleDLLError as load_ex:
+    _LOGGER.warning(
+        f"Could not find/load Oodle DLL. DCX_KRAK compression/decompression will be unavailable. Error: {load_ex}"
+    )
