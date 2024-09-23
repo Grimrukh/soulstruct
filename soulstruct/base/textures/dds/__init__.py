@@ -1,3 +1,3 @@
 from .core import *
-from .deswizzler import *
+from .deswizzle import *
 from .enums import *

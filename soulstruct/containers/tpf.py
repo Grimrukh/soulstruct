@@ -5,8 +5,6 @@ __all__ = [
     "TPF",
     "TPFPlatform",
     "TextureType",
-    "TextureHeader",
-    "TextureFloatStruct",
     "batch_get_tpf_texture_png_data",
     "batch_get_tpf_texture_tga_data",
 ]
@@ -54,49 +52,86 @@ class TextureType(IntEnum):
     Volume = 2  # one 3D texture
 
 
-@dataclass(slots=True)
-class TextureHeader:
-    """Extra metadata for headerless textures used in console versions."""
-    width: int
-    height: int
-    texture_count: int = 0
-    unk1: int = 0  # unknown, PS3 only
-    unk2: int = 0  # unknown, 0x0 or 0xAAE4 in DeS, 0xD in BB/DS3 (console)
-    dxgi_format: DXGI_FORMAT = DXGI_FORMAT.UNKNOWN  # must be supplied for certain `TPFTexture.format` values (DX10)
-
-
-@dataclass(slots=True)
-class TextureFloatStruct(BinaryStruct):
-    """Unknown optional data for some textures."""
-    unk0: int
-    size: int  # 4 * len(data)
-
-    def unpack_data(self, reader: BinaryReader) -> list[float]:
-        return list(reader.unpack(f"{self.size}f"))
-
-
-@dataclass(slots=True)
-class TPFTextureStruct(BinaryStruct, abc.ABC):
-    data_offset: uint
-    data_size: int
-    format: byte
-    texture_type: TextureType = field(**Binary(byte))
-    mipmap_count: byte
-    texture_flags: byte
+# The `TPFTexture.STRUCT.format` field is some other internal enum, which we need to map to DXGI_FORMAT for consoles.
+TPF_TEXTURE_FORMAT_TO_DXGI_FORMAT = {
+    0: DXGI_FORMAT.BC1_UNORM,
+    1: DXGI_FORMAT.BC1_UNORM,
+    3: DXGI_FORMAT.BC2_UNORM,
+    5: DXGI_FORMAT.BC3_UNORM,
+    6: DXGI_FORMAT.B5G5R5A1_UNORM,
+    8: DXGI_FORMAT.R8G8B8A8_UNORM,
+    9: DXGI_FORMAT.B8G8R8A8_UNORM,
+    10: DXGI_FORMAT.R8G8B8A8_UNORM,
+    16: DXGI_FORMAT.A8_UNORM,
+    22: DXGI_FORMAT.R16G16B16A16_UNORM,
+    23: DXGI_FORMAT.BC3_UNORM,
+    24: DXGI_FORMAT.BC4_UNORM,
+    25: DXGI_FORMAT.BC1_UNORM,
+    29: DXGI_FORMAT.BC1_UNORM,
+    33: DXGI_FORMAT.BC3_UNORM,
+    100: DXGI_FORMAT.BC6H_UF16,
+    102: DXGI_FORMAT.BC7_UNORM,
+    103: DXGI_FORMAT.BC4_UNORM,
+    104: DXGI_FORMAT.BC5_UNORM,
+    105: DXGI_FORMAT.R8G8B8A8_UNORM,
+    106: DXGI_FORMAT.BC7_UNORM,
+    107: DXGI_FORMAT.BC7_UNORM,
+    108: DXGI_FORMAT.BC1_UNORM,
+    109: DXGI_FORMAT.BC1_UNORM,
+    110: DXGI_FORMAT.BC3_UNORM,
+    112: DXGI_FORMAT.BC7_UNORM_SRGB,
+    113: DXGI_FORMAT.BC6H_UF16,
+    115: DXGI_FORMAT.BC6H_UF16,
+}
 
 
 @dataclass(slots=True)
 class TPFTexture:
 
-    name: str = ""  # no file extension (i.e. actually just stem)
+    @dataclass(slots=True)
+    class STRUCT(BinaryStruct, abc.ABC):
+        data_offset: uint
+        data_size: int
+        format: byte
+        texture_type: TextureType = field(**Binary(byte))
+        mipmap_count: byte
+        texture_flags: byte
+
+    @dataclass(slots=True)
+    class FLOAT_STRUCT(BinaryStruct):
+        """Unknown optional data for some textures."""
+        unk0: int
+        size: int  # 4 * len(data)
+
+        def unpack_data(self, reader: BinaryReader) -> list[float]:
+            return list(reader.unpack(f"{self.size}f"))
+
+    stem: str = ""  # no file extension
     format: int = 1
     texture_type: TextureType = TextureType.Texture
     mipmap_count: int = 0
     texture_flags: int = 0  # {2, 3} -> DCX-compressed (i.e. bit 1); unknown otherwise
     data: bytes = b""
 
-    header: TextureHeader | None = None  # only used for console textures to supplement headerless DDS
+    @dataclass(slots=True)
+    class ConsoleInfo:
+        """Extra metadata for headerless textures used in console versions.
+
+        NOT a `BinaryStruct`, as its exact layout varies by console and is handled manually.
+        """
+        width: int
+        height: int
+        texture_count: int = 0
+        unk1: int = 0  # unknown, PS3 only
+        unk2: int = 0  # unknown, 0x0 or 0xAAE4 in DeS, 0xD in BB/DS3 (console)
+        dxgi_format: DXGI_FORMAT = DXGI_FORMAT.UNKNOWN  # must be supplied for certain `TPFTexture.format` values (DX10)
+
+    console_info: ConsoleInfo | None = None  # only used for console textures to supplement headerless DDS
     unknown_float_struct: tuple[int, list[float]] | None = None
+
+    # Platform is stored in the `TPF`, not each `TPFTexture`, but it is often very convenient to associate them as
+    # textures are unpacked and pooled across TPFs.
+    platform: TPFPlatform | None = None
 
     @classmethod
     def from_tpf_reader(
@@ -106,39 +141,44 @@ class TPFTexture:
         tpf_flags: int,
         encoding: str,
     ):
-        texture_struct = TPFTextureStruct.from_bytes(reader)
+        texture_struct = cls.STRUCT.from_bytes(reader)
 
         if platform != TPFPlatform.PC:
             width = reader["h"]
             height = reader["h"]
-            header = TextureHeader(width, height)
+            console_info = cls.ConsoleInfo(width, height)
+
+            # Only PS4 and XboxOne actually store their DXGI_FORMAT in the `TPFTexture`, which will be set below.
+            # For all other consoles, we need to remap the `STRUCT.format` enum.
+            console_info.dxgi_format = TPF_TEXTURE_FORMAT_TO_DXGI_FORMAT.get(texture_struct.format, DXGI_FORMAT.UNKNOWN)
+
             if platform == TPFPlatform.Xbox360:
                 reader.assert_pad(4)
             elif platform == TPFPlatform.PS3:
-                header.unk1 = reader["i"]
+                console_info.unk1 = reader["i"]
                 if tpf_flags != 0:
-                    header.unk2 = reader["i"]
-                    if header.unk2 not in {0, 0x68E0, 0xAAE4}:
+                    console_info.unk2 = reader["i"]
+                    if console_info.unk2 not in {0, 0x69E0, 0xAAE4}:
                         raise ValueError(
-                            f"`TextureHeader.unk2` was {header.unk2}, but expected 0, 0x68E0, or 0xAAE4."
+                            f"`ConsoleInfo.unk2` was {console_info.unk2}, but expected one of: [0, 0x69E0, 0xAAE4]"
                         )
             elif platform in {TPFPlatform.PS4, TPFPlatform.XboxOne}:
-                header.texture_count = reader["i"]
-                if header.texture_count not in {1, 6}:
-                    f"`TextureHeader.texture_count` was {header.texture_count}, but expected 1 or 6."
-                header.unk2 = reader["i"]
-                if header.unk2 != 0xD:
-                    f"`TextureHeader.unk2` was {header.unk2}, but expected 0xD."
+                console_info.texture_count = reader["i"]
+                if console_info.texture_count not in {1, 6}:
+                    f"`ConsoleInfo.texture_count` was {console_info.texture_count}, but expected 1 or 6."
+                console_info.unk2 = reader["i"]
+                if console_info.unk2 != 0xD:
+                    f"`ConsoleInfo.unk2` was {console_info.unk2}, but expected 0xD."
             # `dxgi_format` unpacked below.
         else:
-            header = None
+            console_info = None
 
-        name_offset = reader["I"]
+        stem_offset = reader["I"]
         has_unknown_float_struct = reader["i"] == 1
         if platform in {TPFPlatform.PS4, TPFPlatform.XboxOne}:
-            header.dxgi_format = DXGI_FORMAT(reader["i"])
+            console_info.dxgi_format = DXGI_FORMAT(reader["i"])
         if has_unknown_float_struct:
-            float_struct = TextureFloatStruct.from_bytes(reader)
+            float_struct = cls.FLOAT_STRUCT.from_bytes(reader)
             unknown_float_struct = (float_struct.unk0, float_struct.unpack_data(reader))
         else:
             unknown_float_struct = None
@@ -150,15 +190,21 @@ class TPFTexture:
             # TODO: should enforce DCX type as 'DCP_EDGE'?
             data = decompress(data)
 
-        name = reader.unpack_string(offset=name_offset, encoding=encoding)
+        stem = reader.unpack_string(offset=stem_offset, encoding=encoding)
 
         texture = texture_struct.to_object(
             cls,
-            name=name,
+            stem=stem,
             data=data,
-            header=header,
+            console_info=console_info,
             unknown_float_struct=unknown_float_struct,
+            platform=platform,
         )
+
+        if console_info and console_info.dxgi_format == DXGI_FORMAT.UNKNOWN:
+            _LOGGER.warning(
+                f"Could not determine DXGI_FORMAT for TPFTexture '{stem}' (internal format {texture_struct.format})."
+            )
 
         return texture
 
@@ -176,7 +222,7 @@ class TPFTexture:
             texture_type = self.texture_type
             mipmap_count = self.mipmap_count
 
-        TPFTextureStruct.object_to_writer(
+        self.STRUCT.object_to_writer(
             self,
             writer,
             data_offset=RESERVED,
@@ -186,38 +232,44 @@ class TPFTexture:
         )
 
         if platform != TPFPlatform.PC:
-            writer.pack("h", self.header.width)
-            writer.pack("h", self.header.height)
+            writer.pack("h", self.console_info.width)
+            writer.pack("h", self.console_info.height)
             if platform == TPFPlatform.Xbox360:
                 writer.pad(4)
             elif platform == TPFPlatform.PS3:
-                writer.pack("i", self.header.unk1)
+                writer.pack("i", self.console_info.unk1)
                 if tpf_flags != 0:
-                    writer.pack("i", self.header.unk2)
+                    writer.pack("i", self.console_info.unk2)
             elif platform in {TPFPlatform.PS4, TPFPlatform.XboxOne}:
-                writer.pack("i", self.header.texture_count)
-                writer.pack("i", self.header.unk2)
+                writer.pack("i", self.console_info.texture_count)
+                writer.pack("i", self.console_info.unk2)
 
-        writer.reserve("name_offset", "I", obj=self)
+        writer.reserve("stem_offset", "I", obj=self)
         writer.pack("i", 0 if self.unknown_float_struct is None else 1)
 
         if platform in {TPFPlatform.PS4, TPFPlatform.XboxOne}:
-            writer.pack("i", self.header.dxgi_format)
+            writer.pack("i", self.console_info.dxgi_format)
 
         if self.unknown_float_struct is not None:
             unk0, floats = self.unknown_float_struct
-            TextureFloatStruct(unk0, len(floats) * 4).to_writer(writer)
+            self.FLOAT_STRUCT(unk0, len(floats) * 4).to_writer(writer)
             writer.pack(f"{len(floats) * 4}f", *floats)
 
-    def pack_name(self, writer: BinaryWriter, encoding_type: int):
-        writer.fill_with_position("name_offset", obj=self)
+        if self.platform is not None and self.platform != platform:
+            _LOGGER.warning(
+                f"`TPFPlatform` assigned to `TPFTexture` {self.stem} ({self.platform}) does not match the platform of "
+                f"the TPF it is being written into ({platform}). The TPF platform will be kept."
+            )
+
+    def pack_stem(self, writer: BinaryWriter, encoding_type: int):
+        writer.fill_with_position("stem_offset", obj=self)
         if encoding_type == 1:  # UTF-16
-            name = self.name.encode(encoding=writer.default_byte_order.get_utf_16_encoding()) + b"\0\0"
+            stem = self.stem.encode(encoding=writer.default_byte_order.get_utf_16_encoding()) + b"\0\0"
         elif encoding_type in {0, 2}:  # shift-jis
-            name = self.name.encode(encoding="shift-jis") + b"\0"
+            stem = self.stem.encode(encoding="shift-jis") + b"\0"
         else:
-            raise ValueError(f"Invalid TPF texture encoding: {encoding_type}. Must be 0, 1, or 2.")
-        writer.append(name)
+            raise ValueError(f"Invalid TPF texture encoding type: {encoding_type}. Must be 0, 1, or 2.")
+        writer.append(stem)
 
     def pack_data(self, writer: BinaryWriter):
         writer.fill_with_position("data_offset", obj=self)
@@ -236,14 +288,19 @@ class TPFTexture:
         dds_header = DDSHeader.from_bytes(self.data)  # only need the header
         return dds_header.pixelformat.fourcc
 
-    def get_headerized_data(self, platform: TPFPlatform) -> bytes:
-        """Attempt to convert headerless DDS texture to TPFTexture with header. TPF platform is required to detect the
-        console source of the headerless data."""
+    def get_headerized_data(self, deswizzle_platform: TPFPlatform = None) -> bytes:
+        """Attempt to build a header for  headerless DDS texture to TPFTexture with header."""
+
+        # First, we can simply check if a header is already present.
         if self.data[:4] == b"DDS ":
             return self.data  # has header
-        if not self.header:
-            raise TexconvError("Cannot convert headerless DDS texture to TGA without a `TPFTexture` header.")
-        return bytes(self.get_headerized_dds(platform))
+
+        if self.platform is None:
+            # We can't guess the console format to deswizzle without the platform.
+            raise DDSDeswizzleError("Cannot guess `TPFTexture.platform` value for console deswizzling. Set it first.")
+        if not self.console_info:
+            raise TexconvError("Cannot convert headerless DDS texture to TGA without `TPFTexture.console_info`.")
+        return bytes(self.get_headerized_dds(deswizzle_platform))
 
     def write_dds(self, dds_path: str | Path):
         Path(dds_path).write_bytes(self.data)
@@ -277,10 +334,10 @@ class TPFTexture:
                     f"   stderr: {result.stderr}"
                 )
 
-    def get_png_data(self, fmt="rgba", platform=TPFPlatform.PC) -> bytes:
+    def get_png_data(self, deswizzle_platform: TPFPlatform = None, fmt="rgba") -> bytes:
         with tempfile.TemporaryDirectory() as png_dir:
             temp_dds_path = Path(png_dir, "temp.dds")
-            dds_data = self.get_headerized_data(platform)
+            dds_data = self.get_headerized_data(deswizzle_platform)
             temp_dds_path.write_bytes(dds_data)
             Path("~/Documents/temp.dds").expanduser().write_bytes(dds_data)
             texconv_result = texconv("-o", png_dir, "-ft", "png", "-f", fmt, "-nologo", temp_dds_path)
@@ -290,11 +347,11 @@ class TPFTexture:
                 stdout = texconv_result.stdout.decode()
                 raise TexconvError(f"Could not convert texture DDS to PNG:\n    {stdout}")
 
-    def export_png(self, png_path: str | Path, fmt="rgba", platform=TPFPlatform.PC):
-        png_data = self.get_png_data(fmt, platform)
+    def export_png(self, png_path: str | Path, deswizzle_platform: TPFPlatform = None, fmt="rgba"):
+        png_data = self.get_png_data(deswizzle_platform, fmt)
         png_path.write_bytes(png_data)
 
-    def get_tga_data(self, platform=TPFPlatform.PC) -> bytes:
+    def get_tga_data(self, deswizzle_platform: TPFPlatform) -> bytes:
         """Convert DDS to TGA.
 
         NOTE: `texconv` has these TGA options, but I'm not using them at the moment:
@@ -303,7 +360,7 @@ class TPFTexture:
         """
         with tempfile.TemporaryDirectory() as tga_dir:
             temp_dds_path = Path(tga_dir, "temp.dds")
-            dds_data = self.get_headerized_data(platform)
+            dds_data = self.get_headerized_data(deswizzle_platform)
             temp_dds_path.write_bytes(dds_data)
             Path("~/Documents/temp.dds").expanduser().write_bytes(dds_data)
             texconv_result = texconv("-o", tga_dir, "-ft", "tga", "-f", "RGBA", "-nologo", temp_dds_path)
@@ -313,8 +370,8 @@ class TPFTexture:
                 stdout = texconv_result.stdout.decode()
                 raise TexconvError(f"Could not convert texture DDS to TGA:\n    {stdout}")
 
-    def export_tga(self, tga_path: str | Path, platform=TPFPlatform.PC):
-        tga_data = self.get_tga_data(platform)
+    def export_tga(self, tga_path: str | Path, deswizzle_platform: TPFPlatform = None):
+        tga_data = self.get_tga_data(deswizzle_platform)
         tga_path.write_bytes(tga_data)
 
     def convert_dds_format(self, output_format: str, assert_input_format: str = None) -> bool:
@@ -334,31 +391,32 @@ class TPFTexture:
             self.data = temp_dds_path.read_bytes()
             if current_dxgi_format:
                 _LOGGER.info(
-                    f"Converted TPF texture {self.name} from format {current_format} "
+                    f"Converted TPF texture {self.stem} from format {current_format} "
                     f"(DXGI {current_dxgi_format}) to {output_format}."
                 )
             else:
-                _LOGGER.info(f"Converted TPF texture {self.name} from format {current_format} to {output_format}.")
+                _LOGGER.info(f"Converted TPF texture {self.stem} from format {current_format} to {output_format}.")
             return True
         else:
             _LOGGER.error(
-                f"Could not convert TPF texture {self.name} from format {current_format} to {output_format}.\n"
+                f"Could not convert TPF texture {self.stem} from format {current_format} to {output_format}.\n"
                 f"   stdout: {result.stdout}\n"
                 f"   stderr: {result.stderr}"
             )
             return False
 
-    def get_texture_format_info(
-        self, platform=TPFPlatform.PC
-    ) -> tuple[bytes, int, bool]:
-        """Get `fourcc` code (four nulls if unused), bytes per block, and `is_compressed` for this `TPFTexture.format`.
+    @staticmethod
+    def get_texture_format_info(texture_format: int) -> tuple[bytes, int, bool]:
+        """Get `fourcc` code (four nulls if unused), bytes per block, and `is_compressed` for given value of
+        `TPFTexture.format` (internal enum, *not* `DXGI_FORMAT`).
 
-        `dxgi_format` for DX10 headers is supplied by `TextureHeader.dxgi_format`.
+        `dxgi_format` for DX10 headers is supplied by `TPFTexture.console_info.dxgi_format`.
 
-        At least one format value (10) is known to be different between PC and console (R8G8B8 vs A8G8B8R8).
+        At least one format value (10) is known to be different between PC and PS3 (R8G8B8 vs A8G8B8R8). However, this
+        doesn't affect the returned values here, so I've removed it for now.
         """
         null = b"\0\0\0\0"
-        match self.format:
+        match texture_format:
             case 0 | 1 | 24 | 25 | 108 | 109:
                 return b"DXT1", 8, True
             case 3:
@@ -370,8 +428,9 @@ class TPFTexture:
             case 9:
                 return null, 4, False
             case 10:
-                if platform == TPFPlatform.PS3:
-                    return null, 4, False  # expected format: A8G8B8R8
+                # TODO: Pointless?
+                # if platform == TPFPlatform.PS3:
+                #     return null, 4, False  # expected format: A8G8B8R8
                 return null, 4, False  # PC; expected format: R8G8B8
             case 16:
                 return null, 1, False
@@ -392,17 +451,27 @@ class TPFTexture:
             case 113:
                 return b"DX10", 16, True  # expected format: BC6H_UF16
             case _:
-                raise ValueError(f"Unknown TPF texture format value: {self.format}")
+                raise ValueError(f"Unknown TPF texture format value: {texture_format}")
 
-    def get_headerized_dds(self, platform=TPFPlatform.PC) -> DDS:
+    def get_headerized_dds(self, deswizzle_platform: TPFPlatform = None) -> DDS:
         """Generate automatic DDS headers for headerless console textures and pack them together.
 
         Requires `TPFTexture.header` to specify texture width, height, and (for DX10) `DXGI_FORMAT`.
         """
-        width = self.header.width
-        height = self.header.height
+        if deswizzle_platform is None:
+            if self.platform is None:
+                raise ValueError(
+                    "Must provide `deswizzle_platform` or assign `TPFTexture.platform` to headerize DDS."
+                )
+            deswizzle_platform = self.platform
 
-        fourcc, block_size, is_compressed = self.get_texture_format_info(platform)
+        if self.console_info is None:
+            raise ValueError("Cannot generate DDS header for console texture without `TPFTexture.console_info`.")
+
+        width = self.console_info.width
+        height = self.console_info.height
+
+        fourcc, block_size, is_compressed = self.get_texture_format_info(self.format)
 
         flags = DDSD.get_required_flags() | DDSD.MIPMAPCOUNT  # always enables `MIPMAPCOUNT`
         if is_compressed:
@@ -447,94 +516,51 @@ class TPFTexture:
             caps4=0,
             reserved_2=0,
         )
+
+        # TODO: Suspicious? Not big-endian on old consoles?
         dds_header.byte_order = ByteOrder.LittleEndian
 
         if fourcc == b"DX10":
-            dx10_header = DX10Header.get_default(self.header.dxgi_format)
+            dx10_header = DX10Header.get_default(self.console_info.dxgi_format)
             if self.texture_type == TextureType.Cubemap:
                 dx10_header.misc_flag |= RESOURCE_MISC.TEXTURECUBE
         else:
             dx10_header = None
 
-        # Deswizzle.
-        dds_deswizzler = DDSDeswizzler(block_size, self.header.dxgi_format, pitch_or_linear_size, self.data)
+        if deswizzle_platform == TPFPlatform.PC:
+            # No deswizzling required.
+            return DDS(header=dds_header, dx10_header=dx10_header, data=self.data)
+
+        # Deswizzle console DDS.
         try:
-            # TODO: I'm not certain if this algorithm deswizzles mipmaps as well. My suspicion is no, hence why BC7
-            #  (format 102) doesn't work right now.
-            data = dds_deswizzler.deswizzle_dds_bytes_ps4(width, height)
-        except DDSDeswizzlerError as ex:
-            raise DDSDeswizzlerError(
-                f"Failed to deswizzle DDS texture {self.name} with TPF format {self.format}, width {width}, height "
-                f"{height}, and DXGI_FORMAT {self.header.dxgi_format}. Internal error: {ex}"
+            match deswizzle_platform:
+                case TPFPlatform.PS3:
+                    data = deswizzle_dds_bytes_ps3(self.data, self.console_info.dxgi_format, width, height)
+                case TPFPlatform.PS4:
+                    data = deswizzle_dds_bytes_ps4(self.data, self.console_info.dxgi_format, width, height)
+                case _:
+                    raise ValueError(f"DDS deswizzling is currently only supported for PS3 and PS4 TPF textures.")
+        except DDSDeswizzleError as ex:
+            raise DDSDeswizzleError(
+                f"Failed to deswizzle DDS texture {self.stem} from platform {deswizzle_platform} with:\n"
+                f"    TPFTexture format: {self.format}\n"
+                f"    Dimensions: {width} x {height}\n"
+                f"    DXGI_FORMAT: {self.console_info.dxgi_format}\n"
+                f"Internal error: {ex}"
             )
 
         return DDS(header=dds_header, dx10_header=dx10_header, data=data)
 
-    def get_images(self, mipmap_count: int) -> list[DDSImage]:
-        """TODO: Currently no use for this. Potentially useful to skip `texconv` altogether."""
-        if not self.header:
-            raise ValueError("Cannot only rebuild texture data for headerless DDS textures (with `TPFTexture` header).")
-        width = self.header.width
-        height = self.header.height
-        texture_count = 6 if self.texture_type == TextureType.Cubemap else 1
-        if texture_count != self.header.texture_count:
-            raise ValueError(
-                f"Texture type {self.texture_type.name} does not match `TextureHeader.texture_count` "
-                f"{self.header.texture_count}. Cubemap DDS should contain 6 textures, and all others should contain 1."
-            )
-        pad_dimensions = 32 if self.format == 102 else 1
-
-        _, block_size, is_compressed = self.get_texture_format_info()
-        reader = BinaryReader(self.data)
-        if is_compressed is not None:
-            images = DDSImage.read_compressed_images(
-                reader, width, height, pad_dimensions, texture_count, mipmap_count, 0x80, block_size
-            )
-        else:
-            images = DDSImage.read_uncompressed_images(
-                reader, width, height, pad_dimensions, texture_count, mipmap_count, 0x80, block_size
-            )
-
-        if self.format in {10, 102}:
-            texel_size = 4 if self.format == 10 else 16
-            for image in images:
-                for i, mipmap_level in enumerate(image.mipmap_levels):
-                    scale = 2 ** i
-                    image.mipmap_levels[i] = self.deswizzle_mipmap_level(
-                        mipmap_level, texel_size, width // scale, height // scale, pad_dimensions
-                    )
-
-        return images
-
-    def _sf_deswizzle(self, images: list[DDSImage], width: int, height: int):
-        """Deswizzle DDS `images` in-place."""
-
-        padded_width = padded_height = padded_size = copy_offset = 0
-        _, compressed_bpp, uncompressed_bpp = self.get_texture_format_info()
-        block_size = compressed_bpp or uncompressed_bpp
-        for image in images:
-            current_width = width
-            current_height = height
-            for mipmap_level in image.mipmap_levels:
-                if self.format == 105:
-                    padded_width = current_width
-                    padded_height = current_height
-                    padded_size = padded_width * padded_height * block_size
-                else:
-                    padded_width = DDSImage.pad_to(current_width, 32)
-                    padded_height = DDSImage.pad_to(current_height, 32)
-                    padded_size = DDSImage.pad_to(padded_width, 4) * DDSImage.pad_to(padded_height, 4) * block_size
-
     def __repr__(self) -> str:
         return (
             f"TPFTexture(\n"
-            f"    name = '{self.name}'\n"
+            f"    stem = '{self.stem}'\n"
             f"    format = {self.format}\n"
             f"    texture_type = {self.texture_type.name}\n"
             f"    mipmap_count = {self.mipmap_count}\n"
             f"    texture_flags = {self.texture_flags}\n"
             f"    data = <{len(self.data)} bytes>\n"
-            f"    has_header = {self.header is not None}\n"
+            f"    has_console_info = {self.console_info is not None}\n"
             f"    has_unknown_float_struct = {self.unknown_float_struct is not None}\n"
             f")"
         )
@@ -598,17 +624,23 @@ class TPF(GameFile):
 
         textures = []
         for entry in manifest["entries"]:
-            dds_path = directory / f"{entry['name']}.dds"
+
+            # Legacy support for change from 'name' to 'stem'.
+            if "name" in entry:
+                entry["stem"] = entry.pop("name")
+
+            dds_path = directory / f"{entry['stem']}.dds"
             if not dds_path.is_file():
-                raise FileNotFoundError(f"Could not find DDS file for TPF texture {entry['name']}: {dds_path}")
+                raise FileNotFoundError(f"Could not find DDS file for TPF texture {entry['stem']}: {dds_path}")
+            console_info = TPFTexture.ConsoleInfo(**entry["header"]) if entry.get("header", None) is not None else None
             textures.append(TPFTexture(
-                name=entry["name"],
+                stem=entry["stem"],
                 format=entry["format"],
                 texture_type=TextureType[entry["texture_type"]],
                 mipmap_count=entry["mipmap_count"],
                 texture_flags=entry["texture_flags"],
                 data=dds_path.read_bytes(),
-                header=TextureHeader(**entry["header"]) if entry.get("header", None) is not None else None,
+                console_info=console_info,
                 unknown_float_struct=entry.get("unknown_float_struct", None),
             ))
 
@@ -635,7 +667,7 @@ class TPF(GameFile):
         for texture in self.textures:
             texture.to_tpf_writer(writer, self.platform, self.tpf_flags)
         for texture in self.textures:
-            texture.pack_name(writer, self.encoding_type)
+            texture.pack_stem(writer, self.encoding_type)
 
         data_start = writer.position
         for texture in self.textures:
@@ -659,29 +691,29 @@ class TPF(GameFile):
 
         texture_entries = []
         for texture in self.textures:
-            if texture.header is not None:
-                header_dict = {
-                    "width": texture.header.width,
-                    "height": texture.header.height,
-                    "mipmaps": texture.header.texture_count,
-                    "unk1": texture.header.unk1,
-                    "unk2": texture.header.unk2,
-                    "dxgi_format": texture.header.dxgi_format.name,
+            if texture.console_info is not None:
+                console_info_dict = {
+                    "width": texture.console_info.width,
+                    "height": texture.console_info.height,
+                    "mipmaps": texture.console_info.texture_count,
+                    "unk1": texture.console_info.unk1,
+                    "unk2": texture.console_info.unk2,
+                    "dxgi_format": texture.console_info.dxgi_format.name,
                 }
             else:
-                header_dict = None
+                console_info_dict = None
 
             texture_dict = {
-                "name": texture.name,
+                "stem": texture.stem,
                 "format": texture.format,
                 "texture_type": texture.texture_type.name,
                 "mipmap_count": texture.mipmap_count,
                 "texture_flags": texture.texture_flags,
-                "header": header_dict,
+                "console_info": console_info_dict,
                 "unknown_float_struct": texture.unknown_float_struct,
             }
             texture_entries.append(texture_dict)
-            texture.write_dds(directory / f"{texture.name}.dds")
+            texture.write_dds(directory / f"{texture.stem}.dds")
         tpf_manifest = self.get_json_header()
         tpf_manifest["entries"] = texture_entries
 
@@ -715,18 +747,24 @@ class TPF(GameFile):
                 f"Failed to convert {fail_count} out of {total_count} textures from {input_format} to {output_format}."
             )
 
-    def find_texture_name(self, name: str) -> TPFTexture:
+    def find_texture_stem(self, stem: str, case_sensitive=False) -> TPFTexture:
         """Find texture by name."""
-        for texture in self.textures:
-            if texture.name == name:
-                return texture
-        raise ValueError(f"Could not find texture with name {name}.")
+        if not case_sensitive:
+            stem = stem.lower()
+            for texture in self.textures:
+                if texture.stem.lower() == stem:
+                    return texture
+        else:
+            for texture in self.textures:
+                if texture.stem == stem:
+                    return texture
+        raise ValueError(f"Could not find texture with name {stem}.")
 
-    def get_all_png_data(self, fmt="rgba") -> list[tp.Optional[bytes]]:
+    def get_all_png_data(self, deswizzle_platform: TPFPlatform = None, fmt="rgba") -> list[tp.Optional[bytes]]:
         png_datas = []
         for tex in self.textures:
             try:
-                png_datas.append(tex.get_png_data(fmt))
+                png_datas.append(tex.get_png_data(deswizzle_platform, fmt))
             except ValueError as ex:
                 _LOGGER.warning(str(ex))
                 png_datas.append(None)
@@ -734,9 +772,9 @@ class TPF(GameFile):
 
     def export_to_pngs(self, png_dir_path: Path | str, fmt="rgba"):
         for tex in self.textures:
-            png_name = Path(tex.name).with_suffix(".png")
+            png_name = Path(f"{tex.stem}.png")
             try:
-                tex.export_png(png_dir_path / png_name, fmt=fmt, platform=self.platform)
+                tex.export_png(png_dir_path / png_name, fmt=fmt)
             except ValueError as ex:
                 _LOGGER.warning(str(ex))
 
@@ -781,28 +819,28 @@ class TPF(GameFile):
                         input_format, output_format = convert_formats
                         tpf.convert_dds_formats(input_format, output_format)
                     for texture in tpf.textures:
-                        textures[texture.name] = texture
+                        textures[texture.stem] = texture
         return textures
 
 
-def _get_png_data(tex: TPFTexture, fmt: str):
+def _get_png_data(tex: TPFTexture, deswizzle_platform: TPFPlatform, fmt: str):
     """Function for batch operator."""
     try:
-        return tex.get_png_data(fmt=fmt)
-    except (TexconvError, DDSDeswizzlerError) as ex:
+        return tex.get_png_data(deswizzle_platform=deswizzle_platform, fmt=fmt)
+    except (TexconvError, DDSDeswizzleError) as ex:
         _LOGGER.error(f"Failed to get TPF texture as PNG: {str(ex)}")
         return None
 
 
 def batch_get_tpf_texture_png_data(
-    tpf_textures: list[TPFTexture], fmt="rgba", processes: int = None
+    tpf_textures: list[TPFTexture], deswizzle_platform: TPFPlatform = None, fmt="rgba", processes: int = None
 ) -> list[bytes | None]:
     """Use multiprocessing to retrieve PNG data (converted from DDS) for a collection of `TPFTexture`s.
 
     Failed conversions will put `None` into list rather than PNG bytes.
     """
 
-    mp_args = [(tpf_texture, fmt) for tpf_texture in tpf_textures]
+    mp_args = [(tpf_texture, deswizzle_platform, fmt) for tpf_texture in tpf_textures]
 
     with multiprocessing.Pool(processes=processes) as pool:
         png_data = pool.starmap(_get_png_data, mp_args)  # blocks here until all done
@@ -810,24 +848,24 @@ def batch_get_tpf_texture_png_data(
     return png_data
 
 
-def _get_tga_data(tex: TPFTexture):
+def _get_tga_data(tex: TPFTexture, deswizzle_platform: TPFPlatform):
     """Function for batch operator."""
     try:
-        return tex.get_tga_data()
-    except (TexconvError, DDSDeswizzlerError) as ex:
+        return tex.get_tga_data(deswizzle_platform)
+    except (TexconvError, DDSDeswizzleError) as ex:
         _LOGGER.error(f"Failed to get TPF texture as TGA: {str(ex)}")
         return None
 
 
 def batch_get_tpf_texture_tga_data(
-    tpf_textures: list[TPFTexture], processes: int = None
+    tpf_textures: list[TPFTexture], deswizzle_platform: TPFPlatform = None, processes: int = None
 ) -> list[bytes | None]:
     """Use multiprocessing to retrieve TGA data (converted from DDS) for a collection of `TPFTexture`s.
 
     Failed conversions will put `None` into list rather than TGA bytes.
     """
 
-    mp_args = [(tpf_texture,) for tpf_texture in tpf_textures]
+    mp_args = [(tpf_texture, deswizzle_platform) for tpf_texture in tpf_textures]
 
     with multiprocessing.Pool(processes=processes) as pool:
         tga_data = pool.starmap(_get_tga_data, mp_args)  # blocks here until all done

@@ -21,7 +21,6 @@ from soulstruct.utilities.maths import Matrix3, Vector3, resolve_rotation
 
 if tp.TYPE_CHECKING:
     from .core import MSB
-    from .enums import BaseMSBSubtype
     from .msb_entry import MSBEntry
     from .msb_entry_list import MSBEntryList
     from .parts import BaseMSBPart
@@ -38,16 +37,17 @@ class MSBBrokenEntryReference:
 
 
 class MSBSubtypeInfo(tp.NamedTuple):
-    subtype_enum: BaseMSBSubtype
+    """Typically mapped to by a `BaseMSBSubtype` enum for fast look-up from packed subtype indices."""
     entry_class: type[MSBEntry]
     subtype_list_name: str
 
     def matches_name(self, name: str) -> bool:
         """Check if `name` is one of the valid specifiers for this MSB entry subtype."""
+        subtype_enum = self.entry_class.SUBTYPE_ENUM
         name_options = {
             self.subtype_list_name.lower(),
-            self.subtype_enum.name.lower(),
-            self.subtype_enum.pluralized_name.lower(),
+            subtype_enum.name.lower(),
+            subtype_enum.pluralized_name.lower(),
             self.entry_class.__name__.lower(),
         }
         return name.lower() in name_options

@@ -204,8 +204,8 @@ class ObjectDataStruct(MSBBinaryStruct):
     net_sync_type: sbyte
     _pad2: bytes = field(init=False, **BinaryPad(2))
     default_animation: short
-    unk_x0e_x10: short
-    unk_x10_x14: int
+    unk_x0e: short
+    unk_x10: int
     _pad3: bytes = field(init=False, **BinaryPad(4))
 
 
@@ -228,8 +228,8 @@ class MSBObject(MSBPart):
         "point_light_id",
         "tone_correction_id",
         "lod_id",
-        "unk_x0e_x10",
-        "unk_x10_x14",
+        "unk_x0e",
+        "unk_x10",
         "use_depth_bias_float",
     )
 
@@ -243,8 +243,8 @@ class MSBObject(MSBPart):
     break_term: int = 0
     net_sync_type: int = 0
     default_animation: int = -1
-    unk_x0e_x10: int = 0
-    unk_x10_x14: int = 0
+    unk_x0e: int = 0
+    unk_x10: int = 0
 
     _draw_parent_index: int = None
 

@@ -59,7 +59,7 @@ def test_merge_and_split():
 
     for s, (og_submesh, split_submesh) in enumerate(zip(flver.submeshes, split_submeshes)):
 
-        og_faces = og_submesh.face_sets[0].triangulate(False)
+        og_faces = og_submesh.triangulate()
         print(f"\nOriginal submesh: {len(og_submesh.vertices)} vertices, {len(og_faces)} faces")
         for i in range(min(len(og_submesh.vertices), 5)):
             print(f"    Vertex {i}: {og_submesh.vertices[i]}")
@@ -72,7 +72,7 @@ def test_merge_and_split():
         for vertex_index in og_faces[0]:
             print(f"        Face 0 Vertex {vertex_index}: {og_submesh.vertices[vertex_index]}")
 
-        split_faces = split_submesh.face_sets[0].triangulate(False)
+        split_faces = split_submesh.triangulate()
         print(f"Split submesh: {len(split_submesh.vertices)} vertices, {len(split_faces)} faces")
         for i in range(min(len(split_submesh.vertices), 5)):
             print(f"    Vertex {i}: {split_submesh.vertices[i]}")

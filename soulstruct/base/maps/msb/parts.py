@@ -29,6 +29,9 @@ class BaseMSBPart(MSBEntry, abc.ABC):
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = None
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model"]
 
+    # Number of bits in draw/display/navmesh/backread groups (e.g. 128 or 256).
+    GROUP_BIT_COUNT: tp.ClassVar[int]
+
     model: BaseMSBModel = None
     entity_id: int = -1
     sib_path: str = ""

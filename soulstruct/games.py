@@ -100,10 +100,30 @@ class Game:
 DEMONS_SOULS = Game(
     "DEMONS_SOULS",
     "Demon's Souls",
+    submodule_name="demonssouls",
     aliases=("demonssouls", "des"),
     default_dcx_type=DCXType.DCX_EDGE,
+    special_dcx_types={
+        ".msb": DCXType.Null,
+        ".nvmbnd": DCXType.Null,
+    },
+    bundled_resource_paths={
+        "MTDBND": PACKAGE_PATH("demonsouls/models/resources/mtd.mtdbnd.dcx"),
+    },
+    steam_appid=None,
     default_game_path=DES_PATH,
     executable_name="EBOOT.BIN",
+    interroot_prefix="N:\\DemonsSoul\\data\\DVDROOT",
+    default_file_paths={
+        "AIScriptDirectory": "script",
+        "DrawParamDirectory": "param/drawparam",
+        "EventDirectory": "event",
+        "GameParamBND": "param/gameparam/gameparam.parambnd.dcx",
+        "MapStudioDirectory": "map/mapstudio",
+        "MSGDirectory": "msg/ENGLISH",
+        "ParamDefBND": "paramdef/paramdef.paramdefbnd.dcx",
+        "TalkDirectory": "script/talk",
+    },
 )
 
 

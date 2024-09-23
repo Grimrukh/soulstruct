@@ -118,7 +118,7 @@ class ParamDefField:
 
         if uses_string_offsets:
             display_name_offset = reader["v"]
-            kwargs["display_name"] = reader.unpack_string(display_name_offset, encoding="utf-16-le")
+            kwargs["display_name"] = reader.unpack_string(offset=display_name_offset, encoding="utf-16-le")
         else:
             raw_display_name = reader.read(64)
             kwargs["display_name"] = raw_display_name.decode(encoding).rstrip("\0")

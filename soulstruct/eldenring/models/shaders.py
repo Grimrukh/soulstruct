@@ -13,7 +13,7 @@ from enum import IntEnum, auto
 from pathlib import Path
 
 from soulstruct.base.models.matbin import MATBIN, MATBINBND
-from soulstruct.base.models.flver.vertex_array import *
+from soulstruct.base.models.flver.vertex_array_layout import *
 from soulstruct.base.models.shaders import MatDef as _BaseMatDef, MatDefError
 from soulstruct.containers import Binder, BinderEntry, EntryNotFoundError
 from soulstruct.utilities.binary import BinaryReader
@@ -78,7 +78,7 @@ class MatDef(_BaseMatDef):
         f"{shader_stem.replace('[', '_').replace(']', '_')}_snp_Texture2D_{sampler_index}_{map_type}(_{slot_index})"
         - `slot_index` (presumably) only appears for a few shaders.
         - `sampler_index` may as well be randomly ordered, unfortunately, which is why metaparam sampler groups from the
-        shader data are so important.
+        shader data are so important to identify UV layers and UV scaling.
     """
 
     class UVLayer(IntEnum):
@@ -605,9 +605,9 @@ def read_metaparam(metaparam_entry: BinderEntry) -> dict[str, list[tuple[str, st
         default_texture_path_offset = metaparam.unpack_value("q")
         sampler_group_name_offset = metaparam.unpack_value("q")
 
-        sampler_name = metaparam.unpack_string(sampler_name_offset, encoding="utf-16-le")
-        default_texture_path = metaparam.unpack_string(default_texture_path_offset, encoding="utf-16-le")
-        group_name = metaparam.unpack_string(sampler_group_name_offset, encoding="utf-16-le")  # could be empty
+        sampler_name = metaparam.unpack_string(offset=sampler_name_offset, encoding="utf-16-le")
+        default_texture_path = metaparam.unpack_string(offset=default_texture_path_offset, encoding="utf-16-le")
+        group_name = metaparam.unpack_string(offset=sampler_group_name_offset, encoding="utf-16-le")  # could be empty
 
         shader_dict.setdefault(group_name, []).append((sampler_name, default_texture_path))
 

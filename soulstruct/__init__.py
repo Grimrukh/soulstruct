@@ -7,7 +7,7 @@ from soulstruct.config import *
 from soulstruct.containers import Binder, EntryNotFoundError
 
 # Convenience imports (must be done after the above to avoid `GameFile` import circularity).
-from soulstruct.base.models.flver.core import FLVER
+from soulstruct.base.models.flver import FLVER
 
 
 try:

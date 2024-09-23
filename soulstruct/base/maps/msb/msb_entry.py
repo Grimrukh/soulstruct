@@ -11,6 +11,7 @@ __all__ = [
 ]
 
 import abc
+import contextlib
 import copy
 import logging
 import re
@@ -20,6 +21,7 @@ from dataclasses import dataclass, field, fields, Field, MISSING
 from enum import IntEnum
 from types import MappingProxyType, ModuleType
 
+from constrata.metadata import *
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import BaseVector, Vector2, Vector3, Vector4
 from soulstruct.utilities.misc import IDList
@@ -167,7 +169,7 @@ class MSBHeaderStruct(MSBBinaryStruct, abc.ABC):
         if subtype_int != entry_type.SUBTYPE_ENUM.value:
             raise ValueError(f"Unexpected MSB subtype index for `{cls.__name__}`: {subtype_int}")
 
-        name = reader.unpack_string(entry_offset + kwargs.pop("name_offset"), encoding=entry_type.NAME_ENCODING)
+        name = reader.unpack_string(offset=entry_offset + kwargs.pop("name_offset"), encoding=entry_type.NAME_ENCODING)
         kwargs["name"] = name
 
         return kwargs
@@ -204,14 +206,12 @@ class MSBEntry(abc.ABC):
 
     # Shared between all game MSB entries. TODO: Infer from `reader.long_varints`?
     NAME_ENCODING: tp.ClassVar[str]
-    # Required to look up default field info (and just of general relevance). Defined in the four base classes.
+    # Required to look up default field info (and just of general relevance). Defined in classes like `BaseMSBPart`.
     SUPERTYPE_ENUM: tp.ClassVar[MSBSupertype]
     # Generally only used to check against unpacked indices (which should have already been 'peeked' by the MSB).
     SUBTYPE_ENUM: tp.ClassVar[BaseMSBSubtype]
     # These fields will be marked as hidden in the GUI.
     HIDE_FIELDS: tp.ClassVar[tuple[str, ...]] = ()
-    # Number of bits in draw/display/navmesh/backread groups (e.g. 128 or 256).
-    GROUP_BIT_COUNT: tp.ClassVar[int]
     # Names of fields that reference other MSB entries.
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = []
     # Cached when first accessed. Maps field names to their default values. Immutable.
@@ -229,7 +229,7 @@ class MSBEntry(abc.ABC):
     }
 
     # Prevents `__setattr__` type checks when creating instances from binary `MSB` (for efficiency). Can also be enabled
-    # and disabled by the user at will.
+    # and disabled by the user at will, which is best done temporarily via `with MSBEntry.setattr_checks_disabled():`.
     SETATTR_CHECKS_DISABLED: tp.ClassVar[bool] = False
 
     # Header struct containing basic information and offsets to other structs.
@@ -251,10 +251,8 @@ class MSBEntry(abc.ABC):
         """Default minimal method. Most subclasses can just override one of the header/data unpack methods."""
         kwargs = cls.reader_to_entry_kwargs(reader, entry_offset=reader.position)
 
-        cls.SETATTR_CHECKS_DISABLED = True  # will be re-enabled in `__post_init__`
-        msb_entry = cls(**kwargs)
-        cls.SETATTR_CHECKS_DISABLED = False
-        return msb_entry
+        with cls.setattr_checks_disabled():
+            return cls(**kwargs)
 
     @classmethod
     def reader_to_entry_kwargs(cls, reader: BinaryReader, entry_offset: int) -> dict[str, tp.Any]:
@@ -418,10 +416,8 @@ class MSBEntry(abc.ABC):
     @classmethod
     def from_dict(cls, data: dict[str, tp.Any]) -> tp.Self:
         """Standard dictionary loader."""
-        cls.SETATTR_CHECKS_DISABLED = True
-        msb_entry = cls(**data)
-        cls.SETATTR_CHECKS_DISABLED = False
-        return msb_entry
+        with cls.setattr_checks_disabled():
+            return cls(**data)
 
     @classmethod
     def from_json_dict(cls, data: dict[str, tp.Any]) -> tuple[tp.Self, dict[str, dict]]:
@@ -468,17 +464,15 @@ class MSBEntry(abc.ABC):
                 # `__setattr__` enforcer should be able to convert all JSON values to their proper types.
                 kwargs[field_name] = field_value
 
-        cls.SETATTR_CHECKS_DISABLED = True
-        msb_entry = cls(**kwargs)
-        cls.SETATTR_CHECKS_DISABLED = False
-        return msb_entry, deferred_refs
+        with cls.setattr_checks_disabled():
+            return cls(**kwargs), deferred_refs
 
     @staticmethod
     def is_valid_ref_dict(ref_dict: dict[str, tp.Any]) -> bool:
         """JSON MSB entry reference can be by index or name."""
         return (
             len(ref_dict) == 2
-            and "subtype_list_name" in ref_dict
+            and ("subtype_list_name" in ref_dict or "subtype" in ref_dict)  # legacy support for 'subtype_list_name'
             and ("subtype_index" in ref_dict or "entry_name" in ref_dict)
         )
 
@@ -522,12 +516,12 @@ class MSBEntry(abc.ABC):
                 if subtype_list.supertype == MSBSupertype.PARTS:
                     # Parts have unique names, so we can safely reference those names instead of indices.
                     data[name] = {
-                        "subtype_list_name": subtype_list.subtype_info.subtype_list_name,
+                        "subtype": (subtype_list.supertype, subtype_list.subtype_name),
                         "entry_name": value.name,
                     }
                 else:
                     data[name] = {
-                        "subtype_list_name": subtype_list.subtype_info.subtype_list_name,
+                        "subtype": (subtype_list.supertype, subtype_list.subtype_name),
                         "subtype_index": subtype_list.index(value),
                     }
             elif isinstance(value, list) and any(isinstance(element, MSBEntry) for element in value):
@@ -541,7 +535,7 @@ class MSBEntry(abc.ABC):
                         if ref_subtype_list is None:
                             ref_subtype_list = msb.get_list_of_entry(element)
                         ref_list.append({
-                            "subtype_list_name": ref_subtype_list.subtype_info.subtype_list_name,
+                            "subtype": (ref_subtype_list.supertype, ref_subtype_list.subtype_name),
                             "subtype_index": ref_subtype_list.index(element)
                         })
                 data[name] = ref_list
@@ -751,6 +745,16 @@ class MSBEntry(abc.ABC):
         raise ValueError(f"Invalid `MSBEntry` subclass field: `{self.cls_name}.{key}`")
 
     @classmethod
+    @contextlib.contextmanager
+    def setattr_checks_disabled(cls):
+        """Disable `__setattr__` type checks temporarily."""
+        cls.SETATTR_CHECKS_DISABLED = True
+        try:
+            yield
+        finally:
+            cls.SETATTR_CHECKS_DISABLED = False
+
+    @classmethod
     def _is_subtype(cls, value: MSBEntry, parent_type_name: str) -> bool:
         """Checks if `parent_type_name` is a parent of `value` type."""
         if "|" in parent_type_name:
@@ -930,11 +934,11 @@ class MSBEntry(abc.ABC):
                     raise TypeError(f"Invalid list element type annotation '{element_ann}' for `{cls.__name__}`.")
                 # Check binary metadata for length and store in type string.
                 try:
-                    binary = f.metadata["binary"]  # type: BinaryMetadata
-                    if isinstance(binary, BinaryArrayMetadata):
-                        if binary.length is None:
+                    binary_metadata = f.metadata["binary"]  # type: BinaryMetadata
+                    if isinstance(binary_metadata, BinaryArrayMetadata):
+                        if binary_metadata.length is None:
                             raise KeyError
-                        length = binary.length
+                        length = binary_metadata.length
                     else:
                         raise TypeError(
                             f"Array MSB entry field `{cls.__name__}{f.name}` must have `BinaryArray` metadata."
@@ -975,6 +979,25 @@ class MSBEntry(abc.ABC):
         for field_name, value in self.to_dict(ignore_defaults=True).items():
             if isinstance(value, MSBEntry):
                 field_strings.append(f"    {field_name}=<{value.cls_name}('{value.name}')>,")
+            elif isinstance(value, list) and any(isinstance(e, MSBEntry) or e is None for e in value):
+                field_strings.append(f"    {field_name}=[")
+                # Find last index of non-`None` element.
+                last_index = len(value) - 1
+                while last_index >= 0 and value[last_index] is None:
+                    last_index -= 1
+                if last_index == -1:
+                    field_strings[-1] += "]"  # no elements
+                    continue
+                for element in value[:last_index + 1]:
+                    if element is None:
+                        field_strings.append("        None,")
+                    else:
+                        field_strings.append(f"        <{element.cls_name}('{element.name}')>,")
+                trailing_nones = len(value) - last_index - 1
+                if trailing_nones > 0:
+                    field_strings.append(f"        ... {trailing_nones} None,")
+
+                field_strings.append("    ],")
             else:
                 field_strings.append(f"    {field_name}={repr(value)},")
         return f"{self.cls_name}(\n" + "\n".join(field_strings) + "\n)"

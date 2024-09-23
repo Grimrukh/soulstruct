@@ -1,10 +1,16 @@
-__all__ = ["Version"]
+__all__ = ["FLVERVersion"]
 
 from enum import IntEnum
 
 
-class Version(IntEnum):
+class FLVERVersion(IntEnum):
     Null = 0x0
+
+    # Old `FLVER0` format:
+    DemonsSouls_B = 0x00014  # e.g. c7080
+    DemonsSouls = 0x00015
+
+    # Modern `FLVER` format:
     DarkSouls2_Armor9320 = 0x20009
     DarkSouls_PS3_o0700_o0701 = 0x2000B
     DarkSouls_A = 0x2000C

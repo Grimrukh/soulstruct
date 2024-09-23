@@ -23,7 +23,7 @@ class MapAreaTextureManager:
     any MSBs in this area have their textures present.
 
     Also manages the 'miscellaneous' `mXX_9999.tpf.dcx` TPF, which typically contains `EnvDif`/`EnvSpc` cube map DDS
-    textures, water/sky textures, and other seemingly random textures.
+    textures, water/sky textures, and sometimes other seemingly random textures.
 
     TODO: It's worth testing whether the game engine loads ALL `tpfbhd` binders it finds in this folder, or just all
      `mXX_####.tpfbhd` binders, or even just when #### is 0003 or less. If either of the latter, m12 must have an
@@ -31,6 +31,9 @@ class MapAreaTextureManager:
      easier to keep all new Nightfall textures separate and prevent the binders from getting out of control (though
      given that we will want to *remove* old redundant textures, most binders will need to be changed from vanilla
      anyway).
+
+    TODO: Is it possible that ALL loose TPF files in the directory are loaded, not just `mXX_9999.tpf.dcx`?
+     Simple test: try renaming it for a map and see if the textures load.
     """
 
     # The vanilla TPF binders are separated into multiple binders (generally four) that each contain no more than this
@@ -43,6 +46,9 @@ class MapAreaTextureManager:
     tpfbhd_entries: dict[str, BinderEntry] = field(default_factory=dict)
     tpf_9999: TPF | None = None
 
+    # By default, texture lookup is not case-sensitive, but you can change this if you want to enforce case sensitivity.
+    case_sensitive: bool = False
+
     @classmethod
     def from_existing_area_directory(cls, map_directory: Path, area_id: int) -> MapAreaTextureManager:
         """Load all existing TPFBHDs and TPF 9999 from the given map area directory."""
@@ -51,8 +57,82 @@ class MapAreaTextureManager:
         self._load_tpf_9999()
         return self
 
-    def __getitem__(self, texture_stem: str) -> BinderEntry:
-        return self.tpfbhd_entries[texture_stem]
+    def get_all_texture_stems(self) -> list[str]:
+        """Return a list of all texture stems in a TPFBHD (as a `BinderEntry` stem) or inside TPF 9999.
+
+        If `self.case_sensitive` is False, all stems are returned in lower case.
+        """
+        stems = list(self.tpfbhd_entries)
+        if self.tpf_9999:
+            stems.extend(texture.stem for texture in self.tpf_9999.textures)
+        if not self.case_sensitive:
+            return [stem.lower() for stem in stems]
+        return stems
+
+    def get_tpf_binder_entry(self, texture_stem: str) -> BinderEntry:
+        """Find the `BinderEntry` in the TPFBHDs that contains the given texture stem.
+
+        Does NOT check TPF 9999, which has no Binder.
+        """
+        if not self.case_sensitive:
+            texture_stem = texture_stem.lower()
+            for stem in self.tpfbhd_entries:
+                if stem.lower() == texture_stem:
+                    return self.tpfbhd_entries[stem]
+            raise KeyError(f"Texture '{texture_stem}' (case-insensitive) not found in map area m{self.area_id:02}.")
+        try:
+            return self.tpfbhd_entries[texture_stem]
+        except KeyError:
+            raise KeyError(f"Texture '{texture_stem}' (case-sensitive) not found in map area m{self.area_id:02}.")
+
+    def get_tpf(self, texture_stem: str) -> TPF:
+        """Find the `TPF` in the TPFBHDs that contains the given texture stem."""
+        binder_entry = self.get_tpf_binder_entry(texture_stem)  # will raise KeyError if not found
+        return TPF.from_binder_entry(binder_entry)
+
+    def get_tpf_9999_texture(self, texture_stem: str) -> TPFTexture:
+        """Find the `TPFTexture` in TPF 9999 that contains the given texture stem."""
+        if not self.tpf_9999:
+            raise ValueError("No TPF 9999 loaded for this map area.")
+        if not self.case_sensitive:
+            texture_stem = texture_stem.lower()
+            for texture in self.tpf_9999.textures:
+                if texture.stem.lower() == texture_stem:
+                    return texture
+            raise KeyError(f"Texture '{texture_stem}' (case-insensitive) not found in TPF 9999.")
+        for texture in self.tpf_9999.textures:
+            if texture.stem == texture_stem:
+                return texture
+        raise KeyError(f"Texture '{texture_stem}' (case-sensitive) not found in TPF 9999.")
+
+    def get_tpf_texture(self, texture_stem: str) -> TPFTexture:
+        """Find the `TPFTexture` in the TPFBHDs or TPF 9999 (checked last) that contains the given texture stem."""
+        try:
+            binder_entry = self.get_tpf_binder_entry(texture_stem)
+        except KeyError:
+            # Try TPF 9999.
+            if self.tpf_9999:
+                try:
+                    return self.get_tpf_9999_texture(texture_stem)
+                except KeyError:
+                    pass
+            raise KeyError(f"Texture '{texture_stem}' not found in map area m{self.area_id:02}.")
+        else:
+            tpf = TPF.from_binder_entry(binder_entry)
+            if not tpf.textures:
+                raise ValueError(
+                    f"TPF '{texture_stem}' was found in map area m{self.area_id:02}, but it contains no textures."
+                )
+            if len(tpf.textures) > 1:
+                _LOGGER.warning(
+                    f"Expected TPF in `TPFBHD` to contain exactly one texture, but found {len(tpf.textures)} textures. "
+                    f"Only returning the first."
+                )
+            return tpf.textures[0]
+
+    def __getitem__(self, texture_stem: str) -> TPFTexture:
+        """Shortcut for `get_tpf_texture()`."""
+        return self.get_tpf_texture(texture_stem)
 
     def log_missing_unused_msb_map_piece_textures(self):
         """Compare list of present textures to all textures used by all Map Pieces in this area's MSBs to find both
@@ -98,51 +178,61 @@ class MapAreaTextureManager:
     def scan_map_piece_textures(self, map_piece_flver: FLVER, unused_textures: set[str]) -> list[str]:
         """Returns a list of textures in this Map Piece FLVER model that are currently missing from area textures."""
         missing = []
+        all_stems = self.get_all_texture_stems()
         for submesh in map_piece_flver.submeshes:
             for texture in submesh.material.textures:
-                if not self.has_texture(texture.stem):
+                texture_stem = texture.stem.lower() if not self.case_sensitive else texture.stem
+                if texture_stem not in all_stems:
                     missing.append(texture.stem)
                 unused_textures.discard(texture.stem)
         return missing
 
-    def has_texture(self, texture_stem: str) -> bool:
-        """Check if a texture is present in any of the binder entries or TPF 9999."""
-        if texture_stem in self.tpfbhd_entries:
-            return True
-        if self.tpf_9999:
-            for texture in self.tpf_9999.textures:
-                if texture_stem == texture.name:
-                    return True
-
-        # Texture not found.
-        return False
-
     def add_tpfbhd_texture(self, tpf_texture: TPFTexture, overwrite=False):
         """Add a TPF texture to the binders."""
-        texture_stem = tpf_texture.name
+        texture_stem = tpf_texture.stem
+        entry = None
 
-        if texture_stem in self.tpfbhd_entries:
-            if not overwrite:
-                raise ValueError(f"Texture {texture_stem} already present in binders and `overwrite = False`.")
-            entry = self.tpfbhd_entries[texture_stem]
+        if not self.case_sensitive:
+            # We need to CHECK existing textures in a case-insensitive manner, but we want to STORE them with case.
+            stem_lower = tpf_texture.stem.lower()
+            for existing_stem, existing_entry in self.tpfbhd_entries.items():
+                if existing_stem.lower() == stem_lower:
+                    # Found existing entry with same stem (case-insensitive).
+                    if not overwrite:
+                        raise ValueError(f"Texture {texture_stem} already present in binders and `overwrite = False`.")
+                    entry = self.tpfbhd_entries[texture_stem]
+                    break
         else:
-            # New entry.
+            for existing_stem, existing_entry in self.tpfbhd_entries.items():
+                if existing_stem == texture_stem:
+                    # Found existing entry with same stem (case-sensitive).
+                    if not overwrite:
+                        raise ValueError(f"Texture {texture_stem} already present in binders and `overwrite = False`.")
+                    entry = self.tpfbhd_entries[texture_stem]
+                    break
+
+        if entry is None:
+            # Existing entry not found. Create a new one.
             entry = BinderEntry(data=b"", entry_id=0, path=f"\\{texture_stem}.tpf.dcx", flags=0x2)
             self.tpfbhd_entries[texture_stem] = entry
 
-        tpf = self._get_tpf(tpf_texture)
+        tpf = self._get_new_tpf(tpf_texture)
         entry.set_from_binary_file(tpf)
 
     def add_tpf_9999_texture(self, tpf_texture: TPFTexture, overwrite=False):
         """Add a TPF texture to special TPF 9999."""
-        texture_stem = tpf_texture.name
+        texture_stem = tpf_texture.stem
+        check_stem = texture_stem.lower() if not self.case_sensitive else texture_stem
 
         if not self.tpf_9999:
             # Create now.
-            self.tpf_9999 = self._get_tpf()
+            self.tpf_9999 = self._get_new_tpf()
 
         for i, existing_tpf_texture in enumerate(tuple(self.tpf_9999.textures)):
-            if existing_tpf_texture.name == texture_stem:
+            check_existing_stem = existing_tpf_texture.stem
+            if not self.case_sensitive:
+                check_existing_stem = existing_tpf_texture.stem.lower()
+            if check_existing_stem == check_stem:
                 if not overwrite:
                     raise ValueError(f"Texture {texture_stem} already present in TPF 9999 and `overwrite = False`.")
                 self.tpf_9999.textures[i] = tpf_texture
@@ -190,6 +280,11 @@ class MapAreaTextureManager:
                     _LOGGER.warning(
                         f"Duplicate texture entry found in map TPFBHD binders: {entry.minimal_stem}. Using last found."
                     )
+                if ".tpf" not in entry.suffixes:
+                    _LOGGER.warning(
+                        f"Ignoring non-TPF entry '{entry.name}' in TPFBHD binder {binder_path.name}."
+                    )
+                    continue
                 self.tpfbhd_entries[entry.minimal_stem] = entry
 
     def _load_tpf_9999(self):
@@ -199,7 +294,7 @@ class MapAreaTextureManager:
         self.tpf_9999 = TPF.from_path(tpf_9999_path)
 
     @staticmethod
-    def _get_tpf(texture: TPFTexture = None) -> TPF:
+    def _get_new_tpf(texture: TPFTexture = None) -> TPF:
         """Returns a new one-texture or zero-texture (default) TPF with the correct values for DSR."""
         return TPF(
             platform=TPFPlatform.PC,

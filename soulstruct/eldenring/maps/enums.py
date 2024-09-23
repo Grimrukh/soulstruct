@@ -14,35 +14,12 @@ from soulstruct.base.maps.msb.enums import *
 
 
 class MSBSupertype(StrEnum):
-    """Same for most games."""
     MODELS = "MODEL_PARAM_ST"
     EVENTS = "EVENT_PARAM_ST"
     REGIONS = "POINT_PARAM_ST"
     ROUTES = "ROUTE_PARAM_ST"
     LAYERS = "LAYER_PARAM_ST"  # empty supertype
     PARTS = "PARTS_PARAM_ST"
-
-    @classmethod
-    def resolve(cls, supertype: str) -> MSBSupertype:
-        """Resolve various forms of the supertype name into this enum."""
-        if supertype.upper().startswith("MODEL"):
-            return cls.MODELS
-        if supertype.upper().startswith("EVENT"):
-            return cls.EVENTS
-        if supertype.upper().startswith("REGION") or supertype.upper().startswith("POINT"):
-            return cls.REGIONS
-        if supertype.upper().startswith("ROUTE"):
-            return cls.ROUTES
-        if supertype.upper().startswith("LAYER"):
-            return cls.LAYERS
-        if supertype.upper().startswith("PARTS"):
-            return cls.PARTS
-        raise ValueError(f"Cannot resolve unknown MSB supertype name: {supertype}")
-
-    @classmethod
-    def entity_id_supertypes(cls):
-        """Returns all supertypes whose entries use entity IDs."""
-        return cls.EVENTS, cls.REGIONS, cls.PARTS
 
 
 class MSBModelSubtype(BaseMSBModelSubtype):
@@ -141,9 +118,14 @@ class MSBPartSubtype(BaseMSBPartSubtype):
 
 
 class MSBRouteSubtype(BaseMSBSubtype):
+
     MufflingPortalLink = 3
     MufflingBoxLink = 4
     OtherRoute = -1
+
+    @classmethod
+    def get_supertype_name(cls) -> str:
+        return "ROUTE_PARAM_ST"
 
 
 class CollisionHitFilter(IntEnum):

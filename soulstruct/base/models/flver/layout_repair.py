@@ -4,7 +4,8 @@ from __future__ import annotations
 import logging
 import typing as tp
 
-from .vertex_array import *
+from .vertex_array_layout import *
+from .vertex_array import VertexArrayHeaderStruct
 
 if tp.TYPE_CHECKING:
     from .submesh import Submesh

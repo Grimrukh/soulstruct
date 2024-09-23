@@ -9,11 +9,13 @@ from soulstruct.containers import BinderVersion, BinderVersion4Info
 from soulstruct.containers.binder_types import FLVERBinder
 from soulstruct.dcx import DCXType
 from soulstruct.games import BLOODBORNE
+from .flver import FLVER
 
 
 @dataclass(slots=True)
-class CHRBND(FLVERBinder):
+class CHRBND(FLVERBinder[FLVER]):
 
+    FLVER_CLASS = FLVER
     DEFAULT_ENTRY_ROOT = f"{BLOODBORNE.interroot_prefix}\\chr"
 
     dcx_type: DCXType = BLOODBORNE.default_dcx_type

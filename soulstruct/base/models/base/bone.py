@@ -11,23 +11,6 @@ from soulstruct.utilities.maths import Vector3, Matrix3
 from soulstruct.utilities.misc import IDList
 
 
-@dataclass(slots=True)
-class FLVERBoneStruct(BinaryStruct):
-
-    translate: Vector3
-    _name_offset: int
-    rotate: Vector3  # Euler angles (radians)
-    _parent_bone_index: short
-    _child_bone_index: short
-    scale: Vector3
-    _next_sibling_bone_index: short
-    _previous_sibling_bone_index: short
-    bounding_box_min: Vector3
-    usage_flags: int
-    bounding_box_max: Vector3
-    _pad1: bytes = field(init=False, **BinaryPad(52))
-
-
 class FLVERBoneUsageFlags(IntEnum):
     """Bit flags used in `FLVERBone.usage_flags`, which indicate whether/how the bone is used in the FLVER."""
 
@@ -42,6 +25,21 @@ class FLVERBoneUsageFlags(IntEnum):
 @dataclass(slots=True)
 class FLVERBone:
     """Bone in a FLVER model. Named to distinguish it from Havok `Bone` in my `soulstruct-havok` package."""
+
+    @dataclass(slots=True)
+    class STRUCT(BinaryStruct):
+        translate: Vector3
+        _name_offset: int
+        rotate: Vector3  # Euler angles (radians)
+        _parent_bone_index: short
+        _child_bone_index: short
+        scale: Vector3
+        _next_sibling_bone_index: short
+        _previous_sibling_bone_index: short
+        bounding_box_min: Vector3
+        usage_flags: int
+        bounding_box_max: Vector3
+        _pad1: bytes = field(init=False, **BinaryPad(52))
 
     name: str
     translate: Vector3 = field(default_factory=Vector3.zero)
@@ -69,7 +67,7 @@ class FLVERBone:
     @classmethod
     def from_flver_reader(cls, reader: BinaryReader, encoding: str) -> FLVERBone:
         """Returns `FLVERBone` instance without dereferenced connected bones."""
-        bone_struct = FLVERBoneStruct.from_bytes(reader)
+        bone_struct = cls.STRUCT.from_bytes(reader)
         name = reader.unpack_string(offset=bone_struct.pop("_name_offset"), encoding=encoding)
         flver_bone = bone_struct.to_object(cls, name=name)  # connected bone indices included
         return flver_bone
@@ -108,7 +106,7 @@ class FLVERBone:
             bone = getattr(self, bone_attr)  # type: FLVERBone
             return -1 if bone is None else bone.get_bone_index(bones)
         
-        FLVERBoneStruct.object_to_writer(
+        self.STRUCT.object_to_writer(
             self,
             writer,
             _name_offset=None,

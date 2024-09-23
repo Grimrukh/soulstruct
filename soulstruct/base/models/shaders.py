@@ -200,21 +200,21 @@ class MatDef(abc.ABC):
         ):
             # Unshaded skyboxes, mist, some trees, etc.
             matdef.shader_category = "NormalToAlpha"
-            matdef.add_sampler(alias="Primary Albedo", uv_layer=cls.UVLayer.UVTexture0)
+            matdef.add_sampler(alias="Main 0 Albedo", uv_layer=cls.UVLayer.UVTexture0)
         elif (
             matdef.has_name_tag("wet")
             or mtd_stem in cls.KNOWN_SHADER_MTD_STEMS.get("Water", {})
         ):
             # Water shaders with normals only.
             matdef.shader_category = "Water"
-            matdef.add_sampler(alias="Primary Normal", uv_layer=cls.UVLayer.UVTexture0)
+            matdef.add_sampler(alias="Main 0 Normal", uv_layer=cls.UVLayer.UVTexture0)
         else:
             # Check for all other standard sampler types.
             for texture_tag, alias in (
-                ("Albedo", "Primary Albedo"),
-                ("Specular", "Primary Specular"),
-                ("Shininess", "Primary Shininess"),
-                ("Normal", "Primary Normal"),
+                ("Albedo", "Main 0 Albedo"),
+                ("Specular", "Main 0 Specular"),
+                ("Shininess", "Main 0 Shininess"),
+                ("Normal", "Main 0 Normal"),
                 ("Displacement", "Displacement"),
             ):
                 if texture_tag in cls.NAME_TAG_RE and matdef.has_name_tag(texture_tag):
@@ -227,10 +227,10 @@ class MatDef(abc.ABC):
             )
 
         if matdef.has_name_tag("Multi"):
-            # For each 'Primary' alias sampler, create 'Secondary' alias sampler.
+            # For each 'Main 0' alias sampler, create 'Main 1' alias sampler.
             for sampler in matdef.samplers:
-                if sampler.alias.startswith("Primary"):
-                    secondary_alias = sampler.alias.replace("Primary", "Secondary")
+                if sampler.alias.startswith("Main 0"):
+                    secondary_alias = sampler.alias.replace("Main 0", "Main 1")
                     matdef.add_sampler(alias=secondary_alias, uv_layer=cls.UVLayer.UVTexture1)
 
         if matdef.has_name_tag("Lightmap"):
@@ -251,7 +251,7 @@ class MatDef(abc.ABC):
 
         # Use real MTD file if available (much less guesswork).
         try:
-            mtd = mtdbnd.mtds[mtd_name]
+            mtd = mtdbnd.get_mtd(mtd_name)
         except KeyError:
             _LOGGER.warning(f"Could not find MTD '{mtd_name}' in MTDBND. Guessing info from name...")
             return cls.from_mtd_name(mtd_name)

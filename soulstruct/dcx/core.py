@@ -30,6 +30,37 @@ class DCXError(SoulstructError):
     pass
 
 
+class DCXVersionInfo(tp.NamedTuple):
+    compression_type: bytes
+    version1: int
+    version2: int
+    version3: int | None  # not constant for `DCX_EDGE`
+    version4: int
+    version5: int
+    version6: int
+    version7: int
+
+    def __eq__(self, other: DCXVersionInfo):
+        """Fields must be equal unless one or both is `None`."""
+        for field_name in self._fields:
+            if getattr(self, field_name) is None or getattr(other, field_name) is None:
+                continue
+            if getattr(self, field_name) != getattr(other, field_name):
+                return False
+        return True
+
+    def __repr__(self) -> str:
+        """Convert `int` fields to hex strings."""
+        s = f"DCXVersionInfo("
+        for _field in self.__annotations__:
+            v = getattr(self, _field)
+            if isinstance(v, int):
+                s += f"{_field}={hex(v)}, "
+            else:
+                s += f"{_field}={v}, "
+        return s[:-2] + ")"
+
+
 class DCXType(Enum):
     Unknown = -1  # could not be detected
     Null = 0  # no compression
@@ -51,7 +82,7 @@ class DCXType(Enum):
     SEKIRO = DCX_DFLT_11000_44_9
     ER_REGULATION = DCX_DFLT_11000_44_9_15
 
-    def get_version_info(self) -> tuple[bytes, int, int, int, int, int]:
+    def get_version_info(self) -> DCXVersionInfo:
         return DCX_VERSION_INFO[self]
 
     def has_dcx_extension(self):
@@ -98,24 +129,28 @@ class DCXType(Enum):
 
             header_version_info = header.get_version_info()
             for dcx_type, version_info in DCX_VERSION_INFO.items():
+                if version_info is None:
+                    continue
                 if version_info == header_version_info:
                     return dcx_type
 
             _LOGGER.error(
-                f"Unknown configuration of DCX version fields in DCX header: {header_version_info}\n"
+                f"Unknown configuration of DCX version fields in DCX header:\n"
+                f" {header_version_info}\n"
                 "  Maybe tell Grimrukh about this new DCX format..."
             )
             return cls.Unknown
 
 
 DCX_VERSION_INFO = {
-    DCXType.DCP_DFLT: (),
-    DCXType.DCX_DFLT_10000_24_9: (b"DFLT", 0x10000, 0x24, 0x2C, 0x9000000, 0),
-    DCXType.DCX_DFLT_10000_44_9: (b"DFLT", 0x10000, 0x44, 0x4C, 0x9000000, 0),
-    DCXType.DCX_DFLT_11000_44_8: (b"DFLT", 0x11000, 0x44, 0x4C, 0x8000000, 0),
-    DCXType.DCX_DFLT_11000_44_9: (b"DFLT", 0x11000, 0x44, 0x4C, 0x9000000, 0),
-    DCXType.DCX_DFLT_11000_44_9_15: (b"DFLT", 0x11000, 0x44, 0x4C, 0x9000000, 0xF000000),
-    DCXType.DCX_KRAK: (b"KRAK", 0x11000, 0x44, 0x4C, 0x6000000, 0),
+    DCXType.DCP_DFLT: None,
+    DCXType.DCX_EDGE: DCXVersionInfo(b"EDGE", 0x10000, 0x24, None, 0x9000000, 0x10000, 0, 0x100100),
+    DCXType.DCX_DFLT_10000_24_9: DCXVersionInfo(b"DFLT", 0x10000, 0x24, 0x2C, 0x9000000, 0, 0, 0x10100),
+    DCXType.DCX_DFLT_10000_44_9: DCXVersionInfo(b"DFLT", 0x10000, 0x44, 0x4C, 0x9000000, 0, 0, 0x10100),
+    DCXType.DCX_DFLT_11000_44_8: DCXVersionInfo(b"DFLT", 0x11000, 0x44, 0x4C, 0x8000000, 0, 0, 0x10100),
+    DCXType.DCX_DFLT_11000_44_9: DCXVersionInfo(b"DFLT", 0x11000, 0x44, 0x4C, 0x9000000, 0, 0, 0x10100),
+    DCXType.DCX_DFLT_11000_44_9_15: DCXVersionInfo(b"DFLT", 0x11000, 0x44, 0x4C, 0x9000000, 0, 0xF000000, 0x10100),
+    DCXType.DCX_KRAK: DCXVersionInfo(b"KRAK", 0x11000, 0x44, 0x4C, 0x6000000, 0, 0, 0x10100),
 }
 
 
@@ -140,31 +175,86 @@ class DCXHeaderStruct(BinaryStruct):
     NOTE: Not asserting the five 'version' fields so that we can guess when a new format is available.
     """
     dcx: bytes = field(init=False, **BinaryString(4, asserted=b"DCX"))
-    version1: int  # = field(**Binary(asserted=(0x10000, 0x11000)))  # 1
+    version1: int  # [0x10000, 0x11000]
     unk1: int = field(init=False, **Binary(asserted=0x18))
     unk2: int = field(init=False, **Binary(asserted=0x24))
-    version2: int  # = field(**Binary(asserted=(0x24, 0x44)))  # 2
-    version3: int  # = field(**Binary(asserted=(0x2C, 0x4C)))  # 3
+    version2: int  # [0x24, 0x44]
+    version3: int  # [0x2C, 0x4C, `0x50 + chunk_count * 0x10` (DCX_EDGE)]
     dcs: bytes = field(init=False, **BinaryString(4, b"DCS"))
     decompressed_size: int
     compressed_size: int
     dcp: bytes = field(init=False, **BinaryString(4, asserted=b"DCP"))
-    compression_type: bytes = field(**BinaryString(4, asserted=(b"DFLT", b"KRAK")))
+    compression_type: bytes = field(**BinaryString(4, asserted=(b"EDGE", b"DFLT", b"KRAK")))
     unk3: int = field(init=False, **Binary(asserted=0x20))
-    version4: int  # = field(**Binary(asserted=(0x6000000, 0x8000000, 0x9000000)))  # 3
-    unk4: int = field(init=False, **Binary(asserted=0))
-    version5: int  # = field(**Binary(asserted=(0, 0xF000000)))  # 4
+    version4: int  # [0x6000000, 0x8000000, 0x9000000]
+    version5: int  # [0, 0x10000]
+    version6: int  # [0, 0xF000000]
     unk5: int = field(init=False, **Binary(asserted=0))
-    unk6: int = field(init=False, **Binary(asserted=0x10100))
-    dca: bytes = field(init=False, **BinaryString(4, asserted=b"DCA"))
-    compressed_header_size: int = field(init=False, **Binary(asserted=8))
+    version7: int  # [0x10100, 0x101000]
 
     def get_default_byte_order(self) -> ByteOrder:
         return ByteOrder.BigEndian
 
-    def get_version_info(self) -> tuple[bytes, int, int, int, int, int]:
-        """Actually used."""
-        return self.compression_type, self.version1, self.version2, self.version3, self.version4, self.version5
+    def get_version_info(self) -> DCXVersionInfo:
+        """Extract non-constant field values."""
+        return DCXVersionInfo(
+            compression_type=self.compression_type,
+            version1=self.version1,
+            version2=self.version2,
+            version3=self.version3,
+            version4=self.version4,
+            version5=self.version5,
+            version6=self.version6,
+            version7=self.version7,
+        )
+
+
+@dataclass(slots=True)
+class DCXEdgeSubheader(BinaryStruct):
+    dca: bytes = field(init=False, **BinaryString(4, asserted=b"DCA"))
+    dca_size: int
+    egdt: bytes = field(init=False, **BinaryString(4, asserted=b"EgdT"))
+    unk1: int = field(init=False, **Binary(asserted=0x10100))
+    unk2: int = field(init=False, **Binary(asserted=0x24))
+    unk3: int = field(init=False, **Binary(asserted=0x10))
+    unk4: int = field(init=False, **Binary(asserted=0x10000))
+    last_block_decompressed_size: int
+    egdt_size: int
+    chunk_count: int
+    unk5: int = field(init=False, **Binary(asserted=0x100000))
+
+    def get_default_byte_order(self) -> ByteOrder:
+        return ByteOrder.BigEndian
+
+
+def _decompress_dcx_edge(reader: BinaryReader, header: DCXHeaderStruct) -> tuple[bytes, DCXType]:
+    dca_start = reader.position  # position of 'DCA' magic
+    subheader = DCXEdgeSubheader.from_bytes(reader)
+    if header.version3 != 0x50 + subheader.chunk_count * 0x10:
+        raise DCXError("DCX_EDGE header 'version3' field does not match expected value (0x50 + chunk_count * 0x10).")
+    if subheader.last_block_decompressed_size not in {0x10000, header.decompressed_size % 0x10000}:
+        raise DCXError("DCX_EDGE subheader 'last_block_decompressed_size' does not match expected value.")
+    if subheader.egdt_size != 0x24 + subheader.chunk_count * 0x10:
+        print(subheader)
+        raise DCXError("DCX_EDGE subheader 'egdt_size' does not match expected value.")
+
+    chunks_offset = dca_start + subheader.dca_size
+    decompressed = bytearray()
+    for _ in range(subheader.chunk_count):
+        reader.unpack_value("i", asserted=0)
+        offset, size, is_compressed_int = reader.unpack("3i")
+        if is_compressed_int not in {0, 1}:
+            raise DCXError("DCX_EDGE chunk 'is_compressed' field is not 0 or 1.")
+        chunk = reader.unpack_bytes(length=size, offset=chunks_offset + offset)
+        if is_compressed_int:
+            # Decompress using DEFLATE method.
+            decompressor = zlib.decompressobj(-zlib.MAX_WBITS)
+            decompressed_chunk = decompressor.decompress(chunk)
+            decompressed_chunk += decompressor.flush()
+            decompressed += decompressed_chunk
+        else:
+            decompressed += chunk
+    return decompressed, DCXType.DCX_EDGE
 
 
 def decompress(dcx_source: bytes | BinaryReader | tp.BinaryIO | Path | str) -> tuple[bytes, DCXType]:
@@ -183,6 +273,11 @@ def decompress(dcx_source: bytes | BinaryReader | tp.BinaryIO | Path | str) -> t
     else:
         header = DCXHeaderStruct.from_bytes(reader, byte_order=ByteOrder.BigEndian)
 
+    if dcx_type == DCXType.DCX_EDGE:
+        return _decompress_dcx_edge(reader, header)
+
+    reader.unpack_bytes(length=4, asserted=b"DCA")
+    reader.unpack_value("i", asserted=8)  # compressed header size
     compressed = reader.read(header.compressed_size)
 
     if dcx_type == DCXType.DCX_KRAK:
@@ -195,12 +290,81 @@ def decompress(dcx_source: bytes | BinaryReader | tp.BinaryIO | Path | str) -> t
     return decompressed, dcx_type
 
 
+def _compress_dcx_edge(raw_data: bytes) -> bytes:
+    """Use DEFLATE compression and return compressed chunks after packed subheader."""
+    writer = BinaryWriter(byte_order=ByteOrder.BigEndian)
+
+    chunk_count = len(raw_data) // 0x10000
+    last_block_decompressed_size = len(raw_data) % 0x10000
+    if last_block_decompressed_size > 0:
+        chunk_count += 1  # add one more chunk for the remainder
+
+    version_info = DCXType.DCX_EDGE.get_version_info()
+    header = DCXHeaderStruct(
+        version1=version_info.version1,
+        version2=version_info.version2,
+        version3=0x50 + chunk_count * 0x10,
+        compression_type=version_info.compression_type,
+        decompressed_size=len(raw_data),
+        compressed_size=RESERVED,
+        version4=version_info.version4,
+        version5=version_info.version5,
+        version6=version_info.version6,
+        version7=version_info.version7,
+    )
+    header.to_writer(writer)
+
+    dca_start = writer.position
+    egdt_start = dca_start + 8  # after b'DCA\0' magic and 'dca_size'
+    subheader = DCXEdgeSubheader(
+        dca_size=RESERVED,
+        last_block_decompressed_size=last_block_decompressed_size,
+        egdt_size=RESERVED,
+        chunk_count=chunk_count,
+    )
+    subheader.to_writer(writer)
+
+    for i in range(chunk_count):
+        writer.pack("i", 0)  # pad
+        writer.reserve(f"offset{i}", "i")
+        writer.reserve(f"size{i}", "i")
+        writer.reserve(f"is_compressed{i}", "i")
+
+    subheader.fill(writer, "dca_size", writer.position - dca_start)
+    subheader.fill(writer, "egdt_size", writer.position - egdt_start)
+    
+    data_start = writer.position
+    compressed_size = 0
+    for i in range(chunk_count):
+        # 64 KB chunks, except for whatever is left in the last one.
+        decompressed_chunk_size = 0x10000 if i < chunk_count - 1 else last_block_decompressed_size
+        compressor = zlib.compressobj(level=9, method=zlib.DEFLATED, wbits=-zlib.MAX_WBITS)
+        raw_offset = i * 0x10000
+        decompressed_chunk = raw_data[raw_offset:raw_offset + decompressed_chunk_size]
+        chunk = compressor.compress(decompressed_chunk)
+        chunk += compressor.flush(zlib.Z_FINISH)
+        chunk_compressed_size = len(chunk)
+        
+        writer.fill(f"offset{i}", writer.position - data_start)
+        writer.fill(f"size{i}", chunk_compressed_size)
+        writer.fill(f"is_compressed{i}", int(chunk_compressed_size < decompressed_chunk_size))
+        compressed_size += chunk_compressed_size
+        writer.append(chunk)
+        writer.pad_align(0x10)
+
+    header.fill(writer, "compressed_size", compressed_size)
+
+    return bytes(writer)
+
+
 def compress(raw_data: bytes, dcx_type: DCXType) -> bytes:
     """Compress `raw_data` with DCX of `dcx_type`.
 
     Returns bytes that are ready to be written to a DCX file.
     """
-    if dcx_type == DCXType.DCX_KRAK:
+    if dcx_type == DCXType.DCX_EDGE:
+        return _compress_dcx_edge(raw_data)
+    elif dcx_type == DCXType.DCX_KRAK:
         compressed = oodle.compress(raw_data)  # default compressor and compression level are correct
     else:
         compressed = zlib.compress(raw_data, level=7)
@@ -213,14 +377,16 @@ def compress(raw_data: bytes, dcx_type: DCXType) -> bytes:
     else:
         version_info = dcx_type.get_version_info()
         header = bytes(DCXHeaderStruct(
-            version1=version_info[1],
-            version2=version_info[2],
-            version3=version_info[3],
-            compression_type=version_info[0],
+            version1=version_info.version1,
+            version2=version_info.version2,
+            version3=version_info.version3,
+            compression_type=version_info.compression_type,
             decompressed_size=len(raw_data),
             compressed_size=len(compressed),
-            version4=version_info[4],
-            version5=version_info[5],
+            version4=version_info.version4,
+            version5=version_info.version5,
+            version6=version_info.version6,
+            version7=version_info.version7,
         ))
     return header + compressed
 

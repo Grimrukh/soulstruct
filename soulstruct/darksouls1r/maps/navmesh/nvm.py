@@ -233,7 +233,7 @@ class NVM(GameFile):
 
     @classmethod
     def from_reader(cls, reader: BinaryReader) -> tp.Self:
-        endian_byte = reader.peek("i")
+        endian_byte = reader.peek("i")[0]
         if endian_byte == 1:
             reader.default_byte_order = ByteOrder.LittleEndian
         elif endian_byte == 0x1000000:
@@ -246,7 +246,8 @@ class NVM(GameFile):
             double_triangles_offset = 0x80 + header.vertices_count * 0x18
             if header.triangles_offset == double_triangles_offset:
                 _LOGGER.warning("`NVM` file appears to have 64-bit vertices. Will truncate to 32-bit vertices.")
-                vertices = np.frombuffer(reader.read(8 * 3 * header.vertices_count), dtype=np.float64)
+                dtype = np.dtype("<f8") if reader.default_byte_order == ByteOrder.LittleEndian else np.dtype(">f8")
+                vertices = np.frombuffer(reader.read(8 * 3 * header.vertices_count), dtype=dtype)
                 vertices = vertices.astype(np.float32)
             else:
                 raise ValueError(
@@ -255,7 +256,8 @@ class NVM(GameFile):
                 )
         else:
             # Read flat array of [x0, y0, z0, x1, y1, z1, ...] single-precision vertices.
-            vertices = np.frombuffer(reader.read(4 * 3 * header.vertices_count), dtype=np.float32)
+            dtype = np.dtype("<f4") if reader.default_byte_order == ByteOrder.LittleEndian else np.dtype(">f4")
+            vertices = np.frombuffer(reader.read(4 * 3 * header.vertices_count), dtype=dtype)
 
         vertices.shape = (header.vertices_count, 3)
         triangles = [NVMTriangle.from_nvm_reader(reader) for _ in range(header.triangles_count)]

@@ -9,9 +9,7 @@ from enum import IntEnum
 
 from soulstruct.utilities.misc import IDList
 
-from .enums import MSBSupertype
 from .msb_entry import MSBEntry
-from .utils import MSBSubtypeInfo
 
 if tp.TYPE_CHECKING:
     from .core import MSB
@@ -25,17 +23,17 @@ MSBEntryType = tp.TypeVar("MSBEntryType", bound=MSBEntry)
 # NOT a dataclass.
 class MSBEntryList(IDList[MSBEntryType]):
 
-    supertype: MSBSupertype
-    subtype_info: MSBSubtypeInfo | None
+    supertype: str
+    entry_class: type[MSBEntry] | None  # may be `None` for transient supertype lists
 
     def __init__(
         self,
         entries: tp.Iterable[MSBEntryType],
-        supertype: MSBSupertype,
-        subtype_info: MSBSubtypeInfo | None,
+        supertype: str,
+        entry_class: type[MSBEntryType] | None,
     ):
         self.supertype = supertype
-        self.subtype_info = subtype_info
+        self.entry_class = entry_class
         super().__init__(entries)
 
     def copy(self) -> tp.Self:
@@ -130,7 +128,7 @@ class MSBEntryList(IDList[MSBEntryType]):
         return MSBEntryList(
             [entry.copy() for entry in self if filter_func(entry)],
             supertype=self.supertype,
-            subtype_info=self.subtype_info,
+            entry_class=self.entry_class,
         )
 
     def default_entry(self) -> MSBEntryType:
@@ -139,7 +137,7 @@ class MSBEntryList(IDList[MSBEntryType]):
         Does NOT add the new entry to this list, unlike `new()`.
         """
         # noinspection PyArgumentList
-        return self.subtype_info.entry_class(name=f"Default{self.subtype_info.entry_class.__name__}")
+        return self.entry_class(name=f"Default{self.entry_class.__name__}")
 
     def new(self, new_index=-1, **kwargs) -> MSBEntryType:
         """Create a new `MSBEntry` of this list's subtype and append it to list (or insert it at `new_index`)."""
@@ -152,9 +150,9 @@ class MSBEntryList(IDList[MSBEntryType]):
             kwargs["name"] = entity_enum.name
             kwargs["entity_id"] = entity_enum.value
         # noinspection PyArgumentList
-        kwargs.setdefault("name", f"Default{self.subtype_info.entry_class.__name__}")
+        kwargs.setdefault("name", f"Default{self.entry_class.__name__}")
         # noinspection PyArgumentList
-        entry = self.subtype_info.entry_class(**kwargs)
+        entry = self.entry_class(**kwargs)
         if new_index >= 0:
             self.insert(new_index, entry)
         else:
@@ -236,7 +234,5 @@ class MSBEntryList(IDList[MSBEntryType]):
     # NOTE: No `from_json_dict` method; `MSB` handles this.
 
     @property
-    def subtype_name(self):
-        if not self.subtype_info:
-            raise ValueError("MSBEntryList has no subtype info.")
-        return self.subtype_info.subtype_enum.name
+    def subtype_name(self) -> str:
+        return self.entry_class.SUBTYPE_ENUM.name

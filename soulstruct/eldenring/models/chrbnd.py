@@ -9,11 +9,13 @@ from soulstruct.containers import BinderVersion, BinderVersion4Info
 from soulstruct.containers.binder_types import FLVERBinder
 from soulstruct.dcx import DCXType
 from soulstruct.games import ELDEN_RING
+from .flver import FLVER
 
 
 @dataclass(slots=True)
-class CHRBND(FLVERBinder):
+class CHRBND(FLVERBinder[FLVER]):
 
+    FLVER_CLASS = FLVER
     DEFAULT_ENTRY_ROOT = f"{ELDEN_RING.interroot_prefix}\\chr"
 
     dcx_type: DCXType = ELDEN_RING.default_dcx_type

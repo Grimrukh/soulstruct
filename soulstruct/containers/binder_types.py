@@ -10,24 +10,27 @@ import logging
 import typing as tp
 from dataclasses import dataclass, field
 
-from soulstruct.base.models.flver import FLVER
+from soulstruct.base.models.base import BaseFLVER
 from .core import Binder, EntryNotFoundError
 from .tpf import TPF
 
 _LOGGER = logging.getLogger("soulstruct")
 
+FLVER_T = tp.TypeVar("FLVER_T", bound=BaseFLVER)
+
 
 @dataclass(slots=True)
-class FLVERBinder(Binder, abc.ABC):
+class FLVERBinder(Binder, tp.Generic[FLVER_T], abc.ABC):
     """Base class for Binders that contain one or more FLVER files and an optional TPF file."""
 
+    FLVER_CLASS: tp.ClassVar[tp.Type[BaseFLVER]]  # must be set in subclass
     TPF_ENTRY_ID: tp.ClassVar[int] = 100  # -1 if no TPF ever exists
     FLVER_FIRST_ENTRY_ID: tp.ClassVar[int] = 200
     MAX_FLVER_COUNT: tp.ClassVar[int] = 1
 
     model_stem: str = ""  # will be extracted from `path` field if left empty
     tpf: TPF | None = None  # not available in all subclasses
-    flvers: dict[str, FLVER] = field(default_factory=dict)
+    flvers: dict[str, FLVER_T] = field(default_factory=dict)
 
     def __post_init__(self):
         if not self.tpf and self.TPF_ENTRY_ID >= 0:
@@ -39,7 +42,7 @@ class FLVERBinder(Binder, abc.ABC):
                 self.tpf = tpf_entry.to_binary_file(TPF)
         if not self.flvers:
             for entry in self.find_entries_matching_name(r".*\.flver(\.dcx)?"):
-                self.flvers[entry.minimal_stem] = entry.to_binary_file(FLVER)
+                self.flvers[entry.minimal_stem] = entry.to_binary_file(self.FLVER_CLASS)
             if len(self.flvers) > self.MAX_FLVER_COUNT:
                 _LOGGER.warning(f"More than {self.MAX_FLVER_COUNT} FLVERs loaded from Binder with path '{self.path}'.")
 
@@ -67,14 +70,14 @@ class FLVERBinder(Binder, abc.ABC):
                 ).set_from_binary_file(flver)
 
     @property
-    def flver(self) -> FLVER | None:
+    def flver(self) -> FLVER_T | None:
         """Shortcut for accessing the main FLVER file (if there is only one)."""
         if self.MAX_FLVER_COUNT != 1:
             raise ValueError(f"Cannot access `flver` property of {self.__class__.__name__} with multiple FLVERs.")
         return self.flvers[self.model_stem] if self.flvers else None
 
     @flver.setter
-    def flver(self, value: FLVER):
+    def flver(self, value: FLVER_T):
         if self.MAX_FLVER_COUNT != 1:
             raise ValueError(f"Cannot set `flver` property of {self.__class__.__name__} with multiple FLVERs.")
         self.flvers[self.model_stem] = value

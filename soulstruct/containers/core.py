@@ -426,7 +426,9 @@ class Binder(BaseBinaryFile):
         flags = BinderFlags.from_byte(reader[flags_fmt, 0xC], bit_big_endian)
         byte_order = ByteOrder.BigEndian if (big_endian or flags.is_big_endian) else ByteOrder.LittleEndian
 
-        header_struct = BinderHeaderV3.from_bytes(reader, byte_order=byte_order)
+        # Change reader byte order.
+        reader.default_byte_order = byte_order
+        header_struct = BinderHeaderV3.from_bytes(reader)
 
         entry_headers = [
             BinderEntryHeader.from_reader_v3(reader, flags, header_struct.bit_big_endian)
@@ -447,7 +449,7 @@ class Binder(BaseBinaryFile):
         """Less endian complexity than V3."""
         byte_order = ByteOrder.from_reader_peek(reader, 1, 9, b"\01", b"\00")
         reader.default_byte_order = byte_order
-        header_struct = BinderHeaderV4.from_bytes(reader, byte_order=byte_order)  # type: BinderHeaderV4
+        header_struct = BinderHeaderV4.from_bytes(reader)  # type: BinderHeaderV4
 
         flags = BinderFlags.from_byte(header_struct.flags, not header_struct.bit_little_endian)
         flags_header_size = flags.get_bnd_entry_header_size()
@@ -783,6 +785,7 @@ class Binder(BaseBinaryFile):
 
     def _header_to_writer_v3(self) -> BinaryWriter:
 
+        writer = BinaryWriter(byte_order=ByteOrder.BigEndian if self.big_endian else ByteOrder.LittleEndian)
         return BinderHeaderV3(
             version=b"BHF3" if self.is_split_bxf else b"BND3",
             signature=self.signature,
@@ -791,7 +794,7 @@ class Binder(BaseBinaryFile):
             bit_big_endian=self.bit_big_endian,
             entry_count=len(self.entries),
             file_size=RESERVED,
-        ).to_writer(reserve_obj=self)
+        ).to_writer(writer, reserve_obj=self)
 
     def _entries_into_writer_v3(self, header_writer: BinaryWriter, entry_writer: BinaryWriter):
         """Write entries into given `entry_writer` and fill offsets in `header_writer`.
@@ -818,6 +821,7 @@ class Binder(BaseBinaryFile):
         if self.v4_info is None:
             raise AttributeError("`Binder version `V4` must have a `v4_info`.")
 
+        writer = BinaryWriter(byte_order=ByteOrder.BigEndian if self.big_endian else ByteOrder.LittleEndian)
         return BinderHeaderV4(
             version=b"BHF4" if self.is_split_bxf else b"BND4",
             unknown1=self.v4_info.unknown1,
@@ -832,7 +836,7 @@ class Binder(BaseBinaryFile):
             flags=byte(self.flags.to_byte(self.bit_big_endian)),
             hash_table_type=byte(self.v4_info.hash_table_type),
             _hash_table_offset=RESERVED,  # only non-zero for hash table type 4
-        ).to_writer(reserve_obj=self)
+        ).to_writer(writer, reserve_obj=self)
 
     def _check_v4_hash_table(self) -> bool:
         if self.v4_info is None:

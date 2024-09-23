@@ -44,7 +44,7 @@ class Command:
             with reader.temp_offset(header.args_offset):
                 for _ in range(header.args_count):
                     arg_struct = CommandArgsStruct.from_bytes(reader)
-                    args.append(reader.unpack_bytes(offset=arg_struct.arg_ezl_offset, length=arg_struct.arg_ezl_size))
+                    args.append(reader.unpack_bytes(length=arg_struct.arg_ezl_size, offset=arg_struct.arg_ezl_offset))
 
         return cls(header.bank, header.index, args)
 

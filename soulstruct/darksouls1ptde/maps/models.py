@@ -37,7 +37,9 @@ class ModelHeaderStruct(MSBHeaderStruct):
         entry_offset: int,
     ) -> dict[str, tp.Any]:
         kwargs = super(ModelHeaderStruct, cls).reader_to_entry_kwargs(reader, entry_type, entry_offset)
-        sib_path = reader.unpack_string(entry_offset + kwargs.pop("sib_path_offset"), encoding=entry_type.NAME_ENCODING)
+        sib_path = reader.unpack_string(
+            offset=entry_offset + kwargs.pop("sib_path_offset"), encoding=entry_type.NAME_ENCODING
+        )
         kwargs["sib_path"] = sib_path
         kwargs.pop("instance_count")
         return kwargs

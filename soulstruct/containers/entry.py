@@ -78,7 +78,7 @@ class BinderEntryHeader:
         entry_id = reader["i"] if binder_flags.has_ids else None
         if binder_flags.has_names:
             path_offset = reader["i"]
-            path = reader.unpack_string(path_offset, encoding="shift-jis")  # NOT `shift_jis_2004`
+            path = reader.unpack_string(offset=path_offset, encoding="shift-jis")  # NOT `shift_jis_2004`
         else:
             path = None
         uncompressed_size = reader["i"] if binder_flags.has_compression else None
@@ -114,7 +114,7 @@ class BinderEntryHeader:
         entry_id = reader["i"] if binder_flags.has_ids else None
         if binder_flags.has_names:
             path_offset = reader["I"]
-            path = reader.unpack_string(path_offset, encoding="utf-16-le" if unicode else "shift-jis")
+            path = reader.unpack_string(offset=path_offset, encoding="utf-16-le" if unicode else "shift-jis")
         else:
             path = None
         return cls(
@@ -233,6 +233,10 @@ class BinderEntry:
     @property
     def suffix(self) -> str:
         return Path(self.path).suffix
+
+    @property
+    def suffixes(self) -> list[str]:
+        return Path(self.path).suffixes
 
     @property
     def path_with_forward_slashes(self) -> str:

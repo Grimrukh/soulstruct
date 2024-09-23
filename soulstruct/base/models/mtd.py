@@ -7,12 +7,14 @@ __all__ = [
 ]
 
 import logging
+import re
 import typing as tp
 from pathlib import Path
 
 from dataclasses import dataclass, field
 from enum import IntEnum, StrEnum
 
+from soulstruct import EntryNotFoundError
 from soulstruct.base.game_file import GameFile
 from soulstruct.games import Game, get_game
 from soulstruct.containers import Binder
@@ -534,22 +536,29 @@ def write_marked_string(writer: BinaryWriter, marker: int, string: str):
 
 @dataclass(slots=True)
 class MTDBND(Binder):
-    """NOTE: This is NOT an abstract class. It can be used for any supported game (i.e. up to Sekiro)."""
+    """`Binder` wrapper that dynamically loads `MTD` instances from entries when they are requested.
+
+    NOTE: This is NOT an abstract class. It can be used for any supported game (i.e. up to Sekiro).
+    """
 
     _BUNDLED: tp.ClassVar[dict[Game, MTDBND]] = {}
 
-    mtds: dict[str, MTD] = field(default_factory=dict)
+    mtds: dict[str, MTD] = field(default_factory=dict)  # keys are lower case
 
-    def __post_init__(self):
-        """Loads FIRST instance of each entry name as an MTD."""
-        if self.mtds:
-            return  # already passed in
+    def get_mtd(self, mtd_name: str):
+        mtd_name = mtd_name.lower()
+        if not mtd_name.endswith(".mtd"):
+            mtd_name += ".mtd"
+        if mtd_name in self.mtds:
+            return self.mtds[mtd_name]
 
-        self.mtds = {}
-        for entry in self.entries:
-            if entry.name in self.mtds:
-                continue  # ignore repeated names silently
-            self.mtds[entry.name] = entry.to_binary_file(MTD)
+        try:
+            mtd_entry = self.find_entry_matching_name(mtd_name, flags=re.IGNORECASE, escape=True)
+        except EntryNotFoundError:
+            raise EntryNotFoundError(f"No MTD entry found with name '{mtd_name}' in {self.path}.")
+        mtd = mtd_entry.to_binary_file(MTD)
+        self.mtds[mtd_name] = mtd
+        return mtd
 
     @classmethod
     def from_bundled(cls, game_or_name: Game | str) -> MTDBND:

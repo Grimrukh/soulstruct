@@ -118,9 +118,9 @@ class MSBVFXEvent(MSBEvent):
 @dataclass(slots=True)
 class WindEventDataStruct(MSBBinaryStruct):
     wind_vector_min: Vector3
-    unk_x04_x08: float
+    unk_x0c: float
     wind_vector_max: Vector3
-    unk_x0c_x10: float
+    unk_x1c: float
     wind_swing_cycles: list[float] = field(**BinaryArray(4))
     wind_swing_powers: list[float] = field(**BinaryArray(4))
 
@@ -132,9 +132,9 @@ class MSBWindEvent(MSBEvent):
     STRUCTS = MSBEvent.STRUCTS | {"subtype_data": WindEventDataStruct}
 
     wind_vector_min: Vector3 = field(default_factory=Vector3.zero)
-    unk_x04_x08: float = 0.0
+    unk_x0c: float = 0.0
     wind_vector_max: Vector3 = field(default_factory=Vector3.zero)
-    unk_x0c_x10: float = 0.0
+    unk_x1c: float = 0.0
     wind_swing_cycles: list[float] = field(default_factory=lambda: [0.0] * 4, **BinaryArray(4))
     wind_swing_powers: list[float] = field(default_factory=lambda: [0.0] * 4, **BinaryArray(4))
 
@@ -177,8 +177,6 @@ class MSBTreasureEvent(MSBEvent):
     _treasure_part_index: int = None
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
-        # TODO: My MSB entry `duplicate()` (copying entries) is doing a deep copy on referenced fields.
-        #  Create a custom `MSBEntry.copy()` method that does a shallow copy only
         super(MSBEvent, self).indices_to_objects(entry_lists)
         self._consume_index(entry_lists, "PARTS_PARAM_ST", "treasure_part")
 
@@ -234,7 +232,7 @@ class MSBSpawnerEvent(MSBEvent):
 @dataclass(slots=True)
 class MessageEventDataStruct(MSBBinaryStruct):
     text_id: short
-    unk_x02_x04: short
+    unk_x02: short
     is_hidden: bool
     _pad1: bytes = field(**BinaryPad(3))
 
@@ -246,7 +244,7 @@ class MSBMessageEvent(MSBEvent):
     STRUCTS = MSBEvent.STRUCTS | {"subtype_data": MessageEventDataStruct}
 
     text_id: int = field(default=-1, **MapFieldInfo(game_type=SoapstoneMessage))
-    unk_x02_x04: int = 2
+    unk_x02: int = 2
     is_hidden: bool = False
 
 

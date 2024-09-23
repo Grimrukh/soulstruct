@@ -10,11 +10,13 @@ from soulstruct.containers import BinderVersion, BinderVersion4Info
 from soulstruct.containers.binder_types import FLVERBinder
 from soulstruct.dcx import DCXType
 from soulstruct.games import ELDEN_RING
+from .flver import FLVER
 
 
 @dataclass(slots=True)
-class GEOMBND(FLVERBinder):
+class GEOMBND(FLVERBinder[FLVER]):
 
+    FLVER_CLASS = FLVER
     DEFAULT_ENTRY_ROOT: tp.ClassVar[str] = f"{ELDEN_RING.interroot_prefix}\\asset\\aeg"
     TPF_ENTRY_ID: tp.ClassVar[int] = -1
 

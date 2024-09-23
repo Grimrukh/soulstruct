@@ -18,6 +18,7 @@ setup(
     packages=find_packages(),
     description="Inspect and mod FromSoftware games.",
     long_description=long_description,
+    requires=["constrata"],
     extras_require={
         "Interactive": ["IPython"],
         "Runtime": ["psutil"],
@@ -29,5 +30,5 @@ setup(
     },
     author="Scott Mooney (Grimrukh)",
     author_email="grimrukh@gmail.com",
-    url="https://github.com/grimrukh/soulstruct",
+    url="https://github.com/Grimrukh/soulstruct",
 )
