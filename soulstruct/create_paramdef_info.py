@@ -6,8 +6,7 @@ from soulstruct.base.params.param_row import *
 from soulstruct.utilities.files import read_json, write_json
 
 import colorama
-from colorama import just_fix_windows_console
-just_fix_windows_console()
+colorama.just_fix_windows_console()
 RED = colorama.Fore.RED
 YELLOW = colorama.Fore.YELLOW
 RESET = colorama.Fore.RESET

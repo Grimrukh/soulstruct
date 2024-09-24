@@ -22,15 +22,15 @@ from binascii import hexlify
 from functools import wraps
 from pathlib import Path
 
-from colorama import init as colorama_init, Fore
+import colorama
 
 _LOGGER = logging.getLogger("soulstruct")
 
-colorama_init()
-GREEN = Fore.GREEN
-YELLOW = Fore.YELLOW
-RED = Fore.RED
-RESET = Fore.RESET
+colorama.just_fix_windows_console()
+GREEN = colorama.Fore.GREEN
+YELLOW = colorama.Fore.YELLOW
+RED = colorama.Fore.RED
+RESET = colorama.Fore.RESET
 
 
 def get_diff_indices(bytes1: bytes, bytes2: bytes) -> list[int]:

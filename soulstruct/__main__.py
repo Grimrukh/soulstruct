@@ -15,21 +15,6 @@ import argparse
 import logging
 from pathlib import Path
 
-try:
-    from colorama import init as colorama_init, Fore
-except ImportError:
-    colorama_init = None
-    Fore = None
-    MAGENTA = ""
-    GREEN = ""
-    RED = ""
-    RESET = ""
-else:
-    MAGENTA = Fore.MAGENTA
-    GREEN = Fore.GREEN
-    RED = Fore.RED
-    RESET = Fore.RESET
-
 from soulstruct._logging import CONSOLE_HANDLER, FILE_HANDLER
 from soulstruct.utilities.text import word_wrap
 

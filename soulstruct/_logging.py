@@ -7,8 +7,7 @@ try:
 except ImportError:
     colorama = None
 else:
-    from colorama import just_fix_windows_console
-    just_fix_windows_console()
+    colorama.just_fix_windows_console()
 
 
 class _ModuleFormatter(logging.Formatter):
