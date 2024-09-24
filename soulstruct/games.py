@@ -104,6 +104,7 @@ DEMONS_SOULS = Game(
     aliases=("demonssouls", "des"),
     default_dcx_type=DCXType.DCX_EDGE,
     special_dcx_types={
+        ".hkx": DCXType.Null,
         ".msb": DCXType.Null,
         ".nvmbnd": DCXType.Null,
     },
