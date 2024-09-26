@@ -339,7 +339,7 @@ class NVM(GameFile):
         return writer
 
     @staticmethod
-    def get_all_boxes(root_box: NVMBox) -> list[tuple[NVMBox, tuple[int]]]:
+    def get_all_boxes(root_box: NVMBox) -> list[tuple[NVMBox, tuple[int, ...]]]:
         """Returns a list of tuples, each containing a box and an index sequence that shows its nesting, such as
         `(1, 3, 0)` (first child of third child of first child of root box).
 

@@ -16,4 +16,4 @@ class NVMBND(BaseNVMBND):
     # Override defaults.
     version: BinderVersion = BinderVersion.V3
     v4_info: BinderVersion4Info | None = None
-    dcx_type: DCXType = DCXType.DCX_DFLT_10000_24_9
+    dcx_type: DCXType = DCXType.Null

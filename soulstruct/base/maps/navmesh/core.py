@@ -82,10 +82,10 @@ Notes for functional navmesh system:
     enter backread, even when standing on it (and may screw up other navmeshes nearby as well).
 
     - Gate node positions do not affect backread, but the connectivity BETWEEN them does seem to inform which navmeshes
-    can enter backread from a distance. As long as the two requirements above are met (and `ConnectCollision` instances are
-    set up properly), you will probably be able to navigate the world without issues, as navmeshes enter backread "just
-    in time" when walking on them, but proper connected nodes are needed for the actual raycasting 80m/90m system to
-    work. This will need to be done for enemy behavior anyway.
+    can enter backread from a distance. As long as the two requirements above are met (and `ConnectCollision` instances
+    are set up properly), you will probably be able to navigate the world without issues, as navmeshes enter backread
+    "just in time" when walking on them, but proper connected nodes are needed for the actual raycasting 80m/90m system
+    to work. This will need to be done for enemy behavior anyway.
 
     - It should go without saying that breaking correspondence between the connected nodes and edges of nodes will
     cause major issues, so don't do this. You can tell if the navmesh system is broken completely because that map will
