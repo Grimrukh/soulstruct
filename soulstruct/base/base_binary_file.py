@@ -12,6 +12,7 @@ import json
 import logging
 import multiprocessing
 import re
+import traceback
 import typing as tp
 from dataclasses import dataclass, asdict, field, fields
 from pathlib import Path
@@ -97,6 +98,7 @@ class BaseBinaryFile:
         try:
             binary_file = cls.from_bytes(BinaryReader(path))
         except Exception:
+            traceback.print_exc()
             _LOGGER.error(f"Error occurred while reading `{cls.__name__}` with path '{path}'. See traceback.")
             raise
         if path.suffix == ".bak":
@@ -138,6 +140,7 @@ class BaseBinaryFile:
             binary_file = cls.from_reader(reader)
             binary_file.dcx_type = dcx_type
         except Exception:
+            traceback.print_exc()
             _LOGGER.error(f"Error occurred while reading `{cls.__name__}` from binary data. See traceback.")
             raise
         finally:
