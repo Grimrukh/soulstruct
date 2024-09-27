@@ -105,7 +105,10 @@ class BaseFLVER(GameFile, tp.Generic[SUBMESH_T]):
             bone.set_bones(self.bones)
 
     def __repr__(self) -> str:
-        return f"{self.cls_name}({len(self.submeshes)} submeshes, {len(self.bones)} bones, {len(self.dummies)} dummies)"
+        return (
+            f"{self.cls_name}({self.version.name}, {len(self.submeshes)} submeshes, "
+            f"{len(self.bones)} bones, {len(self.dummies)} dummies)"
+        )
 
     def refresh_submesh_indices(self):
         for i, submesh in enumerate(self.submeshes):
@@ -359,7 +362,8 @@ class BaseFLVER(GameFile, tp.Generic[SUBMESH_T]):
                 submesh_min = np.minimum(submesh_min, position.min(axis=0))
                 submesh_max = np.maximum(submesh_max, position.max(axis=0))
 
-            if submesh.uses_bounding_box:
+            # NOTE: Lazy check for `FLVER0` vs. `FLVER`.
+            if getattr(submesh, "uses_bounding_box", False):
                 submesh.bounding_box_min = Vector3(submesh_min)
                 submesh.bounding_box_max = Vector3(submesh_max)
                 # TODO: Don't know how to set `bounding_box_unknown` in Sekiro+.
@@ -578,7 +582,7 @@ class BaseFLVER(GameFile, tp.Generic[SUBMESH_T]):
                     array["bone_indices"][:, :] = 0
 
             if submesh.bone_indices is not None:
-                # Set submesh local bones to [0].
+                # Set submesh local bones to [0]. (NOTE: `FLVER0` pack will pad to 28 indices with -1.)
                 submesh.bone_indices = np.array([0])
 
         # All bones baked into all submeshes. Remove all but the default bone (0).

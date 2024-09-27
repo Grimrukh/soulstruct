@@ -14,8 +14,9 @@ from enum import IntEnum
 from pathlib import Path
 
 from soulstruct.exceptions import SoulstructError
-from soulstruct.base.models.matbin import MATBIN, MATBINBND
-from soulstruct.base.models.mtd import MTD, MTDBND
+from .base.vertex_array_layout import BaseVertexArrayLayout
+from .matbin import MATBIN, MATBINBND
+from .mtd import MTD, MTDBND
 from soulstruct.utilities.maths import Vector2
 
 _LOGGER = logging.getLogger("soulstruct")
@@ -292,11 +293,11 @@ class MatDef(abc.ABC):
     # region Abstract Methods/Properties
 
     @abc.abstractmethod
-    def get_map_piece_layout(self):
+    def get_map_piece_layout(self) -> BaseVertexArrayLayout:
         ...
 
     @abc.abstractmethod
-    def get_character_layout(self):
+    def get_character_layout(self) -> BaseVertexArrayLayout:
         ...
 
     # endregion

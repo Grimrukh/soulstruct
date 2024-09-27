@@ -46,12 +46,11 @@ class VertexArray(BaseVertexArray[VertexArrayLayout]):
         layouts: list[VertexArrayLayout],
         vertex_data_offset: int,  # from `FLVER0` header
         uv_factor: int,
-        big_endian: bool,
     ):
         layout = layouts[array_header.layout_index]
         with flver_reader.temp_offset(vertex_data_offset + array_header.array_offset):
             array_data = flver_reader.read(array_header.array_length)
-            array = layout.unpack_vertex_array(array_data, uv_factor, big_endian)
+            array = layout.unpack_vertex_array(array_data, uv_factor)
 
         return cls(array, layout)
 
@@ -76,7 +75,6 @@ class VertexArray(BaseVertexArray[VertexArrayLayout]):
         writer: BinaryWriter,
         array_offset: int,
         uv_factor: int,
-        big_endian: bool,
     ):
         writer.fill("array_offset", array_offset, obj=self)
-        writer.append(self.layout.pack_vertex_array(self.array, uv_factor, big_endian))
+        writer.append(self.layout.pack_vertex_array(self.array, uv_factor))

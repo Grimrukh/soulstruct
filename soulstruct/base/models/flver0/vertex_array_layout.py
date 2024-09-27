@@ -2,18 +2,26 @@ from __future__ import annotations
 
 __all__ = [
     "VertexArrayLayout",
+    "VertexDataCodec",
+    "VERTEX_DATA_TYPES",
+    "VERTEX_FORMAT_ENUM_SIZES",
+    "VertexDataFormatEnum",
+    "VertexDataType",
+    "VertexPosition",
+    "VertexBoneWeights",
+    "VertexBoneIndices",
+    "VertexNormal",
+    "VertexUV",
+    "VertexTangent",
+    "VertexBitangent",
+    "VertexColor",
 ]
 
 import logging
 from dataclasses import dataclass, field
 
+from soulstruct.base.models.base.vertex_array_layout import *
 from soulstruct.utilities.binary import *
-from soulstruct.base.models.base.vertex_array_layout import (
-    VertexDataType,
-    VERTEX_DATA_TYPES,
-    VERTEX_FORMAT_ENUM_SIZES,
-    BaseVertexArrayLayout,
-)
 
 _LOGGER = logging.getLogger("soulstruct")
 
@@ -63,7 +71,7 @@ class VertexArrayLayout(BaseVertexArrayLayout):
                 f"{layout_struct.struct_size}."
             )
 
-        return cls(data_types)
+        return cls(data_types, byte_order=reader.default_byte_order)
 
     def to_flver_writer(self, writer: BinaryWriter):
         """Data is written here as well."""

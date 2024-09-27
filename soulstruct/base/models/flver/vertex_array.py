@@ -63,7 +63,6 @@ class VertexArray(BaseVertexArray[VertexArrayLayout]):
         layouts: list[VertexArrayLayout],
         vertex_data_offset: int,
         uv_factor: int,
-        big_endian: bool,
     ):
         if array_header.vertex_size != array_header.array_length / array_header.vertex_count:
             _LOGGER.warning(
@@ -86,7 +85,7 @@ class VertexArray(BaseVertexArray[VertexArrayLayout]):
                         f"FLVER vertex array data appears to be a known corrupted case from DS1R (Map Piece "
                         f"{corrupted_key}). You may want to replace its vertex data from the same model in PTDE!"
                     )
-            array = layout.unpack_vertex_array(array_data, uv_factor, big_endian)
+            array = layout.unpack_vertex_array(array_data, uv_factor)
 
         return cls(array, layout)
 
@@ -116,7 +115,6 @@ class VertexArray(BaseVertexArray[VertexArrayLayout]):
         writer: BinaryWriter,
         array_offset: int,
         uv_factor: int,
-        big_endian: bool,
     ):
         writer.fill("array_offset", array_offset, obj=self)
-        writer.append(self.layout.pack_vertex_array(self.array, uv_factor, big_endian))
+        writer.append(self.layout.pack_vertex_array(self.array, uv_factor))

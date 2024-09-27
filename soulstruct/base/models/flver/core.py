@@ -72,7 +72,7 @@ class FLVER(BaseFLVER[Submesh]):
         bounding_box_max: Vector3
         true_face_count: int
         total_face_count: int
-        face_set_vertex_indices_size: byte = field(**Binary(asserted=[0, 8, 16, 32]))
+        face_set_vertex_index_bit_size: byte = field(**Binary(asserted=[0, 8, 16, 32]))
         unicode: bool
         unk_x4a: bool
         _pad1: bytes = field(init=False, **BinaryPad(1))
@@ -106,7 +106,10 @@ class FLVER(BaseFLVER[Submesh]):
         byte_order = ByteOrder.from_reader_peek(reader, 2, 6, b"B\0", b"L\0")
         reader.default_byte_order = byte_order  # applies to all FLVER structs (manually passed to `VertexArray`)
         header = cls.STRUCT.from_bytes(reader)
-        big_endian = header.endian == b"B\0"
+
+        if header.version < 0x20000:
+            raise ValueError(f"`FLVER` version {header.version} is not supported. Must be >= 0x20000.")
+
         encoding = "utf-16-le" if header.unicode else "shift_jis_2004"
         uv_factor = 2048 if header.version >= FLVERVersion.DarkSouls2_NT else 1024
 
@@ -143,7 +146,7 @@ class FLVER(BaseFLVER[Submesh]):
         face_sets = {
             i: FaceSet.from_flver_reader(
                 reader,
-                header_vertex_index_size=header.face_set_vertex_indices_size,
+                header_vertex_index_bit_size=header.face_set_vertex_index_bit_size,
                 vertex_data_offset=header.vertex_data_offset,
             )
             for i in range(header.face_set_count)
@@ -168,7 +171,7 @@ class FLVER(BaseFLVER[Submesh]):
         for i, array_header in enumerate(array_headers):
             try:
                 vertex_array = VertexArray.from_flver_reader(
-                    reader, array_header, layouts, header.vertex_data_offset, uv_factor, big_endian
+                    reader, array_header, layouts, header.vertex_data_offset, uv_factor
                 )
             except VertexDataSizeError:
                 vertex_array = VertexArray(array=np.empty(0), layout=layouts[array_header.layout_index])
@@ -220,26 +223,26 @@ class FLVER(BaseFLVER[Submesh]):
         true_face_count = 0
         total_face_count = 0
         for submesh in self.submeshes:
-            allow_primitive_restarts = len(submesh.vertices) < 0xFFFF  # max unsigned short value
+            uses_0xffff_separators = len(submesh.vertices) <= 0xFFFF  # max unsigned short value
             for face_set in submesh.face_sets:
-                face_set_true_count, face_set_total_count = face_set.get_face_counts(allow_primitive_restarts)
+                face_set_true_count, face_set_total_count = face_set.get_face_counts(uses_0xffff_separators)
                 true_face_count += face_set_true_count
                 total_face_count += face_set_total_count
 
         if self.version >= FLVERVersion.Bloodborne_DS3_A:
             # FLVERs from Bloodborne onward: vertex index size is stored per `FaceSet`.
-            header_face_set_vertex_indices_size = 0
+            header_face_set_vertex_index_bit_size = 0
         else:
             # All `FaceSet`s use the same vertex index size, specified in the FLVER header. We check if all face sets in
             # this FLVER support 16-bit indices. If not, we use 32-bit indices for ALL of them.
-            header_face_set_vertex_indices_size = 16
+            header_face_set_vertex_index_bit_size = 16
             for submesh in self.submeshes:
                 for face_set in submesh.face_sets:
                     if face_set.needs_32bit_indices():
                         _LOGGER.info(f"FLVER '{self.path}' has a face set that requires global 32-bit vertex indices.")
-                        header_face_set_vertex_indices_size = 32
+                        header_face_set_vertex_index_bit_size = 32
                         break
-                if header_face_set_vertex_indices_size == 32:
+                if header_face_set_vertex_index_bit_size == 32:
                     break
 
         header = self.STRUCT.from_object(
@@ -255,7 +258,7 @@ class FLVER(BaseFLVER[Submesh]):
             vertex_array_count=sum(len(mesh.vertex_arrays) for mesh in self.submeshes),
             true_face_count=true_face_count,
             total_face_count=total_face_count,
-            face_set_vertex_indices_size=header_face_set_vertex_indices_size,  # 0, 16, or 32
+            face_set_vertex_index_bit_size=header_face_set_vertex_index_bit_size,  # 0, 16, or 32
             face_set_count=sum(len(mesh.face_sets) for mesh in self.submeshes),
             array_layout_count=RESERVED,
             texture_count=RESERVED,
@@ -333,17 +336,17 @@ class FLVER(BaseFLVER[Submesh]):
         face_set_index_sizes = []
         for submesh in self.submeshes:
             for face_set in submesh.face_sets:
-                if header_face_set_vertex_indices_size != 0:
+                if header_face_set_vertex_index_bit_size != 0:
                     # Vertex size set globally in FLVER header, depending on largest face set (older FLVERs).
                     # No value is written to each Face Set.
-                    face_set_vertex_index_size = header_face_set_vertex_indices_size
+                    face_set_vertex_index_bit_size = header_face_set_vertex_index_bit_size
                     write_index_size = False
                 else:
                     # Vertex size set per `FaceSet`. These sizes are stored for packing below.
-                    face_set_vertex_index_size = 32 if face_set.needs_32bit_indices() else 16
+                    face_set_vertex_index_bit_size = 32 if face_set.needs_32bit_indices() else 16
                     write_index_size = True
-                face_set_index_sizes.append(face_set_vertex_index_size)  # to save time below
-                face_set.to_flver_writer(writer, face_set_vertex_index_size, write_index_size)
+                face_set_index_sizes.append(face_set_vertex_index_bit_size)  # to save time below
+                face_set.to_flver_writer(writer, face_set_vertex_index_bit_size, write_index_size)
 
         # Pack submesh vertex array headers.
         for submesh, layout_indices in zip(self.submeshes, submesh_layout_indices):
@@ -436,7 +439,7 @@ class FLVER(BaseFLVER[Submesh]):
                 writer.pad_align(16)
                 face_set.pack_vertex_indices(
                     writer,
-                    vertex_index_size=face_set_index_sizes[face_set_index],
+                    vertex_index_bit_size=face_set_index_sizes[face_set_index],
                     vertex_indices_offset=writer.position - vertex_data_start,
                 )
                 face_set_index += 1
@@ -447,7 +450,6 @@ class FLVER(BaseFLVER[Submesh]):
                     writer,
                     array_offset=writer.position - vertex_data_start,
                     uv_factor=uv_factor,
-                    big_endian=self.big_endian,
                 )
 
         writer.pad_align(16)

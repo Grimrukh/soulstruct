@@ -11,7 +11,8 @@ from dataclasses import dataclass
 from enum import IntEnum
 
 from soulstruct.base.models.shaders import MatDef as _BaseMatDef
-from soulstruct.base.models.flver.vertex_array_layout import *
+from soulstruct.base.models.flver0.vertex_array_layout import *
+from soulstruct.utilities.binary import ByteOrder
 
 _LOGGER = logging.getLogger("soulstruct")
 
@@ -21,7 +22,7 @@ class MatDef(_BaseMatDef):
     """TODO: So far mostly identical to Dark Souls 1, but I'm sure there are a few differences to find."""
 
     class UVLayer(IntEnum):
-        """Up to four of these are used by each shader in DS1, in the order they appear here."""
+        """Up to four of these are used by each shader in DeS, in the order they appear here."""
         UVTexture0 = 0
         UVTexture1 = 1
         UVLightmap = 2
@@ -47,7 +48,7 @@ class MatDef(_BaseMatDef):
     NAME_TAG_RE: tp.ClassVar[str, re.Pattern] = {
         "Albedo": re.compile(r".*\[.*D.*\].*"),
         "Specular": re.compile(r".*\[.*S.*\].*"),
-        # No "Shininess" samplers in DS1.
+        # No "Shininess" samplers in DeS.
         "Normal": re.compile(r".*\[.*B.*\].*"),
         "Translucent": re.compile(r".*\[.*T.*\].*"),
         "Multi": re.compile(r".*\[.*M.*\].*"),  # two blended texture slots (ALBEDO, SPECULAR, and/or NORMAL)
@@ -139,18 +140,18 @@ class MatDef(_BaseMatDef):
 
         if matdef.get_sampler_with_alias("Main 0 Normal"):
             # Add useless "Detail 0 Normal" sampler for completion.
-            # TODO: Some DS1 shaders, even with 'g_Bumpmap', do not have this. I have no way to detect from the name.
+            # TODO: Some DeS shaders, even with 'g_Bumpmap', do not have this. I have no way to detect from the name.
             #  Currently assuming that it doesn't matter at all if FLVERs have an (empty) texture definition for it.
             matdef.add_sampler(alias="Detail 0 Normal", uv_layer=cls.UVLayer.UVTexture0)
 
         return matdef
 
     def get_map_piece_layout(self) -> VertexArrayLayout:
-        """Get a standard DS1 map piece layout with the given number of UV layers."""
+        """Get a standard DeS map piece layout with the given number of UV layers."""
 
         data_types = [  # always present
             VertexPosition(VertexDataFormatEnum.Float3, 0),
-            VertexBoneIndices(VertexDataFormatEnum.FourBytesB, 0),
+            VertexBoneIndices(VertexDataFormatEnum.FourBytesD, 0),
             VertexNormal(VertexDataFormatEnum.FourBytesC, 0),
             # Tangent/Bitangent will be inserted here if needed.
             VertexColor(VertexDataFormatEnum.FourBytesC, 0),
@@ -190,13 +191,13 @@ class MatDef(_BaseMatDef):
         for data_type in data_types:
             data_type.unk_x00 = self.type_unk_x00
 
-        return VertexArrayLayout(data_types)
+        return VertexArrayLayout(data_types, byte_order=ByteOrder.BigEndian)
 
     def get_character_layout(self) -> VertexArrayLayout:
-        """Get a standard vertex array layout for character (and probably object) materials in DS1."""
+        """Get a standard vertex array layout for character (and probably object) materials in DeS."""
         data_types = [
             VertexPosition(VertexDataFormatEnum.Float3, 0),
-            VertexBoneIndices(VertexDataFormatEnum.FourBytesB, 0),
+            VertexBoneIndices(VertexDataFormatEnum.FourBytesD, 0),
             VertexBoneWeights(VertexDataFormatEnum.FourShortsToFloats, 0),
             VertexNormal(VertexDataFormatEnum.FourBytesC, 0),
             VertexTangent(VertexDataFormatEnum.FourBytesC, 0),
@@ -210,9 +211,9 @@ class MatDef(_BaseMatDef):
         elif uv_count == 1:  # one UV
             data_types.append(VertexUV(VertexDataFormatEnum.UV, 0))
         else:
-            raise ValueError(f"Invalid UV count for DS1 character layout: {uv_count}. Must be 1 or 2.")
+            raise ValueError(f"Invalid UV count for DeS character layout: {uv_count}. Must be 1 or 2.")
 
         for data_type in data_types:
-            data_type.unk_x00 = 0  # DS1
+            data_type.unk_x00 = 0  # DeS
 
-        return VertexArrayLayout(data_types)
+        return VertexArrayLayout(data_types, byte_order=ByteOrder.BigEndian)

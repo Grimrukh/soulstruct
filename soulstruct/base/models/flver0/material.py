@@ -49,7 +49,9 @@ class Material(BaseMaterial[Texture]):
     name: str = ""
     mat_def_path: str = ""  # '.mtd' (MTD) file name (MATBIN too new)
     textures: list[Texture] = field(default_factory=list)
-    layouts: list[VertexArrayLayout] = field(default_factory=list)
+
+    # Stored by `FLVER0` just after reading (before reassining to array users).
+    _layouts: list[VertexArrayLayout] | None = None
 
     @classmethod
     def from_flver_reader(
@@ -101,14 +103,14 @@ class Material(BaseMaterial[Texture]):
             name=name,
             mat_def_path=mat_def_path,
             textures=textures,
-            layouts=layouts,
+            _layouts=layouts,
         )
         return material
 
     def to_flver_writer(self, writer: BinaryWriter):
         self.STRUCT.object_to_writer(self, writer)  # everything reserved!
 
-    def pack_data(self, flver_writer: BinaryWriter, encoding: str):
+    def pack_data(self, flver_writer: BinaryWriter, layouts: list[VertexArrayLayout], encoding: str):
         start = flver_writer.position
         flver_writer.fill_with_position("_name_offset", obj=self)
         flver_writer.pack_z_string(self.name, encoding=encoding)
@@ -127,14 +129,14 @@ class Material(BaseMaterial[Texture]):
 
         # We always write the layout header, even if it was absent on import.
         flver_writer.fill_with_position("_layout_header_offset", obj=self)
-        flver_writer.pack("i", len(self.layouts))
+        flver_writer.pack("i", len(layouts))
         flver_writer.pack("i", flver_writer.position + 0xC)
         flver_writer.pad(8)
-        for layout in self.layouts:
+        for layout in layouts:
             flver_writer.reserve("layout_offset", "i", obj=layout)
 
         flver_writer.fill_with_position("_layouts_offset", obj=self)
-        for layout in self.layouts:
+        for layout in layouts:
             flver_writer.fill_with_position("layout_offset", obj=layout)
             layout.to_flver_writer(flver_writer)  # data written here as well
 
@@ -242,15 +244,11 @@ class Material(BaseMaterial[Texture]):
         textures = ",\n".join(["    " + indent_lines(repr(texture)) for texture in self.textures])
         if textures:
             textures = "\n" + textures + ",\n  "
-        layouts = ",\n".join(["    " + indent_lines(repr(layout)) for layout in self.layouts])
-        if layouts:
-            layouts = "\n" + layouts + ",\n  "
         lines = [
             f"Material(",
             f"  name = {repr(self.name)},",
             f"  mat_def_path = {repr(self.mat_def_path)},",
             f"  textures = [{textures}],",
-            f"  layouts = [{layouts}],",
             f")",
         ]
         return "\n".join(lines)
@@ -262,8 +260,7 @@ class Material(BaseMaterial[Texture]):
         use material names as a way to keep them separate.
         """
         texture_hashes = tuple(hash(tex) for tex in self.textures)
-        layout_hashes = tuple(hash(layout) for layout in self.layouts)
-        return hash((self.name, self.mat_def_path, texture_hashes, layout_hashes))
+        return hash((self.name, self.mat_def_path, texture_hashes))
 
     def __eq__(self, other: Material):
         """Check for equality by hash."""

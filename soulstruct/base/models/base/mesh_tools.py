@@ -31,6 +31,7 @@ _LOGGER = logging.getLogger("soulstruct")
 class SplitSubmeshDef(tp.NamedTuple):
     material: BaseMaterial
     layout: BaseVertexArrayLayout
+    is_rigged: bool  # required for correct bone index handling; will be `== kwargs["is_bind_pose"]` for `FLVER`
     kwargs: dict[str, tp.Any]
     uv_layer_names: list[str] | None = None
 
@@ -59,19 +60,23 @@ class SplitSubmeshDef(tp.NamedTuple):
         Makes it easy to test merging and splitting `MergedMesh` from the same FLVER.
         """
         split_submesh_defs = []
+        flver_is_rigged = flver.guess_rigged()
         for submesh in flver.submeshes:
             kwargs = {
                 "default_bone_index": submesh.default_bone_index,
                 "use_backface_culling": submesh.use_backface_culling,  # from FaceSet 0 in `FLVER`
             }
             # NOTE: Being lazy about `Submesh` versioning. These extra keys are for modern `FLVER`.
-            if hasattr(submesh, "is_bind_pose"):
-                kwargs["is_bind_pose"] = submesh.is_bind_pose
             if hasattr(submesh, "uses_bounding_box"):
                 kwargs["uses_bounding_box"] = submesh.uses_bounding_box
 
             split_submesh_defs.append(
-                cls(material=submesh.material, layout=submesh.vertex_arrays[0].layout, kwargs=kwargs)
+                cls(
+                    material=submesh.material,
+                    is_rigged=getattr(submesh, "is_bind_pose", flver_is_rigged),  # default to FLVER-wide guess
+                    layout=submesh.vertex_arrays[0].layout,
+                    kwargs=kwargs,
+                )
             )
         return split_submesh_defs
 
@@ -683,7 +688,8 @@ class BaseMergedMesh:
 
         If a submesh material index has no faces, it will be ignored.
 
-        `is_bind_pose` must appear in each submesh kwargs dictionary, as it is used to determine bone index style.
+        `is_rigged` must appear in each submesh kwargs dictionary, as it is used to determine bone index style. For
+        modern `FLVER` format, it will also be used to set
         TODO: Still not 100% sure if there are any FLVERs that use 'bind pose' for some submeshes but not others. From
          memory, I found a few cut content objects or something, but only checked the bool and not the indices.
 
@@ -708,6 +714,7 @@ class BaseMergedMesh:
         # Split each `SplitSubmeshDef` into its component information for efficiency.
         submesh_materials = [submesh_def.material for submesh_def in split_submesh_defs]
         submesh_layouts = [submesh_def.layout for submesh_def in split_submesh_defs]
+        submesh_is_rigged = [submesh_def.is_rigged for submesh_def in split_submesh_defs]
         submesh_kwargs = [submesh_def.kwargs for submesh_def in split_submesh_defs]
         submesh_uv_layer_names = [
             submesh_def.get_validated_uv_layer_names(self.loop_uvs, i)
@@ -793,7 +800,7 @@ class BaseMergedMesh:
                 split_submesh_info += self.subsplit_faces(
                     material_index,
                     submesh_loops,
-                    is_bind_pose=submesh_kwargs[material_index]["is_bind_pose"],
+                    is_rigged=submesh_is_rigged[material_index],
                     max_bones_per_submesh=max_bones_per_submesh,
                     unused_bone_indices_are_minus_one=unused_bone_indices_are_minus_one,
                 )
@@ -846,7 +853,7 @@ class BaseMergedMesh:
                 material=material,
                 vertex_arrays=[vertex_array],
                 bone_indices=submesh_bone_indices,
-                **kwargs,  # typically just 'is_bind_pose', 'default_bone_index', and maybe 'uses_bounding_box'
+                **kwargs,  # typically just 'default_bone_index' and maybe 'uses_bounding_box' and 'is_bind_pose'
             )
             if hasattr(submesh, "refresh_bounding_box"):
                 submesh.refresh_bounding_box()
@@ -857,7 +864,7 @@ class BaseMergedMesh:
                 for i in range(1, face_set_count):
                     face_set = FaceSet(
                         flags=i,  # 1 or 2
-                        triangle_strip=base_face_set.triangle_strip,  # False
+                        is_triangle_strip=base_face_set.is_triangle_strip,  # False
                         use_backface_culling=base_face_set.use_backface_culling,
                         unk_x06=base_face_set.unk_x06,
                         vertex_indices=base_face_set.vertex_indices,  # don't bother copying array
@@ -959,7 +966,7 @@ class BaseMergedMesh:
         cls,
         material_index: int,
         submesh_loops: np.ndarray,
-        is_bind_pose: bool,
+        is_rigged: bool,
         max_bones_per_submesh: int,
         unused_bone_indices_are_minus_one: bool,
     ) -> list[tuple[int, np.ndarray, np.ndarray]]:
@@ -971,7 +978,7 @@ class BaseMergedMesh:
 
         bone_indices = submesh_loops["bone_indices"]  # copied below if modified
 
-        if is_bind_pose:
+        if is_rigged:
             # Up to four unique bones per vertex, so we need to more carefully collect as we go.
             if not unused_bone_indices_are_minus_one:
                 # Set all unused bone indices to -1, to distinguish them from true use of bone 0. Ideally, the
@@ -985,7 +992,7 @@ class BaseMergedMesh:
         all_face_bone_indices = bone_indices.reshape((-1, 12))
 
         # Rather than filtering out values of -1, we make sure it's always in the set, and offset the check.
-        # Slightly suboptimal for `is_bind_pose = False`, as every face should only have up to 3 bones, but
+        # Slightly suboptimal for `is_rigged = False`, as every face should only have up to 3 bones, but
         # worth the complexity trade-off.
         max_bones = max_bones_per_submesh + 1
         unique_indices = {-1}

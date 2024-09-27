@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 __all__ = [
+    "VertexArrayLayout",
     "VertexDataCodec",
     "VERTEX_DATA_TYPES",
     "VERTEX_FORMAT_ENUM_SIZES",
@@ -14,7 +15,6 @@ __all__ = [
     "VertexTangent",
     "VertexBitangent",
     "VertexColor",
-    "VertexArrayLayout",
 ]
 
 import logging
@@ -60,7 +60,7 @@ class VertexArrayLayout(BaseVertexArrayLayout):
                 data_types.append(data_type)
                 tight_data_offset += VERTEX_FORMAT_ENUM_SIZES[data_type.format_enum]
 
-        return cls(data_types)
+        return cls(data_types, byte_order=reader.default_byte_order)
 
     def to_flver_writer(self, writer: BinaryWriter):
         layout_struct = self.STRUCT(layout_types_count=len(self), layout_types_offset=RESERVED)

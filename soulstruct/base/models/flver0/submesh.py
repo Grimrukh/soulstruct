@@ -11,6 +11,7 @@ import numpy as np
 
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.text import indent_lines
+from soulstruct.base.models.base.version import FLVERVersion
 from soulstruct.base.models.base.submesh import FaceSet, BaseSubmesh
 from .material import Material
 from .vertex_array_layout import VertexArrayLayout
@@ -33,14 +34,14 @@ class Submesh(BaseSubmesh[Material, VertexArrayLayout, VertexArray]):
         material_index: byte
         # start of "FaceSet properties"
         use_backface_culling: bool
-        triangle_strip: bool
+        is_triangle_strip: bool  # NOTE: always `False` in verison 0x14 (old Demon's Souls) but strips ARE used
         vertex_index_count: int
         # end of "FaceSet properties"
         vertex_count: int
         default_bone_index: short
         bone_indices: list[short] = field(**BinaryArray(28))
         unk_x46: short
-        _vertex_indices_length: int  # computable from size and `vertex_index_count` above
+        vertex_indices_size: int  # size of vertex indices in bytes (computable if `vertex_index_count` given)
         vertex_indices_offset: int  # relative to FLVER0 vertex data offset
         vertex_array_data_size: int  # only used if header offset 1 is zero
         vertex_array_data_offset: int  # only used if header offset 1 is zero
@@ -48,6 +49,7 @@ class Submesh(BaseSubmesh[Material, VertexArrayLayout, VertexArray]):
         vertex_array_headers_offset_2: int
         _pad0: bytes = field(init=False, **BinaryPad(4))
 
+    bone_indices: np.ndarray  # override (cannot be `None`)
     material: Material  # override
     vertex_arrays: list[VertexArray]  # override
 
@@ -59,18 +61,20 @@ class Submesh(BaseSubmesh[Material, VertexArrayLayout, VertexArray]):
     def from_flver_reader(
         cls,
         reader: BinaryReader,
-        vertex_index_size: int,
+        vertex_index_bit_size: int,
         vertex_data_offset: int,
         materials: list[Material],
-        big_endian: bool,
+        version: FLVERVersion,
     ) -> tp.Self:
         submesh_struct = cls.STRUCT.from_bytes(reader)
 
         material = materials[submesh_struct.material_index]
 
-        if vertex_index_size not in {16, 32}:
-            raise ValueError(f"Unsupported vertex index size for `FLVER0` submesh: {vertex_index_size}")
-        vertex_index_fmt = f"{submesh_struct.vertex_index_count}{'H' if vertex_index_size == 16 else 'i'}"
+        if vertex_index_bit_size not in {16, 32}:
+            # In practice, always 16 right now.
+            raise ValueError(f"Unsupported vertex index size for `FLVER0` submesh: {vertex_index_bit_size}")
+
+        vertex_index_fmt = f"{submesh_struct.vertex_index_count}{'H' if vertex_index_bit_size == 16 else 'i'}"
         vertex_indices_offset = vertex_data_offset + submesh_struct.vertex_indices_offset
         vertex_indices = list(reader.unpack(vertex_index_fmt, offset=vertex_indices_offset))
 
@@ -103,15 +107,31 @@ class Submesh(BaseSubmesh[Material, VertexArrayLayout, VertexArray]):
         # NOTE: Hacky way to determine UV factor.
         uv_factor = 1024 if reader.default_byte_order == ByteOrder.BigEndian else 2048
         vertex_array = VertexArray.from_flver_reader(
-            reader, array_header, material.layouts, vertex_data_offset, uv_factor, big_endian
+            reader, array_header, material._layouts, vertex_data_offset, uv_factor
         )
+
+        # Convert vertex indices to numpy array. We use `uint32` regardless of vertex index size.
+        vertex_indices_array = np.array(vertex_indices, dtype=np.uint32)
+
+        if version == FLVERVersion.DemonsSouls_B:
+            # `is_triangle_strip` is False in these old FLVERs even though it IS actually a strip.
+            # For this reason, I doubt this version supports non-strips.
+            is_triangle_strip = True
+            if 0xFFFF not in vertex_indices:
+                _LOGGER.warning("Old Demon's Souls FLVER0 submesh does not contain any 0xFFFF strip separators.")
+        else:
+            is_triangle_strip = submesh_struct.is_triangle_strip
+
+        if not is_triangle_strip:
+            # Reshape vertex indices to `(n, 3)` 2D array for non-strip faces.
+            vertex_indices_array = vertex_indices_array.reshape((-1, 3))
 
         face_set = FaceSet(
             flags=0,  # not used in FLVER0
-            triangle_strip=submesh_struct.triangle_strip,
+            is_triangle_strip=is_triangle_strip,
             use_backface_culling=submesh_struct.use_backface_culling,
             unk_x06=0,  # not used in FLVER0
-            vertex_indices=np.array(vertex_indices, dtype=np.uint32),
+            vertex_indices=vertex_indices_array,
         )
 
         return cls(
@@ -124,34 +144,43 @@ class Submesh(BaseSubmesh[Material, VertexArrayLayout, VertexArray]):
             face_sets=[face_set],
         )
 
-    def to_flver_writer(self, writer: BinaryWriter, vertex_index_size: int, material_index: int):
+    def to_flver_writer(self, writer: BinaryWriter, vertex_index_bit_size: int, material_index: int):
         """Materials already collected FLVER-wide and indexed passed in here."""
         if len(self.vertex_arrays) != 1:
             raise ValueError("`FLVER0` Submesh must have exactly one VertexArray.")
         if len(self.face_sets) != 1:
             raise ValueError("`FLVER0` Submesh must have exactly one FaceSet.")
+        if self.bone_indices is None:
+            raise ValueError("`FLVER0` Submesh must have exactly 28 bone indices, even if just [0, -1, -1, ...].")
+        if len(self.bone_indices) > 28:
+            raise ValueError(f"`FLVER0` Submesh can only have 28 bone indices. Too many: {self.bone_indices}")
         face_set = self.face_sets[0]
         if face_set.flags != 0:
-            _LOGGER.warning(f"FaceSet flags are not used in FLVER0. Non-zero flags {face_set.flags} ignored.")
+            _LOGGER.warning(f"FaceSet `flags` not used in FLVER0. Non-zero flags {face_set.flags} ignored.")
         if face_set.unk_x06 != 0:
-            _LOGGER.warning(f"FaceSet unk_x06 is not used in FLVER0. Non-zero value {face_set.unk_x06} ignored.")
+            _LOGGER.warning(f"FaceSet `unk_x06` not used in FLVER0. Non-zero value {face_set.unk_x06} ignored.")
 
         vertex_array = self.vertex_arrays[0]
         vertex_count = len(vertex_array.array)
-        vertex_index_count = len(face_set.vertex_indices)
+        vertex_index_count = face_set.vertex_indices.size  # NOT `len()`
         vertex_array_data_size = vertex_array.layout.get_total_data_size() * vertex_count
+
+        bone_indices = self.bone_indices.tolist()
+        if len(bone_indices) < 28:
+            # Pad out with -1.
+            bone_indices += [-1] * (28 - len(bone_indices))
 
         submesh_struct = self.STRUCT(
             dynamic=self.dynamic,
             material_index=material_index,
             use_backface_culling=face_set.use_backface_culling,
-            triangle_strip=face_set.triangle_strip,
+            is_triangle_strip=face_set.is_triangle_strip,
             vertex_index_count=vertex_index_count,
             vertex_count=vertex_count,
             default_bone_index=self.default_bone_index,
-            bone_indices=self.bone_indices,
+            bone_indices=bone_indices,
             unk_x46=self.unk_x46,
-            _vertex_indices_length=(vertex_index_size // 8) * vertex_index_count,
+            vertex_indices_size=(vertex_index_bit_size // 8) * vertex_index_count,
             vertex_indices_offset=RESERVED,
             vertex_array_data_size=vertex_array_data_size,
             vertex_array_data_offset=RESERVED,
@@ -160,14 +189,14 @@ class Submesh(BaseSubmesh[Material, VertexArrayLayout, VertexArray]):
         )
         submesh_struct.to_writer(writer, reserve_obj=self)
 
-    def pack_vertex_indices(self, writer: BinaryWriter, vertex_index_size: int, vertex_indices_offset: int):
-        if len(self.face_sets) != 1:
-            raise ValueError("`FLVER0` Submesh must have exactly one FaceSet.")
+    def pack_vertex_indices(self, writer: BinaryWriter, vertex_index_bit_size: int, vertex_indices_offset: int):
         face_set = self.face_sets[0]
         # Submesh header `vertex_indices_offset` is relative to FLVER0 vertex data offset.
         writer.fill("vertex_indices_offset", vertex_indices_offset, obj=self)
-        vertex_index_fmt = f"{len(face_set.vertex_indices)}{'H' if vertex_index_size == 16 else 'i'}"
-        writer.pack(vertex_index_fmt, *face_set.vertex_indices)
+        flat_vertex_indices = face_set.vertex_indices.flatten()
+        # `vertex_index_bit_size` will always be 16, currently.
+        vertex_index_fmt = f"{len(flat_vertex_indices)}{'H' if vertex_index_bit_size == 16 else 'i'}"
+        writer.pack(vertex_index_fmt, *flat_vertex_indices)
 
     def pack_vertex_array_header(self, writer: BinaryWriter, layout_index: int):
         """We only write a single header. Returns header struct for filling data offset later."""
@@ -192,6 +221,19 @@ class Submesh(BaseSubmesh[Material, VertexArrayLayout, VertexArray]):
             for _ in range(array_count):
                 array_headers.append(VertexArrayHeaderStruct.from_bytes(reader))
         return array_headers
+
+    def triangulate(self, include_degenerate_faces=False) -> np.ndarray:
+        """Shortcut for triangulating first face set. Passes in vertices for a manual normal check set up by TK."""
+        uses_0xffff_separators = len(self.vertices) < 0xFFFF  # should always be true for `FLVER0`
+        return self.face_sets[0].triangulate(
+            uses_0xffff_separators,
+            include_degenerate_faces,
+            vertices=self.vertices,
+        )
+
+    @property
+    def face_set(self) -> FaceSet:
+        return self.face_sets[0]
 
     def draw(
         self,
@@ -232,18 +274,6 @@ class Submesh(BaseSubmesh[Material, VertexArrayLayout, VertexArray]):
         axes.set(**kwargs)
         if auto_show:
             plt.show()
-
-    def triangulate(self, include_degenerate_faces=False):
-        """Shortcut for triangulating first face set.
-
-        `FLVER0` must pass in its vertices so that normal checks can be performed.
-        """
-        allow_primitive_restarts = len(self.vertices) < 0xFFFF
-        return self.face_sets[0].triangulate(
-            allow_primitive_restarts,
-            include_degenerate_faces,
-            vertices_for_flver0_normal_check=self.vertices,
-        )
 
     def __repr__(self):
         material = indent_lines(repr(self.material))

@@ -79,10 +79,10 @@ class BaseSubmesh(tp.Generic[MATERIAL_T, LAYOUT_T, ARRAY_T]):
                         )
                     existing_types.add(name)
 
-    def triangulate(self, include_degenerate_faces=False):
+    def triangulate(self, include_degenerate_faces=False) -> np.ndarray:
         """Shortcut for triangulating first face set."""
-        allow_primitive_restarts = len(self.vertices) < 0xFFFF
-        return self.face_sets[0].triangulate(allow_primitive_restarts, include_degenerate_faces)
+        uses_0xffff_separators = len(self.vertices) < 0xFFFF
+        return self.face_sets[0].triangulate(uses_0xffff_separators, include_degenerate_faces)
 
     def to_obj(self, name="Submesh", vertex_offset=0, vertex_array=0) -> str:
         """Convert mesh vertices, normals, UVs, and faces to an OBJ string.
@@ -109,7 +109,7 @@ class BaseSubmesh(tp.Generic[MATERIAL_T, LAYOUT_T, ARRAY_T]):
             lines.append(f"vt {uv_str}")
         for i, face_set in enumerate(self.face_sets):
             lines.append(f"# Face Set {i}")
-            triangles = face_set.triangulate(allow_primitive_restarts=len(self.vertex_arrays[vertex_array]) > 0xFFFF)
+            triangles = face_set.triangulate(uses_0xffff_separators=len(self.vertex_arrays[vertex_array]) <= 0xFFFF)
             for j in range(0, len(triangles), 3):
                 # TODO: Are these UV/normal assignments correct, given that each vertex has one?
                 face = " ".join("/".join([str(v + vertex_offset + 1)] * 3) for v in triangles[j:j + 3])

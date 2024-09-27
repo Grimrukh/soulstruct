@@ -32,74 +32,79 @@ class FaceSet:
 
         _pad1: bytes = field(init=False, **BinaryPad(3))
         flags: byte
-        triangle_strip: bool
+        is_triangle_strip: bool
         use_backface_culling: bool
         unk_x06: short
         _vertex_indices_count: int
         _vertex_indices_offset: int
         # NOTE: Fields stop here for FLVER versions < 0x20005, which are not supported by Soulstruct.
-        _vertex_indices_length: int  # len(self.vertex_indices) * vertex_index_size // 8
+        _vertex_indices_length: int  # len(self.vertex_indices) * vertex_index_bit_size // 8
         _pad2: bytes = field(init=False, **BinaryPad(4))
-        _vertex_index_size: int = field(**Binary(asserted=[0, 16, 32]))  # 0 means size is set by FLVER header
+        _vertex_index_bit_size: int = field(**Binary(asserted=[0, 16, 32]))  # 0 means size is set by FLVER header
         _pad3: bytes = field(init=False, **BinaryPad(4))
 
     flags: int  # seems to indicate LoD level
-    triangle_strip: bool
+    is_triangle_strip: bool
     use_backface_culling: bool
     unk_x06: int
 
-    # Vertex indices could be in triangle strip format (1D) or simply rows of triangles (2D). Number of dimensions must
-    # match setting of `triangle_strip` upon export.
-    # Note that the `dtype` is always `uint32`, even if FLVER read/written vertex size is 16, for simplicity.
+    # Vertex indices could be in triangle strip format (1D) or simply an `(n, 3)` array of triangles. Number of
+    # dimensions must match setting of `is_triangle_strip` upon export.
+    # Note that the `dtype` is always `uint32`, even if FLVER read/written vertex size is 16, for simplicity. It is
+    # cast to the correct `dtype` before packing.
     vertex_indices: np.ndarray = field(default_factory=lambda: np.empty(0, dtype=np.uint32))
 
     @classmethod
-    def from_flver_reader(cls, reader: BinaryReader, header_vertex_index_size: int, vertex_data_offset: int) -> FaceSet:
+    def from_flver_reader(
+        cls, reader: BinaryReader, header_vertex_index_bit_size: int, vertex_data_offset: int
+    ) -> FaceSet:
         face_set_struct = cls.STRUCT.from_bytes(reader)
 
         # NOTE: We don't use the `_vertex_indices_length` field, since length is computable from size * count, but the
         # game DOES use it and WILL crash if it's not set correctly.
 
-        vertex_index_size = face_set_struct.pop("_vertex_index_size")
-        if vertex_index_size == 0:
+        vertex_index_bit_size = face_set_struct.pop("_vertex_index_bit_size")
+        if vertex_index_bit_size == 0:
             # Use global FLVER size.
-            vertex_index_size = header_vertex_index_size
+            vertex_index_bit_size = header_vertex_index_bit_size
 
-        if vertex_index_size == 8:
+        if vertex_index_bit_size == 8:
             raise NotImplementedError("Soulstruct cannot read edge-compressed FLVER face sets.")
-        elif vertex_index_size not in {16, 32}:
-            raise ValueError(f"Unsupported face set index size: {vertex_index_size}")
+        elif vertex_index_bit_size not in {16, 32}:
+            raise ValueError(f"Unsupported face set index size: {vertex_index_bit_size}")
 
         vertex_indices_count = face_set_struct.pop("_vertex_indices_count")
         vertex_indices_offset = face_set_struct.pop("_vertex_indices_offset")
 
         vertex_indices_data = reader.read(
-            vertex_indices_count * vertex_index_size // 8,
+            vertex_indices_count * vertex_index_bit_size // 8,
             offset=vertex_data_offset + vertex_indices_offset,
         )
 
         # TODO: No byte order?
         vertex_indices = np.frombuffer(
-            vertex_indices_data, dtype=np.uint16 if vertex_index_size == 16 else np.uint32
+            vertex_indices_data, dtype=np.uint16 if vertex_index_bit_size == 16 else np.uint32
         )
 
         # We always store indices as 32-bit.
-        if vertex_index_size == 16:
+        if vertex_index_bit_size == 16:
             vertex_indices = vertex_indices.astype(np.uint32)
 
-        if not face_set_struct.triangle_strip:
+        # NOTE: This method is not called for `FLVER0` (FaceSet is constructed manually as a container only) so
+        # we know we will only have triangles.
+        if not face_set_struct.is_triangle_strip:
             # Reshape indices into 2D array (every row of three indices is a separate triangle).
             vertex_indices = vertex_indices.reshape((-1, 3))
 
         return face_set_struct.to_object(cls, vertex_indices=vertex_indices)
 
-    def to_flver_writer(self, writer: BinaryWriter, vertex_index_size: int, write_index_size: bool):
-        if self.triangle_strip and self.vertex_indices.ndim != 1:
+    def to_flver_writer(self, writer: BinaryWriter, vertex_index_bit_size: int, write_index_size: bool):
+        if self.is_triangle_strip and self.vertex_indices.ndim != 1:
             raise ValueError(
                 f"Cannot write triangle strip FaceSet with {self.vertex_indices.ndim}-dimensional vertex indices. "
                 f"Must be 1D."
             )
-        elif not self.triangle_strip and self.vertex_indices.ndim != 2:
+        elif not self.is_triangle_strip and self.vertex_indices.ndim != 2:
             raise ValueError(
                 f"Cannot write non-strip triangles FaceSet {self.vertex_indices.ndim}-dimensional vertex indices. "
                 f"Must be 2D."
@@ -111,36 +116,37 @@ class FaceSet:
             writer,
             _vertex_indices_count=vertex_indices_count,
             _vertex_indices_offset=None,  # reserved
-            _vertex_indices_length=vertex_indices_count * vertex_index_size // 8,
-            _vertex_index_size=vertex_index_size if write_index_size else 0,
+            _vertex_indices_length=vertex_indices_count * vertex_index_bit_size // 8,
+            _vertex_index_bit_size=vertex_index_bit_size if write_index_size else 0,
         )
 
-    def pack_vertex_indices(self, writer: BinaryWriter, vertex_index_size: int, vertex_indices_offset: int):
+    def pack_vertex_indices(self, writer: BinaryWriter, vertex_index_bit_size: int, vertex_indices_offset: int):
         writer.fill("_vertex_indices_offset", vertex_indices_offset, obj=self)
-        if vertex_index_size == 16:
+        if vertex_index_bit_size == 16:
             vertex_indices = self.vertex_indices.astype(np.uint16)
-        elif vertex_index_size == 32:
+        elif vertex_index_bit_size == 32:
             if self.vertex_indices.dtype != np.uint32:
                 vertex_indices = self.vertex_indices.astype(np.uint32)
             else:
                 vertex_indices = self.vertex_indices
         else:
-            raise NotImplementedError(f"Unsupported vertex index size for `pack()`: {vertex_index_size}")
+            raise NotImplementedError(f"Unsupported vertex index size for `pack()`: {vertex_index_bit_size}")
+        # TODO: byte order issue?
         packed_vertex_indices = vertex_indices.tobytes()
         writer.append(packed_vertex_indices)
 
-    def get_face_counts(self, allow_primitive_restarts: bool) -> tuple[int, int]:
+    def get_face_counts(self, uses_0xffff_separators: bool) -> tuple[int, int]:
         """Returns two counts of faces: 'true' and 'total'.
 
         Both counts are always the same for non-strip vertex indices. For strips, the 'true' count is zero if this
         face set has the `MotionBlur` flag set and otherwise excludes degenerate (point/line) faces.
         """
-        if self.triangle_strip:
+        if self.is_triangle_strip:
             true_face_count = 0
             total_face_count = 0
             for i in range(len(self.vertex_indices) - 2):
                 triplet = self.vertex_indices[i:i + 3]
-                if not allow_primitive_restarts or 0xFFFF not in triplet:
+                if not uses_0xffff_separators or 0xFFFF not in triplet:
                     total_face_count += 1
                     if not self.has_flag(FaceSetFlags.MotionBlur) and len(set(triplet)) == 3:
                         # Vertices are not MotionBlur and not degenerate.
@@ -167,37 +173,37 @@ class FaceSet:
 
     def triangulate(
         self,
-        allow_primitive_restarts: bool,
+        uses_0xffff_separators: bool,
         include_degenerate_faces=False,
-        vertices_for_flver0_normal_check: np.ndarray | None = None,
+        vertices: np.ndarray | None = None,
     ) -> np.ndarray:
         """Convert triangle strip to 2D triangle array (i.e. every row/triangle is a separate vertex index triplet).
 
-        Simply copies `self.vertex_indices` if `self.triangle_strip=False` already. Otherwise, processes the triangle
-        strip. In this case, if `allow_primitive_restarts=True`, a vertex index of 0xFFFF will reset `flip` to False.
+        Simply copies `self.vertex_indices` if `self.is_triangle_strip=False` already. Otherwise, processes the triangle
+        strip. In this case, if `uses_0xffff_separators=True`, a vertex index of 0xFFFF will reset `flip` to False.
         Only use this if the number of vertices in the mesh is less than 0xFFFF (otherwise the primitive command is
         ambiguous). TODO: Surely can automate that detection.
 
         When unwinding a triangle strip, also excludes degenerate faces (where two or more vertex indices are identical)
         by default. Otherwise, they may be included.
         """
-        if not self.triangle_strip:
+        if not self.is_triangle_strip:
             if self.vertex_indices.ndim != 2:
-                raise ValueError("Non-triangle-strip vertex indices must be 2D.")
+                raise ValueError("Non-triangle-strip `FaceSet.vertex_indices` must be a 2D array.")
             return self.vertex_indices.copy()
 
         if self.vertex_indices.ndim != 1:
-            raise ValueError("Triangle-strip vertex indices must be 1D.")
+            raise ValueError("Triangle-strip `FaceSet.vertex_indices` must be a 1D array.")
 
-        if vertices_for_flver0_normal_check is not None:
+        if vertices is not None:
             # Sub-call with modified (slower) method including TK's manual normal inspection.
-            return self._triangulate_flver0(vertices_for_flver0_normal_check)
+            return self._triangulate_flver0(vertices)
 
         triangle_list = []  # can't predict array length due to primitive restarts
         flip = False
         for i in range(len(self.vertex_indices) - 2):
             triplet = self.vertex_indices[i:i + 3]
-            if allow_primitive_restarts and 0xFFFF in triplet:
+            if uses_0xffff_separators and 0xFFFF in triplet:
                 flip = False  # restart the strip and ignore this triplet
                 continue
             if include_degenerate_faces or len(set(triplet)) == 3:
@@ -236,7 +242,7 @@ class FaceSet:
 
     def get_connected_vertex_indices(self, vertex_index: int) -> set[int]:
         """Find all vertices connected to the given `vertex_index`, including `vertex_index` itself."""
-        triangles = self.triangulate(allow_primitive_restarts=False, include_degenerate_faces=False)
+        triangles = self.triangulate(uses_0xffff_separators=False, include_degenerate_faces=False)
         connected_vertices = {vertex_index}
 
         # Iterate over `triangles`, 3 at a time, and add any triangle that shares a vertex with `connected`.
@@ -276,13 +282,13 @@ class FaceSet:
         return cls(
             flags=0,
             unk_x06=0,
-            triangle_strip=False,
+            is_triangle_strip=False,
             use_backface_culling=use_backface_culling,
             vertex_indices=vertex_indices,
         )
 
     def __repr__(self):
-        if self.triangle_strip:
+        if self.is_triangle_strip:
             vertex_indices_str = f"<{self.vertex_indices.size}-index strip>"
         else:
             vertex_indices_str = f"<{self.vertex_indices.shape[0]} triangles>"
@@ -291,7 +297,7 @@ class FaceSet:
         return (
             f"FaceSet(\n"
             f"  flags = 0b{self.flags:032b}  # {self.flags}\n"
-            f"  triangle_strip = {self.triangle_strip}\n"
+            f"  triangle_strip = {self.is_triangle_strip}\n"
             f"  use_backface_culling = {self.use_backface_culling}\n"
             f"  unk_x06 = {self.unk_x06}\n"
             f"  vertex_indices = {vertex_indices_str}\n"

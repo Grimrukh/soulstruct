@@ -43,7 +43,7 @@ class FLVER0(BaseFLVER[Submesh]):
         bounding_box_max: Vector3
         true_face_count: int  # not including motion blur meshes or degenerate faces
         total_face_count: int
-        vertex_indices_size: byte = field(**Binary(asserted=[16, 32]))  # no 'local' zero option in FLVER0
+        vertex_index_bit_size: byte = field(**Binary(asserted=[16, 32]))  # no 'local' zero option in FLVER0
         unicode: bool
         unk_x4a: byte  # bool in `FLVER`
         unk_x4b: byte  # pad in `FLVER`
@@ -63,10 +63,30 @@ class FLVER0(BaseFLVER[Submesh]):
 
     @classmethod
     def from_reader(cls, reader: BinaryReader) -> tp.Self:
-        """Much simpler than `FLVER` with all the missing elements."""
+        """Much simpler than `FLVER` with all the missing elements.
+
+        However, note that layouts are packed inside materials. Each submeshes indexes a materia, each vertex array
+        (in practice, only ever one) in that submeshes indexes a layout in that submesh's material. In theory, this
+        means that multiple submeshes could use the same material, but index different layouts within that material --
+        but as far as I know, this never happens, because each material's shader fully determines the layout of any
+        submesh vertex array that uses that material.
+
+        In any case, the canonical place where layouts are stored is still attached to each vertex array, just like in
+        the newer `FLVER` class. When packing a `FLVER0`, we first hash materials WITHOUT any layouts to minimize the
+        number of materials, then each submesh (array) user of that material indexes a layout within that material,
+        which we also hash to keep unique.
+        """
         byte_order = ByteOrder.from_reader_peek(reader, 2, 6, b"B\0", b"L\0")
         reader.default_byte_order = byte_order  # applies to all FLVER structs (manually passed to `VertexArray`)
         header = cls.STRUCT.from_bytes(reader)
+
+        if header.version == FLVERVersion.DemonsSouls_C:
+            # TODO: Support. Currently can't unpack vertex buffer. See o9993.
+            raise NotImplementedError("This `FLVER0` version (ancient Demon's Souls format) not currently supported.")
+
+        if header.version < 0 or header.version >= 0x20000:
+            raise ValueError(f"`FLVER0` version {header.version} is not supported. Must be < 0x20000.")
+
         big_endian = header.endian == b"B\0"
         encoding = reader.default_byte_order.get_utf_16_encoding() if header.unicode else "shift_jis_2004"
 
@@ -83,14 +103,17 @@ class FLVER0(BaseFLVER[Submesh]):
         submeshes = [
             Submesh.from_flver_reader(
                 reader=reader,
-                vertex_index_size=header.vertex_indices_size,
+                vertex_index_bit_size=header.vertex_index_bit_size,
                 vertex_data_offset=header.vertex_data_offset,
                 materials=materials,
-                big_endian=big_endian,
+                version=header.version,
             ) for _ in range(header.mesh_count)
         ]
         for i, submesh in enumerate(submeshes):
             submesh.index = i
+        for material in materials:
+            # Layouts consumed and assigned to submesh vertex arrays.
+            material._layouts = None
 
         return cls(
             big_endian=big_endian,
@@ -108,27 +131,31 @@ class FLVER0(BaseFLVER[Submesh]):
         )
 
     def to_writer(self) -> BinaryWriter:
+        """NOTE: I am currently only supporting 16-bit vertex indices for `FLVER0`, as I highly doubt 32-bit indices
+        are actually supported."""
 
         byte_order = ByteOrder.BigEndian if self.big_endian else ByteOrder.LittleEndian
         encoding = byte_order.get_utf_16_encoding() if self.unicode else "shift_jis_2004"
 
         true_face_count = 0
         total_face_count = 0
+        vertex_index_bit_size = 16
         for submesh in self.submeshes:
             if len(submesh.face_sets) != 1:
                 raise ValueError("Each FLVER0 Submesh must have exactly one FaceSet.")
+            if (vertex_count := len(submesh.vertices)) >= 0xFFFF:
+                raise ValueError(f"`FLVER0` submesh cannot have more than 65534 vertices ({vertex_count}).")
             face_set = submesh.face_sets[0]
-            allow_primitive_restarts = len(submesh.vertices) < 0xFFFF  # max unsigned short value
-            face_set_true_count, face_set_total_count = face_set.get_face_counts(allow_primitive_restarts)
+            if (max_index := face_set.vertex_indices.max()) > 0xFFFF:
+                # 0xFFFF appears as a strip reset or non-strip separator.
+                raise ValueError(
+                    f"`FLVER0` submesh vertex indices cannot be greater than 65535 ({max_index}) and this submesh only "
+                    f"has {vertex_count} vertices anyway."
+                )
+            # Primitive restarts with 0xFFFF always allowed.
+            face_set_true_count, face_set_total_count = face_set.get_face_counts(uses_0xffff_separators=True)
             true_face_count += face_set_true_count
             total_face_count += face_set_total_count
-
-        # We only support 16 or 32-bit vertices in FLVER0. If any Submesh needs 32-bit vertices, all use them.
-        vertex_indices_size = 16
-        for submesh in self.submeshes:
-            if submesh.face_sets[0].needs_32bit_indices():
-                vertex_indices_size = 32
-                break  # no point checking further
 
         header = self.STRUCT.from_object(
             self,
@@ -143,7 +170,7 @@ class FLVER0(BaseFLVER[Submesh]):
             vertex_array_count=len(self.submeshes),  # each submesh has one vertex array
             true_face_count=true_face_count,
             total_face_count=total_face_count,
-            vertex_indices_size=vertex_indices_size,
+            vertex_index_bit_size=vertex_index_bit_size,
         )
 
         writer = header.to_writer(reserve_obj=self)
@@ -153,26 +180,26 @@ class FLVER0(BaseFLVER[Submesh]):
 
         materials_to_pack = []  # type: list[Material]  # unique materials to actually pack to FLVER
         hashed_material_indices = {}  # type: dict[int, int]  # maps material hashes to `materials_to_pack` indices
-        hashed_material_layouts_to_pack = {}  # type: dict[int, list[VertexArrayLayout]]
-        hashed_material_hashed_layout_indices = {}  # type: dict[int, dict[int, int]]
-        submesh_material_indices = []  # type: list[int]
-        submesh_material_layout_indices = []  # type: list[int]
+        material_layouts_to_pack = []  # type: list[list[VertexArrayLayout]]  # matches `materials_to_pack`
+        material_hashed_layout_indices = []  # type: list[dict[int, int]]  # matches `materials_to_pack`
+        submesh_material_indices = []  # type: list[int]  # index into global materials
+        submesh_material_layout_indices = []  # type: list[int]  # index into packed `material._layouts`
 
         for submesh in self.submeshes:
             material = submesh.material
             material_hash = hash(material)  # includes name!
             if material_hash in hashed_material_indices:
                 # Identical material already used by a previous Submesh. Reuse it.
-                submesh_material_index = hashed_material_indices[material_hash]
+                material_index = hashed_material_indices[material_hash]
             else:
                 # New material.
-                submesh_material_index = hashed_material_indices[material_hash] = len(materials_to_pack)
+                material_index = hashed_material_indices[material_hash] = len(materials_to_pack)
                 materials_to_pack.append(material)
+                material_layouts_to_pack.append([])
+                material_hashed_layout_indices.append({})
 
-            submesh_material_indices.append(submesh_material_index)
-            layouts_to_pack = hashed_material_layouts_to_pack.setdefault(material_hash, [])
-            hashed_layout_indices = hashed_material_hashed_layout_indices.setdefault(material_hash, {})
-
+            layouts_to_pack = material_layouts_to_pack[material_index]
+            hashed_layout_indices = material_hashed_layout_indices[material_index]
             layout = submesh.vertex_arrays[0].layout
             layout_hash = hash(tuple((data_type.type_int, data_type.format_enum) for data_type in layout))
             if layout_hash in hashed_layout_indices:
@@ -182,26 +209,29 @@ class FLVER0(BaseFLVER[Submesh]):
                 # New layout (for this Material).
                 material_layout_index = hashed_layout_indices[layout_hash] = len(layouts_to_pack)
                 layouts_to_pack.append(layout)
+
+            # Record FLVER0 material index and index of its layout used by this submesh.
+            submesh_material_indices.append(material_index)
             submesh_material_layout_indices.append(material_layout_index)
 
         writer.fill("material_count", len(materials_to_pack), obj=self)
 
-        # Pack materials.
+        # Pack material headers.
         for material in materials_to_pack:
             material.to_flver_writer(writer)
 
-        # Pack bones.
+        # Pack bone headers.
         for bone in self.bones:
             bone.set_bone_indices(self.bones)
             bone.to_flver_writer(writer, self.bones)
 
         # Pack submesh headers.
         for submesh, material_index in zip(self.submeshes, submesh_material_indices):
-            submesh.to_flver_writer(writer, vertex_indices_size, material_index)
+            submesh.to_flver_writer(writer, vertex_index_bit_size, material_index)
 
         # Pack material data.
-        for material in materials_to_pack:
-            material.pack_data(writer, encoding)
+        for material, layouts in zip(materials_to_pack, material_layouts_to_pack):
+            material.pack_data(writer, layouts, encoding)
 
         # Pack bone names.
         for bone in self.bones:
@@ -218,14 +248,13 @@ class FLVER0(BaseFLVER[Submesh]):
 
         for submesh in self.submeshes:
             indices_offset = writer.position - vertex_data_offset
-            submesh.pack_vertex_indices(writer, vertex_indices_size, indices_offset)
+            submesh.pack_vertex_indices(writer, vertex_index_bit_size, indices_offset)
             writer.pad_align(32)
             array_offset = writer.position - vertex_data_offset
             submesh.vertex_arrays[0].pack_array(
                 writer,
                 array_offset=array_offset,
                 uv_factor=1024 if self.big_endian else 2048,
-                big_endian=self.big_endian,
             )
             # Single vertex array offset (relative to FLVER vertex data start) is also written to Submesh header.
             writer.fill("vertex_array_data_offset", array_offset, obj=submesh)

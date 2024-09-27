@@ -443,10 +443,15 @@ class BaseVertexArrayLayout(list[VertexDataType], abc.ABC):
 
     Functions as a standard list, with extra methods for constructing combined `np.dtype` and reading/packing arrays.
     """
+    byte_order: ByteOrder
 
-    def unpack_vertex_array(self, data: bytes, uv_factor: int, big_endian: bool) -> np.ndarray:
+    def __init__(self, *args, byte_order: ByteOrder = ByteOrder.LittleEndian, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.byte_order = byte_order
+
+    def unpack_vertex_array(self, data: bytes, uv_factor: int) -> np.ndarray:
         """Use this layout to read a structured array of vertex data from the given raw FLVER array data."""
-        compressed_dtype, decompressed_dtype = self.get_dtypes(big_endian)
+        compressed_dtype, decompressed_dtype = self.get_dtypes()
         codecs = self.get_codecs(uv_factor=uv_factor)
 
         compressed_array = np.frombuffer(data, dtype=compressed_dtype)
@@ -457,9 +462,9 @@ class BaseVertexArrayLayout(list[VertexDataType], abc.ABC):
             decompressed_array[name] = codec.decompress(compressed_subarray)
         return decompressed_array
 
-    def pack_vertex_array(self, array: np.ndarray, uv_factor: int, big_endian: bool) -> bytes:
+    def pack_vertex_array(self, array: np.ndarray, uv_factor: int) -> bytes:
         """Use this layout to pack a structured array of vertex data into raw FLVER array data."""
-        compressed_dtype, decompressed_dtype = self.get_dtypes(big_endian)
+        compressed_dtype, decompressed_dtype = self.get_dtypes()
         codecs = self.get_codecs(uv_factor=uv_factor)
 
         compressed_array = np.empty(len(array), dtype=compressed_dtype)
@@ -469,7 +474,7 @@ class BaseVertexArrayLayout(list[VertexDataType], abc.ABC):
             compressed_array[name] = compressed_subarray.astype(dtype[0].base)
         return compressed_array.tobytes()
 
-    def get_dtypes(self, big_endian: bool) -> tuple[np.dtype, np.dtype]:
+    def get_dtypes(self) -> tuple[np.dtype, np.dtype]:
         """Get compressed and decompressed NumPy dtypes for this layout."""
         compressed_dtype = []  # type: list[tuple[str, str, int]]
         decompressed_dtype = []  # type: list[tuple[str, str, int]]
@@ -509,7 +514,7 @@ class BaseVertexArrayLayout(list[VertexDataType], abc.ABC):
                 f"    {compressed_dtype}\n"
                 f"Error: {ex}"
             )
-        if big_endian:
+        if self.byte_order == ByteOrder.BigEndian:
             np_compressed_dtype = np_compressed_dtype.newbyteorder(">")
 
         try:
@@ -520,7 +525,7 @@ class BaseVertexArrayLayout(list[VertexDataType], abc.ABC):
                 f"    decompressed: {decompressed_dtype}\n"
                 f"Error: {ex}"
             )
-        if big_endian:
+        if self.byte_order == ByteOrder.BigEndian:
             np_decompressed_dtype = np_decompressed_dtype.newbyteorder(">")
 
         return np_compressed_dtype, np_decompressed_dtype
