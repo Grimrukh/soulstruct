@@ -364,7 +364,8 @@ def compress(raw_data: bytes, dcx_type: DCXType) -> bytes:
     """
     if dcx_type == DCXType.DCX_EDGE:
         return _compress_dcx_edge(raw_data)
-    elif dcx_type == DCXType.DCX_KRAK:
+
+    if dcx_type == DCXType.DCX_KRAK:
         compressed = oodle.compress(raw_data)  # default compressor and compression level are correct
     else:
         compressed = zlib.compress(raw_data, level=7)
@@ -388,6 +389,7 @@ def compress(raw_data: bytes, dcx_type: DCXType) -> bytes:
             version6=version_info.version6,
             version7=version_info.version7,
         ))
+        header += b"DCA\0" + b"\x00\x00\x00\x08"
     return header + compressed
 
 

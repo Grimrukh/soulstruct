@@ -470,7 +470,7 @@ class FLVER(BaseFLVER[Submesh]):
 
     def guess_rigged(self) -> bool:
         """Additional condition: if no submesh has `is_bind_pose == True`, we also infer unrigged."""
-        has_bone_weights = super().guess_rigged()
+        has_bone_weights = super(FLVER, self).guess_rigged()
         if not has_bone_weights:
             return False  # still a better method
         return any(submesh.is_bind_pose for submesh in self.submeshes)
