@@ -12,6 +12,7 @@ CHARACTER_MODELS = {
     1040: "Crocodile",
     1070: "Deer (Male)",
     1080: "Deer (Female)",
+    1200: "Rat (Unused)",
     2000: "Dregling",
     2010: "Boletaria Soldier",
     2011: "Boletaria Soldier (B)",

@@ -113,7 +113,7 @@ class Submesh(BaseSubmesh[Material, VertexArrayLayout, VertexArray]):
         # Convert vertex indices to numpy array. We use `uint32` regardless of vertex index size.
         vertex_indices_array = np.array(vertex_indices, dtype=np.uint32)
 
-        if version == FLVERVersion.DemonsSouls_B:
+        if version < FLVERVersion.DemonsSouls:
             # `is_triangle_strip` is False in these old FLVERs even though it IS actually a strip.
             # For this reason, I doubt this version supports non-strips.
             is_triangle_strip = True

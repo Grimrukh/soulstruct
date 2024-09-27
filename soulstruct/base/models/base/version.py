@@ -7,8 +7,9 @@ class FLVERVersion(IntEnum):
     Null = 0x0
 
     # Old `FLVER0` versions:
-    DemonsSouls_C = 0x0000F  # e.g. o9993
-    DemonsSouls_B = 0x00014  # e.g. c7080, 'm07' map pieces
+    DemonsSouls_0x0F = 0x0000F  # e.g. o9993
+    DemonsSouls_0x10 = 0x00010  # e.g. c1200
+    DemonsSouls_0x14 = 0x00014  # e.g. c7080, 'm07' map pieces
     DemonsSouls = 0x00015
 
     # Modern `FLVER` versions:

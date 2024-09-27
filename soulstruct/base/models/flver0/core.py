@@ -80,9 +80,9 @@ class FLVER0(BaseFLVER[Submesh]):
         reader.default_byte_order = byte_order  # applies to all FLVER structs (manually passed to `VertexArray`)
         header = cls.STRUCT.from_bytes(reader)
 
-        if header.version == FLVERVersion.DemonsSouls_C:
+        if header.version < FLVERVersion.DemonsSouls_0x10:
             # TODO: Support. Currently can't unpack vertex buffer. See o9993.
-            raise NotImplementedError("This `FLVER0` version (ancient Demon's Souls format) not currently supported.")
+            raise NotImplementedError(f"FLVER0 version {repr(header.version)} not currently supported.")
 
         if header.version < 0 or header.version >= 0x20000:
             raise ValueError(f"`FLVER0` version {header.version} is not supported. Must be < 0x20000.")
