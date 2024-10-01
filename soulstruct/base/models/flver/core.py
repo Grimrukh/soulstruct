@@ -469,8 +469,8 @@ class FLVER(BaseFLVER[Submesh]):
         return MergedMesh.from_flver(self, submesh_material_indices, material_uv_layer_names, merge_vertices)
 
     def guess_rigged(self) -> bool:
-        """Additional condition: if no submesh has `is_bind_pose == True`, we also infer unrigged."""
-        has_bone_weights = super(FLVER, self).guess_rigged()
-        if not has_bone_weights:
-            return False  # still a better method
+        """Override condition: if no submesh has `is_bind_pose == True`, we also infer unrigged.
+
+        We can't rely on the presence of 'bone_weights' in later games due to more complicated shaders.
+        """
         return any(submesh.is_bind_pose for submesh in self.submeshes)
