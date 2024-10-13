@@ -495,7 +495,7 @@ __all__ = [
     "BRIDGE_TO_RAUH_RUINS",
     "STONE_COFFIN_FISSURE",
     "METYR_ARENA",
-    "MIDNAS_MANSE",
+    "MIDRAS_MANSE",
     # endregion
 
     # DLC Generic Dungeons

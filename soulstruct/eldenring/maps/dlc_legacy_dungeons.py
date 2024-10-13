@@ -7,7 +7,7 @@ __all__ = [
     "BRIDGE_TO_RAUH_RUINS",
     "STONE_COFFIN_FISSURE",
     "METYR_ARENA",
-    "MIDNAS_MANSE",
+    "MIDRAS_MANSE",
 ]
 
 from soulstruct.base.game_types.map_types import Map
@@ -54,9 +54,9 @@ METYR_ARENA = Map(
     variable_name="METYR_ARENA",
     verbose_name="Metyr, Mother of Fingers Arena",
 )
-MIDNAS_MANSE = Map(
+MIDRAS_MANSE = Map(
     28, 0, 0, 0,
-    name="MidnasManse",
-    variable_name="MIDNAS_MANSE",
-    verbose_name="Midna's Manse",
+    name="MidrasManse",
+    variable_name="MIDRAS_MANSE",
+    verbose_name="Midra's Manse",
 )

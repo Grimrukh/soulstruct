@@ -503,7 +503,7 @@ class EventDirectory(_BaseEventDirectory):
     m21_02_00_00 = map_property(BRIDGE_TO_RAUH_RUINS),  # type: EMEVD
     m22_00_00_00 = map_property(STONE_COFFIN_FISSURE),  # type: EMEVD
     m25_00_00_00 = map_property(METYR_ARENA),  # type: EMEVD
-    m28_00_00_00 = map_property(MIDNAS_MANSE),  # type: EMEVD
+    m28_00_00_00 = map_property(MIDRAS_MANSE),  # type: EMEVD
     m40_00_00_00 = map_property(FOG_RIFT_CATACOMBS),  # type: EMEVD
     m40_01_00_00 = map_property(SCORPION_RIVER_CATACOMBS),  # type: EMEVD
     m40_02_00_00 = map_property(DARKLIGHT_CATACOMBS),  # type: EMEVD
