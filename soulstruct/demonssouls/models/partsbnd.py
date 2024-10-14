@@ -5,6 +5,7 @@ __all__ = ["PARTSBND"]
 
 from dataclasses import dataclass
 
+from soulstruct.base.models.flver0 import FLVER0
 from soulstruct.containers import BinderVersion
 from soulstruct.containers.binder_types import FLVERBinder
 from soulstruct.dcx import DCXType
@@ -12,7 +13,7 @@ from soulstruct.games import DEMONS_SOULS
 
 
 @dataclass(slots=True)
-class PARTSBND(FLVERBinder):
+class PARTSBND(FLVERBinder[FLVER0]):
 
     DEFAULT_ENTRY_ROOT = f"{DEMONS_SOULS.interroot_prefix}\\parts"
 
