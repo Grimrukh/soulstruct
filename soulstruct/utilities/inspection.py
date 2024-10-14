@@ -3,6 +3,7 @@ from __future__ import annotations
 __all__ = [
     "compare_binary_data",
     "compare_binary_files",
+    "compare_lines",
     "print_binary_as_integers",
     "get_hex_repr",
     "write_hex_repr",
@@ -160,6 +161,18 @@ def compare_binary_files(
         header1=file1_path.name,
         header2=file2_path.name,
     )
+
+
+def compare_lines(lines1: list[str], lines2: list[str], pad=False):
+    """Compare two lists of strings, line by line."""
+    pad_str = max(len(line) for line in lines1) if pad else 1
+    for i in range(max(len(lines1), len(lines2))):
+        line1 = lines1[i] if i < len(lines1) else ""
+        line2 = lines2[i] if i < len(lines2) else ""
+        if line1 != line2:
+            print(f"{YELLOW}{str(i):>4}: {line1:<{pad_str}} -> {RED}{line2}{RESET}")
+        else:
+            print(f"{GREEN}{str(i):>4}: {line1}{RESET}")
 
 
 def print_binary_as_integers(file_path: Path):
