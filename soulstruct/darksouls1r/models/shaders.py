@@ -36,9 +36,10 @@ class MatDef(_PTDE_MatDef):
             # QLOC changed `g_Bumpmap_2` to use the first UV index in the shader so that the new `g_Bumpmap_3` could
             # use the second UV index) WITHOUT changing the sampler's UV index in the MTD. We update it here.
             if mtd.has_param("g_SnowMetalMask"):
-                matdef.add_sampler(alias="Main 2 Normal", uv_layer=cls.UVLayer.UVTexture1)
-                if snow_secondary_normal := matdef.get_sampler_with_alias("Main 1 Normal"):
-                    snow_secondary_normal.uv_layer = cls.UVLayer.UVTexture0
+                snow_normal_2 = matdef.get_sampler_with_alias("Main 2 Normal")
+                snow_normal_2.uv_layer = cls.UVLayer.UVTexture1
+                snow_normal_1 = matdef.get_sampler_with_alias("Main 1 Normal")
+                snow_normal_1.uv_layer = cls.UVLayer.UVTexture0
 
         return matdef
 
@@ -48,6 +49,6 @@ class MatDef(_PTDE_MatDef):
         matdef = super(MatDef, cls).from_mtd_name(mtd_name)
         if matdef.shader_category == "Snow" and mtd_stem in cls.SNOW_METAL_MASK_STEMS:
             matdef.add_sampler(alias="Main 2 Normal", uv_layer=cls.UVLayer.UVTexture1)
-            if snow_secondary_normal := matdef.get_sampler_with_alias("Main 1 Normal"):
-                snow_secondary_normal.uv_layer = cls.UVLayer.UVTexture0
+            snow_normal_1 = matdef.get_sampler_with_alias("Main 1 Normal")
+            snow_normal_1.uv_layer = cls.UVLayer.UVTexture0
         return matdef

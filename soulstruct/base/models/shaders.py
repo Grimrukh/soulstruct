@@ -2,6 +2,7 @@ from __future__ import annotations
 
 __all__ = [
     "MatDefError",
+    "MatDefSampler",
     "MatDef",
 ]
 
@@ -31,7 +32,7 @@ class MatDefError(SoulstructError):
 class MatDefSampler:
 
     name: str  # e.g. 'g_Diffuse'; real, game-specific name of sampler
-    alias: str  # e.g. 'ALBEDO_0'; used for Blender node names, etc., to improve porting
+    alias: str  # e.g. 'Main 0 Albedo'; used for Blender node names, etc., to improve porting
     uv_layer: IntEnum | None  # game-specific UV layer enum (could be `None` for non-textured samplers)
     sampler_group: int = 0  # given explicitly in Elden Ring; inferred in earlier games
     uv_scale: Vector2 | None = None  # added from sampler group in later games
@@ -73,7 +74,7 @@ class MatDef(abc.ABC):
     have pre-loaded for all known MATBINs into a bundled JSON with Meow's help.
 
     The other function of this class is to map each known sampler name in each game to a game-agnostic 'alias' like
-    `ALBEDO_0` (which appears as 'g_Diffuse' in DS1, 'g_DiffuseTexture' in BB, etc.). This makes it easier to port
+    `Main 0 Albedo` (which appears as 'g_Diffuse' in DS1, 'g_DiffuseTexture' in BB, etc.). This makes it easier to port
     FLVER materials across games and determines how they are held in my Blender add-on.
     """
 

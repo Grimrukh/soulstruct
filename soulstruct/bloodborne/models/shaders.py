@@ -54,8 +54,8 @@ class MatDef(_BaseMatDef):
         "Normal": re.compile(r".*\[.*N.*\].*"),
         # "translucent": re.compile(r".*\[.*T.*\].*"),
         "Displacement": re.compile(r".*\[.*H.*\].*"),
-        "NormalToAlpha": re.compile(r".*\[Dn\].*"),  # ALBEDO_0 only
-        "Water": re.compile(r".*\[We\].*"),  # NORMAL_0 only
+        "NormalToAlpha": re.compile(r".*\[Dn\].*"),  # 'Main 0 Albedo' only
+        "Water": re.compile(r".*\[We\].*"),  # 'Main 0 Normal' only
 
         "Multi": re.compile(r".*_m(_.*|$)"),  # two blended texture slots (Albedo, Metallic, and/or Normal)
         "Alpha": re.compile(r".*_Alp.*"),
@@ -166,7 +166,7 @@ class MatDef(_BaseMatDef):
     def get_character_layout(self) -> VertexArrayLayout:
         """Get a standard vertex array layout for character (and probably object) materials in BB."""
 
-        if len(self.samplers) == 1 and self.samplers[0].alias == "ALBEDO_0":
+        if len(self.samplers) == 1 and self.samplers[0].alias == "Main 0 Albedo":
             # Diffuse-only, with no normals (e.g. 'C_1040_Phantom', 'C[A]_NoLight').
             layout = VertexArrayLayout([
                 VertexPosition(VertexDataFormatEnum.Float3, 0),
