@@ -133,9 +133,7 @@ class MatDef(_BaseMatDef):
         "Far": re.compile(r".*\[Far_.*\].*"),  # e.g. '[Far_AN]'
         "Multi": re.compile(r".*\[Mb(\d+).*\].*"),  # e.g. '[Mb2]', note count in capture group 1
         "Mask": re.compile(r".*\[(\d+)Mask.*\].*"),
-    }
 
-    NAME_SUFFIX_RE: tp.ClassVar[dict[str, re.Pattern]] = {
         "Alpha": re.compile(r".*_Alpha(_.*|$)", re.IGNORECASE),
         "Edge": re.compile(r".*_Edge(_.*|$)", re.IGNORECASE),
         "Emissive_Glow": re.compile(r".*_Emissive_Glow(_.*|$)", re.IGNORECASE),

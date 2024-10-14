@@ -56,9 +56,7 @@ class MatDef(_BaseMatDef):
         "Lightmap": re.compile(r".*\[.*L.*\].*"),
         "NormalToAlpha": re.compile(r".*\[(Dn|.*N.*)\].*"),  # Main 0 Albedo only
         "Water": re.compile(r".*\[We\].*"),  # Main 0 Normal only
-    }
 
-    NAME_SUFFIX_RE: tp.ClassVar[str, re.Pattern] = {
         "Alpha": re.compile(r".*_Alp.*"),
         "Edge": re.compile(r".*_Edge.*"),
     }

@@ -54,9 +54,7 @@ class MatDef(_BaseMatDef):
         "Lightmap": re.compile(r".*\[.*L.*\].*"),
         "NormalToAlpha": re.compile(r".*\[(Dn|.*N.*)\].*"),  # Main 0 Albedo only
         "Water": re.compile(r".*\[We\].*"),  # Main 0 Normal only
-    }
 
-    NAME_SUFFIX_RE: tp.ClassVar[str, re.Pattern] = {
         "Alpha": re.compile(r".*_Alp.*"),
         "Edge": re.compile(r".*_Edge.*"),
     }
@@ -134,6 +132,7 @@ class MatDef(_BaseMatDef):
 
     @classmethod
     def from_mtd_name(cls, mtd_name: str):
+        print(f"FROM NAME: {mtd_name}")
         matdef = super(MatDef, cls).from_mtd_name(mtd_name)
 
         if matdef.get_sampler_with_alias("Main 0 Normal"):

@@ -47,27 +47,28 @@ class MatDef(_BaseMatDef):
     SAMPLER_GAME_NAMES: tp.ClassVar[dict[str, str]] = {v: k for k, v in SAMPLER_ALIASES.items()}
 
     # Class regex patterns for MTD name parsing.
-    NAME_BOOL_RE: tp.ClassVar[str, re.Pattern] = {
-        "albedo": re.compile(r".*\[.*A.*\].*"),
-        "metallic": re.compile(r".*\[.*R.*\].*"),
-        "shininess": re.compile(r".*\[.*S.*\].*"),
-        "normal": re.compile(r".*\[.*N.*\].*"),
+    NAME_TAG_RE: tp.ClassVar[str, re.Pattern] = {
+        "Albedo": re.compile(r".*\[.*A.*\].*"),
+        "Metallic": re.compile(r".*\[.*R.*\].*"),
+        "Shininess": re.compile(r".*\[.*S.*\].*"),
+        "Normal": re.compile(r".*\[.*N.*\].*"),
         # "translucent": re.compile(r".*\[.*T.*\].*"),
-        "multi": re.compile(r".*_m(_.*|$)"),  # two blended texture slots (ALBEDO, SPECULAR, and/or NORMAL)
-        "displacement": re.compile(r".*\[.*H.*\].*"),
-        "blend": re.compile(r".*_blend(_.*|$)"),  # has Blend 01 texture
-        "env": re.compile(r".*_env(_.*|$)"),
-        "lightmap": re.compile(r".*_l(_.*|$)"),
-        "normal_to_alpha": re.compile(r".*\[Dn\].*"),  # ALBEDO_0 only
-        "wet": re.compile(r".*\[We\].*"),  # NORMAL_0 only
-        "alpha": re.compile(r".*_Alp.*"),
-        "edge": re.compile(r".*_e(_.*|$).*"),
-        "emission": re.compile(r".*_em(_.*|$).*"),
-        "glow": re.compile(r".*_Glow(_.*|$).*"),
-        "sss": re.compile(r".*_SSS(_.*|$).*"),
+        "Displacement": re.compile(r".*\[.*H.*\].*"),
+        "NormalToAlpha": re.compile(r".*\[Dn\].*"),  # ALBEDO_0 only
+        "Water": re.compile(r".*\[We\].*"),  # NORMAL_0 only
+
+        "Multi": re.compile(r".*_m(_.*|$)"),  # two blended texture slots (Albedo, Metallic, and/or Normal)
+        "Alpha": re.compile(r".*_Alp.*"),
+        "Edge": re.compile(r".*_e(_.*|$).*"),
+        "Blend": re.compile(r".*_blend(_.*|$)"),  # has Blend 01 texture
+        "Env": re.compile(r".*_env(_.*|$)"),
+        "Lightmap": re.compile(r".*_l(_.*|$)"),
+        "Emission": re.compile(r".*_em(_.*|$).*"),
+        "Glow": re.compile(r".*_Glow(_.*|$).*"),
+        "SSS": re.compile(r".*_SSS(_.*|$).*"),
         "PDEnhanced": re.compile(r".*_PDEnhanced(_.*|$).*"),
-        "tr": re.compile(r".*_Tr(_.*|$).*"),
-        "phantom": re.compile(r".*_Phantom(_.*|$).*"),
+        "Tr": re.compile(r".*_Tr(_.*|$).*"),
+        "Phantom": re.compile(r".*_Phantom(_.*|$).*"),
     }
 
     EXTRA_SHADER_UV_LAYERS: tp.ClassVar[dict[str, list[UVLayer]]] = {
