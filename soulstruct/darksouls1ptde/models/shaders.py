@@ -132,7 +132,6 @@ class MatDef(_BaseMatDef):
 
     @classmethod
     def from_mtd_name(cls, mtd_name: str):
-        print(f"FROM NAME: {mtd_name}")
         matdef = super(MatDef, cls).from_mtd_name(mtd_name)
 
         if matdef.get_sampler_with_alias("Main 0 Normal"):
