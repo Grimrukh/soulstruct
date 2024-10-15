@@ -240,17 +240,26 @@ def _decompress_dcx_edge(reader: BinaryReader, header: DCXHeaderStruct) -> tuple
 
     chunks_offset = dca_start + subheader.dca_size
     decompressed = bytearray()
-    for _ in range(subheader.chunk_count):
-        reader.unpack_value("i", asserted=0)
-        offset, size, is_compressed_int = reader.unpack("3i")
+    for i in range(subheader.chunk_count):
+        zero, offset, chunk_size, is_compressed_int = reader.unpack("4i")
+        if zero != 0:
+            raise DCXError("DCX_EDGE chunk 'zero' field is not 0.")
         if is_compressed_int not in {0, 1}:
             raise DCXError("DCX_EDGE chunk 'is_compressed' field is not 0 or 1.")
-        chunk = reader.unpack_bytes(length=size, offset=chunks_offset + offset)
+        chunk = reader.unpack_bytes(length=chunk_size, offset=chunks_offset + offset)
         if is_compressed_int:
-            # Decompress using DEFLATE method.
+            # Decompress using DEFLATE method. We use and flush a new Decompressor object for each chunk.
+            # Decompressed chunks may occasionally be smaller than expected (0x10000 or final chunk size), so we pad as
+            # necessary after each one.
             decompressor = zlib.decompressobj(-zlib.MAX_WBITS)
             decompressed_chunk = decompressor.decompress(chunk)
             decompressed_chunk += decompressor.flush()
+            expected_decompressed_size = (
+                0x10000 if i < subheader.chunk_count - 1 else subheader.last_block_decompressed_size
+            )
+            decompressed_size = len(decompressed_chunk)
+            if decompressed_size < expected_decompressed_size:
+                decompressed_chunk += b"\0" * (expected_decompressed_size - decompressed_size)
             decompressed += decompressed_chunk
         else:
             decompressed += chunk

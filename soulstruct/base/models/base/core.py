@@ -296,7 +296,7 @@ class BaseFLVER(GameFile, tp.Generic[SUBMESH_T]):
                 try:
                     bone_weights = vertex_array["bone_weights"]
                 except ValueError:
-                    # No bone weights (map piece 'pose' mode). We only need to look at first bone index (always used).
+                    # No bone weights (e.g. Map Piece or special material). We only need first bone index (always used).
                     for bone_index in refresh_bone_indices:
                         used_bone_vertex_indices[bone_index] = bone_indices[:, 0] == bone_index
                 else:
@@ -312,8 +312,6 @@ class BaseFLVER(GameFile, tp.Generic[SUBMESH_T]):
                         continue  # bone unused by this submesh array
 
                     # Get vertex positions for this bone.
-                    # TODO: "IndexError: boolean index did not match indexed array along dimension 1; dimension is 3
-                    #  but corresponding boolean dimension is 4."
                     bone_vertex_positions = position[vertex_indices]
 
                     if in_local_space:

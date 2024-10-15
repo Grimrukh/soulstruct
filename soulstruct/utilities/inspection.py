@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 __all__ = [
+    "get_dataclass_repr",
     "compare_binary_data",
     "compare_binary_files",
     "compare_lines",
@@ -14,6 +15,7 @@ __all__ = [
 
 import contextlib
 import cProfile
+import dataclasses
 import logging
 import pstats
 import struct
@@ -24,6 +26,10 @@ from functools import wraps
 from pathlib import Path
 
 import colorama
+import numpy as np
+
+from .maths import BaseVector
+from .misc import IDList
 
 _LOGGER = logging.getLogger("soulstruct")
 
@@ -32,6 +38,39 @@ GREEN = colorama.Fore.GREEN
 YELLOW = colorama.Fore.YELLOW
 RED = colorama.Fore.RED
 RESET = colorama.Fore.RESET
+
+
+def get_dataclass_repr(dataclass_instance: tp.Any, _indent=0, _recursed_ids=None) -> str:
+    if not dataclasses.is_dataclass(dataclass_instance):
+        raise ValueError(f"Object {dataclass_instance} is not a dataclass instance.")
+    indent = "    " * _indent
+    if _recursed_ids is None:
+        _recursed_ids = set()
+    _recursed_ids.add(id(dataclass_instance))
+    s = f"{indent}{dataclass_instance.__class__.__name__}(\n"
+    for field in dataclasses.fields(dataclass_instance):
+        value = getattr(dataclass_instance, field.name)
+        if dataclasses.is_dataclass(value) and not isinstance(value, BaseVector):
+            if id(value) in _recursed_ids:
+                s += f"{indent}    {field.name} = <{id(value)}>,\n"
+            else:
+                s += f"{indent}    {field.name} =\n{get_dataclass_repr(value, _indent + 2, _recursed_ids)}\n"
+        elif isinstance(value, (list, tuple, IDList)) and value and dataclasses.is_dataclass(value[0]):
+            p = "[]" if isinstance(value, (IDList, list)) else "()"
+            s += f"{indent}    {field.name} = {p[0]}\n"
+            for item in value:
+                if id(item) in _recursed_ids:
+                    s += f"{indent}        <{id(item)}>,\n"
+                else:
+                    s += f"{get_dataclass_repr(item, _indent + 2, _recursed_ids)},\n"
+            s += f"{indent}    {p[1]},\n"
+        elif isinstance(value, np.ndarray):
+            value_repr = repr(value)[6:].replace("\n", f"\n{indent}{' ' * value.ndim}")
+            s += f"{indent}    {field.name} = array(\n{indent}        {value_repr},\n"
+        else:
+            s += f"{indent}    {field.name} = {repr(value)},\n"
+    s += f"{indent}) <{id(dataclass_instance)}>"
+    return s
 
 
 def get_diff_indices(bytes1: bytes, bytes2: bytes) -> list[int]:
@@ -64,7 +103,7 @@ def compare_binary_data(
     row_size=16,
     context_rows=8,
     with_ascii=True,
-    first_diff_only=False,
+    max_diff_count=-1,
     header1="Data 1",
     header2="Data 2",
 ):
@@ -82,6 +121,7 @@ def compare_binary_data(
 
     print(f"{YELLOW}Offset{RESET} | {YELLOW}{header1:<{pad}}{RESET} | {YELLOW}{header2:<{pad}}{RESET} ")
 
+    diff_count = 0
     while offset < min(len(data1), len(data2)):
         row1 = data1[offset : offset + row_size]
         row2 = data2[offset : offset + row_size]
@@ -123,7 +163,8 @@ def compare_binary_data(
                 offset += row_size
             last_rows.clear()
             last_diff_row_offset = offset
-            if first_diff_only:
+            diff_count += 1
+            if 0 < max_diff_count <= diff_count:
                 return
         else:
             last_rows.append((offset, row1, row2))
@@ -141,7 +182,7 @@ def compare_binary_files(
     row_size=16,
     context_rows=8,
     with_ascii=True,
-    first_diff_only=False,
+    max_diff_count=-1,
 ):
     """Compare two binary files, printing out any differences."""
     file1_path = Path(file1_path)
@@ -157,14 +198,18 @@ def compare_binary_files(
         row_size=row_size,
         context_rows=context_rows,
         with_ascii=with_ascii,
-        first_diff_only=first_diff_only,
+        max_diff_count=max_diff_count,
         header1=file1_path.name,
         header2=file2_path.name,
     )
 
 
-def compare_lines(lines1: list[str], lines2: list[str], pad=False):
+def compare_lines(lines1: str | list[str], lines2: str | list[str], pad=False):
     """Compare two lists of strings, line by line."""
+    if isinstance(lines1, str):
+        lines1 = lines1.split("\n")
+    if isinstance(lines2, str):
+        lines2 = lines2.split("\n")
     pad_str = max(len(line) for line in lines1) if pad else 1
     for i in range(max(len(lines1), len(lines2))):
         line1 = lines1[i] if i < len(lines1) else ""
