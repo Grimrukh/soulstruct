@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from enum import IntEnum
 
 from soulstruct.base.models.shaders import MatDef as _BaseMatDef
-from soulstruct.base.models.flver0.vertex_array_layout import *
+from soulstruct.base.models.flver.vertex_array_layout import *
 from soulstruct.utilities.binary import ByteOrder
 
 _LOGGER = logging.getLogger("soulstruct")
@@ -150,27 +150,21 @@ class MatDef(_BaseMatDef):
         data_types = [  # always present
             VertexPosition(VertexDataFormatEnum.Float3, 0),
             VertexBoneIndices(VertexDataFormatEnum.FourBytesD, 0),
-            VertexNormal(VertexDataFormatEnum.FourBytesC, 0),
+            VertexNormal(VertexDataFormatEnum.FourBytesA, 0),
             # Tangent/Bitangent will be inserted here if needed.
-            VertexColor(VertexDataFormatEnum.FourBytesC, 0),
+            VertexColor(VertexDataFormatEnum.FourBytesA, 0),
             # UV/UVPair will be inserted here if needed.
         ]
 
-        texture_group_count = 0
-        if self.get_sampler_with_alias("Main 0 Albedo"):
-            texture_group_count += 1
-        if self.get_sampler_with_alias("Main 1 Albedo"):
-            texture_group_count += 1
-
         if self.get_sampler_with_alias("Main 0 Normal"):
             # Uses tangent vertex data.
-            data_types.insert(3, VertexTangent(VertexDataFormatEnum.FourBytesC, 0))
+            data_types.insert(3, VertexTangent(VertexDataFormatEnum.FourBytesA, 0))
             if self.get_sampler_with_alias("Main 1 Normal"):
                 # Uses bitangent vertex data for second texture group normal.
-                data_types.insert(4, VertexBitangent(VertexDataFormatEnum.FourBytesC, 0))
-        elif self.get_sampler_with_alias("Main 1 Albedo"):
+                data_types.insert(4, VertexBitangent(VertexDataFormatEnum.FourBytesA, 0))
+        elif self.get_sampler_with_alias("Main 1 Normal"):
             # Uses bitangent only. NOTE: I highly doubt any game shaders do this.
-            data_types.insert(3, VertexBitangent(VertexDataFormatEnum.FourBytesC, 0))
+            data_types.insert(3, VertexBitangent(VertexDataFormatEnum.FourBytesA, 0))
 
         uv_member_index = 0
         uv_count = len(self.get_used_uv_layers())
@@ -197,14 +191,15 @@ class MatDef(_BaseMatDef):
             VertexPosition(VertexDataFormatEnum.Float3, 0),
             VertexBoneIndices(VertexDataFormatEnum.FourBytesD, 0),
             VertexBoneWeights(VertexDataFormatEnum.FourShortsToFloats, 0),
-            VertexNormal(VertexDataFormatEnum.FourBytesC, 0),
-            VertexTangent(VertexDataFormatEnum.FourBytesC, 0),
-            VertexColor(VertexDataFormatEnum.FourBytesC, 0),
+            VertexNormal(VertexDataFormatEnum.FourBytesA, 0),
+            VertexTangent(VertexDataFormatEnum.FourBytesA, 0),
+            VertexColor(VertexDataFormatEnum.FourBytesA, 0),
         ]
 
         uv_count = len(self.get_used_uv_layers())
         if uv_count == 2:  # has Bitangent and UVPair
-            data_types.insert(5, VertexBitangent(VertexDataFormatEnum.FourBytesC, 0))
+            # NOTE: Haven't actually seen this in DeS yet.
+            data_types.insert(5, VertexBitangent(VertexDataFormatEnum.FourBytesA, 0))
             data_types.append(VertexUV(VertexDataFormatEnum.UVPair, 0))
         elif uv_count == 1:  # one UV
             data_types.append(VertexUV(VertexDataFormatEnum.UV, 0))
