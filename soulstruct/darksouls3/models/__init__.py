@@ -1,3 +1,3 @@
 __all__ = ["FLVER"]
 
-from .flver import FLVER
+from soulstruct.base.models.flver import FLVER

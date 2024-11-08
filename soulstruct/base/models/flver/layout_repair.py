@@ -5,10 +5,10 @@ import logging
 import typing as tp
 
 from .vertex_array_layout import *
-from .vertex_array import VertexArrayHeaderStruct
 
 if tp.TYPE_CHECKING:
-    from .submesh import Submesh
+    from .mesh import FLVERMesh
+    from .vertex_array import VertexArray
 
 _LOGGER = logging.getLogger("soulstruct")
 
@@ -67,8 +67,8 @@ OTHER_CORRECTED_QLOC_LAYOUTS = {
 
 def check_ds1_layouts(
     array_layouts: list[VertexArrayLayout],
-    array_headers: list[VertexArrayHeaderStruct],
-    submeshes: list[Submesh],
+    array_headers: list[VertexArray.HEADER2],
+    flver_meshes: list[FLVERMesh],
 ):
     """
     QLOC really botched some of the FLVERs in DS1R, so we need to know the layouts of the broken ones and manually use
@@ -76,22 +76,22 @@ def check_ds1_layouts(
         m2120B2A10.flver.dcx
         m8000B2A10.flver.dcx
 
-    Note that this should be called BEFORE submesh vertex arrays/arrays are dereferenced.
+    Note that this should be called BEFORE mesh vertex arrays/arrays are dereferenced.
     """
 
-    for i, submesh in enumerate(submeshes):
-        mtd_name = submesh.material.mat_def_name
+    for i, mesh in enumerate(flver_meshes):
+        mtd_name = mesh.material.mat_def_name
         if not mtd_name.endswith(".mtd"):
             return  # definitely not DS1
         # noinspection PyProtectedMember
-        for array_index in submesh._vertex_array_indices:
+        for array_index in mesh._vertex_array_indices:
             header = array_headers[array_index]
             layout = array_layouts[header.layout_index]
 
             if header.vertex_size != (layout_size := layout.get_total_data_size()):
                 # BAD LAYOUT. Try to guess the layout from the MTD name.
                 _LOGGER.info(
-                    f"Attempting to fix bad vertex data layout for submesh {i}.\n"
+                    f"Attempting to fix bad vertex data layout for FLVER mesh {i}.\n"
                     f"    MTD: {mtd_name})\n"
                     f"    Layout size {layout_size} vs. header vertex size {header.vertex_size}"
                 )
@@ -118,11 +118,11 @@ def check_ds1_layouts(
                         f"not match header vertex size {header.vertex_size}."
                     )
                 else:
-                    # New layout works. We do NOT replace the original, as it may be used correctly by other submeshes.
+                    # New layout works. We do NOT replace the original, as it may be used correctly by other meshes.
                     header.layout_index = len(array_layouts)
                     array_layouts.append(guessed_layout)
 
                     # Mesh should now be able to read vertex array correctly...?
-                    submesh.layout_fixed = True
+                    mesh.layout_fixed = True
 
     return True

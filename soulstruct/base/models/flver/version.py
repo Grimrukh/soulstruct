@@ -10,7 +10,9 @@ class FLVERVersion(IntEnum):
     DemonsSouls_0x0F = 0x0000F  # e.g. o9993
     DemonsSouls_0x10 = 0x00010  # e.g. c1200
     DemonsSouls_0x14 = 0x00014  # e.g. c7080, 'm07' map pieces
-    DemonsSouls = 0x00015
+    DemonsSouls = 0x00015  # standard Demon's Souls version
+
+    # NOTE: For whatever reason, there are no `FLVER1` versions in [0x10000, 0x1FFFF] range.
 
     # Modern `FLVER` versions:
     DarkSouls2_Armor9320 = 0x20009
@@ -28,3 +30,6 @@ class FLVERVersion(IntEnum):
     @classmethod
     def default(cls):
         return cls.Null
+
+    def is_flver0(self):
+        return self.value <= 0x0FFFF

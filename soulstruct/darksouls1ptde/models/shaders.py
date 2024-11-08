@@ -154,19 +154,13 @@ class MatDef(_BaseMatDef):
             # UV/UVPair will be inserted here if needed.
         ]
 
-        texture_group_count = 0
-        if self.get_sampler_with_alias("Main 0 Albedo"):
-            texture_group_count += 1
-        if self.get_sampler_with_alias("Main 1 Albedo"):
-            texture_group_count += 1
-
         if self.get_sampler_with_alias("Main 0 Normal"):
             # Uses tangent vertex data.
             data_types.insert(3, VertexTangent(VertexDataFormatEnum.FourBytesC, 0))
             if self.get_sampler_with_alias("Main 1 Normal"):
                 # Uses bitangent vertex data for second texture group normal.
                 data_types.insert(4, VertexBitangent(VertexDataFormatEnum.FourBytesC, 0))
-        elif self.get_sampler_with_alias("Main 1 Albedo"):
+        elif self.get_sampler_with_alias("Main 1 Normal"):
             # Uses bitangent only. NOTE: I highly doubt any game shaders do this.
             data_types.insert(3, VertexBitangent(VertexDataFormatEnum.FourBytesC, 0))
 

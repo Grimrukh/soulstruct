@@ -128,19 +128,13 @@ class MatDef(_BaseMatDef):
             # UV/UVPair fields will be inserted here if needed.
         ]
 
-        texture_group_count = 0
-        if self.get_sampler_with_alias("Main 0 Albedo"):
-            texture_group_count += 1
-        if self.get_sampler_with_alias("Main 1 Albedo"):
-            texture_group_count += 1
-
         if self.get_sampler_with_alias("Main 0 Normal"):
             # Uses tangent vertex data.
             data_types.insert(2, VertexTangent(VertexDataFormatEnum.FourBytesB, 0))
             if self.get_sampler_with_alias("Main 1 Normal"):
                 # Uses second tangent vertex data for second texture group normal.
                 data_types.insert(3, VertexTangent(VertexDataFormatEnum.FourBytesB, 1))
-        elif self.get_sampler_with_alias("Main 1 Albedo"):
+        elif self.get_sampler_with_alias("Main 1 Normal"):
             # Still uses one tangent field. NOTE: I highly doubt any game shaders do this.
             data_types.insert(2, VertexTangent(VertexDataFormatEnum.FourBytesB, 0))
 

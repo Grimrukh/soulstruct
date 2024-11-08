@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3
-from soulstruct.base.models.base.version import FLVERVersion
+from .version import FLVERVersion
 
 
 @dataclass(slots=True)
@@ -41,7 +41,6 @@ class Dummy:
 
     @classmethod
     def from_flver_reader(cls, reader: BinaryReader, flver_version: FLVERVersion) -> Dummy:
-        """For consistency."""
         dummy_struct = cls.STRUCT.from_bytes(reader)
         _color = dummy_struct.pop("_color")
         color_rgba = list(reversed(_color)) if flver_version == FLVERVersion.DarkSouls2 else list(_color)

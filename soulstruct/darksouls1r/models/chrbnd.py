@@ -10,13 +10,11 @@ from soulstruct.containers import BinderVersion
 from soulstruct.containers.binder_types import FLVERBinder
 from soulstruct.dcx import DCXType
 from soulstruct.games import DARK_SOULS_DSR
-from .flver import FLVER
 
 
 @dataclass(slots=True)
-class CHRBND(FLVERBinder[FLVER]):
+class CHRBND(FLVERBinder):
 
-    FLVER_CLASS = FLVER
     DEFAULT_ENTRY_ROOT = f"{DARK_SOULS_DSR.interroot_prefix}\\chr"
 
     # NOTE: ID is defined here, but because the BDT is written outside the CHRBND, reading/writing is not managed here.

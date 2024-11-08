@@ -1,30 +1,33 @@
+
 __all__ = [
     "FLVER",
-    "Submesh",
-    "Material",
-    "Texture",
-    "GXItem",
-    "VertexArray",
-    "VertexArrayLayout",
+
+    "FLVERBone",
+    "FLVERBoneUsageFlags",
     "Dummy",
     "FaceSetFlags",
     "FaceSet",
-    "FLVERVersion",
-    "FLVERBone",
-    "FLVERBoneUsageFlags",
+    "GXItem",
+    "Material",
+    "FLVERMesh",
     "MergedMesh",
+    "SplitMeshDef",
+    "Texture",
+    "FLVERVersion",
+    "VertexArray",
+    "VertexArrayLayout",
 ]
 
 from .core import FLVER
-from .submesh import Submesh
-from .material import Material
-from .texture import Texture
+
+from .bone import FLVERBone, FLVERBoneUsageFlags
+from .dummy import Dummy
+from .face_set import FaceSetFlags, FaceSet
 from .gx_item import GXItem
+from .material import Material
+from .mesh import FLVERMesh
+from .mesh_tools import MergedMesh, SplitMeshDef
+from .texture import Texture
+from .version import FLVERVersion
 from .vertex_array import VertexArray
 from .vertex_array_layout import VertexArrayLayout
-from ..base.dummy import Dummy
-from ..base.face_set import FaceSetFlags, FaceSet
-from ..base.version import FLVERVersion
-from ..base.bone import FLVERBone, FLVERBoneUsageFlags
-
-from .mesh_tools import MergedMesh

@@ -5,7 +5,7 @@ __all__ = [
     "PARTSBND",
 ]
 
-from .flver import FLVER
+from soulstruct.base.models.flver import FLVER
 from .chrbnd import CHRBND
 from .objbnd import OBJBND
 from .partsbnd import PARTSBND

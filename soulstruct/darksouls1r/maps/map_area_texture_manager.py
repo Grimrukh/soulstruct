@@ -179,8 +179,8 @@ class MapAreaTextureManager:
         """Returns a list of textures in this Map Piece FLVER model that are currently missing from area textures."""
         missing = []
         all_stems = self.get_all_texture_stems()
-        for submesh in map_piece_flver.submeshes:
-            for texture in submesh.material.textures:
+        for mesh in map_piece_flver.meshes:
+            for texture in mesh.material.textures:
                 texture_stem = texture.stem.lower() if not self.case_sensitive else texture.stem
                 if texture_stem not in all_stems:
                     missing.append(texture.stem)

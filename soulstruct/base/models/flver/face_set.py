@@ -158,11 +158,11 @@ class FaceSet:
 
     def needs_32bit_indices(self) -> bool:
         """Check if vertices can be written as unsigned shorts (16-bit), which is only possible if they are all less
-        than or equal to 2 ** 16. Returns `False` if so.
+        than or equal to 2 ** 16 - 1. Returns `False` if so.
 
         We need to check this when writing both the FaceSet headers and the vertices themselves, hence this method.
         """
-        if (self.vertex_indices > 2 ** 16).any():
+        if (self.vertex_indices > 2 ** 16 - 1).any():
             # Indices go too high to use an unsigned short.
             return True
         # Can use unsigned shorts.
@@ -175,7 +175,7 @@ class FaceSet:
         self,
         uses_0xffff_separators: bool,
         include_degenerate_faces=False,
-        vertices: np.ndarray | None = None,
+        flver0_vertices: np.ndarray | None = None,
     ) -> np.ndarray:
         """Convert triangle strip to 2D triangle array (i.e. every row/triangle is a separate vertex index triplet).
 
@@ -195,9 +195,9 @@ class FaceSet:
         if self.vertex_indices.ndim != 1:
             raise ValueError("Triangle-strip `FaceSet.vertex_indices` must be a 1D array.")
 
-        if vertices is not None:
+        if flver0_vertices is not None:
             # Sub-call with modified (slower) method including TK's manual normal inspection.
-            return self._triangulate_flver0(vertices)
+            return self._triangulate_flver0(flver0_vertices)
 
         triangle_list = []  # can't predict array length due to primitive restarts
         flip = False

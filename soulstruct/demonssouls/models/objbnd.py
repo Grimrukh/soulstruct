@@ -9,13 +9,11 @@ from soulstruct.containers import BinderVersion
 from soulstruct.containers.binder_types import FLVERBinder
 from soulstruct.dcx import DCXType
 from soulstruct.games import DEMONS_SOULS
-from .flver import FLVER0
 
 
 @dataclass(slots=True)
-class OBJBND(FLVERBinder[FLVER0]):
+class OBJBND(FLVERBinder):
 
-    FLVER_CLASS = FLVER0
     DEFAULT_ENTRY_ROOT = f"{DEMONS_SOULS.interroot_prefix}\\obj"
     MAX_FLVER_COUNT = 99
 

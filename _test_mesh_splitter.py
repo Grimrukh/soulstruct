@@ -9,8 +9,8 @@ def test_flver_rewrite():
     flver.write("test.flver.dcx")
     re_flver = FLVER.from_path("test.flver.dcx")
     print("FLVER read, written, and re-read successfully? First five vertices of submesh 0 compared below.")
-    print(flver.submeshes[0].vertex_arrays[0].array[:5])
-    print(re_flver.submeshes[0].vertex_arrays[0].array[:5])
+    print(flver.meshes[0].vertex_arrays[0].array[:5])
+    print(re_flver.meshes[0].vertex_arrays[0].array[:5])
 
 
 def test_merge_and_split():
@@ -22,7 +22,7 @@ def test_merge_and_split():
     # Will of course need to create new indices into 'material' representations that include critical submesh fields.
     all_materials = []
     submesh_mat_indices = []
-    for submesh in flver.submeshes:
+    for submesh in flver.meshes:
         try:
             material_index = all_materials.index(submesh.material)
         except IndexError:
@@ -36,7 +36,7 @@ def test_merge_and_split():
     # TODO: This seems general-purpose: getting layouts PER MATERIAL. We can detect if two different submesh arrays use
     #  different layouts for the same material, too.
     submesh_layouts_dict = {}
-    for submesh, material_index in zip(flver.submeshes, submesh_mat_indices):
+    for submesh, material_index in zip(flver.meshes, submesh_mat_indices):
         layout = submesh.vertex_arrays[0].layout
         if material_index not in submesh_layouts_dict:
             submesh_layouts_dict[material_index] = layout
@@ -46,7 +46,7 @@ def test_merge_and_split():
     print("Layouts are valid (same for all usages of each material).")
 
     submesh_info = []
-    for submesh, material_index in zip(flver.submeshes, submesh_mat_indices):
+    for submesh, material_index in zip(flver.meshes, submesh_mat_indices):
         layout = submesh_layouts_dict[material_index]
         submesh_kwargs = {
             "is_bind_pose": submesh.is_bind_pose,
@@ -57,7 +57,7 @@ def test_merge_and_split():
 
     split_submeshes = merged.split_mesh(submesh_info)
 
-    for s, (og_submesh, split_submesh) in enumerate(zip(flver.submeshes, split_submeshes)):
+    for s, (og_submesh, split_submesh) in enumerate(zip(flver.meshes, split_submeshes)):
 
         og_faces = og_submesh.triangulate()
         print(f"\nOriginal submesh: {len(og_submesh.vertices)} vertices, {len(og_faces)} faces")
@@ -179,7 +179,7 @@ def inspect_c5280():
     """
 
     flver = FLVER.from_binder_path(DSR_PATH + "/chr/c5280.chrbnd.dcx", 200)
-    for i, submesh in enumerate(flver.submeshes):
+    for i, submesh in enumerate(flver.meshes):
         print(i, submesh.face_sets[0].use_backface_culling, submesh.material.textures[0].stem)
 
 

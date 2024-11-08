@@ -1,17 +1,22 @@
-"""Two FLVER versions are supported:
-    `FLVER0`: Demon's Souls and other old FromSoft games (not otherwise supported by Soulstruct).
-    `FLVER`: all FromSoft games since Dark Souls: PTDE (2011), with only a few modifications handled within-class.
-"""
 
 __all__ = [
-    "BaseFLVER",
-    "Dummy",
+    "FLVER",
+
     "FLVERBone",
+    "FLVERBoneUsageFlags",
+    "Dummy",
     "FaceSetFlags",
     "FaceSet",
+    "GXItem",
+    "Material",
+    "FLVERMesh",
+    "MergedMesh",
+    "SplitMeshDef",
+    "Texture",
     "FLVERVersion",
-    "FLVER",
-    "FLVER0",
+    "VertexArray",
+    "VertexArrayLayout",
+
     "MTD",
     "MTDBND",
     "MATBIN",
@@ -19,9 +24,7 @@ __all__ = [
     "MatDef",
 ]
 
-from .base import *
-from .flver import FLVER
-from .flver0 import FLVER0
+from .flver import *
 from .mtd import MTD, MTDBND
 from .matbin import MATBIN, MATBINBND
 from .shaders import MatDef

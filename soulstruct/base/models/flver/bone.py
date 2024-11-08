@@ -196,6 +196,34 @@ class FLVERBone:
             and self.usage_flags == 0
         )
 
+    def __eq__(self, other: FLVERBone):
+        """Checks the names of connected bones if set, or their indices if not."""
+        if not isinstance(other, FLVERBone):
+            return False
+        if not all(
+            [
+                self.name == other.name,
+                self.translate == other.translate,
+                self.rotate == other.rotate,
+                self.scale == other.scale,
+                self.bounding_box_min == other.bounding_box_min,
+                self.bounding_box_max == other.bounding_box_max,
+                self.usage_flags == other.usage_flags,
+            ]
+        ):
+            return False
+        for connection_name in ("parent", "child", "next_sibling", "previous_sibling"):
+            ref_bone = getattr(self, f"{connection_name}_bone")
+            other_ref_bone = getattr(other, f"{connection_name}_bone")
+            if ref_bone is None and other_ref_bone is None:
+                if getattr(self, f"_{connection_name}_bone_index") != getattr(other, f"_{connection_name}_bone_index"):
+                    return False
+            elif ref_bone is None or other_ref_bone is None:
+                return False
+            elif ref_bone.name != other_ref_bone.name:
+                return False
+        return True
+
     def __repr__(self):
         lines = [
             f"FLVERBone(\n"

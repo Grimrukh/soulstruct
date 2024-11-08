@@ -9,13 +9,11 @@ from soulstruct.containers import BinderVersion
 from soulstruct.containers.binder_types import FLVERBinder
 from soulstruct.dcx import DCXType
 from soulstruct.games import DARK_SOULS_PTDE
-from .flver import FLVER
 
 
 @dataclass(slots=True)
-class OBJBND(FLVERBinder[FLVER]):
+class OBJBND(FLVERBinder):
 
-    FLVER_CLASS = FLVER
     DEFAULT_ENTRY_ROOT = f"{DARK_SOULS_PTDE.interroot_prefix}\\obj"
     MAX_FLVER_COUNT = 99
 
