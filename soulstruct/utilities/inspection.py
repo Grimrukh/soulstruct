@@ -2,6 +2,7 @@ from __future__ import annotations
 
 __all__ = [
     "get_dataclass_repr",
+    "compare_dataclasses",
     "compare_binary_data",
     "compare_binary_files",
     "compare_lines",
@@ -30,6 +31,7 @@ import numpy as np
 
 from .maths import BaseVector
 from .misc import IDList
+from .text import indent_lines
 
 _LOGGER = logging.getLogger("soulstruct")
 
@@ -71,6 +73,92 @@ def get_dataclass_repr(dataclass_instance: tp.Any, _indent=0, _recursed_ids=None
             s += f"{indent}    {field.name} = {repr(value)},\n"
     s += f"{indent}) <{id(dataclass_instance)}>"
     return s
+
+
+def compare_dataclasses(
+    obj1: tp.Any,
+    obj2: tp.Any,
+    ignore_fields: tp.Iterable[str] = None,
+    repr_funcs: dict[type, tp.Callable[[tp.Any], str]] = None,
+    is_eq_funcs: dict[type, tp.Callable[[tp.Any, tp.Any], bool]] = None,
+    is_close_funcs: dict[type, tp.Callable[[tp.Any, tp.Any], bool]] = None,
+    close_vector_threshold=0.001,
+    close_float_threshold=0.001,
+    unequal_only=False,
+):
+    if not dataclasses.is_dataclass(obj1):
+        raise ValueError(f"First object {obj1} is not a dataclass instance.")
+    if not dataclasses.is_dataclass(obj2):
+        raise ValueError(f"Second object {obj2} is not a dataclass instance.")
+    if type(obj1) is not type(obj2):
+        print(f"{RED}Objects are not of the same type: ({type(obj1).__name__} vs. {type(obj2).__name__}){RESET}")
+        return
+
+    if repr_funcs is None:
+        repr_funcs = {}
+
+    obj_type = type(obj1)
+
+    max_field_name_length = 1
+    for field in dataclasses.fields(obj1):
+        name = field.name
+        if ignore_fields is not None and name in ignore_fields:
+            continue
+        max_field_name_length = max(max_field_name_length, len(name))
+
+    print(f"Comparing instances of {obj_type.__name__}:")
+
+    for field in dataclasses.fields(obj1):
+        name = field.name
+        if ignore_fields is not None and name in ignore_fields:
+            continue
+
+        value1 = getattr(obj1, field.name)
+        value2 = getattr(obj2, field.name)
+
+        if type(value1) is not type(value2):
+            # TODO: Permitted for `None` and non-primitive instances.
+            print(f"{RED}{name:>{max_field_name_length}}: "
+                  f"Field types differ: {type(value1).__name__} vs. {type(value2).__name__}{RESET}")
+            continue
+
+        field_type = type(value1)
+
+        repr1 = repr_funcs.get(field_type, repr)(value1)
+        repr2 = repr_funcs.get(field_type, repr)(value2)
+        if "\n" in repr1:
+            repr1 = indent_lines(repr1, indent=max_field_name_length + 2)
+        if "\n" in repr2:
+            repr2 = indent_lines(repr2, indent=max_field_name_length + 2)
+
+        if is_eq_funcs is not None and field_type in is_eq_funcs:
+            if is_eq_funcs[field_type](value1, value2):
+                if not unequal_only:
+                    print(f"{GREEN}{name:>{max_field_name_length}}: {repr1} == {repr2}{RESET}")
+                continue
+            print(f"{RED}{name:>{max_field_name_length}}: {repr1} != {repr2}{RESET}")
+            continue
+        if value1 == value2:
+            if not unequal_only:
+                print(f"{GREEN}{name:>{max_field_name_length}}: {repr1} == {repr2}{RESET}")
+            continue
+        if field_type in is_close_funcs:
+            if is_close_funcs[field_type](value1, value2):
+                if not unequal_only:
+                    print(f"{YELLOW}{name:>{max_field_name_length}}: {repr1} ~= {repr2}{RESET}")
+                continue
+        if isinstance(value1, BaseVector) and close_vector_threshold > 0:
+            if (value1 - value2).get_magnitude() < close_vector_threshold:
+                if not unequal_only:
+                    print(f"{YELLOW}{name:>{max_field_name_length}}: {repr1} ~= {repr2}{RESET}")
+                continue
+        if isinstance(value1, float) and close_float_threshold > 0:
+            if abs(value1 - value2) < close_float_threshold:
+                if not unequal_only:
+                    print(f"{YELLOW}{name:>{max_field_name_length}}: {repr1} ~= {repr2}{RESET}")
+                continue
+
+        print(f"{RED}{field.name}: {repr1} != {repr2}{RESET}")
 
 
 def get_diff_indices(bytes1: bytes, bytes2: bytes) -> list[int]:

@@ -573,7 +573,7 @@ class TPFStruct(BinaryStruct):
     file_count: int
     platform: TPFPlatform = field(**Binary(byte))
     tpf_flags: byte = field(**(Binary(asserted=[0, 1, 2, 3])))
-    encoding_type: byte = field(**Binary(asserted=[0, 1, 2]))  # 2 == UTF_16, 0/1 == shift_jis_2004
+    encoding_type: byte = field(**Binary(asserted=[0, 1, 2]))  # 2 == UTF-16, 0/1 == shift_jis_2004
     _pad1: bytes = field(**BinaryPad(1))
 
 
@@ -669,13 +669,38 @@ class TPF(GameFile):
         for texture in self.textures:
             texture.pack_stem(writer, self.encoding_type)
 
+        if self.platform == TPFPlatform.PS3:
+            # NOTE: SoulsFormats aligns to 0x100 here, but in Demon's Souls TPFs, they sometimes align to 0x80 provided
+            # that the emergent pad size is large enough (possibly at least 0x40, which is the smallest I've seen so far
+            # in c7150). To better emulate vanilla files, I explicitly pad by 0x40, then align to 0x80. I'd have to look
+            # at every vanilla file to confirm the minimum pad.
+            writer.pad(0x40)
+            writer.pad_align(0x80)
+
         data_start = writer.position
+        data_size = 0
+
         for texture in self.textures:
             # TKGP notes: padding varies wildly across games, so don't worry about it too much.
-            if len(texture.data) > 0:
-                writer.pad_align(4)
+            # However, from Demon's Souls TPFs on PS3, it's clear that each texture aligns to 0x80 (possibly with the
+            # same minimum pad as above, but ignoring that for now).
+            if self.platform == TPFPlatform.PS3:
+                writer.pad_align(0x80)
+            elif len(texture.data) > 0:
+                writer.pad_align(4)  # default alignment
+            texture_pos = writer.position
             texture.pack_data(writer)
-        writer.fill("_data_size", writer.position - data_start, obj=self)
+            texture_size = writer.position - texture_pos
+            data_size += texture_size
+
+        # Demon's Souls (PS3) also aligns to 0x80 after the final texture (not included in data size). The total data
+        # size in the header also excludes all the padding. (Possibly true for later TPFs too.)
+        if self.platform == TPFPlatform.PS3:
+            writer.pad_align(0x80)
+            writer.fill("_data_size", data_size, obj=self)
+        else:
+            writer.fill("_data_size", writer.position - data_start, obj=self)
+
         writer.fill("file_count", len(self.textures), obj=self)
         return writer
 

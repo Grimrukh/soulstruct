@@ -1312,6 +1312,9 @@ class Binder(BaseBinaryFile):
         """Convenient shortcut for finding an entry by ID (int), full path (Path), name only (str), or by matching
         its name with regex (`re.Pattern`).
 
+        Note that the one thing this CANNOT be used for is to simply index `.entries`. Index the `.entries` attribute
+        directly to do this. Integer arguments to this method are always interpreted as entry IDs.
+
         If `entry_spec` is a string that looks like a Path (contains a forward slash or backslash), it will be treated
         as a full path. Obviously, these characters can never appear in a file name, so this is a safe assumption.
 
