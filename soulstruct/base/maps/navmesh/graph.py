@@ -109,17 +109,28 @@ import typing as tp
 from dataclasses import dataclass
 from pathlib import Path
 
-from soulstruct.darksouls1ptde.maps.msb import MSB as PTDE_MSB
-from soulstruct.darksouls1r.maps.parts import MSBNavmesh
+from soulstruct.base.maps.msb import MSB
+from soulstruct.base.maps.msb.parts import BaseMSBPart
 from soulstruct.utilities.maths import Vector3
 
 from .mcp import MCP, NavmeshAABB
 from .mcg import MCG, MCGNode, MCGEdge
 from .utilities import ExistingConnectionError, MissingConnectionError, import_matplotlib_plt
 
-_LOGGER = logging.getLogger("soulstruct")
+if tp.TYPE_CHECKING:
+    from soulstruct.darksouls1ptde.maps.msb import MSB as MSB_PTDE
+    from soulstruct.darksouls1ptde.maps.parts import MSBNavmesh as MSBNavmesh_PTDE
+    from soulstruct.darksouls1r.maps.msb import MSB as MSB_DSR
+    from soulstruct.darksouls1r.maps.parts import MSBNavmesh as MSBNavmesh_DSR
+    from soulstruct.demonssouls.maps.msb import MSB as MSB_DES
+    from soulstruct.demonssouls.maps.parts import MSBNavmesh as MSBNavmesh_DES
+    from soulstruct.bloodborne.maps.msb import MSB as MSB_BB
+    from soulstruct.bloodborne.maps.parts import MSBNavmesh as MSBNavmesh_BB
+    MSB_TYPING = tp.Union[MSB_PTDE, MSB_DSR, MSB_DES, MSB_BB]
+    MSB_NAVMESH_TYPING = tp.Union[MSBNavmesh_PTDE, MSBNavmesh_DSR, MSBNavmesh_DES, MSBNavmesh_BB]
+    NAVMESH_SPEC = tp.Union[MSB_NAVMESH_TYPING, str, int]
 
-NavmeshTyping = tp.Union[MSBNavmesh, str, int]
+_LOGGER = logging.getLogger("soulstruct")
 
 
 @dataclass(slots=True, init=False)
@@ -136,43 +147,25 @@ class NavmeshGraph:
 
     Args:
         map_path (str or Path): Folder containing MCP and MCG files (e.g. '{game_root}/map/m10_01_00_00').
-        msb (MSB or None): MSB instance or file path. If None (default), searched for in adjacent `MapStudio` directory.
+        msb (MSB): MSB instance containing navmesh parts.
         map_stem (str): map name stem, e.g. 'm10_01_00_00'. Auto-detected from `map_path` directory name by default.
     """
-
     map_path: Path  # path to game `map/mAA_BB_CC_DD` directory (NOT `MapStudio`)
     map_stem: str  # detected from `map_path` by default
     map_id: tuple[int, int, int, int]  # map ID tuple for AABBs and edges (e.g. `(10, 1, 0, 0)`)
 
-    msb_path: Path
     mcp: MCP
     mcg: MCG
-    _msb: PTDE_MSB  # MSB to pull navmeshes from; read from `MapStudio` adjacent to `map_path` by default
+    _msb: MSB_TYPING  # required to read `MSBNavmesh` instances referenced directly by MCP and MCG
 
-    def __init__(self, map_path: Path | str, msb: PTDE_MSB = None, map_stem: str = None):
+    def __init__(self, map_path: Path | str, msb: MSB_TYPING, map_stem: str = None):
         self.map_path = Path(map_path)
         if not self.map_path.is_dir():
             raise ValueError(f"Map directory does not exist: {self.map_path}")
         self.map_stem = self.map_path.name if map_stem is None else map_stem
         aa, bb, cc, dd = [int(x) for x in self.map_stem[1:].split("_")]
         self.map_id = (aa, bb, cc, dd)
-
-        if msb is None:
-            self.msb_path = (self.map_path / f"../MapStudio/{self.map_stem}.msb").resolve()
-            try:
-                self._msb = PTDE_MSB.from_path(self.msb_path)
-            except FileNotFoundError:
-                raise FileNotFoundError(f"Could not find MSB file: {self.msb_path}")
-        elif isinstance(msb, PTDE_MSB):
-            if not msb.path:
-                raise ValueError("`MSB` given to `NavInfo` must have `.path` set.")
-            self._msb = msb
-            self.msb_path = msb.path
-        else:
-            raise TypeError(
-                f"`MSB` given to `NavInfo` has invalid type: `{msb.__class__.__name__}`. Note that only PTDE or DSR "
-                f"`MSB` subclasses are supported."
-            )
+        self._msb = msb
 
         mcp_path = self.map_path / f"{self.map_stem}.mcp"
         mcg_path = self.map_path / f"{self.map_stem}.mcg"
@@ -210,16 +203,16 @@ class NavmeshGraph:
     def edges(self):
         return self.mcg.edges
 
-    def _get_navmesh(self, navmesh: NavmeshTyping) -> MSBNavmesh:
-        """Get `MSBNavmesh` instance from `NavmeshTyping` (either `MSBNavmesh` instance or name/index in MSB)."""
-        if isinstance(navmesh, MSBNavmesh):
-            if navmesh not in self.navmeshes:
-                raise ValueError(f"Navmesh '{navmesh.name}' is not a part in the attached MSB.")
-            return navmesh
-        elif isinstance(navmesh, str):
+    def _get_navmesh(self, navmesh: NAVMESH_SPEC) -> MSB_NAVMESH_TYPING:
+        """Get `MSBNavmesh` instance from `NavmeshTyping` (either `MSBNavmesh` instance or name/index in MSB)."""        
+        if isinstance(navmesh, str):
             return self._msb.navmeshes.find_entry_name(navmesh)
         elif isinstance(navmesh, int):
             return self._msb.navmeshes[navmesh]
+        elif isinstance(navmesh, BaseMSBPart) and navmesh.cls_name == "MSBNavmesh":
+            if navmesh not in self._msb.navmeshes:
+                raise ValueError(f"Navmesh part '{navmesh.name}' is not a part in the attached MSB.")
+            return navmesh
         raise TypeError(f"Invalid navmesh type: {navmesh.__class__.__name__}. Must be `MSBNavmesh`, str, or int.")
 
     def check_aabb_count(self):
@@ -235,7 +228,7 @@ class NavmeshGraph:
                 f"MCP ({aabb_count}). This should be fixed ASAP, or navmesh functionality will be broken."
             )
 
-    def get_navmesh_gate_nodes(self, navmesh: NavmeshTyping) -> list[MCGNode]:
+    def get_navmesh_gate_nodes(self, navmesh: NAVMESH_SPEC) -> list[MCGNode]:
         """Return all MCG nodes with at least one edge in the given navmesh or who explicitly have this navmesh as
         their dead-end navmesh."""
         navmesh = self._get_navmesh(navmesh)
@@ -245,7 +238,7 @@ class NavmeshGraph:
             or node.dead_end_navmesh is navmesh
         ]
 
-    def get_navmesh_aabb(self, navmesh: NavmeshTyping) -> NavmeshAABB:
+    def get_navmesh_aabb(self, navmesh: NAVMESH_SPEC) -> NavmeshAABB:
         """Get `NavmeshAABB` with the same index as `navmesh` index in MSB.
 
         `navmesh` can be an `MSBNavmesh` entry or the name of one. Obviously, if you already have its index in the MSB,
@@ -256,7 +249,7 @@ class NavmeshGraph:
         navmesh_index = self.navmeshes.index(navmesh)
         return self.mcp.aabbs[navmesh_index]
 
-    def get_navmesh_aabb_connected_navmeshes(self, navmesh: NavmeshTyping) -> list[MSBNavmesh]:
+    def get_navmesh_aabb_connected_navmeshes(self, navmesh: NAVMESH_SPEC) -> list[MSB_NAVMESH_TYPING]:
         """Get all navmesh parts connected to `navmesh` via AABB connectivity in MCP file."""
         aabb = self.get_navmesh_aabb(navmesh)
         return [self.navmeshes[i] for i in aabb.connected_navmesh_part_indices]
@@ -265,7 +258,7 @@ class NavmeshGraph:
         self,
         translate: Vector3,
         unknown_offset=0,
-        dead_end_navmesh: MSBNavmesh = None,
+        dead_end_navmesh: MSB_NAVMESH_TYPING = None,
     ) -> MCGNode:
         """Create and return a new `MCGNode` with the given `translate` and optional `dead_end_navmesh`.
 
@@ -293,7 +286,7 @@ class NavmeshGraph:
         self,
         start_node: MCGNode | int,
         end_node: MCGNode | int,
-        edge_navmesh: NavmeshTyping,
+        edge_navmesh: NAVMESH_SPEC,
         start_node_triangle_indices: list[int],
         end_node_triangle_indices: list[int],
         cost: float = None,
@@ -313,8 +306,8 @@ class NavmeshGraph:
 
     def connect_navmesh_aabbs(
         self,
-        first_navmesh: NavmeshTyping,
-        second_navmesh: NavmeshTyping,
+        first_navmesh: NAVMESH_SPEC,
+        second_navmesh: NAVMESH_SPEC,
         ignore_connected=False,
     ):
         """Connect the two AABBs of the given navmeshes.
@@ -342,8 +335,8 @@ class NavmeshGraph:
 
     def disconnect_navmesh_aabbs(
         self,
-        first_navmesh: NavmeshTyping,
-        second_navmesh: NavmeshTyping,
+        first_navmesh: NAVMESH_SPEC,
+        second_navmesh: NAVMESH_SPEC,
         ignore_unconnected=False,
     ):
         """Disconnect the two given MCP AABBs, which can also be given as MSB navmeshes or names thereof.

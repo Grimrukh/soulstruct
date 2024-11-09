@@ -60,7 +60,7 @@ class FLVERBinder(Binder, abc.ABC):
             for i, name in enumerate(sorted_names):
                 flver = self._flvers[name]
                 self.set_default_entry(
-                    entry_spec=self.FLVER_FIRST_ENTRY_ID + i,
+                    entry_spec=self.FLVER_FIRST_ENTRY_ID + i,  # TODO: could clash with existing...
                     new_path=self.get_flver_entry_path(name),
                     new_flags=0x2,
                 ).set_from_binary_file(flver)

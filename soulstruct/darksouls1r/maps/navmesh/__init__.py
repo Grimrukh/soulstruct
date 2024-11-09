@@ -9,7 +9,6 @@ __all__ = [
     "MCG",
     "MCGNode",
     "MCGEdge",
-    "NavmeshFlag",
     "NVMBND",
 ]
 

@@ -13,7 +13,6 @@ from pathlib import Path
 from soulstruct.base.game_file import GameFile
 from soulstruct.containers import Binder, EntryNotFoundError
 from soulstruct.dcx import DCXType
-from soulstruct.darksouls1r.maps.msb import MSB
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
 
@@ -22,7 +21,16 @@ from .nvm import NVM
 from .utilities import import_matplotlib_plt
 
 if tp.TYPE_CHECKING:
-    from soulstruct.darksouls1r.maps.parts import MSBNavmesh
+    from soulstruct.darksouls1ptde.maps.msb import MSB as MSB_PTDE
+    from soulstruct.darksouls1ptde.maps.parts import MSBNavmesh as MSBNavmesh_PTDE
+    from soulstruct.darksouls1r.maps.msb import MSB as MSB_DSR
+    from soulstruct.darksouls1r.maps.parts import MSBNavmesh as MSBNavmesh_DSR
+    from soulstruct.demonssouls.maps.msb import MSB as MSB_DES
+    from soulstruct.demonssouls.maps.parts import MSBNavmesh as MSBNavmesh_DES
+    from soulstruct.bloodborne.maps.msb import MSB as MSB_BB
+    from soulstruct.bloodborne.maps.parts import MSBNavmesh as MSBNavmesh_BB
+    MSB_TYPING = tp.Union[MSB_PTDE, MSB_DSR, MSB_DES, MSB_BB]
+    MSB_NAVMESH_TYPING = tp.Union[MSBNavmesh_PTDE, MSBNavmesh_DSR, MSBNavmesh_DES, MSBNavmesh_BB]
 
 _LOGGER = logging.getLogger("soulstruct")
 
@@ -88,10 +96,10 @@ class NavmeshAABB:
     def get_connected_aabbs(self, aabbs: list[NavmeshAABB]) -> list[NavmeshAABB]:
         return [aabbs[index] for index in self.connected_navmesh_part_indices]
 
-    def get_connected_navmesh_parts(self, msb: MSB) -> list[MSBNavmesh]:
+    def get_connected_navmesh_parts(self, msb: MSB_TYPING) -> list[MSB_NAVMESH_TYPING]:
         return [msb.navmeshes[index] for index in self.connected_navmesh_part_indices]
 
-    def get_connected_navmesh_part_names(self, msb: MSB) -> list[str]:
+    def get_connected_navmesh_part_names(self, msb: MSB_TYPING) -> list[str]:
         return [msb.navmeshes[index].name for index in self.connected_navmesh_part_indices]
 
     def add_translate(self, translate: Vector3):
@@ -204,7 +212,6 @@ class MCP(GameFile):
         - In m13_02 (Great Hollow), n0107B2 has a drop-down to n0114B2, but there are two extremely close nodes at that
           connection point connected by a tiny edge that (incorrectly, I contend) passes through a third navmesh.
     """
-
     AABB_PADDING: tp.ClassVar[tuple[float, float, float]] = (0.5, 1.5, 0.5)  # in-game distance units
 
     @dataclass(slots=True)
@@ -227,12 +234,13 @@ class MCP(GameFile):
     @classmethod
     def from_msb_mcg_nvm_paths(
         cls,
+        msb_class: type[MSB_TYPING],
         mcp_path: Path | str,
         msb_path: Path | str = None,
         mcg_path: Path | str = None,
         nvmbnd_path: Path | str = None,
         aabb_padding: tp.Sequence[float, float, float] = None,
-        custom_connected_navmeshes: tp.Sequence[tuple[MSBNavmesh, MSBNavmesh]] = None,
+        custom_connected_navmeshes: tp.Sequence[tuple[MSB_NAVMESH_TYPING, MSB_NAVMESH_TYPING]] = None,
     ) -> tp.Self:
         """Automatically generate MCP file from other map navmesh component files.
 
@@ -271,18 +279,18 @@ class MCP(GameFile):
         if nvmbnd_path is None:
             nvmbnd_path = mcp_path.parent / f"{mcp_path.stem}.nvmbnd.dcx"
 
-        msb = MSB.from_path(msb_path)
+        msb = msb_class.from_path(msb_path)
         mcg = MCG.from_path(mcg_path)
         nvmbnd = Binder.from_path(nvmbnd_path)
 
         mcg.set_navmesh_references(msb.navmeshes)
 
         # Build dictionary mapping node indices to all navmeshes that node touches, rather than iterating many times.
-        node_navmeshes = {}  # type: dict[int, list[MSBNavmesh]]
+        node_navmeshes = {}  # type: dict[int, list[MSB_NAVMESH_TYPING]]
         for i, node in enumerate(mcg.nodes):
             node_navmeshes[i] = node.get_touching_navmeshes()
 
-        def is_connected(navmesh1: MSBNavmesh, navmesh2: MSBNavmesh) -> bool:
+        def is_connected(navmesh1: MSB_NAVMESH_TYPING, navmesh2: MSB_NAVMESH_TYPING) -> bool:
             """Returns whether the two given navmeshes are connected by a `MCGNode` in the `MCG` graph."""
             if custom_connected_navmeshes:
                 if (navmesh1, navmesh2) in custom_connected_navmeshes:
@@ -320,7 +328,6 @@ class MCP(GameFile):
 
         aabbs = []
         for navmesh, connected_indices in zip(msb.navmeshes, connected_navmesh_indices):
-            navmesh: MSBNavmesh
             # Find and load `NVM` model.
             model_name = navmesh.model.name + f"A{map_id[0]:02d}.nvm"
             try:
