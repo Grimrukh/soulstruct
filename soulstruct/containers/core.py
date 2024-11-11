@@ -219,6 +219,10 @@ class BinderVersion4Info:
         return cls(False, False, True, 4)
 
     @classmethod
+    def sekiro_default(cls):
+        return cls(False, False, True, 4)
+
+    @classmethod
     def elden_ring_default(cls):
         return cls(False, False, True, 4)
 

@@ -33,3 +33,11 @@ class FLVERVersion(IntEnum):
 
     def is_flver0(self):
         return self.value <= 0x0FFFF
+
+    def map_pieces_use_normal_w_bones(self):
+        """From Bloodborne onwards, Map Piece FLVER vertices store their singular bone indices in the fourth 8-bit
+        component of the 'normal_w' vertex array, rather than having a full useless four-bone `bone_indices` field like
+        real rigged FLVERs.
+        TODO: Possibly from DS2 onwards?
+        """
+        return self.value >= self.Bloodborne_DS3_A

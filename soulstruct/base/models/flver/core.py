@@ -69,7 +69,7 @@ class FLVER(GameFile):
         - Vertex data
     """
 
-    EXT: tp.ClassVar = ".flver"
+    EXT: tp.ClassVar = ""  # not consistent: '.flv' in Dark Souls 2 and '.flver' in all other games
     PATTERN: tp.ClassVar = re.compile(r".*\.flver(\.dcx)?$")
 
     @dataclass(slots=True)
@@ -715,10 +715,12 @@ class FLVER(GameFile):
             gx_list_offset = writer.position
             for gx_item in gx_list:
                 gx_item.to_writer(writer)
-            if not gx_list[-1].is_terminator:  # list cannot be empty here
-                _LOGGER.warning("Final `GXItem` in list is not a dummy item. Appending new dummy item.")
-                dummy_gx_item = GXItem.new_terminator()
-                dummy_gx_item.to_writer(writer)
+            # NOTE: `gx_list` never empty here. Also note that Dark Souls 2 FLVERs (first to use GX Items) have no
+            # terminator item at the end of the list. (Almost all DS2 FLVERs uses a single GXItem, category 102.)
+            if not gx_list[-1].is_terminator and self.version != FLVERVersion.DarkSouls2:  # list cannot be empty here
+                _LOGGER.warning("Final `GXItem` in list is not a terminator item. Appending new terminator item.")
+                terminator_gx_item = GXItem.new_terminator()
+                terminator_gx_item.to_writer(writer)
             for material in material_users:
                 # NOTE: Material only reserves this field if it has any GX items. Otherwise, already wrote offset -1.
                 material.fill_flver2_gx_offset(writer, gx_list_offset)

@@ -24,7 +24,7 @@ class MAPBND(FLVERBinder):
     v4_info: BinderVersion4Info = field(default_factory=BinderVersion4Info.elden_ring_default)
 
     def get_tpf_entry_path(self, model_stem: str) -> str:
-        raise TypeError("MAPBND does not contain TPF files. These are in `asset/aet` TPFs (yes, just like Assets).")
+        raise TypeError("MAPBND does not contain TPF files. They are found in 'asset/aet' TPFs (next to Asset 'aeg').")
 
     def get_flver_entry_path(self, model_stem: str) -> str:
         map_stem = model_stem[:12]

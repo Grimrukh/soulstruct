@@ -104,7 +104,7 @@ DEMONS_SOULS = Game(
     aliases=("demonssouls", "des"),
     default_dcx_type=DCXType.DCX_EDGE,
     special_dcx_types={
-        ".flver": DCXType.Null,  # NOTE: '.dcx' files are also present, but most dumped debug PS3 games use the non-DCX
+        # NOTE: Some DCX files, such as Map Pieve FLVERs, have DCX and debug non-DCX versions.
         ".hkx": DCXType.Null,
         ".msb": DCXType.Null,
         ".nvmbnd": DCXType.Null,
@@ -273,6 +273,7 @@ SEKIRO = Game(
     aliases=("sekiro", "sekiroshadowsdietwice", "sdt"),
     default_dcx_type=DCXType.DCX_KRAK,
     default_game_path=SEKIRO_PATH,
+    interroot_prefix="N:\\NTC\\data\\Target\\INTERROOT_win64",
 )
 
 
