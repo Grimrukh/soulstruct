@@ -180,9 +180,14 @@ class VertexArray:
         return self.array.dtype
 
     @property
-    def has_normal_w_bone_indices(self):
-        """Just checks if ANY `normal_w` values are not 127."""
-        return "normal_w" in self.array.dtype.names and not np.all(self.array["normal_w"] == 127)
+    def guess_has_normal_w_bone_indices(self):
+        """Just checks if ANY `normal_w` values are not 127 and not 0."""
+        if "bone_indices" in self.array.dtype.names:
+            return False  # has REAL bone indices
+        if "normal_w" not in self.array.dtype.names:
+            return False
+        # Check if any normal_w values are not 127 and not 0.
+        return np.any((self.array["normal_w"] != 127) & (self.array["normal_w"] != 0))
 
     def __getitem__(self, key):
         """Wraps NumPy array indexing."""

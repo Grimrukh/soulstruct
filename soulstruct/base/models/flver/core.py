@@ -964,7 +964,7 @@ class FLVER(GameFile):
             for vertex_array in mesh.vertex_arrays:
 
                 used_bone_vertex_indices = {}  # tracks vertex indices used by each bone
-                if vertex_array.has_normal_w_bone_indices:
+                if vertex_array.guess_has_normal_w_bone_indices:
                     # Already global, but confirmed below.
                     bone_indices = vertex_array["normal_w"]
                 else:
@@ -1222,7 +1222,7 @@ class FLVER(GameFile):
         for mesh in self.meshes:
             for vertex_array in mesh.vertex_arrays:
                 if not vertex_array.has_field("bone_indices"):
-                    if vertex_array.has_normal_w_bone_indices:
+                    if vertex_array.guess_has_normal_w_bone_indices:
                         # These are always global, but that will be confirmed below.
                         local_bone_indices = vertex_array["normal_w"][:, 0]
                         using_normal_w = True

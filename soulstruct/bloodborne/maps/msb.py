@@ -96,6 +96,12 @@ class MSB(_BaseMSB):
         MSBSupertype.REGIONS: MSBRegion,
         MSBSupertype.PARTS: MSBPart,
     }
+    MSB_SUPERTYPE_SUBTYPE_ENUMS: tp.ClassVar[dict[str, type[BaseMSBSubtype]]] = {
+        MSBSupertype.MODELS: MSBModelSubtype,
+        MSBSupertype.EVENTS: MSBEventSubtype,
+        MSBSupertype.REGIONS: MSBRegionSubtype,
+        MSBSupertype.PARTS: MSBPartSubtype,
+    }
     MSB_ENTRY_SUBTYPES: tp.ClassVar[dict[str, dict[BaseMSBSubtype, MSBSubtypeInfo]]] = MSB_ENTRY_SUBTYPES
     MSB_ENTRY_SUBTYPE_OFFSETS: tp.ClassVar[dict[str, int]] = {
         MSBSupertype.MODELS: 8,

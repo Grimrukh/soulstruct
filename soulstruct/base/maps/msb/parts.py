@@ -61,3 +61,6 @@ class BaseMSBPart(MSBEntry, abc.ABC):
         if self.SIB_PATH_TEMPLATE is None:
             raise TypeError(f"Cannot set `sib_path` automatically for type `{self.cls_name}`.")
         self.sib_path = self.SIB_PATH_TEMPLATE.format(map_stem=map_stem)
+
+    def has_identity_transform(self) -> bool:
+        return self.translate == Vector3.zero() and self.rotate == Vector3.zero() and self.scale == Vector3.one()

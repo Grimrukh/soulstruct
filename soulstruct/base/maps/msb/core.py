@@ -94,6 +94,8 @@ class MSB(GameFile, abc.ABC):
     MSB_SUPERTYPE_ENUM: tp.ClassVar[type[StrEnum]]
     # Dictionary mapping MSB supertype name enums to their base types, in the order they appear in the MSB.
     MSB_ENTRY_SUPERTYPES: tp.ClassVar[dict[str, type[MSBEntry]]]
+    # Dictionary mapping MSB supertype name enums to their subtype enum types.
+    MSB_SUPERTYPE_SUBTYPE_ENUMS: tp.ClassVar[dict[str, type[BaseMSBSubtype]]]
     # Maps MSB entry supertype names (e.g. 'POINT_PARAM_ST') to dicts that map subtype enum names to subtype info.
     MSB_ENTRY_SUBTYPES: tp.ClassVar[dict[str, dict[BaseMSBSubtype, MSBSubtypeInfo]]]
     # Maps MSB entry supertype names (parts, etc.) to the relative offsets of their subtype enums, which we check in
@@ -605,7 +607,8 @@ class MSB(GameFile, abc.ABC):
                 continue
             subtype_dict = data[supertype_name]
             for subtype_enum_name, subtype_list in subtype_dict.items():
-                subtype_info = cls.MSB_ENTRY_SUBTYPES[supertype_name][subtype_enum_name]
+                subtype_enum = cls.MSB_SUPERTYPE_SUBTYPE_ENUMS[supertype_name][subtype_enum_name]
+                subtype_info = cls.MSB_ENTRY_SUBTYPES[supertype_name][subtype_enum]
                 entries = []
                 subtype_deferred = deferred_refs[subtype_info.subtype_list_name] = []
                 for entry_dict in subtype_list:
@@ -663,9 +666,7 @@ class MSB(GameFile, abc.ABC):
             ref_list_name = field_ref["subtype_list_name"]
         else:
             # Get ref list name from supertype and subtype enum values.
-            entry_class = cls.MSB_ENTRY_SUPERTYPES[ref_supertype]
-            # noinspection PyUnresolvedReferences
-            subtype_enum = entry_class.SUBTYPE_ENUM[ref_subtype]
+            subtype_enum = cls.MSB_SUPERTYPE_SUBTYPE_ENUMS[ref_supertype][ref_subtype]
             ref_list_name = cls.MSB_ENTRY_SUBTYPES[ref_supertype][subtype_enum].subtype_list_name
 
         try:

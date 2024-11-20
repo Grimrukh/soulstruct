@@ -52,6 +52,9 @@ class BaseMSBRegion(MSBEntry, abc.ABC):
         """For `BinaryStruct` easy access."""
         return self.shape.SHAPE_TYPE.value
 
+    def has_identity_transform(self) -> bool:
+        return self.translate == Vector3.zero() and self.rotate == Vector3.zero()
+
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         """In later games, regions are more like spatial Events and have references to other MSB entries, or may have
         Composite shapes that require child Region deferencing."""
