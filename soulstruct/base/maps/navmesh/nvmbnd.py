@@ -33,9 +33,42 @@ class BaseNVMBND(Binder, abc.ABC):
         self._nvms[model_stem] = nvm
         return nvm
 
+    def has_nvm(self, model_stem) -> bool:
+        """Check if model is in loaded NVMs or is present as an unloaded entry."""
+        if model_stem in self._nvms:
+            return True
+
+        try:
+            self.find_entry_matching_name(rf"{model_stem}\.nvm(\.dcx)?")
+        except EntryNotFoundError:
+            return False
+        return True
+
     def set_nvm(self, model_stem: str, nvm: NVM):
         """Set NVM in managed dictionary. Will be written to a new/existing entry on `NVMBND` write."""
         self._nvms[model_stem] = nvm
+
+    def remove_nvm(self, model_stem: str):
+        """Remove NVM from managed dictionary (if loaded) and/or remove entry from `NVMBND`.
+
+        Raises `KeyError` if NVM is not loaded AND entry is not found.
+        """
+        removed_nvm = False
+        if model_stem in self._nvms:
+            del self._nvms[model_stem]
+            removed_nvm = True
+
+        # Look for entry to remove.
+        try:
+            entry = self.find_entry_matching_name(rf"{model_stem}\.nvm(\.dcx)?")
+        except EntryNotFoundError:
+            if removed_nvm:
+                return  # fine, as we removed an NVM that WOULD have been written
+            raise KeyError(
+                f"Cannot remove NVM with model stem '{model_stem}': not loaded in `{self.cls_name}` and no entry found."
+            )
+
+        self.remove_entry(entry)
 
     def entry_autogen(self):
         """Replace/create NVM Binder entries. Note that existing, non-overwritten entries are NOT removed."""

@@ -190,7 +190,10 @@ class NVMEventEntity:
 @dataclass(slots=True)
 class NVM(GameFile):
     """Holds a navigation mesh (vertices and triangles), per-triangle navigation flags, groups of triangles that can be
-    manipulated with EMEVD scripts, and a box quad-tree hierarchy that covers the mesh (which is simple to generate)."""
+    manipulated with EMEVD scripts, and a box quad-tree hierarchy that covers the mesh (which is simple to generate).
+
+    Note that there is no internal name to worry about. You can re-use an NVM by simply changing its file name.
+    """
 
     # TODO: Always correct for DS1. Not sure about DeS.
     BOX_LEVELS: tp.ClassVar[int] = 3  # number of nested quaternary levels in box tree (excluding root box)
