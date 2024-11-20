@@ -112,11 +112,11 @@ FIELD_INFO = {
         "Set Main Object Structure Bools",
         "Unknown.",
     ),
-    "Object[unk_x0e_x10]": (
+    "Object[unk_x0e]": (
         "Unknown [0e-10]",
         "Unknown.",
     ),
-    "Object[unk_x10_x14]": (
+    "Object[unk_x10]": (
         "Unknown [10-14]",
         "Unknown.",
     ),
