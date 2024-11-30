@@ -955,7 +955,7 @@ class MSBConnectCollision(MSBPart):
 
     model: MSBCollisionModel = None
 
-    # MAP CONNECTION DATA
+    # CONNECT COLLISION DATA
     collision: MSBCollision = None
     connected_map_id: list[int] = field(default_factory=lambda: [21, 0, 0, 0], **BinaryArray(4))
     con_unk_x08: int = 0

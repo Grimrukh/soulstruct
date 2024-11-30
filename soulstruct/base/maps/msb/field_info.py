@@ -403,7 +403,7 @@ FIELD_INFO = {
 
     "ConnectCollision[collision]": (
         "Collision Part Name",
-        "Collision part that triggers this map connection.",
+        "Collision part that triggers this connect collision.",
     ),
     "ConnectCollision[connected_map_id]": (
         "Map ID",
