@@ -28,8 +28,12 @@ _LOGGER = logging.getLogger("soulstruct")
 _DRAW_PARAM_FILE_NAME_RE = re.compile(r"([ms]\d\d|default)(_\d)?(_\w+)\.param")  # e.g. 'm12_1_LensFlare.param'
 
 
-def draw_param_property(draw_param_stem: str):
-    return property(lambda self: self.draw_params[draw_param_stem])
+def draw_param_property(draw_param_stem: str, slot: int):
+    if slot == 0:
+        return property(lambda self: self.draw_params_0[draw_param_stem])
+    elif slot == 1:
+        return property(lambda self: self.draw_params_1.get(draw_param_stem, None))
+    raise ValueError(f"Invalid `DrawParam` slot for `DrawParamBND` property: {slot}. Must be 0 or 1.")
 
 
 class TypedDrawParamError(SoulstructError):
@@ -95,19 +99,33 @@ class DrawParamBND(Binder):
     # Maps DrawParam game stems, e.g. 'LightBank', to a `DrawParam` for second slot.
     draw_params_1: dict[str, DrawParam | ParamDict | None] = field(default_factory=dict)
 
-    DepthOfField = draw_param_property("DofBank")  # type: list[DrawParam[DOF_BANK]]
-    EnvLightTex = draw_param_property("EnvLightTexBank")  # type: list[DrawParam[ENV_LIGHT_TEX_BANK]]
-    Fog = draw_param_property("FogBank")  # type: list[DrawParam[FOG_BANK]]
-    LensFlares = draw_param_property("LensFlareBank")  # type: list[DrawParam[LENS_FLARE_BANK]]
-    LensFlareSources = draw_param_property("LensFlareExBank")  # type: list[DrawParam[LENS_FLARE_EX_BANK]]
-    BakedLight = draw_param_property("LightBank")  # type: list[DrawParam[LIGHT_BANK]]
-    ScatteredLight = draw_param_property("LightScatteringBank")  # type: list[DrawParam[LIGHT_SCATTERING_BANK]]
-    PointLights = draw_param_property("PointLightBank")  # type: list[DrawParam[POINT_LIGHT_BANK]]
-    Shadows = draw_param_property("ShadowBank")  # type: list[DrawParam[SHADOW_BANK]]
-    ToneCorrection = draw_param_property("ToneCorrectBank")  # type: list[DrawParam[TONE_CORRECT_BANK]]
-    ToneMapping = draw_param_property("ToneMapBank")  # type: list[DrawParam[TONE_MAP_BANK]]
-    DebugBakedLight = draw_param_property("s_LightBank")  # type: list[DrawParam[LIGHT_BANK]]
-    Lods = draw_param_property("LodBank")  # type: list[DrawParam[LOD_BANK]]
+    DepthOfField_0 = draw_param_property("DofBank", 0)  # type: DrawParam[DOF_BANK]
+    EnvLightTex_0 = draw_param_property("EnvLightTexBank", 0)  # type: DrawParam[ENV_LIGHT_TEX_BANK]
+    Fog_0 = draw_param_property("FogBank", 0)  # type: DrawParam[FOG_BANK]
+    LensFlares_0 = draw_param_property("LensFlareBank", 0)  # type: DrawParam[LENS_FLARE_BANK]
+    LensFlareSources_0 = draw_param_property("LensFlareExBank", 0)  # type: DrawParam[LENS_FLARE_EX_BANK]
+    BakedLight_0 = draw_param_property("LightBank", 0)  # type: DrawParam[LIGHT_BANK]
+    ScatteredLight_0 = draw_param_property("LightScatteringBank", 0)  # type: DrawParam[LIGHT_SCATTERING_BANK]
+    PointLights_0 = draw_param_property("PointLightBank", 0)  # type: DrawParam[POINT_LIGHT_BANK]
+    Shadows_0 = draw_param_property("ShadowBank", 0)  # type: DrawParam[SHADOW_BANK]
+    ToneCorrection_0 = draw_param_property("ToneCorrectBank", 0)  # type: DrawParam[TONE_CORRECT_BANK]
+    ToneMapping_0 = draw_param_property("ToneMapBank", 0)  # type: DrawParam[TONE_MAP_BANK]
+    DebugBakedLight_0 = draw_param_property("s_LightBank", 0)  # type: DrawParam[LIGHT_BANK]
+    Lods_0 = draw_param_property("LodBank", 0)  # type: DrawParam[LOD_BANK]
+
+    DepthOfField_1 = draw_param_property("DofBank", 1)  # type: DrawParam[DOF_BANK] | None
+    EnvLightTex_1 = draw_param_property("EnvLightTexBank", 1)  # type: DrawParam[ENV_LIGHT_TEX_BANK] | None
+    Fog_1 = draw_param_property("FogBank", 1)  # type: DrawParam[FOG_BANK] | None
+    LensFlares_1 = draw_param_property("LensFlareBank", 1)  # type: DrawParam[LENS_FLARE_BANK] | None
+    LensFlareSources_1 = draw_param_property("LensFlareExBank", 1)  # type: DrawParam[LENS_FLARE_EX_BANK] | None
+    BakedLight_1 = draw_param_property("LightBank", 1)  # type: DrawParam[LIGHT_BANK] | None
+    ScatteredLight_1 = draw_param_property("LightScatteringBank", 1)  # type: DrawParam[LIGHT_SCATTERING_BANK] | None
+    PointLights_1 = draw_param_property("PointLightBank", 1)  # type: DrawParam[POINT_LIGHT_BANK] | None
+    Shadows_1 = draw_param_property("ShadowBank", 1)  # type: DrawParam[SHADOW_BANK] | None
+    ToneCorrection_1 = draw_param_property("ToneCorrectBank", 1)  # type: DrawParam[TONE_CORRECT_BANK] | None
+    ToneMapping_1 = draw_param_property("ToneMapBank", 1)  # type: DrawParam[TONE_MAP_BANK] | None
+    DebugBakedLight_1 = draw_param_property("s_LightBank", 1)  # type: DrawParam[LIGHT_BANK] | None
+    Lods_1 = draw_param_property("LodBank", 1)  # type: DrawParam[LOD_BANK] | None
 
     def __post_init__(self):
         if self.draw_params_0:
