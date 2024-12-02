@@ -40,6 +40,7 @@ class MatDefSampler:
     uv_scale: Vector2 | None = None  # added from sampler group in later games
     default_texture_path: str = ""
     matbin_texture_path: str = ""  # only used in Elden Ring, where FLVERs only rarely override texture paths
+    is_uv_unused: bool = False  # if True, ignored by `MatDef.get_used_uv_layers()` (but sampler still exists)
 
     @property
     def uv_layer_name(self) -> str:
@@ -53,6 +54,8 @@ class MatDefSampler:
 
     def __repr__(self):
         s = f"Sampler({self.name} -> {self.alias}, UV '{self.uv_layer_name}'"
+        if self.is_uv_unused:
+            s += " <UNUSED>"
         if self.sampler_group > 0:
             s += f", Group {self.sampler_group}"
         if self.uv_scale is not None:
@@ -286,7 +289,7 @@ class MatDef(abc.ABC):
     def get_used_uv_layers(self) -> list[IntEnum]:
         """Value-sorted list of unique UV layer enums used by all samplers and any additional, otherwise undetectable
         shader function (e.g. foliage wind animation) specified in `cls.EXTRA_SHADER_UV_LAYERS`."""
-        all_uv_layers = set(sampler.uv_layer for sampler in self.samplers) - {None}
+        all_uv_layers = set(sampler.uv_layer for sampler in self.samplers if not sampler.is_uv_unused) - {None}
         for extra_uv_layer in self.EXTRA_SHADER_UV_LAYERS.get(self.shader_category, []):
             all_uv_layers.add(extra_uv_layer)
         return sorted(all_uv_layers, key=lambda x: x.value)

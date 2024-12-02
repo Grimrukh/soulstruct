@@ -10,6 +10,7 @@ import typing as tp
 from dataclasses import dataclass
 from enum import IntEnum
 
+from soulstruct.base.models import MTD
 from soulstruct.base.models.shaders import MatDef as _BaseMatDef
 from soulstruct.base.models.flver.vertex_array_layout import *
 from soulstruct.utilities.binary import ByteOrder
@@ -131,6 +132,22 @@ class MatDef(_BaseMatDef):
     def get_shader_category(cls, shader_stem: str) -> str:
         """Parse stem as 'FRPG_{category}_*' and return the category."""
         return shader_stem.removeprefix("FRPG_").split("_")[0]
+
+    @classmethod
+    def from_mtd(cls, mtd: MTD):
+        matdef = super(MatDef, cls).from_mtd(mtd)
+
+        # Special known case of an unused UV layer, which we mark to stop layouts from including a second UV slot.
+        if matdef.name == "Cs_ShadowMan_skin.mtd":
+            unused_sampler = matdef.get_sampler_with_alias("Main 1 Albedo")
+            if unused_sampler is None:
+                _LOGGER.warning(
+                    f"MatDef '{matdef.name}' does not have expected 'Main 1 Albedo' sampler with unused UV layer."
+                )
+            else:
+                unused_sampler.is_uv_unused = True
+
+        return matdef
 
     @classmethod
     def from_mtd_name(cls, mtd_name: str):
