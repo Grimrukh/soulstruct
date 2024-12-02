@@ -18,4 +18,4 @@ class CHRBND(FLVERBinder):
 
     dcx_type: DCXType = ELDEN_RING.default_dcx_type
     version: BinderVersion = BinderVersion.V4
-    v4_info: BinderVersion4Info = field(default_factory=BinderVersion4Info.elden_ring_default)
+    v4_info: BinderVersion4Info = field(default_factory=BinderVersion4Info.eldenring_default)

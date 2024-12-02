@@ -214,6 +214,8 @@ class BinderVersion4Info:
     def bloodborne_default(cls):
         return cls(False, False, True, 0)
 
+    # BND4 extended properties have not changed since DS3:
+
     @classmethod
     def darksouls3_default(cls):
         return cls(False, False, True, 4)
@@ -223,7 +225,7 @@ class BinderVersion4Info:
         return cls(False, False, True, 4)
 
     @classmethod
-    def elden_ring_default(cls):
+    def eldenring_default(cls):
         return cls(False, False, True, 4)
 
 

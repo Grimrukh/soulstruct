@@ -263,6 +263,7 @@ DARK_SOULS_3 = Game(
     default_dcx_type=DCXType.DCX_DFLT_10000_44_9,
     default_game_path=DS3_PATH,
     executable_name="DarkSoulsIII.exe",
+    interroot_prefix="N:\\FDP\\data\\INTERROOT_win64",
 )
 
 

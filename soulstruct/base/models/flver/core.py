@@ -155,7 +155,7 @@ class FLVER(GameFile):
 
     @property
     def submeshes(self):
-        # TODO: TEMPORARILY LEGACY SUPPORT.
+        # TODO: TEMPORARY LEGACY SUPPORT.
         _LOGGER.warning(f"Use of deprecated `FLVER.submeshes`. Use `FLVER.meshes` instead.")
         return self.meshes
 

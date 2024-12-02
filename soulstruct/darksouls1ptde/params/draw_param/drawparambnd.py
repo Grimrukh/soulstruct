@@ -29,9 +29,9 @@ _DRAW_PARAM_FILE_NAME_RE = re.compile(r"([ms]\d\d|default)(_\d)?(_\w+)\.param") 
 
 
 def draw_param_property(draw_param_stem: str, slot: int):
-    if slot == 0:
+    if slot == 0:  # always exists
         return property(lambda self: self.draw_params_0[draw_param_stem])
-    elif slot == 1:
+    elif slot == 1:  # may not exist
         return property(lambda self: self.draw_params_1.get(draw_param_stem, None))
     raise ValueError(f"Invalid `DrawParam` slot for `DrawParamBND` property: {slot}. Must be 0 or 1.")
 

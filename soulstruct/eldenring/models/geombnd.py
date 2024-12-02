@@ -20,7 +20,7 @@ class GEOMBND(FLVERBinder):
 
     dcx_type: DCXType = ELDEN_RING.default_dcx_type
     version: BinderVersion = BinderVersion.V4
-    v4_info: BinderVersion4Info = field(default_factory=BinderVersion4Info.elden_ring_default)
+    v4_info: BinderVersion4Info = field(default_factory=BinderVersion4Info.eldenring_default)
 
     def get_tpf_entry_path(self, model_stem: str) -> str:
         raise TypeError("GEOMBND does not contain TPF files. These are in `asset/aet` TPFs.")
