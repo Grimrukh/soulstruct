@@ -43,7 +43,7 @@ __all__ = [
     "PlayerStart",
     "Navmesh",
     "DummyObject",
-    "UnusedAsset",
+    "DummyAsset",
     "DummyCharacter",
     "ConnectCollision",
 
@@ -517,7 +517,7 @@ class DummyObject(Object):
         return ("Parts", "DummyObjects") if pluralized_subtype else ("Parts", "DummyObject")
 
 
-class UnusedAsset(Asset):
+class DummyAsset(Asset):
     """Unused (or cutscene-only) asset in MSB."""
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):

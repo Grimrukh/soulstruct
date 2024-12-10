@@ -106,7 +106,7 @@ MSB_ENTRY_SUBTYPES = {
         MSBPartSubtype.Character: MSBSubtypeInfo(MSBCharacter, "characters"),
         MSBPartSubtype.PlayerStart: MSBSubtypeInfo(MSBPlayerStart, "player_starts"),
         MSBPartSubtype.Collision: MSBSubtypeInfo(MSBCollision, "collisions"),
-        MSBPartSubtype.UnusedAsset: MSBSubtypeInfo(MSBUnusedAsset, "unused_assets"),
+        MSBPartSubtype.DummyAsset: MSBSubtypeInfo(MSBDummyAsset, "dummy_assets"),
         MSBPartSubtype.DummyCharacter: MSBSubtypeInfo(MSBDummyCharacter, "dummy_characters"),
         MSBPartSubtype.ConnectCollision: MSBSubtypeInfo(MSBConnectCollision, "connect_collisions"),
     },
@@ -240,7 +240,7 @@ class MSB(_BaseMSB):
     collisions: MSBEntryList[MSBCollision] = field(default_factory=empty(MSBPartSubtype.Collision))
     connect_collisions: MSBEntryList[MSBConnectCollision] = field(
         default_factory=empty(MSBPartSubtype.ConnectCollision))
-    unused_assets: MSBEntryList[MSBUnusedAsset] = field(default_factory=empty(MSBPartSubtype.UnusedAsset))
+    dummy_assets: MSBEntryList[MSBDummyAsset] = field(default_factory=empty(MSBPartSubtype.DummyAsset))
     dummy_characters: MSBEntryList[MSBDummyCharacter] = field(default_factory=empty(MSBPartSubtype.DummyCharacter))
 
     # TODO: Need to check all part `model_instance_id` values are unique.

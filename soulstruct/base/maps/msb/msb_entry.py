@@ -778,7 +778,7 @@ class MSBEntry(abc.ABC):
         if self.cls_name == "MSBDummyCharacter" and value.__class__.__name__ == "MSBAssetModel":
             # Happens in Elden Ring: e.g. 'AEG099_320'
             return True
-        if self.cls_name == "MSBUnusedAsset" and value.__class__.__name__ == "MSBCharacterModel":
+        if self.cls_name == "MSBDummyAsset" and value.__class__.__name__ == "MSBCharacterModel":
             # Happens in Elden Ring.
             return True
         if self.cls_name == "MSBConnectCollision" and value.__class__.__name__ == "MSBMapPieceModel":

@@ -77,11 +77,11 @@ if tp.TYPE_CHECKING:
 class RegionHeaderStruct(MSBHeaderStruct):
     name_offset: long
     _subtype_int: int
-    supertype_index: int
+    subtype_index: int
     shape_type_int: int
     translate: Vector3
     rotate: Vector3  # Euler angles in radians
-    region_unkh_2c: int
+    supertype_index: int
     unk_shorts_a_offset: long
     unk_shorts_b_offset: long
     region_unkh_40: int
@@ -141,7 +141,6 @@ class RegionHeaderStruct(MSBHeaderStruct):
         kwargs["supertype_data_offset"] = RESERVED
         kwargs["subtype_data_offset"] = RESERVED
         kwargs["extra_data_offset"] = RESERVED
-        kwargs.pop("subtype_index")  # not used by regions
 
     @classmethod
     def post_write(
@@ -204,7 +203,6 @@ class MSBRegion(BaseMSBRegion, abc.ABC):
     }
 
     # HEADER DATA
-    region_unkh_2c: int = 0
     region_unkh_40: int = 0
     event_layer: int = -1
     unk_shorts_a: list[int] = field(default_factory=list)
@@ -345,7 +343,7 @@ class MSBSoundRegion(MSBRegion):
     sound_type: int = 0
     sound_id: int = 0
     child_regions: list[MSBRegion] = field(
-        default_factory=lambda: [None] * 16, **MapFieldInfo(game_type=GameObjectIntSequence((Region, 8)))
+        default_factory=lambda: [None] * 16, **MapFieldInfo(game_type=GameObjectIntSequence((Region, 16)))
     )
     unk_t49: bool = False
 

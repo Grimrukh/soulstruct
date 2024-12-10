@@ -43,13 +43,13 @@ class MSBEventSubtype(BaseMSBEventSubtype):
     Spawner = 5
     ObjAct = 7
     Navigation = 10
-    Environment = 11
     NPCInvasion = 12
     Platoon = 15
     PatrolRouteEvent = 20  # needs `Event` suffix to distinguish it from Region subtype
     Mount = 21
     SignPool = 23
     RetryPoint = 24
+    AreaTeam = 25  # added in Shadow of the Erdtree DLC
     OtherEvent = -1
 
     @classmethod
@@ -106,8 +106,7 @@ class MSBPartSubtype(BaseMSBPartSubtype):
     Character = 2
     PlayerStart = 4
     Collision = 5
-    Navmesh = 8
-    UnusedAsset = 9
+    DummyAsset = 9
     DummyCharacter = 10
     ConnectCollision = 11
     Asset = 13

@@ -7,7 +7,7 @@ __all__ = [
     "MSBCharacter",
     "MSBPlayerStart",
     "MSBCollision",
-    "MSBUnusedAsset",
+    "MSBDummyAsset",
     "MSBDummyCharacter",
     "MSBConnectCollision",
 ]
@@ -53,16 +53,16 @@ class PartHeaderStruct(MSBHeaderStruct):
     part_unkh_44: int
     event_layer: int
     _zero: int = field(init=False, **Binary(asserted=0))
-    unk1_data_offset: long
-    unk2_data_offset: long
+    draw_info_1_data_offset: long
+    draw_info_2_data_offset: long
     supertype_data_offset: long
     subtype_data_offset: long
     gparam_data_offset: long
     scene_gparam_data_offset: long
-    unk7_data_offset: long
+    grass_config_data_offset: long
     unk8_data_offset: long
     unk9_data_offset: long
-    unk10_data_offset: long
+    tile_load_config_data_offset: long
     unk11_data_offset: long
     _pad1: bytes = field(init=False, **BinaryPad(24))  # three unused offsets?
 
@@ -116,7 +116,7 @@ class PartHeaderStruct(MSBHeaderStruct):
 
 
 @dataclass(slots=True)
-class UnkStruct1(MSBBinaryStruct):
+class DrawInfo1(MSBBinaryStruct):
     # TODO: Name 'DrawInfoData1'?
     display_groups: GroupBitSet256 = field(**BinaryArray(8, uint))
     draw_groups: GroupBitSet256 = field(**BinaryArray(8, uint))
@@ -131,7 +131,7 @@ class UnkStruct1(MSBBinaryStruct):
 
 
 @dataclass(slots=True)
-class UnkStruct2(MSBBinaryStruct):
+class DrawInfo2(MSBBinaryStruct):
     # TODO: Name 'DrawInfoData2'?
     condition_2: int
     display_groups_2: GroupBitSet256 = field(**BinaryArray(8, uint))
@@ -167,7 +167,7 @@ class PartDataStruct(MSBBinaryStruct):
     part_unkd_3e: short
 
 
-# Struct 4 is part subtype data.
+# Struct 4 is part subtype data (varies by subtype).
 
 
 @dataclass(slots=True)
@@ -198,7 +198,7 @@ class SceneGParamDataStruct(MSBBinaryStruct):  # 6
 
 
 @dataclass(slots=True)
-class UnkStruct7(MSBBinaryStruct):
+class GrassConfig(MSBBinaryStruct):
     unk7_00: int
     unk7_04: int
     unk7_08: int
@@ -222,7 +222,7 @@ class UnkStruct9(MSBBinaryStruct):
 
 
 @dataclass(slots=True)
-class UnkStruct10(MSBBinaryStruct):
+class TileLoadConfig(MSBBinaryStruct):
     map_id: int
     unk10_04: int
     _zero: int = field(init=False, **Binary(asserted=0))
@@ -310,13 +310,13 @@ class MSBMapPiece(MSBPart):
     """No further subtype data beyond the structs."""
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.MapPiece
     STRUCTS = {
-        "unk1_data": UnkStruct1,
+        "draw_info_1_data": DrawInfo1,
         "subtype_data": MapPieceDataStruct,
         "gparam_data": GParamDataStruct,
-        "unk7_data": UnkStruct7,
+        "grass_config_data": GrassConfig,
         "unk8_data": UnkStruct8,
         "unk9_data": UnkStruct9,
-        "unk10_data": UnkStruct10,
+        "tile_load_config_data": TileLoadConfig,
         "unk11_data": UnkStruct11,
     }
 
@@ -497,10 +497,15 @@ class MSBAsset(MSBPart):
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Asset
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model", "unk_parts"]
     STRUCTS = {
-        "unk1_data": UnkStruct1,
-        "unk2_data": UnkStruct1,
+        "draw_info_1_data": DrawInfo1,
+        "draw_info_2_data": DrawInfo1,
         "subtype_data": AssetDataStruct,
         "gparam_data": GParamDataStruct,
+        "grass_config_data": GrassConfig,
+        "unk8_data": UnkStruct8,
+        "unk9_data": UnkStruct9,
+        "tile_load_config_data": TileLoadConfig,
+        "unk11_data": UnkStruct11,
     }
 
     # Assets use every struct except SceneGParam.
@@ -676,11 +681,11 @@ class MSBCharacter(MSBPart):
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Character
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model", "draw_parent", "patrol_route_event"]
     STRUCTS = {
-        "unk1_data": UnkStruct1,
+        "draw_info_1_data": DrawInfo1,
         "subtype_data": CharacterDataStruct,
         "gparam_data": GParamDataStruct,
         "unk8_data": UnkStruct8,
-        "unk10_data": UnkStruct10,
+        "tile_load_config_data": TileLoadConfig,
     }
 
     model: MSBCharacterModel | MSBPlayerModel = None  # c0000 characters can use either model type
@@ -755,10 +760,10 @@ class MSBPlayerStart(MSBPart):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.PlayerStart
     STRUCTS = {
-        "unk1_data": UnkStruct1,
+        "draw_info_1_data": DrawInfo1,
         "subtype_data": PlayerStartDataStruct,
         "unk8_data": UnkStruct8,
-        "unk10_data": UnkStruct10,
+        "tile_load_config_data": TileLoadConfig,
     }
 
     HIDE_FIELDS: tp.ClassVar = (
@@ -836,13 +841,13 @@ class MSBCollision(MSBPart):
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\GR\\data\\Model\\map\\{map_stem}\\sib\\h_layout.SIB"
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model"]
     STRUCTS = {
-        "unk1_data": UnkStruct1,
-        "unk2_data": UnkStruct2,
+        "draw_info_1_data": DrawInfo1,
+        "draw_info_2_data": DrawInfo2,
         "subtype_data": CollisionDataStruct,
         "gparam_data": GParamDataStruct,
         "scene_gparam_data": SceneGParamDataStruct,
         "unk8_data": UnkStruct8,
-        "unk10_data": UnkStruct10,
+        "tile_load_config_data": TileLoadConfig,
         "unk11_data": UnkStruct11,
     }
 
@@ -945,11 +950,11 @@ class MSBConnectCollision(MSBPart):
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.ConnectCollision
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model", "collision"]
     STRUCTS = {
-        "unk1_data": UnkStruct1,
-        "unk2_data": UnkStruct2,
+        "draw_info_1_data": DrawInfo1,
+        "draw_info_2_data": DrawInfo2,
         "subtype_data": ConnectCollisionDataStruct,
         "unk8_data": UnkStruct8,
-        "unk10_data": UnkStruct10,
+        "tile_load_config_data": TileLoadConfig,
         "unk11_data": UnkStruct11,
     }
 
@@ -1005,7 +1010,7 @@ class MSBConnectCollision(MSBPart):
 
 
 @dataclass(slots=True)
-class UnusedAssetDataStruct(MSBBinaryStruct):
+class DummyAssetDataStruct(MSBBinaryStruct):
     """Basically all Asset fields nuked. Unlike earlier games, this is a DESTRUCTIVE way to just disable Assets.
 
     These probably contain the bare minimum for cutscene use in their GParam and other structs.
@@ -1014,19 +1019,19 @@ class UnusedAssetDataStruct(MSBBinaryStruct):
 
 
 @dataclass(slots=True, eq=False, repr=False)
-class MSBUnusedAsset(MSBPart):
+class MSBDummyAsset(MSBPart):
     """Unused asset. May be used in cutscenes; disabled otherwise.
 
     Does NOT have the same layout or even use the same Part sub-structs as `MSBAsset`. Has no variable data at all.
     """
 
-    SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.UnusedAsset
+    SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.DummyAsset
     STRUCTS = {
-        "unk1_data": UnkStruct1,
-        "subtype_data": UnusedAssetDataStruct,
+        "draw_info_1_data": DrawInfo1,
+        "subtype_data": DummyAssetDataStruct,
         "gparam_data": GParamDataStruct,
         "unk8_data": UnkStruct8,
-        "unk10_data": UnkStruct10,
+        "tile_load_config_data": TileLoadConfig,
     }
 
     model: MSBAssetModel = None
