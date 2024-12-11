@@ -24,13 +24,13 @@ MSBEntryType = tp.TypeVar("MSBEntryType", bound=MSBEntry)
 class MSBEntryList(IDList[MSBEntryType]):
 
     supertype: str
-    entry_class: type[MSBEntry] | None  # may be `None` for transient supertype lists
+    entry_class: type[MSBEntryType]  # may be an abstract base class for transient supertype lists
 
     def __init__(
         self,
         entries: tp.Iterable[MSBEntryType],
         supertype: str,
-        entry_class: type[MSBEntryType] | None,
+        entry_class: type[MSBEntryType],
     ):
         self.supertype = supertype
         self.entry_class = entry_class

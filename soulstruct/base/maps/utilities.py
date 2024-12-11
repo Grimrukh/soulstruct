@@ -92,7 +92,7 @@ def get_map(source: MAP_SOURCE_TYPING, game_maps: tp.Sequence[Map]) -> Map:
     if len(matches) > 1:
         raise ValueError(f"Multiple maps matched for '{input_source}': {[g.name for g in matches]}")
     elif not matches:
-        raise ValueError(f"No maps matched for '{input_source}'.")
+        raise ValueError(f"No known maps matched for '{input_source}'.")
 
     return matches[0]
 

@@ -1,0 +1,207 @@
+"""
+Land of Shadow 13-11 NW NW
+
+linked:
+0
+82
+
+strings:
+0: N:\\GR\\data\\Param\\event\\common_func.emevd
+82: N:\\GR\\data\\Param\\event\\common_macro.emevd
+166: 
+168: 
+170: 
+172: 
+174: 
+"""
+# [COMMON_FUNC]
+from .common_func import *
+from soulstruct.eldenring.events import *
+from soulstruct.eldenring.events.instructions import *
+from soulstruct.eldenring.game_types import *
+
+
+@ContinueOnRest(0)
+def Constructor():
+    """Event 0"""
+    RegisterGrace(grace_flag=2052470000, asset=2052471950)
+    CommonFunc_90005200(
+        0,
+        character=2052470202,
+        animation_id=30003,
+        animation_id_1=20003,
+        region=2052472202,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=2052470204,
+        animation_id=30003,
+        animation_id_1=20003,
+        region=2052472202,
+        seconds=1.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=2052470300,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=2052472300,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=2052470301,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=2052472300,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=2052470302,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=2052472300,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=2052470303,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=2052472300,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=2052470304,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=2052472300,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=2052470305,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=2052472300,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=2052470306,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=2052472300,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=2052470307,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=2052472300,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=2052470308,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=2052472300,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=2052470309,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=2052472300,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=2052470310,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=2052472300,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=2052470311,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=2052472300,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=2052470312,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=2052472300,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )

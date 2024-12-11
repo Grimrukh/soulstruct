@@ -252,7 +252,7 @@ class GameEnumsManager(abc.ABC):
         """Iterate over all `GameObjectInt`-inheriting classes in `module` and register their IDs and values.
 
         Note that the same enum members may appear under multiple keys, as each class in each game type's hierarchy can
-        appear as a dictionary key (e.g. `RegionVolume` members will also appear under the `Region` key if both are in
+        appear as a dictionary key (e.g. `Character` members will also appear under the `Part` key if both are in
         `VALID_GAME_TYPES`).
         """
         self.enums[module_name] = {}  # reset

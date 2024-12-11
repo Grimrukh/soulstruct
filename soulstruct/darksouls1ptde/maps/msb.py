@@ -114,9 +114,7 @@ class MSB(_BaseMSB):
         "messages": MessageEvent,
         "spawn_points": SpawnPointEvent,
         "navigation": NavigationEvent,
-        # Shape-based region sublist properties:
-        "region_points": RegionPoint,
-        "region_volumes": RegionVolume,
+        "regions": Region,
     }
 
     # Callables with `map_base_id` to get prescribed DS1 entity ID range for each MSB entity type, as class kwargs.
@@ -124,8 +122,7 @@ class MSB(_BaseMSB):
     # Note that these are GUIDELINES for vanilla usage, but are not always followed. A few maps also have clashing IDs
     # over different supertypes in vanilla DS1 (often between `NavigationEvent`s and regions).
     ID_RANGES = {
-        RegionVolume: lambda map_base_id: dict(first_value=2000 + map_base_id, last_value=2499 + map_base_id),
-        RegionPoint: lambda map_base_id: dict(first_value=2500 + map_base_id, last_value=2899 + map_base_id),
+        Region: lambda map_base_id: dict(first_value=2000 + map_base_id, last_value=2899 + map_base_id),
 
         MapPiece: lambda map_base_id: dict(first_value=3000 + map_base_id, last_value=3199 + map_base_id),
         Collision: lambda map_base_id: dict(first_value=3200 + map_base_id, last_value=3399 + map_base_id),
@@ -204,7 +201,7 @@ class MSB(_BaseMSB):
         return MSBEntryList(
             [region for region in self.regions if region.shape_type == RegionShapeType.Point],
             supertype=MSBSupertype.REGIONS,
-            entry_class=None,
+            entry_class=MSBRegion,
         )
 
     @property
@@ -213,7 +210,7 @@ class MSB(_BaseMSB):
         return MSBEntryList(
             [region for region in self.regions if region.shape_type in volume_types],
             supertype=MSBSupertype.REGIONS,
-            entry_class=None,
+            entry_class=MSBRegion,
         )
 
     def pack_supertype_name(self, writer: BinaryWriter, supertype_name: str):
@@ -457,7 +454,7 @@ class MSB(_BaseMSB):
         self,
         translate: Vector3,
         rotate: Vector3,
-        point_entity_enum: RegionPoint = None,
+        point_entity_enum: Region = None,
         **vfx_event_kwargs,
     ) -> MSBVFXEvent:
         if "attached_region" in vfx_event_kwargs:

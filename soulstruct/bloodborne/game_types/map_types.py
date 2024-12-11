@@ -38,8 +38,6 @@ __all__ = [
     "ConnectCollision",
 
     "Region",
-    "RegionVolume",
-    "RegionPoint",
 
     "MapPartTyping",
     "CoordEntityTyping",

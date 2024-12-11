@@ -66,5 +66,5 @@ class Flags(Flag):
     EraseSummonSign = 11005990
 
 
-class RegionVolumes(RegionVolume):
+class RegionVolumes(Region):
     GapingDragonArena = 1002999

@@ -3,6 +3,7 @@ import shutil
 import unittest
 from pathlib import Path
 
+from soulstruct.base.maps.enum_module_generator import EnumModuleGenerator
 from soulstruct.darksouls1r.maps import MSB, MapStudioDirectory
 from soulstruct.utilities.maths import Vector3
 from soulstruct.utilities.inspection import profile_function, Timer
@@ -91,7 +92,8 @@ class MSBTest(unittest.TestCase):
 
     def test_entities_module(self):
         msb = MSB.from_path("resources/m10_00_00_00.msb")
-        msb.write_enums_module("test_m10_00_00_00_entities.py")
+        emg = EnumModuleGenerator(msb)
+        emg.write_enums_module(output_module_path="test_m10_00_00_00_entities.py")
 
     def tearDown(self):
         for test_file in Path(".").glob("_test*"):

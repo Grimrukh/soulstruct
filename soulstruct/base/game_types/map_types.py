@@ -31,8 +31,6 @@ __all__ = [
     "NPCInvasionEvent",
 
     "Region",
-    "RegionVolume",
-    "RegionPoint",
 
     "MapPart",
     "MapPiece",
@@ -425,21 +423,6 @@ class Region(MapEntity):
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
         return ("Regions", "Regions") if pluralized_subtype else ("Regions", "Region")
-
-
-class RegionVolume(Region):
-    """Soulstruct ABC for Spheres, Cylinders, and Boxes, which share an auto-enumeration schema separate from Points."""
-
-    @classmethod
-    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
-        return ("Regions", "RegionVolumes") if pluralized_subtype else ("Regions", "RegionVolume")
-
-
-class RegionPoint(Region):
-    """Shapeless point region."""
-    @classmethod
-    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
-        return ("Regions", "RegionPoints") if pluralized_subtype else ("Regions", "RegionPoint")
 
 # endregion
 

@@ -261,6 +261,9 @@ class IDList(tp.Generic[ElementType]):
     def __len__(self) -> int:
         return self._size
 
+    def __bool__(self) -> bool:
+        return self._size > 0
+
     def __iter__(self) -> tp.Iterator[ElementType]:
         return iter(self._list)
 

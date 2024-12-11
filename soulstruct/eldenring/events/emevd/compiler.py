@@ -63,12 +63,15 @@ def compile_game_object_test(
 
     if issubclass(game_object_int_type, Flag):
         test.set_all("FlagEnabled", "FlagDisabled")
-    # TODO: Regions are directly tied to Events in Elden Ring. Need better MSB support!
-    # elif issubclass(game_object_int_type, RegionVolume):
+    # TODO: Regions are directly tied to Events in Elden Ring. Need better MSB support! Disabling implicit use for now.
+    # elif issubclass(game_object_int_type, Region):
+    #     if game_object_int_type.__name__ == "RegionPoints":
+    #         _LOGGER.warning(
+    #             f"Used a member of an enum called `RegionPoints` as a boolean test for being inside or outside "
+    #             f"a Region, which will not work for volumeless points."
+    #         )
     #     test.if_true = "IfPlayerInsideRegion"
     #     test.if_false = "IfPlayerOutsideRegion"
-    # elif issubclass(game_object_int_type, Region):
-    #     raise TypeError(f"Only `RegionVolume` subclasses can be used as direct booleans, not just `Region`.")
     elif issubclass(game_object_int_type, Asset):
         test.set_all("AssetNotDestroyed", "AssetDestroyed")  # True == asset NOT destroyed
     elif issubclass(game_object_int_type, Character):

@@ -40,6 +40,11 @@ class RegionShapeType(IntEnum):
     def get_volume_types(cls) -> set[RegionShapeType]:
         return {cls.Sphere, cls.Cylinder, cls.Box}
 
+    @classmethod
+    def get_2d_types(cls) -> set[RegionShapeType]:
+        """I have never seen these used even once in any FromSoftware game."""
+        return {cls.Circle, cls.Rect}
+
 
 @dataclass(slots=True)
 class RegionShape(abc.ABC):

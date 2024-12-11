@@ -19,7 +19,6 @@ from soulstruct.utilities.binary import *
 from soulstruct.utilities.files import write_json
 from soulstruct.utilities.maths import Vector2, Vector3, Vector4
 from soulstruct.utilities.misc import IDList
-from soulstruct.utilities.text import PY_NAME_RE
 from .region_shapes import RegionShape
 
 from .msb_entry import MSBEntry
@@ -37,7 +36,7 @@ if tp.TYPE_CHECKING:
 _LOGGER = logging.getLogger("soulstruct")
 
 
-MAP_NAME_RE = re.compile(r"m(\d\d)_(\d\d)_.*")
+MAP_NAME_RE = re.compile(r"m(\d\d)_(\d\d)_(\d\d)_(\d\d)")
 
 # NOTE: Completely absent in DS1 and earlier.
 MSB_HEADER_BYTES = struct.pack("4sII??BB", b"MSB ", 1, 16, False, False, 1, 255)
@@ -857,125 +856,6 @@ class MSB(GameFile, abc.ABC):
         """Iterate over all subtype lists."""
         return iter(self.get_all_subtype_lists())
 
-    def write_enums_module(
-        self,
-        module_path: str | Path = None,
-        area_id: int = None,
-        block_id: int = None,
-        # TODO: cc_id and dd_id for Elden Ring
-        append_to_module: str = ""
-    ):
-        """Generates a '{mXX_YY}_enums.py' file with entity IDs for import into EVS scripts.
-
-        If `append_to_module` text is given, all map enums will be appended to it.
-        """
-        if module_path is None:
-            if self.path is None:
-                raise ValueError("Cannot auto-detect MSB entities `module_path` (MSB path not known).")
-            module_path = self.path.parent / f"{self.path.name.split('.')[0]}_enums.py"
-        else:
-            module_path = Path(module_path)
-
-        module_path.parent.mkdir(parents=True, exist_ok=True)
-
-        auto_map_base_id = None
-        if area_id is None and block_id is None:
-            if self.path:
-                map_name_match = MAP_NAME_RE.match(self.path.name)
-                if map_name_match:
-                    area_id, block_id = map(int, map_name_match.group(1, 2))
-                    auto_map_base_id = area_id * 100000 + block_id * 10000
-                else:
-                    _LOGGER.warning(
-                        f"Could not auto-detect map area and block (cannot parse from MSB path: {self.path}). "
-                        "Auto-enumerator functions will be commented out; replace the {MAP_RANGE_START} string in each "
-                        "one and uncomment to use."
-                    )
-            else:
-                _LOGGER.warning(
-                    "Could not auto-detect map area and block (MSB path not known). Auto-enumerator functions will be"
-                    "commented out; replace the {MAP_RANGE_START} string in each one and uncomment to use."
-                )
-        elif area_id is not None and block_id is not None:
-            # TODO: Is this still right for Elden Ring? For legacy dungeons, at least.
-            auto_map_base_id = area_id * 100000 + block_id * 10000
-        else:
-            raise ValueError("Both `area_id` and `block_id` must be given, or neither for automatic detection.")
-
-        trailing_digit_re = re.compile(r"(.*?)(\d+)")
-
-        def sort_key(key_value) -> tuple[str, int]:
-            """Sort trailing digits properly."""
-            _, value_ = key_value
-            if match := trailing_digit_re.match(value_.name):
-                return match.group(1), int(match.group(2))
-            return value_.name, 0
-
-        module_path = Path(module_path)
-
-        game_types_import = f"from soulstruct.{self.get_game().submodule_name}.game_types import *\n"
-        if append_to_module:
-            if game_types_import not in append_to_module:
-                # Add game type start import to module. (Very rare that it wouldn't already be there.)
-                first_class_def_index = append_to_module.find("\nclass")
-                if first_class_def_index != -1:
-                    append_to_module = append_to_module.replace("\nclass", game_types_import + "\n\nclass", 1)
-                else:
-                    append_to_module += game_types_import
-            module_text = append_to_module.rstrip("\n") + "\n"
-        else:
-            module_text = game_types_import
-
-        for subtype_name, subtype_game_type in self.ENTITY_GAME_TYPES.items():
-            class_name = subtype_game_type.get_msb_entry_supertype_subtype(pluralized_subtype=True)[1]
-            class_text = ""
-            subtype_list = getattr(self, subtype_name)
-            entity_id_dict = subtype_list.get_entity_id_dict()
-            sorted_entity_id_dict = {
-                k: v for k, v in sorted(entity_id_dict.items(), key=sort_key)
-            }
-            last_is_non_ascii = False
-            for entity_id, entry in sorted_entity_id_dict.items():
-                # name = entry.name.replace(" ", "_")
-                try:
-                    name = entry.name.encode("utf-8").decode("ascii")
-                except UnicodeDecodeError:
-                    if not last_is_non_ascii:
-                        class_text += f"    # TODO: Non-ASCII name characters.\n"
-                        last_is_non_ascii = True
-                    class_text += f"    # {entry.name} = {entity_id}"
-                else:
-                    last_is_non_ascii = False
-                    if not PY_NAME_RE.match(name):
-                        class_text += f"    # TODO: Invalid Python variable name.\n    # {entry.name} = {entity_id}"
-                    else:
-                        class_text += f"    {name} = {entity_id}"
-                if entry.description:
-                    class_text += f"  # {entry.description}"
-                class_text += "\n"
-            if class_text:
-                game_type_name = subtype_game_type.__name__
-                if auto_map_base_id is not None and subtype_game_type in self.ID_RANGES:
-                    range_kwargs = self.ID_RANGES[subtype_game_type](auto_map_base_id)
-                    try:
-                        first_value = range_kwargs["first_value"]
-                        last_value = range_kwargs["last_value"]
-                    except KeyError:
-                        _LOGGER.warning(
-                            f"`ID_RANGES` callback for {game_type_name} did not return `first_value` and `last_value`."
-                        )
-                        class_def = f"\n\nclass {class_name}({game_type_name}):\n"
-                    else:
-                        class_def = f"\n\nclass {class_name}({game_type_name}, {first_value=}, {last_value=}):\n"
-                else:
-                    class_def = f"\n\nclass {class_name}({game_type_name}):\n"
-                class_def += f"    \"\"\"`{game_type_name}` entity IDs for MSB and EVS use.\"\"\"\n\n"
-                class_text = class_def + class_text
-                module_text += class_text
-
-        with module_path.open("w", encoding="utf-8") as f:
-            f.write(module_text)
-
     def get_or_create_model(
         self,
         model_subtype_name: str,
@@ -1058,5 +938,5 @@ class MSB(GameFile, abc.ABC):
         if self.path is None:
             raise ValueError("Cannot get map stem from MSB path because it is not known.")
         if map_name_match := MAP_NAME_RE.match(self.path.name):
-            return map_name_match.group(0)
+            return map_name_match.group(0)  # full match
         raise ValueError(f"Could not parse map stem from MSB path name: {self.path}")
