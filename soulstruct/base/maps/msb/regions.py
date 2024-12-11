@@ -55,6 +55,21 @@ class BaseMSBRegion(MSBEntry, abc.ABC):
     def has_identity_transform(self) -> bool:
         return self.translate == Vector3.zero() and self.rotate == Vector3.zero()
 
+    def change_shape_type(self, shape_type: RegionShapeType):
+        """Change the shape type of this region, attempting to copy over dimensions as able."""
+        if self.shape.SHAPE_TYPE == shape_type:
+            return  # no change
+        try:
+            old_dimensions = self.shape.get_three_dimensions()
+        except ValueError:
+            old_dimensions = (1.0, 1.0, 1.0)  # CompositeShape
+
+        self.shape = self.SHAPE_CLASSES[shape_type.value]()
+        try:
+            self.shape.set_three_dimensions(old_dimensions)
+        except ValueError:
+            pass  # CompositeShape
+
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         """In later games, regions are more like spatial Events and have references to other MSB entries, or may have
         Composite shapes that require child Region deferencing."""

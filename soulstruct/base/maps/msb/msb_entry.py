@@ -870,6 +870,8 @@ class MSBEntry(abc.ABC):
                             display_type = GroupBitSet256
                         case "GroupBitSet1024":
                             display_type = GroupBitSet1024
+                        case "RegionShape":
+                            display_type = RegionShape
                         case "Vector2":
                             display_type = Vector2
                         case "Vector3":

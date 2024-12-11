@@ -48,46 +48,13 @@ FIELD_INFO = {
     "REGIONS[rotate]": (
         "Rotate", "Euler angles for region rotation around its local X, Y, and Z axes.",
     ),
+    "REGIONS[shape]": (
+        "Shape",
+        "Shape of region, which vary in used dimensions. Width, height, and depth correspond to game X, Y, and Z.",
+    ),
     "REGIONS[entity_id]": (
         "Entity ID",
         "Entity ID for region, for referring to it in EMEVD event scripts.",
-    ),
-    "circles[radius]": (
-        "Radius",
-        "Radius (in xy-plane) of circular region.",
-    ),
-    "Sphere[radius]": (
-        "Radius",
-        "Radius of sphere-shaped region.",
-    ),
-    "Cylinder[radius]": (
-        "Radius",
-        "Radius (in xz-plane) of cylinder-shaped region.",
-    ),
-    "Cylinder[height]": (
-        "Height",
-        "Height (along y-axis) of cylinder-shaped region.",
-    ),
-    "rects[width]": (
-        "Width",
-        "Width (along x-axis) of rectangle-shaped region.",
-    ),
-    "rects[height]": (
-        "Height",
-        "Height (along y-axis) of rectangle-shaped region.",
-    ),
-
-    "Box[width]": (
-        "Width",
-        "Width (along x-axis) of box-shaped region.",
-    ),
-    "Box[depth]": (
-        "Depth",
-        "Depth (along z-axis) of box-shaped region.",
-    ),
-    "Box[height]": (
-        "Height",
-        "Height (along y-axis) of box-shaped region.",
     ),
 
     "Object[break_term]": (
