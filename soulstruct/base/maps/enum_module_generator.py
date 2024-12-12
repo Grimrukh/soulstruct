@@ -10,6 +10,7 @@ import re
 from pathlib import Path
 
 from soulstruct.base.game_types.map_types import MapEntity
+from soulstruct.games import Game
 from soulstruct.utilities.text import PY_NAME_RE
 from soulstruct.utilities.misc import IDList
 
@@ -27,13 +28,13 @@ class EnumModuleGenerator:
     msb: MSB
     path: Path
     map_stem: str
-    submodule_name: str
+    game: Game
 
     def __init__(self, msb: MSB, map_stem: str = None):
         self.msb = msb
         self.path = msb.path
         self.map_stem = map_stem or self.path.name.split(".")[0]
-        self.submodule_name = self.msb.get_game().submodule_name
+        self.game = self.msb.get_game()
 
     def write_enums_module(
         self,
@@ -71,10 +72,14 @@ class EnumModuleGenerator:
                     auto_map_base_id = None
                 else:
                     # Elden Ring ten-digit overworld map format (small tiles).
+                    # Note that these match flags in Elden Ring.
                     auto_map_base_id = int(f"10{bb_id:02d}{cc_id:02d}0000")
-            else:
+            elif self.game.variable_name == "ELDEN_RING":
                 # Standard eight-digit format.
                 auto_map_base_id = int(f"{aa_id:02d}{bb_id:02d}0000")
+            else:
+                # Older seven-digit format (single block digit).
+                auto_map_base_id = int(f"{aa_id:02d}{bb_id:01d}{cc_id:02d}00")
 
         if output_module_path is None:
             if self.path is None:
@@ -85,7 +90,7 @@ class EnumModuleGenerator:
 
         output_module_path.parent.mkdir(parents=True, exist_ok=True)
 
-        game_types_import = f"from soulstruct.{self.submodule_name}.game_types import *"
+        game_types_import = f"from soulstruct.{self.game.submodule_name}.game_types import *"
         if append_to_module:
             if game_types_import not in append_to_module:
                 # Add game type start import to module. (Very rare that it wouldn't already be there.)

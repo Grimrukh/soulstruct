@@ -1046,7 +1046,6 @@ class Binder(BaseBinaryFile):
         """Add or replace ALL entries with the same name."""
         entry_name = entry.name
         for existing_entry in self.entries:
-            print(existing_entry.name)
             if existing_entry.name == entry_name:
                 self.entries.remove(existing_entry)
         self.entries.append(entry)
@@ -1060,6 +1059,8 @@ class Binder(BaseBinaryFile):
         self.entries.append(entry)
 
     def __or__(self, other: Binder | list[BinderEntry]):
+        """Add all entries from another `Binder` or list of `BinderEntry`s to this `Binder`, replacing any entries
+        with the same name."""
         if isinstance(other, Binder):
             new_entries = other.entries
         elif isinstance(other, list):
