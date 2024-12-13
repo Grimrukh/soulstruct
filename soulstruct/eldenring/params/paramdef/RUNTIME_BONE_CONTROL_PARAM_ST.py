@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class RUNTIME_BONE_CONTROL_PARAM_ST(ParamRow):
     ChrId: int = ParamField(
         uint, "chrId", default=0,

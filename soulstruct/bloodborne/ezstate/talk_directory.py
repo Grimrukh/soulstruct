@@ -11,7 +11,6 @@ from soulstruct.bloodborne.ezstate.talkesdbnd import TalkESDBND
 from soulstruct.bloodborne.maps.constants import *
 
 
-@dataclass(slots=True)
 class TalkDirectory(_BaseTalkDirectory):
     """Does not include Chalice Dungeons."""
     ALL_MAPS: tp.ClassVar = ALL_MAPS_NO_CHALICE[1:]

@@ -25,7 +25,6 @@ class TypedParamError(SoulstructError):
     pass
 
 
-@dataclass(slots=True)
 class GameParamBND(Binder, abc.ABC):
 
     EXT: tp.ClassVar[str] = ".parambnd"

@@ -13,7 +13,6 @@ from soulstruct.games import DARK_SOULS_DSR
 from .esd import TalkESD
 
 
-@dataclass(slots=True)
 class TalkESDBND(_BaseTalkESDBND):
 
     DEFAULT_ENTRY_ROOT: tp.ClassVar[str] = f"{DARK_SOULS_DSR.interroot_prefix}\\script\\talk"

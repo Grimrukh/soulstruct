@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class HIT_EFFECT_SE_PARAM_ST(ParamRow):
     IronSlashS: int = ParamField(
         int, "Iron_Slash_S", default=0,

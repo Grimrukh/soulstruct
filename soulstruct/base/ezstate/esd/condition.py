@@ -12,7 +12,6 @@ from .command import Command
 from .ezl_parser import decompile
 
 
-@dataclass(slots=True)
 class ConditionStruct(BinaryStruct):
     next_state_offset: varint  # offset to the actual `State` header (where `state_id` is conveniently first)
     pass_commands_offset: varint

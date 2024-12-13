@@ -7,21 +7,18 @@ from dataclasses import dataclass, field
 from soulstruct.utilities.binary import *
 
 
-@dataclass(slots=True)
 class HashTableHeader(BinaryStruct):
-    _pad1: bytes = field(init=False, **BinaryPad(8))
+    _pad1: bytes = binary_pad(8, init=False)
     path_hashes_offset: long
     hash_group_count: uint
-    _unknown3: int = field(init=False, **Binary(asserted=0x00080810))
+    _unknown3: int = binary(asserted=0x00080810, init=False)
 
 
-@dataclass(slots=True)
 class PathHash(BinaryStruct):
     hashed_value: uint
     entry_index: int
 
 
-@dataclass(slots=True)
 class HashGroup(BinaryStruct):
     length: int
     index: int

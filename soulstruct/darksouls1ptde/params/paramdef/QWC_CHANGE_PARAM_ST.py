@@ -10,8 +10,6 @@ from soulstruct.darksouls1ptde.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class QWC_CHANGE_PARAM_ST(ParamRow):
     PcAttrB: int = ParamField(
         short, "pcAttrB", default=0,

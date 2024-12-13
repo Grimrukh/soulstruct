@@ -10,8 +10,6 @@ from soulstruct.bloodborne.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class ITEMLOT_LVDEP_PARAM_ST(ParamRow):
     ItemCategory: int = ParamField(
         int, "itemCategory", ITEMLOT_LVDEP_ITEMCATEGORY, default=0,

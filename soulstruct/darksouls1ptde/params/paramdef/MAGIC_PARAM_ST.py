@@ -12,8 +12,6 @@ from soulstruct.utilities.binary import *
 from .dynamics import MagicReference
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class MAGIC_PARAM_ST(ParamRow):
     ConfirmationMessage: int = ParamField(
         int, "yesNoDialogMessageId", default=0,

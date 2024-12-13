@@ -9,7 +9,6 @@ from soulstruct.containers import Binder, BinderVersion, BinderVersion4Info
 from soulstruct.games import ELDEN_RING
 
 
-@dataclass(slots=True)
 class MSGBND(Binder):
     """Subclassed by games to set default binder/entry path."""
 

@@ -10,8 +10,6 @@ from soulstruct.bloodborne.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class HIT_MTRL_PARAM_ST(ParamRow):
     SoundRadiusMultiplier: float = ParamField(
         float, "aiVolumeRate", default=1.0,

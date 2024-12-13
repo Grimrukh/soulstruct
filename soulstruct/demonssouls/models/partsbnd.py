@@ -11,8 +11,7 @@ from soulstruct.dcx import DCXType
 from soulstruct.games import DEMONS_SOULS
 
 
-@dataclass(slots=True)
-class PARTSBND(FLVERBinder):
+class PARTSBND(FLVERBinder):):
 
     DEFAULT_ENTRY_ROOT = f"{DEMONS_SOULS.interroot_prefix}\\parts"
 

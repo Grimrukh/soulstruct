@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class NPC_AI_ACTION_PARAM_ST(ParamRow):
     MoveDir: int = ParamField(
         byte, "moveDir", NPC_AI_ACTION_MOVE_DIR, default=0,

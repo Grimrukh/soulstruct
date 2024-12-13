@@ -13,7 +13,6 @@ from soulstruct.games import BLOODBORNE
 from .esd import TalkESD
 
 
-@dataclass(slots=True)
 class TalkESDBND(_BaseTalkESDBND):
 
     DEFAULT_ENTRY_ROOT: tp.ClassVar[str] = f"{BLOODBORNE.interroot_prefix}\\script\\talk"

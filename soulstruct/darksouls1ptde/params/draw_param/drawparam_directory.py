@@ -19,7 +19,6 @@ def drawparambnd_property(area_name: str):
     return property(lambda self: self.files[f"{area_name}_DrawParam"])
 
 
-@dataclass(slots=True)
 class DrawParamDirectory(GameFileDirectory[DrawParamBND], abc.ABC):
 
     FILE_NAME_PATTERN: tp.ClassVar[str] = r"(a\d\d|default)_DrawParam\.parambnd"

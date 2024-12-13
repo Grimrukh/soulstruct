@@ -10,8 +10,6 @@ from soulstruct.bloodborne.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class OBJECT_PARAM_ST(ParamRow):
     ObjectHP: int = ParamField(
         short, "hp", default=-1,

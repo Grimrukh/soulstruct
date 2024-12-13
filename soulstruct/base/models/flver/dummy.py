@@ -12,10 +12,9 @@ from .version import FLVERVersion
 @dataclass(slots=True)
 class Dummy:
 
-    @dataclass(slots=True)
     class STRUCT(BinaryStruct):
         translate: Vector3
-        _color: list[byte] = field(**BinaryArray(4))  # could be ARGB (Dark Souls 2 only) or BGRA
+        _color: list[byte] = binary_array(4)  # could be ARGB (Dark Souls 2 only) or BGRA
         forward: Vector3
         reference_id: short
         parent_bone_index: short
@@ -25,7 +24,7 @@ class Dummy:
         use_upward_vector: bool
         unk_x30: int  # only used in Sekiro
         unk_x34: int  # only used in Sekiro
-        _pad1: bytes = field(init=False, **BinaryPad(8))
+        _pad1: bytes = binary_pad(8, init=False)
 
     translate: Vector3 = field(default_factory=Vector3.zero)
     color_rgba: list[int] = field(default_factory=lambda: [255, 255, 255, 255])  # always stored as RGBA

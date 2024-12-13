@@ -36,7 +36,6 @@ class Event(_BaseEvent):
     USE_ADVANCED_DECOMPILER: tp.ClassVar = True
 
 
-@dataclass(slots=True)
 class EMEVD(_BaseEMEVD):
 
     events: dict[int, Event] = field(default_factory=dict)

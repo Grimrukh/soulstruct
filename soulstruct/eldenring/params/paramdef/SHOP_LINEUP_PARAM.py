@@ -12,8 +12,6 @@ from soulstruct.utilities.binary import *
 from .dynamics import ShopReference
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class SHOP_LINEUP_PARAM(ParamRow):
     ItemID: int = ParamField(
         int, "equipId", default=0, dynamic_callback=ShopReference(),

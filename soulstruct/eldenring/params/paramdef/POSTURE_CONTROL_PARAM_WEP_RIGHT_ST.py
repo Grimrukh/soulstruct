@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class POSTURE_CONTROL_PARAM_WEP_RIGHT_ST(ParamRow):
     A000rightArmFB: int = ParamField(
         short, "a000_rightArmFB", default=0,

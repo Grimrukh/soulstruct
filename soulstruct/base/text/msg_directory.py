@@ -20,7 +20,6 @@ from .fmg import FMG
 _LOGGER = logging.getLogger("soulstruct")
 
 
-@dataclass(slots=True)
 class MSGDirectory(GameFileDirectory, abc.ABC):
     """Loads `item.msgbnd` and `menu.msgbnd` simultaneously and manages their text categories (FMGs).
 

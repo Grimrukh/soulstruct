@@ -17,14 +17,13 @@ from soulstruct.utilities.binary import *
 from .enums import MSBSupertype, MSBRouteSubtype
 
 
-@dataclass(slots=True)
 class RouteHeaderStruct(MSBHeaderStruct):
     name_offset: long
     route_unkh_08: int
     route_unkh_0c: int
     _subtype_int: int
     subtype_index: int  # NOTE: unknown behavior for (likely unused) `OtherRoute` so is stored manually
-    _pad1: bytes = field(init=False, **BinaryPad(0x68))
+    _pad1: bytes = binary_pad(0x68, init=False)
 
     @classmethod
     def preprocess_write_kwargs(

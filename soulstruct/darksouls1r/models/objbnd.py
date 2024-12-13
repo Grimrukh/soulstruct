@@ -11,7 +11,6 @@ from soulstruct.dcx import DCXType
 from soulstruct.games import DARK_SOULS_DSR
 
 
-@dataclass(slots=True)
 class OBJBND(FLVERBinder):
 
     DEFAULT_ENTRY_ROOT = f"{DARK_SOULS_DSR.interroot_prefix}\\obj"

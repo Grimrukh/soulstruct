@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class RESIST_CORRECT_PARAM_ST(ParamRow):
     AddPoint1: float = ParamField(
         float, "addPoint1", default=0.0,

@@ -19,7 +19,6 @@ _LOGGER = logging.getLogger("soulstruct")
 MSB_T = tp.TypeVar("MSB_T", bound=MSB)
 
 
-@dataclass(slots=True)
 class MapStudioDirectory(GameFileMapDirectory[MSB_T], abc.ABC):
     """Unpack MSB map data files from a `MapStudio` directory into one single modifiable structure.
 

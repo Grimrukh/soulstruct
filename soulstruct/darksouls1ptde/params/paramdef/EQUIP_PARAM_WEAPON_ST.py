@@ -10,8 +10,6 @@ from soulstruct.darksouls1ptde.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class EQUIP_PARAM_WEAPON_ST(ParamRow):
     BehaviorVariationID: int = ParamField(
         int, "behaviorVariationId", default=0,

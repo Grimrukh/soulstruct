@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class CUTSCENE_TIMEZONE_CONVERT_PARAM_ST(ParamRow):
     SrcTimezoneStart: float = ParamField(
         float, "SrcTimezoneStart", default=0.0,

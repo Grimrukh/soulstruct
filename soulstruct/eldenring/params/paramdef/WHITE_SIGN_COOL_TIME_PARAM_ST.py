@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class WHITE_SIGN_COOL_TIME_PARAM_ST(ParamRow):
     LimitationTimeNormal: float = ParamField(
         float, "limitationTime_Normal", default=0.0,

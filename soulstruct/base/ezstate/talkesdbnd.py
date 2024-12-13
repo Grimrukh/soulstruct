@@ -19,7 +19,6 @@ _TALK_ESD_RE = re.compile(r"t(\d+)\.esd$")
 _TALK_ESP_RE = re.compile(r"t(\d+)\.esp(\.py)$")
 
 
-@dataclass(slots=True)
 class TalkESDBND(Binder, abc.ABC):
     """Automatically loads all talk ESDs contained inside given path, or constructs BND from scratch using dictionary
     mapping talk IDs to valid ESD instance sources."""

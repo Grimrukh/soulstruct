@@ -88,16 +88,14 @@ TPF_TEXTURE_FORMAT_TO_DXGI_FORMAT = {
 @dataclass(slots=True)
 class TPFTexture:
 
-    @dataclass(slots=True)
     class STRUCT(BinaryStruct, abc.ABC):
         data_offset: uint
         data_size: int
         format: byte
-        texture_type: TextureType = field(**Binary(byte))
+        texture_type: TextureType = binary(byte)
         mipmap_count: byte
         texture_flags: byte
 
-    @dataclass(slots=True)
     class FLOAT_STRUCT(BinaryStruct):
         """Unknown optional data for some textures."""
         unk0: int
@@ -252,7 +250,7 @@ class TPFTexture:
 
         if self.unknown_float_struct is not None:
             unk0, floats = self.unknown_float_struct
-            self.FLOAT_STRUCT(unk0, len(floats) * 4).to_writer(writer)
+            self.FLOAT_STRUCT(unk0=unk0, size=len(floats) * 4).to_writer(writer)
             writer.pack(f"{len(floats) * 4}f", *floats)
 
         if self.platform is not None and self.platform != platform:
@@ -264,7 +262,7 @@ class TPFTexture:
     def pack_stem(self, writer: BinaryWriter, encoding_type: int):
         writer.fill_with_position("stem_offset", obj=self)
         if encoding_type == 1:  # UTF-16
-            stem = self.stem.encode(encoding=writer.default_byte_order.get_utf_16_encoding()) + b"\0\0"
+            stem = self.stem.encode(encoding=writer.byte_order.get_utf_16_encoding()) + b"\0\0"
         elif encoding_type in {0, 2}:  # shift-jis
             stem = self.stem.encode(encoding="shift-jis") + b"\0"
         else:
@@ -566,18 +564,16 @@ class TPFTexture:
         )
 
 
-@dataclass(slots=True)
 class TPFStruct(BinaryStruct):
-    signature: bytes = field(**BinaryString(4, asserted=b"TPF\0"))
+    signature: bytes = binary_string(4, asserted=b"TPF\0")
     _data_size: int
     file_count: int
-    platform: TPFPlatform = field(**Binary(byte))
+    platform: TPFPlatform = binary(byte)
     tpf_flags: byte = field(**(Binary(asserted=[0, 1, 2, 3])))
-    encoding_type: byte = field(**Binary(asserted=[0, 1, 2]))  # 2 == UTF-16, 0/1 == shift_jis_2004
-    _pad1: bytes = field(**BinaryPad(1))
+    encoding_type: byte = binary(asserted=[0, 1, 2])  # 2 == UTF-16, 0/1 == shift_jis_2004
+    _pad1: bytes = binary_pad(1)
 
 
-@dataclass(slots=True)
 class TPF(GameFile):
 
     textures: list[TPFTexture] = field(default_factory=list)
@@ -588,7 +584,7 @@ class TPF(GameFile):
     @classmethod
     def from_reader(cls, reader: BinaryReader) -> TPF:
         platform = TPFPlatform(reader["B", 0xC])
-        reader.default_byte_order = ByteOrder.big_endian_bool(platform in {TPFPlatform.Xbox360, TPFPlatform.PS3})
+        reader.byte_order = ByteOrder.big_endian_bool(platform in {TPFPlatform.Xbox360, TPFPlatform.PS3})
         tpf_struct = TPFStruct.from_bytes(reader)
 
         encoding = reader.get_utf_16_encoding() if tpf_struct.encoding_type == 1 else "shift_jis_2004"

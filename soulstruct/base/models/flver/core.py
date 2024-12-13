@@ -5,7 +5,7 @@ __all__ = ["FLVER"]
 import logging
 import re
 import typing as tp
-from dataclasses import dataclass, field
+from dataclasses import field
 from pathlib import Path
 
 import numpy as np
@@ -32,7 +32,6 @@ from .vertex_array_layout import VertexArrayLayout
 _LOGGER = logging.getLogger("soulstruct")
 
 
-@dataclass(slots=True)
 class FLVER(GameFile):
     """FromSoftware 3D model format.
 
@@ -72,11 +71,10 @@ class FLVER(GameFile):
     EXT: tp.ClassVar = ""  # not consistent: '.flv' in Dark Souls 2 and '.flver' in all other games
     PATTERN: tp.ClassVar = re.compile(r".*\.flver(\.dcx)?$")
 
-    @dataclass(slots=True)
     class STRUCT0(BinaryStruct):
-        _file_type: bytes = field(init=False, **BinaryString(6, asserted=b"FLVER"))
-        endian: bytes = field(**BinaryString(2, rstrip_null=False, asserted=[b"L\0", b"B\0"]))
-        version: FLVERVersion = field(**Binary(int))
+        _file_type: bytes = binary_string(6, asserted=b"FLVER", init=False)
+        endian: bytes = binary_string(2, rstrip_null=False, asserted=[b"L\0", b"B\0"])
+        version: FLVERVersion = binary(int)
         vertex_data_offset: int
         vertex_data_size: int
         dummy_count: int
@@ -88,21 +86,20 @@ class FLVER(GameFile):
         bounding_box_max: Vector3
         true_face_count: int  # not including motion blur meshes or degenerate faces
         total_face_count: int
-        vertex_index_bit_size: byte = field(**Binary(asserted=[16, 32]))  # no 'local' zero option in FLVER0
+        vertex_index_bit_size: byte = binary(asserted=[16, 32])  # no 'local' zero option in FLVER0
         unicode: bool
         f0_unk_x4a: byte  # bool in `FLVER`
         f0_unk_x4b: byte  # pad in `FLVER`
         f0_unk_x4c: int
-        _pad0: bytes = field(init=False, **BinaryPad(12))  # no face set, array layout, or texture counts
+        _pad0: bytes = binary_pad(12, init=False)  # no face set, array layout, or texture counts
         f0_unk_x5c: byte
-        _pad2: bytes = field(init=False, **BinaryPad(3))  # alignment after `unk_x5c`
-        _pad3: bytes = field(init=False, **BinaryPad(32))
+        _pad2: bytes = binary_pad(3, init=False)  # alignment after `unk_x5c`
+        _pad3: bytes = binary_pad(32, init=False)
 
-    @dataclass(slots=True)
     class STRUCT2(BinaryStruct):
-        _file_type: bytes = field(init=False, **BinaryString(6, asserted=b"FLVER"))
-        endian: bytes = field(**BinaryString(2, rstrip_null=False, asserted=[b"L\0", b"B\0"]))
-        version: FLVERVersion = field(**Binary(int))
+        _file_type: bytes = binary_string(6, asserted=b"FLVER", init=False)
+        endian: bytes = binary_string(2, rstrip_null=False, asserted=[b"L\0", b"B\0"])
+        version: FLVERVersion = binary(int)
         vertex_data_offset: int
         vertex_data_size: int
         dummy_count: int
@@ -114,19 +111,19 @@ class FLVER(GameFile):
         bounding_box_max: Vector3
         true_face_count: int
         total_face_count: int
-        face_set_vertex_index_bit_size: byte = field(**Binary(asserted=[0, 8, 16, 32]))
+        face_set_vertex_index_bit_size: byte = binary(asserted=[0, 8, 16, 32])
         unicode: bool
         f2_unk_x4a: bool
-        _pad1: bytes = field(init=False, **BinaryPad(1))
+        _pad1: bytes = binary_pad(1, init=False)
         f2_unk_x4c: int
         face_set_count: int
         array_layout_count: int
         texture_count: int
         f2_unk_x5c: byte
         f2_unk_x5d: byte
-        _pad2: bytes = field(init=False, **BinaryPad(10))
+        _pad2: bytes = binary_pad(10, init=False)
         f2_unk_x68: int
-        _pad3: bytes = field(init=False, **BinaryPad(20))
+        _pad3: bytes = binary_pad(20, init=False)
 
     big_endian: bool = False
     version: FLVERVersion = FLVERVersion.DarkSouls_A
@@ -221,7 +218,7 @@ class FLVER(GameFile):
         which we also hash to keep unique.
         """
         byte_order = ByteOrder.from_reader_peek(reader, 2, 6, b"B\0", b"L\0")
-        reader.default_byte_order = byte_order  # applies to all FLVER structs (manually passed to `VertexArray`)
+        reader.byte_order = byte_order  # applies to all FLVER structs (manually passed to `VertexArray`)
         header = cls.STRUCT0.from_bytes(reader)
 
         if header.version < FLVERVersion.DemonsSouls_0x10:
@@ -232,7 +229,7 @@ class FLVER(GameFile):
             raise ValueError(f"`FLVER0` version {header.version} is not supported. Must be < 0x20000.")
 
         big_endian = header.endian == b"B\0"
-        encoding = reader.default_byte_order.get_utf_16_encoding() if header.unicode else "shift_jis_2004"
+        encoding = reader.byte_order.get_utf_16_encoding() if header.unicode else "shift_jis_2004"
 
         dummies = [Dummy.from_flver_reader(reader, header.version) for _ in range(header.dummy_count)]
         materials = [Material.from_flver0_reader(reader, encoding) for _ in range(header.material_count)]
@@ -277,7 +274,7 @@ class FLVER(GameFile):
     @classmethod
     def from_flver2_reader(cls, reader: BinaryReader) -> tp.Self:
         byte_order = ByteOrder.from_reader_peek(reader, 2, 6, b"B\0", b"L\0")
-        reader.default_byte_order = byte_order  # applies to all FLVER structs (manually passed to `VertexArray`)
+        reader.byte_order = byte_order  # applies to all FLVER structs (manually passed to `VertexArray`)
         header = cls.STRUCT2.from_bytes(reader)
 
         if header.version < 0x20000:

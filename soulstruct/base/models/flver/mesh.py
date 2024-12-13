@@ -38,7 +38,6 @@ class FLVERMesh:
     relevant properties) directly in the `FLVERMesh` class, a single-set `FaceSet` is used here to unify the formats.
     """
 
-    @dataclass(slots=True)
     class STRUCT0(BinaryStruct):
         is_bind_pose: bool  # NOTE: named `dynamic` in SoulsFormats but clearly identical to `FLVER2.is_bind_pose`
         material_index: byte
@@ -49,7 +48,7 @@ class FLVERMesh:
         # end of "FaceSet properties"
         vertex_count: int
         default_bone_index: short
-        bone_indices: list[short] = field(**BinaryArray(28))
+        bone_indices: list[short] = binary_array(28)
         unk_x46: short
         vertex_indices_size: int  # size of vertex indices in bytes (computable if `vertex_index_count` given)
         vertex_indices_offset: int  # relative to FLVER0 vertex data offset
@@ -57,21 +56,20 @@ class FLVERMesh:
         vertex_array_data_offset: int  # only used if header offset 1 is zero
         vertex_array_headers_offset_1: int
         vertex_array_headers_offset_2: int
-        _pad0: bytes = field(init=False, **BinaryPad(4))
+        _pad0: bytes = binary_pad(4, init=False)
 
-    @dataclass(slots=True)
     class STRUCT2(BinaryStruct):
         is_bind_pose: bool
-        _pad1: bytes = field(init=False, **BinaryPad(3))
+        _pad1: bytes = binary_pad(3, init=False)
         _material_index: int
-        _pad2: bytes = field(init=False, **BinaryPad(8))
+        _pad2: bytes = binary_pad(8, init=False)
         default_bone_index: int
         _bone_count: int
         _bounding_box_offset: int
         _bone_offset: int
         _face_set_count: int
         _face_set_offset: int
-        _vertex_array_count: int = field(**Binary(asserted=[1, 2, 3]))
+        _vertex_array_count: int = binary(asserted=[1, 2, 3])
         _vertex_array_offset: int
 
     is_bind_pose: bool
@@ -156,7 +154,7 @@ class FLVERMesh:
                     raise ValueError("Unexpected vertex arrays found at second array header offset in mesh.")
 
         # NOTE: Hacky way to determine UV factor.
-        uv_factor = 1024 if reader.default_byte_order == ByteOrder.BigEndian else 2048
+        uv_factor = 1024 if reader.byte_order == ByteOrder.BigEndian else 2048
         vertex_array = VertexArray.from_flver0_reader(
             reader, array_header, material._layouts, vertex_data_offset, uv_factor
         )

@@ -10,8 +10,6 @@ from soulstruct.bloodborne.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class EQUIP_PARAM_ACCESSORY_ST(ParamRow):
     SpecialEffect: int = ParamField(
         int, "refId", game_type=SpecialEffectParam, default=-1,

@@ -217,7 +217,7 @@ class WavebankInfo(XMLObject):
         MP2 = 3
 
     class STRUCT(BinaryStruct):
-        bank_type: WavebankInfo.BankType = field(**Binary(uint))
+        bank_type: WavebankInfo.BankType = binary(uint)
         max_streams: uint
         bank_hash: ulong
 
@@ -337,13 +337,12 @@ class EventCategory(XMLObject):
         def from_xml_name(cls, name: str) -> EventCategory.PlaybackBehavior:
             return cls[name.upper()]
 
-    @dataclass(slots=True)
     class STRUCT(BinaryStruct):
         # Name comes first.
         volume: float
         pitch: float
         maxplaybacks: uint
-        maxplaybacks_behavior: EventCategory.PlaybackBehavior = field(**Binary(uint))
+        maxplaybacks_behavior: EventCategory.PlaybackBehavior = binary(uint)
         _subcategory_count: uint
 
     name: str
@@ -516,25 +515,24 @@ class SoundInstance(XMLObject):
         POWER_30_LATE = 6
         POWER_30_EARLY = 7
     
-    @dataclass(slots=True)
     class STRUCT(BinaryStruct):
         sounddef_index: ushort
         start: float
         length: float
-        start_mode: SoundInstance.StartMode = field(**Binary(uint))
-        loop_mode: SoundInstance.LoopMode = field(**Binary(byte))
-        autopitch_param: SoundInstance.AutopitchParameter = field(**Binary(byte))
-        _pad1: bytes = field(**BinaryPad(2))
+        start_mode: SoundInstance.StartMode = binary(uint)
+        loop_mode: SoundInstance.LoopMode = binary(byte)
+        autopitch_param: SoundInstance.AutopitchParameter = binary(byte)
+        _pad1: bytes = binary_pad(2)
         loop_count: int
-        autopitch_enabled: bool = field(**Binary(uint, unpack_func=bool))
+        autopitch_enabled: bool = binary(uint)  # 32-bit bool
         autopitch_reference: float
         autopitch_at_min: float
         fine_tune: float
         volume: float
         fade_in_length: float
         fade_out_length: float
-        fade_in_type: SoundInstance.CrossfadeType = field(**Binary(uint))
-        fade_out_type: SoundInstance.CrossfadeType = field(**Binary(uint))
+        fade_in_type: SoundInstance.CrossfadeType = binary(uint)
+        fade_out_type: SoundInstance.CrossfadeType = binary(uint)
    
     FROM_XML = {
         "sounddef_index": ("sounddef_index", lambda e: int(e.text)),
@@ -603,10 +601,9 @@ class Point(XMLObject):
         LOGARITHMIC = 4
         FLAT_MIDDLE = 8
 
-    @dataclass(slots=True)
     class PointStruct(BinaryStruct):
         xy: Vector2
-        curve_shape: Point.CurveShape = field(**Binary(uint))
+        curve_shape: Point.CurveShape = binary(uint)
 
     xy: Vector2
     curve_shape: Point.CurveShape
@@ -654,12 +651,11 @@ class Envelope(XMLObject):
                 self.SPAWN_INTENSITY: "Spawn Intensity",
             }[self]
 
-    @dataclass(slots=True)
     class STRUCT(BinaryStruct):
         # Parent index and name are here.
         effect_parameter_index: uint
         _combined_flags: uint  # split into `effect`, `is_muted`, and remaining `flags`
-        _pad1: bytes = field(**BinaryPad(4))
+        _pad1: bytes = binary_pad(4)
         _point_count: uint
         # Points are here, then `control_parameter_index (I) and `mapping_method` (I).
 
@@ -732,13 +728,11 @@ class Layer(XMLObject):
     """Holds Sound Definition Instances, so that a single event may play several at the same time for the same control
     parameter value.
     """    
-    @dataclass(slots=True)
     class COMPLEX_STRUCT(BinaryStruct):
-        signature: bytes = field(**BinaryString(2, asserted=b"\x02\x00"))
+        signature: bytes = binary_string(2, asserted=b"\x02\x00")
         priority: short
         control_parameter: short
 
-    @dataclass(slots=True)
     class STRUCT(BinaryStruct):
         sound_instance_count: ushort
         envelope_count: ushort
@@ -820,7 +814,6 @@ class Parameter(XMLObject):
     seek_speed: float
     controlled_envelope_count: int
 
-    @dataclass(slots=True)
     class STRUCT(BinaryStruct):
         # Name comes first.
         velocity: float
@@ -829,7 +822,7 @@ class Parameter(XMLObject):
         _param_info: uint
         seek_speed: float
         controlled_envelope_count: uint
-        _pad1: bytes = field(**BinaryPad(4))
+        _pad1: bytes = binary_pad(4)
 
     @classmethod
     def from_fev_reader(cls, reader: BinaryReader):
@@ -983,10 +976,9 @@ class Event(XMLObject):
     user_properties: list[UserProperty]
     category_names: list[str]
 
-    @dataclass(slots=True)
     class STRUCT(BinaryStruct):
         # Event type and name come first.
-        _guid: bytes = field(**BinaryString(16))
+        _guid: bytes = binary_string(16)
         volume: float
         pitch: float
         volume_rand: float
@@ -994,13 +986,13 @@ class Event(XMLObject):
         priority: int
         max_playbacks: int
         steal_priority: int
-        mode: Event.EventMode = field(**Binary(ushort))
+        mode: Event.EventMode = binary(ushort)
         _geom_flags: ushort
         three_dim_min_dist: float
         three_dim_max_dist: float
-        _pad1: bytes = field(init=False, **BinaryPad(2))
+        _pad1: bytes = binary_pad(2, init=False)
         _oneshot: byte
-        pitch_rand_units: Event.PitchUnits = field(**Binary(byte))
+        pitch_rand_units: Event.PitchUnits = binary(byte)
         speaker_l: float
         speaker_r: float
         speaker_c: float
@@ -1012,7 +1004,7 @@ class Event(XMLObject):
         cone_inside_angle: float
         cone_outside_angle: float
         cone_outside_volume: float
-        max_playback_behavior: Event.PlaybackBehavior = field(**Binary(uint))
+        max_playback_behavior: Event.PlaybackBehavior = binary(uint)
         doppler_factor: float
         reverb_dry: float
         reverb_wet: float
@@ -1151,7 +1143,6 @@ class EventGroup(XMLObject):
     Events in-game.
     """
 
-    @dataclass(slots=True)
     class STRUCT(BinaryStruct):
         # Name comes first.
         user_property_count: int
@@ -1227,9 +1218,8 @@ class SoundDefProperty(XMLObject):
         ON_TRIGGER = 1
         ON_START = 2
 
-    @dataclass(slots=True)
     class STRUCT(BinaryStruct):
-        play_mode: SoundDefProperty.PlayMode = field(**Binary(int))
+        play_mode: SoundDefProperty.PlayMode = binary(int)
         spawn_time_min: uint
         spawn_time_max: uint
         max_spawned: uint
@@ -1243,7 +1233,7 @@ class SoundDefProperty(XMLObject):
         pitch_randmin: float
         pitch_randmax: float
         pitch_rand: float
-        recalc_pitch_rand_value: SoundDefProperty.RecalculateRand = field(**Binary(uint))
+        recalc_pitch_rand_value: SoundDefProperty.RecalculateRand = binary(uint)
         three_dim_position_rand: float
 
     play_mode: SoundDefProperty.PlayMode
@@ -1293,7 +1283,6 @@ class Waveform(XMLObject):
     The audio data and specific format information before and after compression is saved into the FSB instead.
     """
 
-    @dataclass(slots=True)
     class STRUCT(BinaryStruct):
         # 4x, weight, name, and bank name come first.
         index_in_bank: uint
@@ -1333,7 +1322,6 @@ class SoundDef(XMLObject):
     sounddef_prop_index: int
     waveforms: list[Waveform]
 
-    @dataclass(slots=True)
     class STRUCT(BinaryStruct):
         # Name comes first.
         sounddef_prop_index: uint
@@ -1420,7 +1408,6 @@ class SoundDefFolder:
 
 
 # noinspection PyDataclass
-@dataclass(slots=True)
 class FEV(GameFile):
     """FMOD Event file that holes all event data about an FMOD project.
 
@@ -1437,9 +1424,8 @@ class FEV(GameFile):
     sounddef_properties: list[SoundDefProperty]
     sounddefs: list[SoundDef]
 
-    @dataclass(slots=True)
     class FEVHeaderStruct(BinaryStruct):
-        signature: bytes = field(**BinaryString(4, asserted=b"FEV1"))
+        signature: bytes = binary_string(4, asserted=b"FEV1")
         version_byte: uint
         unk_offset1: uint
         unk_offset2: uint

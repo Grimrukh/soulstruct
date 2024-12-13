@@ -27,7 +27,6 @@ _GOAL_SCRIPT_RE = re.compile(r"^(\d{6})_(battle|logic)\.lua$")
 _LUA_SCRIPT_RE = re.compile(r"(.*)\.lua$")
 
 
-@dataclass(slots=True)
 class LuaBND(Binder):
     """Automatically loads all scripts, LuaInfo, and LuaGNL objects."""
 

@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class SE_ACTIVATION_RANGE_PARAM_ST(ParamRow):
     ActivateRange: float = ParamField(
         float, "activateRange", default=0.0,

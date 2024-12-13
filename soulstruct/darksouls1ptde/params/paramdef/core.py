@@ -3,7 +3,6 @@ from __future__ import annotations
 __all__ = ["ParamDef", "ParamDefBND"]
 
 import typing as tp
-from dataclasses import dataclass
 
 from soulstruct.base.params.paramdef import (
     ParamDef as _BaseParamDef,
@@ -11,7 +10,6 @@ from soulstruct.base.params.paramdef import (
 )
 
 
-@dataclass(slots=True)
 class ParamDef(_BaseParamDef):
 
     # Version default overrides.
@@ -19,6 +17,5 @@ class ParamDef(_BaseParamDef):
     format_version: int = 104
 
 
-@dataclass(slots=True)
 class ParamDefBND(_BaseParamDefBND):
     PARAMDEF_CLASS: tp.ClassVar = ParamDef

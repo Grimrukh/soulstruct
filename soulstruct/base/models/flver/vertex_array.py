@@ -38,22 +38,20 @@ class VertexDataSizeError(SoulstructError):
 class VertexArray:
     """Wraps a structured NumPy array containing vertex data for a particular FLVER mesh."""
 
-    @dataclass(slots=True)
     class HEADER0(BinaryStruct):
         """Header information about a packed FLVER0 vertex data array, which we read into a NumPy structured array."""
         layout_index: int  # index into layouts of mesh's material, rather than global FLVER layouts
         array_length: int
         array_offset: int
-        _pad0: bytes = field(init=False, **BinaryPad(4))
+        _pad0: bytes = binary_pad(4, init=False)
 
-    @dataclass(slots=True)
     class HEADER2(BinaryStruct):
         """Header information about a packed FLVER2 vertex data array, which we read into a NumPy structured array."""
         array_index: int
         layout_index: int
         vertex_size: int
         vertex_count: int
-        _pad1: bytes = field(init=False, **BinaryPad(8))
+        _pad1: bytes = binary_pad(8, init=False)
         array_length: int
         array_offset: int
 

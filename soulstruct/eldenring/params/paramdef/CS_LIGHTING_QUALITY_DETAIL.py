@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class CS_LIGHTING_QUALITY_DETAIL(ParamRow):
     LocalLightDistFactor: float = ParamField(
         float, "localLightDistFactor", default=0.75,

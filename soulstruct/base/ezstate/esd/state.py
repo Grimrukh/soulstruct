@@ -14,7 +14,6 @@ from .condition import Condition
 from .ezl_parser import CLEAR_REGISTERS
 
 
-@dataclass(slots=True)
 class StateStruct(BinaryStruct):
     state_id: varint
     condition_pointers_offset: varint

@@ -27,7 +27,6 @@ _LOGGER = logging.getLogger("soulstruct")
 @dataclass(slots=True)
 class MCGNode:
 
-    @dataclass(slots=True)
     class MCGNodeHeader(BinaryStruct):
         connection_count: int
         translate: Vector3
@@ -206,7 +205,6 @@ class MCGEdge:
     located at its start and end nodes (which, interestingly, do not simply specify it themselves).
     """
 
-    @dataclass(slots=True)
     class MCGEdgeHeader(BinaryStruct):
         _node_a_index: int
         node_a_triangles_count: int
@@ -215,7 +213,7 @@ class MCGEdge:
         node_b_triangles_count: int
         node_b_triangles_offset: int
         navmesh_index: int
-        _reversed_map_id: list[int] = field(**BinaryArray(4, byte))  # stored as (DD, CC, BB, AA) reversed format
+        _reversed_map_id: list[int] = binary_array(4, byte)  # stored as (DD, CC, BB, AA) reversed format
         cost: float  # for AI navigation, presumably
 
     node_a_triangles: list[int] = field(default_factory=list)
@@ -335,12 +333,10 @@ class MCGEdge:
         )
 
 
-@dataclass(slots=True)
 class MCG(GameFile):
 
-    @dataclass(slots=True)
     class MCGHeaderStruct(BinaryStruct):
-        one: int = field(init=False, **Binary(asserted=1))  # 0x1000000 in Demon's Souls (big endian)
+        one: int = binary(asserted=1, init=False)  # 0x1000000 in Demon's Souls (big endian)
         unk0: int
         nodes_count: int
         nodes_offset: int

@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class KEY_ASSIGN_PARAM_ST(ParamRow):
     PadKeyId: int = ParamField(
         int, "padKeyId", CS_PAD_KEY, default=-1,

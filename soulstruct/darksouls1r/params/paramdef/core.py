@@ -11,7 +11,6 @@ from soulstruct.base.params.paramdef import (
 )
 
 
-@dataclass(slots=True)
 class ParamDef(_BaseParamDef):
 
     # Version default overrides. TODO: Probably not correct for DSR.
@@ -19,7 +18,6 @@ class ParamDef(_BaseParamDef):
     format_version: int = 104
 
 
-@dataclass(slots=True)
 class ParamDefBND(_BaseParamDefBND):
 
     PARAMDEF_CLASS: tp.ClassVar = ParamDef

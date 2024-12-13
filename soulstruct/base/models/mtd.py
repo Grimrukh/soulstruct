@@ -30,19 +30,18 @@ class MTDBlock(tp.NamedTuple):
     marker: int
 
 
-@dataclass(slots=True)
 class MTD(GameFile):
     """Material definition file used in older games. Replaced by similar but more powerful `MATBIN` in newer games
     (from Elden Ring). Note that these newer games' FLVERs may still reference '.mtd' files, but the suffix is wrong."""
 
-    shader_path: str
-    description: str
+    shader_path: str = ""
+    description: str = ""
     params: list[MTDParam] = field(default_factory=list)
     samplers: list[MTDSampler] = field(default_factory=list)
 
     @classmethod
     def from_reader(cls, reader: BinaryReader) -> MTD:
-        reader.default_byte_order = ByteOrder.LittleEndian
+        reader.byte_order = ByteOrder.LittleEndian
 
         assert_block(reader, 0, 3, 0x01)  # file
         assert_block(reader, 1, 2, 0xB0)  # header
@@ -81,10 +80,10 @@ class MTD(GameFile):
         reader.assert_pad(4)  # end of file
 
         return cls(
-            shader_path,
-            description,
-            mtd_params,
-            mtd_samplers,
+            shader_path=shader_path,
+            description=description,
+            params=mtd_params,
+            samplers=mtd_samplers,
         )
 
     FILE_BLOCK = MTDBlock(0, 3, 0x01)
@@ -534,7 +533,6 @@ def write_marked_string(writer: BinaryWriter, marker: int, string: str):
     write_marker(writer, marker)
 
 
-@dataclass(slots=True)
 class MTDBND(Binder):
     """`Binder` wrapper that dynamically loads `MTD` instances from entries when they are requested.
 

@@ -10,8 +10,6 @@ from soulstruct.bloodborne.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class WEAPON_GEN_PARAM_ST(ParamRow):
     WeaponParamID: int = ParamField(
         int, "wepParamId", game_type=WeaponParam, default=0,

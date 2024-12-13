@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class MENU_VALUE_TABLE_SPEC(ParamRow):
     Value: int = ParamField(
         int, "value", default=0,

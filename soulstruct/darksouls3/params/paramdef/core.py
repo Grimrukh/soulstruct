@@ -12,14 +12,12 @@ _LOGGER = logging.getLogger("soulstruct")
 _BUNDLED = None
 
 
-@dataclass(slots=True)
 class ParamDef(_BaseParamDef):
 
     unicode: bool = True
     format_version = 202
 
 
-@dataclass(slots=True)
 class ParamDefBND(_BaseParamDefBND):
     # TODO: I don't think DS3 has a `ParamDefBND`. Will need Paramdex, like Elden Ring.
     PARAMDEF_CLASS: tp.ClassVar = ParamDef

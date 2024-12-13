@@ -10,8 +10,6 @@ from soulstruct.darksouls1ptde.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class TONE_MAP_BANK(ParamRow):
     NearBloomThreshold: int = ParamField(
         sbyte, "bloomBegin", default=0,

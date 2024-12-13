@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class GRASS_TYPE_PARAM_ST(ParamRow):
     LodRange: int = ParamField(
         ushort, "lodRange", default=0,

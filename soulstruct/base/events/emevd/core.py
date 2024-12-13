@@ -28,12 +28,11 @@ _LOGGER = logging.getLogger("soulstruct")
 _EVENT_CALL_RE = re.compile(r"( *)(Event|CommonFunc)_(\d+)\(([\d\-,. \n]+)\) *(\n|$)?")
 
 
-@dataclass(slots=True)
 class EMEVDHeaderStruct(BinaryStruct):
     """Indicates fields that will always be present in this header, but cannot be used."""
-    _signature: bytes = field(init=False, **BinaryString(4, asserted=b"EVD"))
+    _signature: bytes = binary_string(4, asserted=b"EVD", init=False)
     big_endian: bool
-    varint_size_check: sbyte = field(**Binary(asserted=[-1, 0]))  # -1 if True, 0 if False
+    varint_size_check: sbyte = binary(asserted=[-1, 0])  # -1 if True, 0 if False
     version_unk_1: bool
     version_unk_2: sbyte
     version: uint
@@ -42,7 +41,7 @@ class EMEVDHeaderStruct(BinaryStruct):
     events_offset: varuint
     instructions_count: varuint
     instructions_offset: varuint
-    _unknown_count: varuint = field(init=False, **Binary(asserted=0))  # unused in all games
+    _unknown_count: varuint = binary(asserted=0, init=False)  # unused in all games
     unknown_offset: varuint  # unused in all games (but still an offset, at `base_arg_data_offset`)
     event_layers_count: varuint
     event_layers_offset: varuint
@@ -55,10 +54,9 @@ class EMEVDHeaderStruct(BinaryStruct):
     packed_strings_size: varuint
     packed_strings_offset: varuint
     # TODO: only in 32-bit versions (PTDE, DSR). Can maybe just do a `pad_align(8)` to save the struct subclasses.
-    # _pad2: bytes = field(**BinaryPad(4))
+    # _pad2: bytes = binary_pad(4)
 
 
-@dataclass(slots=True)
 class EMEVD(GameFile, abc.ABC):
     """Packed list of "event scripts" that are loaded in a particular map, or all maps ("common").
 
@@ -178,7 +176,7 @@ class EMEVD(GameFile, abc.ABC):
     @classmethod
     def from_reader(cls, reader: BinaryReader) -> tp.Self:
         byte_order = ByteOrder.from_reader_peek(reader, 1, 4, b"\01", b"\00")
-        reader.default_byte_order = byte_order
+        reader.byte_order = byte_order
         reader.long_varints = cls.LONG_VARINTS
 
         header = EMEVDHeaderStruct.from_bytes(reader)

@@ -12,7 +12,6 @@ from .functions import COMMANDS
 from .ezl_parser import decompile
 
 
-@dataclass(slots=True)
 class CommandStruct(BinaryStruct):
     bank: int
     index: int
@@ -20,7 +19,6 @@ class CommandStruct(BinaryStruct):
     args_count: varint
 
 
-@dataclass(slots=True)
 class CommandArgsStruct(BinaryStruct):
     arg_ezl_offset: varint
     arg_ezl_size: varint

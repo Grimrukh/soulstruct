@@ -12,8 +12,6 @@ from soulstruct.utilities.binary import *
 from .dynamics import BehaviorReference
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class BEHAVIOR_PARAM_ST(ParamRow):
     VariationID: int = ParamField(
         int, "variationId", default=0,

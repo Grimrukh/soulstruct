@@ -94,14 +94,13 @@ class NVMTriangle:
 class NVMBox:
     """AABB in a quaternary tree structure that covers the navmesh."""
 
-    @dataclass(slots=True)
     class STRUCT(BinaryStruct):
         start_corner: Vector3
         _triangle_count: int
         end_corner: Vector3
         _triangles_offset: int
-        _child_box_offsets: list[int] = field(**BinaryArray(4))
-        _pad: bytes = field(init=False, **BinaryPad(0x10))
+        _child_box_offsets: list[int] = binary_array(4)
+        _pad: bytes = binary_pad(0x10, init=False)
 
     start_corner: Vector3
     end_corner: Vector3
@@ -187,7 +186,6 @@ class NVMEventEntity:
         writer.pack("4i", self.entity_id, index_offset, len(self.triangle_indices), 0)
 
 
-@dataclass(slots=True)
 class NVM(GameFile):
     """Holds a navigation mesh (vertices and triangles), per-triangle navigation flags, groups of triangles that can be
     manipulated with EMEVD scripts, and a box quad-tree hierarchy that covers the mesh (which is simple to generate).
@@ -217,26 +215,25 @@ class NVM(GameFile):
             # Quadtree boxes are automatically generated from vertex extents.
             self.generate_quadtree_boxes()
 
-    @dataclass(slots=True)
     class NVMHeaderStruct(BinaryStruct):
-        _one: int = field(init=False, **Binary(asserted=1))  # peeked to detect endianness
+        _one: int = binary(asserted=1, init=False)  # peeked to detect endianness
         vertices_count: int
-        vertices_offset: int = field(init=False, **Binary(asserted=0x80))  # immediately after this header
+        vertices_offset: int = binary(asserted=0x80, init=False)  # immediately after this header
         triangles_count: int
         triangles_offset: int  # predictable from vertex count
         root_box_offset: int  # last data in file
-        _pad1: bytes = field(init=False, **BinaryPad(4))
+        _pad1: bytes = binary_pad(4, init=False)
         entities_count: int  # triangles marked with entity IDs (matching `MSBNavigation` events)
         entities_offset: int
-        _pad2: bytes = field(init=False, **BinaryPad(92))
+        _pad2: bytes = binary_pad(92, init=False)
 
     @classmethod
     def from_reader(cls, reader: BinaryReader) -> tp.Self:
         endian_one = reader.peek(4)
         if endian_one == b"\x01\x00\x00\x00":
-            reader.default_byte_order = ByteOrder.LittleEndian
+            reader.byte_order = ByteOrder.LittleEndian
         elif endian_one == b"\x00\x00\x00\x01":
-            reader.default_byte_order = ByteOrder.BigEndian
+            reader.byte_order = ByteOrder.BigEndian
         else:
             raise ValueError(f"Could not determine byte order from first four bytes (value 0x1) of NVM: {endian_one}")
 
@@ -247,7 +244,7 @@ class NVM(GameFile):
             double_triangles_offset = 0x80 + header.vertices_count * 0x18
             if header.triangles_offset == double_triangles_offset:
                 _LOGGER.warning("`NVM` file appears to have 64-bit vertices. Will truncate to 32-bit vertices.")
-                dtype = np.dtype("<f8") if reader.default_byte_order == ByteOrder.LittleEndian else np.dtype(">f8")
+                dtype = np.dtype("<f8") if reader.byte_order == ByteOrder.LittleEndian else np.dtype(">f8")
                 vertices = np.frombuffer(reader.read(8 * 3 * header.vertices_count), dtype=dtype)
                 vertices = vertices.astype(np.float32)
             else:
@@ -257,7 +254,7 @@ class NVM(GameFile):
                 )
         else:
             # Read flat array of [x0, y0, z0, x1, y1, z1, ...] single-precision vertices.
-            dtype = np.dtype("<f4") if reader.default_byte_order == ByteOrder.LittleEndian else np.dtype(">f4")
+            dtype = np.dtype("<f4") if reader.byte_order == ByteOrder.LittleEndian else np.dtype(">f4")
             vertices = np.frombuffer(reader.read(4 * 3 * header.vertices_count), dtype=dtype)
 
         vertices.shape = (header.vertices_count, 3)
@@ -278,7 +275,7 @@ class NVM(GameFile):
         reader.seek(header.entities_offset)
         event_entities = [NVMEventEntity.from_nvm_reader(reader) for _ in range(header.entities_count)]
         return cls(
-            big_endian=reader.default_byte_order == ByteOrder.BigEndian,
+            big_endian=reader.byte_order == ByteOrder.BigEndian,
             vertices=vertices,
             triangles=triangles,
             root_box=root_box,

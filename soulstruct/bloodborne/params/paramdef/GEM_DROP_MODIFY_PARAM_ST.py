@@ -10,8 +10,6 @@ from soulstruct.bloodborne.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class GEM_DROP_MODIFY_PARAM_ST(ParamRow):
     SlotTypeRateA: float = ParamField(
         float, "slotTypeRateA", default=1.0,

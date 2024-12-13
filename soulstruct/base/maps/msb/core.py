@@ -42,7 +42,6 @@ MAP_NAME_RE = re.compile(r"m(\d\d)_(\d\d)_(\d\d)_(\d\d)")
 MSB_HEADER_BYTES = struct.pack("4sII??BB", b"MSB ", 1, 16, False, False, 1, 255)
 
 
-@dataclass(slots=True, kw_only=True)
 class MSB(GameFile, abc.ABC):
     """Handles MSB ('MapStudio') data. Subclassed by each game.
 
@@ -123,8 +122,8 @@ class MSB(GameFile, abc.ABC):
         """Unpack an MSB from the given reader."""
         
         if cls.IS_BIG_ENDIAN:
-            reader.default_byte_order = ByteOrder.BigEndian
-        elif reader.default_byte_order == ByteOrder.BigEndian:
+            reader.byte_order = ByteOrder.BigEndian
+        elif reader.byte_order == ByteOrder.BigEndian:
             _LOGGER.warning(
                 "This MSB class has `IS_BIG_ENDIAN=False`, but as the reader is set to big-endian, that will be used."
             )
@@ -160,7 +159,7 @@ class MSB(GameFile, abc.ABC):
         for supertype_name in cls.MSB_ENTRY_SUPERTYPES:
             entry_lists.pop(supertype_name)
 
-        return cls(byte_order=reader.default_byte_order, **entry_lists)
+        return cls(byte_order=reader.byte_order, **entry_lists)
 
     @classmethod
     def _unpack_supertype_list(

@@ -27,10 +27,9 @@ class FaceSetFlags(IntEnum):
 @dataclass(slots=True)
 class FaceSet:
 
-    @dataclass(slots=True)
     class STRUCT(BinaryStruct):
 
-        _pad1: bytes = field(init=False, **BinaryPad(3))
+        _pad1: bytes = binary_pad(3, init=False)
         flags: byte
         is_triangle_strip: bool
         use_backface_culling: bool
@@ -39,9 +38,9 @@ class FaceSet:
         _vertex_indices_offset: int
         # NOTE: Fields stop here for FLVER versions < 0x20005, which are not supported by Soulstruct.
         _vertex_indices_length: int  # len(self.vertex_indices) * vertex_index_bit_size // 8
-        _pad2: bytes = field(init=False, **BinaryPad(4))
-        _vertex_index_bit_size: int = field(**Binary(asserted=[0, 16, 32]))  # 0 means size is set by FLVER header
-        _pad3: bytes = field(init=False, **BinaryPad(4))
+        _pad2: bytes = binary_pad(4, init=False)
+        _vertex_index_bit_size: int = binary(asserted=[0, 16, 32])  # 0 means size is set by FLVER header
+        _pad3: bytes = binary_pad(4, init=False)
 
     flags: int  # seems to indicate LoD level
     is_triangle_strip: bool

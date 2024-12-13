@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class AI_ATTACK_PARAM_ST(ParamRow):
     AttackTableId: int = ParamField(
         int, "attackTableId", default=0,

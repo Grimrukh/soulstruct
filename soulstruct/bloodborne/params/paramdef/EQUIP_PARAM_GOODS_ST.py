@@ -12,8 +12,6 @@ from soulstruct.utilities.binary import *
 from .dynamics import GoodReference
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class EQUIP_PARAM_GOODS_ST(ParamRow):
     Reference: int = ParamField(
         int, "refId", default=-1, dynamic_callback=GoodReference(),

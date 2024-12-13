@@ -13,7 +13,6 @@ from .constants import *
 from .msb import MSB
 
 
-@dataclass(slots=True)
 class MapStudioDirectory(_BaseMapStudioDirectory[MSB]):
     """Dark Souls (either version) `MapStudio` directory.
 

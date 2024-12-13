@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class CAMERA_FADE_PARAM_ST(ParamRow):
     NearMinDist: float = ParamField(
         float, "NearMinDist", default=0.0,

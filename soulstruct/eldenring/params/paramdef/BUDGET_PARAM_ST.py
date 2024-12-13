@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class BUDGET_PARAM_ST(ParamRow):
     Vramall: float = ParamField(
         float, "vram_all", default=1.0,

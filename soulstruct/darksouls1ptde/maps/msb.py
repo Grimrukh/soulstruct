@@ -22,9 +22,8 @@ from .regions import *
 from .parts import *
 
 
-@dataclass(slots=True)
 class MSBEntrySuperlistHeader(BinaryStruct):
-    _pad1: bytes = field(init=False, **BinaryPad(4))
+    _pad1: bytes = binary_pad(4, init=False)
     name_offset: int
     entry_offset_count: int
 

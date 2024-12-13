@@ -10,8 +10,6 @@ from soulstruct.bloodborne.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class NPC_PARAM_ST(ParamRow):
     BehaviorVariationID: int = ParamField(
         int, "behaviorVariationId", default=0,

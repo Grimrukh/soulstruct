@@ -10,8 +10,6 @@ from soulstruct.bloodborne.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class MENUPROPERTY_LAYOUT(ParamRow):
     LayoutPath: str = ParamField(
         str, "LayoutPath[16]", encoding="shift_jis_2004", length=16, default=0.0,

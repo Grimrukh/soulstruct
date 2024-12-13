@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class LOCK_CAM_PARAM_ST(ParamRow):
     CameraDistanceFromTarget: float = ParamField(
         float, "camDistTarget", default=4.0,

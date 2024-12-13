@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class CS_MOTION_BLUR_QUALITY_DETAIL(ParamRow):
     Enabled: int = ParamField(
         byte, "enabled", ON_OFF, default=1,

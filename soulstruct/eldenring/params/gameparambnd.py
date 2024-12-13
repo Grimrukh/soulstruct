@@ -21,7 +21,6 @@ _LOGGER = logging.getLogger("soulstruct")
 #     from ..text.msg_directory import MSGDirectory
 
 
-@dataclass(slots=True)
 class GameParamBND(_BaseGameParamBND):
 
     DEFAULT_ENTRY_ROOT: tp.ClassVar[str] = "N:\\GR\\data\\Param\\param\\GameParam"

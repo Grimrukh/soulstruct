@@ -40,7 +40,6 @@ class TypedDrawParamError(SoulstructError):
     pass
 
 
-@dataclass(slots=True)
 class DrawParamBND(Binder):
     """Structure that manages double-slots and DrawParam nicknames for one `DrawParamBND` file (i.e. one map "area")."""
 

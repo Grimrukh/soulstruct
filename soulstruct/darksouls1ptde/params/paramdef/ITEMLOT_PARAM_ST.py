@@ -12,8 +12,6 @@ from soulstruct.utilities.binary import *
 from .dynamics import ItemLotReference, ItemLotReference, ItemLotReference, ItemLotReference, ItemLotReference, ItemLotReference, ItemLotReference, ItemLotReference
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class ITEMLOT_PARAM_ST(ParamRow):
     Item1ID: int = ParamField(
         int, "lotItemId01", default=0, dynamic_callback=ItemLotReference(1),

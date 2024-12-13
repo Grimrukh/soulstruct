@@ -16,7 +16,6 @@ from .emevd import EMEVD
 _LOGGER = logging.getLogger("soulstruct")
 
 
-@dataclass(slots=True)
 class EventDirectory(GameFileMapDirectory[EMEVD], abc.ABC):
     """Load a directory full of any valid `EMEVD` sources, one per map."""
 

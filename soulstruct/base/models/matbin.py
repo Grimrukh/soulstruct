@@ -18,7 +18,6 @@ from soulstruct.utilities.maths import Vector2
 _LOGGER = logging.getLogger("soulstruct")
 
 
-@dataclass(slots=True)
 class MATBIN(GameFile):
     """Material definition file used from Elden Ring onwards, completely replacing `MTD` format.
 
@@ -28,16 +27,15 @@ class MATBIN(GameFile):
     ignored.
     """
     
-    @dataclass(slots=True)
     class HeaderStruct(BinaryStruct):
-        _magic: bytes = field(init=False, **BinaryString(4, asserted=b"MAB\0"))
-        _two: int = field(init=False, **Binary(asserted=2))
+        _magic: bytes = binary_string(4, asserted=b"MAB\0", init=False)
+        _two: int = binary(asserted=2, init=False)
         _shader_path_offset: ulong
         _source_path_offset: ulong
         key: uint
         _param_count: int
         _sampler_count: int
-        _pad: bytes = field(init=False, **BinaryPad(0x14))        
+        _pad: bytes = binary_pad(0x14, init=False)
 
     shader_path: str = ""  # '.spx'
     source_path: str = ""  # '.matxml' or '.mtd'
@@ -186,13 +184,12 @@ class MATBINParamType(IntEnum):
 class MATBINParam:
     """Generic parameter used in a MATBIN."""
 
-    @dataclass(slots=True)
     class ParamStruct(BinaryStruct):
         _name_offset: long
         _value_offset: long
         key: uint
-        param_type: MATBINParamType = field(**Binary("i"))
-        _pad: bytes = field(init=False, **BinaryPad(16))
+        param_type: MATBINParamType = binary(int)
+        _pad: bytes = binary_pad(16, init=False)
 
     name: str = ""
     value: bool | int | list[int] | float | list[float] = 0
@@ -272,13 +269,12 @@ class MATBINParam:
 class MATBINSampler:
     """Texture samplers used in a MATBIN."""
 
-    @dataclass(slots=True)
     class SamplerStruct(BinaryStruct):
         _sampler_type_offset: long
         _path_offset: long
         key: uint
         unk_x14: Vector2
-        _pad: bytes = field(init=False, **BinaryPad(0x14))
+        _pad: bytes = binary_pad(0x14, init=False)
 
     sampler_type: str = ""
     path: str = ""
@@ -311,7 +307,6 @@ class MATBINSampler:
         writer.append(self.path.encode("utf-16-le"))
 
 
-@dataclass(slots=True)
 class MATBINBND(Binder):
 
     _BUNDLED: tp.ClassVar[dict[Game, MATBINBND]] = {}

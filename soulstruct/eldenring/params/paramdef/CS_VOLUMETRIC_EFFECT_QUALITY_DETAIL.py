@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class CS_VOLUMETRIC_EFFECT_QUALITY_DETAIL(ParamRow):
     FogEnabled: int = ParamField(
         byte, "fogEnabled", ON_OFF, default=1,

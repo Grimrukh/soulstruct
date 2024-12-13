@@ -10,7 +10,6 @@ from soulstruct.dcx import DCXType
 from soulstruct.games import DARK_SOULS_DSR
 
 
-@dataclass(slots=True)
 class MSGBND(Binder):
     """Subclassed by games to set default binder/entry path."""
 

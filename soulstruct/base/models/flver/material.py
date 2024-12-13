@@ -36,7 +36,6 @@ class Material:
     # Exactly one or two digits required between hashes (two usually used), with optional trimmable spaces. Any suffix.
     DISPLAY_MASK_RE: tp.ClassVar[re.Pattern] = re.compile(r"^# *(\d|\d\d) *# *(.*)$")
 
-    @dataclass(slots=True)
     class STRUCT0(BinaryStruct):
         _name_offset: int
         _mat_def_path_offset: int
@@ -44,9 +43,8 @@ class Material:
         _layouts_offset: int
         _size: int  # from name offset to end of layouts
         _layout_header_offset: int
-        _pad0: bytes = field(init=False, **BinaryPad(8))
+        _pad0: bytes = binary_pad(8, init=False)
 
-    @dataclass(slots=True)
     class STRUCT2(BinaryStruct):
         _name_offset: int
         _mat_def_path_offset: int
@@ -55,7 +53,7 @@ class Material:
         flags: int
         _gx_offset: int
         f2_unk_x18: int
-        _pad1: bytes = field(init=False, **BinaryPad(4))
+        _pad1: bytes = binary_pad(4, init=False)
 
     name: str = ""
     mat_def_path: str = ""  # could be a '.mtd' (MTD) file name or '.matxml' (MATBIN) file name

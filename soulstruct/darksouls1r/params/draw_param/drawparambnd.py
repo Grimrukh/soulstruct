@@ -4,13 +4,12 @@ __all__ = ["DrawParamBND"]
 
 import logging
 import typing as tp
-from dataclasses import dataclass
 from types import ModuleType
 
 from soulstruct.containers import BinderEntry
 from soulstruct.games import DARK_SOULS_DSR
 
-from soulstruct.darksouls1ptde.params.draw_param import DrawParam, DrawParamBND, TypedDrawParam
+from soulstruct.darksouls1ptde.params.draw_param import DrawParam, DrawParamBND as DrawParamBND_PTDE, TypedDrawParam
 from soulstruct.darksouls1ptde.params.paramdef import (
     TONE_MAP_BANK as PTDE_TONE_MAP_BANK,
     TONE_CORRECT_BANK as PTDE_TONE_CORRECT_BANK,
@@ -21,8 +20,7 @@ from ..paramdef import *
 _LOGGER = logging.getLogger("soulstruct")
 
 
-@dataclass(slots=True)
-class DrawParamBND(DrawParamBND):
+class DrawParamBND(DrawParamBND_PTDE):
     """Structure that manages double-slots and DrawParam nicknames for one `DrawParamBND` file (i.e. one map "area").
 
     This DS1R override handles two known cases of vanilla Param corruption in `DrawParamBND` files.

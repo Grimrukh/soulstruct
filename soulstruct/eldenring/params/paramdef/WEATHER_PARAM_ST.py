@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class WEATHER_PARAM_ST(ParamRow):
     SfxId: int = ParamField(
         int, "SfxId", default=-1,

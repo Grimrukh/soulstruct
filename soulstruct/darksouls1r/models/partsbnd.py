@@ -11,8 +11,7 @@ from soulstruct.dcx import DCXType
 from soulstruct.games import DARK_SOULS_DSR
 
 
-@dataclass(slots=True)
-class PARTSBND(FLVERBinder):
+class PARTSBND(FLVERBinder):):
     """NOTE: When present, the '_M' suffix is capitalized, and does not appear in the path folder name or TPF name."""
 
     DEFAULT_ENTRY_ROOT = f"{DARK_SOULS_DSR.interroot_prefix}\\parts"

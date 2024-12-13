@@ -4,7 +4,7 @@ __all__ = ["FMG"]
 
 import logging
 import typing as tp
-from dataclasses import dataclass, field
+from dataclasses import field
 from enum import IntEnum
 from pathlib import Path
 from textwrap import wrap
@@ -28,25 +28,23 @@ GAME_MAX_LINES = {
 }
 
 
-@dataclass(slots=True)
 class FMGHeader(BinaryStruct):
-    _pad1: bytes = field(**BinaryPad(1))
+    _pad1: bytes = binary_pad(1)
     big_endian: bool
-    version: FMGVersion = field(**Binary(byte))
-    _pad2: bytes = field(**BinaryPad(1))
+    version: FMGVersion = binary(byte)
+    _pad2: bytes = binary_pad(1)
     file_size: int
-    _one: byte = field(**Binary(asserted=1))
+    _one: byte = binary(asserted=1)
     unknown1: byte  # -1 for version 0, 0 for version 1/2
-    _pad3: bytes = field(**BinaryPad(2))
+    _pad3: bytes = binary_pad(2)
     range_count: int
     string_count: int
-    unknown2: int = field(**Binary(asserted=255, should_skip_func=lambda _, values: values["version"] < 2))
+    unknown2: int = binary(asserted=255, should_skip_func=lambda _, values: values["version"] < 2)
     string_offsets_offset: varint
-    _pad4: bytes = field(**BinaryPad(4))
-    _pad5: bytes = field(**BinaryPad(4, should_skip_func=lambda _, values: values["version"] < 2))
+    _pad4: bytes = binary_pad(4)
+    _pad5: bytes = binary_pad(4, should_skip_func=lambda _, values: values["version"] < 2)
 
 
-@dataclass(slots=True)
 class FMG(GameFile):
     """Simple text dictionary.
 
@@ -62,7 +60,7 @@ class FMG(GameFile):
     def from_reader(cls, reader: BinaryReader) -> tp.Self:
 
         version = FMGVersion(reader["b", 2])
-        reader.default_byte_order = ByteOrder.BigEndian if version == 0 else ByteOrder.LittleEndian
+        reader.byte_order = ByteOrder.BigEndian if version == 0 else ByteOrder.LittleEndian
         reader.long_varints = version >= 2
         header = FMGHeader.from_bytes(reader)
 

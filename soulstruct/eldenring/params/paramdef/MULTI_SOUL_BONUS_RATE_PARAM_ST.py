@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class MULTI_SOUL_BONUS_RATE_PARAM_ST(ParamRow):
     Host: float = ParamField(
         float, "host", default=0.0,

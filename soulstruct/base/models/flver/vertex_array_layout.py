@@ -160,12 +160,11 @@ class VertexDataFormat:
 class VertexDataType(abc.ABC):
     """Information about a vertex data type."""
 
-    @dataclass(slots=True)
     class STRUCT(BinaryStruct):
 
         unk_x00: int
         data_offset: int  # offset of data type's data in described array
-        format_enum: VertexDataFormatEnum = field(**Binary(int))
+        format_enum: VertexDataFormatEnum = binary(int)
         _type_int: int
         instance_index: int  # instance index of this data type in its layout
 
@@ -444,16 +443,14 @@ class VertexArrayLayout(list[VertexDataType]):
     Functions as a standard list, with extra methods for constructing combined `np.dtype` and reading/packing arrays.
     """
 
-    @dataclass(slots=True)
     class STRUCT0(BinaryStruct):
         layout_types_count: short
         struct_size: short
-        _pad0: bytes = field(init=False, **BinaryPad(12))
+        _pad0: bytes = binary_pad(12, init=False)
 
-    @dataclass(slots=True)
     class STRUCT2(BinaryStruct):
         layout_types_count: int
-        _pad0: bytes = field(init=False, **BinaryPad(8))
+        _pad0: bytes = binary_pad(8, init=False)
         layout_types_offset: int
 
     byte_order: ByteOrder
@@ -495,7 +492,7 @@ class VertexArrayLayout(list[VertexDataType]):
                 f"{layout_struct.struct_size}."
             )
 
-        return cls(data_types, byte_order=reader.default_byte_order)
+        return cls(data_types, byte_order=reader.byte_order)
 
     @classmethod
     def from_flver2_reader(cls, reader: BinaryReader) -> VertexArrayLayout:
@@ -523,7 +520,7 @@ class VertexArrayLayout(list[VertexDataType]):
                 data_types.append(data_type)
                 tight_data_offset += VERTEX_FORMAT_ENUM_SIZES[data_type.format_enum]
 
-        return cls(data_types, byte_order=reader.default_byte_order)
+        return cls(data_types, byte_order=reader.byte_order)
 
     def to_flver0_writer(self, writer: BinaryWriter):
         """Data is written here as well."""

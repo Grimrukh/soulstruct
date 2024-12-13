@@ -82,7 +82,6 @@ def EntryRef(list_name: str, field_name="", array_size: int = None) -> dict[str,
     return metadata
 
 
-@dataclass(slots=True)
 class MSBBinaryStruct(BinaryStruct, abc.ABC):
     """Allows more `MSBEntry` arguments for unpacking/packing."""
 
@@ -146,7 +145,6 @@ class MSBBinaryStruct(BinaryStruct, abc.ABC):
         pass
 
 
-@dataclass(slots=True)
 class MSBHeaderStruct(MSBBinaryStruct, abc.ABC):
     """Supports basic headers and allows easy extension. Must be inherited to define actual field order."""
 

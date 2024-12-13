@@ -17,7 +17,6 @@ if tp.TYPE_CHECKING:
 _LOGGER = logging.getLogger("soulstruct")
 
 
-@dataclass(slots=True)
 class TalkDirectory(GameFileMapDirectory, abc.ABC):
     """Directory containing `TalkESDBND` files."""
 

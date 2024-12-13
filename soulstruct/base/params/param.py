@@ -11,6 +11,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from types import ModuleType
 
+from constrata.streams.bits import BitFieldReader, BitFieldWriter
+
 from soulstruct.base.game_file import GameFile
 from soulstruct.dcx import DCXType
 from soulstruct.utilities.binary import *
@@ -195,7 +197,6 @@ class ParamDictRow:
         return True
 
 
-@dataclass(slots=True)
 class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
     """Table of `ParamRows` (spreadsheet entries full of numbers used all over the place).
 
@@ -214,13 +215,11 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
 
     EXT: tp.ClassVar[str] = ".param"
 
-    @dataclass(slots=True)
     class RowPointerStruct32(BinaryStruct):
         row_id: int
         data_offset: uint
         name_offset: uint
 
-    @dataclass(slots=True)
     class RowPointerStruct64(BinaryStruct):
         row_id: int
         unknown: int  # not zero in DS2:SOFTS "generatordbglocation" params according to TKGP
@@ -280,7 +279,7 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
 
         # Peek at struct-affecting info:
         byte_order = ByteOrder.BigEndian if reader["b", 0x2c] == -1 else ByteOrder.LittleEndian
-        reader.default_byte_order = byte_order
+        reader.byte_order = byte_order
         version_info = reader.unpack("bbb", offset=0x2d)
         flags1 = ParamFlags1(version_info[0])
         flags2 = ParamFlags2(version_info[1])
@@ -539,7 +538,7 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
             reader = BinaryReader(source)
 
         byte_order = ByteOrder.BigEndian if reader["b", 0x2c] == -1 else ByteOrder.LittleEndian
-        reader.default_byte_order = byte_order
+        reader.byte_order = byte_order
         version_info = reader.unpack("BBB", offset=0x2d)
         flags1 = ParamFlags1(version_info[0])
 
@@ -570,7 +569,6 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
         return "shift_jis_2004"
 
 
-@dataclass(slots=True)
 class ParamDict(Param):
     """Deprecated type that unpacks `ParamRowDict`s using a `ParamDef` instead of using baked Soulstruct classes."""
 

@@ -136,66 +136,56 @@ class BinderVersion(enum.Enum):
     V4 = 4  # used from Dark Souls 2 (2014) onwards
 
 
-@dataclass(slots=True)
 class BinderHeaderV3(BinaryStruct):
-    version: bytes = field(**BinaryString(4, asserted=[b"BND3", b"BHF3"]))
-    signature: str = field(**BinaryString(8, encoding="ASCII", rstrip_null=True))
+    version: bytes = binary_string(4, asserted=[b"BND3", b"BHF3"])
+    signature: str = binary_string(8, encoding="ascii", rstrip_null=True)
     flags: byte
     big_endian: bool
     bit_big_endian: bool
-    _pad1: bytes = field(init=False, **BinaryPad(1))
+    _pad1: bytes = binary_pad(1, init=False)
     entry_count: int
     file_size: int
-    _pad2: bytes = field(init=False, **BinaryPad(8))
-
-    def get_default_byte_order(self) -> ByteOrder:
-        return ByteOrder.BigEndian if self.big_endian else ByteOrder.LittleEndian
+    _pad2: bytes = binary_pad(8, init=False)
 
 
-@dataclass(slots=True)
 class BinderHeaderV4(BinaryStruct):
-    version: bytes = field(**BinaryString(4, asserted=[b"BND4", b"BHF4"]))
+    version: bytes = binary_string(4, asserted=[b"BND4", b"BHF4"])
     unknown1: bool
     unknown2: bool
-    _pad1: bytes = field(init=False, **BinaryPad(3))
+    _pad1: bytes = binary_pad(3, init=False)
     big_endian: bool
     bit_little_endian: bool
-    _pad2: bytes = field(init=False, **BinaryPad(1))
+    _pad2: bytes = binary_pad(1, init=False)
     entry_count: int
     # NOTE: No `file_size` in V4.
-    _header_size: long = field(init=False, **Binary(asserted=0x40))
-    signature: str = field(**BinaryString(8, encoding="ASCII", rstrip_null=True))
+    _header_size: long = binary(asserted=0x40, init=False)
+    signature: str = binary_string(8, encoding="ascii", rstrip_null=True)
     _entry_header_size: long
     _data_offset: long
     unicode: bool
     flags: byte
-    hash_table_type: byte = field(**Binary(asserted=[0, 1, 4, 128]))
-    _pad3: bytes = field(init=False, **BinaryPad(5))
+    hash_table_type: byte = binary(asserted=[0, 1, 4, 128])
+    _pad3: bytes = binary_pad(5, init=False)
     _hash_table_offset: long  # only non-zero if `hash_table_type = 4`
 
-    def get_default_byte_order(self) -> ByteOrder:
-        return ByteOrder.BigEndian if self.big_endian else ByteOrder.LittleEndian
 
-
-@dataclass(slots=True)
 class BDTHeaderV3(BinaryStruct):
-    _version: bytes = field(init=False, **BinaryString(4, asserted=b"BDF3"))
-    signature: str = field(**BinaryString(8, encoding="ASCII", rstrip_null=True))
-    _pad1: bytes = field(init=False, **BinaryPad(4))
+    _version: bytes = binary_string(4, asserted=b"BDF3", init=False)
+    signature: str = binary_string(8, encoding="ascii", rstrip_null=True)
+    _pad1: bytes = binary_pad(4, init=False)
 
 
-@dataclass(slots=True)
 class BDTHeaderV4(BinaryStruct):
-    _version: bytes = field(init=False, **BinaryString(4, asserted=b"BDT4"))
+    _version: bytes = binary_string(4, asserted=b"BDT4", init=False)
     unknown1: bool
     unknown2: bool
-    _pad1: bytes = field(init=False, **BinaryPad(3))
+    _pad1: bytes = binary_pad(3, init=False)
     big_endian: bool
     bit_little_endian: bool
-    _pad2: bytes = field(init=False, **BinaryPad(5))
-    _header_size: long = field(init=False, **Binary(asserted=0x30))
-    signature: str = field(**BinaryString(8, encoding="ASCII", rstrip_null=True))
-    _pad3: bytes = field(init=False, **BinaryPad(16))
+    _pad2: bytes = binary_pad(5, init=False)
+    _header_size: long = binary(asserted=0x30, init=False)
+    signature: str = binary_string(8, encoding="ascii", rstrip_null=True)
+    _pad3: bytes = binary_pad(16, init=False)
 
 
 @dataclass(slots=True)
@@ -229,7 +219,7 @@ class BinderVersion4Info:
         return cls(False, False, True, 4)
 
 
-@dataclass(slots=True, kw_only=True)
+# @dataclass(slots=True, kw_only=True)
 class Binder(BaseBinaryFile):
     """Collection of files, with their own internal IDs, paths, and flags, glued together into one file on disk.
 
@@ -433,7 +423,7 @@ class Binder(BaseBinaryFile):
         byte_order = ByteOrder.BigEndian if (big_endian or flags.is_big_endian) else ByteOrder.LittleEndian
 
         # Change reader byte order.
-        reader.default_byte_order = byte_order
+        reader.byte_order = byte_order
         header_struct = BinderHeaderV3.from_bytes(reader)
 
         entry_headers = [
@@ -454,7 +444,7 @@ class Binder(BaseBinaryFile):
     def _read_header_v4(cls, reader: BinaryReader) -> tuple[dict[str, tp.Any], list[BinderEntryHeader]]:
         """Less endian complexity than V3."""
         byte_order = ByteOrder.from_reader_peek(reader, 1, 9, b"\01", b"\00")
-        reader.default_byte_order = byte_order
+        reader.byte_order = byte_order
         header_struct = BinderHeaderV4.from_bytes(reader)  # type: BinderHeaderV4
 
         flags = BinderFlags.from_byte(header_struct.flags, not header_struct.bit_little_endian)
@@ -774,12 +764,12 @@ class Binder(BaseBinaryFile):
 
         if self.version == BinderVersion.V3:
             header_writer = self._header_to_writer_v3()
-            entry_writer = BDTHeaderV3.object_to_writer(self, byte_order=header_writer.default_byte_order)
+            entry_writer = BDTHeaderV3.object_to_writer(self, byte_order=header_writer.byte_order)
             self._entries_into_writer_v3(header_writer, entry_writer)
         elif self.version == BinderVersion.V4:
             header_writer = self._header_to_writer_v4()
             rebuild_hash_table = self._check_v4_hash_table() if self.v4_info.hash_table_type == 4 else False
-            entry_writer = BDTHeaderV4.object_to_writer(self, byte_order=header_writer.default_byte_order)
+            entry_writer = BDTHeaderV4.object_to_writer(self, byte_order=header_writer.byte_order)
             self._entries_into_writer_v4(header_writer, entry_writer, rebuild_hash_table)
         else:
             raise ValueError(f"Cannot pack BND version: {self.version}")
@@ -791,7 +781,7 @@ class Binder(BaseBinaryFile):
 
     def _header_to_writer_v3(self) -> BinaryWriter:
 
-        writer = BinaryWriter(byte_order=ByteOrder.BigEndian if self.big_endian else ByteOrder.LittleEndian)
+        writer = BinaryWriter(byte_order=ByteOrder.big_endian_bool(self.big_endian))
         return BinderHeaderV3(
             version=b"BHF3" if self.is_split_bxf else b"BND3",
             signature=self.signature,
@@ -827,7 +817,7 @@ class Binder(BaseBinaryFile):
         if self.v4_info is None:
             raise AttributeError("`Binder version `V4` must have a `v4_info`.")
 
-        writer = BinaryWriter(byte_order=ByteOrder.BigEndian if self.big_endian else ByteOrder.LittleEndian)
+        writer = BinaryWriter(byte_order=ByteOrder.big_endian_bool(self.big_endian))
         return BinderHeaderV4(
             version=b"BHF4" if self.is_split_bxf else b"BND4",
             unknown1=self.v4_info.unknown1,
@@ -1032,12 +1022,12 @@ class Binder(BaseBinaryFile):
         for entry_id, binder_entry in sorted(unsorted_entries.items()):
             self.add_entry(binder_entry)
 
-    def add_entry(self, entry: BinderEntry):
+    def add_entry(self, entry: BinderEntry, ignore_id_conflict=False):
         if id(entry) in {id(e) for e in self.entries}:
             raise BinderError(f"Given `BinderEntry` instance with object ID {entry.entry_id} is already in Binder.")
-        if entry.entry_id in {e.id for e in self.entries}:
+        if not ignore_id_conflict and entry.entry_id in {e.id for e in self.entries}:
             _LOGGER.warning(
-                f"Entry ID {entry.entry_id} appears more than once in this Binder. Entry still added, but you should"
+                f"Entry ID {entry.entry_id} appears more than once in this Binder. Entry still added, but you should "
                 f"fix this."
             )
         self.entries.append(entry)

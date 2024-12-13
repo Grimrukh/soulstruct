@@ -14,7 +14,6 @@ from soulstruct.utilities.maths import Vector3
 from soulstruct.utilities.misc import IDList
 
 
-@dataclass(slots=True)
 class TreeHeaderStruct(BinaryStruct):
     """Header struct for a 'tree' in a Demon's Souls MSB file."""
     point_0: Vector3

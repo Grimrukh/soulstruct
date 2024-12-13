@@ -26,7 +26,6 @@ class Event(_BaseEvent):
     EMEDF_COMPARISON_TESTS: tp.ClassVar = EMEDF_COMPARISON_TESTS
 
 
-@dataclass(slots=True)
 class EMEVD(_BaseEMEVD):
 
     events: dict[int, Event] = field(default_factory=dict)

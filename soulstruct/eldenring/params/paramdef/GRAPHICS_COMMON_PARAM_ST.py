@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class GRAPHICS_COMMON_PARAM_ST(ParamRow):
     HitBulletDecalOffsetHitIns: float = ParamField(
         float, "hitBulletDecalOffset_HitIns", default=0.05,

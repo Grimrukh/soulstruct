@@ -8,7 +8,6 @@ from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.binary import *
 
 
-@dataclass(slots=True)
 class LuaGNL(GameFile):
     """Global Name List file that lists all the functions declared in all the Lua scripts in the `LuaBND`.
 
@@ -25,16 +24,16 @@ class LuaGNL(GameFile):
     def from_reader(cls, reader: BinaryReader) -> LuaGNL:
         # We can only guess at byte order and varint size from the appearance of the first 1/2 string offsets.
         first_eight_bytes = reader.peek(8)
-        reader.default_byte_order = ByteOrder.BigEndian if first_eight_bytes[0:2] == b"\0\0" else ByteOrder.LittleEndian
-        zeroes = first_eight_bytes[2:4] if reader.default_byte_order == ByteOrder.BigEndian else first_eight_bytes[4:6]
+        reader.byte_order = ByteOrder.BigEndian if first_eight_bytes[0:2] == b"\0\0" else ByteOrder.LittleEndian
+        zeroes = first_eight_bytes[2:4] if reader.byte_order == ByteOrder.BigEndian else first_eight_bytes[4:6]
         reader.long_varints = zeroes == b"\0\0"  # probable
         offset = reader["v"]
-        encoding = cls.get_encoding(reader.default_byte_order, reader.long_varints)
+        encoding = cls.get_encoding(reader.byte_order, reader.long_varints)
         names = []
         while offset != 0:
             names.append(reader.unpack_string(offset=offset, encoding=encoding))
             offset = reader["v"]
-        return cls(byte_order=reader.default_byte_order, long_varints=reader.long_varints, names=names)
+        return cls(byte_order=reader.byte_order, long_varints=reader.long_varints, names=names)
 
     def to_writer(self) -> BinaryWriter:
         writer = BinaryWriter(

@@ -22,18 +22,36 @@ from soulstruct.utilities.binary import *
 from soulstruct.utilities.files import create_bak, read_json, write_json, get_blake2b_hash
 from soulstruct.dcx import DCXType, compress, decompress, is_dcx
 
+from .dataclass_meta import DataclassMeta
+
 if tp.TYPE_CHECKING:
     from soulstruct.containers.entry import BinderEntry
 
 _LOGGER = logging.getLogger("soulstruct")
 
-
 _GAME_MODULE_RE = re.compile(r"^soulstruct\.(\w+)\..*$")
 
 
-@dataclass(slots=True)
-class BaseBinaryFile:
-    """Base class for anything that is represented in binary at some point: notably `GameFile` and `BaseBinder`.
+BASE_BINARY_FILE_T = tp.TypeVar("BASE_BINARY_FILE_T", bound="BaseBinaryFile")
+
+
+@tp.dataclass_transform(kw_only_default=False)
+class BaseBinaryFileMeta(DataclassMeta):
+    """Metaclass for `BaseBinaryFileMeta` that adds dataclass wrapping."""
+
+    def __call__(cls: type[BASE_BINARY_FILE_T], *args, **kwargs) -> BASE_BINARY_FILE_T:
+        """Intercept instance creation to handle the single-argument path case, which calls `cls.from_path(path)`."""
+        if len(args) == 1 and isinstance(args[0], (Path, str)) and not kwargs:
+            # Call `from_path` if a single `path` argument is provided
+            return cls.from_path(args[0])
+        # Otherwise, proceed with the normal dataclass constructor.
+        return super(BaseBinaryFileMeta, cls).__call__(*args, **kwargs)
+
+
+class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
+    """Base class for anything that is represented in binary at some point.
+
+    Its two notable direct children are `GameFile` (which cannot be a Binder) and `Binder`.
 
     Includes methods for recording and automating DCX compression.
     """
@@ -48,15 +66,25 @@ class BaseBinaryFile:
     # If given, this `re.Pattern` will be used to check file names. Usually just `EXT` plus optional DCX extension.
     PATTERN: tp.ClassVar[re.Pattern | None] = None
 
-    # Internal field wrapped by `dcx_type` property, which converts string values to `DCXType`.
-    _dcx_type: DCXType | None = field(init=False, repr=False)  # default will be handled by `dcx_type` property below
     # Internal field wrapped by `path` property, which ensures any string is converted to a `Path`.
     _path: Path | None = field(init=False, repr=False)
+    # Internal field wrapped by `dcx_type` property, which converts string values to `DCXType`.
+    _dcx_type: DCXType | None = field(init=False, repr=False)
 
-    # Default DCX compression type for file. If `None`, then `get_game().default_dcx_type` will be used.
-    dcx_type: DCXType | None = field(default=None, kw_only=True)
+    # These are wrapped by properties after the class definition (below), but these serve to generate the appropriate
+    # `__init__` arguments that are filtered through those property setters:
+
     # Records origin path of file if loaded from disk (or a `BinderEntry`). Not always available.
-    path: Path | None = field(default=None, kw_only=True)
+    # Also serves as a dummy argument for a metaclass overload trick that calls `cls.from_path(path)` instead of
+    # standard dataclass keyword argument instantiation. This overload only triggers if the path (as a string or `Path`)
+    # is the only argument passed to the class constructor and is NOT a keyword. If it's a keyword, a default instance
+    # of the class will be constructed with `path` set to whatever the keyword value is.
+    path: Path | None = field(default=None, kw_only=False)
+    # Default DCX compression type for file. If `None`, then `get_game().default_dcx_type` will be used, or a
+    # type-specific override of that default value if known for the `Game`.
+    dcx_type: DCXType | None = field(default=None, kw_only=False)
+
+    # All subclass fields will be keyword-only and must have default values.
 
     # region Read Methods
 
@@ -224,9 +252,10 @@ class BaseBinaryFile:
 
     def to_dict(self) -> dict[str, tp.Any]:
         """Create a dictionary from file instance. Uses `dataclasses.asdict()` by default and ignores internals."""
+        # noinspection PyDataclass,PyTypeChecker
         return asdict(
             self,
-            dict_factory=lambda d: {k: v for (k, v) in d if k != "_dcx_type" and k != "_path"},
+            dict_factory=lambda d: {k: v for (k, v) in d if k != "_path" and k != "_dcx_type"},
         )
 
     def write_json(self, file_path: None | str | Path, encoding="utf-8", indent=4):
@@ -353,13 +382,14 @@ class BaseBinaryFile:
         self._dcx_type = dcx_type
 
     def get_field_names(self) -> list[str]:
-        return [f.name for f in fields(self)]
+        """Get all dataclass field names (excluding internal `_dcx_type` and `_path`)."""
+        # noinspection PyDataclass,PyTypeChecker
+        return [f.name for f in fields(self) if f.name != "_dcx_type" and f.name != "_path"]
 
     def __repr__(self) -> str:
         lines = [f"{self.cls_name}("]
-        for f in fields(self):
-            if f.name != "_dcx_type" and f.name != "_path":
-                lines.append(f"    {f.name}={repr(getattr(self, f.name))},")
+        for field_name in self.get_field_names():
+            lines.append(f"    {field_name}={repr(getattr(self, field_name))},")
         lines.append(")")
         return "\n".join(lines)
 
@@ -379,7 +409,7 @@ BaseBinaryFile.path = property(
 )
 
 
-BASE_BINARY_FILE_T = tp.TypeVar("BASE_BINARY_FILE_T", bound="BaseBinaryFile")
+
 
 
 class BaseJSONEncoder(json.JSONEncoder):

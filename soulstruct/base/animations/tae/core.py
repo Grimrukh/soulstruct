@@ -101,7 +101,6 @@ class TAEEventGroup:
 @dataclass(slots=True)
 class TAEAnimation:
 
-    @dataclass(slots=True)
     class STRUCT(BinaryStruct):
         event_headers_offset: int64
         event_groups_offset: int64
@@ -110,7 +109,7 @@ class TAEAnimation:
         event_count: int32
         event_group_count: int32
         event_times_count: int32
-        _zero: int32 = field(init=False, **Binary(asserted=0))
+        _zero: int32 = binary(asserted=0, init=False)
 
     animation_id: int
     events: list[TAEEvent]
@@ -168,37 +167,35 @@ class TAEAnimation:
         )
 
 
-@dataclass(slots=True)
 class TAEHeaderStruct(BinaryStruct):
-    magic: str = field(init=False, **BinaryString(4, asserted="TAE "))
-    _fixed_0: list[sbyte] = field(init=False, **BinaryArray(4, asserted=[0x0, 0x0, 0x0, 0xff]))
-    version: int = field(init=False, **Binary(asserted=0x1000C))
+    magic: str = binary_string(4, asserted="TAE ", init=False)
+    _fixed_0: list[sbyte] = binary_array(4, asserted=[0x0, 0x0, 0x0, 0xff], init=False)
+    version: int = binary(asserted=0x1000C, init=False)
     file_size: int
-    _fixed_1: list[int64] = field(init=False, **BinaryArray(4, asserted=[0x40, 0x1, 0x50, 0x80]))
+    _fixed_1: list[int64] = binary_array(4, asserted=[0x40, 0x1, 0x50, 0x80], init=False)
     unk_x30: int
-    _zero: int64 = field(init=False, **Binary(asserted=0))
-    flags: list[byte] = field(**BinaryArray(8))
-    _one: int64 = field(init=False, **Binary(asserted=1))
+    _zero: int64 = binary(asserted=0, init=False)
+    flags: list[byte] = binary_array(8)
+    _one: int64 = binary(asserted=1, init=False)
     tae_id_0: int32
     animation_count_0: int32
     animations_offset: int64
     animation_groups_offset: int64
-    _xa0: int64 = field(init=False, **Binary(asserted=0xa0))
+    _xa0: int64 = binary(asserted=0xa0, init=False)
     animation_count_1: int32
     first_animation_offset: int64
-    _one_2: int64 = field(init=False, **Binary(asserted=1))
-    _x90: int64 = field(init=False, **Binary(asserted=0x90))
+    _one_2: int64 = binary(asserted=1, init=False)
+    _x90: int64 = binary(asserted=0x90, init=False)
     tae_id_1: int32
     tae_id_2: int32
-    _x50: int64 = field(init=False, **Binary(asserted=0x50))
-    _zero_2: int64 = field(init=False, **Binary(asserted=0))
-    _xb0: int64 = field(init=False, **Binary(asserted=0xb0))
+    _x50: int64 = binary(asserted=0x50, init=False)
+    _zero_2: int64 = binary(asserted=0, init=False)
+    _xb0: int64 = binary(asserted=0xb0, init=False)
     skeleton_name_offset: int64
     sib_name_offset: int64
-    _pad: bytes = field(init=False, **BinaryPad(0x2))
+    _pad: bytes = binary_pad(0x2, init=False)
 
 
-@dataclass(slots=True)
 class TAE(GameFile):
     """TODO: Write methods."""
 

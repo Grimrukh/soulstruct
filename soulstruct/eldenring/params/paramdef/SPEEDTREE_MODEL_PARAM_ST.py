@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class SPEEDTREE_MODEL_PARAM_ST(ParamRow):
     MinFadeLeaf: float = ParamField(
         float, "MinFadeLeaf", default=0.0,

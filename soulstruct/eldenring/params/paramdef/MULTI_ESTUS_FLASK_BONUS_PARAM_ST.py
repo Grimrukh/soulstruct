@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class MULTI_ESTUS_FLASK_BONUS_PARAM_ST(ParamRow):
     Host: int = ParamField(
         byte, "host", default=0,

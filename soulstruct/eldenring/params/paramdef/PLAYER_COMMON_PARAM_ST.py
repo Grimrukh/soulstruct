@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class PLAYER_COMMON_PARAM_ST(ParamRow):
     PlayerFootEffectbySFX: int = ParamField(
         int, "playerFootEffect_bySFX", default=0,

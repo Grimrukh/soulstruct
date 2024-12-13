@@ -16,7 +16,6 @@ from .paramdef_field import ParamDefField
 _LOGGER = logging.getLogger("soulstruct")
 
 
-@dataclass(slots=True)
 class ParamDef(GameFile):
 
     # NOTE: TK notes that this value is wrong for `format_version` 103 (DeS, presumably).
@@ -53,7 +52,7 @@ class ParamDef(GameFile):
 
         byte_order = ByteOrder.BigEndian if reader["b", 0x2c] == -1 else ByteOrder.LittleEndian
         format_version = reader["h", 0x2e]
-        reader.default_byte_order = byte_order
+        reader.byte_order = byte_order
         reader.long_varints = format_version >= 200
 
         reader.read(4)  # file size

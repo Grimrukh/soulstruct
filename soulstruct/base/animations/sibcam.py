@@ -62,7 +62,6 @@ class SIBCAMUnknownBytes:
     unk_post_fov_count: bytes  # 0x4
 
 
-@dataclass(slots=True)
 class SIBCAM(GameFile):
 
     big_endian: bool = False
@@ -81,7 +80,7 @@ class SIBCAM(GameFile):
         (It's also full of unknown chunks of data, so a struct may be premature.)
         """
         big_endian = reader.read(4) == b"\00\00\00\01"
-        reader.default_byte_order = ByteOrder.big_endian_bool(big_endian)
+        reader.byte_order = ByteOrder.big_endian_bool(big_endian)
 
         unk_pre_vector_count = reader.read(0x24)
         vector_count = reader["I"]

@@ -11,7 +11,6 @@ from soulstruct.dcx import DCXType
 from soulstruct.games import ELDEN_RING
 
 
-@dataclass(slots=True)
 class PARTSBND(FLVERBinder):
 
     DEFAULT_ENTRY_ROOT = f"{ELDEN_RING.interroot_prefix}\\parts"

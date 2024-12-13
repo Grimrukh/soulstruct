@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class REVERB_AUX_SEND_BUS_PARAM_ST(ParamRow):
     ReverbAuxSendBusName: str = ParamField(
         str, "ReverbAuxSendBusName[32]", encoding="shift_jis_2004", length=32, default='',

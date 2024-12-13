@@ -10,8 +10,6 @@ from soulstruct.darksouls1ptde.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class DOF_BANK(ParamRow):
     FarBlurStartDistance: float = ParamField(
         float, "farDofBegin", default=60.0,

@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class CHR_ACTIVATE_CONDITION_PARAM_ST(ParamRow):
     WeatherSunny: bool = ParamField(
         byte, "weatherSunny:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,

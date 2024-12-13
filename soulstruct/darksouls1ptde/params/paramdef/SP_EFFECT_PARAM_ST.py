@@ -10,8 +10,6 @@ from soulstruct.darksouls1ptde.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class SP_EFFECT_PARAM_ST(ParamRow):
     StatusIcon: int = ParamField(
         int, "iconId", game_type=Icon, default=-1,

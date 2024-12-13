@@ -24,7 +24,6 @@ if tp.TYPE_CHECKING:
     from soulstruct.utilities.misc import IDList
 
 
-@dataclass(slots=True)
 class ModelHeaderStruct(MSBHeaderStruct):
     name_offset: long
     _subtype_int: int
@@ -32,7 +31,7 @@ class ModelHeaderStruct(MSBHeaderStruct):
     sib_path_offset: long
     instance_count: int
     unk_x1c: int  # TODO: is this ever non-zero?
-    _pad1: bytes = field(init=False, **BinaryPad(8))  # `type_data_offset` would go here (always zero)
+    _pad1: bytes = binary_pad(8, init=False)  # `type_data_offset` would go here (always zero)
 
     @classmethod
     def reader_to_entry_kwargs(

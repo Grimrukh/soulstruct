@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class MODEL_SFX_PARAM_ST(ParamRow):
     SfxId0: int = ParamField(
         int, "sfxId_0", default=-1,

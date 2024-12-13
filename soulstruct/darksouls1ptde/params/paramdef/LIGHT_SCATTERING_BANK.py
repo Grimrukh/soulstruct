@@ -10,8 +10,6 @@ from soulstruct.darksouls1ptde.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class LIGHT_SCATTERING_BANK(ParamRow):
     LightRotationX: int = ParamField(
         short, "sunRotX", default=0,

@@ -32,7 +32,6 @@ from .models import *
 from .regions import MSBRegion
 
 
-@dataclass(slots=True)
 class PartHeaderStruct(MSBHeaderStruct):
     # No description offset.
     name_offset: int
@@ -44,12 +43,12 @@ class PartHeaderStruct(MSBHeaderStruct):
     translate: Vector3
     rotate: Vector3
     scale: Vector3
-    draw_groups: GroupBitSet128 = field(**BinaryArray(4, uint))
-    display_groups: GroupBitSet128 = field(**BinaryArray(4, uint))
+    draw_groups: GroupBitSet128 = binary_array(4, uint)
+    display_groups: GroupBitSet128 = binary_array(4, uint)
     supertype_data_offset: int
     subtype_data_offset: int
     # No other structs (Gparam, SceneGparam, etc.).
-    _pad1: bytes = field(**BinaryPad(8))  # note that this is longer than in DS1
+    _pad1: bytes = binary_pad(8)  # note that this is longer than in DS1
 
     @classmethod
     def reader_to_entry_kwargs(
@@ -98,7 +97,6 @@ class PartHeaderStruct(MSBHeaderStruct):
             writer.pad(0x10 - strings_size)
 
 
-@dataclass(slots=True)
 class PartSupertypeData(MSBBinaryStruct):
     """Uses old `DrawParam` fields here, rather than separate Gparam/SceneGparam structs."""
     entity_id: int
@@ -120,7 +118,7 @@ class PartSupertypeData(MSBBinaryStruct):
     draw_only_reflect_cam: bool
     use_depth_bias_float: bool
     disable_point_light_effect: bool
-    _pad2: bytes = field(**BinaryPad(2))
+    _pad2: bytes = binary_pad(2)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -160,9 +158,8 @@ class MSBPart(BaseMSBPart, abc.ABC):
     disable_point_light_effect: bool = False
 
 
-@dataclass(slots=True)
 class MapPieceDataStruct(MSBBinaryStruct):
-    _pad1: bytes = field(**BinaryPad(8))
+    _pad1: bytes = binary_pad(8)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -196,18 +193,17 @@ class MSBMapPiece(MSBPart):
         self.scattered_light_id = value
 
 
-@dataclass(slots=True)
 class ObjectDataStruct(MSBBinaryStruct):
-    _pad1: bytes = field(init=False, **BinaryPad(4))
+    _pad1: bytes = binary_pad(4, init=False)
     # No draw parent in DeS.
     break_term: sbyte
     net_sync_type: sbyte
-    _pad2: bytes = field(init=False, **BinaryPad(2))
+    _pad2: bytes = binary_pad(2, init=False)
     default_animation: short
     # NOTE: Offsets are wrong by -2, but better to keep synced with DS1 names.
     unk_x0e: short
     unk_x10: int
-    _pad3: bytes = field(init=False, **BinaryPad(8))  # longer than in DS1
+    _pad3: bytes = binary_pad(8, init=False)  # longer than in DS1
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -253,7 +249,6 @@ class MSBObject(MSBPart):
         self.scattered_light_id = value
 
 
-@dataclass(slots=True)
 class CharacterDataStruct(MSBBinaryStruct):
     unk_x00: int
     unk_x04: int
@@ -261,11 +256,11 @@ class CharacterDataStruct(MSBBinaryStruct):
     character_id: int
     talk_id: int
     patrol_type: byte
-    _pad2: bytes = field(init=False, **BinaryPad(1))
+    _pad2: bytes = binary_pad(1, init=False)
     platoon_id: ushort
     player_id: int
     _draw_parent_index: int = field(**EntryRef("PARTS_PARAM_ST"))  # still here, unlike Objects
-    _pad3: bytes = field(init=False, **BinaryPad(8))
+    _pad3: bytes = binary_pad(8, init=False)
     _patrol_regions_indices: list[short] = field(**EntryRef("POINT_PARAM_ST", array_size=8))
     default_animation: int
     damage_animation: int
@@ -302,7 +297,7 @@ class MSBCharacter(MSBPart):
     damage_animation: int = -1
 
     _draw_parent_index: int = None
-    _patrol_regions_indices: list[int] = field(default=None, **BinaryArray(8))
+    _patrol_regions_indices: list[int] = binary_array(8, default=None)
 
     HIDE_FIELDS = (
         "scale",
@@ -327,10 +322,9 @@ class MSBCharacter(MSBPart):
         self._consume_indices(entry_lists, "POINT_PARAM_ST", "patrol_regions")
 
 
-@dataclass(slots=True)
 class PlayerStartDataStruct(MSBBinaryStruct):
     unk_x00: byte  # always zero in DS1
-    _pad1: bytes = field(init=False, **BinaryPad(15))
+    _pad1: bytes = binary_pad(15, init=False)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -373,17 +367,16 @@ class MSBPlayerStart(MSBPart):
     unk_x00: int = 0  # TODO: default?
 
 
-@dataclass(slots=True)
 class CollisionDataStruct(MSBBinaryStruct):
     hit_filter_id: byte
     sound_space_type: byte
     cubemap_index: short
     reflect_plane_height: float
-    navmesh_groups: GroupBitSet128 = field(**BinaryArray(4, uint))
-    ref_tex_ids: list[short] = field(**BinaryArray(16))
+    navmesh_groups: GroupBitSet128 = binary_array(4, uint)
+    ref_tex_ids: list[short] = binary_array(16)
     unk_x38: short
     place_name_banner_id_: short  # -1 means use map area/block, and any negative value means banner is forced
-    _pad1: bytes = field(**BinaryPad(16))
+    _pad1: bytes = binary_pad(16)
 
     @classmethod
     def reader_to_entry_kwargs(
@@ -490,7 +483,6 @@ MSBCollision.force_place_name_banner = property(
 )
 
 
-@dataclass(slots=True)
 class ProtobossDataStruct(MSBBinaryStruct):
     unk_x00: float
     unk_x04: float
@@ -505,7 +497,7 @@ class ProtobossDataStruct(MSBBinaryStruct):
     unk_x28: float
     unk_x2c: int
     unk_x30: int
-    _pad1: bytes = field(**BinaryPad(12))
+    _pad1: bytes = binary_pad(12)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -534,10 +526,9 @@ class MSBProtoboss(MSBPart):
     unk_x30: int = 0
 
 
-@dataclass(slots=True)
 class NavmeshDataStruct(MSBBinaryStruct):
-    navmesh_groups: GroupBitSet128 = field(**BinaryArray(4, uint))
-    _pad1: bytes = field(**BinaryPad(16))
+    navmesh_groups: GroupBitSet128 = binary_array(4, uint)
+    _pad1: bytes = binary_pad(16)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -605,11 +596,10 @@ class MSBDummyCharacter(MSBCharacter):
     model: MSBDummyCharacterModel = None
 
 
-@dataclass(slots=True)
 class ConnectCollisionDataStruct(MSBBinaryStruct):
     _collision_index: int = field(**EntryRef("collisions"))
-    connected_map_id: list[sbyte] = field(**BinaryArray(4))
-    _pad1: bytes = field(**BinaryPad(8))
+    connected_map_id: list[sbyte] = binary_array(4)
+    _pad1: bytes = binary_pad(8)
 
 
 @dataclass(slots=True, eq=False, repr=False)

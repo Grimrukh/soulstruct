@@ -14,7 +14,6 @@ from soulstruct.utilities.files import PACKAGE_PATH
 _LOGGER = logging.getLogger("soulstruct")
 
 
-@dataclass(slots=True)
 class ParamDefBND(_BaseParamDefBND):
     """Elden Ring does not come with `ParamDef` files, so this class instead holds a dictionary mapping `ParamDef` stems
     to `ParamDef` instances loaded from the XMl files generously provided in the `Paramdex` repository.

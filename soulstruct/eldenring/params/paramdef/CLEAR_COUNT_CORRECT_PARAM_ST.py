@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class CLEAR_COUNT_CORRECT_PARAM_ST(ParamRow):
     MaxHpRate: float = ParamField(
         float, "MaxHpRate", default=1.0,

@@ -20,6 +20,10 @@ _LOGGER = logging.getLogger("soulstruct")
 
 
 # All FFX/FLVER/TPF IDs required by vanilla enemy models.
+# You'll note that most required FFX IDs for model 'cABC0' use IDs with five-digit format '1ABC?'.
+# However, this is a very loose pattern and broken with random IDs all the time (including some seven-digit). In
+# particular, enemies freely re-use FFX already created for other enemies, e.g. Sanctuary Guardian (c3470) uses the
+# Titanite Demon's (c2300) lightning FFX, Gwyn (c5370) uses the Flaming Attack Dog's (c3341) fire TPF, etc.
 DEFAULT_REQUIRED_FFX_IDS = {
     0: [],
     1000: [],
@@ -1034,7 +1038,6 @@ _FLVER_STEM_MATCH = re.compile(r"s(\d+)")  # typically 5 digits
 _TPF_STEM_MATCH = re.compile(r"s(\d+)(_n|_s|_h)?")  # typically 5 digits
 
 
-@dataclass(slots=True)
 class FFXBND(Binder):
     """Manages the structure of an FFXBND containing FFX, FLVER, and TPF files for visual effects.
 
@@ -1043,11 +1046,6 @@ class FFXBND(Binder):
 
     EXT: tp.ClassVar[str] = ".ffxbnd"
     NAME_PREFIX: tp.ClassVar[str] = "FRPG_SfxBnd_"
-
-    # This is typically 'mAA_BB' (loaded only by one map), 'mAA' (loaded by all area maps), 'cXXXX' (loaded whenever
-    # that character model is used; rare), or one of the fixed 'CommonEffects' or 'Patch'. Single-map areas only use
-    # the 'mAA' area version, not the 'mAA_BB' version.
-    name_suffix: str
 
     def get_ffx_entries(self) -> list[BinderEntry]:
         return [entry for entry in self.entries if entry.entry_id < 100000]
@@ -1124,7 +1122,7 @@ class FFXBND(Binder):
                     flver_stem = entry.minimal_stem.split("_")[0]
                     if not _FLVER_STEM_MATCH.match(flver_stem):
                         raise ValueError(f"FLVER entry name '{entry.name}' does not match expected format.")
-                    entry.set_path_name(f"s{int(flver_stem):05d}.flver")
+                    entry.set_path_name(f"s{int(flver_stem[1:]):05d}.flver")
                     flver_entries.append(entry)
                 case _:
                     raise ValueError(
@@ -1133,7 +1131,7 @@ class FFXBND(Binder):
                     )
 
         ffx_entries = sorted(ffx_entries, key=lambda e: int(e.minimal_stem[1:]))
-        tpf_entries = sorted(tpf_entries, key=lambda e: int(e.minimal_stem[1:]))
+        tpf_entries = sorted(tpf_entries, key=lambda e: int(e.minimal_stem[1:].split("_")[0]))
         flver_entries = sorted(flver_entries, key=lambda e: int(e.minimal_stem[1:]))
 
         for i, ffx_entry in enumerate(ffx_entries):

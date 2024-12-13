@@ -14,7 +14,6 @@ __all__ = [
 import logging
 import typing as tp
 import zlib
-from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 
@@ -154,46 +153,42 @@ DCX_VERSION_INFO = {
 }
 
 
-@dataclass(slots=True)
 class DCPHeaderStruct(BinaryStruct):
     """Early, abbreviated compression version (Demon's Souls only)."""
-    dcp: bytes = field(init=False, **BinaryString(4, asserted=b"DCP"))
-    dflt: bytes = field(init=False, **BinaryString(4, asserted=b"DFLT"))
-    unks: list[int] = field(init=False, **BinaryArray(6, asserted=[0x20, 0x9000000, 0, 0, 0, 0x10100]))
-    dcs: bytes = field(init=False, **BinaryString(4, b"DCS"))
+    dcp: bytes = binary_string(4, asserted=b"DCP", init=False)
+    dflt: bytes = binary_string(4, asserted=b"DFLT", init=False)
+    unks: list[int] = binary_array(6, asserted=[0x20, 0x9000000, 0, 0, 0, 0x10100], init=False)
+    dcs: bytes = binary_string(4, asserted=b"DCS", init=False)
     decompressed_size: int
     compressed_size: int
 
-    def get_default_byte_order(self) -> ByteOrder:
-        return ByteOrder.BigEndian
+    DEFAULT_BYTE_ORDER = ByteOrder.BigEndian
 
 
-@dataclass(slots=True)
 class DCXHeaderStruct(BinaryStruct):
     """Compression header (with variation in the `version` fields) in all FromSoft games after Demon's Souls.
 
     NOTE: Not asserting the five 'version' fields so that we can guess when a new format is available.
     """
-    dcx: bytes = field(init=False, **BinaryString(4, asserted=b"DCX"))
+    dcx: bytes = binary_string(4, asserted=b"DCX", init=False)
     version1: int  # [0x10000, 0x11000]
-    unk1: int = field(init=False, **Binary(asserted=0x18))
-    unk2: int = field(init=False, **Binary(asserted=0x24))
+    unk1: int = binary(asserted=0x18, init=False)
+    unk2: int = binary(asserted=0x24, init=False)
     version2: int  # [0x24, 0x44]
     version3: int  # [0x2C, 0x4C, `0x50 + chunk_count * 0x10` (DCX_EDGE)]
-    dcs: bytes = field(init=False, **BinaryString(4, b"DCS"))
+    dcs: bytes = binary_string(4, asserted=b"DCS", init=False)
     decompressed_size: int
     compressed_size: int
-    dcp: bytes = field(init=False, **BinaryString(4, asserted=b"DCP"))
-    compression_type: bytes = field(**BinaryString(4, asserted=(b"EDGE", b"DFLT", b"KRAK")))
-    unk3: int = field(init=False, **Binary(asserted=0x20))
+    dcp: bytes = binary_string(4, asserted=b"DCP", init=False)
+    compression_type: bytes = binary_string(4, asserted=(b"EDGE", b"DFLT", b"KRAK"))
+    unk3: int = binary(asserted=0x20, init=False)
     version4: int  # [0x6000000, 0x8000000, 0x9000000]
     version5: int  # [0, 0x10000]
     version6: int  # [0, 0xF000000]
-    unk5: int = field(init=False, **Binary(asserted=0))
+    unk5: int = binary(asserted=0, init=False)
     version7: int  # [0x10100, 0x101000]
 
-    def get_default_byte_order(self) -> ByteOrder:
-        return ByteOrder.BigEndian
+    DEFAULT_BYTE_ORDER = ByteOrder.BigEndian
 
     def get_version_info(self) -> DCXVersionInfo:
         """Extract non-constant field values."""
@@ -209,22 +204,20 @@ class DCXHeaderStruct(BinaryStruct):
         )
 
 
-@dataclass(slots=True)
 class DCXEdgeSubheader(BinaryStruct):
-    dca: bytes = field(init=False, **BinaryString(4, asserted=b"DCA"))
+    dca: bytes = binary_string(4, asserted=b"DCA", init=False)
     dca_size: int
-    egdt: bytes = field(init=False, **BinaryString(4, asserted=b"EgdT"))
-    unk1: int = field(init=False, **Binary(asserted=0x10100))
-    unk2: int = field(init=False, **Binary(asserted=0x24))
-    unk3: int = field(init=False, **Binary(asserted=0x10))
-    unk4: int = field(init=False, **Binary(asserted=0x10000))
+    egdt: bytes = binary_string(4, asserted=b"EgdT", init=False)
+    unk1: int = binary(asserted=0x10100, init=False)
+    unk2: int = binary(asserted=0x24, init=False)
+    unk3: int = binary(asserted=0x10, init=False)
+    unk4: int = binary(asserted=0x10000, init=False)
     last_block_decompressed_size: int
     egdt_size: int
     chunk_count: int
-    unk5: int = field(init=False, **Binary(asserted=0x100000))
+    unk5: int = binary(asserted=0x100000, init=False)
 
-    def get_default_byte_order(self) -> ByteOrder:
-        return ByteOrder.BigEndian
+    DEFAULT_BYTE_ORDER = ByteOrder.BigEndian
 
 
 def _decompress_dcx_edge(reader: BinaryReader, header: DCXHeaderStruct) -> tuple[bytes, DCXType]:

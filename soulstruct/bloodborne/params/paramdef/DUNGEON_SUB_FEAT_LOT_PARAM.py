@@ -10,8 +10,6 @@ from soulstruct.bloodborne.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class DUNGEON_SUB_FEAT_LOT_PARAM(ParamRow):
     SubFeatureNameID: int = ParamField(
         uint, "subFeatureNameId", default=0,

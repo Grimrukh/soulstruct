@@ -15,20 +15,18 @@ _LOGGER = logging.getLogger("soulstruct")
 @dataclass(slots=True)
 class Texture:
 
-    @dataclass(slots=True)
     class STRUCT0(BinaryStruct):
         _path_offset: int
         _texture_type_offset: int
-        _pad0: bytes = field(init=False, **BinaryPad(8))
+        _pad0: bytes = binary_pad(8, init=False)
 
-    @dataclass(slots=True)
     class STRUCT2(BinaryStruct):
         _path_offset: int
         _texture_type_offset: int
         scale: Vector2
-        f2_unk_x10: byte = field(**Binary(asserted=[0, 1, 2]))
+        f2_unk_x10: byte = binary(asserted=[0, 1, 2])
         f2_unk_x11: bool
-        _pad1: bytes = field(init=False, **BinaryPad(2))
+        _pad1: bytes = binary_pad(2, init=False)
         f2_unk_x14: float
         f2_unk_x18: float
         f2_unk_x1c: float

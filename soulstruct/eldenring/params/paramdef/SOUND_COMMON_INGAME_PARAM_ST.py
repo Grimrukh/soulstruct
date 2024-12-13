@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class SOUND_COMMON_INGAME_PARAM_ST(ParamRow):
     ParamKeyStr: str = ParamField(
         str, "ParamKeyStr[32]", encoding="shift_jis_2004", length=32, default='',

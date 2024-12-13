@@ -10,8 +10,6 @@ from soulstruct.darksouls1ptde.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class FOG_BANK(ParamRow):
     FogStartDistance: int = ParamField(
         short, "fogBeginZ", default=0,

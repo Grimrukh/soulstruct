@@ -12,8 +12,6 @@ from soulstruct.utilities.binary import *
 from .dynamics import ObjActSuccessCondition, ObjActSuccessCondition
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class OBJ_ACT_PARAM_ST(ParamRow):
     PromptMessage: int = ParamField(
         int, "actionEnableMsgId", default=-1,

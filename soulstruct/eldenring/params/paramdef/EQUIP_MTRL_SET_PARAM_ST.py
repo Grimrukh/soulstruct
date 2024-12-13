@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class EQUIP_MTRL_SET_PARAM_ST(ParamRow):
     UpgradeGood: int = ParamField(
         int, "materialId01", game_type=GoodParam, default=-1,

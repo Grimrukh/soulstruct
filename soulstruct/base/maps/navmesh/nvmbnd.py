@@ -9,7 +9,6 @@ from soulstruct.containers import Binder, EntryNotFoundError
 from .nvm import NVM
 
 
-@dataclass(slots=True)
 class BaseNVMBND(Binder, abc.ABC):
     """Manage `NVM` entries in a Binder. Game-specific subclasses will want to set their own Binder defaults."""
 

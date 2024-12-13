@@ -10,8 +10,6 @@ from soulstruct.bloodborne.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class RESIDENT_FX_PARAM_ST(ParamRow):
     VisualEffectID: int = ParamField(
         int, "sfxId", game_type=VisualEffect, default=-1,

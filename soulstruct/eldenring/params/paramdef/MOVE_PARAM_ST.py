@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class MOVE_PARAM_ST(ParamRow):
     StillAnimation: int = ParamField(
         int, "stayId", default=-1,

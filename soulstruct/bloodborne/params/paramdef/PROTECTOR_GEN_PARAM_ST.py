@@ -10,8 +10,6 @@ from soulstruct.bloodborne.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class PROTECTOR_GEN_PARAM_ST(ParamRow):
     ArmorParamID: int = ParamField(
         int, "proParamId", game_type=ArmorParam, default=0,

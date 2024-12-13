@@ -11,8 +11,7 @@ from soulstruct.dcx import DCXType
 from soulstruct.games import DEMONS_SOULS
 
 
-@dataclass(slots=True)
-class OBJBND(FLVERBinder):
+class OBJBND(FLVERBinder):):
 
     DEFAULT_ENTRY_ROOT = f"{DEMONS_SOULS.interroot_prefix}\\obj"
     MAX_FLVER_COUNT = 99

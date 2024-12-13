@@ -193,7 +193,6 @@ class EventSignature:
         return ", ".join(arg_strings)
 
 
-@dataclass(slots=True)
 class EventStruct(BinaryStruct):
     event_id: varuint
     instructions_count: varuint
@@ -201,7 +200,7 @@ class EventStruct(BinaryStruct):
     event_arg_replacements_count: varuint
     event_arg_replacements_local_offset: varint
     on_rest_behavior: uint  # always 32-bit
-    _pad1: bytes = field(init=False, **BinaryPad(4))
+    _pad1: bytes = binary_pad(4, init=False)
 
 
 @dataclass(slots=True)

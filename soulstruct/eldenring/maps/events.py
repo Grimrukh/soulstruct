@@ -33,34 +33,31 @@ if tp.TYPE_CHECKING:
     from soulstruct.utilities.misc import IDList
 
 
-@dataclass(slots=True)
 class EventHeaderStruct(MSBHeaderStruct):
     name_offset: long
     supertype_index: int
     _subtype_int: int
     subtype_index: int
-    event_unkh_14: int = field(**Binary(asserted=(0, 1)))
+    event_unkh_14: int = binary(asserted=(0, 1))
     supertype_data_offset: long
     subtype_data_offset: long
     extra_data_offset: long
 
 
-@dataclass(slots=True)
 class EventDataStruct(MSBBinaryStruct):
     _attached_part_index: int = field(**EntryRef("PARTS_PARAM_ST"))
     _attached_region_index: int = field(**EntryRef("POINT_PARAM_ST"))
     entity_id: int
     event_unkd_0c: byte
-    _pad1: bytes = field(init=False, **BinaryPad(3))
+    _pad1: bytes = binary_pad(3, init=False)
 
 
-@dataclass(slots=True)
 class EventExtraDataStruct(MSBBinaryStruct):
     map_id: int
     unk_04: int
     unk_08: int
     unk_0c: int
-    _pad1: bytes = field(init=False, **BinaryPad(16))
+    _pad1: bytes = binary_pad(16, init=False)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -89,18 +86,17 @@ class MSBEvent(BaseMSBEvent, abc.ABC):
     unk_0c: int = 0
 
 
-@dataclass(slots=True)
 class TreasureEventDataStruct(MSBBinaryStruct):
-    _pad1: bytes = field(**BinaryPad(8))
+    _pad1: bytes = binary_pad(8)
     _treasure_part_index: int = field(**EntryRef("PARTS_PARAM_ST"))
-    _pad2: bytes = field(**BinaryPad(4))
+    _pad2: bytes = binary_pad(4)
     item_lot: int
-    _pad3: bytes = field(**BinaryPad(0x24, b"\xFF"))
+    _pad3: bytes = binary_pad(0x24, b"\xFF", init=False)
     action_button_id: int
     pickup_animation_id: int
     is_in_chest: bool
     starts_disabled: bool
-    _pad4: bytes = field(**BinaryPad(14))
+    _pad4: bytes = binary_pad(14)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -126,7 +122,6 @@ class MSBTreasureEvent(MSBEvent):
         self._consume_index(entry_lists, "PARTS_PARAM_ST", "treasure_part")
 
 
-@dataclass(slots=True)
 class SpawnerEventDataStruct(MSBBinaryStruct):
     max_count: byte
     spawner_type: sbyte
@@ -136,14 +131,14 @@ class SpawnerEventDataStruct(MSBBinaryStruct):
     min_interval: float
     max_interval: float
     initial_spawn_count: byte
-    _pad1: bytes = field(**BinaryPad(3))
+    _pad1: bytes = binary_pad(3)
     spawner_unk_14: float
     spawner_unk_18: float
-    _pad2: bytes = field(**BinaryPad(0x14))
+    _pad2: bytes = binary_pad(0x14, init=False)
     _spawn_regions_indices: list[int] = field(**EntryRef("POINT_PARAM_ST", array_size=8))
-    _pad3: bytes = field(**BinaryPad(0x10))
+    _pad3: bytes = binary_pad(0x10, init=False)
     _spawn_parts_indices: list[int] = field(**EntryRef("PARTS_PARAM_ST", array_size=32))
-    _pad4: bytes = field(**BinaryPad(0x20))
+    _pad4: bytes = binary_pad(0x20, init=False)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -173,8 +168,8 @@ class MSBSpawnerEvent(MSBEvent):
         default_factory=lambda: [None] * 8, **MapFieldInfo(GameObjectIntSequence((Region, 8)))
     )
 
-    _spawn_parts_indices: list[int] = field(default=None, **BinaryArray(32))
-    _spawn_regions_indices: list[int] = field(default=None, **BinaryArray(8))
+    _spawn_parts_indices: list[int] = binary_array(32, default=None)
+    _spawn_regions_indices: list[int] = binary_array(8, default=None)
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBSpawnerEvent, self).indices_to_objects(entry_lists)
@@ -182,15 +177,14 @@ class MSBSpawnerEvent(MSBEvent):
         self._consume_indices(entry_lists, "POINT_PARAM_ST", "spawn_regions")
 
 
-@dataclass(slots=True)
 class ObjActEventDataStruct(MSBBinaryStruct):
     obj_act_entity_id: int
     _obj_act_part_index: int = field(**EntryRef("PARTS_PARAM_ST"))
     obj_act_param_id: int
     obj_act_state: byte
-    _pad1: bytes = field(**BinaryPad(3))
+    _pad1: bytes = binary_pad(3)
     obj_act_flag: int
-    _pad2: bytes = field(**BinaryPad(12))
+    _pad2: bytes = binary_pad(12)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -216,10 +210,9 @@ class MSBObjActEvent(MSBEvent):
         self._consume_index(entry_lists, "PARTS_PARAM_ST", "obj_act_part")
 
 
-@dataclass(slots=True)
 class NavigationEventDataStruct(MSBBinaryStruct):
     _navigation_region_index: int = field(**EntryRef("POINT_PARAM_ST"))
-    _pad1: bytes = field(**BinaryPad(12))
+    _pad1: bytes = binary_pad(12)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -240,7 +233,6 @@ class MSBNavigationEvent(MSBEvent):
         self._consume_index(entry_lists, "POINT_PARAM_ST", "navigation_region")
 
 
-@dataclass(slots=True)
 class NPCInvasionEventDataStruct(MSBBinaryStruct):
     host_entity_id: int
     invasion_flag_id: int
@@ -250,7 +242,7 @@ class NPCInvasionEventDataStruct(MSBBinaryStruct):
     npc_invasion_unk_14: int
     npc_invasion_unk_18: int
     npc_invasion_unk_1c: int
-    _minus_one: int = field(**Binary(asserted=-1))
+    _minus_one: int = binary(asserted=-1)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -271,11 +263,10 @@ class MSBNPCInvasionEvent(MSBEvent):
     npc_invasion_unk_1c: int = 0
 
 
-@dataclass(slots=True)
 class PlatoonEventDataStruct(MSBBinaryStruct):
     platoon_id_script_activate: int
     state: int
-    _pad1: bytes = field(**BinaryPad(8))
+    _pad1: bytes = binary_pad(8)
     _platoon_parts_indices: list[int] = field(**EntryRef("PARTS_PARAM_ST", array_size=32))
 
 
@@ -297,20 +288,19 @@ class MSBPlatoonEvent(MSBEvent):
         default_factory=lambda: [None] * 32, **MapFieldInfo(game_type=GameObjectIntSequence((MapPart, 32)))
     )
 
-    _platoon_parts_indices: list[int] = field(default=None, **BinaryArray(32))
+    _platoon_parts_indices: list[int] = binary_array(32, default=None)
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBPlatoonEvent, self).indices_to_objects(entry_lists)
         self._consume_indices(entry_lists, "PARTS_PARAM_ST", "platoon_parts")
 
 
-@dataclass(slots=True)
 class PatrolRouteEventDataStruct(MSBBinaryStruct):
     patrol_type: byte
-    _pad1: bytes = field(**BinaryPad(2))
-    _one: byte = field(**Binary(asserted=1))
-    _minus_one: int = field(**Binary(asserted=-1))
-    _pad2: bytes = field(**BinaryPad(8))
+    _pad1: bytes = binary_pad(2)
+    _one: byte = binary(asserted=1)
+    _minus_one: int = binary(asserted=-1)
+    _pad2: bytes = binary_pad(8)
     _patrol_regions_indices: list[short] = field(**EntryRef("POINT_PARAM_ST", array_size=64))
 
 
@@ -329,14 +319,13 @@ class MSBPatrolRouteEvent(MSBEvent):
         default_factory=lambda: [None] * 64, **MapFieldInfo(game_type=GameObjectIntSequence((Region, 64)))
     )
 
-    _patrol_regions_indices: list[int] = field(default=None, **BinaryArray(64))
+    _patrol_regions_indices: list[int] = binary_array(64, default=None)
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBPatrolRouteEvent, self).indices_to_objects(entry_lists)
         self._consume_indices(entry_lists, "POINT_PARAM_ST", "patrol_regions")
 
 
-@dataclass(slots=True)
 class MountEventDataStruct(MSBBinaryStruct):
     _rider_part_index: int = field(**EntryRef("PARTS_PARAM_ST"))
     _mount_part_index: int = field(**EntryRef("PARTS_PARAM_ST"))
@@ -363,11 +352,10 @@ class MSBMountEvent(MSBEvent):
         self._consume_index(entry_lists, "PARTS_PARAM_ST", "mount_part")
 
 
-@dataclass(slots=True)
 class SignPoolEventDataStruct(MSBBinaryStruct):
     _sign_part_index: int = field(**EntryRef("PARTS_PARAM_ST"))
     sign_pool_unk_04: int
-    _pad1: bytes = field(**BinaryPad(8))
+    _pad1: bytes = binary_pad(8)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -388,13 +376,12 @@ class MSBSignPoolEvent(MSBEvent):
         self._consume_index(entry_lists, "PARTS_PARAM_ST", "sign_part")
 
 
-@dataclass(slots=True)
 class RetryPointEventDataStruct(MSBBinaryStruct):
     _retry_part_index: int = field(**EntryRef("PARTS_PARAM_ST"))
     event_flag_id: uint
     retry_point_unk_08: float
     _retry_region_index: short = field(**EntryRef("POINT_PARAM_ST"))
-    _zero: short = field(**Binary(asserted=0))
+    _zero: short = binary(asserted=0)
 
 
 @dataclass(slots=True, eq=False, repr=False)

@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class CS_WATER_QUALITY_DETAIL(ParamRow):
     InteractionEnabled: int = ParamField(
         byte, "interactionEnabled", ON_OFF, default=1,

@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class WAYPOINT_PARAM_ST(ParamRow):
     Attribute1: int = ParamField(
         short, "attribute1", WAYPOINT_ATTRIBUTE, default=-1,

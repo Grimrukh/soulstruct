@@ -10,8 +10,6 @@ from soulstruct.bloodborne.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class LOD_BANK(ParamRow):
     Lv01BorderDist: float = ParamField(
         float, "lv01_BorderDist", default=5.0,

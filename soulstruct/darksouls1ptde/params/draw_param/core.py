@@ -9,7 +9,6 @@ from soulstruct.base.params.param_row import ParamRow
 from soulstruct.dcx import DCXType
 
 
-@dataclass(slots=True)
 class DrawParam(Param):
     """`Param` with some extra methods that are specific to DrawParam tables."""
 

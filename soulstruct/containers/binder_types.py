@@ -17,7 +17,6 @@ from .tpf import TPF
 _LOGGER = logging.getLogger("soulstruct")
 
 
-@dataclass(slots=True)
 class FLVERBinder(Binder, abc.ABC):
     """Base class for Binders that contain one or more FLVER files and an optional TPF file."""
 

@@ -12,7 +12,6 @@ from soulstruct.dcx import DCXType
 from soulstruct.games import ELDEN_RING
 
 
-@dataclass(slots=True)
 class MAPBND(FLVERBinder):
 
     DEFAULT_ENTRY_ROOT: tp.ClassVar[str] = f"{ELDEN_RING.interroot_prefix}\\map"

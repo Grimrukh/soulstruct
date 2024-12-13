@@ -10,8 +10,6 @@ from soulstruct.bloodborne.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class ACTIONBUTTON_PARAM_ST(ParamRow):
     RegionType: int = ParamField(
         byte, "regionType", ACTION_BUTTON_REGION_TYPE, default=0,

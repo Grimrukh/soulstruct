@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class BULLET_PARAM_ST(ParamRow):
     BulletAttack: int = ParamField(
         int, "atkId_Bullet", game_type=AttackParam, default=-1,

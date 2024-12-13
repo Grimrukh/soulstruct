@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class CACL_CORRECT_GRAPH_ST(ParamRow):
     StageMaxIntercept0: float = ParamField(
         float, "stageMaxVal0", default=0.0,

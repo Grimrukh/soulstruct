@@ -36,7 +36,6 @@ if tp.TYPE_CHECKING:
     from soulstruct.utilities.misc import IDList
 
 
-@dataclass(slots=True)
 class EventHeaderStruct(MSBHeaderStruct):
     name_offset: int
     supertype_index: int
@@ -44,15 +43,14 @@ class EventHeaderStruct(MSBHeaderStruct):
     subtype_index: int
     supertype_data_offset: int
     subtype_data_offset: int
-    _pad1: bytes = field(**BinaryPad(4))
+    _pad1: bytes = binary_pad(4)
 
 
-@dataclass(slots=True)
 class EventDataStruct(MSBBinaryStruct):
     _attached_part_index: int = field(**EntryRef("PARTS_PARAM_ST"))
     _attached_region_index: int = field(**EntryRef("POINT_PARAM_ST"))
     entity_id: int
-    unknowns: list[byte] = field(**BinaryArray(4))
+    unknowns: list[byte] = binary_array(4)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -71,7 +69,6 @@ class MSBEvent(BaseMSBEvent, abc.ABC):
     unknowns: list[int] = field(default_factory=lambda: [0, 0, 0, 0], **BinaryArray(4))
 
 
-@dataclass(slots=True)
 class LightEventDataStruct(MSBBinaryStruct):
     point_light_id: int
 
@@ -85,7 +82,6 @@ class MSBLightEvent(MSBEvent):
     point_light_id: int = field(default=0, **MapFieldInfo(game_type=PointLightParam))
 
 
-@dataclass(slots=True)
 class SoundEventDataStruct(MSBBinaryStruct):
     sound_type: int
     sound_id: int
@@ -101,7 +97,6 @@ class MSBSoundEvent(MSBEvent):
     sound_id: int = -1
 
 
-@dataclass(slots=True)
 class VFXEventDataStruct(MSBBinaryStruct):
     vfx_id: int
 
@@ -115,14 +110,13 @@ class MSBVFXEvent(MSBEvent):
     vfx_id: int = 0
 
 
-@dataclass(slots=True)
 class WindEventDataStruct(MSBBinaryStruct):
     wind_vector_min: Vector3
     unk_x0c: float
     wind_vector_max: Vector3
     unk_x1c: float
-    wind_swing_cycles: list[float] = field(**BinaryArray(4))
-    wind_swing_powers: list[float] = field(**BinaryArray(4))
+    wind_swing_cycles: list[float] = binary_array(4)
+    wind_swing_powers: list[float] = binary_array(4)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -139,23 +133,22 @@ class MSBWindEvent(MSBEvent):
     wind_swing_powers: list[float] = field(default_factory=lambda: [0.0] * 4, **BinaryArray(4))
 
 
-@dataclass(slots=True)
 class TreasureEventDataStruct(MSBBinaryStruct):
-    _pad1: bytes = field(**BinaryPad(4))
+    _pad1: bytes = binary_pad(4)
     _treasure_part_index: int = field(**EntryRef("PARTS_PARAM_ST"))
     item_lot_1: int
-    _minus_one_1: int = field(**Binary(asserted=-1))
+    _minus_one_1: int = binary(asserted=-1)
     item_lot_2: int
-    _minus_one_2: int = field(**Binary(asserted=-1))
+    _minus_one_2: int = binary(asserted=-1)
     item_lot_3: int
-    _minus_one_3: int = field(**Binary(asserted=-1))
+    _minus_one_3: int = binary(asserted=-1)
     item_lot_4: int
-    _minus_one_4: int = field(**Binary(asserted=-1))
+    _minus_one_4: int = binary(asserted=-1)
     item_lot_5: int
-    _minus_one_5: int = field(**Binary(asserted=-1))
+    _minus_one_5: int = binary(asserted=-1)
     is_in_chest: bool
     is_hidden: bool
-    _pad2: bytes = field(**BinaryPad(2))
+    _pad2: bytes = binary_pad(2)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -181,7 +174,6 @@ class MSBTreasureEvent(MSBEvent):
         self._consume_index(entry_lists, "PARTS_PARAM_ST", "treasure_part")
 
 
-@dataclass(slots=True)
 class SpawnerEventDataStruct(MSBBinaryStruct):
     max_count: byte
     spawner_type: sbyte
@@ -191,10 +183,10 @@ class SpawnerEventDataStruct(MSBBinaryStruct):
     min_interval: float
     max_interval: float
     initial_spawn_count: int
-    _pad1: bytes = field(**BinaryPad(28))
+    _pad1: bytes = binary_pad(28)
     _spawn_regions_indices: list[int] = field(**EntryRef("POINT_PARAM_ST", array_size=4))
     _spawn_parts_indices: list[int] = field(**EntryRef("PARTS_PARAM_ST", array_size=32))  # should be Characters
-    _pad2: bytes = field(**BinaryPad(64))
+    _pad2: bytes = binary_pad(64)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -220,8 +212,8 @@ class MSBSpawnerEvent(MSBEvent):
         default_factory=lambda: [None] * 4, **MapFieldInfo(GameObjectIntSequence((Region, 4)))
     )
 
-    _spawn_parts_indices: list[int] = field(default=None, **BinaryArray(32))
-    _spawn_regions_indices: list[int] = field(default=None, **BinaryArray(4))
+    _spawn_parts_indices: list[int] = binary_array(32, default=None)
+    _spawn_regions_indices: list[int] = binary_array(4, default=None)
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBSpawnerEvent, self).indices_to_objects(entry_lists)
@@ -229,12 +221,11 @@ class MSBSpawnerEvent(MSBEvent):
         self._consume_indices(entry_lists, "POINT_PARAM_ST", "spawn_regions")
 
 
-@dataclass(slots=True)
 class MessageEventDataStruct(MSBBinaryStruct):
     text_id: short
     unk_x02: short
     is_hidden: bool
-    _pad1: bytes = field(**BinaryPad(3))
+    _pad1: bytes = binary_pad(3)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -248,13 +239,12 @@ class MSBMessageEvent(MSBEvent):
     is_hidden: bool = False
 
 
-@dataclass(slots=True)
 class ObjActEventDataStruct(MSBBinaryStruct):
     obj_act_entity_id: int
     _obj_act_part_index: int = field(**EntryRef("PARTS_PARAM_ST"))
     obj_act_param_id: short
     obj_act_state: byte
-    _pad1: bytes = field(**BinaryPad(1))
+    _pad1: bytes = binary_pad(1)
     obj_act_flag: int
 
 
@@ -279,10 +269,9 @@ class MSBObjActEvent(MSBEvent):
         self._consume_index(entry_lists, "PARTS_PARAM_ST", "obj_act_part")
 
 
-@dataclass(slots=True)
 class SpawnPointEventData(MSBBinaryStruct):
     _spawn_point_region_index: int = field(**EntryRef("POINT_PARAM_ST"))
-    _pad1: bytes = field(**BinaryPad(12))
+    _pad1: bytes = binary_pad(12)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -301,7 +290,6 @@ class MSBSpawnPointEvent(MSBEvent):
         self._consume_index(entry_lists, "POINT_PARAM_ST", "spawn_point_region")
 
 
-@dataclass(slots=True)
 class MapOffsetEventDataStruct(MSBBinaryStruct):
     translate: Vector3
     rotate_y: float
@@ -317,10 +305,9 @@ class MSBMapOffsetEvent(MSBEvent):
     rotate_y: float = 0.0
 
 
-@dataclass(slots=True)
 class NavigationEventDataStruct(MSBBinaryStruct):
     _navigation_region_index: int = field(**EntryRef("POINT_PARAM_ST"))
-    _pad1: bytes = field(**BinaryPad(12))
+    _pad1: bytes = binary_pad(12)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -339,7 +326,6 @@ class MSBNavigationEvent(MSBEvent):
         self._consume_index(entry_lists, "POINT_PARAM_ST", "navigation_region")
 
 
-@dataclass(slots=True)
 class EnvironmentEventDataStruct(MSBBinaryStruct):
     unk_x00_x04: int
     unk_x04_x08: float
@@ -347,7 +333,7 @@ class EnvironmentEventDataStruct(MSBBinaryStruct):
     unk_x0c_x10: float
     unk_x10_x14: float
     unk_x14_x18: float
-    _pad1: bytes = field(**BinaryPad(8))
+    _pad1: bytes = binary_pad(8)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -375,12 +361,11 @@ class MSBEnvironmentEvent(MSBEvent):
     unk_x14_x18: float = 1.0
 
 
-@dataclass(slots=True)
 class SUBTYPE_DATA_STRUCT(MSBBinaryStruct):
     host_entity_id: int
     invasion_flag_id: int
     activate_good_id: int
-    _pad1: bytes = field(**BinaryPad(4))
+    _pad1: bytes = binary_pad(4)
 
 
 @dataclass(slots=True, eq=False, repr=False)

@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class NETWORK_PARAM_ST(ParamRow):
     SignVerticalOffset: float = ParamField(
         float, "signVerticalOffset", default=0.0,

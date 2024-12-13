@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class KNOWLEDGE_LOADSCREEN_ITEM_PARAM_ST(ParamRow):
     DisableParamNT: bool = ParamField(
         byte, "disableParam_NT:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,

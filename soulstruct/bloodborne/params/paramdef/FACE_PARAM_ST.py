@@ -10,8 +10,6 @@ from soulstruct.bloodborne.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class FACE_PARAM_ST(ParamRow):
     FacePartsID: int = ParamField(
         byte, "facePartsId", game_type=EquipmentModel, default=0,

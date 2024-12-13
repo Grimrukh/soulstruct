@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class RANDOM_APPEAR_PARAM_ST(ParamRow):
     Slot0: bool = ParamField(
         byte, "slot0:1", bit_count=1, default=False,

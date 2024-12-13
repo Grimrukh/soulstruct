@@ -34,7 +34,6 @@ if tp.TYPE_CHECKING:
     from .events import MSBEnvironmentEvent
 
 
-@dataclass(slots=True)
 class PartHeaderStruct(MSBHeaderStruct):
     # No description offset.
     name_offset: int
@@ -46,12 +45,12 @@ class PartHeaderStruct(MSBHeaderStruct):
     translate: Vector3
     rotate: Vector3
     scale: Vector3
-    draw_groups: GroupBitSet128 = field(**BinaryArray(4, uint))
-    display_groups: GroupBitSet128 = field(**BinaryArray(4, uint))
+    draw_groups: GroupBitSet128 = binary_array(4, uint)
+    display_groups: GroupBitSet128 = binary_array(4, uint)
     supertype_data_offset: int
     subtype_data_offset: int
     # No other structs (Gparam, SceneGparam, etc.).
-    _pad1: bytes = field(**BinaryPad(4))
+    _pad1: bytes = binary_pad(4)
 
     @classmethod
     def reader_to_entry_kwargs(
@@ -99,7 +98,6 @@ class PartHeaderStruct(MSBHeaderStruct):
             writer.pad(0x14 - (writer.position - strings_position))
 
 
-@dataclass(slots=True)
 class PartSupertypeData(MSBBinaryStruct):
     """Uses old `DrawParam` fields here, rather than separate Gparam/SceneGparam structs."""
     entity_id: int
@@ -113,7 +111,7 @@ class PartSupertypeData(MSBBinaryStruct):
     tone_correction_id: sbyte
     point_light_id: sbyte
     lod_id: sbyte
-    _pad1: bytes = field(**BinaryPad(1))
+    _pad1: bytes = binary_pad(1)
     is_shadow_source: bool
     is_shadow_destination: bool
     is_shadow_only: bool
@@ -121,7 +119,7 @@ class PartSupertypeData(MSBBinaryStruct):
     draw_only_reflect_cam: bool
     use_depth_bias_float: bool
     disable_point_light_effect: bool
-    _pad2: bytes = field(**BinaryPad(2))
+    _pad2: bytes = binary_pad(2)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -160,9 +158,8 @@ class MSBPart(BaseMSBPart, abc.ABC):
     disable_point_light_effect: bool = False
 
 
-@dataclass(slots=True)
 class MapPieceDataStruct(MSBBinaryStruct):
-    _pad1: bytes = field(**BinaryPad(8))
+    _pad1: bytes = binary_pad(8)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -196,17 +193,16 @@ class MSBMapPiece(MSBPart):
         self.scattered_light_id = value
 
 
-@dataclass(slots=True)
 class ObjectDataStruct(MSBBinaryStruct):
-    _pad1: bytes = field(init=False, **BinaryPad(4))
+    _pad1: bytes = binary_pad(4, init=False)
     _draw_parent_index: int = field(**EntryRef("PARTS_PARAM_ST"))
     break_term: sbyte
     net_sync_type: sbyte
-    _pad2: bytes = field(init=False, **BinaryPad(2))
+    _pad2: bytes = binary_pad(2, init=False)
     default_animation: short
     unk_x0e: short
     unk_x10: int
-    _pad3: bytes = field(init=False, **BinaryPad(4))
+    _pad3: bytes = binary_pad(4, init=False)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -259,18 +255,17 @@ class MSBObject(MSBPart):
         self.scattered_light_id = value
 
 
-@dataclass(slots=True)
 class CharacterDataStruct(MSBBinaryStruct):
-    _pad1: bytes = field(init=False, **BinaryPad(8))
+    _pad1: bytes = binary_pad(8, init=False)
     ai_id: int
     character_id: int
     talk_id: int
     patrol_type: byte
-    _pad2: bytes = field(init=False, **BinaryPad(1))
+    _pad2: bytes = binary_pad(1, init=False)
     platoon_id: ushort
     player_id: int
     _draw_parent_index: int = field(**EntryRef("PARTS_PARAM_ST"))
-    _pad3: bytes = field(init=False, **BinaryPad(8))
+    _pad3: bytes = binary_pad(8, init=False)
     _patrol_regions_indices: list[short] = field(**EntryRef("POINT_PARAM_ST", array_size=8))
     default_animation: int
     damage_animation: int
@@ -305,7 +300,7 @@ class MSBCharacter(MSBPart):
     damage_animation: int = -1
 
     _draw_parent_index: int = None
-    _patrol_regions_indices: list[int] = field(default=None, **BinaryArray(8))
+    _patrol_regions_indices: list[int] = binary_array(8, default=None)
 
     HIDE_FIELDS = (
         "scale",
@@ -330,9 +325,8 @@ class MSBCharacter(MSBPart):
         self._consume_indices(entry_lists, "POINT_PARAM_ST", "patrol_regions")
 
 
-@dataclass(slots=True)
 class PlayerStartDataStruct(MSBBinaryStruct):
-    _pad1: bytes = field(init=False, **BinaryPad(16))
+    _pad1: bytes = binary_pad(16, init=False)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -373,23 +367,22 @@ class MSBPlayerStart(MSBPart):
     draw_by_reflect_cam: bool = True
 
 
-@dataclass(slots=True)
 class CollisionDataStruct(MSBBinaryStruct):
     hit_filter_id: byte
     sound_space_type: byte
     _environment_event_index: short = field(**EntryRef("environments"))
     reflect_plane_height: float
-    navmesh_groups: GroupBitSet128 = field(**BinaryArray(4, uint))
-    vagrant_entity_ids: list[int] = field(**BinaryArray(3))
+    navmesh_groups: GroupBitSet128 = binary_array(4, uint)
+    vagrant_entity_ids: list[int] = binary_array(3)
     place_name_banner_id_: short  # -1 means use map area/block, and any negative value means banner is forced
     starts_disabled: bool
     unk_x27_x28: byte
     attached_bonfire: int
-    _minus_ones: list[int] = field(**BinaryArray(3, asserted=[-1, -1, -1]))  # never used
+    _minus_ones: list[int] = binary_array(3, asserted=[-1, -1, -1])  # never used
     play_region_id_: int  # -10 or greater is real play region ID, less than -10 is a negated stable footing flag
     camera_1_id: short
     camera_2_id: short
-    _pad1: bytes = field(**BinaryPad(16))
+    _pad1: bytes = binary_pad(16)
 
     @classmethod
     def reader_to_entry_kwargs(
@@ -563,10 +556,9 @@ MSBCollision.play_region_id = property(
 )
 
 
-@dataclass(slots=True)
 class NavmeshDataStruct(MSBBinaryStruct):
-    navmesh_groups: GroupBitSet128 = field(**BinaryArray(4, uint))
-    _pad1: bytes = field(**BinaryPad(16))
+    navmesh_groups: GroupBitSet128 = binary_array(4, uint)
+    _pad1: bytes = binary_pad(16)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -628,11 +620,10 @@ class MSBDummyCharacter(MSBCharacter):
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = ""
 
 
-@dataclass(slots=True)
 class ConnectCollisionDataStruct(MSBBinaryStruct):
     _collision_index: int = field(**EntryRef("collisions"))
-    connected_map_id: list[sbyte] = field(**BinaryArray(4))
-    _pad1: bytes = field(**BinaryPad(8))
+    connected_map_id: list[sbyte] = binary_array(4)
+    _pad1: bytes = binary_pad(8)
 
 
 @dataclass(slots=True, eq=False, repr=False)

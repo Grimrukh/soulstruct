@@ -24,6 +24,7 @@ from types import MappingProxyType
 from soulstruct.base.game_types import GAME_INT_TYPE
 from soulstruct.base.params.paramdef.field_types import base_type
 from soulstruct.utilities.binary import *
+from constrata.metadata import PRIMITIVE_FIELD_TYPING
 
 _LOGGER = logging.getLogger("soulstruct")
 
@@ -81,7 +82,6 @@ MAP_PARAM_TYPES = {
 PARAM_VALUE_TYPING = tp.Union[int, bool, float, str, bytes]
 
 
-@dataclass(slots=True)
 class ParamRow(BinaryStruct):
     """Base class for `ParamDef`-spawned classes. Instances appear directly in `Param.rows`."""
 

@@ -79,14 +79,13 @@ class FSBSampleMode(IntEnum):
     FSOUND_SYNCPOINTS = 0x80000000
 
 
-@dataclass(slots=True)
 class FSBSampleHeader(BinaryStruct):
     """Wavetable data that is written to the FSB file.
 
     Most of this information is not represented in the FDP, but comes directly from the sound sample file (WAV).
     """
     total_size: ushort
-    name: str = field(**BinaryString(30, encoding="utf-8"))
+    name: str = binary_string(30, encoding="utf-8")
     length: uint
     compressed_length: uint
     loop_start: uint
@@ -167,7 +166,7 @@ class FSBSample:
     @classmethod
     def from_fsb_reader(cls, reader: BinaryReader, data_offset: int):
         header = FSBSampleHeader.from_bytes(reader)
-        metadata_size = header.total_size - FSBSampleHeader.get_size(reader.default_byte_order, reader.long_varints)
+        metadata_size = header.total_size - FSBSampleHeader.get_size(reader.byte_order, reader.long_varints)
         metadata = reader.read(metadata_size)
         with reader.temp_offset(data_offset):
             data = reader.read(header.compressed_length)
@@ -215,9 +214,8 @@ class FSBHeaderVersion(IntEnum):
     VERSION_4_0 = 0x0004_0000
 
 
-@dataclass(slots=True)
 class FSBHeaderStruct(BinaryStruct):
-    _signature: bytes = field(init=False, **BinaryString(4, asserted=b"FSB4"))
+    _signature: bytes = binary_string(4, asserted=b"FSB4", init=False)
     sample_count: int
     sample_headers_size: uint
     sample_data_size: uint
@@ -227,7 +225,6 @@ class FSBHeaderStruct(BinaryStruct):
     # guid (16 bytes)
 
 
-@dataclass(slots=True)
 class FSB(GameFile):
     """FMOD Sound Bank file, which holds the actual sound sample data."""
 

@@ -10,8 +10,6 @@ from soulstruct.bloodborne.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class MENU_PARAM_COLOR_TABLE_ST(ParamRow):
     RedChannel: int = ParamField(
         byte, "r", default=255,

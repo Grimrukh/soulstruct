@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class SP_EFFECT_SET_PARAM_ST(ParamRow):
     SpEffectId1: int = ParamField(
         int, "spEffectId1", default=-1,

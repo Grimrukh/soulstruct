@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class GPARAM_GRID_REGION_INFO_PARAM_ST(ParamRow):
     GparamGridRegionId: int = ParamField(
         uint, "GparamGridRegionId", default=0,

@@ -11,7 +11,6 @@ from soulstruct.dcx import DCXType
 from soulstruct.games import BLOODBORNE
 
 
-@dataclass(slots=True)
 class CHRBND(FLVERBinder):
 
     DEFAULT_ENTRY_ROOT = f"{BLOODBORNE.interroot_prefix}\\chr"

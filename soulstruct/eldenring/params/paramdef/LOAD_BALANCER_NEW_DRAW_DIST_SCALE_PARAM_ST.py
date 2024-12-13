@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class LOAD_BALANCER_NEW_DRAW_DIST_SCALE_PARAM_ST(ParamRow):
     DrawDistLvBegin: int = ParamField(
         byte, "DrawDist_LvBegin", default=21,

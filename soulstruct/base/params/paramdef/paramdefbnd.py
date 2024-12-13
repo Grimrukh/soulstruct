@@ -18,7 +18,6 @@ _LOGGER = logging.getLogger("soulstruct")
 _PARAMDEF_RE = re.compile(r".*\.paramdef")
 
 
-@dataclass(slots=True)
 class ParamDefBND(Binder, abc.ABC):
     """BND container with all the `ParamDef` definitions for a given game.
 

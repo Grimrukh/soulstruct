@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class CS_TEXTURE_FILTER_QUALITY_DETAIL(ParamRow):
     Filter: int = ParamField(
         byte, "filter", GX_TEXTURE_FILTER, default=3,

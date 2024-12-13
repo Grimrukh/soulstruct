@@ -10,8 +10,6 @@ from soulstruct.bloodborne.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class RITUAL_REQUIRED_MAT_PARAM(ParamRow):
     UseSoul: int = ParamField(
         uint, "useSoul", default=0,

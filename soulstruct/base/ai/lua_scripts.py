@@ -86,22 +86,20 @@ class LuaScriptBase(abc.ABC):
         raise NotImplementedError
 
 
-@dataclass(slots=True)
 class LuaGoal32(BinaryStruct):
     goal_id: int
     name_offset: uint
     logic_interrupt_name_offset: uint
     has_battle_interrupt: bool
     has_logic_interrupt: bool
-    _pad1: bytes = field(init=False, **BinaryPad(2))
+    _pad1: bytes = binary_pad(2, init=False)
 
 
-@dataclass(slots=True)
 class LuaGoal64(BinaryStruct):
     goal_id: int
     has_battle_interrupt: bool
     has_logic_interrupt: bool
-    _pad1: bytes = field(init=False, **BinaryPad(2))
+    _pad1: bytes = binary_pad(2, init=False)
     name_offset: long
     logic_interrupt_name_offset: long
 

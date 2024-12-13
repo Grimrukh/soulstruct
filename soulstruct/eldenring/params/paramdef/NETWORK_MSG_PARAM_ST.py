@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class NETWORK_MSG_PARAM_ST(ParamRow):
     Priority: int = ParamField(
         ushort, "priority", default=0,

@@ -10,8 +10,6 @@ from soulstruct.bloodborne.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class ENEMY_STANDARD_INFO_BANK(ParamRow):
     EnemyBehaviorID: int = ParamField(
         int, "EnemyBehaviorID", ENEMY_BEHAVIOR_ID, default=0,

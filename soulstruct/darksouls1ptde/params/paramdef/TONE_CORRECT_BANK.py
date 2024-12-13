@@ -10,8 +10,6 @@ from soulstruct.darksouls1ptde.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class TONE_CORRECT_BANK(ParamRow):
     BrightnessRed: float = ParamField(
         float, "brightnessR", default=1.0,

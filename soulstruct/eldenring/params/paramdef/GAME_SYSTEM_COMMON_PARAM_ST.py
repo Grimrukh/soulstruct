@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class GAME_SYSTEM_COMMON_PARAM_ST(ParamRow):
     BaseToughnessRecoverTime: float = ParamField(
         float, "baseToughnessRecoverTime", default=0.0,

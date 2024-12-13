@@ -13,15 +13,13 @@ from .lua_scripts import LuaGoalScript
 _LOGGER = logging.getLogger("soulstruct")
 
 
-@dataclass(slots=True)
 class LuaInfoStruct(BinaryStruct):
-    lua_version: bytes = field(**BinaryString(4, asserted=b"LUAI"))
-    endian_one: int = field(**Binary(asserted=1))  # confirms byte order is correcet
+    lua_version: bytes = binary_string(4, asserted=b"LUAI")
+    endian_one: int = binary(asserted=1)  # confirms byte order is correcet
     goal_count: int
-    _pad1: bytes = field(init=False, **BinaryPad(4))
+    _pad1: bytes = binary_pad(4, init=False)
 
 
-@dataclass(slots=True)
 class LuaInfo(GameFile):
     """Lists the goals defined in the Lua scripts contained inside the same `LuaBND` binder.
 

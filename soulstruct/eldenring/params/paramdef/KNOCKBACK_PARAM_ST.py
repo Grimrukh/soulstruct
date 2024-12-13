@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class KNOCKBACK_PARAM_ST(ParamRow):
     DamageMinContTime: float = ParamField(
         float, "damage_Min_ContTime", default=0.0,

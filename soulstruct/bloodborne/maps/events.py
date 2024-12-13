@@ -40,23 +40,21 @@ if tp.TYPE_CHECKING:
     from soulstruct.utilities.misc import IDList
 
 
-@dataclass(slots=True)
 class EventHeaderStruct(MSBHeaderStruct):
     name_offset: long
     supertype_index: int
     _subtype_int: int
     subtype_index: int
-    _pad1: bytes = field(**BinaryPad(4))
+    _pad1: bytes = binary_pad(4)
     supertype_data_offset: long
     subtype_data_offset: long
 
 
-@dataclass(slots=True)
 class EventDataStruct(MSBBinaryStruct):
     _attached_part_index: int = field(**EntryRef("PARTS_PARAM_ST"))
     _attached_region_index: int = field(**EntryRef("POINT_PARAM_ST"))
     entity_id: int
-    unknowns: list[byte] = field(**BinaryArray(4))
+    unknowns: list[byte] = binary_array(4)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -77,7 +75,6 @@ class MSBEvent(BaseMSBEvent, abc.ABC):
     unknowns: list[int] = field(default_factory=lambda: [0, 0, 0, 0], **BinaryArray(length=4))
 
 
-@dataclass(slots=True)
 class SoundEventDataStruct(MSBBinaryStruct):
     sound_type: int
     sound_id: int
@@ -94,11 +91,10 @@ class MSBSoundEvent(MSBEvent):
     sound_id: int = -1
 
 
-@dataclass(slots=True)
 class VFXEventDataStruct(MSBBinaryStruct):
     vfx_id: int
     starts_disabled: bool
-    _pad1: bytes = field(**BinaryPad(3))
+    _pad1: bytes = binary_pad(3)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -111,11 +107,10 @@ class MSBVFXEvent(MSBEvent):
     starts_disabled: bool = False
 
 
-@dataclass(slots=True)
 class TreasureEventDataStruct(MSBBinaryStruct):
-    _pad1: bytes = field(**BinaryPad(8))
+    _pad1: bytes = binary_pad(8)
     _treasure_part_index: int = field(**EntryRef("PARTS_PARAM_ST"))
-    _pad2: bytes = field(**BinaryPad(4))
+    _pad2: bytes = binary_pad(4)
     item_lot_1: int
     item_lot_2: int
     item_lot_3: int
@@ -133,7 +128,7 @@ class TreasureEventDataStruct(MSBBinaryStruct):
     unknown_x42_x44: short
     unknown_x44_x48: int
     unknown_x48_x4c: int
-    _pad3: bytes = field(**BinaryPad(4))
+    _pad3: bytes = binary_pad(4)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -171,7 +166,6 @@ class MSBTreasureEvent(MSBEvent):
         self._consume_index(entry_lists, "PARTS_PARAM_ST", "treasure_part")
 
 
-@dataclass(slots=True)
 class SpawnerEventDataStruct(MSBBinaryStruct):
     max_count: byte
     spawner_type: sbyte
@@ -181,10 +175,10 @@ class SpawnerEventDataStruct(MSBBinaryStruct):
     min_interval: float
     max_interval: float
     initial_spawn_count: byte
-    _pad1: bytes = field(**BinaryPad(31))
+    _pad1: bytes = binary_pad(31)
     _spawn_regions_indices: list[int] = field(**EntryRef("POINT_PARAM_ST", array_size=8))
     _spawn_parts_indices: list[int] = field(**EntryRef("PARTS_PARAM_ST", array_size=32))
-    _pad2: bytes = field(**BinaryPad(64))
+    _pad2: bytes = binary_pad(64)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -210,8 +204,8 @@ class MSBSpawnerEvent(MSBEvent):
     spawn_regions: list[MSBRegion] = field(
         default_factory=lambda: [None] * 8, **MapFieldInfo(GameObjectIntSequence((Region, 8))))
 
-    _spawn_parts_indices: list[int] = field(default=None, **BinaryArray(32))
-    _spawn_regions_indices: list[int] = field(default=None, **BinaryArray(8))
+    _spawn_parts_indices: list[int] = binary_array(32, default=None)
+    _spawn_regions_indices: list[int] = binary_array(8, default=None)
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBSpawnerEvent, self).indices_to_objects(entry_lists)
@@ -219,12 +213,11 @@ class MSBSpawnerEvent(MSBEvent):
         self._consume_indices(entry_lists, "POINT_PARAM_ST", "spawn_regions")
 
 
-@dataclass(slots=True)
 class MessageEventDataStruct(MSBBinaryStruct):
     text_id: short
     unk_x02_x04: short
     is_hidden: bool
-    _pad1: bytes = field(**BinaryPad(3))
+    _pad1: bytes = binary_pad(3)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -240,15 +233,14 @@ class MSBMessageEvent(MSBEvent):
     is_hidden: bool = False
 
 
-@dataclass(slots=True)
 class ObjActEventDataStruct(MSBBinaryStruct):
     obj_act_entity_id: int
     _obj_act_part_index: int = field(**EntryRef("PARTS_PARAM_ST"))
     obj_act_param_id: int
     obj_act_state: byte
-    _pad1: bytes = field(**BinaryPad(3))
+    _pad1: bytes = binary_pad(3)
     obj_act_flag: int
-    _pad2: bytes = field(**BinaryPad(4))
+    _pad2: bytes = binary_pad(4)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -274,12 +266,11 @@ class MSBObjActEvent(MSBEvent):
         self._consume_index(entry_lists, "PARTS_PARAM_ST", "obj_act_part")
 
 
-@dataclass(slots=True)
 class WindVFXEventDataStruct(MSBBinaryStruct):
     vfx_id: int
     _wind_region_index: int = field(**EntryRef("POINT_PARAM_ST"))
     unk_x08_x0c: float
-    _pad1: bytes = field(**BinaryPad(4))
+    _pad1: bytes = binary_pad(4)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -302,10 +293,9 @@ class MSBWindVFXEvent(MSBEvent):
         self._consume_index(entry_lists, "POINT_PARAM_ST", "wind_region")
 
 
-@dataclass(slots=True)
 class PatrolRouteEventDataStruct(MSBBinaryStruct):
     unk_x00_x04: int
-    _pad1: bytes = field(**BinaryPad(12))
+    _pad1: bytes = binary_pad(12)
     _patrol_regions_indices: list[short] = field(**EntryRef("POINT_PARAM_ST", array_size=32))
 
 
@@ -323,17 +313,16 @@ class MSBPatrolRouteEvent(MSBEvent):
     patrol_regions: list[MSBRegion | None] = field(
         default_factory=lambda: [None] * 32, **MapFieldInfo(game_type=GameObjectIntSequence((Region, 32))))
 
-    _patrol_regions_indices: list[int] = field(default=None, **BinaryArray(32))
+    _patrol_regions_indices: list[int] = binary_array(32, default=None)
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBPatrolRouteEvent, self).indices_to_objects(entry_lists)
         self._consume_indices(entry_lists, "POINT_PARAM_ST", "patrol_regions")
 
 
-@dataclass(slots=True)
 class DarkLockEventDataStruct(MSBBinaryStruct):
     """No data."""
-    _pad1: bytes = field(**BinaryPad(32))
+    _pad1: bytes = binary_pad(32)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -346,11 +335,10 @@ class MSBDarkLockEvent(MSBEvent):
     }
 
 
-@dataclass(slots=True)
 class PlatoonEventDataStruct(MSBBinaryStruct):
     platoon_id_script_activate: int
     state: int
-    _pad1: bytes = field(**BinaryPad(16))
+    _pad1: bytes = binary_pad(16)
     # TODO: Confirm these are actually Character subtype indices.
     _platoon_character_indices: list[int] = field(**EntryRef("characters", array_size=30))
     _platoon_parent_indices: list[int] = field(**EntryRef("PARTS_PARAM_ST", array_size=2))
@@ -375,8 +363,8 @@ class MSBPlatoonEvent(MSBEvent):
     platoon_id_script_activate: int = -1
     state: int = -1
 
-    _platoon_characters_indices: list[int] = field(default=None, **BinaryArray(30))
-    _platoon_parents_indices: list[int] = field(default=None, **BinaryArray(2))
+    _platoon_characters_indices: list[int] = binary_array(30, default=None)
+    _platoon_parents_indices: list[int] = binary_array(2, default=None)
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBPlatoonEvent, self).indices_to_objects(entry_lists)
@@ -385,14 +373,13 @@ class MSBPlatoonEvent(MSBEvent):
         self._consume_indices(entry_lists, "PARTS_PARAM_ST", "platoon_parents")
 
 
-@dataclass(slots=True)
 class MultiSummonEventDataStruct(MSBBinaryStruct):
     unk_x00_x04: int
     unk_x04_x06: short
     unk_x06_x08: short
     unk_x08_x0a: short
     unk_x0a_x0c: short
-    _pad1: bytes = field(**BinaryPad(4))
+    _pad1: bytes = binary_pad(4)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -410,10 +397,9 @@ class MSBMultiSummonEvent(MSBEvent):
     unk_x0a_x0c: int = 1
 
 
-@dataclass(slots=True)
 class SpawnPointEventDataStruct(MSBBinaryStruct):
     _spawn_point_region_index: int = field(**EntryRef("POINT_PARAM_ST"))
-    _pad1: bytes = field(**BinaryPad(12))
+    _pad1: bytes = binary_pad(12)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -434,7 +420,6 @@ class MSBSpawnPointEvent(MSBEvent):
         self._consume_index(entry_lists, "POINT_PARAM_ST", "spawn_point_region")
 
 
-@dataclass(slots=True)
 class MapOffsetEventDataStruct(MSBBinaryStruct):
     translate: Vector3
     rotate_y: float
@@ -452,10 +437,9 @@ class MSBMapOffsetEvent(MSBEvent):
     rotate_y: float = 0.0
 
 
-@dataclass(slots=True)
 class NavigationEventDataStruct(MSBBinaryStruct):
     _navigation_region_index: int = field(**EntryRef("POINT_PARAM_ST"))
-    _pad1: bytes = field(**BinaryPad(12))
+    _pad1: bytes = binary_pad(12)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -476,7 +460,6 @@ class MSBNavigationEvent(MSBEvent):
         self._consume_index(entry_lists, "POINT_PARAM_ST", "navigation_region")
 
 
-@dataclass(slots=True)
 class EnvironmentEventDataStruct(MSBBinaryStruct):
     unk_x00_x04: int
     unk_x04_x08: float
@@ -484,7 +467,7 @@ class EnvironmentEventDataStruct(MSBBinaryStruct):
     unk_x0c_x10: float
     unk_x10_x14: float
     unk_x14_x18: float
-    _pad1: bytes = field(**BinaryPad(8))
+    _pad1: bytes = binary_pad(8)
 
 
 @dataclass(slots=True, eq=False, repr=False)

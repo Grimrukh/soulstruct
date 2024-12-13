@@ -73,7 +73,6 @@ if tp.TYPE_CHECKING:
     from .parts import MSBPart
 
 
-@dataclass(slots=True)
 class RegionHeaderStruct(MSBHeaderStruct):
     name_offset: long
     _subtype_int: int
@@ -168,21 +167,19 @@ class RegionHeaderStruct(MSBHeaderStruct):
         entry.shape.to_msb_writer(writer)
 
 
-@dataclass(slots=True)
 class RegionSupertypeDataStruct(MSBBinaryStruct):
     _attached_part_index: int = field(**EntryRef("PARTS_PARAM_ST"))
     entity_id: uint
     region_unkd_08: byte
-    _pad1: bytes = field(init=False, **BinaryPad(7))
+    _pad1: bytes = binary_pad(7, init=False)
 
 
-@dataclass(slots=True)
 class RegionExtraData(MSBBinaryStruct):
     map_id: int
     region_unkx_04: int
-    _pad1: int = field(init=False, **BinaryPad(4))
+    _pad1: int = binary_pad(4, init=False)
     region_unkx_0c: int
-    _pad2: int = field(init=False, **BinaryPad(16))
+    _pad2: int = binary_pad(16, init=False)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -261,7 +258,6 @@ class MSBRegion(BaseMSBRegion, abc.ABC):
             writer.pad_align(8)
 
 
-@dataclass(slots=True)
 class InvasionPointRegionDataStruct(MSBBinaryStruct):
     priority: int
 
@@ -276,25 +272,24 @@ class MSBInvasionPointRegion(MSBRegion):
     priority: int = 0
 
 
-@dataclass(slots=True)
 class EnvironmentMapPointRegionDataStruct(MSBBinaryStruct):
     unk_t00: float
     unk_t04: int
-    _minus_one: int = field(**Binary(asserted=-1))
-    _zero: byte = field(**Binary(asserted=0))
+    _minus_one: int = binary(asserted=-1)
+    _zero: byte = binary(asserted=0)
     unk_t0d: bool
     unk_t0e: bool
     unk_t0f: bool
     unk_t10: float
     unk_t14: float
     map_id_2: int
-    _pad1: bytes = field(**BinaryPad(4))
+    _pad1: bytes = binary_pad(4)
     unk_t20: int
     unk_t24: int
     unk_t28: int
     unk_t2c: byte
     unk_t2d: byte
-    _pad2: bytes = field(**BinaryPad(2))
+    _pad2: bytes = binary_pad(2)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -319,14 +314,13 @@ class MSBEnvironmentMapPointRegion(MSBRegion):
     unk_t2d: int = 0
 
 
-@dataclass(slots=True)
 class SoundRegionDataStruct(MSBBinaryStruct):
     sound_type: int
     sound_id: int
-    _child_regions_indices: list[int] = field(**BinaryArray(16, int))
-    _zero: byte = field(**Binary(asserted=0))
+    _child_regions_indices: list[int] = binary_array(16, int)
+    _zero: byte = binary(asserted=0)
     unk_t49: bool
-    _pad1: bytes = field(**BinaryPad(2))
+    _pad1: bytes = binary_pad(2)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -347,14 +341,13 @@ class MSBSoundRegion(MSBRegion):
     )
     unk_t49: bool = False
 
-    _child_regions_indices: list[int] = field(default=None, **BinaryArray(16))
+    _child_regions_indices: list[int] = binary_array(16, default=None)
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBSoundRegion, self).indices_to_objects(entry_lists)
         self._consume_indices(entry_lists, "POINT_PARAM_ST", "child_regions")
 
 
-@dataclass(slots=True)
 class VFXRegionDataStruct(MSBBinaryStruct):
     effect_id: int
     unk_t04: int
@@ -372,7 +365,6 @@ class MSBVFXRegion(MSBRegion):
     unk_t04: int = 0
 
 
-@dataclass(slots=True)
 class WindVFXRegionDataStruct(MSBBinaryStruct):
     effect_id: int
     _wind_area_index: int = field(**EntryRef("POINT_PARAM_ST"))
@@ -398,11 +390,10 @@ class MSBWindVFXRegion(MSBRegion):
         self._consume_index(entry_lists, "POINT_PARAM_ST", "wind_area")
 
 
-@dataclass(slots=True)
 class SpawnPointRegionDataStruct(MSBBinaryStruct):
     """No actual data."""
-    _minus_one: int = field(**Binary(asserted=-1))
-    _pad1: bytes = field(**BinaryPad(3))
+    _minus_one: int = binary(asserted=-1)
+    _pad1: bytes = binary_pad(3)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -414,11 +405,10 @@ class MSBSpawnPointRegion(MSBRegion):
     }
 
 
-@dataclass(slots=True)
 class MessageRegionDataStruct(MSBBinaryStruct):
     message_id: short
     unk_t02: short
-    hidden: bool = field(**Binary("i"))  # 32-bit bool
+    hidden: bool = binary(int)  # 32-bit bool
     unk_t08: int
     unk_t0c: int
     enable_event_flag_id: uint
@@ -448,25 +438,24 @@ class MSBMessageRegion(MSBRegion):
     player_id: int = 0
 
 
-@dataclass(slots=True)
 class EnvironmentMapEffectBoxRegionDataStruct(MSBBinaryStruct):
     enable_dist: float
     transition_dist: float
     unk_t08: byte
     unk_t09: byte
     unk_t0a: short
-    _pad1: bytes = field(**BinaryPad(0x18))
+    _pad1: bytes = binary_pad(0x18, init=False)
     unk_t24: float
     unk_t28: float
     unk_t2c: short
     unk_t2e: bool
     unk_t2f: bool
     unk_t30: short
-    _pad2: bytes = field(**BinaryPad(1))
+    _pad2: bytes = binary_pad(1)
     unk_t33: bool
     unk_t34: short
     unk_t36: short
-    _pad3: bytes = field(**BinaryPad(4))
+    _pad3: bytes = binary_pad(4)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -499,10 +488,9 @@ class MSBWindAreaRegion(MSBRegion):
     SUBTYPE_ENUM: tp.ClassVar[MSBRegionSubtype] = MSBRegionSubtype.WindArea
 
 
-@dataclass(slots=True)
 class ConnectionRegionDataStruct(MSBBinaryStruct):
-    target_map_id: list[sbyte] = field(**BinaryArray(4))
-    _pad1: bytes = field(**BinaryPad(12))
+    target_map_id: list[sbyte] = binary_array(4)
+    _pad1: bytes = binary_pad(12)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -517,11 +505,10 @@ class MSBConnectionRegion(MSBRegion):
     target_map_id: list[int] = field(default_factory=lambda: [0, 0, 0, 0])
 
 
-@dataclass(slots=True)
 class PatrolRoute22RegionSUBTYPE_DataStruct(MSBBinaryStruct):
     """No actual data."""
-    _minus_one: int = field(**Binary(asserted=-1))
-    _zero: int = field(**Binary(asserted=0))
+    _minus_one: int = binary(asserted=-1)
+    _zero: int = binary(asserted=0)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -533,10 +520,9 @@ class MSBPatrolRoute22Region(MSBRegion):
     }
 
 
-@dataclass(slots=True)
 class BuddySummonPointRegionDataStruct(MSBBinaryStruct):
     """No actual data."""
-    _pad1: bytes = field(**BinaryPad(16))
+    _pad1: bytes = binary_pad(16)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -548,16 +534,15 @@ class MSBBuddySummonPointRegion(MSBRegion):
     }
 
 
-@dataclass(slots=True)
 class MufflingBoxRegionDataStruct(MSBBinaryStruct):
     unk_t00: int
-    _pad1: bytes = field(**BinaryPad(20))
-    _unk: int = field(**Binary(asserted=32))
-    _pad2: bytes = field(**BinaryPad(8))
+    _pad1: bytes = binary_pad(20)
+    _unk: int = binary(asserted=32)
+    _pad2: bytes = binary_pad(8)
     unk_t24: float
-    _pad3: bytes = field(**BinaryPad(12))
+    _pad3: bytes = binary_pad(12)
     unk_t34: float
-    _pad4: bytes = field(**BinaryPad(4))
+    _pad4: bytes = binary_pad(4)
     unk_t3c: float
     unk_t40: float
     unk_t44: float
@@ -579,13 +564,12 @@ class MSBMufflingBoxRegion(MSBRegion):
     unk_t44: float = 0.0
 
 
-@dataclass(slots=True)
 class MufflingPortalRegionDataStruct(MSBBinaryStruct):
     unk_t00: int
-    _pad1: bytes = field(**BinaryPad(20))
-    _unk: int = field(**Binary(asserted=32))
-    _pad2: bytes = field(**BinaryPad(24))
-    _minus_one: int = field(**Binary(asserted=-1))
+    _pad1: bytes = binary_pad(20)
+    _unk: int = binary(asserted=32)
+    _pad2: bytes = binary_pad(24)
+    _minus_one: int = binary(asserted=-1)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -599,7 +583,6 @@ class MSBMufflingPortalRegion(MSBRegion):
     unk_t00: int = 0
 
 
-@dataclass(slots=True)
 class OtherSoundRegionDataStruct(MSBBinaryStruct):
     unk_t00: byte
     unk_t01: byte
@@ -609,7 +592,7 @@ class OtherSoundRegionDataStruct(MSBBinaryStruct):
     unk_t08: short
     unk_t0a: short
     unk_t0c: byte
-    _pad1: bytes = field(**BinaryPad(19))
+    _pad1: bytes = binary_pad(19)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -635,7 +618,6 @@ class MSBMufflingPlaneRegion(MSBRegion):
     SUBTYPE_ENUM: tp.ClassVar[MSBRegionSubtype] = MSBRegionSubtype.MufflingPlane
 
 
-@dataclass(slots=True)
 class PatrolRouteRegionDataStruct(MSBBinaryStruct):
     unk_t00: int
 
@@ -650,16 +632,15 @@ class MSBPatrolRouteRegion(MSBRegion):
     unk_t00: int = 0
 
 
-@dataclass(slots=True)
 class MapPointRegionDataStruct(MSBBinaryStruct):
     unk_t00: int
     unk_t04: int
     unk_t08: float
     unk_t0c: float
-    _minus_one: int = field(**Binary(asserted=-1))
+    _minus_one: int = binary(asserted=-1)
     unk_t14: float
     unk_t18: float
-    _zero: int = field(**Binary(asserted=0))
+    _zero: int = binary(asserted=0)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -678,11 +659,10 @@ class MSBMapPointRegion(MSBRegion):
     unk_t18: float = 0.0
 
 
-@dataclass(slots=True)
 class WeatherOverrideRegionDataStruct(MSBBinaryStruct):
     weather_lot_id: int
-    _minus_one: int = field(**Binary(asserted=-1))
-    _pad1: bytes = field(**BinaryPad(24))
+    _minus_one: int = binary(asserted=-1)
+    _pad1: bytes = binary_pad(24)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -696,10 +676,9 @@ class MSBWeatherOverrideRegion(MSBRegion):
     weather_lot_id: int = 0  # TODO: param ref
 
 
-@dataclass(slots=True)
 class AutoDrawGroupPointRegionDataStruct(MSBBinaryStruct):
     unk_t00: int
-    _pad1: bytes = field(**BinaryPad(28))
+    _pad1: bytes = binary_pad(28)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -712,18 +691,17 @@ class MSBAutoDrawGroupPointRegion(MSBRegion):
     unk_t00: int = 0
 
 
-@dataclass(slots=True)
 class GroupDefeatRewardRegionDataStruct(MSBBinaryStruct):
     unk_t00: int
     unk_t04: int
     unk_t08: int
-    _minus_ones_0: int = field(**BinaryPad(8, b"\xFF"))
+    _minus_ones_0: int = binary_pad(8, b"\xFF", init=False)
     _parts_indices: list[int] = field(**EntryRef("PARTS_PARAM_ST", array_size=8))
     unk_t34: int
     unk_t38: int
-    _minus_ones_1: int = field(**BinaryPad(24, b"\xFF"))
+    _minus_ones_1: int = binary_pad(24, b"\xFF", init=False)
     unk_t54: int
-    _pad1: int = field(**BinaryPad(8))
+    _pad1: int = binary_pad(8)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -746,7 +724,7 @@ class MSBGroupDefeatRewardRegion(MSBRegion):
     unk_t38: int = 0
     unk_t54: int = 0
 
-    _parts_indices: list[int] = field(default=None, **BinaryArray(8))
+    _parts_indices: list[int] = binary_array(8, default=None)
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBGroupDefeatRewardRegion, self).indices_to_objects(entry_lists)
@@ -765,7 +743,6 @@ class MSBMapPointParticipationOverrideRegion(MSBRegion):
     SUBTYPE_ENUM: tp.ClassVar[MSBRegionSubtype] = MSBRegionSubtype.MapPointParticipationOverride
 
 
-@dataclass(slots=True)
 class HitsetRegionDataStruct(MSBBinaryStruct):
     unk_t00: int
 
@@ -781,10 +758,9 @@ class MSBHitsetRegion(MSBRegion):
     unk_t00: int = 0
 
 
-@dataclass(slots=True)
 class FastTravelRestrictionRegionDataStruct(MSBBinaryStruct):
     event_flag_id: uint
-    _zero: int = field(**Binary(asserted=0))
+    _zero: int = binary(asserted=0)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -798,10 +774,9 @@ class MSBFastTravelRestrictionRegion(MSBRegion):
     event_flag_id: int = 0
 
 
-@dataclass(slots=True)
 class WeatherCreateAssetPointRegionDataStruct(MSBBinaryStruct):
     """No actual data."""
-    _zero: int = field(**Binary(asserted=0))
+    _zero: int = binary(asserted=0)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -813,7 +788,6 @@ class MSBWeatherCreateAssetPointRegion(MSBRegion):
     }
 
 
-@dataclass(slots=True)
 class PlayAreaRegionDataStruct(MSBBinaryStruct):
     unk_t00: int
     unk_t04: int
@@ -837,7 +811,6 @@ class MSBEnvironmentMapOutputRegion(MSBRegion):
     SUBTYPE_ENUM: tp.ClassVar[MSBRegionSubtype] = MSBRegionSubtype.EnvironmentMapOutput
 
 
-@dataclass(slots=True)
 class MountJumpRegionDataStruct(MSBBinaryStruct):
     jump_height: float
     unk_t04: int
@@ -855,10 +828,9 @@ class MSBMountJumpRegion(MSBRegion):
     unk_t04: int = 0
 
 
-@dataclass(slots=True)
 class DummyRegionDataStruct(MSBBinaryStruct):
     unk_t00: int
-    _zero: int = field(**Binary(asserted=0))
+    _zero: int = binary(asserted=0)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -872,10 +844,9 @@ class MSBDummyRegion(MSBRegion):
     unk_t00: int = 0
 
 
-@dataclass(slots=True)
 class FallPreventionRemovalRegionDataStruct(MSBBinaryStruct):
     """No actual data."""
-    _pad1: bytes = field(**BinaryPad(8))
+    _pad1: bytes = binary_pad(8)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -887,10 +858,9 @@ class MSBFallPreventionRemovalRegion(MSBRegion):
     }
 
 
-@dataclass(slots=True)
 class NavmeshCuttingRegionDataStruct(MSBBinaryStruct):
     """No actual data."""
-    _pad1: bytes = field(**BinaryPad(8))
+    _pad1: bytes = binary_pad(8)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -902,10 +872,9 @@ class MSBNavmeshCuttingRegion(MSBRegion):
     }
 
 
-@dataclass(slots=True)
 class MapNameOverrideRegionDataStruct(MSBBinaryStruct):
     unk_t00: int  # TODO: surely a text ID for desired map name?
-    _zero: int = field(**Binary(asserted=0))
+    _zero: int = binary(asserted=0)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -919,11 +888,10 @@ class MSBMapNameOverrideRegion(MSBRegion):
     unk_t00: int = 0
 
 
-@dataclass(slots=True)
 class MountJumpFallRegionDataStruct(MSBBinaryStruct):
     """No actual data."""
-    _minus_one: int = field(**Binary(asserted=-1))
-    _zero: int = field(**Binary(asserted=0))
+    _minus_one: int = binary(asserted=-1)
+    _zero: int = binary(asserted=0)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -935,10 +903,9 @@ class MSBMountJumpFallRegion(MSBRegion):
     }
 
 
-@dataclass(slots=True)
 class HorseRideOverrideRegionDataStruct(MSBBinaryStruct):
     override_type: int  # TODO: 1 is Prevent, 2 is Allow
-    _zero: int = field(**Binary(asserted=0))
+    _zero: int = binary(asserted=0)
 
 
 @dataclass(slots=True, eq=False, repr=False)

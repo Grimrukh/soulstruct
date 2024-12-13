@@ -10,8 +10,6 @@ from soulstruct.darksouls1ptde.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class SHADOW_BANK(ParamRow):
     ShadowSourceRotationX: int = ParamField(
         short, "lightDegRotX", default=0,

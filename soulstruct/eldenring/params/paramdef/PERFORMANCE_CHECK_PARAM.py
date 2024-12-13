@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class PERFORMANCE_CHECK_PARAM(ParamRow):
     WorkTag: int = ParamField(
         byte, "workTag", PerformanceCheckParamWork, default=0,

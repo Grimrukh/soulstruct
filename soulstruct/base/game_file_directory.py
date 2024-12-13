@@ -9,8 +9,9 @@ import typing as tp
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from soulstruct.utilities.files import create_bak, get_blake2b_hash
 from .base_binary_file import BaseBinaryFile, BASE_BINARY_FILE_T
-from ..utilities.files import create_bak, get_blake2b_hash
+from .dataclass_meta import DataclassMeta
 
 if tp.TYPE_CHECKING:
     from .game_types.map_types import Map
@@ -19,8 +20,24 @@ if tp.TYPE_CHECKING:
 _LOGGER = logging.getLogger("soulstruct")
 
 
+GAME_FILE_DIRECTORY_T = tp.TypeVar("GAME_FILE_DIRECTORY_T", bound="GameFileDirectory")
+
+
+@tp.dataclass_transform(kw_only_default=False)
+class GameFileDirectoryMeta(DataclassMeta):
+    """Metaclass for `GameFileDirectoryMeta` that adds dataclass wrapping."""
+
+    def __call__(cls: type[GAME_FILE_DIRECTORY_T], *args, **kwargs) -> GAME_FILE_DIRECTORY_T:
+        """Intercept instance creation to handle the single-argument path case, which calls `cls.from_path(path)`."""
+        if len(args) == 1 and isinstance(args[0], (Path, str)) and not kwargs:
+            # Call `from_path` if a single `path` argument is provided
+            return cls.from_path(args[0])
+        # Otherwise, proceed with the normal dataclass constructor.
+        return super(GameFileDirectoryMeta, cls).__call__(*args, **kwargs)
+
+
 @dataclass(slots=True)
-class GameFileDirectory(tp.Generic[BASE_BINARY_FILE_T], abc.ABC):
+class GameFileDirectory(tp.Generic[BASE_BINARY_FILE_T], abc.ABC, metaclass=GameFileDirectoryMeta):
     """Python structure for a folder of files in a FromSoftware installation. Implementation is much more flexible.
 
     Typical usage is to specify subclass `FILE_NAME_PATTERN`, `FILE_CLASS`, and `FILE_EXTENSION` to indicate which file
@@ -31,7 +48,8 @@ class GameFileDirectory(tp.Generic[BASE_BINARY_FILE_T], abc.ABC):
     FILE_EXTENSION: tp.ClassVar[str] = ""  # NOTE: `.dcx` extension will be applied by `BinaryBaseFile.write()`
 
     # Tracks directory that instance was loaded from (if any) for argument-free write calls.
-    directory: Path | None = field(default=None, kw_only=True)
+    # If this is the only argument passed to the constructor (without a keyword), then `from_path` will be called.
+    directory: Path | None = field(default=None, kw_only=False)
     # Maps 'true stems' to `FILE_CLASS` instances.
     files: dict[str, BASE_BINARY_FILE_T] = field(default_factory=dict, kw_only=True)
 
@@ -128,7 +146,6 @@ class GameFileDirectory(tp.Generic[BASE_BINARY_FILE_T], abc.ABC):
         return self.files.items()
 
 
-@dataclass(slots=True)
 class GameFileMapDirectory(GameFileDirectory[BASE_BINARY_FILE_T], abc.ABC):
     """Game file directory that expects to find a file for each game map in `ALL_MAPS`, which should be defined by the
     game-specific subclass.

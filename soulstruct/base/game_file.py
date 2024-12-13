@@ -6,7 +6,6 @@ import abc
 import logging
 import re
 import typing as tp
-from dataclasses import dataclass
 from pathlib import Path
 
 from .base_binary_file import BaseBinaryFile
@@ -17,9 +16,8 @@ if tp.TYPE_CHECKING:
 _LOGGER = logging.getLogger("soulstruct")
 
 
-@dataclass(slots=True)
 class GameFile(BaseBinaryFile, abc.ABC):
-    """Non-binder file in a FromSoftware game installation."""
+    """Any non-Binder file in a FromSoftware game installation."""
 
     @classmethod
     def from_binder(cls, binder: Binder, entry_spec: int | Path | str | re.Pattern = None) -> tp.Self:

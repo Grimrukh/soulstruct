@@ -9,7 +9,6 @@ from soulstruct.dcx import DCXType
 from soulstruct.base.maps.navmesh import BaseNVMBND
 
 
-@dataclass(slots=True)
 class NVMBND(BaseNVMBND):
     """Manage `NVM` entries in a Binder."""
 

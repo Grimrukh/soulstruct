@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class CS_KEY_ASSIGN_MENUITEM_PARAM(ParamRow):
     TextID: int = ParamField(
         int, "textID", default=0,

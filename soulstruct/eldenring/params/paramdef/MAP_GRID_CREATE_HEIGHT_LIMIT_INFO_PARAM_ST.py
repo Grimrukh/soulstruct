@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class MAP_GRID_CREATE_HEIGHT_LIMIT_INFO_PARAM_ST(ParamRow):
     GridEnableCreateHeightMin: float = ParamField(
         float, "GridEnableCreateHeightMin", default=-99999.0,

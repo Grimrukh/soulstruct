@@ -30,7 +30,6 @@ if tp.TYPE_CHECKING:
 _LOGGER = logging.getLogger("soulstruct")
 
 
-@dataclass(slots=True)
 class RegionHeaderStruct(MSBHeaderStruct):
     name_offset: int
     _subtype_int: int  # always 0 in DeS
@@ -42,8 +41,8 @@ class RegionHeaderStruct(MSBHeaderStruct):
     null_struct_1_offset: int
     shape_data_offset: int
     supertype_data_offset: int  # just `entity_id` in DeS
-    subtype_data_offset: int = field(init=False, **Binary(asserted=0))  # no subtype data in DS1 Regions
-    _pad1: bytes = field(init=False, **BinaryPad(4))  # extra pad in DeS compared to DS1
+    subtype_data_offset: int = binary(asserted=0, init=False)  # no subtype data in DS1 Regions
+    _pad1: bytes = binary_pad(4, init=False)  # extra pad in DeS compared to DS1
 
     @classmethod
     def reader_to_entry_kwargs(
@@ -107,10 +106,9 @@ class RegionHeaderStruct(MSBHeaderStruct):
         entry.shape.to_msb_writer(writer)
 
 
-@dataclass(slots=True)
 class RegionSupertypeData(MSBBinaryStruct):
     entity_id: int
-    _pad1: bytes = field(init=False, **BinaryPad(12))  # not present in DS1
+    _pad1: bytes = binary_pad(12, init=False)  # not present in DS1
 
 
 @dataclass(slots=True, eq=False, repr=False)

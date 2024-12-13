@@ -22,9 +22,8 @@ from .routes import *
 from .parts import *
 
 
-@dataclass(slots=True)
 class MSBEntrySuperlistHeader(BinaryStruct):
-    _version: int = field(init=False, **Binary(asserted=73))
+    _version: int = binary(asserted=73, init=False)
     entry_offset_count: int
     name_offset: long
 

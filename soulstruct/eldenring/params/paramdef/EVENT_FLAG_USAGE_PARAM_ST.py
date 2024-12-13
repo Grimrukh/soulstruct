@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class EVENT_FLAG_USAGE_PARAM_ST(ParamRow):
     UsageType: int = ParamField(
         byte, "usageType", EVENT_FLAG_USAGE_TYPE, default=0,

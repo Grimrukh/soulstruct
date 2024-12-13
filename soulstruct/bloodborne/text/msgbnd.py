@@ -8,7 +8,6 @@ from dataclasses import dataclass, field
 from soulstruct.containers import Binder, BinderVersion, BinderVersion4Info
 from soulstruct.games import BLOODBORNE
 
-@dataclass(slots=True)
 class MSGBND(Binder):
     """Subclassed by games to set default binder/entry path."""
 

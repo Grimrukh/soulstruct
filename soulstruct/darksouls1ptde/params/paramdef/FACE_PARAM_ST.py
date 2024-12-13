@@ -10,8 +10,6 @@ from soulstruct.darksouls1ptde.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class FACE_PARAM_ST(ParamRow):
     GeometryData00: int = ParamField(
         byte, "faceGeoData00", default=0,

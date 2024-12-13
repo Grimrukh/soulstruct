@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class SOUND_AUTO_ENV_SOUND_GROUP_PARAM_ST(ParamRow):
     SoundNo: int = ParamField(
         int, "SoundNo", default=-1,

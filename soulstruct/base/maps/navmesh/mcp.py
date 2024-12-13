@@ -37,9 +37,8 @@ _LOGGER = logging.getLogger("soulstruct")
 MAP_STEM_RE = re.compile(r"^m(?P<area>\d\d)_(?P<block>\d\d)_(?P<cc>\d\d)_(?P<dd>\d\d)$")
 
 
-@dataclass(slots=True)
 class NavmeshAABBStruct(BinaryStruct):
-    map_id: list[int] = field(**BinaryArray(4, byte))  # stored as (DD, CC, BB, AA) reversed format
+    map_id: list[int] = binary_array(4, byte)  # stored as (DD, CC, BB, AA) reversed format
     _index: int  # just index in `MCP` file
     connected_aabbs_count: int
     connected_aabbs_offset: int
@@ -192,7 +191,6 @@ class NavmeshAABB:
             plt.show()
 
 
-@dataclass(slots=True)
 class MCP(GameFile):
     """Straightforward file containing AABB volumes for navmeshes in the MSB.
 
@@ -214,10 +212,9 @@ class MCP(GameFile):
     """
     AABB_PADDING: tp.ClassVar[tuple[float, float, float]] = (0.5, 1.5, 0.5)  # in-game distance units
 
-    @dataclass(slots=True)
     class MCPHeader(BinaryStruct):
-        two: int = field(init=False, **Binary(asserted=2))  # 0x2000000 for Demon's Souls (big endian)
-        unknown: int = field(init=False, **Binary(asserted=4228561))  # for DSR at least
+        two: int = binary(asserted=2, init=False)  # 0x2000000 for Demon's Souls (big endian)
+        unknown: int = binary(asserted=4228561, init=False)  # for DSR at least
         aabbs_count: int
         aabbs_offset: int
 

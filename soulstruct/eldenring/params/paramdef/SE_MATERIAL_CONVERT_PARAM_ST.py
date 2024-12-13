@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class SE_MATERIAL_CONVERT_PARAM_ST(ParamRow):
     SeMaterialId: int = ParamField(
         byte, "seMaterialId", MATERIAL_SE_TYPE, default=0,

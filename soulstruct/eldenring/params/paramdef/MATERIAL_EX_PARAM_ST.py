@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class MATERIAL_EX_PARAM_ST(ParamRow):
     ParamName: str = ParamField(
         str, "paramName[32]", encoding="utf-16", length=64, default='',

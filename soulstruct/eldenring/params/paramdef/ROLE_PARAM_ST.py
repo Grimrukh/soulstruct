@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class ROLE_PARAM_ST(ParamRow):
     TeamType: int = ParamField(
         byte, "teamType", TEAM_TYPE, default=0,

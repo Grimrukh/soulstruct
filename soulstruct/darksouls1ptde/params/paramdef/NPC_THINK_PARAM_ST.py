@@ -10,8 +10,6 @@ from soulstruct.darksouls1ptde.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class NPC_THINK_PARAM_ST(ParamRow):
     LogicID: int = ParamField(
         int, "logicId", game_type=LogicAIScript, default=10000,

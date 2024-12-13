@@ -10,8 +10,6 @@ from soulstruct.bloodborne.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class MENU_VALUE_TABLE_SPEC(ParamRow):
     Value: float = ParamField(
         float, "value", default=0.0,

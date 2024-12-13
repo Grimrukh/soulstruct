@@ -10,8 +10,6 @@ from soulstruct.bloodborne.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class RAGDOLL_PARAM_ST(ParamRow):
     HierarchyGain: float = ParamField(
         float, "hierarchyGain", default=0.17000000178813934,

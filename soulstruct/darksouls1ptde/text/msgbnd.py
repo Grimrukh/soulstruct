@@ -9,7 +9,6 @@ from soulstruct.containers import Binder, BinderVersion
 from soulstruct.games import DARK_SOULS_PTDE
 
 
-@dataclass(slots=True)
 class MSGBND(Binder):
     """Subclassed by games to set default binder/entry path.
 

@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class CHARMAKEMENUTOP_PARAM_ST(ParamRow):
     CommandType: int = ParamField(
         int, "commandType", CHARMAKEMENU_CMD_TYPE, default=0,

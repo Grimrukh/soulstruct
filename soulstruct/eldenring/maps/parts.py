@@ -39,7 +39,6 @@ if tp.TYPE_CHECKING:
 # critical nested fields like draw groups).
 
 
-@dataclass(slots=True)
 class PartHeaderStruct(MSBHeaderStruct):
     name_offset: long
     model_instance_id: int  # still functions as a unique instance ID for model, but starts at an offset like 9000
@@ -52,7 +51,7 @@ class PartHeaderStruct(MSBHeaderStruct):
     scale: Vector3
     part_unkh_44: int
     event_layer: int
-    _zero: int = field(init=False, **Binary(asserted=0))
+    _zero: int = binary(asserted=0, init=False)
     draw_info_1_data_offset: long
     draw_info_2_data_offset: long
     supertype_data_offset: long
@@ -64,7 +63,7 @@ class PartHeaderStruct(MSBHeaderStruct):
     unk9_data_offset: long
     tile_load_config_data_offset: long
     unk11_data_offset: long
-    _pad1: bytes = field(init=False, **BinaryPad(24))  # three unused offsets?
+    _pad1: bytes = binary_pad(24, init=False)  # three unused offsets?
 
     @classmethod
     def reader_to_entry_kwargs(
@@ -115,36 +114,33 @@ class PartHeaderStruct(MSBHeaderStruct):
             writer.pad(0x14 - (writer.position - strings_position))
 
 
-@dataclass(slots=True)
 class DrawInfo1(MSBBinaryStruct):
     # TODO: Name 'DrawInfoData1'?
-    display_groups: GroupBitSet256 = field(**BinaryArray(8, uint))
-    draw_groups: GroupBitSet256 = field(**BinaryArray(8, uint))
-    collision_mask: GroupBitSet1024 = field(**BinaryArray(32, uint))
+    display_groups: GroupBitSet256 = binary_array(8, uint)
+    draw_groups: GroupBitSet256 = binary_array(8, uint)
+    collision_mask: GroupBitSet1024 = binary_array(32, uint)
     condition_1a: byte
     condition_1b: byte
     unk1_c2: byte
     unk1_c3: byte
     unk1_c4: short  # always -1 in retail, apparently
     unk1_c6: short  # always 0 or 1 in retail, apparently
-    _pad1: bytes = field(init=False, **BinaryPad(0xC0))  # a lot of padding
+    _pad1: bytes = binary_pad(0xC0, init=False)  # a lot of padding
 
 
-@dataclass(slots=True)
 class DrawInfo2(MSBBinaryStruct):
     # TODO: Name 'DrawInfoData2'?
     condition_2: int
-    display_groups_2: GroupBitSet256 = field(**BinaryArray(8, uint))
+    display_groups_2: GroupBitSet256 = binary_array(8, uint)
     unk2_24: short
     unk2_26: short
-    _pad1: bytes = field(init=False, **BinaryPad(0x20))
+    _pad1: bytes = binary_pad(0x20, init=False)
 
 
-@dataclass(slots=True)
 class PartDataStruct(MSBBinaryStruct):
     entity_id: uint
     part_unkd_04: byte
-    _pad1: bytes = field(**BinaryPad(3))  # includes former 'Lantern ID'
+    _pad1: bytes = binary_pad(3)  # includes former 'Lantern ID'
     lod_id: sbyte
     part_unkd_09: byte
     is_point_light_shadow_source: sbyte  # TODO: always 0 or -1?
@@ -162,7 +158,7 @@ class PartDataStruct(MSBBinaryStruct):
     disable_point_light_effect: bool
     part_unkd_17: byte
     part_unkd_18: int
-    entity_group_ids: list[int] = field(**BinaryArray(8, uint))
+    entity_group_ids: list[int] = binary_array(8, uint)
     part_unkd_3c: short
     part_unkd_3e: short
 
@@ -170,34 +166,31 @@ class PartDataStruct(MSBBinaryStruct):
 # Struct 4 is part subtype data (varies by subtype).
 
 
-@dataclass(slots=True)
 class GParamDataStruct(MSBBinaryStruct):  # 5
     light_set_id: int
     fog_id: int
     light_scattering_id: int
     environment_map_id: int
-    _pad1: bytes = field(init=False, **BinaryPad(16))
+    _pad1: bytes = binary_pad(16, init=False)
 
 
-@dataclass(slots=True)
 class SceneGParamDataStruct(MSBBinaryStruct):  # 6
-    _pad1: bytes = field(init=False, **BinaryPad(16))
+    _pad1: bytes = binary_pad(16, init=False)
     transition_time: float
-    _zero: int = field(init=False, **Binary(asserted=0))
+    _zero: int = binary(asserted=0, init=False)
     unk_sgp_18: sbyte
     unk_sgp_19: sbyte
     unk_sgp_1a: sbyte
     unk_sgp_1b: sbyte
     unk_sgp_1c: sbyte
     unk_sgp_1d: sbyte
-    _pad2: bytes = field(init=False, **BinaryPad(2))
+    _pad2: bytes = binary_pad(2, init=False)
     unk_sgp_20: sbyte
     unk_sgp_21: sbyte
-    _pad3: bytes = field(init=False, **BinaryPad(2))  # kept separate in case it's relevant?
-    _pad4: bytes = field(init=False, **BinaryPad(0x44))
+    _pad3: bytes = binary_pad(2, init=False)  # kept separate in case it's relevant?
+    _pad4: bytes = binary_pad(0x44, init=False)
 
 
-@dataclass(slots=True)
 class GrassConfig(MSBBinaryStruct):
     unk7_00: int
     unk7_04: int
@@ -206,37 +199,33 @@ class GrassConfig(MSBBinaryStruct):
     unk7_10: int
     unk7_14: int
     unk7_18: int
-    _zero: int = field(init=False, **Binary(asserted=0))
+    _zero: int = binary(asserted=0, init=False)
 
 
-@dataclass(slots=True)
 class UnkStruct8(MSBBinaryStruct):
-    unk8_00: int = field(**Binary(asserted=(0, 1)))
-    _pad1: bytes = field(init=False, **BinaryPad(28))
+    unk8_00: int = binary(asserted=(0, 1))
+    _pad1: bytes = binary_pad(28, init=False)
 
 
-@dataclass(slots=True)
 class UnkStruct9(MSBBinaryStruct):
     unk9_00: int
-    _pad1: bytes = field(init=False, **BinaryPad(28))
+    _pad1: bytes = binary_pad(28, init=False)
 
 
-@dataclass(slots=True)
 class TileLoadConfig(MSBBinaryStruct):
     map_id: int
     unk10_04: int
-    _zero: int = field(init=False, **Binary(asserted=0))
+    _zero: int = binary(asserted=0, init=False)
     unk10_0c: int
-    unk10_10: int = field(**Binary(asserted=(0, 1)))
+    unk10_10: int = binary(asserted=(0, 1))
     unk10_14: int
-    _pad1: bytes = field(init=False, **BinaryPad(8))
+    _pad1: bytes = binary_pad(8, init=False)
 
 
-@dataclass(slots=True)
 class UnkStruct11(MSBBinaryStruct):
     unk11_00: int
     unk11_04: int
-    _pad1: bytes = field(init=False, **BinaryPad(24))
+    _pad1: bytes = binary_pad(24, init=False)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -300,9 +289,8 @@ class MSBPart(BaseMSBPart, abc.ABC):
     part_unkd_3e: int = 0
 
 
-@dataclass(slots=True)
 class MapPieceDataStruct(MSBBinaryStruct):
-    _pad1: bytes = field(**BinaryPad(8))
+    _pad1: bytes = binary_pad(8)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -366,28 +354,27 @@ class MSBMapPiece(MSBPart):
     unk11_04: int = 0
 
 
-@dataclass(slots=True)
 class AssetDataStruct(MSBBinaryStruct):
-    _zero: short = field(init=False, **Binary(asserted=0))
-    asset_unk_02: short = field(**Binary(asserted=(0, 1)))
-    _pad1: bytes = field(init=False, **BinaryPad(12))
+    _zero: short = binary(asserted=0, init=False)
+    asset_unk_02: short = binary(asserted=(0, 1))
+    _pad1: bytes = binary_pad(12, init=False)
     asset_unk_10: byte
     asset_unk_11: bool
     asset_unk_12: byte
-    _pad2: bytes = field(init=False, **BinaryPad(9))
+    _pad2: bytes = binary_pad(9, init=False)
     asset_sfx_param_relative_id: short
     asset_unk_1e: short
-    _minus_one: int = field(init=False, **Binary(asserted=-1))
+    _minus_one: int = binary(asserted=-1, init=False)
     asset_unk_24: int
     asset_unk_28: int
-    _zero2: int = field(init=False, **Binary(asserted=0))
+    _zero2: int = binary(asserted=0, init=False)
     asset_unk_30: int
     asset_unk_34: int
     # TODO: Pretty sure these are draw parents. Sometimes the same Part repeats.
     _unk_parts_indices: list[int] = field(**EntryRef("PARTS_PARAM_ST", array_size=6))
     asset_unk_50: bool
     asset_unk_51: byte
-    _zero3: byte = field(init=False, **Binary(asserted=0))
+    _zero3: byte = binary(asserted=0, init=False)
     asset_unk_53: byte
     asset_unk_54: int
     asset_unk_58: int
@@ -395,10 +382,10 @@ class AssetDataStruct(MSBBinaryStruct):
     asset_unk_60: int
     asset_unk_64: int
     # These four Asset sub-struct offsets are always the same.
-    _asset_unk1_offset: long = field(init=False, **Binary(asserted=0x88))
-    _asset_unk2_offset: long = field(init=False, **Binary(asserted=0xC8))
-    _asset_unk3_offset: long = field(init=False, **Binary(asserted=0x108))
-    _asset_unk4_offset: long = field(init=False, **Binary(asserted=0x148))
+    _asset_unk1_offset: long = binary(asserted=0x88, init=False)
+    _asset_unk2_offset: long = binary(asserted=0xC8, init=False)
+    _asset_unk3_offset: long = binary(asserted=0x108, init=False)
+    _asset_unk4_offset: long = binary(asserted=0x148, init=False)
 
     @classmethod
     def reader_to_entry_kwargs(
@@ -431,64 +418,60 @@ class AssetDataStruct(MSBBinaryStruct):
 
 # Extra nested structs for Assets:
 
-@dataclass(slots=True)
 class AssetUnkStruct1(MSBBinaryStruct):
     asset_unk1_00: short
-    _minus_one: short = field(init=False, **Binary(asserted=-1))
+    _minus_one: short = binary(asserted=-1, init=False)
     asset_unk1_04: bool
     disable_torrent_asset_only: bool
-    _minus_one2: short = field(init=False, **Binary(asserted=-1))
-    _pad: list[int] = field(init=False, **BinaryArray(5, asserted=[0, 0, -1, -1, -1]))
+    _minus_one2: short = binary(asserted=-1, init=False)
+    _pad: list[int] = binary_array(5, asserted=[0, 0, -1, -1, -1], init=False)
     asset_unk1_1c: int
-    _zero: int = field(init=False, **Binary(asserted=0))
+    _zero: int = binary(asserted=0, init=False)
     asset_unk1_24: short
     asset_unk1_26: short
     asset_unk1_28: int
     asset_unk1_2c: int
-    _pad2: bytes = field(init=False, **BinaryPad(16))
+    _pad2: bytes = binary_pad(16, init=False)
 
 
-@dataclass(slots=True)
 class AssetUnkStruct2(MSBBinaryStruct):
     asset_unk2_00: int
     asset_unk2_04: int
-    _pad1: list[int] = field(init=False, **BinaryArray(3, asserted=[-1, 0, 0]))
+    _pad1: list[int] = binary_array(3, asserted=[-1, 0, 0], init=False)
     asset_unk2_14: float
-    _zero: int = field(init=False, **Binary(asserted=0))
+    _zero: int = binary(asserted=0, init=False)
     asset_unk2_1c: byte
     asset_unk2_1d: byte
     asset_unk2_1e: byte
     asset_unk2_1f: byte
-    _pad2: bytes = field(init=False, **BinaryPad(32))
+    _pad2: bytes = binary_pad(32, init=False)
 
 
-@dataclass(slots=True)
 class AssetUnkStruct3(MSBBinaryStruct):
     asset_unk3_00: int
     asset_unk3_04: float
-    _minus_one: sbyte = field(init=False, **Binary(asserted=-1))
+    _minus_one: sbyte = binary(asserted=-1, init=False)
     asset_unk3_09: byte
     asset_unk3_0a: byte
     asset_unk3_0b: byte
     asset_unk3_0c: short
     asset_unk3_0e: short
     asset_unk3_10: float
-    disable_when_map_loaded_map_id: list[byte] = field(**BinaryArray(4))
+    disable_when_map_loaded_map_id: list[byte] = binary_array(4)
     asset_unk3_18: int
     asset_unk3_1c: int
     asset_unk3_20: int
     asset_unk3_24: byte
     asset_unk3_25: bool
-    _pad1: bytes = field(init=False, **BinaryPad(26))
+    _pad1: bytes = binary_pad(26, init=False)
 
 
-@dataclass(slots=True)
 class AssetUnkStruct4(MSBBinaryStruct):
     asset_unk4_00: bool
     asset_unk4_01: byte
     asset_unk4_02: byte
     asset_unk4_03: bool
-    _pad1: bytes = field(init=False, **BinaryPad(60))
+    _pad1: bytes = binary_pad(60, init=False)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -544,7 +527,7 @@ class MSBAsset(MSBPart):
     asset_unk_60: int = -1
     asset_unk_64: int = -1
 
-    _unk_parts_indices: list[int] = field(default=None, **BinaryArray(6))
+    _unk_parts_indices: list[int] = binary_array(6, default=None)
 
     # UNK STRUCT 1
     display_groups: GroupBitSet256 = field(default_factory=GroupBitSet256.all_off)
@@ -642,37 +625,36 @@ class MSBAsset(MSBPart):
         self._consume_indices(entry_lists, "PARTS_PARAM_ST", "unk_parts")
 
 
-@dataclass(slots=True)
 class CharacterDataStruct(MSBBinaryStruct):
-    _pad1: bytes = field(init=False, **BinaryPad(8))
+    _pad1: bytes = binary_pad(8, init=False)
     ai_id: int
     character_id: int
     talk_id: int
-    _zero: byte = field(init=False, **Binary(asserted=0))
+    _zero: byte = binary(asserted=0, init=False)
     char_unk_15: bool
     platoon_id: short
     player_id: int
     _draw_parent_index: int = field(**EntryRef("PARTS_PARAM_ST"))
     _patrol_route_event_index: short = field(**EntryRef("patrol_route_events"))
-    _zero2: short = field(init=False, **Binary(asserted=0))
+    _zero2: short = binary(asserted=0, init=False)
     char_unk_24: int
     char_unk_28: int
     char_activate_condition_param_id: int
-    _zero3: int = field(init=False, **Binary(asserted=0))
+    _zero3: int = binary(asserted=0, init=False)
     char_unk_34: int
     backup_event_animation_id: int
     char_unk_3c: int
-    special_effect_set_param_id: list[int] = field(**BinaryArray(4))
-    _pad2: bytes = field(init=False, **BinaryPad(40))
-    _const_long: long = field(init=False, **Binary(asserted=0x80))
-    _zero4: int = field(init=False, **Binary(asserted=0))
+    special_effect_set_param_id: list[int] = binary_array(4)
+    _pad2: bytes = binary_pad(40, init=False)
+    _const_long: long = binary(asserted=0x80, init=False)
+    _zero4: int = binary(asserted=0, init=False)
     char_unk_84: float
-    _pad3a: list[short] = field(init=False, **BinaryArray(4, asserted=[-1, -1, -1, 0xa]))
-    _pad3b: list[short] = field(init=False, **BinaryArray(4, asserted=[-1, -1, -1, 0xa]))
-    _pad3c: list[short] = field(init=False, **BinaryArray(4, asserted=[-1, -1, -1, 0xa]))
-    _pad3d: list[short] = field(init=False, **BinaryArray(4, asserted=[-1, -1, -1, 0xa]))
-    _pad3e: list[short] = field(init=False, **BinaryArray(4, asserted=[-1, -1, -1, 0xa]))
-    _pad4: bytes = field(init=False, **BinaryPad(0x10))
+    _pad3a: list[short] = binary_array(4, asserted=[-1, -1, -1, 0xa], init=False)
+    _pad3b: list[short] = binary_array(4, asserted=[-1, -1, -1, 0xa], init=False)
+    _pad3c: list[short] = binary_array(4, asserted=[-1, -1, -1, 0xa], init=False)
+    _pad3d: list[short] = binary_array(4, asserted=[-1, -1, -1, 0xa], init=False)
+    _pad3e: list[short] = binary_array(4, asserted=[-1, -1, -1, 0xa], init=False)
+    _pad4: bytes = binary_pad(0x10, init=False)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -749,10 +731,9 @@ class MSBCharacter(MSBPart):
         self._consume_index(entry_lists, "patrol_route_events", "patrol_route_event")
 
 
-@dataclass(slots=True)
 class PlayerStartDataStruct(MSBBinaryStruct):
     player_start_unk_00: int
-    _pad1: bytes = field(init=False, **BinaryPad(0x0C))
+    _pad1: bytes = binary_pad(0x0C, init=False)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -798,34 +779,33 @@ class MSBPlayerStart(MSBPart):
     unk10_14: int = -1
 
 
-@dataclass(slots=True)
 class CollisionDataStruct(MSBBinaryStruct):
     hit_filter_id: byte
     col_unk_01: byte
     col_unk_02: byte
     col_unk_03: byte
     col_unk_04: float
-    _pad1: bytes = field(init=False, **BinaryPad(12))
+    _pad1: bytes = binary_pad(12, init=False)
     col_unk_14: float
     col_unk_18: int
     col_unk_1c: int
     play_region_id: int
     col_unk_24: short
-    col_unk_26: short = field(**Binary(asserted=(0, 1)))
-    _zero: int = field(init=False, **Binary(asserted=0))
-    _minus_one: int = field(init=False, **Binary(asserted=-1))
+    col_unk_26: short = binary(asserted=(0, 1))
+    _zero: int = binary(asserted=0, init=False)
+    _minus_one: int = binary(asserted=-1, init=False)
     col_unk_30: int
     col_unk_34: byte
     col_unk_35: byte
     disable_torrent: bool
-    _zero2: byte = field(init=False, **Binary(asserted=0))
-    _minus_one2: int = field(init=False, **Binary(asserted=-1))
+    _zero2: byte = binary(asserted=0, init=False)
+    _minus_one2: int = binary(asserted=-1, init=False)
     col_unk_3c: short
     col_unk_3e: short
     col_unk_40: float
-    _zero3: int = field(init=False, **Binary(asserted=0))
+    _zero3: int = binary(asserted=0, init=False)
     enable_fast_travel_flag_id: uint
-    col_unk_4c: short = field(**Binary(asserted=(0, 1)))
+    col_unk_4c: short = binary(asserted=(0, 1))
     col_unk_4e: short
 
 
@@ -926,15 +906,14 @@ class MSBCollision(MSBPart):
     unk11_04: int = 0
 
 
-@dataclass(slots=True)
 class ConnectCollisionDataStruct(MSBBinaryStruct):
     _collision_index: int = field(**EntryRef("collisions"))
-    connected_map_id: list[sbyte] = field(**BinaryArray(4))
+    connected_map_id: list[sbyte] = binary_array(4)
     con_unk_x08: byte
     con_unk_x09: bool
     con_unk_x0a: byte
     con_unk_x0b: bool
-    _zero: int = field(init=False, **Binary(asserted=0))
+    _zero: int = binary(asserted=0, init=False)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -1009,13 +988,12 @@ class MSBConnectCollision(MSBPart):
         return get_map_func(self.connected_map_id)
 
 
-@dataclass(slots=True)
 class DummyAssetDataStruct(MSBBinaryStruct):
     """Basically all Asset fields nuked. Unlike earlier games, this is a DESTRUCTIVE way to just disable Assets.
 
     These probably contain the bare minimum for cutscene use in their GParam and other structs.
     """
-    _pad: list[int] = field(**BinaryArray(8, asserted=[0, 0, -1, 0, -1, -1, -1, -1]))
+    _pad: list[int] = binary_array(8, asserted=[0, 0, -1, 0, -1, -1, -1, -1])
 
 
 @dataclass(slots=True, eq=False, repr=False)

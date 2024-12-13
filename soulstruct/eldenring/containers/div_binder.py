@@ -191,7 +191,6 @@ class BLFCommmand:
         return matching_entries
 
 
-@dataclass(slots=True)
 class BLF(GameFile):
     """Binder List File. Contains a list of Binder files that should be used to split a DivBinder."""
 

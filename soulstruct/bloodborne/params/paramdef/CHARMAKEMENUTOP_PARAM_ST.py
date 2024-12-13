@@ -10,8 +10,6 @@ from soulstruct.bloodborne.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class CHARMAKEMENUTOP_PARAM_ST(ParamRow):
     CommandID: int = ParamField(
         int, "CommandID", CHARMAKEMENU_CMD_TYPE, default=0,

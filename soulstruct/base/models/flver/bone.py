@@ -26,7 +26,6 @@ class FLVERBoneUsageFlags(IntEnum):
 class FLVERBone:
     """Bone in a FLVER model. Named to distinguish it from Havok `Bone` in my `soulstruct-havok` package."""
 
-    @dataclass(slots=True)
     class STRUCT(BinaryStruct):
         translate: Vector3
         _name_offset: int
@@ -39,7 +38,7 @@ class FLVERBone:
         bounding_box_min: Vector3
         usage_flags: int
         bounding_box_max: Vector3
-        _pad1: bytes = field(init=False, **BinaryPad(52))
+        _pad1: bytes = binary_pad(52, init=False)
 
     name: str
     translate: Vector3 = field(default_factory=Vector3.zero)

@@ -29,17 +29,16 @@ from .enums import *
 _LOGGER = logging.getLogger("soulstruct")
 
 
-@dataclass(slots=True)
 class DDSPixelFormat(BinaryStruct):
     """DDS_PIXELFORMAT struct, which is embedded inside `DDSHeader` below."""
-    size: int = field(init=False, **Binary(asserted=32))
+    size: int = binary(asserted=32, init=False)
     flags: uint  # `DDPF` bit flags
-    fourcc: bytes = field(**BinaryString(4), default=b"\0\0\0\0")
-    rgb_bit_count: int = field(**Binary(), default=0)
-    r_bitmask: uint = field(**Binary(), default=0)
-    g_bitmask: uint = field(**Binary(), default=0)
-    b_bitmask: uint = field(**Binary(), default=0)
-    a_bitmask: uint = field(**Binary(), default=0)
+    fourcc: bytes = binary_string(4, default=b"\0\0\0\0")
+    rgb_bit_count: int = 0
+    r_bitmask: uint = 0
+    g_bitmask: uint = 0
+    b_bitmask: uint = 0
+    a_bitmask: uint = 0
 
     @classmethod
     def from_fourcc_tpf_format(cls, fourcc: bytes, tpf_format: int) -> DDSPixelFormat:
@@ -84,17 +83,16 @@ class DDSPixelFormat(BinaryStruct):
         return pixelformat
 
 
-@dataclass(slots=True)
 class DDSHeader(BinaryStruct):
-    magic: bytes = field(init=False, **BinaryString(4, rstrip_null=True, asserted=b"DDS "))  # note space!
-    size: int = field(init=False, **Binary(asserted=0x7C))
+    magic: bytes = binary_string(4, rstrip_null=True, asserted=b"DDS ", init=False)  # note space!
+    size: int = binary(asserted=0x7C, init=False)
     flags: uint
     height: int
     width: int
     pitch_or_linear_size: int
     depth: int
     mipmap_count: int
-    reserved_1: list[int] = field(**BinaryArray(11))  # unused; other programs sometimes write codes here like 'NVTT'
+    reserved_1: list[int] = binary_array(11)  # unused; other programs sometimes write codes here like 'NVTT'
     pixelformat: DDSPixelFormat  # offset 0x4C
     caps1: uint  # `DDSCAPS` bit flags
     caps2: uint  # `DDSCAPS2` bit flags
@@ -103,14 +101,13 @@ class DDSHeader(BinaryStruct):
     reserved_2: int  # unused
 
 
-@dataclass(slots=True)
 class DX10Header(BinaryStruct):
 
-    dxgi_format: DXGI_FORMAT = field(**Binary(uint))
-    resource_dimension: D3D10_RESOURCE_DIMENSION = field(**Binary(uint))
+    dxgi_format: DXGI_FORMAT = binary(uint)
+    resource_dimension: D3D10_RESOURCE_DIMENSION = binary(uint)
     misc_flag: uint  # RESOURCE_MISC; used for cubemaps
     array_size: uint  # typically one
-    alpha_mode: ALPHA_MODE = field(**Binary(uint))
+    alpha_mode: ALPHA_MODE = binary(uint)
 
     @classmethod
     def get_default(cls, dxgi_format: DXGI_FORMAT):
@@ -126,7 +123,6 @@ class DX10Header(BinaryStruct):
         return dx10_header
 
 
-@dataclass(slots=True)
 class DDS(GameFile):
     """Unpacks DDS header information. Does NOT handle the DDS `data` bytes."""
 

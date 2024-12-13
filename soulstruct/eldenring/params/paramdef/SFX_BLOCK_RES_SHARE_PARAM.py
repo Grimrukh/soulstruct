@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class SFX_BLOCK_RES_SHARE_PARAM(ParamRow):
     ShareBlockRsMapUidVal: int = ParamField(
         uint, "shareBlockRsMapUidVal", default=0,

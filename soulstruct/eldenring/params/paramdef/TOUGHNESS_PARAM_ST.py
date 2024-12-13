@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class TOUGHNESS_PARAM_ST(ParamRow):
     CorrectionRate: float = ParamField(
         float, "correctionRate", default=1.0,

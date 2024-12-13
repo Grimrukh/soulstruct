@@ -25,7 +25,6 @@ if tp.TYPE_CHECKING:
     from ..text.msg_directory import MSGDirectory
 
 
-@dataclass(slots=True)
 class GameParamBND(_BaseGameParamBND):
 
     PARAMDEF_MODULE: tp.ClassVar = paramdef

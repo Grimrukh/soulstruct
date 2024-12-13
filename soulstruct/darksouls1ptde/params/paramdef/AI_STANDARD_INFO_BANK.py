@@ -10,8 +10,6 @@ from soulstruct.darksouls1ptde.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class AI_STANDARD_INFO_BANK(ParamRow):
     RadarRange: int = ParamField(
         ushort, "RadarRange", default=20,

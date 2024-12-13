@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class FACE_PARAM_ST(ParamRow):
     FacepartsId: int = ParamField(
         byte, "face_partsId", default=0,

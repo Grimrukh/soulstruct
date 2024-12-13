@@ -20,7 +20,6 @@ if tp.TYPE_CHECKING:
     from ..text.msg_directory import MSGDirectory
 
 
-@dataclass(slots=True)
 class GameParamBND(_BaseGameParamBND):
 
     DEFAULT_ENTRY_ROOT: tp.ClassVar[str] = "N:\\FRPG\\data\\Param\\GameParam"

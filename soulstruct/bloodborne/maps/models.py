@@ -22,14 +22,13 @@ from soulstruct.utilities.binary import *
 from .enums import MSBModelSubtype
 
 
-@dataclass(slots=True)
 class ModelHeaderStruct(MSBHeaderStruct):
     name_offset: long
     _subtype_int: int
     subtype_index: int
     sib_path_offset: long
     instance_count: int
-    _pad1: bytes = field(init=False, **BinaryPad(12))
+    _pad1: bytes = binary_pad(12, init=False)
 
     @classmethod
     def reader_to_entry_kwargs(

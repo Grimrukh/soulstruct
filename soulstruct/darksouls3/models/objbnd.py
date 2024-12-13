@@ -12,8 +12,7 @@ from soulstruct.dcx import DCXType
 from soulstruct.games import DARK_SOULS_3
 
 
-@dataclass(slots=True)
-class OBJBND(FLVERBinder):
+class OBJBND(FLVERBinder):):
 
     DEFAULT_ENTRY_ROOT = f"{DARK_SOULS_3.interroot_prefix}\\obj"
     MAX_FLVER_COUNT = 99

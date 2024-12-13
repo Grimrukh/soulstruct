@@ -10,8 +10,6 @@ from soulstruct.bloodborne.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class WIND_PARAM_ST(ParamRow):
     CommonCapsuleBeginModelPoint: int = ParamField(
         short, "commonCapsuleBeginDmyId", game_type=ModelDummy, default=0,

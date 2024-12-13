@@ -7,13 +7,12 @@ from dataclasses import dataclass, field
 from soulstruct.utilities.binary import *
 
 
-@dataclass(slots=True)
 class EventLayersStruct(BinaryStruct):
-    _two: uint = field(init=False, **Binary(asserted=2))
+    _two: uint = binary(asserted=2, init=False)
     event_layers_uint: uint  # bit flag field (only real variable field)
-    _zero: varuint = field(init=False, **Binary(asserted=0))
-    _minus_one: varint = field(init=False, **Binary(asserted=-1))
-    _one: varint = field(init=False, **Binary(asserted=1))
+    _zero: varuint = binary(asserted=0, init=False)
+    _minus_one: varint = binary(asserted=-1, init=False)
+    _one: varint = binary(asserted=1, init=False)
 
 
 @dataclass(slots=True)

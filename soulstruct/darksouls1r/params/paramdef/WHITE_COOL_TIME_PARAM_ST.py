@@ -10,8 +10,6 @@ from soulstruct.darksouls1r.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class WHITE_COOL_TIME_PARAM_ST(ParamRow):
     timeLimit0: float = ParamField(
         float, "timeLimit0", default=0.0,

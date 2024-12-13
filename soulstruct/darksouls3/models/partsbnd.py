@@ -12,8 +12,7 @@ from soulstruct.dcx import DCXType
 from soulstruct.games import DARK_SOULS_3
 
 
-@dataclass(slots=True)
-class PARTSBND(FLVERBinder):
+class PARTSBND(FLVERBinder):):
     """NOTE: When present, the '_L' suffix is capitalized, and does not appear in the path folder name.
 
     The '_L' suffix also goes after the '_c' cloth suffix in cloth file names.

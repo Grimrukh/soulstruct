@@ -21,7 +21,6 @@ if tp.TYPE_CHECKING:
 _LOGGER = logging.getLogger("soulstruct")
 
 
-@dataclass(slots=True)
 class EventArgStruct(BinaryStruct):
     """Supports all games."""
     instruction_line: varuint
@@ -78,7 +77,6 @@ class EventArgRepl:
         )
 
 
-@dataclass(slots=True)
 class InstructionStruct(BinaryStruct):
     """Supports all games."""
     category: uint

@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class MENU_OFFSCR_REND_PARAM_ST(ParamRow):
     CamAtPosX: float = ParamField(
         float, "camAtPosX", default=0.0,

@@ -10,8 +10,6 @@ from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class REINFORCE_PARAM_PROTECTOR_ST(ParamRow):
     PhysicalDefenseMultiplier: float = ParamField(
         float, "physicsDefRate", default=1.0,

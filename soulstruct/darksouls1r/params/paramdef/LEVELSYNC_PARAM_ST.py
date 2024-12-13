@@ -10,8 +10,6 @@ from soulstruct.darksouls1r.params.enums import *
 from soulstruct.utilities.binary import *
 
 
-# noinspection PyDataclass
-@dataclass(slots=True)
 class LEVELSYNC_PARAM_ST(ParamRow):
     SCLUA: int = ParamField(
         short, "SCLUA", default=0,
