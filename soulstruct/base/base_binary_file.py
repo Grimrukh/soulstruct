@@ -14,7 +14,7 @@ import multiprocessing
 import re
 import traceback
 import typing as tp
-from dataclasses import dataclass, asdict, field, fields
+from dataclasses import asdict, field, fields
 from pathlib import Path
 
 from soulstruct.games import Game, get_game
@@ -403,13 +403,11 @@ BaseBinaryFile.dcx_type = property(
     BaseBinaryFile.get_dcx_type, BaseBinaryFile.set_dcx_type
 )
 
+# noinspection PyTypeChecker
 BaseBinaryFile.path = property(
     fget=lambda self: self._path,
     fset=lambda self, path: setattr(self, "_path", Path(path) if path else None),
 )
-
-
-
 
 
 class BaseJSONEncoder(json.JSONEncoder):

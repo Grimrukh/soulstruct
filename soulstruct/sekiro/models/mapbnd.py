@@ -12,7 +12,7 @@ from soulstruct.dcx import DCXType
 from soulstruct.games import SEKIRO
 
 
-class MAPBND(FLVERBinder):):
+class MAPBND(FLVERBinder):
 
     DEFAULT_ENTRY_ROOT: tp.ClassVar[str] = f"{SEKIRO.interroot_prefix}\\map"
     TPF_ENTRY_ID: tp.ClassVar[int] = -1  # no TPF

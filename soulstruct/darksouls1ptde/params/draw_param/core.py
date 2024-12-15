@@ -2,7 +2,8 @@ from __future__ import annotations
 
 __all__ = ["DrawParam", "TypedDrawParam"]
 
-from dataclasses import dataclass
+import types
+from dataclasses import field
 
 from soulstruct.base.params.param import Param
 from soulstruct.base.params.param_row import ParamRow
@@ -11,6 +12,9 @@ from soulstruct.dcx import DCXType
 
 class DrawParam(Param):
     """`Param` with some extra methods that are specific to DrawParam tables."""
+
+    # No DCX.
+    dcx_type = DCXType.Null
 
     def get_nonzero_entries(self, ignore_polyg=True):
         """Filters table entries and returns only those with a non-empty name that does not start with '0' (or,
@@ -30,13 +34,18 @@ def TypedDrawParam(data_type: type[ParamRow]):
     """Generate a `Param` subclass dynamically with the given row type (or retrieve correct existing subclass).
 
     TODO: Add game-appropriate DCX (probably `Null`).
+    TODO: Cache classes so they aren't generated more than once.
     """
     for draw_param_subclass in DrawParam.__subclasses__():
         if draw_param_subclass.__name__ == "ParamDict":
             continue
         if draw_param_subclass.ROW_TYPE is data_type:
             return draw_param_subclass
-    new_draw_param_subclass = type(f"DrawParam_{data_type.__name__}", (DrawParam,), {"ROW_TYPE": data_type})
+    # noinspection PyTypeChecker
+    new_draw_param_subclass = types.new_class(
+        name=f"DrawParam_{data_type.__name__}",
+        bases=(DrawParam,),
+    )  # type: type[DrawParam]
+    new_draw_param_subclass.ROW_TYPE = data_type
     new_draw_param_subclass.__module__ = DrawParam.__module__
-    new_draw_param_subclass.dcx_type = DCXType.Null
     return new_draw_param_subclass

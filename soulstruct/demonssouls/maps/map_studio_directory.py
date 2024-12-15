@@ -3,6 +3,7 @@ from __future__ import annotations
 __all__ = ["MapStudioDirectory"]
 
 import typing as tp
+from dataclasses import field
 
 from soulstruct.base.game_file_directory import map_property
 from soulstruct.base.maps.map_studio_directory import MapStudioDirectory as _BaseMapStudioDirectory
@@ -29,7 +30,7 @@ class MapStudioDirectory(_BaseMapStudioDirectory):
     GET_MAP: tp.ClassVar = staticmethod(get_map)
 
     # Type hint override.
-    files: dict[str, MSB]
+    files: dict[str, MSB] = field(default_factory=dict)
 
     Common = map_property(COMMON)  # type: MSB
     TheNexus: map_property(THE_NEXUS)  # type: MSB

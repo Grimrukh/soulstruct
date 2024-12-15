@@ -36,7 +36,6 @@ class GameFileDirectoryMeta(DataclassMeta):
         return super(GameFileDirectoryMeta, cls).__call__(*args, **kwargs)
 
 
-@dataclass(slots=True)
 class GameFileDirectory(tp.Generic[BASE_BINARY_FILE_T], abc.ABC, metaclass=GameFileDirectoryMeta):
     """Python structure for a folder of files in a FromSoftware installation. Implementation is much more flexible.
 

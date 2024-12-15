@@ -219,7 +219,6 @@ class BinderVersion4Info:
         return cls(False, False, True, 4)
 
 
-# @dataclass(slots=True, kw_only=True)
 class Binder(BaseBinaryFile):
     """Collection of files, with their own internal IDs, paths, and flags, glued together into one file on disk.
 

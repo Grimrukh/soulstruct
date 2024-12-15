@@ -12,7 +12,7 @@ from soulstruct.dcx import DCXType
 from soulstruct.games import DARK_SOULS_3
 
 
-class MAPBND(FLVERBinder):):
+class MAPBND(FLVERBinder):
 
     DEFAULT_ENTRY_ROOT: tp.ClassVar[str] = f"{DARK_SOULS_3.interroot_prefix}\\map"
     TPF_ENTRY_ID: tp.ClassVar[int] = -1  # no TPF

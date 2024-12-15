@@ -11,7 +11,7 @@ from soulstruct.dcx import DCXType
 from soulstruct.games import DEMONS_SOULS
 
 
-class CHRBND(FLVERBinder):):
+class CHRBND(FLVERBinder):
 
     DEFAULT_ENTRY_ROOT = f"{DEMONS_SOULS.interroot_prefix}\\chr"
 
