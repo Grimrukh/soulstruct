@@ -42,6 +42,7 @@ class EnumModuleGenerator:
         append_to_module: str = "",
         separate_region_points_volumes: bool = False,
         sort_by_id=False,
+        use_entity_id_ranges=True,
     ):
         """Generates a '{mXX_YY}_enums.py' file with entity IDs for import into EVS scripts.
 
@@ -51,35 +52,38 @@ class EnumModuleGenerator:
         inheriting from `Region`) will be created for `Region` entities based on their shape. This is useful for clearer
         arguments for EMEVD instructions like `IsInsideRegion`, so you're less likely to use shapeless Points.
         """
-        if not (match := MAP_NAME_RE.match(self.map_stem)):
-            _LOGGER.warning(
-                f"Unusual map stem detected in `EnumModuleGenerator`: {self.map_stem}. Enum ID ranges will not be "
-                f"applied to enum classes."
-            )
-            auto_map_base_id = None
-        else:
-            aa_id, bb_id, cc_id, dd_id = map(int, match.group(1, 2, 3, 4))
-            if aa_id in {60, 61}:
-                if dd_id not in {0, 1, 2}:
-                    _LOGGER.warning(
-                        f"Elden Ring overworld map tile size is invalid: {self.map_stem}. "
-                        f"Enum ID ranges will not be applied to enum classes."
-                    )
-                    auto_map_base_id = None
-                elif dd_id != 0:
-                    # Silently disable map ID ranges, since the true base entity ID for this map depends on the small
-                    # tile that each entity is actually in.
-                    auto_map_base_id = None
-                else:
-                    # Elden Ring ten-digit overworld map format (small tiles).
-                    # Note that these match flags in Elden Ring.
-                    auto_map_base_id = int(f"10{bb_id:02d}{cc_id:02d}0000")
-            elif self.game.variable_name == "ELDEN_RING":
-                # Standard eight-digit format.
-                auto_map_base_id = int(f"{aa_id:02d}{bb_id:02d}0000")
+        if use_entity_id_ranges:
+            if not (match := MAP_NAME_RE.match(self.map_stem)):
+                _LOGGER.warning(
+                    f"Unusual map stem detected in `EnumModuleGenerator`: {self.map_stem}. Enum ID ranges will not be "
+                    f"applied to enum classes."
+                )
+                auto_map_base_id = None
             else:
-                # Older seven-digit format (single block digit).
-                auto_map_base_id = int(f"{aa_id:02d}{bb_id:01d}{cc_id:02d}00")
+                aa_id, bb_id, cc_id, dd_id = map(int, match.group(1, 2, 3, 4))
+                if aa_id in {60, 61}:
+                    if dd_id not in {0, 1, 2}:
+                        _LOGGER.warning(
+                            f"Elden Ring overworld map tile size is invalid: {self.map_stem}. "
+                            f"Enum ID ranges will not be applied to enum classes."
+                        )
+                        auto_map_base_id = None
+                    elif dd_id != 0:
+                        # Silently disable map ID ranges, since the true base entity ID for this map depends on the
+                        # small tile that each entity is actually in.
+                        auto_map_base_id = None
+                    else:
+                        # Elden Ring ten-digit overworld map format (small tiles).
+                        # Note that these match flags in Elden Ring.
+                        auto_map_base_id = int(f"10{bb_id:02d}{cc_id:02d}0000")
+                elif self.game.variable_name == "ELDEN_RING":
+                    # Standard eight-digit format.
+                    auto_map_base_id = int(f"{aa_id:02d}{bb_id:02d}0000")
+                else:
+                    # Older seven-digit format (single block digit).
+                    auto_map_base_id = int(f"{aa_id:02d}{bb_id:01d}{cc_id:02d}00")
+        else:
+            auto_map_base_id = None
 
         if output_module_path is None:
             if self.path is None:
@@ -146,13 +150,14 @@ class EnumModuleGenerator:
         `entry_list` does not have to be a real `MSBEntryList`; just an `IDList[MSBEntry]`.
         """
         entity_id_dict = self._get_entity_id_dict(entry_list, sort_by_entity_id=sort_by_id)
-        sorted_entity_id_dict = {
-            k: v for k, v in sorted(entity_id_dict.items(), key=self._sort_key)
-        }
+
+        # entity_id_dict = {
+        #     k: v for k, v in sorted(entity_id_dict.items(), key=self._sort_key)
+        # }
 
         class_lines = []
         last_is_non_ascii = False
-        for entity_id, entry in sorted_entity_id_dict.items():
+        for entity_id, entry in entity_id_dict.items():
             # name = entry.name.replace(" ", "_")
             try:
                 name = entry.name.encode("utf-8").decode("ascii")

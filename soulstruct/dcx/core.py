@@ -265,7 +265,7 @@ def decompress(dcx_source: bytes | BinaryReader | tp.BinaryIO | Path | str) -> t
     Returns a tuple containing the decompressed `bytes` and a `DCXInfo` instance that can be used to compress later
     with the same DCX type/parameters.
     """
-    reader = BinaryReader(dcx_source, default_byte_order=ByteOrder.BigEndian)  # always big-endian
+    reader = BinaryReader(dcx_source, byte_order=ByteOrder.BigEndian)  # always big-endian
     dcx_type = DCXType.detect(reader)
 
     if dcx_type == DCXType.Unknown:

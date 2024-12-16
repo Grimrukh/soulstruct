@@ -627,7 +627,7 @@ FIELD_INFO = {
         "Message Text ID",
         "Soapstone Messages text ID shown when soapstone message is examined.",
     ),
-    "Message[unk_x02_x04]": (
+    "Message[unk_x02]": (
         "Unknown [02-04]",
         "Unknown. Often set to 2.",
     ),

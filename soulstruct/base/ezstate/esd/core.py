@@ -176,7 +176,7 @@ class ESD(GameFile, abc.ABC):
         )
 
         # Internal offsets start here, so we reset the reader to make these offsets naturally correct.
-        reader = BinaryReader(reader.read(), default_byte_order=ByteOrder.LittleEndian, long_varints=cls.LONG_VARINTS)
+        reader = BinaryReader(reader.read(), byte_order=ByteOrder.LittleEndian, long_varints=cls.LONG_VARINTS)
 
         internal_header = ESDInternalHeaderStruct.from_bytes(reader)
         internal_header.assert_field_values(

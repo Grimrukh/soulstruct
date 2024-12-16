@@ -215,7 +215,7 @@ class MSBSpawnerEvent(MSBEvent):
 
 class MessageEventDataStruct(MSBBinaryStruct):
     text_id: short
-    unk_x02_x04: short
+    unk_x02: short
     is_hidden: bool
     _pad1: bytes = binary_pad(3)
 
@@ -229,7 +229,7 @@ class MSBMessageEvent(MSBEvent):
     }
 
     text_id: int = field(default=-1, **MapFieldInfo(game_type=SoapstoneMessage))
-    unk_x02_x04: int = 2
+    unk_x02: int = 2
     is_hidden: bool = False
 
 

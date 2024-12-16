@@ -510,7 +510,7 @@ PLAYER_WEAPON_BEHAVIOR_VARIATIONS = {
     3607: "Four-pronged Plow",
     3800: "Halberd/Gargoyle's Halberd",
     3801: "Scythe",
-    3802: "Lucerne ",
+    3802: "Lucerne",
     3803: "Giant's Halberd",
     3804: "Titanite Catch Pole",
     3805: "Black Knight Halberd",

@@ -258,8 +258,8 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
     def items(self) -> tp.ItemsView[int, PARAM_ROW_DATA_T]:
         return self.rows.items()
 
-    def __iter__(self):
-        return iter(self.rows)
+    def __iter__(self) -> tp.Iterator[tuple[int, PARAM_ROW_DATA_T]]:
+        return iter(self.rows.items())
 
     def __len__(self):
         return len(self.rows)

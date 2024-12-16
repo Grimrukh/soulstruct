@@ -33,27 +33,27 @@ class MapStudioDirectory(_BaseMapStudioDirectory):
     files: dict[str, MSB] = field(default_factory=dict)
 
     Common = map_property(COMMON)  # type: MSB
-    TheNexus: map_property(THE_NEXUS)  # type: MSB
-    BoletarianPalace1: map_property(BOLETARIAN_PALACE_1)  # type: MSB
-    BoletarianPalace2: map_property(BOLETARIAN_PALACE_2)  # type: MSB
-    BoletarianPalace3: map_property(BOLETARIAN_PALACE_3)  # type: MSB
-    BoletarianPalace4: map_property(BOLETARIAN_PALACE_4)  # type: MSB
-    ShrineOfStormsCut: map_property(SHRINE_OF_STORMS_CUT)  # type: MSB
-    ShrineOfStorms1: map_property(SHRINE_OF_STORMS_1)  # type: MSB
-    ShrineOfStorms2: map_property(SHRINE_OF_STORMS_2)  # type: MSB
-    ShrineOfStorms3: map_property(SHRINE_OF_STORMS_3)  # type: MSB
-    TowerOfLatria1: map_property(TOWER_OF_LATRIA_1)  # type: MSB
-    TowerOfLatria2: map_property(TOWER_OF_LATRIA_2)  # type: MSB
-    TowerOfLatria3: map_property(TOWER_OF_LATRIA_3)  # type: MSB
-    ValleyOfDefilement1: map_property(VALLEY_OF_DEFILEMENT_1)  # type: MSB
-    ValleyOfDefilement2: map_property(VALLEY_OF_DEFILEMENT_2)  # type: MSB
-    ValleyOfDefilement3: map_property(VALLEY_OF_DEFILEMENT_3)  # type: MSB
-    StonefangTunnel1: map_property(STONEFANG_TUNNEL_1)  # type: MSB
-    StonefangTunnel2: map_property(STONEFANG_TUNNEL_2)  # type: MSB
-    StonefangTunnel3: map_property(STONEFANG_TUNNEL_3)  # type: MSB
-    NorthernLimit1: map_property(NORTHERN_LIMIT_1)  # type: MSB
-    NorthernLimit2: map_property(NORTHERN_LIMIT_2)  # type: MSB
-    NorthernLimit3: map_property(NORTHERN_LIMIT_3)  # type: MSB
-    Tutorial1: map_property(TUTORIAL_1)  # type: MSB
-    Tutorial2: map_property(TUTORIAL_2)  # type: MSB
-    Tutorial3: map_property(TUTORIAL_3)  # type: MSB
+    TheNexus = map_property(THE_NEXUS)  # type: MSB
+    BoletarianPalace1 = map_property(BOLETARIAN_PALACE_1)  # type: MSB
+    BoletarianPalace2 = map_property(BOLETARIAN_PALACE_2)  # type: MSB
+    BoletarianPalace3 = map_property(BOLETARIAN_PALACE_3)  # type: MSB
+    BoletarianPalace4 = map_property(BOLETARIAN_PALACE_4)  # type: MSB
+    ShrineOfStormsCut = map_property(SHRINE_OF_STORMS_CUT)  # type: MSB
+    ShrineOfStorms1 = map_property(SHRINE_OF_STORMS_1)  # type: MSB
+    ShrineOfStorms2 = map_property(SHRINE_OF_STORMS_2)  # type: MSB
+    ShrineOfStorms3 = map_property(SHRINE_OF_STORMS_3)  # type: MSB
+    TowerOfLatria1 = map_property(TOWER_OF_LATRIA_1)  # type: MSB
+    TowerOfLatria2 = map_property(TOWER_OF_LATRIA_2)  # type: MSB
+    TowerOfLatria3 = map_property(TOWER_OF_LATRIA_3)  # type: MSB
+    ValleyOfDefilement1 = map_property(VALLEY_OF_DEFILEMENT_1)  # type: MSB
+    ValleyOfDefilement2 = map_property(VALLEY_OF_DEFILEMENT_2)  # type: MSB
+    ValleyOfDefilement3 = map_property(VALLEY_OF_DEFILEMENT_3)  # type: MSB
+    StonefangTunnel1 = map_property(STONEFANG_TUNNEL_1)  # type: MSB
+    StonefangTunnel2 = map_property(STONEFANG_TUNNEL_2)  # type: MSB
+    StonefangTunnel3 = map_property(STONEFANG_TUNNEL_3)  # type: MSB
+    NorthernLimit1 = map_property(NORTHERN_LIMIT_1)  # type: MSB
+    NorthernLimit2 = map_property(NORTHERN_LIMIT_2)  # type: MSB
+    NorthernLimit3 = map_property(NORTHERN_LIMIT_3)  # type: MSB
+    Tutorial1 = map_property(TUTORIAL_1)  # type: MSB
+    Tutorial2 = map_property(TUTORIAL_2)  # type: MSB
+    Tutorial3 = map_property(TUTORIAL_3)  # type: MSB

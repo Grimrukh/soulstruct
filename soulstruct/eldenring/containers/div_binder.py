@@ -14,7 +14,6 @@ from soulstruct.utilities.binary import BinaryReader, BinaryWriter
 _LOGGER = logging.getLogger("soulstruct")
 
 
-@dataclass(slots=True, kw_only=True, repr=False)
 class DivBinder(Binder):
     """Binder that optionally supports division into multiple sub-Binders when written, based on `.blf` Binder entries.
 
