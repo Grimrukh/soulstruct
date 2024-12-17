@@ -3725,7 +3725,7 @@ def ForceAnimation_Unknown_2003_46(
     loop: bool | int,
     wait_for_completion: bool | int,
     skip_transition: bool | int,
-    unk1: int,
+    unk1: float,
 ):
     """
     TODO

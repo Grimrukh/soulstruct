@@ -294,7 +294,7 @@ EMEDF = PTDE_EMEDF | {
             "loop": BOOL,
             "wait_for_completion": BOOL,
             "skip_transition": BOOL,
-            "unk1": INT,
+            "unk1": FLOAT,
         },
     },
     (2003, 47): {
