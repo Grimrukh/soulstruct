@@ -762,11 +762,6 @@ class MSB(GameFile, abc.ABC):
         msb_list = getattr(self, msb_list_name)  # type: MSBEntryList
         msb_list.append(msb_entry)
 
-    def set_auto_references(self):
-        """Some MSB subclasses have inter-entry references that are easily automated, such as `MSBCollision` references
-        to `MSBEnvironmentEvent` instances that already reference that same Collision."""
-        pass
-
     def get_repeated_entity_ids(self) -> dict[str, IDList[MSBEntry]]:
         """Scans all entries for repeated `entity_id` fields PER SUPERTYPE, not subtype.
 

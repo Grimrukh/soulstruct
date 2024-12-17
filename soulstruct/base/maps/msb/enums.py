@@ -31,7 +31,7 @@ class BaseMSBSubtype(IntEnum):
         """Handles library-wide special cases here out of laziness."""
         if self.name in ("Box", "Navmesh"):
             return self.name + "es"
-        elif self.name in ("VFX", "Wind", "Treasure", "Navigation", "NPCInvasion", "WindVFX", "Other"):
+        elif self.name in ("All", "VFX", "Wind", "Treasure", "Navigation", "NPCInvasion", "WindVFX", "Other"):
             return self.name
         return self.name + "s"
 

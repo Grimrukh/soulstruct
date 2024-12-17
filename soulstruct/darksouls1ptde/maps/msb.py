@@ -3,7 +3,7 @@ from __future__ import annotations
 __all__ = ["MSB", "MSBSubtypeInfo", "MSBSupertype"]
 
 import typing as tp
-from dataclasses import dataclass, field
+from dataclasses import field
 from enum import IntEnum, StrEnum
 
 from soulstruct.darksouls1ptde.game_types.map_types import *
@@ -305,22 +305,6 @@ class MSB(_BaseMSB):
     # endregion
 
     # region Utility Methods
-    def set_auto_references(self):
-        """Look at all `MSBEnvironmentEvent` instances and update the `MSBCollision` they point to so it refers back
-        to the same Environment event (cubemap).
-
-        Raises a `ValueError` if multiple Environment events reference the same Collision, which should never happen.
-        """
-        done_collisions = IDList()
-        for environment in self.environments:
-            if not environment.attached_part:
-                continue
-            if environment.attached_part in done_collisions:
-                raise ValueError(
-                    f"Multiple Environment events reference the same Collision: {environment.attached_part.name}"
-                )
-            done_collisions.append(environment.attached_part)
-            environment.attached_part.environment_event = environment
 
     def duplicate_collision_with_environment_event(
         self, collision: MSBCollision | str, at_next_index=True, **kwargs,
