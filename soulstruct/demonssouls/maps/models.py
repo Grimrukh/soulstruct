@@ -154,7 +154,7 @@ class MSBCollisionModel(MSBModel):
 class MSBNavmeshModel(MSBModel):
     SUBTYPE_ENUM: tp.ClassVar = MSBModelSubtype.NavmeshModel
 
-    SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\DemonsSoul\\data\\Model\\map\\{map_stem}\\navimesh\\{name}.SIB"
+    SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\DemonsSoul\\data\\Model\\map\\{map_stem}\\navimesh\\{name}.sib"
 
     def set_auto_sib_path(self, map_stem: str):
         self.sib_path = self.SIB_PATH_TEMPLATE.format(map_stem=map_stem, name=self.name)
