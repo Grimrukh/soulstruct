@@ -422,7 +422,7 @@ class Region(MapEntity):
 
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
-        return ("Regions", "Regions") if pluralized_subtype else ("Regions", "Region")
+        return "Regions", None
 
 # endregion
 

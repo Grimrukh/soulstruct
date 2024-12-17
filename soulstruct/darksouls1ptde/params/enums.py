@@ -466,7 +466,8 @@ class HMP_FLOOR_HEIGHT_TYPE(u8):
 
 
 class ITEMLOT_CUMULATE_RESET(u16):
-    pass
+    Off = 0
+    On = 1
 
 
 class ITEMLOT_ENABLE_LUCK(u16):

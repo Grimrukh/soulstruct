@@ -168,6 +168,7 @@ CHARACTER_MODELS = {
     5271: "Giant Ornstein",
     5280: "Quelaag",
     5290: "Seath the Scaleless",
+    5291: "Seath the Scaleless (tail)",
     5300: "Undead King Jareel",  # incomplete New Londo Ruins boss
     5310: "Gwynevere",
     5320: "Gwyndolin",
