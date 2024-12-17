@@ -121,7 +121,7 @@ CHARACTER_MODELS = {
     3461: "Armored Tusk (rear guard)",
     3470: "Sanctuary Guardian (unused)",
     3471: "Sanctuary Guardian",
-    3472: "Sanctuary Guardian (unused 2)",
+    3472: "Sanctuary Guardian (tail)",
     3480: "Chaos Bug",
     3490: "Good Vagrant",
     3491: "Evil Vagrant",
