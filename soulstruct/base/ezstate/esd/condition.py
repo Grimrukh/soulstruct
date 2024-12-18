@@ -9,7 +9,7 @@ from soulstruct.base.ezstate.esd.esd_type import ESDType
 from soulstruct.utilities.binary import *
 
 from .command import Command
-from .ezl_parser import decompile
+from .ezl_parser import decompile, split_by_and_or
 
 
 class ConditionStruct(BinaryStruct):
@@ -192,8 +192,27 @@ class Condition:
 
     def to_esp(self, esd_type: ESDType, indent=2, comment=False):
         ind = "    " * indent
-        c = "# " if comment else ""
-        s = f"{ind}{c}if {decompile(self.test_ezl, esd_type)}:\n"
+
+        cond_expr = decompile(self.test_ezl, esd_type)
+        if len(cond_expr) >= 119 - (len(ind) + 1) - (2 if comment else 0):
+            lines = split_by_and_or(cond_expr)
+            if comment:
+                s = f"{ind}# if (\n"
+                for line in lines:
+                    s += f"{ind}#     {line}\n"
+                s += f"{ind}# ):\n"
+            else:
+                s = f"{ind}if (\n"
+                for line in lines:
+                    s += f"{ind}    {line}\n"
+                s += f"{ind}):\n"
+        elif comment:
+            s = f"{ind}# if {cond_expr}:\n"
+        else:
+            s = f"{ind}if {cond_expr}:\n"
+
+        print(s)
+
         if self.pass_commands:
             for command in self.pass_commands:
                 s += command.to_esp(esd_type, indent=indent + 1, comment=comment)
@@ -207,7 +226,7 @@ class Condition:
                 for condition in self.subconditions:
                     s += condition.to_esp(esd_type, indent=indent + 1, comment=comment)
         if self.next_state_id != -1:
-            s += f"{ind}{c}    return State_{self.next_state_id}\n"
+            s += f"{ind}{'#' if comment else ''}    return State_{self.next_state_id}\n"
         return s
 
     def to_html(self, esd_type: ESDType):

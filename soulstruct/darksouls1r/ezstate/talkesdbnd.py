@@ -3,7 +3,6 @@ from __future__ import annotations
 __all__ = ["TalkESDBND"]
 
 import typing as tp
-from dataclasses import dataclass
 
 from soulstruct.base.ezstate.talkesdbnd import TalkESDBND as _BaseTalkESDBND
 from soulstruct.containers import BinderVersion, BinderFlags, BinderVersion4Info
@@ -13,7 +12,7 @@ from soulstruct.games import DARK_SOULS_DSR
 from .esd import TalkESD
 
 
-class TalkESDBND(_BaseTalkESDBND):
+class TalkESDBND(_BaseTalkESDBND[TalkESD]):
 
     DEFAULT_ENTRY_ROOT: tp.ClassVar[str] = f"{DARK_SOULS_DSR.interroot_prefix}\\script\\talk"
     TALK_ESD_CLASS: tp.ClassVar = TalkESD

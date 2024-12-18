@@ -108,7 +108,11 @@ class StateMachineHeaderStruct(BinaryStruct):
 
 
 class ESD(GameFile, abc.ABC):
-    """An EzState state machine that controls character/bonfire interactions (TALK) or character animations (CHR)."""
+    """An EzState state machine that controls character/bonfire interactions (TALK) or character animations (CHR).
+
+    `ESD_TYPE` (Talk or Chr) must be set in subclasses to use the correct set of tests/commands. The file format is
+    otherwise identical.
+    """
 
     EXT: tp.ClassVar[str] = ".esd"
     ESD_TYPE: tp.ClassVar[ESDType]
@@ -250,7 +254,7 @@ class ESD(GameFile, abc.ABC):
             state_machines[state_machine_index] = compiler.states
 
         esd = cls(magic=list(magic), esd_name=esd_name, state_machines=state_machines)
-        esd.path = esp_directory.name
+        esd.path = Path(esp_directory.name)
         return esd
 
     @classmethod
@@ -276,7 +280,7 @@ class ESD(GameFile, abc.ABC):
                 if not line:
                     continue
                 if line.startswith("ESD_NAME = "):
-                    esd_name = ast.literal_eval(line[len("ESD_NAME = "):])
+                    esd_name = ast.literal_eval(line[len("ESD_NAME = "):])  # type: str
                 elif line.startswith("ESD_TYPE = "):
                     esd_type = ESDType(ast.literal_eval(line[len("ESD_TYPE = "):]))
                     if esd_type != cls.ESD_TYPE:
@@ -286,7 +290,7 @@ class ESD(GameFile, abc.ABC):
                 elif line.startswith("MAGIC = "):
                     magic_str = line[len("MAGIC = "):]
                     try:
-                        magic = tuple(ast.literal_eval(magic_str))
+                        magic = tuple(ast.literal_eval(magic_str))  # type: tuple[int, int, int, int]
                     except ValueError:
                         raise ValueError(f"Could not read MAGIC value from ESD_Header: {magic_str}")
                 else:
@@ -426,7 +430,7 @@ class ESD(GameFile, abc.ABC):
             next_states.append(condition.next_state_id)
         return next_states
 
-    def to_esp(self, esd_type: ESDType, state_machine_index=1) -> str:
+    def to_esp(self, state_machine_index=1) -> str:
         """Writes a single state machine to a single Python module."""
 
         # Scan each state to build 'from' lists.
@@ -435,14 +439,17 @@ class ESD(GameFile, abc.ABC):
             for condition in state.conditions:
                 for next_state in self.get_next_states(condition):
                     from_states.setdefault(next_state, set()).add(i)
-        s = f"\"\"\"{esd_type.name} ESD STATE MACHINE {state_machine_index}\"\"\"\n"
+
+        s = f"\"\"\"{self.ESD_TYPE.name} ESD STATE MACHINE {state_machine_index}\"\"\"\n"
         s += f"from soulstruct.{self.get_game().submodule_name}.ezstate.esd import *\n\n"
+
         for i, state in self.state_machines[state_machine_index].items():
-            s += state.to_esp(esd_type, from_states=from_states.get(i, None))
-        s = s.strip("\n") + "\n"  # End with just one newline.
+            s += state.to_esp(self.ESD_TYPE, from_states=from_states.get(i, None))
+
+        s = s.strip("\n") + "\n"  # end with just one newline
         return s
 
-    def write_esp_file(self, esp_path: Path | str = None, esd_type=ESDType.TALK):
+    def write_esp_file(self, esp_path: Path | str = None):
         """Write ESP language script to a single file. Only works for single state machine Talk ESD.
 
         NOTE: This ESP format discards the four 'magic' integers, which will default to zeroes when this file is read.
@@ -454,8 +461,10 @@ class ESD(GameFile, abc.ABC):
                 f"Cannot write an `ESD` instance with {len(self.state_machines)} state machines to a single ESP file. "
                 f"Use `write_esp_directory()`."
             )
-        if esd_type != ESDType.TALK:
-            raise TypeError("Can currently only write single-file ESP for 'TALK'. Use `write_esp_directory()`.")
+        if self.ESD_TYPE != ESDType.TALK:
+            raise TypeError(
+                "Can currently only write single-file ESP for 'TALK'. Use `write_esp_directory()` for 'CHR'."
+            )
 
         if esp_path is None:
             if self.path is None:
@@ -466,10 +475,10 @@ class ESD(GameFile, abc.ABC):
 
         # Write single 'talk' state machine to a single ESP file.
         esp_path.parent.mkdir(parents=True, exist_ok=True)
-        state_machine_py = self.to_esp(esd_type, next(iter(self.state_machines)))
+        state_machine_py = self.to_esp(next(iter(self.state_machines)))
         esp_path.write_text(state_machine_py, encoding="utf-8")
 
-    def write_esp_directory(self, directory=None, esd_type=ESDType.TALK):
+    def write_esp_directory(self, directory: Path | str | None = None):
         """Write ESD to a collection of Python-like 'ESP' scripts (one per state machine) in the specified folder.
 
         Header information about the ESD file (internal name, ESD type, and four unknown 'magic' integers) is written to
@@ -495,7 +504,7 @@ class ESD(GameFile, abc.ABC):
                 # Primary state machine.
                 state_machine_path = directory / f"StateMachine_{i}.esp.py"
             with state_machine_path.open(mode="w", encoding="utf-8") as state_machine_file:
-                state_machine_py = self.to_esp(esd_type, i)
+                state_machine_py = self.to_esp(i)
                 state_machine_file.write(state_machine_py)
 
         header = (
@@ -506,7 +515,7 @@ class ESD(GameFile, abc.ABC):
         with (directory / "ESD_Header.esp.py").open(mode="w", encoding="utf-8") as header_file:
             header_file.write(header)
 
-    def to_html(self, esd_type: ESDType):
+    def to_html(self):
 
         SET_INTERNAL_SYMBOLS(True)
 
@@ -526,16 +535,16 @@ class ESD(GameFile, abc.ABC):
 
         for state_machine in self.state_machines.values():
             for state in state_machine.values():
-                html += state.to_html(esd_type)
+                html += state.to_html(self.ESD_TYPE)
 
         SET_INTERNAL_SYMBOLS(False)
 
         return html + "</body></html>"
 
-    def write_html(self, html_path=None, /, esd_type=ESDType.TALK):
+    def write_html(self, html_path=None):
         if html_path is None:
             html_path = self.path.with_suffix(self.path.suffix + ".html")
         else:
             html_path = Path(html_path)
         with html_path.open(mode="w", encoding="shift_jis_2004") as output_file:
-            output_file.write(self.to_html(esd_type))
+            output_file.write(self.to_html())

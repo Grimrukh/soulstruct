@@ -1,15 +1,24 @@
 from __future__ import annotations
 
-__all__ = ["decompile", "FUNCTION_ARG_BYTES_BY_COUNT", "OPERATORS_BY_NODE", "CLEAR_REGISTERS", "SET_INTERNAL_SYMBOLS"]
+__all__ = [
+    "decompile",
+    "FUNCTION_ARG_BYTES_BY_COUNT",
+    "OPERATORS_BY_NODE",
+    "CLEAR_REGISTERS",
+    "SET_INTERNAL_SYMBOLS",
+    "split_by_and_or",
+]
 
 import ast
+import io
 import logging
 import struct
+import tokenize
 from binascii import hexlify
 
 from soulstruct.base.ezstate.esd.esd_type import ESDType
 from soulstruct.utilities.binary import BinaryReader
-
+from .exceptions import ESDError
 from .functions import TEST_FUNCTIONS
 
 _LOGGER = logging.getLogger("soulstruct")
@@ -32,8 +41,8 @@ UNARY_OPERATORS_BY_BYTE = {
     b"\x8d": "<N",  # TODO: Unpack to 'not' I guess.
 }
 
+# byte: (symbol, priority)
 BINARY_OPERATORS_BY_BYTE = {
-    # byte: (symbol, priority)
     b"\x8c": ("+", 4),
     # b'\x8d' is the unary negate operator. # TODO: Implement negation.
     b"\x8e": ("-", 4),
@@ -102,7 +111,7 @@ def format_function(sequence: list, arg_count_key: bytes, esd_type: ESDType, fun
     return f"{func_prefix}{function_name}({', '.join(str(arg) for arg in reversed(args))})"
 
 
-def format_binary_operator(sequence: list, operator_key: bytes):
+def format_binary_operator(sequence: list, operator_key: bytes) -> str:
     operator, priority = BINARY_OPERATORS_BY_BYTE[operator_key]
     right, left = pop_multiple(sequence, 2)
     # Put parentheses around operands if they contain any other lower-priority binary operators.
@@ -113,8 +122,11 @@ def format_binary_operator(sequence: list, operator_key: bytes):
     return f"{left} {operator} {right}"
 
 
-def decompile(byte_sequence, esd_type: ESDType, func_prefix=""):
-    """Decompile `byte_sequence`."""
+def decompile(byte_sequence, esd_type: ESDType | str, func_prefix="") -> str:
+    """Decompile `byte_sequence` EzState byte code to the contents of an `if` Python statement.
+
+    Does not try to format line breaks. This is just a single line of code, and can get very long.
+    """
     esd_type = ESDType(esd_type)
 
     # _LOGGER.debug(f"Unparsed: {nice_hex_bytes(byte_sequence)}")
@@ -155,7 +167,7 @@ def decompile(byte_sequence, esd_type: ESDType, func_prefix=""):
         # b'\x8b' is unknown. Could simply be a function with seven arguments.
 
         elif b"\x8c" <= b <= b"\x99":
-            # Binary operation on last two elements. Includes logical operations (and/or).
+            # Simple binary operation on last two elements. Includes logical operations (and/or).
             output.append(format_binary_operator(output, b))
             i += 1
 
@@ -165,15 +177,15 @@ def decompile(byte_sequence, esd_type: ESDType, func_prefix=""):
             # End of line. Not printed (and technically not that useful).
             i += 1
             if i != len(byte_sequence):
-                raise ValueError("Encounter end-of-line marker \xa1 before end of line.")
+                raise ESDError("Encountered end-of-line marker \xa1 before end of line.")
 
         # Bytes b'\xa2' to b'\xa4' are unknown. Could be different types of strings.
 
         elif b == b"\xa5":
-            # Start of a null-terminated string. I believe it is always UTF-16LE.
+            # Start of a null-terminated string. I believe it is always UTF-16-LE.
             try:
-                string = BinaryReader(byte_sequence).unpack_string(offset=i + 1, encoding="utf-16le")
-            except ValueError:
+                string = BinaryReader(byte_sequence).unpack_string(offset=i + 1, encoding="utf-16-le")
+            except ESDError:
                 _LOGGER.error(f"Could not interpret ESD string from bytes: {byte_sequence}")
                 raise
             output.append(repr(string))
@@ -222,8 +234,117 @@ def decompile(byte_sequence, esd_type: ESDType, func_prefix=""):
 
         else:
             msg = f"Unknown EZL byte encountered: {b}, after output {output}"
-            _LOGGER.error(msg)
-            raise ValueError(msg)
+            raise ESDError(msg)
 
     # _LOGGER.debug(f"Parsed: {output}")
     return "".join(str(o) for o in output)
+
+
+def split_by_and_or(statement: str) -> list[str]:
+    """Split statement into multiple lines whenever `and` or `or` occurs, indenting nested parenthetical blocks."""
+
+    tokens = tokenize.generate_tokens(io.StringIO(statement).readline)
+    result_lines = []
+    current_line = ""
+    indent = 0
+    new_block_primed = False
+    block_parens = 0
+
+    # Track balance of parentheses, brackets, and braces.
+    parens = 0
+    brackets = 0
+    braces = 0
+
+    # For spaces: we consider whether each token wants to have a space BEFORE it or not. Some tokens also block spaces
+    # AFTER them (e.g. opening brackets).
+    block_space_after = False
+
+    def _add_tok(t_str, space_before=True):
+        nonlocal current_line
+        nonlocal block_space_after
+        if current_line.strip() and space_before and not block_space_after:
+            current_line += " "
+        block_space_after = False
+        current_line += t_str
+
+    def _new_line():
+        nonlocal result_lines
+        nonlocal current_line
+        result_lines.append(current_line.rstrip())
+        current_line = " " * indent
+
+    def is_balanced():
+        return parens == block_parens
+
+    for tok_type, tok_str, _, _, _ in tokens:
+        if tok_type == tokenize.ENDMARKER:
+            break
+
+        if new_block_primed and tok_str == "(":
+            # Start new indented line.
+            parens += 1
+            block_parens = parens
+            _add_tok(tok_str, True)
+            indent += 4
+            _new_line()
+            continue
+
+        if tok_str == ")" and parens == block_parens:
+            # End of indented block.
+            parens -= 1
+            block_parens = 0
+            indent -= 4
+            _new_line()
+            _add_tok(tok_str, False)
+            continue
+
+        new_block_primed = False
+
+        # Update nesting counters.
+        if tok_str in "([{":
+            if tok_str == "(":
+                parens += 1
+                _add_tok(tok_str, False)
+            elif tok_str == "[":
+                brackets += 1
+                _add_tok(tok_str, False)
+            elif tok_str == "{":
+                braces += 1
+                _add_tok(tok_str, False)
+            block_space_after = True
+
+        elif tok_str in ")]}":
+            _add_tok(tok_str, False)  # no space before
+            if tok_str == ")":
+                parens -= 1
+            elif tok_str == "]":
+                brackets -= 1
+            elif tok_str == "}":
+                braces -= 1
+
+        elif tok_type == tokenize.OP and tok_str in (",", ":"):
+            _add_tok(tok_str, False)  # no space before
+
+        elif tok_type == tokenize.OP and tok_str in ("+", "-", "*", "/", "="):
+            _add_tok(tok_str, True)
+
+        elif tok_type == tokenize.NEWLINE:
+            continue  # ignore newlines in original statement
+
+        elif tok_str in ("and", "or"):
+            if is_balanced():
+                _new_line()
+                _add_tok(tok_str, True)
+            else:
+                _add_tok(tok_str, True)
+            new_block_primed = True
+
+        else:
+            # Normal tokens.
+            _add_tok(tok_str, True)
+
+    # Add the final line.
+    if current_line:
+        result_lines.append(current_line.rstrip())
+
+    return result_lines

@@ -1416,7 +1416,7 @@ class EVSParser(abc.ABC):
                     "interpreter from re-using the underlying index after it has been used (so "
                     "you can call it again as a 'finished' condition).",
                 )
-            if not isinstance(hold_keyword.value, ast.NameConstant) or hold_keyword.value.value is None:
+            if not isinstance(hold_keyword.value, ast.Constant) or hold_keyword.value.value is None:
                 raise EVSSyntaxError(
                     node, f"'hold' can be True or False (default), " f"not {node.value.keywords[0].value}."
                 )
@@ -1673,7 +1673,7 @@ class EVSParser(abc.ABC):
         if len(node.comparators) != 1:
             raise EVSSyntaxError(node, "Comparisons must be binary.")
 
-        if isinstance(node.left, ast.Num):
+        if isinstance(node.left, ast.Constant):
             raise EVSSyntaxError(
                 node, "Comparisons must be between a name or function (left) and number (right)."
             )

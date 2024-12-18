@@ -19,14 +19,20 @@ _TALK_ESD_RE = re.compile(r"t(\d+)\.esd$")
 _TALK_ESP_RE = re.compile(r"t(\d+)\.esp(\.py)$")
 
 
-class TalkESDBND(Binder, abc.ABC):
+TALK_ESD_T = tp.TypeVar("TALK_ESD_T", bound=ESD)
+
+
+class TalkESDBND(Binder, tp.Generic[TALK_ESD_T], abc.ABC):
     """Automatically loads all talk ESDs contained inside given path, or constructs BND from scratch using dictionary
-    mapping talk IDs to valid ESD instance sources."""
+    mapping talk IDs to valid ESD instance sources.
+
+    TODO: Lazy loading.
+    """
 
     EXT: tp.ClassVar[str] = ".talkesdbnd"
     TALK_ESD_CLASS: tp.ClassVar[type[ESD]] = None
 
-    talk: dict[int, ESD] = field(default_factory=dict)
+    talk: dict[int, TALK_ESD_T] = field(default_factory=dict)
 
     def __post_init__(self):
         if self.talk:

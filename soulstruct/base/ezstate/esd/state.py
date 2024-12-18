@@ -240,7 +240,14 @@ class State:
 
         if from_states is not None:
             from_state_list = ", ".join(("State_" + str(s) for s in sorted(from_states)))
-            s += f"    def previous_states(self):\n" f"        return [{from_state_list}]\n\n"
+            s += f"    def previous_states(self):\n"
+            if len(from_state_list) >= 103:  # account for '        return []'
+                s += f"        return [\n"
+                for line in from_state_list.split(", "):
+                    s += f"            {line},\n"
+                s += f"        ]\n\n"
+            else:
+                s += f"        return [{from_state_list}]\n\n"
 
         comment = False
         if self.enter_commands:

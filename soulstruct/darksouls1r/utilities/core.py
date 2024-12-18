@@ -10,9 +10,9 @@ def get_ds1_executable_and_version(executable_path, dsr, debug=False):
         if "DARKSOULS.exe" in executables and "DarkSoulsRemastered.exe" in executables:
             raise FileExistsError(f"Both PTDE and DSR were executables found in directory {str(executable_path)}.")
         elif "DARKSOULS.exe" in executables:
-            executable_path = executable_path / "DARKSOULS.exe"
+            executable_path /= "DARKSOULS.exe"
         elif "DarkSoulsRemastered.exe" in executables:
-            executable_path = executable_path / "DarkSoulsRemastered.exe"
+            executable_path /= "DarkSoulsRemastered.exe"
         else:
             raise FileNotFoundError(
                 f"Neither the PTDE or DSR Dark Souls 1 executable were found in directory " f"{str(executable_path)}."

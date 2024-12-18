@@ -441,6 +441,7 @@ class MemoryHook(abc.ABC):
             buffer = None
         else:
             array = None
+            # noinspection PyCallingNonCallable,PyTypeChecker
             buffer = (c.c_char * chunk_size)()
 
         bytes_read = SIZE_T()
@@ -564,6 +565,7 @@ class MemoryHook(abc.ABC):
                 address = self.read_int64(address + jump)
             except MemoryHookCallError as ex:
                 MemoryHookCallError(f"Memory hook error encountered while reading field {value_name}: {ex}")
+        # noinspection PyCallingNonCallable,PyTypeChecker
         buffer = (c.c_char * entry_data.size)()
         bytes_read = SIZE_T()
         try:

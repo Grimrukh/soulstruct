@@ -5,6 +5,7 @@ __all__ = ["ESPCompiler"]
 import ast
 import re
 import struct
+import typing as tp
 from dataclasses import dataclass, field
 from pathlib import Path
 from queue import Queue
@@ -113,7 +114,7 @@ class ESPCompiler:
                     raise ESDSyntaxError(node.lineno, "ongoing() method defined more than once.")
                 ongoing_commands = [self.build_command(command_node) for command_node in node.body]
             else:
-                raise ESDSyntaxError(node.lineno, f"Unexpected state function: '{node.name.id}'.")
+                raise ESDSyntaxError(node.lineno, f"Unexpected state function: '{node.name}'.")
 
         return State(state_id, conditions, enter_commands, exit_commands, ongoing_commands)
 
@@ -133,29 +134,31 @@ class ESPCompiler:
             "nodes": node.body[1:],  # skip docstring
         }
 
-    def build_command(self, node):
+    def build_command(self, node: ast.stmt):
         """Pass in the body of a function def, or a list of nodes before 'return' in a test block."""
-        if self.is_state_machine_call(node):
+        call_node = get_call(node)
+        if call_node is None:
+            raise ESDSyntaxError(node.lineno, f"Expected only function calls, not node type {type(node)}.")
+
+        if (sm_index := get_called_state_machine(call_node)) is not None:
             bank = 6  # TODO: True in every game/file?
-            f_id = 0x80000000 - node.value.func.slice.value.n
+            f_id = 0x80000000 - sm_index
             if not isinstance(f_id, int):
                 raise ESDValueError(node.lineno, "State machine call must have an integer index.")
-        elif self.is_call(node):
+        else:
+            if not isinstance(call_node.func, ast.Name):
+                raise ESDError(node.lineno, f"Could not parse function call node: {call_node}. Must be just a name.")
             try:
-                bank, f_id = COMMANDS_BANK_ID_BY_TYPE_NAME[self.esd_type, node.value.func.id]
+                bank, f_id = COMMANDS_BANK_ID_BY_TYPE_NAME[self.esd_type, call_node.func.id]
             except KeyError:
-                command_match = _COMMAND_DEFAULT_RE.match(node.value.func.id)
+                command_match = _COMMAND_DEFAULT_RE.match(call_node.func.id)
                 if not command_match:
-                    raise ESDError(node.lineno, f"Invalid enter/exit/ongoing command: {node.value.func.id}")
+                    raise ESDError(node.lineno, f"Invalid enter/exit/ongoing command: {call_node.func.id}")
                 bank, f_id = command_match.group(1, 2)
                 bank, f_id = int(bank), int(f_id)
-            except AttributeError:
-                raise ESDError(node.lineno, f"Could not parse function node: {node.value.func}")
 
-        else:
-            raise ESDSyntaxError(node.lineno, f"Expected only function calls, not node type {type(node)}.")
         # TODO: Check arg count against canonical function, once available, and order keyword args.
-        args = node.value.args + [keyword.value for keyword in node.value.keywords]
+        args = call_node.args + [keyword.value for keyword in call_node.keywords]
         command_args = [self.compile_ezl(arg) + b"\xa1" for arg in args]
         return Command(bank, f_id, command_args)
 
@@ -183,7 +186,7 @@ class ESPCompiler:
             if isinstance(if_nodes[0].value, ast.UnaryOp):
                 if (
                     isinstance(if_nodes[0].value.op, ast.USub)
-                    and isinstance(if_nodes[0].value.operand, ast.Constant)
+                    and is_number_literal(if_nodes[0].value.operand)
                     and if_nodes[0].value.operand.value == 1
                 ):
                     # Last state of callable state machine.
@@ -228,7 +231,7 @@ class ESPCompiler:
             subconditions_allowed = True
 
             for j, node in enumerate(if_node.body):
-                if self.is_call(node):
+                if get_call(node):
                     if not pass_commands_allowed:
                         raise ESDSyntaxError(node.lineno, "Encountered a pass command out of order in IF block.")
                     pass_commands.append(self.build_command(node))
@@ -302,10 +305,14 @@ class ESPCompiler:
     def parse_args(arg_nodes):
         args = []
         for node in arg_nodes:
-            if isinstance(node, ast.Num):
-                args.append(node.n)
-            elif isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub):
-                args.append(-node.operand.n)
+            if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)):
+                args.append(node.value)
+            elif (
+                isinstance(node, ast.UnaryOp)
+                and isinstance(node.op, ast.USub)
+                and is_number_literal(node.operand)
+            ):
+                args.append(-node.operand.value)
             elif isinstance(node, (ast.Subscript, ast.Name)):
                 args.append(node)
             else:
@@ -322,6 +329,10 @@ class ESPCompiler:
     def compile_test_function(self, call_node: ast.Call, equals=None):
         if call_node.keywords:
             raise ESDSyntaxError(call_node.lineno, "You cannot use keyword arguments in test functions (yet).")
+        if not isinstance(call_node.func, ast.Name):
+            raise ESDSyntaxError(
+                call_node.lineno, f"Test function call must be a simple function name, not: {call_node.func}"
+            )
         try:
             f_id = TEST_FUNCTIONS_ID_BY_TYPE_NAME[self.esd_type, call_node.func.id]
         except KeyError:
@@ -355,23 +366,23 @@ class ESPCompiler:
         if isinstance(node, (int, float)):
             return self.compile_number(node)
 
-        if isinstance(node, ast.Num):
-            return self.compile_number(node.n)
+        if is_number_literal(node):
+            return self.compile_number(node.value)
 
         if isinstance(node, str):
             return self.compile_string(node)
 
-        if isinstance(node, ast.Str):
-            return self.compile_string(node.s)
+        if is_string_literal(node):
+            return self.compile_string(node.value)
 
         if isinstance(node, ast.UnaryOp):
             if isinstance(node.op, ast.USub):
-                if isinstance(node.operand, ast.Num):
-                    return self.compile_number(-node.operand.n)
+                if is_number_literal(node.operand):
+                    return self.compile_number(-node.operand.value)
                 raise ESDSyntaxError(node.lineno, "Tried to negate a non-numeric value. (TODO: Implement Negate op.)")
             elif isinstance(node.op, ast.Not):
-                if self.is_call(node.operand):
-                    return self.compile_test_function(node.operand, equals=1)
+                if call_node := get_call(node.operand):
+                    return self.compile_test_function(call_node, equals=1)
                 raise ESDSyntaxError(node.lineno, "'not' keyword can only be applied to function calls.")
 
         if isinstance(node, ast.BoolOp):
@@ -422,11 +433,10 @@ class ESPCompiler:
             if (
                 isinstance(node.value, ast.Name)
                 and node.value.id == "MACHINE_ARGS"
-                and isinstance(node.slice, ast.Index)
-                and isinstance(node.slice.value, ast.Num)
+                and is_number_literal(node.slice)
             ):
-                return self.compile_number(node.slice.value.n) + b"\xb8"
-            raise ESDSyntaxError(node.lineno, "Only valid subscripted symbol is MACHINE_ARGS[i].")
+                return self.compile_number(node.slice.value) + b"\xb8"
+            raise ESDSyntaxError(node.lineno, "Only valid subscripted symbol is `MACHINE_ARGS[i]`.")
 
         raise TypeError(
             f"Invalid node type appeared in condition test: {type(node)}.\n"
@@ -452,9 +462,9 @@ class ESPCompiler:
     def compile_string(s):
         return b"\xa5" + s.encode("utf-16le") + b"\0\0"
 
-    def get_calls(self, node):
-        """Returns a list of call tuples (f_id, arg1, arg2, ...) contained inside the given test node."""
-        if self.is_bool(node) or isinstance(node, (ast.Name, ast.Num)):
+    def get_calls(self, node) -> list[tuple]:
+        """Recursively collects a list of call tuples (f_id, arg1, arg2, ...) contained inside the given test node."""
+        if isinstance(node, ast.Constant):
             return []
 
         elif isinstance(node, ast.UnaryOp):
@@ -479,6 +489,10 @@ class ESPCompiler:
             return self.get_calls(node.left) + self.get_calls(node.comparators[0])
 
         elif isinstance(node, ast.Call):
+            if not isinstance(node.func, ast.Name):
+                raise ESDSyntaxError(
+                    node.lineno, f"Function call must be a simple function name, not: {node.func}"
+                )
             function_name = node.func.id
             return [(function_name, *self.parse_args(node.args))]
 
@@ -489,40 +503,55 @@ class ESPCompiler:
         )
 
     @staticmethod
-    def is_bool(node):
-        return isinstance(node, ast.NameConstant) and node.value in {True, False}
-
-    @staticmethod
-    def is_call(node):
-        return isinstance(node, ast.Expr) and isinstance(node.value, ast.Call)
-
-    @staticmethod
-    def is_state_machine_call(node):
-        """For example:
-
-        CALL_STATE_MACHINE[0x79999998](arg1, arg2)
-        """
-        return (
-            isinstance(node, ast.Expr)
-            and isinstance(node.value, ast.Call)
-            and isinstance(node.value.func, ast.Subscript)
-            and isinstance(node.value.func.value, ast.Name)
-            and node.value.func.value.id == "CALL_STATE_MACHINE"
-            and isinstance(node.value.func.slice, ast.Index)
-            and isinstance(node.value.func.slice.value, ast.Num)
-        )
-
-    @staticmethod
-    def get_ast_sequence(node):
-        """List/tuple can only contain literals."""
+    def get_ast_sequence(node) -> list[str | int]:
+        """List/tuple can only contain numeric/string literals."""
         if isinstance(node, (ast.Tuple, ast.List)):
             t = []
             for e in node.elts:
-                if isinstance(e, ast.Num):
-                    t.append(e.n)
-                elif isinstance(e, ast.Str):
-                    t.append(e.s)
+                if isinstance(e, ast.Constant) and isinstance(e.value, (int, float, str)):
+                    t.append(e.value)
                 else:
                     raise ESDValueError(node.lineno, f"Sequences must contain only numeric/string literals.")
             return t
         raise ESDSyntaxError(node.lineno, f"Expected a list or tuple node, but found: {type(node)}")
+
+
+# region Node Type Guards
+
+def is_number_literal(node: ast.AST) -> tp.TypeGuard[ast.Constant]:
+    return isinstance(node, ast.Constant) and isinstance(node.value, (int, float))
+
+
+def is_integer_literal(node: ast.AST) -> tp.TypeGuard[ast.Constant]:
+    return isinstance(node, ast.Constant) and isinstance(node.value, int)
+
+
+def is_string_literal(node: ast.AST) -> tp.TypeGuard[ast.Constant]:
+    return isinstance(node, ast.Constant) and isinstance(node.value, str)
+
+
+def is_bool(node: ast.AST) -> tp.TypeGuard[ast.Constant]:
+    return isinstance(node, ast.Constant) and isinstance(node.value, bool)
+
+
+def get_call(node: ast.AST) -> ast.Call | None:
+    if isinstance(node, ast.Expr) and isinstance(node.value, ast.Call):
+        return node.value
+    return None
+
+
+def get_called_state_machine(node: ast.Call) -> int | None:
+    """Returns the index of the called state machine if the node is a CALL_STATE_MACHINE call, or None otherwise.
+
+    For example:
+        `CALL_STATE_MACHINE[0x79999998](arg1, arg2)` -> 0x79999998
+    """
+    if (
+        isinstance(node.func, ast.Subscript)
+        and isinstance(node.func.value, ast.Name)
+        and node.func.value.id == "CALL_STATE_MACHINE"
+        and isinstance(node.func.slice, ast.Constant)
+        and is_number_literal(node.func.slice.value)
+    ):
+        return node.func.slice.value.value
+    return None
