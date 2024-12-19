@@ -3,7 +3,7 @@ from __future__ import annotations
 __all__ = ["BaseNVMBND"]
 
 import abc
-from dataclasses import dataclass, field
+from dataclasses import field
 
 from soulstruct.containers import Binder, EntryNotFoundError
 from .nvm import NVM

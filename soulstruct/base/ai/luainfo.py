@@ -3,7 +3,7 @@ from __future__ import annotations
 __all__ = ["LuaInfo"]
 
 import logging
-from dataclasses import dataclass, field
+from dataclasses import field
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.binary import *

@@ -6,7 +6,7 @@ import abc
 import logging
 import re
 import typing as tp
-from dataclasses import dataclass, field
+from dataclasses import field
 from pathlib import Path
 
 from soulstruct.utilities.files import create_bak, get_blake2b_hash
@@ -79,6 +79,7 @@ class GameFileDirectory(tp.Generic[BASE_BINARY_FILE_T], abc.ABC, metaclass=GameF
         """Internal write method. Subclasses may determine file paths differently, then call this."""
         packed_files = {}  # type: dict[Path, bytes]
         for file_path, instance in paths_instances.items():
+            file_path = instance.get_file_path(file_path)
             try:
                 packed_dcx = bytes(instance)
             except Exception as ex:

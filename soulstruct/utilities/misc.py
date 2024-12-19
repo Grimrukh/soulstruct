@@ -216,6 +216,10 @@ class IDList(tp.Generic[ElementType]):
         if item_id in self._index_dict:
             index = self._index_dict.pop(item_id)
             self._list.pop(index)
+            # Decrement all later indices in dict.
+            for id_key, list_index in self._index_dict.items():
+                if list_index > index:
+                    self._index_dict[id_key] = list_index - 1
             self._size -= 1
         else:
             raise ValueError(f"Item `{item}` is not in `IDList`.")

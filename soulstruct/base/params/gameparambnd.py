@@ -5,7 +5,7 @@ __all__ = ["GameParamBND", "param_property"]
 import abc
 import logging
 import typing as tp
-from dataclasses import dataclass, field
+from dataclasses import field
 from pathlib import Path
 from types import ModuleType
 

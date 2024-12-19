@@ -4,7 +4,7 @@ __all__ = ["MSB", "MSBSubtypeInfo", "MSBSupertype"]
 
 import typing as tp
 from enum import StrEnum
-from dataclasses import dataclass, field
+from dataclasses import field
 
 from soulstruct.base.game_types.map_types import MapEntity
 from soulstruct.base.maps.msb import MSB as _BaseMSB, MSBEntryList, MSBEntry, BaseMSBSubtype

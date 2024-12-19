@@ -5,7 +5,7 @@ __all__ = ["AIScriptDirectory"]
 import abc
 import logging
 import typing as tp
-from dataclasses import dataclass, field
+from dataclasses import field
 from pathlib import Path
 
 from soulstruct.base.game_file_directory import GameFileMapDirectory

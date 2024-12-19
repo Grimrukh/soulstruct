@@ -11,7 +11,7 @@ __all__ = [
 
 import re
 import typing as tp
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from soulstruct.base.maps.msb.msb_entry import *
 from soulstruct.base.maps.msb.models import BaseMSBModel

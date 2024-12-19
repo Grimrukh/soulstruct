@@ -8,7 +8,7 @@ __all__ = [
 import abc
 import logging
 import typing as tp
-from dataclasses import dataclass, field
+from dataclasses import field
 
 from soulstruct.base.models.flver import FLVER
 from .core import Binder, EntryNotFoundError

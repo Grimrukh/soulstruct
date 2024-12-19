@@ -9,7 +9,7 @@ from __future__ import annotations
 __all__ = ["GameParamBND"]
 
 import typing as tp
-from dataclasses import dataclass, field
+from dataclasses import field
 
 from soulstruct.games import BLOODBORNE
 from soulstruct.bloodborne.game_types import *

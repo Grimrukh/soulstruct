@@ -2,8 +2,6 @@ from __future__ import annotations
 
 __all__ = ["BinderHashTable"]
 
-from dataclasses import dataclass, field
-
 from soulstruct.utilities.binary import *
 
 

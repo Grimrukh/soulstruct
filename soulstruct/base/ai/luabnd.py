@@ -9,7 +9,7 @@ __all__ = ["LuaBND"]
 import logging
 import re
 import typing as tp
-from dataclasses import dataclass, field
+from dataclasses import field
 from pathlib import Path
 
 from soulstruct.containers import Binder, BinderEntry

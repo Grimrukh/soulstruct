@@ -6,7 +6,7 @@ import abc
 import logging
 import re
 import typing as tp
-from dataclasses import dataclass, field
+from dataclasses import field
 
 from soulstruct.containers import Binder
 from soulstruct.games import Game, get_game

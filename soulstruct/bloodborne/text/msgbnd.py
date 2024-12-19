@@ -3,7 +3,7 @@ from __future__ import annotations
 __all__ = ["MSGBND"]
 
 import typing as tp
-from dataclasses import dataclass, field
+from dataclasses import field
 
 from soulstruct.containers import Binder, BinderVersion, BinderVersion4Info
 from soulstruct.games import BLOODBORNE

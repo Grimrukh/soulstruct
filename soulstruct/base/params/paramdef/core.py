@@ -4,7 +4,7 @@ __all__ = ["ParamDef"]
 
 import logging
 import typing as tp
-from dataclasses import dataclass, field
+from dataclasses import field
 from pathlib import Path
 from xml.etree import ElementTree
 

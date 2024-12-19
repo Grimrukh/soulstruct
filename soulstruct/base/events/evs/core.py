@@ -4,6 +4,7 @@ __all__ = ["EVSParser", "EVSError"]
 
 import abc
 import ast
+import copy
 import logging
 import re
 import typing as tp
@@ -383,7 +384,7 @@ class EVSParser(abc.ABC):
         `Condition()` call.
         """
 
-        # INSTRUCTION or GAME TYPE METHOD
+        # INSTRUCTION or GAME TYPE METHOD or CONDITION METHOD
         if isinstance(node, ast.Expr) and isinstance(node.value, ast.Call):
             return self._compile_function_expression(node.value)
 
@@ -1024,8 +1025,10 @@ class EVSParser(abc.ABC):
                     comparison_type=(NEG_COMPARISON_NODES if negate else COMPARISON_NODES)[op_node],
                     value=comparison_value,
                 )
-                node = node.func  # `Name` node handled below.
-                # Modify test name, e.g., `HealthRatio` -> `HealthRatioComparison`, so 'Test function' check catches it.
+
+                # Construct a transient node with the full comparison test name to be caught by the 'Test function'
+                # section below (we have already provided the appropriate args/kwargs; no other node information used).
+                node = copy.deepcopy(node.func)
                 node.id = self.EMEDF_COMPARISON_TESTS[node.id]["test_name"]
             else:
                 raise EVSSyntaxError(

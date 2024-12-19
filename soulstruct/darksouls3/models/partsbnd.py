@@ -4,7 +4,7 @@ from __future__ import annotations
 __all__ = ["PARTSBND"]
 
 import typing as tp
-from dataclasses import dataclass, field
+from dataclasses import field
 
 from soulstruct.containers import BinderVersion, BinderVersion4Info
 from soulstruct.containers.binder_types import FLVERBinder

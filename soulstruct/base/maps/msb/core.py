@@ -8,7 +8,7 @@ import logging
 import re
 import struct
 import typing as tp
-from dataclasses import dataclass, fields
+from dataclasses import fields
 from enum import Enum, StrEnum
 from pathlib import Path
 
@@ -903,6 +903,19 @@ class MSB(GameFile, abc.ABC):
             except KeyError:
                 return False
         return True
+
+    def remove_unused_models(self) -> list[str]:
+        """Remove any models not used by any parts in the MSB. Returns a list of removed model names."""
+        used_models = IDList()
+        for part in self.get_parts():
+            if part.model is not None and part.model not in used_models:
+                used_models.append(part.model)
+        removed_model_names = []
+        for model in self.get_models():  # transient supertype list
+            if model not in used_models:
+                self.remove_entry(model)
+                removed_model_names.append(model.name)
+        return removed_model_names
 
     @classmethod
     def get_display_type_dict(cls) -> dict[str, tuple[BaseMSBSubtype, ...]]:

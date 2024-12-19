@@ -7,7 +7,7 @@ import json
 import logging
 import re
 import typing as tp
-from dataclasses import dataclass, field
+from dataclasses import field
 from pathlib import Path
 
 from soulstruct.base.game_file_directory import GameFileMapDirectory

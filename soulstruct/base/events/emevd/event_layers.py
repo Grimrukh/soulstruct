@@ -2,7 +2,7 @@ from __future__ import annotations
 
 __all__ = ["EventLayersStruct", "EventLayers"]
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from soulstruct.utilities.binary import *
 

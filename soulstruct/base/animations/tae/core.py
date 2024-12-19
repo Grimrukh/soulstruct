@@ -21,7 +21,7 @@ __all__ = [
 ]
 
 import typing as tp
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.exceptions import SoulstructError

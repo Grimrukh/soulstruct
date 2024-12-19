@@ -2,7 +2,7 @@ from __future__ import annotations
 
 __all__ = ["LuaGNL"]
 
-from dataclasses import dataclass, field
+from dataclasses import field
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.binary import *

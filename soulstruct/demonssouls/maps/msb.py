@@ -3,7 +3,7 @@ from __future__ import annotations
 __all__ = ["MSB", "MSBSubtypeInfo", "MSBSupertype"]
 
 import typing as tp
-from dataclasses import dataclass, field
+from dataclasses import field
 from enum import StrEnum
 
 from soulstruct.darksouls1ptde.game_types.map_types import *

@@ -7,7 +7,7 @@ import copy
 import enum
 import logging
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
 from soulstruct.utilities.binary import *
