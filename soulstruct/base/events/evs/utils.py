@@ -58,7 +58,10 @@ NEG_COMPARISON_NODES = {ast.Eq: 1, ast.NotEq: 0, ast.Gt: 5, ast.Lt: 4, ast.GtE: 
 
 MAP_ID_RE = re.compile(r"m(\d\d)_(\d\d)_")
 COMMON_FUNC_IMPORT_RE = re.compile(
-    r"\n *# *\[COMMON_FUNC] *\nfrom (?P<dots>\.*)(?P<module>[\w_]+) +import \(?(?P<names>[*\w_, \n]+)\)?\n"
+    r"\n\s*#\s*\[COMMON_FUNC\]\s*\n+"
+    r"from\s+(?P<module>\.*[.\w]+)\s+import\s+(?P<names>"
+    r"\((?:\s*\w+\s*,?)+\s*\)"  # multi-line
+    r"|\w+(?:,\s*\w+)*)"  # one line
 )
 RESTART_TYPES = {"ContinueOnRest": 0, "RestartOnRest": 1, "EndOnRest": 2}  # avoiding circular import
 EVENT_DOCSTRING_RE = re.compile(r"(\d+)(:\s*.*)?", re.DOTALL)

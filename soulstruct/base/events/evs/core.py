@@ -113,7 +113,8 @@ class EVSParser(abc.ABC):
         self.event_function_strings = {}
 
         self._import_common_funcs(evs_string, common_func_evs)
-        # Strip '# [COMMON_FUNC]' imports from the EVS string before it is parsed properly.
+        # Strip '# [COMMON_FUNC]' imports from the EVS string before it is parsed properly, as we don't want to
+        # actually try to import those EVS scripts as real Python modules.
         evs_string = re.sub(COMMON_FUNC_IMPORT_RE, "\n", evs_string)
 
         self.tree = ast.parse(evs_string)
@@ -141,25 +142,32 @@ class EVSParser(abc.ABC):
 
         for common_func_import_match in re.finditer(COMMON_FUNC_IMPORT_RE, evs_string):
             # TODO: Could theoretically support importing from multiple COMMON_FUNC modules (especially for DS1).
-            groups = common_func_import_match.groupdict()
-            level = len(groups["dots"])
+            cf_module_name, names_str = common_func_import_match.groups()
+            level = len(cf_module_name) - len(cf_module_name.lstrip("."))  # number of dots at start of module name
+            cf_module_name = cf_module_name.lstrip(".")
             if level == 1:
                 level = 0  # single dot is the same as no dot (same directory)
-            cf_module_name = groups["module"]
             if common_func_evs:
                 if cf_module_name.split(".")[-1] == common_func_evs.map_name:
-                    # Attached `common_func` is compatible.
+                    # Attached `common_func` is compatible with loaded one. Don't import it again.
                     continue
-                raise EVSCommonFuncImportError(cf_module_name, "", "Can only import/pass in one [COMMON_FUNC] module.")
-            if groups["names"] != "*" and "*" in groups["names"]:
                 raise EVSCommonFuncImportError(
-                    cf_module_name, groups["names"], "Invalid import names from COMMON_FUNC (contains asterisk)."
+                    cf_module_name, "", "Can currently only import/pass in one [COMMON_FUNC] module."
+                )
+
+            names_str = names_str.lstrip("(").rstrip(")")
+            names = [name.strip("\n ") for name in names_str.split(",")]
+            names = [name for name in names if name]  # remove empty strings (but not sure how these would occur)
+
+            if names != ["*"] and "*" in names_str:
+                raise EVSCommonFuncImportError(
+                    cf_module_name, names, "Invalid imported names from COMMON_FUNC (contains asterisk)."
                 )
 
             cf_module_path = self.script_directory / ("../" * level + cf_module_name.replace(".", "/") + ".py")
             if not cf_module_path.is_file():
                 raise EVSCommonFuncImportError(
-                    cf_module_name, "", f"Cannot import missing COMMON_FUNC file: {cf_module_path}."
+                    cf_module_name, "", f"Cannot import missing COMMON_FUNC file: {cf_module_path}"
                 )
 
             if self.SUPPORTS_COMMON_FUNC:
@@ -174,12 +182,6 @@ class EVSParser(abc.ABC):
 
             self.common_func_events = common_func_evs.events.copy()  # shallow
             self.common_func_event_ids = common_func_evs.event_ids.copy()  # shallow
-
-            if groups["names"] != "*":
-                # Only import certain names from `common_func` module.
-                cf_imported_names = [name.strip(" \n") for name in groups["names"].split(",")]
-                cf_imported_names = [name for name in cf_imported_names if name]  # remove empty strings
-                names.extend(cf_imported_names)
 
             # Otherise, star import preserves all names from common module.
 
