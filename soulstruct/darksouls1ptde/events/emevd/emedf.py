@@ -4,6 +4,8 @@ Used in tandem with `*.emedf.json` to compile/decompile EVS <-> EMEVD scripts.
 """
 from __future__ import annotations
 
+__all__ = ["EMEDF", "EMEDF_ALIASES", "EMEDF_TESTS", "EMEDF_COMPARISON_TESTS"]
+
 import typing as tp
 
 from soulstruct.base.events.emevd.emedf import *
@@ -11,8 +13,6 @@ from soulstruct.darksouls1ptde.maps.constants import get_map_variable_name
 from soulstruct.darksouls1ptde.game_types import *
 from soulstruct.utilities.files import PACKAGE_PATH
 from ..enums import *
-
-__all__ = ["EMEDF", "EMEDF_ALIASES", "EMEDF_TESTS", "EMEDF_COMPARISON_TESTS"]
 
 
 EVENT_RETURN_TYPE = {

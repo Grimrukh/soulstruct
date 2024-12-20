@@ -29,10 +29,21 @@ LOG_BACKUP_CREATION = True
 
 def PACKAGE_PATH(*relative_parts) -> Path:
     """Returns resolved path of given files in `soulstruct` package directory (the actual namespace directory containing
-    `__init__`, NOT the one above it containing `setup.py`)."""
+    `__init__`, NOT the one above it containing `setup.py`).
+
+    The "soulstruct" prefix will be added automatically if missing (for PyInstaller compatibility) and the path will be
+    resolved relative to the folder ABOVE the `soulstruct` package directory (i.e. the one containing `setup.py`).
+    """
+    relative_path = Path(*relative_parts)
+    if relative_path.parts[0] != "soulstruct":
+        relative_path = Path("soulstruct", relative_path)
+
     if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
-        return Path(getattr(sys, "_MEIPASS"), *relative_parts)
-    return Path(__file__).parent.parent.resolve().joinpath(*relative_parts)
+        return Path(getattr(sys, "_MEIPASS"), relative_path)
+
+    # Standard Python package:
+    package_path = Path(__file__).parent.parent.parent.resolve()  # go up three levels to package directory
+    return package_path / relative_path
 
 
 def create_bak(file_path: Path | str, bak_suffix=".bak") -> bool:

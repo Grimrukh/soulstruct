@@ -304,7 +304,9 @@ class MSB(GameFile, tp.Generic[MSB_MODEL_T, MSB_EVENT_T, MSB_REGION_T, MSB_PART_
             names = set()
             for entry in entry_lists[supertype_name]:
                 if entry.name in names:
-                    _LOGGER.warning(f"Duplicate '{supertype_name}' name in MSB: '{entry.name}'")
+                    _LOGGER.warning(
+                        f"Duplicate '{supertype_name}' name in MSB {self.path_minimal_stem}: '{entry.name}'"
+                    )
                 else:
                     names.add(entry.name)
 
