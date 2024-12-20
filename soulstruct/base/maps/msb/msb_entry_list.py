@@ -139,7 +139,7 @@ class MSBEntryList(IDList[MSBEntryType]):
         # noinspection PyArgumentList
         return self.entry_class(name=f"Default{self.entry_class.__name__}")
 
-    def new(self, new_index=-1, **kwargs) -> MSBEntryType:
+    def new(self, new_index=-1, /, **kwargs) -> MSBEntryType:
         """Create a new `MSBEntry` of this list's subtype and append it to list (or insert it at `new_index`)."""
         if "entity_enum" in kwargs:
             if "name" in kwargs or "entity_id" in kwargs:

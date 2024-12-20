@@ -9,6 +9,7 @@ __all__ = [
     "MSBAssetModel",
 ]
 
+import abc
 import re
 import typing as tp
 from dataclasses import dataclass
@@ -84,7 +85,7 @@ class ModelHeaderStruct(MSBHeaderStruct):
 
 
 @dataclass(slots=True, eq=False, repr=False)
-class MSBModel(BaseMSBModel):
+class MSBModel(BaseMSBModel, abc.ABC):
     """MSB model entry in Bloodborne."""
 
     HEADER_STRUCT = ModelHeaderStruct

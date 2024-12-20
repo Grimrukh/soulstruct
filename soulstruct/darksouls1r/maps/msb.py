@@ -1,40 +1,18 @@
 __all__ = ["MSB"]
 
 import logging
-import typing as tp
-from dataclasses import dataclass
-from enum import Enum
 from pathlib import Path
 
 from soulstruct.base.maps.utilities import MAP_SOURCE_TYPING
 from soulstruct.darksouls1ptde.maps.msb import MSB as _PTDE_MSB, MSBSupertype
-
 from .constants import VANILLA_MSB_TRANSLATIONS, get_map
-from .models import MSBModel
-from .events import MSBEvent
-from .regions import MSBRegion
-from .parts import MSBPart
 from .utilities import import_map_piece_flver
 
 _LOGGER = logging.getLogger("soulstruct")
 
 
-# TODO: Move to base and use in other game MSBs.
-ENTRY_T = tp.TypeVar("ENTRY_T", MSBModel, MSBEvent, MSBRegion, MSBPart)
-
-
-class FindEntry(tp.Protocol[ENTRY_T]):
-    def __call__(self, name: str | Enum, subtypes: tp.Iterable[str] = ()) -> ENTRY_T:
-        ...
-
-
-class MSB(_PTDE_MSB):
+class MSB(_PTDE_MSB):  # generic entry types are the same as PTDE parent
     """Only difference from DS1PTDE is in the methods."""
-
-    find_model_name: tp.ClassVar[FindEntry[MSBModel]]
-    find_event_name: tp.ClassVar[FindEntry[MSBEvent]]
-    find_region_name: tp.ClassVar[FindEntry[MSBRegion]]
-    find_part_name: tp.ClassVar[FindEntry[MSBPart]]
 
     def translate_entity_id_names(self):
         """Apply my hand-crafted translations of all vanilla Japanese DS1 MSB names (mostly those with entity IDs).

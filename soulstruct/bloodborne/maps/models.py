@@ -12,6 +12,7 @@ __all__ = [
     "MSBOtherModel",
 ]
 
+import abc
 import typing as tp
 from dataclasses import dataclass
 
@@ -81,7 +82,7 @@ class ModelHeaderStruct(MSBHeaderStruct):
 
 
 @dataclass(slots=True, eq=False, repr=False)
-class MSBModel(BaseMSBModel):
+class MSBModel(BaseMSBModel, abc.ABC):
     HEADER_STRUCT = ModelHeaderStruct
     NAME_ENCODING = "utf-16-le"
 

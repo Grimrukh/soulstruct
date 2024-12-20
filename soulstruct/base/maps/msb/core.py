@@ -42,7 +42,13 @@ MAP_NAME_RE = re.compile(r"m(\d\d)_(\d\d)_(\d\d)_(\d\d)")
 MSB_HEADER_BYTES = struct.pack("4sII??BB", b"MSB ", 1, 16, False, False, 1, 255)
 
 
-class MSB(GameFile, abc.ABC):
+MSB_MODEL_T = tp.TypeVar("MSB_MODEL_T", bound=BaseMSBModel)
+MSB_EVENT_T = tp.TypeVar("MSB_EVENT_T", bound=BaseMSBEvent)
+MSB_REGION_T = tp.TypeVar("MSB_REGION_T", bound=BaseMSBRegion)
+MSB_PART_T = tp.TypeVar("MSB_PART_T", bound=BaseMSBPart)
+
+
+class MSB(GameFile, tp.Generic[MSB_MODEL_T, MSB_EVENT_T, MSB_REGION_T, MSB_PART_T], abc.ABC):
     """Handles MSB ('MapStudio') data. Subclassed by each game.
 
     TODO: Update docstring.
@@ -253,23 +259,23 @@ class MSB(GameFile, abc.ABC):
                 supertype_list.extend(subtype_list)
         return supertype_list
 
-    def get_models(self) -> IDList[BaseMSBModel]:
+    def get_models(self) -> IDList[MSB_MODEL_T]:
         # noinspection PyTypeChecker
         return self.get_supertype_list("MODEL_PARAM_ST")
 
-    def get_events(self) -> IDList[BaseMSBEvent]:
+    def get_events(self) -> IDList[MSB_EVENT_T]:
         # noinspection PyTypeChecker
         return self.get_supertype_list("EVENT_PARAM_ST")
 
-    def get_regions(self) -> IDList[BaseMSBRegion]:
+    def get_regions(self) -> IDList[MSB_REGION_T]:
         # noinspection PyTypeChecker
         return self.get_supertype_list("POINT_PARAM_ST")
 
-    def get_parts(self) -> IDList[BaseMSBPart]:
+    def get_parts(self) -> IDList[MSB_PART_T]:
         # noinspection PyTypeChecker
         return self.get_supertype_list("PARTS_PARAM_ST")    
 
-    def get_regions_with_shape(self, shape_name: str) -> list[BaseMSBRegion]:
+    def get_regions_with_shape(self, shape_name: str) -> list[MSB_REGION_T]:
         """Find all regions with given shape name. Not case-sensitive, but doesn't work with plurals."""
         name = shape_name.lower()
         return [
@@ -298,14 +304,14 @@ class MSB(GameFile, abc.ABC):
             names = set()
             for entry in entry_lists[supertype_name]:
                 if entry.name in names:
-                    _LOGGER.warning(f"Duplicate '{supertype_name}' name in MSB: {entry.name}")
+                    _LOGGER.warning(f"Duplicate '{supertype_name}' name in MSB: '{entry.name}'")
                 else:
                     names.add(entry.name)
 
         # Get model instance counts. We collect them all here at once to save on multiple iterations.
         model_instance_counts = {}
         for part in entry_lists["PARTS_PARAM_ST"]:
-            part: BaseMSBPart
+            part: MSB_PART_T
             if part.model is None:
                 continue
             if part.model.name in model_instance_counts:
@@ -341,7 +347,7 @@ class MSB(GameFile, abc.ABC):
                 subtype_index = entry_lists[subtype_name].index(entry)
                 if supertype_name == "MODEL_PARAM_ST":
                     # Models also need their instance count passed in.
-                    entry: BaseMSBModel
+                    entry: MSB_MODEL_T
                     instance_count = model_instance_counts.get(entry.name, 0)
                     if instance_count == 0 and entry.name not in {"c0000", "c1000"}:
                         _LOGGER.warning(f"Model '{entry.name}' is not used by any parts in MSB '{self.path_name}'.")
@@ -414,7 +420,7 @@ class MSB(GameFile, abc.ABC):
             raise ValueError(f"Found entries of multiple types with name '{name}': {list(results)}")
         return results[0]
 
-    def find_model_name(self, name: str | Enum, subtypes: tp.Iterable[str] = ()) -> BaseMSBModel:
+    def find_model_name(self, name: str | Enum, subtypes: tp.Iterable[str] = ()) -> MSB_MODEL_T:
         """Get `MSBModel` with name `name` that is one of the given `entry_subtypes` or any type by default.
 
         Raises a `KeyError` if the name cannot be found, and a `ValueError` if multiple entries are found.
@@ -424,7 +430,7 @@ class MSB(GameFile, abc.ABC):
         # noinspection PyTypeChecker
         return self.find_entry_name(name, supertypes=["MODEL_PARAM_ST"], subtypes=subtypes)
 
-    def find_event_name(self, name: str | Enum, subtypes: tp.Iterable[str] = ()) -> BaseMSBEvent:
+    def find_event_name(self, name: str | Enum, subtypes: tp.Iterable[str] = ()) -> MSB_EVENT_T:
         """Get `MSBEvent` with name `name` that is one of the given `entry_subtypes` or any type by default.
 
         Raises a `KeyError` if the name cannot be found, and a `ValueError` if multiple entries are found.
@@ -434,7 +440,7 @@ class MSB(GameFile, abc.ABC):
         # noinspection PyTypeChecker
         return self.find_entry_name(name, supertypes=["EVENT_PARAM_ST"], subtypes=subtypes)
 
-    def find_region_name(self, name: str | Enum, subtypes: tp.Iterable[str] = ()) -> BaseMSBRegion:
+    def find_region_name(self, name: str | Enum, subtypes: tp.Iterable[str] = ()) -> MSB_REGION_T:
         """Get `MSBRegion` with name `name` that is one of the given `entry_subtypes` or any type by default.
 
         Raises a `KeyError` if the name cannot be found, and a `ValueError` if multiple entries are found.
@@ -444,7 +450,7 @@ class MSB(GameFile, abc.ABC):
         # noinspection PyTypeChecker
         return self.find_entry_name(name, supertypes=["POINT_PARAM_ST"], subtypes=subtypes)
 
-    def find_part_name(self, name: str | Enum, subtypes: tp.Iterable[str] = ()) -> BaseMSBPart:
+    def find_part_name(self, name: str | Enum, subtypes: tp.Iterable[str] = ()) -> MSB_PART_T:
         """Get `MSBPart` with name `name` that is one of the given `entry_subtypes` or any type by default.
 
         Raises a `KeyError` if the name cannot be found, and a `ValueError` if multiple entries are found.
@@ -464,7 +470,7 @@ class MSB(GameFile, abc.ABC):
                 self.reattach_entry_references(entry, warn_reattachments, backup_converter)
 
     def reattach_entry_references(
-        self, entry: BaseMSBPart | BaseMSBEvent,
+        self, entry: MSB_PART_T | MSB_EVENT_T,
         warn_reattachments=False,
         backup_converter: tp.Callable[[str], str] = None,
     ):
@@ -857,10 +863,12 @@ class MSB(GameFile, abc.ABC):
         sib_path="",
         map_stem="",
         replace_existing=False,
-    ) -> BaseMSBModel:
+    ) -> MSB_MODEL_T:
         """Get or create a model of the given subtype, with the given name and SIB path.
 
         Specify `replace_existing` if you want to replace an existing model with the same name, e.g. with a new SIB.
+
+        TODO: Would be great to be able to infer the return type from the subtype name (or another arg).
         """
         for subtype_name, part_info in self.MSB_ENTRY_SUBTYPES["PARTS_PARAM_ST"].items():
             # Redirect part subtype names to their corresponding model subtype names.
@@ -875,7 +883,7 @@ class MSB(GameFile, abc.ABC):
             if not replace_existing:
                 return model
         except KeyError:
-            model = self[subtype_list_name].new(name=name, sib_path=sib_path)  # type: BaseMSBModel
+            model = self[subtype_list_name].new(name=name, sib_path=sib_path)  # type: MSB_MODEL_T
             if not model.sib_path:
                 if map_stem:  # prevents empty `map_stem` from being formatted
                     model.set_auto_sib_path(map_stem=map_stem)

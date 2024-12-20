@@ -78,7 +78,7 @@ def empty(subtype_enum: BaseMSBSubtype) -> tp.Callable[[], MSBEntryList]:
     return lambda: MSBEntryList((), supertype=supertype, entry_class=subtype_info.entry_class)
 
 
-class MSB(_BaseMSB):
+class MSB(_BaseMSB[MSBModel, MSBEvent, MSBRegion, MSBPart]):
     IS_BIG_ENDIAN: tp.ClassVar[bool] = True  # for PS3
     SUPERTYPE_LIST_HEADER: tp.ClassVar[type[BinaryStruct]] = MSBEntrySuperlistHeader
     MSB_SUPERTYPE_ENUM: tp.ClassVar[type[StrEnum]] = MSBSupertype
