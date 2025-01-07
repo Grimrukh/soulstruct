@@ -1904,7 +1904,7 @@ VANILLA_MSB_TRANSLATIONS = {
     1701997: "MultiplayerFog2",
     1702010: "MimicNest0",
     1702011: "MimicNest1",
-    1702100: "PishacaAlertArea",
+    1702100: "PisacaAlertArea",
     1702101: "PisacaNestCombatArea",
     1702150: "SerpentNest1",
     1702151: "SerpentNest2",

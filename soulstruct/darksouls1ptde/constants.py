@@ -44,7 +44,10 @@ CHARACTER_MODELS = {
     2410: "Silver Knight",
     2430: "Demonic Statue",
     2500: "Hollow",
+    2509: "Hollow (textures only)",
     2510: "Undead Merchant",  # both genders
+    2511: "Undead Merchant (unused)",
+    2519: "Undead Merchant (textures only)",
     2520: "Hollow Assassin",
     2530: "Blowdart Sniper",
     2540: "Hollow Warrior",
@@ -67,12 +70,12 @@ CHARACTER_MODELS = {
     2731: "Crossbreed Priscilla (tail)",
     2750: "Anastacia",
     2780: "Mimic",
-    2790: "Black Knight",  # contains all four weapon models and animation sets
+    2790: "Black Knight (All Weapons)",  # contains all four weapon models and animation sets
     2791: "Black Knight (Ghost)",  # textured all white
-    2792: "Black Knight (Sword)",
-    2793: "Black Knight (Greatsword)",
-    2794: "Black Knight (Greataxe)",
-    2795: "Black Knight (Halberd)",
+    2792: "Black Knight (Sword Only)",
+    2793: "Black Knight (Greatsword Only)",
+    2794: "Black Knight (Greataxe Only)",
+    2795: "Black Knight (Halberd Only)",
     2800: "Undead Crystal Soldier",
     2810: "Infested Barbarian (club)",
     2811: "Infested Barbarian (boulder)",
@@ -110,11 +113,11 @@ CHARACTER_MODELS = {
     3400: "Cragspider",
     3410: "Frog-Ray",
     3420: "Undead Dragon",
-    3421: "Bounding Demon",  # Undead Dragon legs
+    3421: "Bounding Demon",  # aka Undead Dragon (legs)
     3422: "Undead Dragon (wing)",
     3430: "Hellkite Dragon",
     3431: "Hellkite Dragon (tail)",
-    3440: "Kalameet (unused)",
+    3440: "Black Dragon Kalameet (unused)",
     3450: "Everlasting Dragon",
     3451: "Everlasting Dragon (tail)",
     3460: "Armored Tusk",
