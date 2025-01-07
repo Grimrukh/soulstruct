@@ -5,6 +5,7 @@ __all__ = [
     "FLVERBone",
     "FLVERBoneUsageFlags",
     "Dummy",
+    "ColorRGBA",
     "FaceSetFlags",
     "FaceSet",
     "GXItem",

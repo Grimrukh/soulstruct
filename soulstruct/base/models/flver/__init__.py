@@ -4,6 +4,7 @@ __all__ = [
 
     "FLVERBone",
     "FLVERBoneUsageFlags",
+    "ColorRGBA",
     "Dummy",
     "FaceSetFlags",
     "FaceSet",
@@ -21,7 +22,7 @@ __all__ = [
 from .core import FLVER
 
 from .bone import FLVERBone, FLVERBoneUsageFlags
-from .dummy import Dummy
+from .dummy import Dummy, ColorRGBA
 from .face_set import FaceSetFlags, FaceSet
 from .gx_item import GXItem
 from .material import Material
