@@ -77,7 +77,9 @@ def decompile_instruction(
 def _RunEvent(
     slot: int, event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: GameEnumsManager = None
 ):
-    return base_decompile_run_event(slot, event_id, first_arg, *opt_args, arg_types=arg_types, enums_manager=enums_manager)
+    return base_decompile_run_event(
+        slot, event_id, first_arg, *opt_args, arg_types=arg_types, enums_manager=enums_manager
+    )
 
 
 @_decompile(2002, 2)

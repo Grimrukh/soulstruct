@@ -178,14 +178,18 @@ class EVSInstructionCompiler:
         arg_list = []
         arg_loads = []
 
+        arg_index = 0  # used as enumerator below
+
         def _append_emevd_arg(value):
+            nonlocal arg_index
+
             if value is None:
                 raise ValueError(
                     f"Encountered `None` as argument value in EVS in instruction ({category}, {index}): {instr_name}"
                 )
 
             if isinstance(value, EventArgumentData):
-                value = value.offset_tuple
+                value = (value.offset, value.size)
 
             if isinstance(value, Enum):
                 arg_list.append(value.value)
@@ -193,7 +197,7 @@ class EVSInstructionCompiler:
                 arg_list.append(int(value))
             elif isinstance(value, tuple):
                 # Start offset and size of an event argument.
-                write_offset = get_write_offset(arg_types, i)
+                write_offset = get_write_offset(arg_types, arg_index)
                 arg_loads.append(f"    ^({write_offset} <- {value[0]}, {value[1]})")
                 internal_default = arg_info.get("internal_default", 0)
                 arg_list.append(internal_default)  # value that will be overridden by event argument
@@ -201,20 +205,23 @@ class EVSInstructionCompiler:
                 arg_list.append(value)
 
         # Convert EVS arguments to EMEVD.
-        for i, (arg_name, arg_info) in enumerate(emedf_args_info.items()):
+        for arg_name, arg_info in emedf_args_info.items():
             if "from_evs" in arg_info:
                 _append_emevd_arg(arg_info["from_evs"](evs_kwargs))
+                arg_index += 1
             elif arg_info["type"] is tuple:
                 # Unpack values.
                 for element in evs_kwargs.pop(arg_name):
                     _append_emevd_arg(element)
-            elif arg_name not in evs_kwargs:
+                    arg_index += 1
+            elif arg_name in evs_kwargs:
+                _append_emevd_arg(evs_kwargs.pop(arg_name))
+                arg_index += 1
+            else:
                 raise ValueError(
                     f"Argument '{arg_name}' in instruction '{instr_name}' ({category}, {index}) has no "
                     "'from_evs' function defined in EMEDF."
                 )
-            else:
-                _append_emevd_arg(evs_kwargs.pop(arg_name))
 
         instruction_string = f"{category: 5d}[{index:02d}] ({arg_types}){arg_list}"
         return [instruction_string] + arg_loads

@@ -232,7 +232,7 @@ def base_decompiler_instruction(
     _process_arg_types(args_dict, emedf_args_info, enums_module, enums_manager)
 
     if (category, index) in opt_args_decompiler_funcs:
-        # Manual function will check event args for entity IDs.
+        # Manual function will check event args for entity IDs and convert strings to Variables.
         return opt_args_decompiler_funcs[category, index](
             *args_dict.values(), *opt_args, arg_types=opt_arg_types, enums_manager=enums_manager
         )
@@ -311,6 +311,8 @@ def base_decompile_run_event(
         if event_id in enums_manager.all_event_ids:
             return f"Event_{event_id}()"
 
+    # TODO: Surely there's more processing to do here, a la `_process_arg_types`.
+    opt_args = [Variable(opt_arg) if isinstance(opt_arg, str) else opt_arg for opt_arg in opt_args]
     event_args = (first_arg, *opt_args)
 
     if (

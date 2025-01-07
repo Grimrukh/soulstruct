@@ -89,6 +89,7 @@ class SingleEventArg:
         # Remove non-preferred arg names.
         # TODO: Should check 'classes' of names, so 'character__flag' doesn't just become 'character', etc.
         for vague_arg_name in (
+            "event_arg",
             "entity", "other_entity", "target_entity", "owner_entity", "anchor_entity", "attacked_entity",
             "destination", "source_entity", "copy_draw_parent", "line_intersects", "flag", "left", "right",
             "dummy_id",
@@ -508,7 +509,7 @@ class Event(abc.ABC):
             event_arg_replacements_local_offset = writer.position - event_arg_replacements_offset
             writer.fill("event_arg_replacements_local_offset", event_arg_replacements_local_offset, obj=self)
             for replacement in sorted(
-                event_arg_replacements, key=lambda arg_r: (arg_r.read_from_byte, arg_r.instruction_line)
+                event_arg_replacements, key=lambda arg_r: (arg_r.read_offset, arg_r.instruction_line)
             ):
                 replacement.to_emevd_writer(writer)
         else:

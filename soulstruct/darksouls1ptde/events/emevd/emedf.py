@@ -2213,7 +2213,10 @@ EMEDF = {
     },
     (2004, 3): {
         "alias": "MoveToEntity",
-        "docstring": "Basic move. I recommend you use the combined `Move` function.",
+        "docstring": """
+            Basic move. I recommend you use the combined `Move` function. Valid `dummy_id` MUST be supplied for 
+            character destinations (and possibly objects) or no movement will occur.
+        """,
         "args": {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "destination_type": AUTO_COORD_ENTITY_TYPE("destination"),

@@ -81,18 +81,19 @@ EVENT_ARG_TYPE_MSG = f"""
 """
 
 
+# TODO: Use `tp.TypeGuard` to assert these node type unions.
 EventStatementTyping = tp.Union[ast.Expr, ast.For, ast.If, ast.Assign, ast.Return]
 ConditionNodeTyping = tp.Union[ast.UnaryOp, ast.BoolOp, ast.Compare, ast.Name, ast.Attribute, ast.Call]
 SkipReturnTyping = tp.Union[ast.UnaryOp, ast.Name, ast.Attribute, ast.Compare, ast.Call]
 
 
 class EventInfo(tp.NamedTuple):
-    name: str
-    id: int
-    args: dict[str, tuple[int, int]]
+    name: str  # event name
+    id: int  # event ID (also flag enabled upon end/restart, if valid)
+    args: dict[str, tuple[int, int]]  # maps arg names to `(read_offset, size)` tuples
     arg_types: str
     arg_classes: dict[str, GAME_TYPE]
-    on_rest_behavior: int
+    on_rest_behavior: int  # 0 (continue), 1 (restart), or 2 (end)
     nodes: list[ast.stmt]
     description: str
 

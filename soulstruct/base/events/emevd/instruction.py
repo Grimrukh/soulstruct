@@ -24,9 +24,9 @@ _LOGGER = logging.getLogger("soulstruct")
 class EventArgStruct(BinaryStruct):
     """Supports all games."""
     instruction_line: varuint
-    write_from_byte: varuint
-    read_from_byte: varuint
-    bytes_to_write: int  # does NOT have variable size
+    write_offset: varuint
+    read_offset: varuint
+    size: int  # does NOT have variable size
     unknown: int  # TODO: possibly type of argument?
 
 
@@ -37,9 +37,9 @@ class EventArgRepl:
     Supports all games.
     """
     instruction_line: int
-    write_from_byte: int = 0
-    read_from_byte: int = 0
-    bytes_to_write: int = 0
+    write_offset: int = 0
+    read_offset: int = 0
+    size: int = 0
     unknown: int = 0
 
     # These are assigned later, from the `Instruction` that uses the replacement, then combined after that into
@@ -55,11 +55,11 @@ class EventArgRepl:
 
     @property
     def arg_range(self) -> tuple[int, int]:
-        return self.read_from_byte, self.read_from_byte + self.bytes_to_write - 1
+        return self.read_offset, self.read_offset + self.size - 1
 
     def to_numeric(self):
         # TODO: Should include `unknown`, since (as of Elden Ring?) it is not always zero.
-        return f"({self.write_from_byte} <- {self.read_from_byte}, {self.bytes_to_write})"
+        return f"({self.write_offset} <- {self.read_offset}, {self.size})"
 
     def to_emevd_writer(self, writer: BinaryWriter):
         """Simple write; all data should be present."""
@@ -68,12 +68,12 @@ class EventArgRepl:
     def __repr__(self) -> str:
         if self.unknown == 0:
             return (
-                f"EventArgRepl(line={self.instruction_line}, write_from_bytes={self.write_from_byte}, "
-                f"read_from_byte={self.read_from_byte}, bytes_to_write={self.bytes_to_write})"
+                f"EventArgRepl(line={self.instruction_line}, write_offset={self.write_offset}, "
+                f"read_offset={self.read_offset}, size={self.size})"
             )
         return (
-            f"EventArgRepl(line={self.instruction_line}, write_from_bytes={self.write_from_byte}, "
-            f"read_from_byte={self.read_from_byte}, bytes_to_write={self.bytes_to_write}, unknown={self.unknown})"
+            f"EventArgRepl(line={self.instruction_line}, write_offset={self.write_offset}, "
+            f"read_offset={self.read_offset}, size={self.size}, unknown={self.unknown})"
         )
 
 
@@ -266,34 +266,57 @@ class Instruction(abc.ABC):
 
         for arg_r in self.event_arg_replacements:
             try:
-                arg_index, argument_byte_type = arg_offset_dict[arg_r.write_from_byte]
+                arg_index, argument_byte_type = arg_offset_dict[arg_r.write_offset]
             except KeyError:
                 raise ValueError(
-                    f"No argument in '{self.event_arg_replacements}' begins at byte {arg_r.write_from_byte}. "
+                    f"No argument in '{self.event_arg_replacements}' begins at byte {arg_r.write_offset}. "
                     f"Your replacement commands are probably misaligned. Arg offset dict: {arg_offset_dict}"
                 )
 
             # Byte type "s" is actually a four-byte offset into the packed strings.
             if (
-                not (argument_byte_type == "s" and arg_r.bytes_to_write == 4)
-                and struct.calcsize(argument_byte_type) < arg_r.bytes_to_write
+                not (argument_byte_type == "s" and arg_r.size == 4)
+                and struct.calcsize(argument_byte_type) < arg_r.size
             ):
                 raise ValueError(
-                    f"You cannot write event argument with size {arg_r.bytes_to_write} bytes over an argument of type "
+                    f"You cannot write event argument with size {arg_r.size} bytes over an argument of type "
                     f"{argument_byte_type} (it's too small).\n"
                     f"    Instruction: {self.instruction_id}\n"
                     f"    Event arg: {arg_r}"
                 )
 
             value_to_overwrite = self.args_list[arg_index]
-            evs_arg_name = list(self.EMEDF[self.category, self.index]["args"])[arg_index]
-            if evs_arg_name == "slot":
-                # Not permitted as an event argument (conflicts with `RunEvent` slot).
-                evs_arg_name = "event_slot"
-            default_arg_name = f"arg_{arg_r.read_from_byte}_{arg_r.read_from_byte + arg_r.bytes_to_write - 1}"
+            default_arg_name = f"arg_{arg_r.read_offset}_{arg_r.read_offset + arg_r.size - 1}"
+            is_run_arg = False
+            evs_arg_name = ""
+            arg_info = {}
+            arg_py_type = None
 
-            arg_info = self.EMEDF[self.category, self.index]["args"][evs_arg_name]
-            arg_py_type = arg_info["type"]
+            # We have to consider 'Run' instructions with variable length args, which are typed as tuples in EMEDF.
+            if self.category == 2000 and self.index in {0, 6}:
+                emedf_args_index = list(self.EMEDF[self.category, self.index]["args"]).index("args")
+                if arg_index >= emedf_args_index:
+                    # Target argument for replacement is inside the 'args' tuple.
+                    # NOTE: We would have to inspect the event being called to guess the real argument name, which would
+                    #  recursively required us to process that event's instructions, etc. Not worth it. We will rely on
+                    #  other usages of the same argument in the same event to determine the correct name.
+                    evs_arg_name = "event_arg"  # ignored during name guessing
+                    arg_info = self.EMEDF[self.category, self.index]["args"]["args"]
+                    arg_py_type = arg_info["type"]  # tuple
+                    is_run_arg = True
+            if not is_run_arg:
+                try:
+                    evs_arg_name = list(self.EMEDF[self.category, self.index]["args"])[arg_index]
+                except IndexError:
+                    print(self.args_list)
+                    raise ValueError(
+                        f"Could not find event arg name for index {arg_index} in instruction {self.instruction_id}."
+                    )
+                if evs_arg_name == "slot":
+                    # Not permitted as an event argument (conflicts with `RunEvent` slot).
+                    evs_arg_name = "event_slot"
+                arg_info = self.EMEDF[self.category, self.index]["args"][evs_arg_name]
+                arg_py_type = arg_info["type"]
 
             # TODO: Still NO idea what `arg_r.unknown` is. Seems totally inconsistent but thankfully non-functional.
 

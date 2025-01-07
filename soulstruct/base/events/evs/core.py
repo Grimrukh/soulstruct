@@ -98,7 +98,8 @@ class EVSParser(abc.ABC):
         self.globals = vars(self.EVENTS_MODULE.enums)
         self.globals.update(vars(self.EVENTS_MODULE.constants))
         self.globals.update(vars(self.GAME_TYPES))
-        # Note that there is no event-specific local namespace, except for this dictionary of 'for' loop variables:
+        # Event-specific namespaces:
+        self.locals = {}
         self.for_vars = {}
 
         self.events = {}  # Maps your event names to their IDs, so you can call them to initialize them.
@@ -285,10 +286,10 @@ class EVSParser(abc.ABC):
         return name
 
     # ~~~~~~~~~~~~~~~~
-    #  COMPILE METHODS: These produce numeric EMEVD lines.
+    #  COMPILE METHODS: These produce numeric EMEVD lines (except for `_compile_evs()`).
     # ~~~~~~~~~~~~~~~~
 
-    def _compile_evs(self):
+    def _compile_evs(self) -> None:
         """Top-level node traversal."""
         emevd_docstring = ast.get_docstring(self.tree)
         if emevd_docstring is not None:
@@ -379,7 +380,7 @@ class EVSParser(abc.ABC):
 
         return event_emevd
 
-    def _compile_event_body_node(self, node: EventStatementTyping):
+    def _compile_event_body_node(self, node: EventStatementTyping) -> list[str]:
         """Recursive node compiler.
 
         Every line must be an instruction (from my set, not the base EMEVD set), an IF statement, or an assignment to a
@@ -416,6 +417,7 @@ class EVSParser(abc.ABC):
 
             # Assign local variable.
             self._assign_name(node, is_local=True)
+            return []  # no EMEVD
 
         # RETURN
         if isinstance(node, ast.Return):
@@ -435,7 +437,7 @@ class EVSParser(abc.ABC):
         )
 
     def _compile_event_call(self, node: ast.Call, is_common_func=False):
-        """Shortcut for RunEvent(...) instruction."""
+        """Shortcut for `RunEvent(...)` instruction."""
         name, args, kwargs = self._parse_function_call(node)
         event_info = self.common_func_events[name] if is_common_func else self.events[name]
         kwargs = self._parse_keyword_nodes(node.keywords)
@@ -538,7 +540,7 @@ class EVSParser(abc.ABC):
             return self.cond.MAIN
         return None
 
-    def _compile_function_expression(self, node: ast.Call):
+    def _compile_function_expression(self, node: ast.Call) -> list[str]:
 
         # `{Condition}.Add()` or `MAIN.Await()`
         if (condition := self._check_condition_group_add(node)) is not None:
@@ -616,7 +618,7 @@ class EVSParser(abc.ABC):
             f"methods can be called outside of assignments and argument values.",
         )
 
-    def _compile_for(self, node: ast.For):
+    def _compile_for(self, node: ast.For) -> list[str]:
         try:
             for_iter = self._parse_nodes(node.iter, allowed_calls=("range", "zip"))
         except Exception as e:
@@ -664,7 +666,7 @@ class EVSParser(abc.ABC):
 
         return for_emevd
 
-    def _compile_if(self, node: ast.If):
+    def _compile_if(self, node: ast.If) -> list[str]:
 
         if_emevd = []
 
@@ -731,7 +733,7 @@ class EVSParser(abc.ABC):
 
         return if_emevd
 
-    def _compile_test(self, node, body_length, negate=False):
+    def _compile_test(self, node, body_length, negate=False) -> list[str]:
         """Tries a simple skip, then a chain skip, then resorts to building a condition.
 
         Argument `node` should be the test node of the `ast.If` node.
@@ -761,7 +763,7 @@ class EVSParser(abc.ABC):
         restart_event=False,
         negate=False,
         chain=False,
-    ):
+    ) -> list[str]:
         if sum((skip_lines > 0, end_event, restart_event)) != 1:
             raise EVSSyntaxError(
                 node, "(internal) You can use 'skip_lines, 'end_event', or 'restart_event', but not multiples."
@@ -902,7 +904,7 @@ class EVSParser(abc.ABC):
         # Failed to build simple/chain skip or return.
         raise NoSkipOrReturnError
 
-    def _compile_simple_comparison(self, node: ast.Compare, negate, skip_lines):
+    def _compile_simple_comparison(self, node: ast.Compare, negate, skip_lines) -> list[str]:
         left_node, op_node, comparison_value = self._validate_comparison_node(node)
         if isinstance(left_node, ast.Name):
             name = left_node.id
@@ -919,7 +921,7 @@ class EVSParser(abc.ABC):
             )
         raise NoSkipOrReturnError
 
-    def _compile_range_test(self, node: ast.Call, negate, skip_lines):
+    def _compile_range_test(self, node: ast.Call, negate, skip_lines) -> list[str]:
         """`node` must be an `all()` or `any()` call with a single argument (already checked by caller).
 
         This single argument must be a `range()` call or `FlagRange` object.
@@ -946,7 +948,7 @@ class EVSParser(abc.ABC):
                 return self._compile_instr(node, "SkipLinesIfFlagRange" + tests[negate], skip_lines, flag_range)
             raise EVSSyntaxError(node, "The only valid non-sequence argument to 'all' is a FlagRange.")
 
-    def _compile_chain_test(self, node: tp.Union[ast.Tuple, ast.List], func_name: str, negate, skip_lines):
+    def _compile_chain_test(self, node: tp.Union[ast.Tuple, ast.List], func_name: str, negate, skip_lines) -> list[str]:
         """`node` must be an `any()` or `all()` call with a single argument that is a `list` or `tuple` (already checked
         by caller).
         """
@@ -1370,7 +1372,10 @@ class EVSParser(abc.ABC):
     # ~~~~~~~~~~~~~~~~~~~~
 
     def _assign_name(self, node: ast.Assign, is_local: bool):
-        """Assign object to name of your choosing. Can only be used outside any event function scripts."""
+        """Assign object to name of your choosing.
+
+        Can be used outside event functions (`is_local = False`) or inside them (`is_local = True`).
+        """
         value = self._parse_nodes(node.value)
         for target in node.targets:
             if not isinstance(target, ast.Name):
@@ -1385,7 +1390,9 @@ class EVSParser(abc.ABC):
 
             if is_local:
                 if name in self.current_event.args:
-                    raise EVSSyntaxError(node, f"Cannot assign to an event argument name ({name}).")
+                    raise EVSSyntaxError(node, f"Cannot re-assign to an event argument name ({name}).")
+                if name in self.globals:
+                    raise EVSSyntaxError(node, f"Cannot re-assign to a global name ({name}) in an event function.")
                 # NOTE: You can replace previously defined locals.
                 self.locals[name] = value
             else:
@@ -1481,10 +1488,9 @@ class EVSParser(abc.ABC):
             # Name is an event argument.
             if name in {"slot", "event_layers"}:
                 raise EVSSyntaxError(node, f"Cannot use reserved event argument {repr(name)}.")
-            arg = EventArgumentData(
-                offset_tuple=self.current_event.args[name],
-                arg_class=self.current_event.arg_classes.get(name, None),
-            )
+            offset, size = self.current_event.args[name]
+            arg_class = self.current_event.arg_classes.get(name, None)
+            arg = EventArgumentData(offset, size, arg_class)
             if test and name in self.current_event.arg_classes:
                 # TODO: Never used.
                 # Bake arg into game type `__call__` method as 'self' (becomes a valid zero-argument test call).
@@ -1501,9 +1507,11 @@ class EVSParser(abc.ABC):
                 raise EVSValueError(node, f"Invalid condition group name for EMEVD: {name} (group index {condition})")
             return condition
 
-        # Look in 'for' loop variables, then globals.
+        # Look in 'for' loop variables, then locals, then globals.
         if name in self.for_vars:
             return self.for_vars[name]
+        if name in self.locals:
+            return self.locals[name]
         if name in self.globals:
             return self.globals[name]
         raise EVSNameError(node, name)
@@ -1543,8 +1551,11 @@ class EVSParser(abc.ABC):
         kwargs = self._parse_keyword_nodes(node.keywords, allowed_calls=allowed_calls)
         return name, args, kwargs
 
-    def _compile_game_type_method(self, node, name, args, kwargs):
-        """Parses and executes a game type method call, which are the only valid expressions other than instructions."""
+    def _compile_game_type_method(self, node, name, args, kwargs) -> list[str]:
+        """Parses and executes a game type method call, which are the only valid expressions other than instructions.
+
+        TODO: Currently unused. Remove?
+        """
         try:
             func = self.globals[name]
         except KeyError:

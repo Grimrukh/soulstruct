@@ -26,18 +26,15 @@ _LOGGER = logging.getLogger("soulstruct")
 _OPTIONAL_ARGS_ALLOWED = ((2000, 0), (2000, 6))
 
 
-class EventArgumentData:
-    """Holds event argument offset tuple, e.g. `(12, 4)`, and event argument type, e.g. `Region`.
+class EventArgumentData(tp.NamedTuple):
+    """Holds event argument offset/size, e.g. 12 and 4, and optional event argument type, e.g. `Region`.
 
     Passed to EMEVD instructions/tests so that arguments like `anchor_type` and `destination_type` do not need to be
     specified with properly type-annotated event arguments.
     """
-    offset_tuple: tuple[int, int]
-    arg_class: tp.Optional[GAME_INT_TYPE]
-
-    def __init__(self, offset_tuple: tuple[int, int], arg_class: tp.Optional[GAME_INT_TYPE] = None):
-        self.offset_tuple = offset_tuple
-        self.arg_class = arg_class
+    offset: int
+    size: int
+    arg_class: tp.Optional[GAME_INT_TYPE] = None
 
     def get_coord_entity_type(self, coord_entity_type_enum: type[IntEnum]):
         """Forwards to `get_coord_entity_type` with `self.arg_class` as `arg_or_type`."""
@@ -48,8 +45,8 @@ class EventArgumentData:
 
     def __repr__(self):
         if self.arg_class:
-            return f"EventArgumentData({self.offset_tuple[0]}, {self.offset_tuple[1]}, {self.arg_class})"
-        return f"EventArgumentData({self.offset_tuple[0]}, {self.offset_tuple[1]})"
+            return f"EventArgumentData({self.offset}, {self.size}, {self.arg_class})"
+        return f"EventArgumentData({self.offset}, {self.size})"
 
 
 def get_coord_entity_type(
@@ -148,7 +145,7 @@ def get_instruction_args(
     return args_format[1:] + "|" + "I" * (extra_size // 4), list(args) + opt_args
 
 
-def get_write_offset(event_format, arg_index) -> int:
+def get_write_offset(event_format: str, arg_index: int) -> int:
     """Iterate over event format string to determine write offset of given argument index."""
     offset = 0
     for i, c in enumerate(event_format):

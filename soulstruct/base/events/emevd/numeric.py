@@ -161,12 +161,12 @@ def build_numeric(numeric_string: str, event_class: type[Event]):
             elif m_arg_r:
                 if len(instruction_list) >= 1:
                     # Parse the line as an arg replacement for the previous line.
-                    write_from_byte = int(m_arg_r.group(1))
-                    read_from_byte = int(m_arg_r.group(2))
-                    bytes_to_write = int(m_arg_r.group(3))
+                    write_offset = int(m_arg_r.group(1))
+                    read_offset = int(m_arg_r.group(2))
+                    size = int(m_arg_r.group(3))
 
                     event_arg = EventArgRepl(
-                        len(instruction_list) - 1, write_from_byte, read_from_byte, bytes_to_write
+                        len(instruction_list) - 1, write_offset, read_offset, size
                     )
                     instruction_list[-1].event_arg_replacements.append(event_arg)
                 else:
