@@ -526,7 +526,7 @@ class FLVER(GameFile):
 
     def to_flver2_writer(self) -> BinaryWriter:
 
-        byte_order = ByteOrder.BigEndian if self.big_endian else ByteOrder.LittleEndian
+        byte_order = ByteOrder.big_endian_bool(self.big_endian)
         encoding = byte_order.get_utf_16_encoding() if self.unicode else "shift_jis_2004"
 
         true_face_count = 0
@@ -556,7 +556,6 @@ class FLVER(GameFile):
 
         header = self.STRUCT2.from_object(
             self,
-            byte_order=byte_order,
             endian=b"B\0" if self.big_endian else b"L\0",
             vertex_data_offset=RESERVED,
             vertex_data_size=RESERVED,
@@ -573,7 +572,7 @@ class FLVER(GameFile):
             texture_count=RESERVED,
         )
 
-        writer = header.to_writer(reserve_obj=self)
+        writer = header.to_writer(reserve_obj=self, byte_order=byte_order)
 
         for dummy in self.dummies:
             dummy.to_flver_writer(writer, self.version)
