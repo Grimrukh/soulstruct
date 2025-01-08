@@ -191,6 +191,7 @@ CHARACTER_MODELS = {
 }
 
 UNUSED_CHARACTERS = (
+    2511,  # Undead Merchant prototype?
     2590,  # Marvelous Chester (1)
     2591,  # Marvelous Chester (2)
     2600,  # Young Witch Beatrice

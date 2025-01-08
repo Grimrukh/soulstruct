@@ -2189,7 +2189,7 @@ EMEDF = {
     },
     (2004, 1): {
         "alias": "SetAIState",
-        "docstring": "TODO",
+        "docstring": "Enable or disable battle AI of character. Does not affect logic AI (e.g. for patrolling).",
         "args": {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "state": BOOL | HIDE_NAME,
