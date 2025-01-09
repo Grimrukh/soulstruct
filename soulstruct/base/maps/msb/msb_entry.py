@@ -511,8 +511,8 @@ class MSBEntry(abc.ABC):
                     raise ValueError(
                         f"Invalid MSB entry `{value.name}` referenced by `{self.name}`."
                     ) from ex
-                if subtype_list.supertype == MSBSupertype.PARTS:
-                    # Parts have unique names, so we can safely reference those names instead of indices.
+                if subtype_list.supertype in {MSBSupertype.MODELS, MSBSupertype.PARTS}:
+                    # Models and Parts have unique names, so we can safely reference those names instead of indices.
                     data[name] = {
                         "subtype": (subtype_list.supertype, subtype_list.subtype_name),
                         "entry_name": value.name,
