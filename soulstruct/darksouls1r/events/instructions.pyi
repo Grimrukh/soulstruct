@@ -3943,6 +3943,8 @@ def FaceEntity(character: Character | int, target_entity: Object | Character | R
 def SetInvincibilityState(character: Character | int, state: bool | int):
     """
     Character cannot take damage or die.
+
+    NOTE: Disabling invincibility will also disable immortality.
     """
 
 

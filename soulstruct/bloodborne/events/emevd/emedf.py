@@ -2395,6 +2395,8 @@ EMEDF = PTDE_EMEDF | {
         "alias": "SetInvincibilityState",
         "docstring": """
             Character cannot take damage or die.
+            
+            NOTE: Disabling invincibility will also disable immortality.
         """,
         "args": {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
