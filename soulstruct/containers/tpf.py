@@ -515,8 +515,7 @@ class TPFTexture:
             reserved_2=0,
         )
 
-        # TODO: Suspicious? Not big-endian on old consoles?
-        dds_header.byte_order = ByteOrder.LittleEndian
+        # TODO: Any big-endian byte order on old consoles?
 
         if fourcc == b"DX10":
             dx10_header = DX10Header.get_default(self.console_info.dxgi_format)

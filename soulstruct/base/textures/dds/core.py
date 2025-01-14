@@ -43,7 +43,6 @@ class DDSPixelFormat(BinaryStruct):
     @classmethod
     def from_fourcc_tpf_format(cls, fourcc: bytes, tpf_format: int) -> DDSPixelFormat:
         pixelformat = cls(flags=0, fourcc=fourcc)
-        pixelformat.byte_order = ByteOrder.LittleEndian
         if fourcc != b"\0\0\0\0":
             pixelformat.flags |= DDPF.FOURCC
             pixelformat.fourcc = fourcc
@@ -119,7 +118,6 @@ class DX10Header(BinaryStruct):
             array_size=1,
             alpha_mode=ALPHA_MODE.UNKNOWN,
         )
-        dx10_header.byte_order = ByteOrder.LittleEndian
         return dx10_header
 
 

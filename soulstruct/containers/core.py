@@ -15,6 +15,7 @@ import enum
 import io
 import logging
 import re
+import traceback
 import typing as tp
 from pathlib import Path
 from dataclasses import dataclass, field
@@ -302,6 +303,7 @@ class Binder(BaseBinaryFile):
                 instance = cls.from_reader(reader)
                 instance.dcx_type = dcx_type
             except Exception:
+                traceback.print_exc()
                 _LOGGER.error(f"Error occurred while reading `{cls.__name__}` from binary data. See traceback.")
                 raise
             finally:
@@ -327,6 +329,7 @@ class Binder(BaseBinaryFile):
             instance = cls.from_reader(reader, bdt_reader)
             instance.dcx_type = dcx_type
         except Exception:
+            traceback.print_exc()
             _LOGGER.error(f"Error occurred while reading `{cls.__name__}` from binary data. See traceback.")
             raise
         finally:
@@ -373,6 +376,7 @@ class Binder(BaseBinaryFile):
         try:
             binder = cls.from_bytes(reader, bdt_reader)
         except Exception:
+            traceback.print_exc()
             _LOGGER.error(f"Error occurred while reading `{cls.__name__}` with path '{path}'. See traceback.")
             raise
         binder.path = path
