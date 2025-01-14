@@ -16,14 +16,20 @@ __all__ = [
     "CLIENT_PLAYER_7",
     "CLIENT_PLAYER_8",
     "CLIENT_PLAYER_9",
+
+    # EMEVD enums
+    "ConditionGroup",
     "BaseEMEVDEnum",
     "AIStatusType",
+    "BannerType",
     "BitOperation",
     "ButtonType",
     "CharacterType",
     "CharacterUpdateRate",
     "ClassType",
     "ComparisonType",
+    "CoordEntityType",
+    "Covenant",
     "CutsceneFlags",
     "DamageTargetType",
     "EventReturnType",
@@ -32,8 +38,10 @@ __all__ = [
     "InterpolationState",
     "ItemType",
     "RangeState",
-    "CoordEntityType",
+    "TeamType",
+    "MultiplayerState",
     "NavmeshFlag",
+    "NPCPartType",
     "NumberButtons",
     "OnOffChange",
     "OnRestBehavior",
@@ -43,13 +51,17 @@ __all__ = [
     "TriggerAttribute",
     "WorldTendencyType",
     "UpdateAuthority",
+
+    # Other enums (not used by any EMEVD instructions)
+    "LOCAL_PLAYER",
+    "NET_PLAYER",
+    "MessageCategory",
+    "InfoMenuType",
+    "TalkAttribute",
+    "PlayerDeathType",
+    "SummonParamType",
+    "InvadeType",
     "CalculationType",
-    "ConditionGroup",
-    "Covenant",
-    "TeamType",
-    "BannerType",
-    "MultiplayerState",
-    "NPCPartType",
 ]
 
 from enum import IntEnum
@@ -59,26 +71,6 @@ from soulstruct.darksouls1ptde.events.enums import *
 
 
 # DSR extends three enums:
-
-
-class BannerType(BaseEMEVDEnum):
-    VictoryAchieved = 1
-    YouDied = 2
-    HumanityRestored = 3
-    SoulsRetrieved = 4
-    TargetDestroyed = 5
-    YouDiedPhantom = 6  # Phantom version of "YOU DIED"
-    BlackPhantomDestroyed = 7
-    AreaName = 8  # Name determined by current floor collision.
-    MagicRevival = 9
-    RingRevival = 10
-    RareRingRevival = 11
-    Congratulations = 12  # Bugged texture.
-    BonfireLit = 13
-    YouWin = 15
-    YouLose = 16
-    Draw = 17
-    BeginMatch = 18  # REMASTERED ONLY.
 
 
 class ConditionGroup(IntEnum):
@@ -128,10 +120,41 @@ class ConditionGroup(IntEnum):
         ...
 
 
-class MultiplayerState(BaseEMEVDEnum):
+class BannerType(BaseEMEVDEnum):
+    VictoryAchieved = 1
+    YouDied = 2
+    HumanityRestored = 3
+    SoulsRetrieved = 4
+    TargetDestroyed = 5
+    YouDiedPhantom = 6  # Phantom version of "YOU DIED"
+    BlackPhantomDestroyed = 7
+    AreaName = 8  # Name determined by current floor collision.
+    MagicRevival = 9
+    RingRevival = 10
+    RareRingRevival = 11
+    Congratulations = 12  # Bugged texture.
+    BonfireLit = 13
+    YouWin = 15
+    YouLose = 16
+    Draw = 17
+    BeginMatch = 18  # REMASTERED ONLY.
+
+
+class MultiplayerState(BaseNegatableEMEVDEnum):
     Host = 0
     Client = 1
     Multiplayer = 2
     Singleplayer = 3
     UnknownPlayerType4 = 4  # REMASTERED ONLY.
     UnknownPlayerType5 = 5  # REMASTERED ONLY.
+
+    def negate(self):
+        if self == MultiplayerState.Host:
+            return MultiplayerState.Client
+        elif self == MultiplayerState.Client:
+            return MultiplayerState.Host
+        elif self == MultiplayerState.Multiplayer:
+            return MultiplayerState.Singleplayer
+        elif self == MultiplayerState.Singleplayer:
+            return MultiplayerState.Multiplayer
+        return super().negate()

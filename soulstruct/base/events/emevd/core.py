@@ -10,6 +10,7 @@ from dataclasses import field
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
+from soulstruct.base.game_types import Flag
 from soulstruct.dcx import DCXType
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.conversion import floatify
@@ -350,18 +351,22 @@ class EMEVD(GameFile, abc.ABC):
             self.regenerate_signatures()
 
         if enums_manager:
-            # Update `all_event_ids` and `star_import_module_names` of existing `GameEnumsManager`.
-            enums_manager.all_event_ids = list(self.events)
+            # Update `star_import_module_names` of existing `GameEnumsManager`.
             enums_manager.star_import_module_names = star_import_module_names
         else:
             # Create a new `GameEnumsManager` from the given module paths and events in this EMEVD.
             # User may want to supply an existing one if decompiling multiple EMEVDs that reference the same modules.
-            enums_manager = self.ENTITY_ENUMS_MANAGER(list(enums_module_paths), all_event_ids=list(self.events))
+            enums_manager = self.ENTITY_ENUMS_MANAGER(list(enums_module_paths))
             enums_manager.star_import_module_names = star_import_module_names
+
+        for event_id in self.events:
+            enums_manager.add_event_id(event_id)
 
         if self._common_func:
             # Update common event IDs of `GameEnumsManager`.
-            enums_manager.all_common_event_ids = list(self._common_func.events)
+            # TODO: If these aren't named 'CommonFunc_{ID}', incorrect calls will be written to EVS.
+            for event_id in self._common_func:
+                enums_manager.add_event_id(event_id, is_common=True)
 
         docstring = self.get_evs_docstring(docstring)
         game = self.get_game()
@@ -373,7 +378,6 @@ class EMEVD(GameFile, abc.ABC):
             for event in self.events.values()
         ]
 
-        # TODO: Does not catch calls that are already multi-line.
         for i in range(len(evs_events)):
             evs_events[i] = self.add_event_call_keywords(evs_events[i], enums_manager, self._common_func)
 

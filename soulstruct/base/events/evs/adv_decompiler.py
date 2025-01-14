@@ -60,6 +60,7 @@ _COMPARISON_OPERATORS = {
 
 
 class AdvancedDecompiler:
+    """Tries to convert EVS instruction lines into more complex Python `if/else` blocks and other useful aliases."""
 
     class _DecompileFrame:
         i: int  # line count
@@ -71,6 +72,10 @@ class AdvancedDecompiler:
             self.in_lines = in_lines
             self.out_lines = []
 
+        @property
+        def current_line(self):
+            return self.in_lines[self.i]
+
     emedf_tests: dict[str, dict[str, str]]
     emedf_comparison_tests: dict[str, dict[str, str]]
 
@@ -80,6 +85,8 @@ class AdvancedDecompiler:
         self.emedf_tests = emedf_tests
         self.emedf_comparison_tests = emedf_comparison_tests
         self._frame_stack = []
+
+    # Shortcut properties for most recent frame in stack:
 
     @property
     def i(self):
@@ -99,7 +106,7 @@ class AdvancedDecompiler:
 
     @property
     def current_line(self) -> str:
-        return self.in_lines[self.i]
+        return self._frame_stack[-1].current_line
     
     def get_line_ahead(self, count: int) -> str:
         try:
@@ -152,18 +159,24 @@ class AdvancedDecompiler:
                     self.skip_test(line, match.groupdict())
                     continue
     
-                elif match := _RETURN_CONDITION_RE.match(line):
+                if match := _RETURN_CONDITION_RE.match(line):
                     self.return_condition(match.groupdict())
                     continue
     
-                elif match := _RETURN_RE.match(line):
+                if match := _RETURN_RE.match(line):
                     self.return_test(line, match.groupdict())
                     continue
 
             # Failed to do any advanced decompiling. Copy line as-is.
             self.out_lines.append(line)
             self.i += 1
-    
+
+        # If the last line is just 'End()' or 'Restart()', replace it with 'return' or 'return RESTART'.
+        if self.out_lines[-1].endswith("End()"):
+            self.out_lines[-1] = self.out_lines[-1].removesuffix("End()") + "return"
+        elif self.out_lines[-1].endswith("Restart()"):
+            self.out_lines[-1] = self.out_lines[-1].removesuffix("Restart()") + "return RESTART"
+
         # Remove any trailing blank lines that were added due to the last instruction.
         while self.out_lines and self.out_lines[-1] == "":
             self.out_lines.pop()
@@ -174,7 +187,15 @@ class AdvancedDecompiler:
         return stack.out_lines
     
     def if_condition(self, match_dict: dict[str, str]):
-        """One condition group is added to another."""
+        """One condition group is added to another.
+
+        Examples:
+            `IfConditionTrue(AND_1, input_condition=OR_1)`
+         -> `AND_1.Add(OR_1)`
+
+            `IfConditionFalse(MAIN, input_condition=AND_2)`
+         -> `MAIN.Await(AND_2)`
+        """
         indent = match_dict["indent"]
         state = match_dict["state"] == "True"
         condition = match_dict["condition"]
@@ -184,7 +205,7 @@ class AdvancedDecompiler:
     
         # TODO: If condition was just defined on previous line, we could move the whole thing here.
         #  However, this veers into "lost info" territory, as we won't know what condition number the game
-        #  originally used (and would have to look ahead for "finished" usage).
+        #  originally used (and would have to look ahead for "LastConditionResult" usage).
     
         if condition == "MAIN":
             if self.out_lines and self.out_lines[-1] != "":
@@ -252,62 +273,92 @@ class AdvancedDecompiler:
             return
 
         args = match_dict["args"].removeprefix(", ")
-        # Find negated skip.
-        for test_name, tests in self.emedf_tests.items():
-            if tests.get("skip", "") == f"SkipLinesIf{test}":
-                break
+
+        if test in {"ConditionTrue", "ConditionFalse", "LastConditionResultTrue", "LastConditionResultFalse"}:
+            input_condition = args.removeprefix("input_condition=")
+            if test == "ConditionTrue":
+                test_expr = f"not {input_condition}"  # e.g. `not AND_1`
+            elif test == "ConditionFalse":
+                test_expr = input_condition  # e.g. `AND_1`
+            elif test == "LastConditionResultTrue":
+                test_expr = f"not LastResult({input_condition})"  # e.g. `not LastResult(AND_1)`
+            elif test == "LastConditionResultFalse":
+                test_expr = f"LastResult({input_condition})"  # e.g. `LastResult(AND_1)`
         else:
-            # Could not find test name (possibly no negation).
-            self.out_lines.append(line)
-            self.i += 1
-            return
-        if_block_lines = [f"{indent}{self.get_line_ahead(1 + j)}" for j in range(line_count)]
-        if any("SkipLinesIf" in instr for instr in if_block_lines):
-            # Cannot yet skip other skips. Ignore this line, and recur on block lines for conditions only.
-            self.out_lines.append(line)
-            self.i += 1
-            self.out_lines.extend(self.adv_decompile(if_block_lines, conditions_only=True))
-            self.i += len(if_block_lines)
-            return
-        if any(
-            "SkipLines(" in instr for instr in (if_block_lines[:-1] if len(if_block_lines) > 1 else if_block_lines)
-        ):
-            # Cannot yet skip other unconditional skips EXCEPT as the last block instruction (`else`).
-            self.out_lines.append(line)
-            self.i += 1
-            self.out_lines.extend(self.adv_decompile(if_block_lines, conditions_only=True))
-            self.i += len(if_block_lines)
-            return
-        if unconditional_match := _UNCONDITIONAL_SKIP_RE.match(self.get_line_ahead(line_count)):
-            else_line_count = int(unconditional_match.groupdict()["line_count"])
-            else_block_lines = [
-                f"{indent}    {self.get_line_ahead(line_count + 1 + j)}" for j in range(else_line_count)
-            ]
-            if any("SkipLines" in instr for instr in else_block_lines):
-                # Cannot yet skip other skips (conditional or unconditional) in `else` block.
+            # Find test that contains this "SkipLinesIf" instruction as its "skip_if_not" instruction.
+            for test_name, tests in self.emedf_tests.items():
+                if tests.get("skip_if_not", "") == f"SkipLinesIf{test}":
+                    test_expr = f"{test_name}({args})"
+                    break
+            else:
+                # Could not find test name (possibly no negation).
                 self.out_lines.append(line)
                 self.i += 1
-                self.out_lines.extend(self.adv_decompile(if_block_lines, conditions_only=True))
-                self.i += len(if_block_lines)
                 return
-            if_block_lines = if_block_lines[:-1]  # ignore unconditional skip
-        else:
-            else_line_count = 0
-            else_block_lines = []
-        self.out_lines.append(f"{indent}if {test_name}({args}):")
+
+        # NOTE: Not yet indented.
+        if_block_lines = [self.get_line_ahead(1 + j) for j in range(line_count)]
+        else_line_count = 0
+        else_block_lines = []
+
+        # Check contents of `if` block for any skips that breach the block.
+        for j, if_line in enumerate(if_block_lines):
+            if (m := _SKIP_TEST_RE.match(if_line)) or (m := _UNCONDITIONAL_SKIP_RE.match(if_line)):
+                inner_line_count = int(m.groupdict()["line_count"])
+                if j == line_count - 1 and "test" not in m.groupdict():
+                    # Unconditional skip as final instruction in block is a simple `else` block.
+                    else_line_count = inner_line_count
+                    else_block_lines = [self.get_line_ahead(line_count + 1 + k) for k in range(inner_line_count)]
+
+                    # Check contents of `else` block for any skips that breach the block.
+                    for k, else_line in enumerate(else_block_lines):
+                        if (
+                            (else_m := _SKIP_TEST_RE.match(else_line))
+                            or (else_m := _UNCONDITIONAL_SKIP_RE.match(else_line))
+                        ):
+                            if int(m.groupdict()["line_count"]) > else_line_count - k:
+                                # Skip goes beyond end of `else` block. Ignore the entire `if` block.
+                                self.out_lines.append(line)
+                                self.i += 1
+                                self.out_lines.extend(self.adv_decompile(if_block_lines, conditions_only=True))
+                                self.i += len(if_block_lines)
+                                return
+
+                    if_block_lines = if_block_lines[:-1]  # drop the unconditional skip
+                    break
+
+                if inner_line_count > line_count - j:
+                    # Skip goes beyond end of `if` block. This does happen with complex skipping logic (e.g. in
+                    # Constructors trying to avoid condition group usage) so we don't comment on it. We also recur on
+                    # the block lines to prevent skip/return checks.
+                    self.out_lines.append(line)
+                    self.i += 1
+                    self.out_lines.extend(self.adv_decompile(if_block_lines, conditions_only=True))
+                    self.i += len(if_block_lines)
+                    return
+
+        self.out_lines.append(f"{indent}if {test_expr}:")
         self.i += 1
-        # Recur on indented `if` block (which contains no skips, as per above).
+
+        # Recur decompiler on indented `if` block (which contains no skips, as per above).
         self.out_lines.extend(self.adv_decompile(
-            [f"    {if_line}" for if_line in if_block_lines],
-            conditions_only=False,
+            [f"{indent}    {if_line.lstrip()}" for if_line in if_block_lines],
+            conditions_only=False,  # nested `if` blocks can be decompiled
         ))
         self.i += line_count
+
         if else_block_lines:
-            # Recur on indented `else` block (which contains no skips, as per above).
+            # Recur on indented `else` block (which contains no breaching skips, as per above).
             self.out_lines.append(f"{indent}else:")
-            # No need for `i += 1`, as `line_count` includes the unconditional skip that `else` is replacing.
-            self.out_lines.extend(self.adv_decompile(else_block_lines, conditions_only=False))
+            # No need for `i += 1`, as `line_count` above includes the unconditional skip that `else` is replacing.
+            self.out_lines.extend(self.adv_decompile(
+                [f"{indent}    {else_line.lstrip()}" for else_line in else_block_lines],
+                conditions_only=False,
+            ))
             self.i += else_line_count
+
+        # Add a blank line for clarity.
+        self.out_lines.append("")
 
     def return_condition(self, match_dict: dict[str, str]):
         indent = match_dict["indent"]
@@ -322,9 +373,12 @@ class AdvancedDecompiler:
         self.out_lines.append(f"{indent}    return{' RESTART' if return_type == 'restart' else ''}")
         self.i += 1
 
+        # Add a blank line for clarity.
+        self.out_lines.append("")
+
     def return_test(self, line: str, match_dict: dict[str, str]):
         indent = match_dict["indent"]
-        return_type = match_dict["return_type"].lower()
+        return_type = match_dict["return_type"].lower() + "_if"
         test = match_dict["test"]
         if test not in self.emedf_tests or return_type not in self.emedf_tests[test]:
             # Ignore (no end/restart test).
@@ -333,5 +387,8 @@ class AdvancedDecompiler:
             return
         args = match_dict["args"].removeprefix(", ")
         self.out_lines.append(f"{indent}if {test}({args}):")
-        self.out_lines.append(f"{indent}    return{' RESTART' if return_type == 'restart' else ''}")
+        self.out_lines.append(f"{indent}    return{' RESTART' if return_type == 'restart_if' else ''}")
         self.i += 1
+
+        # Add a blank line for clarity.
+        self.out_lines.append("")

@@ -18,14 +18,20 @@ __all__ = [
     "CLIENT_PLAYER_7",
     "CLIENT_PLAYER_8",
     "CLIENT_PLAYER_9",
+
+    # EMEVD enums
+    "ConditionGroup",
     "BaseEMEVDEnum",
     "AIStatusType",
+    "BannerType",
     "BitOperation",
     "ButtonType",
     "CharacterType",
     "CharacterUpdateRate",
     "ClassType",
     "ComparisonType",
+    "CoordEntityType",
+    "Covenant",
     "CutsceneFlags",
     "DamageTargetType",
     "EventReturnType",
@@ -34,8 +40,10 @@ __all__ = [
     "InterpolationState",
     "ItemType",
     "RangeState",
-    "CoordEntityType",
+    "TeamType",
+    "MultiplayerState",
     "NavmeshFlag",
+    "NPCPartType",
     "NumberButtons",
     "OnOffChange",
     "OnRestBehavior",
@@ -45,18 +53,67 @@ __all__ = [
     "TriggerAttribute",
     "WorldTendencyType",
     "UpdateAuthority",
+
+    # Other enums (not used by any EMEVD instructions)
+    "LOCAL_PLAYER",
+    "NET_PLAYER",
+    "MessageCategory",
+    "InfoMenuType",
+    "TalkAttribute",
+    "PlayerDeathType",
+    "SummonParamType",
+    "InvadeType",
     "CalculationType",
-    "ConditionGroup",
-    "Covenant",
-    "TeamType",
-    "BannerType",
-    "MultiplayerState",
-    "NPCPartType",
 ]
 
 from enum import IntEnum
 
 from soulstruct.base.events.enums import *
+
+
+class ConditionGroup(IntEnum):
+    OR_7 = -7
+    OR_6 = -6
+    OR_5 = -5
+    OR_4 = -4
+    OR_3 = -3
+    OR_2 = -2
+    OR_1 = -1
+    MAIN = 0
+    AND_1 = 1
+    AND_2 = 2
+    AND_3 = 3
+    AND_4 = 4
+    AND_5 = 5
+    AND_6 = 6
+    AND_7 = 7
+
+    def Await(self, condition: bool | int | ConditionGroup):
+        """For EVS intellisense. Handled internally.
+
+        Continually evaluate the given condition until it is true, then continue with the next instruction.
+
+        Only permitted for `MAIN`.
+        """
+        ...
+
+    def Add(self, condition: bool | int | ConditionGroup):
+        """For EVS intellisense. Handled internally.
+
+        Add a condition to this condition group for evaluation.
+        """
+        ...
+
+    # noinspection PyPropertyDefinition
+    @property
+    def LastResult(self) -> bool:
+        """For EVS intellisense. Handled internally.
+
+        Retrieve the result of this condition group from its last evaluation for use in a simple, instantaneous test.
+        If the group has never been evaluted, this will be False, except for `MAIN`, which is always True (but you have
+        no reason to call this on `MAIN`).
+        """
+        ...
 
 
 # Basic obvious booleans are omitted:
@@ -68,6 +125,25 @@ class AIStatusType(BaseEMEVDEnum):
     Caution = 1
     Search = 2
     Battle = 3
+
+
+class BannerType(BaseEMEVDEnum):
+    VictoryAchieved = 1
+    YouDied = 2
+    HumanityRestored = 3
+    SoulsRetrieved = 4
+    TargetDestroyed = 5
+    YouDiedPhantom = 6  # Phantom version of "YOU DIED"
+    BlackPhantomDestroyed = 7
+    AreaName = 8  # Name determined by current floor collision.
+    MagicRevival = 9
+    RingRevival = 10
+    RareRingRevival = 11
+    Congratulations = 12  # Bugged texture.
+    BonfireLit = 13
+    YouWin = 15
+    YouLose = 16
+    Draw = 17
 
 
 class BitOperation(BaseEMEVDEnum):
@@ -157,6 +233,31 @@ class ComparisonType(BaseNegatableEMEVDEnum):
             return "<="
 
 
+class CoordEntityType(BaseEMEVDEnum):
+    """Originally "Category", which was ambiguous. Used often to identify the type of an MSB part (or region).
+
+    Note that all MSB parts (Map Pieces, Collisions, Navmesh, etc.) technically have `translate` coordinates, but these
+    are the big three types/subtypes.
+    """
+    Object = 0
+    Region = 1
+    Character = 2
+
+
+class Covenant(BaseEMEVDEnum):
+    """Dark Souls covenant. Can be checked in EMEVD with `IfPlayerCovenant` instructions."""
+    NoCovenant = 0
+    WayOfWhite = 1
+    PrincessGuard = 2
+    WarriorOfSunlight = 3
+    Darkwraith = 4
+    PathOfTheDragon = 5
+    GravelordServant = 6
+    ForestHunter = 7
+    DarkmoonBlade = 8
+    ChaosServant = 9
+
+
 class CutsceneFlags(BaseEMEVDFlags):
     """Bit flags, stored in one byte."""
     Unskippable = 0b0000_0010  # 2
@@ -230,15 +331,18 @@ class RangeState(BaseNegatableEMEVDEnum):
         return super().negate()
 
 
-class CoordEntityType(BaseEMEVDEnum):
-    """Originally "Category", which was ambiguous. Used often to identify the type of an MSB part (or region).
-
-    Note that all MSB parts (Map Pieces, Collisions, Navmesh, etc.) technically have `translate` coordinates, but these
-    are the big three types/subtypes.
-    """
-    Object = 0
-    Region = 1
-    Character = 2
+class NPCPartType(BaseEMEVDEnum):
+    """Used in definining different behavior for parts of NPC models, e.g. tails that can be cut or Smough's invincible
+    hammer."""
+    Part1 = 1
+    Part2 = 2
+    Part3 = 3
+    Part4 = 4
+    Part5 = 5
+    Part6 = 6
+    WeakPoint = 7
+    Part7 = 8
+    Part8 = 9
 
 
 class NumberButtons(BaseEMEVDEnum):
@@ -295,6 +399,26 @@ class StatueType(BaseEMEVDEnum):
     Crystal = 1  # e.g. in Crystal Cave, from Seath crystals
 
 
+class TeamType(BaseEMEVDEnum):
+    Default = -1
+    NoTeam = 0
+    Human = 1
+    WhitePhantom = 2
+    BlackPhantom = 3
+    Hollow = 4
+    Vagrant = 5
+    Enemy = 6
+    Boss = 7
+    Ally = 8  # Targets no one, targeted by Enemy/Boss. (Not sure about HostileAlly.)
+    HostileAlly = 9  # Targets and targeted by everyone.
+    Decoy = 10
+    RedChild = 11  # Seems identical to Enemy.
+    FightingAlly = 12  # Targets Enemy/Boss, targeted by Enemy/Boss.
+    Intruder = 13  # Targets and targeted by Human/WhitePhantom/Hollow
+    Neutral = 14
+    Charm = 15  # Seems to target and hurt everyone, but can't be locked onto, and keeps attacking dead (Charm) enemies.
+
+
 class TriggerAttribute(BaseEMEVDFlags):
     """Bit flags that determine which categories of player are able to use a given action button trigger.
 
@@ -323,6 +447,24 @@ class WorldTendencyType(BaseEMEVDEnum):
 class UpdateAuthority(BaseEMEVDEnum):
     Normal = 0
     Forced = 4095
+
+
+class MultiplayerState(BaseNegatableEMEVDEnum):
+    Host = 0
+    Client = 1
+    Multiplayer = 2
+    Singleplayer = 3
+
+    def negate(self):
+        if self == MultiplayerState.Host:
+            return MultiplayerState.Client
+        elif self == MultiplayerState.Client:
+            return MultiplayerState.Host
+        elif self == MultiplayerState.Multiplayer:
+            return MultiplayerState.Singleplayer
+        elif self == MultiplayerState.Singleplayer:
+            return MultiplayerState.Multiplayer
+        return super().negate()
 
 
 # EXTRA ENUMS (unused in EMEVD)
@@ -418,121 +560,3 @@ class CalculationType(IntEnum):
     Multiply = 2
     Divide = 3
     Modulus = 4
-
-
-class ConditionGroup(IntEnum):
-    OR_7 = -7
-    OR_6 = -6
-    OR_5 = -5
-    OR_4 = -4
-    OR_3 = -3
-    OR_2 = -2
-    OR_1 = -1
-    MAIN = 0
-    AND_1 = 1
-    AND_2 = 2
-    AND_3 = 3
-    AND_4 = 4
-    AND_5 = 5
-    AND_6 = 6
-    AND_7 = 7
-
-    def Await(self, condition: bool | int | ConditionGroup):
-        """For EVS intellisense. Handled internally.
-
-        Continually evaluate the given condition until it is true, then continue with the next instruction.
-
-        Only permitted for `MAIN`.
-        """
-        ...
-
-    def Add(self, condition: bool | int | ConditionGroup):
-        """For EVS intellisense. Handled internally.
-
-        Add a condition to this condition group for evaluation.
-        """
-        ...
-
-    # noinspection PyPropertyDefinition
-    @property
-    def LastResult(self) -> bool:
-        """For EVS intellisense. Handled internally.
-
-        Retrieve the result of this condition group from its last evaluation for use in a simple, instantaneous test.
-        If the group has never been evaluted, this will be False, except for `MAIN`, which is always True (but you have
-        no reason to call this on `MAIN`).
-        """
-        ...
-
-
-class Covenant(IntEnum):
-    NoCovenant = 0
-    WayOfWhite = 1
-    PrincessGuard = 2
-    WarriorOfSunlight = 3
-    Darkwraith = 4
-    PathOfTheDragon = 5
-    GravelordServant = 6
-    ForestHunter = 7
-    DarkmoonBlade = 8
-    ChaosServant = 9
-
-
-class TeamType(IntEnum):
-    Default = -1
-    NoTeam = 0
-    Human = 1
-    WhitePhantom = 2
-    BlackPhantom = 3
-    Hollow = 4
-    Vagrant = 5
-    Enemy = 6
-    Boss = 7
-    Ally = 8  # Targets no one, targeted by Enemy/Boss. (Not sure about HostileAlly.)
-    HostileAlly = 9  # Targets and targeted by everyone.
-    Decoy = 10
-    RedChild = 11  # Seems identical to Enemy.
-    FightingAlly = 12  # Targets Enemy/Boss, targeted by Enemy/Boss.
-    Intruder = 13  # Targets and targeted by Human/WhitePhantom/Hollow
-    Neutral = 14
-    Charm = 15  # Seems to target and hurt everyone, but can't be locked onto, and keeps attacking dead (Charm) enemies.
-
-
-class BannerType(IntEnum):
-    VictoryAchieved = 1
-    YouDied = 2
-    HumanityRestored = 3
-    SoulsRetrieved = 4
-    TargetDestroyed = 5
-    YouDiedPhantom = 6  # Phantom version of "YOU DIED"
-    BlackPhantomDestroyed = 7
-    AreaName = 8  # Name determined by current floor collision.
-    MagicRevival = 9
-    RingRevival = 10
-    RareRingRevival = 11
-    Congratulations = 12  # Bugged texture.
-    BonfireLit = 13
-    YouWin = 15
-    YouLose = 16
-    Draw = 17
-
-
-class MultiplayerState(IntEnum):
-    Host = 0
-    Client = 1
-    Multiplayer = 2
-    Singleplayer = 3
-
-
-class NPCPartType(IntEnum):
-    """Used in definining different behavior for parts of NPC models, e.g. tails that can be cut or Smough's invincible
-    hammer."""
-    Part1 = 1
-    Part2 = 2
-    Part3 = 3
-    Part4 = 4
-    Part5 = 5
-    Part6 = 6
-    WeakPoint = 7
-    Part7 = 8
-    Part8 = 9

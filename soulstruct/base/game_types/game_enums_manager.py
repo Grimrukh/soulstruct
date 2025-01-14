@@ -102,14 +102,19 @@ class GameEnumsManager(abc.ABC):
     # enum is not found there, the other modules will be checked; if found THERE, only the used enum names will be
     # imported into EVS from that non-star module.
     enums: dict[str, dict[GAME_INT_TYPE, dict[int, GameEnumInfo]]]
-    all_event_ids: list[int]
-    all_common_event_ids: list[int]
+
+    # Maps event IDs defined in one event script to their alias (from `Flag` enums), which defaults to `str(event_id)`.
+    # These are not related to enum checkout, but instructions do need to see them to know if `RunEvent()` can be
+    # replaced with a direct function call.
+    all_event_ids: dict[int, str]
+    # As above, but for common events that can be imported/templated from another file.
+    all_common_event_ids: dict[int, str]
 
     # Added whenever `checkout_enum()` has a hit. Can be manually cleared and monitored by caller.
     used_enums: list[GameEnumInfo]
     star_import_module_names: list[str]
 
-    def __init__(self, module_paths: tp.Sequence[str | Path], all_event_ids: list[int] = None):
+    def __init__(self, module_paths: tp.Sequence[str | Path]):
         """Loads modules and monitors non-star enum usage for `EMEVD.to_evs()`.
 
         Parses all given `module_paths` and builds nested dictionary mapping module stems to game types to enum values.
@@ -126,8 +131,8 @@ class GameEnumsManager(abc.ABC):
         """
         self.modules = {Path(path).name.split(".")[0]: import_arbitrary_module(path) for path in module_paths}
         self.enums = {module_stem: {} for module_stem in self.modules}
-        self.all_event_ids = all_event_ids or []
-        self.all_common_event_ids = []  # added separately
+        self.all_event_ids = {}
+        self.all_common_event_ids = {}  # added separately
 
         # For generating final import statements.
         # TODO: Move to EVS decompiler process. Just track all enums checked out and their 'module_name' attributes.
@@ -147,6 +152,16 @@ class GameEnumsManager(abc.ABC):
 
         if self.modules:
             self.refresh_enums()
+
+    def add_event_id(self, event_id: int, is_common=False):
+        try:
+            alias = self.check_out_enum_variable(event_id, Flag)
+        except self.EnumManagerError:
+            alias = str(event_id)
+        if is_common:
+            # TODO: Should only be able to check out enums from `common`.
+            self.all_common_event_ids[event_id] = alias
+        self.all_event_ids[event_id] = alias
 
     def refresh_enums(self):
         """Completely regenerate `enums` dictionary from all registered modules."""

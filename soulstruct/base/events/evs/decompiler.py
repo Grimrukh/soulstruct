@@ -301,15 +301,22 @@ def base_decompile_run_event(
     slot: int, event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: GameEnumsManager = None
 ):
     """Shared across all games."""
+
+    if event_id in enums_manager.all_event_ids:
+        alias = enums_manager.all_event_ids[event_id].split(".")[-1].lstrip("_")
+        func_name = f"Event_{alias}"
+    else:
+        func_name = None
+
     if not opt_args and first_arg == 0:
         # `args` and `arg_types` not needed.
         # NOTE: Some Bloodborne events use non-zero slots for events without optional arguments.
         if slot != 0:
-            if event_id in enums_manager.all_event_ids:
-                return f"Event_{event_id}({slot=})"
+            if func_name is not None:
+                return f"{func_name}({slot=})"
             return f"RunEvent({event_id}, {slot=})"
-        if event_id in enums_manager.all_event_ids:
-            return f"Event_{event_id}()"
+        if func_name is not None:
+            return f"{func_name}()"
 
     # TODO: Surely there's more processing to do here, a la `_process_arg_types`.
     opt_args = [Variable(opt_arg) if isinstance(opt_arg, str) else opt_arg for opt_arg in opt_args]
@@ -340,10 +347,11 @@ def base_decompile_run_event(
                     pass  # do nothing
         event_args = tuple(new_args)
 
-    if event_id in enums_manager.all_event_ids:
+    if func_name is not None:
         # Arg types are given in event definition and are not needed in this call.
         # TODO: Support multiline.
-        return f"Event_{event_id}({slot}, {', '.join(repr(e) for e in event_args)})"
+        args = ", ".join(repr(e) for e in event_args)  # unpack tuple
+        return f"{func_name}({slot}, {args})"
 
     if not arg_types or not arg_types.strip("i"):
         # No arg types, or all signed integers (default). "arg_types" keyword omitted.
@@ -363,17 +371,17 @@ def base_decompile_run_common_event(
         # `args` and `arg_types` not needed. (Yes, there are common events called without arguments.)
         if slot is None or slot == 0:
             if event_id in enums_manager.all_common_event_ids:
-                return f"CommonFunc_{event_id}()"  # default slot
+                return f"CommonFunc_{enums_manager.all_common_event_ids[event_id]}()"  # default slot
             elif event_id in enums_manager.all_event_ids:
                 # Happens sometimes: local event is run as a 'common' event. We accept the function itself as a first
                 # argument in this case for easier code navigation.
-                return f"RunCommonEvent(Event_{event_id})"
+                return f"RunCommonEvent(Event_{enums_manager.all_event_ids[event_id]})"
             return f"RunCommonEvent({event_id})"  # default slot
         if event_id in enums_manager.all_common_event_ids:
-            return f"CommonFunc_{event_id}({slot=})"
+            return f"CommonFunc_{enums_manager.all_common_event_ids[event_id]}({slot=})"
         elif event_id in enums_manager.all_event_ids:
             # See above. We allow the function as a first argument rather than the ID.
-            return f"RunCommonEvent(Event_{event_id}, {slot=})"
+            return f"RunCommonEvent(Event_{enums_manager.all_event_ids[event_id]}, {slot=})"
         return f"RunCommonEvent({event_id}, {slot=})"
 
     event_args = (first_arg, *opt_args)
@@ -405,9 +413,10 @@ def base_decompile_run_common_event(
     if event_id in enums_manager.all_common_event_ids:
         # Arg types are given in event definition and are not needed in this call.
         # NOTE: Even if `slot` is None, slot 0 is written for function signature match.
+        args = ", ".join(repr(e) for e in event_args)  # unpack tuple
         if slot is None:
-            return f"CommonFunc_{event_id}(0, {', '.join(repr(e) for e in event_args)})"
-        return f"CommonFunc_{event_id}({slot}, {', '.join(repr(e) for e in event_args)})"
+            return f"CommonFunc_{enums_manager.all_common_event_ids[event_id]}(0, {args})"
+        return f"CommonFunc_{event_id}({slot}, {args})"
 
     if not arg_types or not arg_types.strip("i"):
         # No arg types, or all signed integers (default). "arg_types" keyword omitted.

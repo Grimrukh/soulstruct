@@ -36,7 +36,7 @@ EVS_ARG_TYPES = {
 _SPECIAL_EVENT_NAMES = {
     0: "Constructor",
     50: "Preconstructor",
-    # TODO: Extra one in Elden Ring? 200?
+    # TODO: Extra one in Elden Ring? 200? 'Postconstructor'?
 }
 
 _INSTRUCTION_RE = re.compile(r" *(\w+)\((.*)\)")  # groups = (instruction_name, args)
@@ -440,16 +440,28 @@ class Event(abc.ABC):
         function_prefix="Event",
     ) -> str:
         """Convert ('decompile') single event script to EVS."""
-        function_name = _SPECIAL_EVENT_NAMES.get(self.event_id, f"{function_prefix}_{self.event_id}")
-        function_docstring = f'"""{function_prefix} {self.event_id}"""'
+
+        # Preference for naming: special event name (e.g. Constructor), 'Event_{flag_enum_name}', or 'Event_{event_id}'.
+        event_flag_enum = None
+        if self.event_id in _SPECIAL_EVENT_NAMES:
+            function_name = _SPECIAL_EVENT_NAMES[self.event_id]
+        else:
+            try:
+                event_flag_enum = enums_manager.check_out_enum_variable(self.event_id, Flag)
+            except enums_manager.EnumManagerError:
+                function_name = f"{function_prefix}_{self.event_id}"
+            else:
+                just_enum_name = event_flag_enum.split(".")[-1].lstrip("_")
+                function_name = f"{function_prefix}_{just_enum_name}"
+
+        function_docstring = f'"""Event {self.event_id}"""'
         # starts with an empty '_' slot arg, if any other args exist
         self.process_all_event_arg_replacements()
         self.update_signature()
 
-        try:
-            event_flag_enum = enums_manager.check_out_enum_variable(self.event_id, Flag)
+        if event_flag_enum is not None:
             on_rest_behavior_decorator = f"@{OnRestBehavior(self.on_rest_behavior).name}({event_flag_enum})\n"
-        except enums_manager.EnumManagerError:
+        else:
             on_rest_behavior_decorator = f"@{OnRestBehavior(self.on_rest_behavior).name}({self.event_id})\n"
 
         function_def = _indent_and_wrap_function_def(

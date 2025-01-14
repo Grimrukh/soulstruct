@@ -1300,17 +1300,17 @@ class EVSParser(abc.ABC):
         if skip_lines > 0:
             if condition is not None or end_event or restart_event:
                 raise ValueError("You cannot use more than one of: condition, skip_lines, end_event, restart_event.")
-            if "skip" not in tests:
+            if "skip_if" not in tests:
                 raise NoSkipOrReturnError
             if negate:
-                if "skip_not" in tests:
-                    instr_name = tests["skip_not"]
+                if "skip_if_not" in tests:
+                    instr_name = tests["skip_if_not"]
                 else:
                     raise EVSError(
                         node, f"Cannot support `not` keyword with SkipLines-based test function '{test_name}'."
                     )
             else:
-                instr_name = tests["skip"]
+                instr_name = tests["skip_if"]
             # `line_count` is always the first positional argument.
             instruction_lines = self._compile_instr(node, instr_name, skip_lines, *args, **kwargs)
         elif skip_lines < 0:
@@ -1334,38 +1334,38 @@ class EVSParser(abc.ABC):
         if end_event:
             if restart_event:
                 raise ValueError("You cannot use more than one of: condition, skip_lines, end_event, restart_event.")
-            if "end" not in tests:
+            if "end_if" not in tests:
                 raise NoSkipOrReturnError
             if negate:
-                if "end_not" in tests:
-                    instr_name = tests["end_not"]
+                if "end_if_not" in tests:
+                    instr_name = tests["end_if_not"]
                 else:
                     raise EVSError(
                         node, f"Cannot support `not` keyword with End-based test function '{test_name}'."
                     )
             else:
-                instr_name = tests["end"]
+                instr_name = tests["end_if"]
             instruction_lines = self._compile_instr(node, instr_name, *args, **kwargs)
 
         if restart_event:
-            if "restart" not in tests:
+            if "restart_if" not in tests:
                 raise NoSkipOrReturnError
             if negate:
-                if "restart_not" in tests:
-                    instr_name = tests["restart_not"]
+                if "restart_if_not" in tests:
+                    instr_name = tests["restart_if_not"]
                 else:
                     raise EVSError(
                         node, f"Cannot yet support `not` keyword with Restart-based test function '{test_name}'."
                     )
             else:
-                instr_name = tests["restart"]
+                instr_name = tests["restart_if"]
             instruction_lines = self._compile_instr(node, instr_name, *args, **kwargs)
 
         if instruction_lines:
             instruction_lines[0] += event_layers
             return instruction_lines
 
-        raise ValueError("Must specify one condition outcome (condition, skip, end, restart).")
+        raise ValueError("Must specify one condition outcome (condition, skip_lines, end_event, restart_event).")
 
     # ~~~~~~~~~~~~~~~~~~~~
     #  ASSIGNMENT METHODS: These create global/local objects, including Conditions, from assignment nodes.

@@ -7,6 +7,7 @@ __all__ = [
 
 import logging
 import re
+import typing as tp
 from pathlib import Path
 
 from soulstruct.base.game_types.map_types import MapEntity
@@ -43,6 +44,7 @@ class EnumModuleGenerator:
         separate_region_points_volumes: bool = False,
         sort_by_id=False,
         use_entity_id_ranges=True,
+        comment_func: tp.Callable[[str, str], str] | None = None
     ):
         """Generates a '{mXX_YY}_enums.py' file with entity IDs for import into EVS scripts.
 
@@ -51,6 +53,9 @@ class EnumModuleGenerator:
         If `separate_region_points_volumes` is True, separate enums called `RegionPoints` and `RegionVolumes` (both
         inheriting from `Region`) will be created for `Region` entities based on their shape. This is useful for clearer
         arguments for EMEVD instructions like `IsInsideRegion`, so you're less likely to use shapeless Points.
+
+        If `comment_func` is given, it should be a function that takes the enum class name (e.g. `Character`) and the
+        MSB entity name (e.g. `c0000_0001`) and return an optional string to be appended to the enum line as a comment.
         """
         if use_entity_id_ranges:
             if not (match := MAP_NAME_RE.match(self.map_stem)):
@@ -109,6 +114,13 @@ class EnumModuleGenerator:
 
         for subtype_name, subtype_game_type in self.msb.ENTITY_GAME_TYPES.items():
 
+            if comment_func:
+                def subtype_comment_func(name: str) -> str:
+                    return comment_func(subtype_game_type.__name__, name)
+
+            else:
+                subtype_comment_func = None
+
             if separate_region_points_volumes and subtype_name == "regions":
                 # Two subtypes: `RegionPoints` and `RegionVolumes`.
 
@@ -123,7 +135,9 @@ class EnumModuleGenerator:
                     filtered_regions = IDList([region for region in self.msb.get_regions() if region_predicate(region)])
 
                     if filtered_regions:
-                        class_contents = self._get_enum_class_contents(filtered_regions, sort_by_id)
+                        class_contents = self._get_enum_class_contents(
+                            filtered_regions, sort_by_id, subtype_comment_func
+                        )
                         if class_contents:
                             class_def = self._get_enum_class_def(class_name, subtype_game_type, auto_map_base_id)
                             module_text += "\n" + class_def + class_contents
@@ -133,7 +147,7 @@ class EnumModuleGenerator:
                 class_name = subtype_game_type.get_msb_entry_supertype_subtype(pluralized_subtype=True)[1]
                 subtype_list = getattr(self.msb, subtype_name)  # type: MSBEntryList
                 if subtype_list:
-                    class_contents = self._get_enum_class_contents(subtype_list, sort_by_id)
+                    class_contents = self._get_enum_class_contents(subtype_list, sort_by_id, subtype_comment_func)
                     # If no entries in the list have entity IDs, `class_contents` will be empty.
                     if class_contents:
                         class_def = self._get_enum_class_def(class_name, subtype_game_type, auto_map_base_id)
@@ -144,7 +158,12 @@ class EnumModuleGenerator:
         with output_module_path.open("w", encoding="utf-8") as f:
             f.write(module_text)
 
-    def _get_enum_class_contents(self, entry_list: IDList[MSBEntry], sort_by_id: bool) -> str:
+    def _get_enum_class_contents(
+        self,
+        entry_list: IDList[MSBEntry],
+        sort_by_id: bool,
+        comment_func: tp.Callable[[str], str] | None = None,
+    ) -> str:
         """Iterate over all MSB entries in the given list and return a string of definitions for an enum class.
 
         `entry_list` does not have to be a real `MSBEntryList`; just an `IDList[MSBEntry]`.
@@ -154,6 +173,9 @@ class EnumModuleGenerator:
         # entity_id_dict = {
         #     k: v for k, v in sorted(entity_id_dict.items(), key=self._sort_key)
         # }
+
+        if not entity_id_dict:
+            return ""
 
         class_lines = []
         last_is_non_ascii = False
@@ -166,18 +188,21 @@ class EnumModuleGenerator:
                     class_lines.append("# TODO: Non-ASCII name characters.")
                     last_is_non_ascii = True
                 class_lines.append(f"# {entry.name} = {entity_id}")  # invalid name commented out
+                name = entry.name
             else:
                 last_is_non_ascii = False
                 if not PY_NAME_RE.match(name):
                     class_lines.append(f"# TODO: Invalid Python variable name.")
                     class_lines.append(f"# {entry.name} = {entity_id}")  # invalid name commented out
                 else:
+                    # Best outcome: an MSB entry name that can be used as a Python variable name.
                     class_lines.append(f"{name} = {entity_id}")
             if entry.description:
                 class_lines[-1] += f"  # {entry.description}"
-
-        if not class_lines:
-            return ""
+            if comment_func:
+                comment = comment_func(name)
+                if comment:
+                    class_lines[-1] += f"  # {comment}"
 
         return "    " + "\n    ".join(class_lines)
 

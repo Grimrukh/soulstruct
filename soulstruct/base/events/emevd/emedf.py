@@ -17,6 +17,7 @@ __all__ = [
 ]
 
 import typing as tp
+from collections import defaultdict
 from enum import IntEnum
 from pathlib import Path
 
@@ -153,41 +154,65 @@ def add_common_emedf_info(emedf: EMEDF_TYPING, common_emedf_path: Path | str):
 
 
 def build_emedf_aliases_tests(emedf: EMEDF_TYPING) -> tuple[dict, dict, dict]:
-    """Retrieve instruction information by EVS instruction alias name (or partial name) and build test dictionary."""
+    """Retrieve instruction information by EVS instruction alias name (or partial name) and build test dictionary.
+
+    Returns three dictionaries:
+        - `emedf_aliases`: maps alias names to instruction information dictionaries.
+        - `emedf_tests`: maps test names to instructions for these keys, when they exist:
+            - "if": If{Test} instruction.
+            - "skip_if": SkipLinesIf{Test} instruction.
+            - "skip_if_not": SkipLinesIf{NotTest} instruction with negated test (e.g. 'EnabledFlag' -> 'DisabledFlag').
+            - "end_if": EndIf{Test} instruction.
+            - "restart_if": RestartIf{Test} instruction.
+        - `emedf_comparison_tests`: maps comparison test names to dictionaries with "test_name" and "return_type" keys.
+
+    NOTE: In practice, the values of the test instructions are predictable from their keys (e.g. test `FlagEnabled` key
+    "skip_if" will be `SkipLinesIfFlagEnabled`). But we may as well assign the names rather than just existence bools.
+    """
     emedf_aliases = {v["alias"]: (category, index, v) for (category, index), v in emedf.items()}
-    emedf_tests = {}
+    emedf_tests = defaultdict(dict)
     emedf_comparison_tests = {}
     for (category, index), v in emedf.items():
-        partials = v.get("partials", {})
 
+        alias = v["alias"]
+        partials = v.get("partials", {})
         for partial_name in partials:
             emedf_aliases[partial_name] = (category, index, v)
 
-        if v["alias"].endswith("IfConditionState") or v["alias"].endswith("IfLastConditionResultState"):
+        if alias.endswith("IfConditionState") or alias.endswith("IfLastConditionResultState"):
             continue  # condition tests are handled with `Condition` EVS object and `ConditionGroup` enum
 
-        if v["alias"].startswith("If") and not v["alias"].startswith("If_Unknown"):
+        if alias.startswith("If") and not alias.startswith("If_Unknown"):
 
             # TODO: Need to detect negated versions and add to 'if_not', 'skip_not', 'end_not', 'restart_not'...
 
-            test_name = v["alias"].removeprefix("If")
-            emedf_tests.setdefault(test_name, {})["if"] = v["alias"]
+            test_name = alias.removeprefix("If")
+            emedf_tests[test_name]["if"] = alias
 
             for partial_name in partials:
                 test_name = partial_name.removeprefix("If")
-                emedf_tests.setdefault(test_name, {})["if"] = partial_name
+                emedf_tests[test_name]["if"] = partial_name
 
-            if v["alias"].endswith("Comparison") and "comparison_type" in v["args"] and "value" in v["args"]:
-                comparator_test_name = v["alias"].removeprefix("If").removesuffix("Comparison")  # e.g., `HealthRatio`
+            # Comparison tests are also added to a third specific dictionary.
+            if alias.endswith("Comparison") and "comparison_type" in v["args"] and "value" in v["args"]:
+                comparator_test_name = alias.removeprefix("If").removesuffix("Comparison")  # e.g., `HealthRatio`
                 emedf_comparison_tests[comparator_test_name] = {
-                    "test_name": v["alias"].removeprefix("If"),  # test defined above, e.g., `HealthComparison()`.
+                    "test_name": alias.removeprefix("If"),  # test defined above, e.g., `HealthComparison()`.
                     "return_type": v["args"]["value"]["type"],
                 }
 
-        elif v["alias"].startswith("SkipLinesIf"):
-            # Base "SkipLinesIf" instructions cannot be systematically negated, and so do not have "skip" tests.
+        elif alias.startswith("SkipLinesIf"):
+
             for partial_name, partial_kwargs in partials.items():
+
                 test_name = partial_name.removeprefix("SkipLinesIf")
+
+                # Add "skip_if" test:
+                emedf_tests[test_name]["skip_if"] = partial_name
+
+                # Search for and add "skip_if_not" test, which in practice is more useful than "skip_if" as it
+                # corresponds to `if {test}:` in higher-level code.
+
                 boolean_kwargs = [
                     (kw, kw_v) for kw, kw_v in partial_kwargs.items()
                     if isinstance(kw_v, (bool, BaseNegatableEMEVDEnum))
@@ -198,28 +223,31 @@ def build_emedf_aliases_tests(emedf: EMEDF_TYPING) -> tuple[dict, dict, dict]:
                         try:
                             negated_value = bool_value.negate()
                         except ValueError:
-                            continue
+                            continue  # not all enum values necessarily have negations
                     else:
                         negated_value = not bool_value
                     negated_kwargs = partial_kwargs.copy() | {bool_name: negated_value}
 
                     for check_partial_name, check_partial_kwargs in partials.items():
                         if check_partial_kwargs == negated_kwargs:
-                            emedf_tests.setdefault(test_name, {})["skip"] = check_partial_name
-        elif v["alias"].startswith("ReturnIf"):
+                            emedf_tests[test_name]["skip_if_not"] = check_partial_name
+                            break
+
+        elif alias.startswith("ReturnIf"):
             # Base "ReturnIf" instructions do not need to be tests here. They always have partials.
             for partial_name in partials:
                 if partial_name.startswith("EndIf"):
                     test_name = partial_name.removeprefix("EndIf")
-                    emedf_tests.setdefault(test_name, {})["end"] = partial_name
+                    emedf_tests[test_name]["end_if"] = partial_name
                 elif partial_name.startswith("RestartIf"):
                     test_name = partial_name.removeprefix("RestartIf")
-                    emedf_tests.setdefault(test_name, {})["restart"] = partial_name
-        elif v["alias"].startswith("GotoIf"):
+                    emedf_tests[test_name]["restart_if"] = partial_name
+
+        elif alias.startswith("GotoIf"):
             # TODO: Should probably implement tests for base instructions here.
             for partial_name in partials:
                 test_name = partial_name.removeprefix("GotoIf")
-                emedf_tests.setdefault(test_name, {})["goto"] = partial_name
+                emedf_tests[test_name]["goto"] = partial_name
 
     tests_to_remove = [name for name, info in emedf_tests.items() if "if" not in info]
     for test_name in tests_to_remove:
