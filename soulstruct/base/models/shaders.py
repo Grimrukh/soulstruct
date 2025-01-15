@@ -367,3 +367,7 @@ class MatDef(abc.ABC):
             for sampler in self.samplers
             if (match := pattern.match(sampler.alias if match_alias else sampler.name))
         ]
+
+    @property
+    def stem(self) -> str:
+        return Path(self.name).stem if self.name else ""

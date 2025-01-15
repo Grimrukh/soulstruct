@@ -125,6 +125,12 @@ class MatDef(_BaseMatDef):
         "A19_Snow[L]",  # FRPG_Snow_Lit
     }
 
+    # Some older materials have a second albedo texture ('g_Diffuse_2') that still uses UV layer 0.
+    HAS_DUPLICATE_ALBEDO_STEMS: tp.ClassVar[set[str]] = {
+        "Cs_ShadowMan_skin",
+        "Cs_Ghost_Param_Wander",
+    }
+
     # TODO: Some shaders simply don't use the always-empty 'g_DetailBumpmap', but I can find no reliable way to detect
     #  this from their MTD names alone. I may have to guess that they do unless the MTD file is provided.
 
@@ -137,15 +143,16 @@ class MatDef(_BaseMatDef):
     def from_mtd(cls, mtd: MTD):
         matdef = super(MatDef, cls).from_mtd(mtd)
 
-        # Special known case of an unused UV layer, which we mark to stop layouts from including a second UV slot.
-        if matdef.name == "Cs_ShadowMan_skin.mtd":
-            unused_sampler = matdef.get_sampler_with_alias("Main 1 Albedo")
-            if unused_sampler is None:
+        # Special known cases of a reused albedo UV layer, which we redirect to the first albedo UV.
+        if matdef.stem in cls.HAS_DUPLICATE_ALBEDO_STEMS:
+            main_0_sampler = matdef.get_sampler_with_alias("Main 0 Albedo")
+            main_1_sampler = matdef.get_sampler_with_alias("Main 1 Albedo")
+            if main_1_sampler is None:
                 _LOGGER.warning(
-                    f"MatDef '{matdef.name}' does not have expected 'Main 1 Albedo' sampler with unused UV layer."
+                    f"MatDef '{matdef.name}' does not have expected 'Main 1 Albedo' sampler."
                 )
             else:
-                unused_sampler.is_uv_unused = True
+                main_1_sampler.uv_layer = main_0_sampler.uv_layer
 
         return matdef
 

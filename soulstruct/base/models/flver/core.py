@@ -167,8 +167,8 @@ class FLVER(GameFile):
         except ValueError:
             raise ValueError(f"Unrecognized FLVER version: {version_int}. Cannot read it.")
         if version <= 0xFFFF:
-            return cls.from_flver0_reader(reader)
-        return cls.from_flver2_reader(reader)
+            return cls._from_flver0_reader(reader)
+        return cls._from_flver2_reader(reader)
 
     @classmethod
     def from_path(cls, path: str | Path) -> tp.Self:
@@ -203,7 +203,7 @@ class FLVER(GameFile):
         return [cls.from_bytes(binder[entry_id_or_name]) for entry_id_or_name in entry_ids_or_names]
 
     @classmethod
-    def from_flver0_reader(cls, reader: BinaryReader) -> tp.Self:
+    def _from_flver0_reader(cls, reader: BinaryReader) -> tp.Self:
         """Much simpler than `FLVER` with all the missing elements.
 
         However, note that layouts are packed inside materials. Each mesh indexes a materia, each vertex array
@@ -272,7 +272,7 @@ class FLVER(GameFile):
         )
 
     @classmethod
-    def from_flver2_reader(cls, reader: BinaryReader) -> tp.Self:
+    def _from_flver2_reader(cls, reader: BinaryReader) -> tp.Self:
         byte_order = ByteOrder.from_reader_peek(reader, 2, 6, b"B\0", b"L\0")
         reader.byte_order = byte_order  # applies to all FLVER structs (manually passed to `VertexArray`)
         header = cls.STRUCT2.from_bytes(reader)
@@ -414,7 +414,6 @@ class FLVER(GameFile):
 
         header = self.STRUCT0.from_object(
             self,
-            byte_order=byte_order,
             endian=b"B\0" if self.big_endian else b"L\0",
             vertex_data_offset=RESERVED,
             vertex_data_size=RESERVED,
@@ -428,7 +427,7 @@ class FLVER(GameFile):
             vertex_index_bit_size=vertex_index_bit_size,
         )
 
-        writer = header.to_writer(reserve_obj=self)
+        writer = header.to_writer(reserve_obj=self, byte_order=byte_order)
 
         for dummy in self.dummies:
             dummy.to_flver_writer(writer, self.version)
