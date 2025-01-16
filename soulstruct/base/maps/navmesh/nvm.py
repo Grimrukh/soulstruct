@@ -235,7 +235,9 @@ class NVM(GameFile):
         elif endian_one == b"\x00\x00\x00\x01":
             reader.byte_order = ByteOrder.BigEndian
         else:
-            raise ValueError(f"Could not determine byte order from first four bytes (value 0x1) of NVM: {endian_one}")
+            raise ValueError(
+                f"Could not determine byte order from first four bytes (expected value == 1) of NVM: {endian_one}"
+            )
 
         header = cls.NVMHeaderStruct.from_bytes(reader)
         expected_triangles_offset = 0x80 + header.vertices_count * 0xC

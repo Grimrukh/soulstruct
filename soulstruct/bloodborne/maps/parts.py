@@ -495,14 +495,17 @@ class MSBCollision(MSBPart):
 
 
 # Still slightly awkward to get dataclasses, properties, and `__init__` to interact well. This is the workaround.
+# noinspection PyTypeChecker
 MSBCollision.force_place_name_banner = property(
     lambda self: self.get_force_place_name_banner(),
     lambda self, value: self.set_force_place_name_banner(value),
 )
+# noinspection PyTypeChecker
 MSBCollision.stable_footing_flag = property(
     lambda self: self.get_stable_footing_flag(),
     lambda self, value: self.set_stable_footing_flag(value),
 )
+# noinspection PyTypeChecker
 MSBCollision.play_region_id = property(
     lambda self: self.get_play_region_id(),
     lambda self, value: self.set_play_region_id(value),

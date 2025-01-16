@@ -27,9 +27,9 @@ class MatDef(_BaseMatDef):
         UVTexture0 = 0
         UVTexture1 = 1
         UVLightmap = 2
-        UVWindDataIvy = 3  # used by Ivy (only two unique values)
-        UVWindDataMain = 4  # used by both Foliage and Ivy
-        UVWindDataEmpty = 5  # used by both Foliage and Ivy, always seems to be zeroed
+        UVData_WindIvy = 3  # used by Ivy (only two unique values)
+        UVData_WindMain = 4  # used by both Foliage and Ivy
+        UVData_WindEmpty = 5  # used by both Foliage and Ivy, always seems to be zeroed
 
     SAMPLER_ALIASES: tp.ClassVar[dict[str, str]] = {
         "g_Diffuse": "Main 0 Albedo",
@@ -63,8 +63,8 @@ class MatDef(_BaseMatDef):
     }
 
     EXTRA_SHADER_UV_LAYERS: tp.ClassVar[dict[str, list[UVLayer]]] = {
-        "Foliage": [UVLayer.UVWindDataMain, UVLayer.UVWindDataEmpty],
-        "Ivy": [UVLayer.UVWindDataIvy, UVLayer.UVWindDataMain, UVLayer.UVWindDataEmpty],
+        "Foliage": [UVLayer.UVData_WindMain, UVLayer.UVData_WindEmpty],
+        "Ivy": [UVLayer.UVData_WindIvy, UVLayer.UVData_WindMain, UVLayer.UVData_WindEmpty],
     }
 
     KNOWN_SHADER_MTD_STEMS: tp.ClassVar[dict[str, list[str | re.Pattern]]] = {
@@ -129,6 +129,7 @@ class MatDef(_BaseMatDef):
     HAS_DUPLICATE_ALBEDO_STEMS: tp.ClassVar[set[str]] = {
         "Cs_ShadowMan_skin",
         "Cs_Ghost_Param_Wander",
+        "Ps_Wander_Ghost",
     }
 
     # TODO: Some shaders simply don't use the always-empty 'g_DetailBumpmap', but I can find no reliable way to detect
@@ -209,7 +210,7 @@ class MatDef(_BaseMatDef):
 
         return VertexArrayLayout(data_types, byte_order=ByteOrder.BigEndian)
 
-    def get_character_layout(self) -> VertexArrayLayout:
+    def get_non_map_piece_layout(self) -> VertexArrayLayout:
         """Get a standard vertex array layout for character (and probably object) materials in DeS."""
         data_types = [
             VertexPosition(VertexDataFormatEnum.Float3, 0),

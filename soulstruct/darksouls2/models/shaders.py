@@ -26,7 +26,7 @@ class MatDef(_BaseMatDef):
         UVTexture1 = 1
         UVBloodMaskOrLightmap = 2  # lightmap ('DOLTexture') for Map Pieces, blood mask for characters
         UVBlendMask = 3
-        UVWindDataMain = 4
+        UVData_WindMain = 4
         # TODO: other data UVs?
 
     SAMPLER_ALIASES: tp.ClassVar[dict[str, str]] = {
@@ -72,7 +72,7 @@ class MatDef(_BaseMatDef):
     }
 
     EXTRA_SHADER_UV_LAYERS: tp.ClassVar[dict[str, list[UVLayer]]] = {
-        # "Grass": [UVLayer.UVWindDataMain],
+        # "Grass": [UVLayer.UVData_WindMain],
     }
 
     KNOWN_SHADER_STEMS: tp.ClassVar[dict[str, list[str | re.Pattern]]] = {
@@ -160,7 +160,7 @@ class MatDef(_BaseMatDef):
 
         return VertexArrayLayout(data_types)
 
-    def get_character_layout(self) -> VertexArrayLayout:
+    def get_non_map_piece_layout(self) -> VertexArrayLayout:
         """Get a standard vertex array layout for character (and probably object) materials in DS2.
 
         NOTE: Every material seems to use two colors.
