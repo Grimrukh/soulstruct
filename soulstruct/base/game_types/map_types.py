@@ -63,90 +63,86 @@ __all__ = [
 ]
 
 import typing as tp
+from dataclasses import dataclass
 from enum import unique
 
 from .basic_types import GameObject, GameObjectInt
 
 
+@dataclass(slots=True)
 class Map(GameObject):
-    """Represents a game map with associated naming information. Used as an argument in EVS instructions."""
+    """Represents a game map with associated naming information. Used as an argument in EVS instructions.
 
-    def __init__(
-        self,
-        area_id: tp.Optional[int],
-        block_id: tp.Optional[int],
-        cc_id: tp.Optional[int] = 0,
-        dd_id: tp.Optional[int] = 0,
-        name=None,
-        emevd_file_stem=None,
-        msb_file_stem=None,
-        ai_file_stem=None,
-        esd_file_stem=None,
-        ffxbnd_file_name=None,
-        variable_name=None,
-        verbose_name=None,
-    ):
-        """
-        Create a game map instance with associated naming information. These instances can be used as arguments in EVS
-        instructions.
+    Soulstruct defines constants for existing game maps already, so you shouldn't need to use this class yourself.
+    (You can theoretically use transient `Map(a, b)` calls as arguments in EVS instructions, but you may as well
+    just use a tuple `(a, b)` in that case, which is also accepted.)
 
-        Soulstruct defines constants for existing game maps already, so you shouldn't need to use this class yourself.
-        (You can theoretically use transient `Map(a, b)` calls as arguments in EVS instructions, but you may as well
-        just use a tuple `(a, b)` in that case, which is also accepted.)
+    Args:
+        area_id: Area ID of map, which is the first number (of four) in the full map ID. Multiple maps can appear in
+            the same area. Some game files (such as lighting parameters) are area-specific rather than map-specific.
+        block_id: Block ID of map, which is the second number (of four) in the full map ID. Generally, the area ID
+            and block ID fully specify the map. The third number in the map ID is essentially never used and the
+            fourth number is only used for file revision purposes (e.g. the Dark Souls DLC version of Darkroot).
+        cc_id: Third part of map ID, used only in later games with lots of maps.
+        dd_id: Fourth and final part of map ID, used only in later games with lots of maps.
 
-        Args:
-            area_id: Area ID of map, which is the first number (of four) in the full map ID. Multiple maps can appear in
-                the same area. Some game files (such as lighting parameters) are area-specific rather than map-specific.
-            block_id: Block ID of map, which is the second number (of four) in the full map ID. Generally, the area ID
-                and block ID fully specify the map. The third number in the map ID is essentially never used and the
-                fourth number is only used for file revision purposes (e.g. the Dark Souls DLC version of Darkroot).
-            cc_id: Third part of map ID, used only in later games with lots of maps.
-            dd_id: Fourth and final part of map ID, used only in later games with lots of maps.
+        name: Canonical name of map (e.g. "undeadburg"). Note that the map-finding utility `get_map` ignores case
+            and underscores when looking for a specific name.
+        variable_name: Name to use in EVS output (typically upper case with underscores).
+        verbose_name: Full descriptive name of map for display in certain output-only fields.
 
-            name: Canonical name of map (e.g. "undeadburg"). Note that the map-finding utility `get_map` ignores case
-                and underscores when looking for a specific name.
+        emevd_file_stem: Name of `emevd` file for this map, without extension.
+        msb_file_stem: Name of `msb` file for this map, without extension.
+        ai_file_stem: Name of 'luabnd[.dcx]' for this map, without extension(s).
+        esd_file_stem: Name of 'talkesdbnd[.dcx]' for this map, without extension(s).
+    """
 
-            emevd_file_stem: Name of `emevd` file for this map, without extension.
-            msb_file_stem: Name of `msb` file for this map, without extension.
-            ai_file_stem: Name of 'luabnd[.dcx]' for this map, without extension(s).
-            esd_file_stem: Name of 'talkesdbnd[.dcx]' for this map, without extension(s).
+    # Four parts of map identifier. May be set to `None` to represent 'maps' that only have specific files, e.g. Common.
+    area_id: int | None
+    block_id: int | None
+    cc_id: int | None = 0
+    dd_id: int | None = 0
 
-            ffxbnd_file_name: Name of 'ffxbnd[.dcx]' file that Soulstruct should modify for this map. Map areas with
-                multiple blocks may have an area-wide file and block-specific files that are both loaded. The block-
-                specific files are preferred for ease/efficiency.
+    name: str = ""  # e.g. "FirelinkShrine"
+    verbose_name: str = ""  # e.g. "Firelink Shrine"
+    variable_name: str | None = None  # e.g. `FIRELINK_SHRINE`
 
-            variable_name: Name to use in EVS output (typically upper case with underscores).
-            verbose_name: Full descriptive name of map for display in certain output-only fields.
+    # Stems of related map files. If left as "", they will be auto-set based on the map stem (mAA_BB_CC_DD).
+    # If explicitly set to `None`, that indicates that the associated file does not exist.
+    emevd_file_stem: str | None = ""
+    msb_file_stem: str | None = ""
+    ai_file_stem: str | None = ""
+    esd_file_stem: str | None = ""
 
-        `name`, `emevd_file_stem`, `msb_file_stem`, `ai_file_stem`, and `esd_file_stem` all default to
-        `m{area_id:02d}_{block_id:02d}_00_00` if not specified. `verbose_name` defaults to `name`. `variable_name`
-        defaults to None (not a valid EVS instruction argument).
-        """
-        self.area_id = area_id
-        self.block_id = block_id
-        self.cc_id = cc_id
-        self.dd_id = dd_id
+    # Lowest-numbered entity ID (e.g. 1020000 for Firelink Shrine) and event flag (e.g. 11020000 for Firelink Shrine).
+    # If left as 0, they will be auto-set based on the map ID. If explicitly set to `None`, they should not be used.
+    base_entity_id: int | None = 0
+    base_flag: int | None = 0
 
-        if area_id is not None and block_id is not None:
-            base_id = f"m{area_id:02d}_{block_id:02d}_{cc_id:02d}_{dd_id:02d}"
+    def __post_init__(self):
+        if self.area_id is not None and self.block_id is not None:
+            cc_id = self.cc_id or 0
+            dd_id = self.dd_id or 0
+            map_stem = f"m{self.area_id:02d}_{self.block_id:02d}_{cc_id:02d}_{dd_id:02d}"
+
+            # We can set defaults for base entity ID and base flag from area and block IDs.
+            if self.base_entity_id == 0:
+                self.base_entity_id = 100000 * self.area_id + 10000 * self.block_id
+            if self.base_flag == 0:
+                self.base_flag = 1000 + 10 * self.area_id + self.block_id
         else:
-            base_id = None
-        self.name = base_id if name is None else name
+            map_stem = None
 
-        self.emevd_file_stem = base_id if emevd_file_stem is None else emevd_file_stem
-        self.msb_file_stem = base_id if msb_file_stem is None else msb_file_stem
-        self.ai_file_stem = base_id if ai_file_stem is None else ai_file_stem
-        self.esd_file_stem = base_id if esd_file_stem is None else esd_file_stem
-        self.ffxbnd_file_name = ffxbnd_file_name
-        self.map_load_tuple = (
-            area_id,
-            block_id,
-            -1 if self.cc_id <= 0 else self.cc_id,
-            -1 if self.dd_id <= 0 else self.dd_id,
-        )  # for `MSBConnectCollision`
+        if not self.name:
+            self.name = map_stem
+        if not self.variable_name:
+            self.variable_name = "MAP_" + map_stem[1:]
+        if not self.verbose_name:
+            self.verbose_name = self.name
 
-        self.variable_name = variable_name
-        self.verbose_name = self.name if verbose_name is None else verbose_name
+        for stem in ("emevd", "msb", "ai", "esd"):
+            if getattr(self, f"{stem}_file_stem") == "":
+                setattr(self, f"{stem}_file_stem", map_stem)
 
         if self.area_id is not None:
             self.base_entity_id = 100000 * self.area_id + 10000 * self.block_id
@@ -159,8 +155,19 @@ class Map(GameObject):
             if stem
         }
 
+    def get_connected_map_id(self) -> tuple[int, int, int, int]:
+        """Return a tuple with -1 wild cards in place of CC and DD if they are `None`.
+
+        Suitable for use in the `connected_map_id` field of `MSBConnectCollision` instances (as a list).
+        """
+        if self.area_id is None or self.block_id is None:
+            raise ValueError("Cannot get connect tuple for a map with no area ID and/or block ID.")
+        cc_id = -1 if self.cc_id is None else self.cc_id
+        dd_id = -1 if self.dd_id is None else self.dd_id
+        return self.area_id, self.block_id, cc_id, dd_id
+
     def __hash__(self):
-        """Map is unique defined by its MSB stem."""
+        """Map is uniquely defined by its MSB stem."""
         return hash(self.msb_file_stem)
 
     def __eq__(self, other_map: Map):

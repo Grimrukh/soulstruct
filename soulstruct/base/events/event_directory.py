@@ -67,7 +67,10 @@ class EventDirectory(GameFileMapDirectory[EMEVD], abc.ABC):
                             continue
                     all_map_stems.remove(file_stem)
                 else:
-                    _LOGGER.warning(f"Ignoring unexpected file in `{cls.__name__}` directory: {file_path.name}")
+                    if file_path.is_dir() and file_path.name != "__pycache__":
+                        _LOGGER.warning(f"Ignoring unexpected folder in `{cls.__name__}` directory: {file_path.name}")
+                    elif file_path.is_file():
+                        _LOGGER.warning(f"Ignoring unexpected file in `{cls.__name__}` directory: {file_path.name}")
                     continue
 
         if all_map_stems:

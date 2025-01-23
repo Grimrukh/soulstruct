@@ -65,29 +65,32 @@ class SingleEventArg:
 
     It holds all the formats, names, and Python types that appear where it is used in instructions.
     """
+    # We default to unsigned integers.
     DEFAULT_ARG_SIZE_TYPE: tp.ClassVar[dict[int, str]] = {1: "B", 2: "H", 4: "I"}
 
     arg_range: tuple[int, int]  # start and (exclusive) end offsets; corresponds to `(i, j)` in default argument names
     fmts: set[str] = field(default_factory=set)
     names: set[str] = field(default_factory=set)
     py_types: set[type | GenericAlias] = field(default_factory=set)  # each could be from a `typing.Union`
+    sizes: set[int] = field(default_factory=set)  # replacement sizes (most important attribute!)
 
     # Computed from above sets.
-    combined_name: str = field(default="")
-    combined_fmt: str = field(default="")
+    combined_name: str = ""
+    combined_fmt: str = ""
     combined_py_types: tuple[type, ...] = ()
     # Subset of the above; ONLY contains game types (for enum lookups).
     combined_game_types: tuple[GAME_INT_TYPE, ...] = ()
 
-    def add_info(self, event_arg: EventArgRepl):
+    def record_repl_usage(self, event_arg_repl: EventArgRepl):
         """Merge in information from a single replacement usage."""
-        self.names.add(event_arg.name)
-        self.fmts.add(event_arg.fmt)
-        self.py_types.add(event_arg.py_type_hint)
+        self.names.add(event_arg_repl.name)
+        self.fmts.add(event_arg_repl.fmt)
+        self.py_types.add(event_arg_repl.py_type_hint)
+        self.sizes.add(event_arg_repl.size)
 
     def remove_generic_names(self):
-        # Remove non-preferred arg names.
-        # TODO: Should check 'classes' of names, so 'character__flag' doesn't just become 'character', etc.
+        """Remove non-preferred arg names."""
+        # TODO: Should check compatible 'classes' of names, so 'character__flag' doesn't just become 'character', etc.
         for vague_arg_name in (
             "event_arg",
             "entity", "other_entity", "target_entity", "owner_entity", "anchor_entity", "attacked_entity",
@@ -98,7 +101,17 @@ class SingleEventArg:
                 self.names.remove(vague_arg_name)
 
     def compute_combined_info(self, existing_arg_names: set[str], event_id: int = -1):
-        """Parse the sets of formats, names, and Python types and decide what to use for EVS function signatures."""
+        """Parse the sets of formats, names, Python types, and sizes, then decide on usage in signature."""
+        if not self.names:
+            _LOGGER.warning(f"Event arg {self.arg_range} in event {event_id} has no usages in instructions.")
+            return
+
+        if len(self.sizes) > 1:
+            _LOGGER.error(
+                f"Detected multiple sizes for event arg {self.arg_range} in event {event_id}: {self.sizes}. "
+                f"This is a critical error that must be fixed in your EMEVD source file."
+            )
+            return
 
         try_arg_name = "__".join(sorted(self.names))
 
@@ -113,23 +126,10 @@ class SingleEventArg:
             arg_name = try_arg_name
         self.combined_name = arg_name
 
-        if len(self.fmts) > 1:
-            # Multiple detected types. Acceptable (using default integer type) only if they all the same size.
-            sizes = {struct.calcsize(fmt) for fmt in self.fmts}
-            if len(sizes) == 1:
-                arg_size = next(iter(sizes))
-                self.combined_fmt = self.DEFAULT_ARG_SIZE_TYPE[arg_size]
-                _LOGGER.warning(
-                    f"Detected multiple types for event arg '{arg_name}' in event {event_id}: {self.fmts}. "
-                    f"Using default type '{self.combined_fmt}' for this arg size ({arg_size})."
-                )
-            else:
-                raise ValueError(
-                    f"Detected multiple types for event arg '{arg_name}' in event {event_id}: {self.fmts}. "
-                    f"They have incompatible sizes, which is not permitted."
-                )
-        else:
-            self.combined_fmt = next(iter(self.fmts))
+        # Size reigns supreme over usage formats, which may be ambiguous (e.g. args of any integer size can be used in
+        # the same comparison instructions).
+        size = next(iter(self.sizes))
+        self.combined_fmt = self.guess_arg_fmt(event_id, arg_name, size)
 
         all_py_types = []
         all_game_types = []
@@ -149,6 +149,85 @@ class SingleEventArg:
                             all_game_types.append(union_type)
         self.combined_py_types = tuple(all_py_types)
         self.combined_game_types = tuple(all_game_types)
+
+    def guess_arg_fmt(self, event_id: int, name: str, size: int) -> str:
+        """Guess the most appropriate format for this event arg based on its usage in instructions.
+
+        Logs warnings when incompatible types or invalid usage sizes are detected.
+        """
+
+        default_fmt = self.DEFAULT_ARG_SIZE_TYPE[size]
+
+        if len(self.fmts) == 1:
+            unique_fmt = next(iter(self.fmts))
+            fmt_size = struct.calcsize(unique_fmt)
+            if fmt_size < size:
+                _LOGGER.warning(
+                    f"Detected usage format '{unique_fmt}' for event arg '{name}' in event {event_id} has size "
+                    f"{struct.calcsize(unique_fmt)}, which is smaller than the replacement size {size}. Fix this! "
+                    f"Using default integer type '{default_fmt}' for this arg."
+                )
+                return default_fmt
+            elif fmt_size == size:
+                # Only one format used, and it matches the replacement `size`. Format override.
+                return unique_fmt
+            else:
+                # Only one format used, and it is larger than our replacement `size`.
+                if unique_fmt in "fs":
+                    # Default format is byte or short, but detected unique format is float or string ref.
+                    _LOGGER.warning(
+                        f"Detected incompatible usage format for event arg '{name}' in event {event_id}: "
+                        f"{unique_fmt}. Fix this! Using default integer type '{default_fmt}' for this arg."
+                    )
+                return default_fmt
+        else:
+            # Check all usage formats for incompatible or too-small types.
+            # If all usages are compatible, we can use the most specific (smallest) type.
+            smallest_fmt = ""
+            smallest_fmt_size = 4
+            has_int_usage = False
+            has_str_usage = False
+            has_float_usage = False
+            for fmt in self.fmts:
+                fmt_size = struct.calcsize(fmt)
+                if fmt in "bBhHiI":
+                    has_int_usage = True
+                    if has_str_usage or has_float_usage:
+                        _LOGGER.warning(
+                            f"Detected incompatible usage formats for event arg '{name}' in event {event_id}: "
+                            f"{self.fmts}. Fix this! Using default integer type '{default_fmt}' for this arg."
+                        )
+                        return default_fmt
+                elif fmt == "f":
+                    has_float_usage = True
+                    if has_int_usage or has_str_usage:
+                        _LOGGER.warning(
+                            f"Detected incompatible usage formats for event arg '{name}' in event {event_id}: "
+                            f"{self.fmts}. Fix this! Using default integer type '{default_fmt}' for this arg."
+                        )
+                        return default_fmt
+                elif fmt == "s":
+                    has_str_usage = True
+                    if has_int_usage or has_float_usage:
+                        _LOGGER.warning(
+                            f"Detected incompatible usage formats for event arg '{name}' in event {event_id}: "
+                            f"{self.fmts}. Fix this! Using default integer type '{default_fmt}' for this arg."
+                        )
+                        return default_fmt
+
+                if fmt_size < size:
+                    _LOGGER.warning(
+                        f"At least one detected usage format for event arg '{name}' in event {event_id} has "
+                        f"size smaller than {size}: {self.fmts}. Fix this! Using default integer type '{default_fmt}' "
+                        f"for this arg."
+                    )
+                    return default_fmt
+                elif fmt_size < smallest_fmt_size:
+                    # Found new smallest (valid) format.
+                    smallest_fmt = fmt
+                    smallest_fmt_size = fmt_size
+
+            return smallest_fmt if smallest_fmt else default_fmt
 
 
 @dataclass(slots=True)
@@ -192,6 +271,16 @@ class EventSignature:
             # Prepend blank argument for slot intellisense (if any arguments exist).
             arg_strings = ["_"] + arg_strings
         return ", ".join(arg_strings)
+
+    def __repr__(self) -> str:
+        if not self.event_args:
+            return "EventSignature()"
+
+        lines = [f"EventSignature(", f"    \"{self.get_full_fmt()}\""]
+        for arg in self.event_args:
+            lines.append(f"    {arg.combined_name}: {arg.combined_fmt} ({arg.combined_py_types})")
+        lines.append(")")
+        return "\n".join(lines)
 
 
 class EventStruct(BinaryStruct):
@@ -299,8 +388,8 @@ class Event(abc.ABC):
         proper `args` and `arg_types` values.
 
         If a `RunEvent` instruction contains more arguments than the event can actually use (which is fine by the game -
-        the extra packed argument data will simply never be index), this will log a warning, and you should see error
-        highlighting in your decompiled EVS script (wrong number of arguments).
+        the extra packed argument data will simply never be indexed into), this will log a warning, and you should see
+        error highlighting in your decompiled EVS script (wrong number of arguments).
 
         Can be called with 'local' `event_signatures` and/or `common_signatures`. Only events run with `RunCommonEvent`
         will be searched for in `common_signatures`, if given. (`RunCommonEvent` will also search for events in
@@ -309,7 +398,7 @@ class Event(abc.ABC):
         TODO: Doesn't Bloodborne use 'RunEvent' even for common events (from `common.emevd`)?
         """
         if not event_signatures and not common_signatures:
-            return  # nothing to do...
+            return  # nothing to do
 
         for instruction in self.instructions:
             if (event_id := instruction.get_called_event()) is not None:
@@ -409,13 +498,13 @@ class Event(abc.ABC):
         """
         single_event_args = {}  # type: dict[tuple[int, int], SingleEventArg]
         for instruction in self.instructions:
-            for event_arg in instruction.event_arg_replacements:
-                if event_arg.arg_range not in single_event_args:
-                    # First occurrence of this event arg being used as a replacement.
-                    single_event_args[event_arg.arg_range] = SingleEventArg(event_arg.arg_range)
-                single_event_args[event_arg.arg_range].add_info(event_arg)
+            for event_arg_repl in instruction.event_arg_replacements:
+                if event_arg_repl.arg_range not in single_event_args:
+                    # First occurrence of this event arg being used as a replacement. (Info still added on next line.)
+                    single_event_args[event_arg_repl.arg_range] = SingleEventArg(event_arg_repl.arg_range)
+                single_event_args[event_arg_repl.arg_range].record_repl_usage(event_arg_repl)
 
-        # Sort into list by arg range and compute combined attributes.
+        # Sort into list by arg range `(start_byte, stop_byte)` and compute combined attributes.
         event_args = sorted(single_event_args.values(), key=lambda arg: arg.arg_range)
         event_arg_names = set()
         for event_arg in event_args:

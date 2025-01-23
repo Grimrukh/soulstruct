@@ -99,7 +99,7 @@ class EventInfo(tp.NamedTuple):
 
 
 def parse_event_arguments(
-    event_node: ast.FunctionDef, namespace: dict[str, tp.Any],
+    evs_name: str, event_node: ast.FunctionDef, namespace: dict[str, tp.Any],
 ) -> tuple[dict[str, tuple[int, int]], str, dict[str, GAME_TYPE]]:
     """Parse argument nodes of given event function node and return:
         - dictionary mapping argument names to `(write_offset, size)` tuples for creating `EventArgRepl` instances
@@ -111,11 +111,11 @@ def parse_event_arguments(
     arg_classes = {}  # type: dict[str, GAME_TYPE]
 
     if event_node.args.defaults:
-        raise EVSSyntaxError(event_node, "You cannot provide default values for event arguments.")
+        raise EVSSyntaxError(evs_name, event_node, "You cannot provide default values for event arguments.")
     if event_node.args.vararg or event_node.args.kwarg:
-        raise EVSSyntaxError(event_node, "You cannot use `*args` or `**kwargs` in event functions.")
+        raise EVSSyntaxError(evs_name, event_node, "You cannot use `*args` or `**kwargs` in event functions.")
     if event_node.args.kwonlyargs:
-        raise EVSSyntaxError(event_node, "You cannot have keyword-only arguments in event functions.")
+        raise EVSSyntaxError(evs_name, event_node, "You cannot have keyword-only arguments in event functions.")
 
     for arg_node in event_node.args.args:
         arg_name = arg_node.arg
@@ -133,18 +133,21 @@ def parse_event_arguments(
             # `{GameObjectInt} | int` type hints are accepted (but no others).
             if not isinstance(arg_type_node.op, ast.BitOr):
                 raise EVSSyntaxError(
+                    evs_name,
                     event_node,
                     f"Invalid event argument type: {repr(arg_type_node)}. "
                     f"Valid type hints: {EVENT_ARG_TYPE_MSG}"
                 )
             if not isinstance(arg_type_node.left, ast.Name):
                 raise EVSSyntaxError(
+                    evs_name,
                     event_node,
                     f"Invalid event argument type (left of |): {repr(arg_type_node.left)}. "
                     f"Valid type hints: {EVENT_ARG_TYPE_MSG}"
                 )
             if not isinstance(arg_type_node.right, ast.Name):
                 raise EVSSyntaxError(
+                    evs_name,
                     event_node,
                     f"Invalid event argument type (right of |): {repr(arg_type_node.right)}. "
                     f"Valid type hints: {EVENT_ARG_TYPE_MSG}"
@@ -157,6 +160,7 @@ def parse_event_arguments(
                 arg_type_node = arg_type_node.left  # process class name below
             else:
                 raise EVSSyntaxError(
+                    evs_name,
                     event_node,
                     f"Invalid event argument type. If '|' is used, one side must be `int` and the other must be "
                     f"a game type. Valid type hints: {EVENT_ARG_TYPE_MSG}"
@@ -165,6 +169,7 @@ def parse_event_arguments(
         if isinstance(arg_type_node, ast.Constant) and isinstance(arg_type_node.value, str):
             if arg_type_node.value not in EVS_TYPES:
                 raise EVSSyntaxError(
+                    evs_name,
                     event_node,
                     f"Invalid event argument type string {repr(arg_type_node.value)}. "
                     f"Valid type hints: {EVENT_ARG_TYPE_MSG}"
@@ -181,6 +186,7 @@ def parse_event_arguments(
                     arg_class = namespace[class_name]
                 except KeyError:
                     raise EVSSyntaxError(
+                        evs_name,
                         event_node,
                         f"{repr(class_name)} is not a valid game type for argument hinting.",
                     )
@@ -188,6 +194,7 @@ def parse_event_arguments(
                     fmt = arg_class.get_event_arg_fmt()
                 except AttributeError:
                     raise EVSSyntaxError(
+                        evs_name,
                         event_node,
                         f"{repr(class_name)} is not a valid game type for argument hinting.",
                     )
@@ -196,6 +203,7 @@ def parse_event_arguments(
                     arg_type = fmt
         else:
             raise EVSSyntaxError(
+                evs_name,
                 event_node,
                 f"Every event argument needs a type. Valid type hints: {EVENT_ARG_TYPE_MSG}"
             )
@@ -207,7 +215,7 @@ def parse_event_arguments(
     return arg_dict, arg_types, arg_classes
 
 
-def import_module(node: ast.Import, ignore_names: list[str] = ()) -> dict[str, tp.Any]:
+def import_module(evs_name: str, node: ast.Import, ignore_names: list[str] = ()) -> dict[str, tp.Any]:
     module_dict = {}
     for alias in node.names:
         name = alias.name
@@ -217,18 +225,18 @@ def import_module(node: ast.Import, ignore_names: list[str] = ()) -> dict[str, t
             module = importlib.import_module(alias.name)
             importlib.reload(module)
         except ImportError as e:
-            raise EVSImportError(node, alias.name, str(e))
+            raise EVSImportError(evs_name, node, alias.name, str(e))
         as_name = alias.asname if alias.asname is not None else name
         try:
             module_dict[as_name] = getattr(module, name)
         except AttributeError as e:
-            raise EVSImportError(node, name, str(e))
+            raise EVSImportError(evs_name, node, name, str(e))
     del module
     return module_dict
 
 
 def import_from(
-    node: ast.ImportFrom, script_directory: Path, ignore_names: list[str] = ()
+    evs_name: str, node: ast.ImportFrom, script_directory: Path, ignore_names: list[str] = ()
 ) -> dict[str, tp.Any]:
     """Import names into given namespace dictionary."""
     if node.module in ignore_names:
@@ -241,6 +249,7 @@ def import_from(
         # Try to import module on path.
         if script_directory is None:
             raise EVSImportError(
+                evs_name,
                 node,
                 node.module,
                 "`script_directory` needed for relative import, but was not given to `EVSParser` or auto-detected.",
@@ -248,12 +257,13 @@ def import_from(
         level = 0 if node.level == 0 else node.level - 1  # single dot (level 1) is the same as no dot (level 0)
         module_path = (script_directory / ("../" * level + node.module.replace(".", "/") + ".py")).resolve()
         if not module_path.is_file():
-            raise EVSImportError(node, node.module, f"Cannot import missing module file: {module_path}")
+            raise EVSImportError(evs_name, node, node.module, f"Cannot import missing module file: {module_path}")
         try:
             module = import_arbitrary_module(module_path)
         except ImportError as ex:
             if "no known parent package" in str(ex):
                 raise EVSImportError(
+                    evs_name,
                     node,
                     node.module,
                     f"Cannot import module '{module_path}' due to having no known parent package.\n"
@@ -287,19 +297,19 @@ def import_from(
                     _LOGGER.error(
                         f"EVS error: could not import {name_} from module {node.module} " f"(__all__ = {all_names})"
                     )
-                    raise EVSImportFromError(node, node.module, name_, str(e))
+                    raise EVSImportFromError(evs_name, node, node.module, name_, str(e))
         else:
             as_name = alias.asname if alias.asname is not None else name
             try:
                 module_dict[as_name] = getattr(module, name)
             except AttributeError as e:
-                raise EVSImportFromError(node, node.module, name, str(e))
+                raise EVSImportFromError(evs_name, node, node.module, name, str(e))
     del module
     return module_dict
 
 
 def import_from_common_func(
-    module_name: str, namespace: dict, script_directory: Path, names: list[str], level: int
+    evs_name: str, module_name: str, namespace: dict, script_directory: Path, names: list[str], level: int
 ):
     """Import names into given namespace dictionary."""
     try:
@@ -310,22 +320,23 @@ def import_from_common_func(
         # Try to import module on path.
         if script_directory is None:
             raise EVSCommonFuncImportError(
+                evs_name,
                 module_name,
                 "",
                 "`script_directory` needed for relative import, but was not given to `EVSParser` or be detected.",
             )
         module_path = script_directory / ("../" * level + module_name.replace(".", "/") + ".py")
         if not module_path.is_file():
-            raise EVSCommonFuncImportError(module_name, "", "Cannot import missing module file.")
+            raise EVSCommonFuncImportError(evs_name, module_name, "", "Cannot import missing module file.")
         module = import_arbitrary_module(module_path)
 
     for name in names:
         if name == "*":
-            raise EVSCommonFuncImportError(module_name, "", "Cannot star import from COMMON_FUNC module.")
+            raise EVSCommonFuncImportError(evs_name, module_name, "", "Cannot star import from COMMON_FUNC module.")
         try:
             namespace[name] = getattr(module, name)
         except AttributeError as ex:
-            raise EVSCommonFuncImportError(module_name, name, str(ex))
+            raise EVSCommonFuncImportError(evs_name, module_name, name, str(ex))
     del module
 
 
@@ -349,21 +360,21 @@ def define_args(arg_types: str) -> list[tuple[int, int]]:
 def as_event_statement_node(node: ast.stmt, msg="") -> EventStatementTyping:
     """Intellisense hack to check and validate node type."""
     if not isinstance(node, (ast.Expr, ast.For, ast.If, ast.Assign, ast.Return)):
-        raise EVSSyntaxError(node, msg or f"Invalid Event Statement node: {ast.dump(node)}")
+        raise EVSSyntaxError("", node, msg or f"Invalid Event Statement node: {ast.dump(node)}")
     return node
 
 
 def as_condition_node(node: ast.expr, msg="") -> ConditionNodeTyping:
     """Intellisense hack to check and validate node type."""
     if not isinstance(node, (ast.UnaryOp, ast.BoolOp, ast.Compare, ast.Name, ast.Attribute, ast.Call)):
-        raise EVSSyntaxError(node, msg or f"Invalid Condition node: {ast.dump(node)}")
+        raise EVSSyntaxError("", node, msg or f"Invalid Condition node: {ast.dump(node)}")
     return node
 
 
 def as_skip_return_node(node: ast.expr, msg="") -> SkipReturnTyping:
     """Intellisense hack to check and validate node type."""
     if not isinstance(node, (ast.UnaryOp, ast.Name, ast.Attribute, ast.Compare, ast.Call)):
-        raise EVSSyntaxError(node, msg or f"Invalid Skip/Return node: {ast.dump(node)}")
+        raise EVSSyntaxError("", node, msg or f"Invalid Skip/Return node: {ast.dump(node)}")
     return node
 
 

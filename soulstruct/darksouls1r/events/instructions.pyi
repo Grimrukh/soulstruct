@@ -18,6 +18,8 @@ __all__ = [
     "END",
     "RESTART",
     "RunEvent",
+    "enable_debug",
+    "disable_debug",
     # Condition groups:
     "OR_7",
     "OR_6",
@@ -779,6 +781,20 @@ def Await(condition):
     
     You can also use the built-in 'await' Python keyword, but Python linters might complain about this (e.g. because
     you haven't declared your function with `async def` or because of the type being passed to `await`).
+    """
+    ...
+
+
+def enable_debug():
+    """
+    Enables EVS debugging for the rest of the EVS file. Disable with `disable_debug()`.
+    """
+    ...
+
+
+def disable_debug():
+    """
+    Disables EVS debugging for the rest of the EVS file. Enable with `enable_debug()`.
     """
     ...
 

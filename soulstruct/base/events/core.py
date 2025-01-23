@@ -64,28 +64,30 @@ def convert_events(
     output_directory = Path(output_directory)
     input_ext = "." + input_type.lower().lstrip(".") if input_type is not None else None
     input_directory = Path(input_directory)
-    emevd_source_paths = {m.emevd_file_stem: None for m in maps}
+    source_paths_to_find = {m.emevd_file_stem for m in maps}  # NOT modified as we search so duplicates can be detected
+    emevd_source_paths = {}
     merge_emevd_paths = [Path(merge_source) for merge_source in merge_emevd_paths]
     for available in input_directory.glob("*"):
         parts = available.name.split(".")
         name, ext = parts[0], "." + ".".join(parts[1:])
-        if name in emevd_source_paths and (ext == input_ext or (input_ext is None and ext in ALL_EXTENSIONS)):
-            if emevd_source_paths[name] is not None:
-                raise FileExistsError(f"Found multiple files named {repr(name)} with different extensions.")
+        if name in source_paths_to_find and (ext == input_ext or (input_ext is None and ext in ALL_EXTENSIONS)):
+            if name in emevd_source_paths:
+                raise FileExistsError(f"Found multiple files named {repr(name)} with different valid extensions.")
             emevd_source_paths[name] = available
-    missing = [name for name, source in emevd_source_paths.items() if source is None]
+    missing = [name for name in source_paths_to_find if name not in emevd_source_paths]
     if missing:
         raise FileNotFoundError(f"Could not find EMEVD sources for: {missing}.")
 
     for name, source_path in emevd_source_paths.items():
         output_path = output_directory / (name + output_ext)
         name_stem = name.split(".")[0]
+
         try:
             if input_type in {"evs", "evs.py"}:
                 emevd = emevd_class.from_evs_path(source_path, script_directory=input_directory)
             elif input_type == "numeric":
                 emevd = emevd_class.from_numeric_path(source_path, map_name=name_stem)
-            else:
+            else:  # binary EMEVD
                 emevd = emevd_class.from_path(source_path)
         except Exception as ex:
             raise EMEVDError(f"Encountered an error while attempting to load {name + output_ext}:\n  {str(ex)}")
@@ -118,6 +120,7 @@ def convert_events(
                 emevd.write_numeric(output_path)
         except Exception as ex:
             raise EMEVDError(f"Encountered an error while attempting to write {name + output_ext}: {str(ex)}")
+
     if merge_emevd_paths:
         _LOGGER.warning(f"Unused `merge_emevd_paths` after EMEVD conversion: {merge_emevd_paths}")
 

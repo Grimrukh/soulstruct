@@ -1414,15 +1414,15 @@ class FEV(GameFile):
     Sister to FSB files, which hold the actual sound sample data (banks).
     """
 
-    version_byte: int
-    unk_offset1: int
-    unk_offset2: int
-    project_name: str
-    wavebanks: list[WavebankInfo]
-    top_event_category: EventCategory
-    top_event_groups: list[EventGroup]
-    sounddef_properties: list[SoundDefProperty]
-    sounddefs: list[SoundDef]
+    version_byte: int = 0
+    unk_offset1: int = 0
+    unk_offset2: int = 0
+    project_name: str = ""
+    wavebanks: list[WavebankInfo] = field(default_factory=list)
+    top_event_category: EventCategory | None = None
+    top_event_groups: list[EventGroup] = field(default_factory=list)
+    sounddef_properties: list[SoundDefProperty] = field(default_factory=list)
+    sounddefs: list[SoundDef] = field(default_factory=list)
 
     class FEVHeaderStruct(BinaryStruct):
         signature: bytes = binary_string(4, asserted=b"FEV1")

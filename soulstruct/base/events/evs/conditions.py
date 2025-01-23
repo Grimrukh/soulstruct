@@ -6,9 +6,13 @@ __all__ = [
 ]
 
 import ast
+import logging
+import typing as tp
 from dataclasses import dataclass, field
 
 from .exceptions import ConditionNameError, ConditionLimitError
+
+_LOGGER = logging.getLogger("soulstruct")
 
 
 @dataclass(slots=True)
@@ -23,32 +27,25 @@ class ConditionGroupState:
     name: str = ""
 
     # Enabled by the EVS `COMPILE` function whenever a test of any kind (including another condition group) is added to
-    # this condition group. This informs us that 'old' will be enabled later and a valid 'Last Result' available.
+    # this condition group. This informs us that `_stale` will be enabled later and a valid `LastResult()` available.
     # Disabled across ALL conditions whenever a 'frame-ending' instruction like `MAIN.Await()` or `Wait()` is called.
     _active: bool = False
 
-    # Condition group has been evaluated due to a previous Wait/Await instruction (or a few others that I'm still
-    # tracking down). Its 'Last Result' will be available and it will only be used again automatically if not `held`.
-    _stale: bool = False  # condition group has been evaluated due to a previous Wait/Await instruction
+    # Condition group has been evaluated due to a previous `Wait()`/`MAIN.Await()` instruction (or a few others that I'm
+    # still tracking down). Its `LastResult()` output will be available and it will only be used again automatically if
+    # not `held`.
+    _stale: bool = False
 
     # If enabled, caller has requested that condition NOT be automatically re-used in compilation, even when stale.
-    # Used to guarantee post-evaluation access with '...IfLastConditionResult...' instructions.
+    # Used to guarantee post-evaluation use with `LastResult()` or basic `...IfLastConditionResult...()` instructions.
     held: bool = False
 
     # Condition groups that have been loaded into this one. EVS users are free to repeatedly load the same condition
     # group into multiple other condition groups, but this is not tracked here (we just use a set).
     children: set[ConditionGroupState] = field(default_factory=set)
 
-    @property
-    def active(self):
-        return self._active
-
-    @property
-    def stale(self):
-        return self._stale
-
     def reset(self):
-        """Called ONLY at the start of compiling a new `Event`, which wants fresh condition groups."""
+        """Called ONLY at the start of compiling a new `Event`, which wants totally fresh condition groups."""
         self.name = ""
         self._active = False
         self._stale = False
@@ -58,10 +55,16 @@ class ConditionGroupState:
     def activate(self):
         self._stale = False
         self._active = True
+        if EVSConditionManager.DEBUG_ENABLED:
+            _LOGGER.debug(f"Condition group {self.index} activated. Children: {sorted(self.children)}")
 
     def activate_with_child(self, condition: ConditionGroupState):
+        """Activate this condition group by adding a child condition group into it."""
         self.children.add(condition)
         self.activate()
+        if EVSConditionManager.DEBUG_ENABLED:
+            # `active()` call already logs activation itself.
+            _LOGGER.debug(f"Condition group {self.index} activated by adding child condition {condition.index}.")
 
     def deactivate(self):
         """Called when a 'frame-ending' instruction like `MAIN.Await()` or `Wait()` is called.
@@ -71,8 +74,20 @@ class ConditionGroupState:
         """
         if self._active:
             self._active = False
-            self._stale = True  # 'Last Result' will be available for appropriate SkipLines/Goto/Return instructions
+            self._stale = True  # `LastResult()` will be available for appropriate SkipLines/Goto/Return instructions
         self.children.clear()
+        if EVSConditionManager.DEBUG_ENABLED:
+            _LOGGER.debug(f"Condition group {self.index} deactivated (stale = {self._stale}).")
+
+    @property
+    def active(self):
+        """Getter only."""
+        return self._active
+
+    @property
+    def stale(self):
+        """Getter only."""
+        return self._stale
 
     def __hash__(self):
         return hash(self.index)
@@ -80,12 +95,18 @@ class ConditionGroupState:
     def __eq__(self, other: ConditionGroupState):
         return self.index == other.index
 
+    def __lt__(self, other: ConditionGroupState):
+        return self.index < other.index
+
     def __repr__(self):
         """For appearance in numeric EMEVD."""
         return f"{self.index}"
 
 
 class EVSConditionManager:
+
+    # Controlled by `EVSParser.debug_enabled`.
+    DEBUG_ENABLED: tp.ClassVar[bool] = False
 
     # Current event ID.
     event_id: int
@@ -153,25 +174,34 @@ class EVSConditionManager:
         for condition in self.conditions:
             condition.reset()
 
-    def check_out_OR(self, node: ast.AST, event_id: int, name="_", hold=False) -> ConditionGroupState:
+    def check_out_OR(self, evs_name: str, node: ast.AST, event_id: int, name="_", hold=False) -> ConditionGroupState:
         """Automatically check out the next available OR condition group index (closest to 0)."""
-        return self._check_out(node, event_id, name, hold, "OR", self.or_conditions)
+        return self._check_out(evs_name, node, event_id, name, hold, "OR", self.or_conditions)
 
-    def check_out_AND(self, node: ast.AST, event_id: int, name="_", hold=False) -> ConditionGroupState:
+    def check_out_AND(self, evs_name: str, node: ast.AST, event_id: int, name="_", hold=False) -> ConditionGroupState:
         """Automatically check out the next available AND condition group index (closest to 0)."""
-        return self._check_out(node, event_id, name, hold, "AND", self.and_conditions)
+        return self._check_out(evs_name, node, event_id, name, hold, "AND", self.and_conditions)
 
     def _check_out(
-        self, node, event_id: int, name: str, hold: bool, bool_type: str, conditions: list[ConditionGroupState]
+        self,
+        evs_name: str,
+        node,
+        event_id: int,
+        name: str,
+        hold: bool,
+        bool_type: str,
+        conditions: list[ConditionGroupState],
     ) -> ConditionGroupState:
         if name != "_" and name in self.names:
-            raise ConditionNameError(node, f"A condition named '{name}' already exists in this event.")
+            raise ConditionNameError(evs_name, node, f"Condition named '{name}' already exists in event ({event_id}).")
 
         for cond in conditions:
             if cond.name == "":
                 # This OR slot is free.
                 cond.name = name
                 cond.held = hold
+                if EVSConditionManager.DEBUG_ENABLED:
+                    _LOGGER.debug(f"Checked out {bool_type} condition {cond.index} with name '{name}'.")
                 return cond
 
         # Failed to find a completely unused (unnamed) condition, so get a non-held 'stale' one.
@@ -182,15 +212,18 @@ class EVSConditionManager:
                 # TODO: Clear stale flag here? Is this condition always going to be an output?
                 cond.name = name
                 cond.held = hold
+                if EVSConditionManager.DEBUG_ENABLED:
+                    _LOGGER.debug(f"Checked out STALE {bool_type} condition {cond.index} with name '{name}'.")
                 return cond
 
         raise ConditionLimitError(
+            evs_name,
             node,
             f"No available or stale {bool_type} conditions left in event {event_id}.\n"
             "You may need to manage conditions manually or change your logic."
         )
 
-    def check_out_TEMP(self, lineno: int, event_id: int) -> ConditionGroupState:
+    def check_out_TEMP(self, evs_name: str, lineno: int, event_id: int) -> ConditionGroupState:
         """Check out highest-magnitude condition of either OR type (preferred) or AND type for temporary use (e.g when
         a simple skip cannot be used in a one-line IF statement, like 'if HealthRatio(PLAYER) <= 0: ...').
 
@@ -200,6 +233,7 @@ class EVSConditionManager:
         highest_mag_condition = max(abs(cond.index) for cond in self.conditions)
         if highest_mag_condition == 0:
             raise ConditionLimitError(
+                evs_name,
                 lineno,
                 f"No conditions available in event {event_id} to check out a temporary condition.",
             )
@@ -207,3 +241,6 @@ class EVSConditionManager:
         cond = self.conditions[highest_mag_condition]
         cond.name = "_"
         return cond
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(event_id={self.event_id}, conditions={self.conditions})"

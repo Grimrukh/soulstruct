@@ -68,6 +68,20 @@ def Await(condition):
     ...
 
 
+def enable_debug():
+    \"\"\"
+    Enables EVS debugging for the rest of the EVS file. Disable with `disable_debug()`.
+    \"\"\"
+    ...
+
+
+def disable_debug():
+    \"\"\"
+    Disables EVS debugging for the rest of the EVS file. Enable with `enable_debug()`.
+    \"\"\"
+    ...
+
+
 # Terminators that can be returned by events as cleaner syntax.
 END = ...  # use with `return END`, identical to `return` or `End()`
 RESTART = ...  # use with `return RESTART`, identical to `Restart()`
@@ -199,6 +213,8 @@ def generate_instr_pyi(
         "\"END\",",
         "\"RESTART\",",
         "\"RunEvent\",",
+        "\"enable_debug\",",
+        "\"disable_debug\",",
     ]
 
     pyi_funcs_str = BASICS

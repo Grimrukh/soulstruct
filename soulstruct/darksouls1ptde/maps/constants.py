@@ -41,7 +41,6 @@ DEPTHS = Map(
     0,
     name="Depths",
     variable_name="DEPTHS",
-    ffxbnd_file_name="FRPG_SfxBnd_m10_00",
 )
 UNDEAD_BURG = Map(
     10,
@@ -49,7 +48,6 @@ UNDEAD_BURG = Map(
     name="UndeadBurg",
     variable_name="UNDEAD_BURG",
     verbose_name="Undead Burg / Parish",
-    ffxbnd_file_name="FRPG_SfxBnd_m10_01",
 )
 FIRELINK_SHRINE = Map(
     10,
@@ -57,7 +55,6 @@ FIRELINK_SHRINE = Map(
     name="FirelinkShrine",
     variable_name="FIRELINK_SHRINE",
     verbose_name="Firelink Shrine",
-    ffxbnd_file_name="FRPG_SfxBnd_m10_02",
 )
 PAINTED_WORLD = Map(
     11,
@@ -65,7 +62,6 @@ PAINTED_WORLD = Map(
     name="PaintedWorld",
     variable_name="PAINTED_WORLD",
     verbose_name="Painted World",
-    ffxbnd_file_name="FRPG_SfxBnd_m11",
 )
 DARKROOT_GARDEN = Map(
     12,
@@ -74,7 +70,6 @@ DARKROOT_GARDEN = Map(
     msb_file_stem="m12_00_00_01",
     variable_name="DARKROOT_GARDEN",
     verbose_name="Darkroot Garden / Basin",
-    ffxbnd_file_name="FRPG_SfxBnd_m12_00",
 )
 OOLACILE = Map(
     12,
@@ -82,14 +77,12 @@ OOLACILE = Map(
     name="Oolacile",
     variable_name="OOLACILE",
     verbose_name="Oolacile / Chasm of the Abyss",
-    ffxbnd_file_name="FRPG_SfxBnd_m12_01",
 )
 CATACOMBS = Map(
     13,
     0,
     name="Catacombs",
     variable_name="CATACOMBS",
-    ffxbnd_file_name="FRPG_SfxBnd_m13_00",
 )
 TOMB_OF_THE_GIANTS = Map(
     13,
@@ -97,7 +90,6 @@ TOMB_OF_THE_GIANTS = Map(
     name="TombOfTheGiants",
     variable_name="TOMB_OF_THE_GIANTS",
     verbose_name="Tomb of the Giants",
-    ffxbnd_file_name="FRPG_SfxBnd_m13_01",
 )
 ASH_LAKE = Map(
     13,
@@ -105,7 +97,6 @@ ASH_LAKE = Map(
     name="AshLake",
     variable_name="ASH_LAKE",
     verbose_name="Great Hollow / Ash Lake",
-    ffxbnd_file_name="FRPG_SfxBnd_m13_02",
 )
 BLIGHTTOWN = Map(
     14,
@@ -113,7 +104,6 @@ BLIGHTTOWN = Map(
     name="Blighttown",
     variable_name="BLIGHTTOWN",
     verbose_name="Blighttown / Quelaag's Domain",
-    ffxbnd_file_name="FRPG_SfxBnd_m14_00",
 )
 LOST_IZALITH = Map(
     14,
@@ -121,7 +111,6 @@ LOST_IZALITH = Map(
     name="LostIzalith",
     variable_name="LOST_IZALITH",
     verbose_name="Demon Ruins / Lost Izalith",
-    ffxbnd_file_name="FRPG_SfxBnd_m14_01",
 )
 SENS_FORTRESS = Map(
     15,
@@ -129,7 +118,6 @@ SENS_FORTRESS = Map(
     name="SensFortress",
     variable_name="SENS_FORTRESS",
     verbose_name="Sen's Fortress",
-    ffxbnd_file_name="FRPG_SfxBnd_m15_00",
 )
 ANOR_LONDO = Map(
     15,
@@ -137,7 +125,6 @@ ANOR_LONDO = Map(
     name="AnorLondo",
     variable_name="ANOR_LONDO",
     verbose_name="Anor Londo",
-    ffxbnd_file_name="FRPG_SfxBnd_m15_01",
 )
 NEW_LONDO_RUINS = Map(
     16,
@@ -145,7 +132,6 @@ NEW_LONDO_RUINS = Map(
     name="NewLondoRuins",
     variable_name="NEW_LONDO_RUINS",
     verbose_name="New Londo Ruins / Valley of Drakes",
-    ffxbnd_file_name="FRPG_SfxBnd_m16",
 )
 DUKES_ARCHIVES = Map(
     17,
@@ -153,7 +139,6 @@ DUKES_ARCHIVES = Map(
     name="DukesArchives",
     variable_name="DUKES_ARCHIVES",
     verbose_name="Duke's Archives / Crystal Cave",
-    ffxbnd_file_name="FRPG_SfxBnd_m17",
 )
 KILN_OF_THE_FIRST_FLAME = Map(
     18,
@@ -161,7 +146,6 @@ KILN_OF_THE_FIRST_FLAME = Map(
     name="KilnOfTheFirstFlame",
     variable_name="KILN_OF_THE_FIRST_FLAME",
     verbose_name="Kiln of the First Flame",
-    ffxbnd_file_name="FRPG_SfxBnd_m18_00",
 )
 UNDEAD_ASYLUM = Map(
     18,
@@ -169,7 +153,6 @@ UNDEAD_ASYLUM = Map(
     name="UndeadAsylum",
     variable_name="UNDEAD_ASYLUM",
     verbose_name="Undead Asylum",
-    ffxbnd_file_name="FRPG_SfxBnd_m18_01",
 )
 
 ALL_MAPS = (

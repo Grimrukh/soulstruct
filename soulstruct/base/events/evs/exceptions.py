@@ -42,16 +42,22 @@ class NoSkipOrReturnError(Exception):
     """
 
 
+NODE_TYPING = tp.Union[
+    ast.AST, ast.Name, ast.Constant, ast.Expr, ast.For, ast.If, ast.Assign, ast.Return, ast.Call, ast.UnaryOp, ast.stmt
+]
+
+
 class EVSError(Exception):
     def __init__(
         self,
-        lineno: tp.Union[ast.AST, ast.Expr, ast.For, ast.If, ast.Assign, ast.Return, ast.Call, int],
+        evs_name: str,
+        lineno: NODE_TYPING | int,
         msg: str,
     ):
         if isinstance(lineno, ast.AST):
             lineno = lineno.lineno
         self.lineno = lineno
-        super().__init__(f"LINE {lineno}: {msg}")
+        super().__init__(f"{evs_name} | LINE {lineno}: {msg}")
 
 
 class EVSSyntaxError(EVSError):
@@ -65,8 +71,9 @@ class EVSValueError(EVSError):
 class EVSImportError(EVSError):
     """Raised when a module cannot be imported."""
 
-    def __init__(self, lineno, module, msg):
+    def __init__(self, evs_name, lineno, module, msg):
         super().__init__(
+            evs_name,
             lineno,
             f"Could not import {repr(module)}.\nError: {msg}",
         )
@@ -75,39 +82,47 @@ class EVSImportError(EVSError):
 class EVSImportFromError(EVSError):
     """Raised when a name cannot be imported from a module."""
 
-    def __init__(self, lineno, module, name, msg):
-        super().__init__(lineno, f"Could not import {repr(name)} from module {repr(module)}. Error: {msg}")
+    def __init__(self, evs_name, lineno, module, name, msg):
+        super().__init__(evs_name, lineno, f"Could not import {repr(name)} from module {repr(module)}. Error: {msg}")
 
 
 class EVSCommonFuncImportError(EVSError):
     """Raised when a [COMMON_FUNC]-tagged import cannot be completed."""
 
-    def __init__(self, module, name, msg):
+    def __init__(self, evs_name, module, name, msg):
         if name == "":
-            super().__init__(0, f"Could not import COMMON_FUNC module {repr(module)}. Error: {msg}")
+            super().__init__(
+                evs_name,
+                0,
+                f"Could not import COMMON_FUNC module {repr(module)}. Error: {msg}",
+            )
         else:
-            super().__init__(0, f"Could not import {repr(name)} from COMMON_FUNC module {repr(module)}. Error: {msg}")
+            super().__init__(
+                evs_name,
+                0,
+                f"Could not import {repr(name)} from COMMON_FUNC module {repr(module)}. Error: {msg}",
+            )
 
 
 class EVSNameError(EVSError):
     """Raised when an invalid (undefined) name is parsed."""
 
-    def __init__(self, lineno, name):
-        super().__init__(lineno, f"Name {repr(name)} has not been imported or defined.")
+    def __init__(self, evs_name, lineno, name):
+        super().__init__(evs_name, lineno, f"Name {repr(name)} has not been imported or defined.")
 
 
 class EVSAttributeError(EVSError):
     """Raised when an attribute of an object cannot be retrieved."""
 
-    def __init__(self, lineno, name, attribute):
-        super().__init__(lineno, f"Object {repr(name)} has no attribute {repr(attribute)}.")
+    def __init__(self, evs_name, lineno, name, attribute):
+        super().__init__(evs_name, lineno, f"Object {repr(name)} has no attribute {repr(attribute)}.")
 
 
 class EVSCallableError(EVSError):
     """Raised when an un-callable object is called."""
 
-    def __init__(self, lineno, name):
-        super().__init__(lineno, f"Object {name} is not callable.")
+    def __init__(self, evs_name, lineno, name):
+        super().__init__(evs_name, lineno, f"Object {name} is not callable.")
 
 
 class ConditionError(EVSError):

@@ -115,7 +115,7 @@ class EMEVD(GameFile, abc.ABC):
 
     @classmethod
     def from_evs_parser(cls, evs_parser: EVSParser) -> tp.Self:
-        return cls.from_numeric_string(evs_parser.numeric_emevd, evs_parser.map_name)
+        return cls.from_numeric_string(evs_parser.numeric_emevd, evs_parser.name)
 
     @classmethod
     def from_evs_string(
@@ -127,7 +127,7 @@ class EMEVD(GameFile, abc.ABC):
     ) -> tp.Self:
         try:
             parser = cls.EVS_PARSER(
-                evs_string, map_name=map_name, script_directory=script_directory, common_func_evs=common_func_evs
+                evs_string, name=map_name, script_directory=script_directory, common_func_evs=common_func_evs
             )
         except Exception as ex:
             import traceback
@@ -365,7 +365,7 @@ class EMEVD(GameFile, abc.ABC):
         if self._common_func:
             # Update common event IDs of `GameEnumsManager`.
             # TODO: If these aren't named 'CommonFunc_{ID}', incorrect calls will be written to EVS.
-            for event_id in self._common_func:
+            for event_id in self._common_func.events:
                 enums_manager.add_event_id(event_id, is_common=True)
 
         docstring = self.get_evs_docstring(docstring)
