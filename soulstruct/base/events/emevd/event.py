@@ -566,6 +566,8 @@ class Event(abc.ABC):
             try:
                 instruction_lines = adv_decompiler.adv_decompile(instruction_lines)
             except (ValueError, KeyError, IndexError) as ex:
+                import traceback
+                traceback.print_exc()
                 _LOGGER.error(
                     f"Error while trying to decompile event {self.event_id} with high-level language. Using simple "
                     f"EVS output. Error:\n  {ex}")

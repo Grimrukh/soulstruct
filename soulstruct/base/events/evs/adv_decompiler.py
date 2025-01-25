@@ -171,11 +171,12 @@ class AdvancedDecompiler:
             self.out_lines.append(line)
             self.i += 1
 
-        # If the last line is just 'End()' or 'Restart()', replace it with 'return' or 'return RESTART'.
-        if self.out_lines[-1].endswith("End()"):
-            self.out_lines[-1] = self.out_lines[-1].removesuffix("End()") + "return"
-        elif self.out_lines[-1].endswith("Restart()"):
-            self.out_lines[-1] = self.out_lines[-1].removesuffix("Restart()") + "return RESTART"
+        if self.out_lines:
+            # If the last line is just 'End()' or 'Restart()', replace it with 'return' or 'return RESTART'.
+            if self.out_lines[-1].endswith("End()"):
+                self.out_lines[-1] = self.out_lines[-1].removesuffix("End()") + "return"
+            elif self.out_lines[-1].endswith("Restart()"):
+                self.out_lines[-1] = self.out_lines[-1].removesuffix("Restart()") + "return RESTART"
 
         # Remove any trailing blank lines that were added due to the last instruction.
         while self.out_lines and self.out_lines[-1] == "":
@@ -238,6 +239,7 @@ class AdvancedDecompiler:
             self.i += 1
 
     def if_test(self, line: str, match_dict: dict[str, str]):
+        """Generic `If...()` test detected."""
         indent = match_dict["indent"]
         test = match_dict["test"]
         if test not in self.emedf_tests or "if" not in self.emedf_tests[test]:
@@ -257,6 +259,7 @@ class AdvancedDecompiler:
             self.i += 1
 
     def skip_test(self, line: str, match_dict: dict[str, str]):
+        """Generic `SkipIf...()` test detected."""
         indent = match_dict["indent"]
         test = match_dict["test"]
         line_count = int(match_dict["line_count"])
@@ -275,6 +278,7 @@ class AdvancedDecompiler:
         args = match_dict["args"].removeprefix(", ")
 
         if test in {"ConditionTrue", "ConditionFalse", "LastConditionResultTrue", "LastConditionResultFalse"}:
+            # Condition group-based skip.
             input_condition = args.removeprefix("input_condition=")
             if test == "ConditionTrue":
                 test_expr = f"not {input_condition}"  # e.g. `not AND_1`
@@ -282,7 +286,7 @@ class AdvancedDecompiler:
                 test_expr = input_condition  # e.g. `AND_1`
             elif test == "LastConditionResultTrue":
                 test_expr = f"not LastResult({input_condition})"  # e.g. `not LastResult(AND_1)`
-            elif test == "LastConditionResultFalse":
+            else:  # == "LastConditionResultFalse":
                 test_expr = f"LastResult({input_condition})"  # e.g. `LastResult(AND_1)`
         else:
             # Find test that contains this "SkipLinesIf" instruction as its "skip_if_not" instruction.

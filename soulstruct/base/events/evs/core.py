@@ -257,13 +257,11 @@ class EVSParser(abc.ABC):
             expected_default_name = f"Event{event_id}"
             if event_name not in {expected_name, expected_default_name}:
                 raise self._EVSSyntaxError(
-                    
                     node,
                     f"Event with ID {event_id} must be called '{expected_name}' or '{expected_default_name}'.",
                 )
         elif event_name.lower() in {name.lower() for name in self.SPECIAL_EVENT_NAMES.values()}:  # case-insensitive
             raise self._EVSSyntaxError(
-                
                 node,
                 f"Special event name '{event_name}' cannot be used for event ID {event_id}.",
             )
@@ -338,7 +336,6 @@ class EVSParser(abc.ABC):
                 continue  # type hints are allowed and ignored
             else:
                 raise self._EVSSyntaxError(
-                    
                     node,
                     f"Invalid content: {node.__class__}. The only valid global EVS lines are "
                     f"from-imports, event script function definitions, and global name assignments.",
@@ -481,7 +478,6 @@ class EVSParser(abc.ABC):
         if is_common_func and not self.USES_COMMON_FUNC_SLOT:
             if slot != 0:
                 raise self._EVSSyntaxError(
-                    
                     node,
                     f"This game does not support non-zero slot arguments for imported common events.",
                 )
@@ -782,7 +778,6 @@ class EVSParser(abc.ABC):
     ) -> list[str]:
         if sum((skip_lines > 0, end_event, restart_event)) != 1:
             raise self._EVSSyntaxError(
-                
                 node,
                 "(internal) You can use 'skip_lines, 'end_event', or 'restart_event', but not multiples."
             )
@@ -818,12 +813,10 @@ class EVSParser(abc.ABC):
                     )
                 except TypeError:
                     raise self._EVSValueError(
-                        
                         node,
                         f"Event argument type {repr(arg_class)} is not testable.",
                     )
             raise self._EVSValueError(
-                
                 node,
                 f"Cannot use an event argument as a test condition unless it has a testable game type\n "
                 f"such as `Flag` (tests for enabled state), `Region` (tests if player is inside), etc.",
@@ -900,7 +893,7 @@ class EVSParser(abc.ABC):
         if isinstance(node, ast.Compare):
             return self._compile_simple_comparison(node, negate, skip_lines)
 
-        # 7. The condition is a test function call.
+        # 7. The condition is a test function call, e.g. `FlagEnabled()`.
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id in self.EMEDF_TESTS:
             # Get arguments.
             args = self._parse_nodes(node.args)
@@ -964,7 +957,6 @@ class EVSParser(abc.ABC):
         if isinstance(arg, ast.Call) and isinstance(arg.func, ast.Name) and arg.func.id == "range":
             if len(arg.args) != 2:
                 raise self._EVSSyntaxError(
-                    
                     node,
                     "`range()` used inside `all()` or `any()` must have exactly two arguments: `(first, last)`.",
                 )
@@ -1027,7 +1019,6 @@ class EVSParser(abc.ABC):
 
         if condition_group is not None and not isinstance(condition_group, ConditionGroupState):
             raise self._EVSError(
-                
                 node,
                 "(internal) Invalid 'condition' argument. Must be a ConditionGroupState or None.",
             )
@@ -1109,7 +1100,6 @@ class EVSParser(abc.ABC):
             if input_condition_group:
                 if condition_group is None:
                     raise self._EVSSyntaxError(
-                        
                         node,
                         f"(internal) Tried to compile condition group '{node.id}' into `condition=None`.",
                     )
@@ -1317,7 +1307,6 @@ class EVSParser(abc.ABC):
                 return self.cond_manager[node.id]
             except IndexError:
                 raise self._EVSSyntaxError(
-                    
                     node,
                     f"Condition group {node.id} is not defined in this event function.",
                 )
@@ -1358,19 +1347,21 @@ class EVSParser(abc.ABC):
         if skip_lines > 0:
             if condition_group is not None or end_event or restart_event:
                 raise ValueError("You cannot use more than one of: condition, skip_lines, end_event, restart_event.")
-            if "skip_if" not in tests:
+            # Not all tests have 'SkipIf' instructions (generally a subset of the condition-based 'If' instructions).
+            # To be supported, "skip_if_not" instruction must be defined, even if `negate` is True.
+            if "skip_if_not" not in tests:
                 raise NoSkipOrReturnError
+            # Note intrinsic negation here, as `if {test}` compiles to `skip {skip_lines} if not {test}`
             if negate:
-                if "skip_if_not" in tests:
-                    instr_name = tests["skip_if_not"]
+                if "skip_if" in tests:
+                    instr_name = tests["skip_if"]
                 else:
                     raise self._EVSError(
-                        
                         node,
                         f"Cannot support `not` keyword with SkipLines-based test function '{test_name}'.",
                     )
             else:
-                instr_name = tests["skip_if"]
+                instr_name = tests["skip_if_not"]
             # `line_count` is always the first positional argument.
             instruction_lines = self._compile_instr(node, instr_name, skip_lines, *args, **kwargs)
         elif skip_lines < 0:
@@ -1384,7 +1375,6 @@ class EVSParser(abc.ABC):
                     instr_name = tests["if_not"]
                 else:
                     raise self._EVSError(
-                        
                         node,
                         f"Cannot support `not` keyword with Condition-based test function '{test_name}'.",
                     )
@@ -1707,7 +1697,6 @@ class EVSParser(abc.ABC):
 
         if len(decorators) > 1:
             raise self._EVSSyntaxError(
-                
                 event_node,
                 f"Event function cannot have more than one decorator (restart type).\n"
                 f"Must be one of: {', '.join(RESTART_TYPES)}",
@@ -1721,7 +1710,6 @@ class EVSParser(abc.ABC):
             name, args, kwargs = self._parse_function_call(dec_node)
             if kwargs or len(args) != 1 or not isinstance(args[0], int):
                 raise self._EVSSyntaxError(
-                    
                     event_node,
                     f"Event function decorator must have exactly one numeric argument (event ID).",
                 )
@@ -1730,7 +1718,6 @@ class EVSParser(abc.ABC):
                 if self.map_base_flag is None:
                     # noinspection PyTypeChecker
                     raise self._EVSSyntaxError(
-                        
                         dec_node,
                         f"MapFlagSuffix `{event_id}` cannot be used when map base flag is unknown. (Pass `map_name` to "
                         f"the EVS parser explicitly if your EVS file name does not start with the usual 'mAA_BB_'.)",
@@ -1738,7 +1725,6 @@ class EVSParser(abc.ABC):
                 event_id += self.map_base_flag
         else:
             raise self._EVSSyntaxError(
-                
                 event_node,
                 f"Event function decorator must be `@ContinueOnRest`, `@RestartOnRest`, or `@EndOnRest`, with the event"
                 f" ID given as a decorator argument (e.g., `@RestartOnRest(11020100)`), not: {dec_node}.",
@@ -1748,7 +1734,6 @@ class EVSParser(abc.ABC):
             on_rest_behavior = RESTART_TYPES[name]
         except KeyError:
             raise self._EVSSyntaxError(
-                
                 event_node,
                 f"Event function decorator name is not a valid event restart type: {dec_node.id}\n"
                 f"Must be one of: {', '.join(RESTART_TYPES)}",
