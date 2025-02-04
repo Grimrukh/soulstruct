@@ -215,7 +215,9 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
         json_dict = read_json(json_path)
         # TODO: Some kind of fancy recursive JSON reader that checks field types and converts dictionaries to
         #  `BaseBinaryFile` subclasses.
-        return cls.from_dict(json_dict)
+        file = cls.from_dict(json_dict)
+        file.path = Path(json_path)
+        return file
 
     # endregion
 

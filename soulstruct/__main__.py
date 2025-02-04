@@ -30,6 +30,8 @@ parser.add_argument("--binderpack", action="store", help=word_wrap("Repack a BND
 parser.add_argument("--binderunpack", action="store", help=word_wrap("Unpack a BND/BXF from the given source file."))
 parser.add_argument("--tpfpack", action="store", help=word_wrap("Repack a TPF from the given source directory."))
 parser.add_argument("--tpfunpack", action="store", help=word_wrap("Unpack a TPF from the given source file."))
+parser.add_argument("--msbtojson", action="store", help=word_wrap("Convert an MSB file to JSON (DS1R only)."))
+parser.add_argument("--jsontomsb", action="store", help=word_wrap("Convert a JSON file to MSB (DS1R only)."))
 parser.add_argument("--restorebak", action="store", help=word_wrap("Restore a BAK file, overwriting any non-BAK file."))
 parser.add_argument(
     "--consoleLogLevel",
@@ -103,6 +105,26 @@ def soulstruct_main(ss_args):
         tpf.write()
         return
 
+    if ss_args.msbtojson is not None:
+        from soulstruct.darksouls1r.maps import MSB
+        try:
+            msb = MSB.from_path(ss_args.msbtojson)
+        except ValueError as ex:
+            _LOGGER.error(f"Could not load MSB file: {ex}")
+            raise
+        msb.write_json(msb.path.with_suffix(f"{msb.path.suffix}.json"))
+        return
+
+    if ss_args.jsontomsb is not None:
+        from soulstruct.darksouls1r.maps import MSB
+        try:
+            msb = MSB.from_json(ss_args.jsontomsb)
+        except ValueError as ex:
+            _LOGGER.error(f"Could not load JSON file as MSB: {ex}")
+            raise
+        msb.write(msb.path.with_name(f"{msb.path_minimal_stem}.msb"))
+        return
+
     if ss_args.restorebak is not None:
         from soulstruct.utilities.files import restore_bak
         # NOTE: Dangerous enough that I require user confirmation if the non-BAK file exists.
@@ -132,6 +154,6 @@ def soulstruct_main(ss_args):
 
 try:
     soulstruct_main(parser.parse_args())
-except Exception as ex:
-    _LOGGER.exception(f"Error occurred in soulstruct.__main__: {ex}")
+except Exception as main_ex:
+    _LOGGER.exception(f"Error occurred in soulstruct.__main__: {main_ex}")
     input("Press any key to exit.")

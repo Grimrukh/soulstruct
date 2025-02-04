@@ -12,12 +12,16 @@ else:
 
 class _ModuleFormatter(logging.Formatter):
 
+    def __init__(self, base_module_name: str, fmt, style="{"):
+        super().__init__(fmt, style=style)
+        self.base_module_name = base_module_name
+        self.module_dir = f"\\{self.base_module_name}\\"  # for relative module path
+
     def format(self, record):
         """Modify record with color information before formatting it to a message."""
-        if "\\soulstruct\\" in record.pathname:
-            record.modulepath = (
-                "soulstruct." + record.pathname.split("\\soulstruct\\", 1)[-1].replace("\\", ".").removesuffix(".py")
-            )
+        if self.module_dir in record.pathname:
+            relative_module = record.pathname.split(self.module_dir, 1)[-1].replace("\\", ".").removesuffix(".py")
+            record.modulepath = f"{self.base_module_name}.{relative_module}"
         else:
             record.modulepath = record.pathname
         return super().format(record)
@@ -35,8 +39,8 @@ class _ColoredModuleFormatter(_ModuleFormatter):
         "$RESET": "\033[0m",
     }
 
-    def __init__(self, fmt, style="{", use_color=True):
-        super().__init__(fmt, style=style)
+    def __init__(self, base_module_name: str, fmt, style="{", use_color=True):
+        super().__init__(base_module_name, fmt, style=style)
         self.use_color = use_color
 
     def format(self, record):
@@ -58,6 +62,7 @@ class _ColoredModuleFormatter(_ModuleFormatter):
 
 
 CONSOLE_FORMATTER = _ColoredModuleFormatter(
+    base_module_name="soulstruct",
     fmt="$COLOR{levelname:>7} :: {modulepath:<40} :: {lineno:>4d} :: {message}$RESET",
     style="{",
     use_color=bool(colorama),
@@ -68,7 +73,9 @@ CONSOLE_HANDLER.setFormatter(CONSOLE_FORMATTER)
 CONSOLE_HANDLER.setLevel(logging.INFO)  # default
 LOG_PATH = str(Path(_path_source).parent / "soulstruct.log")
 FILE_FORMATTER = _ModuleFormatter(
-    fmt="{levelname:>7} :: {asctime} :: {pathname:<35} :: Line {lineno:>4d} :: {message}", style="{"
+    base_module_name="soulstruct",
+    fmt="{levelname:>7} :: {asctime} :: {pathname:<35} :: Line {lineno:>4d} :: {message}",
+    style="{",
 )
 FILE_HANDLER = logging.FileHandler(LOG_PATH, mode="w", encoding="shift_jis_2004")
 FILE_HANDLER.setFormatter(FILE_FORMATTER)

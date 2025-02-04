@@ -557,7 +557,8 @@ class MergedMesh:
             all_loop_indices = set(range(loop_offset, loop_offset + len(mesh.vertices)))
             unresolved_loop_indices = all_loop_indices - resolved_loop_indices
             if unresolved_loop_indices:
-                _LOGGER.warning(f"FLVER mesh {i} has {len(unresolved_loop_indices)} vertices never used by a face.")
+                # This happens way too much in vanilla FLVER models to elevate above DEBUG log level.
+                _LOGGER.debug(f"FLVER mesh {i} has {len(unresolved_loop_indices)} vertices never used by a face.")
                 for loop_index in unresolved_loop_indices:
                     loop_vertex_indices[loop_index] = 2 ** 32 - 1  # mark as unused (-1)
 
