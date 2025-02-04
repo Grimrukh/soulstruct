@@ -105,7 +105,7 @@ class Map(GameObject):
 
     name: str = ""  # e.g. "FirelinkShrine"
     verbose_name: str = ""  # e.g. "Firelink Shrine"
-    variable_name: str | None = None  # e.g. `FIRELINK_SHRINE`
+    variable_name: str | None = None  # e.g. `FIRELINK_SHRINE`. Must be given for map to be useable in EVS.
 
     # Stems of related map files. If left as "", they will be auto-set based on the map stem (mAA_BB_CC_DD).
     # If explicitly set to `None`, that indicates that the associated file does not exist.
@@ -134,9 +134,10 @@ class Map(GameObject):
             map_stem = None
 
         if not self.name:
+            if map_stem is None:
+                raise ValueError("Map must have an area ID and block ID to auto-set `name` from its map stem.")
             self.name = map_stem
-        if not self.variable_name:
-            self.variable_name = "MAP_" + map_stem[1:]
+        # `variable_name` must be set for map to be used in EVS. It has no default string value.
         if not self.verbose_name:
             self.verbose_name = self.name
 

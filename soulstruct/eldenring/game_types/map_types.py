@@ -116,7 +116,6 @@ class MapTile(Map):
         msb_file_stem=None,
         ai_file_stem=None,
         esd_file_stem=None,
-        ffxbnd_file_name=None,
         variable_name=None,
         verbose_name=None,
         sites_of_grace=(),
@@ -160,7 +159,6 @@ class MapTile(Map):
             msb_file_stem=msb_file_stem,
             ai_file_stem=ai_file_stem,
             esd_file_stem=esd_file_stem,
-            ffxbnd_file_name=ffxbnd_file_name,
             variable_name=variable_name,
             verbose_name=verbose_name,
         )

@@ -320,7 +320,7 @@ class AdvancedDecompiler:
                             (else_m := _SKIP_TEST_RE.match(else_line))
                             or (else_m := _UNCONDITIONAL_SKIP_RE.match(else_line))
                         ):
-                            if int(m.groupdict()["line_count"]) > else_line_count - k:
+                            if int(else_m.groupdict()["line_count"]) > else_line_count - k:
                                 # Skip goes beyond end of `else` block. Ignore the entire `if` block.
                                 self.out_lines.append(line)
                                 self.i += 1

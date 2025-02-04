@@ -393,7 +393,7 @@ class MSBWindVFXRegion(MSBRegion):
 class SpawnPointRegionDataStruct(MSBBinaryStruct):
     """No actual data."""
     _minus_one: int = binary(asserted=-1)
-    _pad1: bytes = binary_pad(3)
+    _pad1: bytes = binary_pad(12)
 
 
 @dataclass(slots=True, eq=False, repr=False)

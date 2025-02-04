@@ -100,6 +100,12 @@ class DCXType(Enum):
         return new_path if is_path else str(new_path)
 
     @classmethod
+    def from_member_name(cls, member_name: str) -> DCXType:
+        """Getaround for PyCharm's refusal to understand that `Enum.__getitem__()` returns members, not `type[Enum]`."""
+        # noinspection PyTypeChecker
+        return cls[member_name]
+
+    @classmethod
     def detect(cls, reader: BinaryReader) -> DCXType:
         """Detect type of DCX. Resets offset when done."""
         with reader.temp_offset():
