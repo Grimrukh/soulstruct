@@ -10,6 +10,9 @@ else:
     colorama.just_fix_windows_console()
 
 
+_LOGGER = logging.getLogger("soulstruct")
+
+
 class _ModuleFormatter(logging.Formatter):
 
     def __init__(self, base_module_name: str, fmt, style="{"):
@@ -61,50 +64,61 @@ class _ColoredModuleFormatter(_ModuleFormatter):
         return s
 
 
-CONSOLE_FORMATTER = _ColoredModuleFormatter(
-    base_module_name="soulstruct",
-    fmt="$COLOR{levelname:>7} :: {modulepath:<40} :: {lineno:>4d} :: {message}$RESET",
-    style="{",
-    use_color=bool(colorama),
-)
-_path_source = sys.executable if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS") else __file__
-CONSOLE_HANDLER = logging.StreamHandler()
-CONSOLE_HANDLER.setFormatter(CONSOLE_FORMATTER)
-CONSOLE_HANDLER.setLevel(logging.INFO)  # default
-LOG_PATH = str(Path(_path_source).parent / "soulstruct.log")
-FILE_FORMATTER = _ModuleFormatter(
-    base_module_name="soulstruct",
-    fmt="{levelname:>7} :: {asctime} :: {pathname:<35} :: Line {lineno:>4d} :: {message}",
-    style="{",
-)
-FILE_HANDLER = logging.FileHandler(LOG_PATH, mode="w", encoding="shift_jis_2004")
-FILE_HANDLER.setFormatter(FILE_FORMATTER)
-FILE_HANDLER.setLevel(logging.DEBUG)  # default
+CONSOLE_FORMATTER: _ColoredModuleFormatter | None = None
+CONSOLE_HANDLER: logging.StreamHandler | None = None
+FILE_FORMATTER: _ModuleFormatter | None = None
+FILE_HANDLER: logging.FileHandler | None = None
 
-_LOGGER = logging.getLogger("soulstruct")
-# Only add if no other handlers have been added (e.g., to avoid stacking up after Blender scripts reload).
-if not _LOGGER.hasHandlers():
+
+def set_up_logging():
+    global CONSOLE_FORMATTER, CONSOLE_HANDLER, FILE_FORMATTER, FILE_HANDLER
+
     _LOGGER.setLevel(1)  # All filtering is done by handlers.
+
+    CONSOLE_FORMATTER = _ColoredModuleFormatter(
+        base_module_name="soulstruct",
+        fmt="$COLOR{levelname:>7} :: {modulepath:<40} :: {lineno:>4d} :: {message}$RESET",
+        style="{",
+        use_color=bool(colorama),
+    )
+    _path_source = sys.executable if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS") else __file__
+    CONSOLE_HANDLER = logging.StreamHandler()
+    CONSOLE_HANDLER.setFormatter(CONSOLE_FORMATTER)
+    CONSOLE_HANDLER.setLevel(logging.INFO)  # default
     _LOGGER.addHandler(CONSOLE_HANDLER)
+
+    FILE_FORMATTER = _ModuleFormatter(
+        base_module_name="soulstruct",
+        fmt="{levelname:>7} :: {asctime} :: {pathname:<35} :: Line {lineno:>4d} :: {message}",
+        style="{",
+    )
+    log_path = str(Path(_path_source).parent / "soulstruct.log")
+    FILE_HANDLER = logging.FileHandler(log_path, mode="w", encoding="shift_jis_2004")
+    FILE_HANDLER.setFormatter(FILE_FORMATTER)
+    FILE_HANDLER.setLevel(logging.DEBUG)  # default
     _LOGGER.addHandler(FILE_HANDLER)
 
+    def handle_unhandled_exception(exc_type, exc_value, exc_traceback):
+        if issubclass(exc_type, KeyboardInterrupt):
+            # Use default `excepthook` for KeyboardInterrupts.
+            sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        else:
+            _LOGGER.critical("Unhandled exception: ", exc_info=(exc_type, exc_value, exc_traceback))
 
-def handle_unhandled_exception(exc_type, exc_value, exc_traceback):
-    if issubclass(exc_type, KeyboardInterrupt):
-        # Use default `excepthook` for KeyboardInterrupts.
-        sys.__excepthook__(exc_type, exc_value, exc_traceback)
-    else:
-        _LOGGER.critical("Unhandled exception: ", exc_info=(exc_type, exc_value, exc_traceback))
+    sys.excepthook = handle_unhandled_exception
+
+    # NOTE: Disabled, as it's annoying with `multiprocessing`.
+    # _LOGGER.info(
+    #     f"Log file {LOG_PATH} opened with level {logging.getLevelName(FILE_HANDLER.level)} ({FILE_HANDLER.level})."
+    # )
+
+    if not colorama:
+        _LOGGER.info(
+            "Install `colorama` in your Python environment with `python -m pip install colorama` to enable colorful "
+            "console output."
+        )
 
 
-sys.excepthook = handle_unhandled_exception
-
-# NOTE: Disabled, as it's annoying with `multiprocessing`.
-# _LOGGER.info(
-#     f"Log file {LOG_PATH} opened with level {logging.getLevelName(FILE_HANDLER.level)} ({FILE_HANDLER.level})."
-# )
-if not colorama:
-    _LOGGER.info(
-        "Install `colorama` in your Python environment with `python -m pip install colorama` to enable colorful "
-        "console output."
-    )
+# Only set up once (e.g. not every time we reload Blender scripts).
+if not _LOGGER.hasHandlers():
+    set_up_logging()

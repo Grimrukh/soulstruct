@@ -45,6 +45,7 @@ class DrawParamBND(Binder):
 
     EXT: tp.ClassVar[str] = ".parambnd"
     DEFAULT_ENTRY_ROOT: tp.ClassVar[str] = f"{DARK_SOULS_PTDE.interroot_prefix}\\param\\DrawParam"
+    IS_SPLIT_BXF: tp.ClassVar[bool] = False
     PARAMDEF_MODULE: tp.ClassVar[ModuleType] = paramdef
 
     PARAM_NICKNAMES: tp.ClassVar[BiDict[str, str]] = BiDict(
@@ -255,7 +256,7 @@ class DrawParamBND(Binder):
             raise ValueError(f"Invalid `DrawParamBND` slot: {slot}. Must be 0 or 1.")
         return self.get_default_entry_path(entry_name)
 
-    def regenerate_entries(self):
+    def entry_autogen(self):
         """Regenerate Binder entries from `draw_params` dictionary."""
 
         # Any existing Binder entries not regenerated here will be removed below.
@@ -264,6 +265,7 @@ class DrawParamBND(Binder):
         for slot, draw_params in enumerate((self.draw_params_0, self.draw_params_1)):
             for draw_param_stem, draw_param in draw_params.items():
                 if draw_param is None:
+                    print(f"Missing DrawParam stem/slot: {draw_param_stem} {slot}")
                     continue  # slot missing
                 entry_path = self.get_draw_param_entry_path(draw_param_stem, slot)
                 regenerated_entry_paths.add(entry_path)
@@ -286,20 +288,6 @@ class DrawParamBND(Binder):
         if draw_param_stem_or_nickname not in cls.PARAM_NICKNAMES:
             raise ValueError(f"Invalid `DrawParam` stem or nickname: {draw_param_stem_or_nickname}")
         return draw_param_stem_or_nickname  # already a valid stem
-
-    def write(
-        self,
-        file_path: None | str | Path = None,
-        bdt_file_path: None | str | Path = None,
-        make_dirs=True,
-        check_hash=False,
-    ) -> list[Path]:
-        if bdt_file_path is not None:
-            raise TypeError(
-                f"Cannot write `DrawParamBND` to a split `BXF` file. (Invalid `bdt_file_path`: {bdt_file_path})"
-            )
-        self.regenerate_entries()
-        return super(DrawParamBND, self).write(file_path, make_dirs=make_dirs, check_hash=check_hash)
 
     @classmethod
     def from_json_directory(cls, directory: Path | str) -> tp.Self:

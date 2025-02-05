@@ -309,6 +309,8 @@ class MATBINSampler:
 
 class MATBINBND(Binder):
 
+    IS_SPLIT_BXF: tp.ClassVar[bool] = False
+
     _BUNDLED: tp.ClassVar[dict[Game, MATBINBND]] = {}
 
     use_lazy_load: bool = True  # if True, entries will only be loaded into `MATBIN` instances when requested

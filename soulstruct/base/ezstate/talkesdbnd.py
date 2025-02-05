@@ -10,7 +10,7 @@ from dataclasses import field
 from pathlib import Path
 
 from soulstruct.containers import Binder
-from .esd import ESD, ESDType
+from .esd import ESD
 
 _LOGGER = logging.getLogger("soulstruct")
 
@@ -30,6 +30,8 @@ class TalkESDBND(Binder, tp.Generic[TALK_ESD_T], abc.ABC):
     """
 
     EXT: tp.ClassVar[str] = ".talkesdbnd"
+    IS_SPLIT_BXF: tp.ClassVar[bool] = False
+
     TALK_ESD_CLASS: tp.ClassVar[type[ESD]] = None
 
     talk: dict[int, TALK_ESD_T] = field(default_factory=dict)
@@ -83,15 +85,16 @@ class TalkESDBND(Binder, tp.Generic[TALK_ESD_T], abc.ABC):
         return cls(talk=talk_dict.copy())
 
     def write_esp_directory(self, esp_directory: Path | str):
+        """Write `TalkESDBND` as a directory of ESP files (1 state machine) and/or folders (2+ state machines)."""
         esp_directory = Path(esp_directory)
         esp_directory.mkdir(parents=True, exist_ok=True)
         for talk_id, talk_esd in self.talk.items():
             if len(talk_esd.state_machines) == 1:
-                talk_esd.write_esp_file(esp_directory / f"t{talk_id}.esp.py", esd_type=ESDType.TALK)
+                talk_esd.write_esp_file(esp_directory / f"t{talk_id}.esp.py")
             else:
-                talk_esd.write_esp_directory(esp_directory / f"t{talk_id}", esd_type=ESDType.TALK)
+                talk_esd.write_esp_directory(esp_directory / f"t{talk_id}")
 
-    def regenerate_entries(self):
+    def entry_autogen(self):
         """Regenerate Binder entries from `talk` dictionary."""
 
         # Remove BND talk entries that aren't still present in this `TalkESDBND` instance.
@@ -110,7 +113,7 @@ class TalkESDBND(Binder, tp.Generic[TALK_ESD_T], abc.ABC):
         # Sort entries by name.
         self.entries.sort(key=lambda entry: entry.name)
 
-    def __getitem__(self, talk_id):
+    def __getitem__(self, talk_id) -> TALK_ESD_T:
         return self.talk[talk_id]
 
     def __iter__(self):
@@ -119,23 +122,9 @@ class TalkESDBND(Binder, tp.Generic[TALK_ESD_T], abc.ABC):
     def __repr__(self):
         return f"TalkESDBND({repr(self.path)}): {list(self.talk)}"
 
-    def write(
-        self,
-        file_path: None | str | Path = None,
-        bdt_file_path: None | str | Path = None,
-        make_dirs=True,
-        check_hash=False,
-    ) -> list[Path]:
-        if bdt_file_path is not None:
-            raise TypeError(
-                f"Cannot write `TalkESDBND` to a split `BXF` file. (Invalid `bdt_file_path`: {bdt_file_path})"
-            )
-        self.regenerate_entries()
-        return super(TalkESDBND, self).write(file_path, make_dirs=make_dirs, check_hash=check_hash)
-
     @classmethod
     def write_from_dict(cls, talk_dict, talkesdbnd_path, make_dirs=True):
         """Shortcut to immediately load given dictionary and write to given `.talkesdbnd` path."""
         talkesdbnd = cls.from_talk_dict(talk_dict)  # type: tp.Self
-        # Skip regeneneration in this class's `write`.
+        # Skip `entry_autogen()` call in this class.
         Binder.write(talkesdbnd, talkesdbnd_path, make_dirs=make_dirs)

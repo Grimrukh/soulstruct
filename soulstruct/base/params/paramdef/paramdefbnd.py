@@ -29,6 +29,8 @@ class ParamDefBND(Binder, abc.ABC):
     journey with you at this time.
     """
 
+    IS_SPLIT_BXF: tp.ClassVar[bool] = False
+
     _BUNDLED: tp.ClassVar[dict[Game, ParamDefBND]] = {}
 
     PARAMDEF_CLASS: tp.ClassVar[type[ParamDef]] = None

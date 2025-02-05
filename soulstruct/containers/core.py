@@ -263,6 +263,10 @@ class Binder(BaseBinaryFile):
     # Typically set to something like `{game.interroot_prefix}\\some\\extra\\folders`.
     DEFAULT_ENTRY_ROOT: tp.ClassVar[str] = ""
 
+    # Set to `True` or `False` by subclasses to assert that the Binder must always or never be split into BHD/BDT files.
+    # Default `None` means the Binder can be either.
+    IS_SPLIT_BXF: tp.ClassVar[bool | None] = None
+
     signature: str = "07D7R6"
     flags: BinderFlags = BinderFlags(0b00101110)  # most common flags by far (IDs, names1, names2, compression)
     big_endian: bool = False
@@ -286,6 +290,12 @@ class Binder(BaseBinaryFile):
         bdt_data: bytes | bytearray | tp.BinaryIO | BinaryReader | BinderEntry | None = None,
     ) -> tp.Self:
         """Load `Binder` from just `data` (BND file) or split `data` and `bdt_data` (BXF file)."""
+
+        if bdt_data is not None and cls.IS_SPLIT_BXF is False:
+            raise ValueError(f"Cannot load split BHD/BDT Binder for class `{cls.__name__}`.")
+        elif bdt_data is None and cls.IS_SPLIT_BXF is True:
+            raise ValueError(f"Can only load split BHD/BDT Binder for class `{cls.__name__}`.")
+
         reader = BinaryReader(data) if not isinstance(data, BinaryReader) else data  # type: BinaryReader
 
         if is_dcx(reader):
@@ -356,6 +366,8 @@ class Binder(BaseBinaryFile):
             dcx_type = None  # will not be assigned
 
         if first_four_bytes[:3] == b"BHF":
+            if cls.IS_SPLIT_BXF is False:
+                raise ValueError(f"Cannot load split BHD/BDT Binder for class `{cls.__name__}`.")
             if bdt_path is None:
                 # Try to auto-detect BDT file next to `path`.
                 name_parts = path.name.split(".")
@@ -367,6 +379,8 @@ class Binder(BaseBinaryFile):
                     raise FileNotFoundError(f"Could not find BDT data file next to BHD header file: {bdt_path}")
             bdt_reader = BinaryReader(bdt_path)
         elif first_four_bytes[:3] == b"BND":
+            if cls.IS_SPLIT_BXF is True:
+                raise ValueError(f"Can only load split BHD/BDT Binder for class `{cls.__name__}`.")
             if bdt_path is not None:
                 raise ValueError("Cannot pass in `bdt_path` when `path` is a BND file.")
             bdt_reader = None
@@ -386,6 +400,11 @@ class Binder(BaseBinaryFile):
 
     @classmethod
     def from_reader(cls, reader: BinaryReader, bdt_reader: BinaryReader | None = None) -> tp.Self:
+        if bdt_reader is not None and cls.IS_SPLIT_BXF is False:
+            raise ValueError(f"Cannot load split BHD/BDT Binder for class `{cls.__name__}`.")
+        elif bdt_reader is None and cls.IS_SPLIT_BXF is True:
+            raise ValueError(f"Can only load split BHD/BDT Binder for class `{cls.__name__}`.")
+
         version_bytes = reader.peek(4)
 
         if version_bytes[:3] == b"BHF":
@@ -539,8 +558,12 @@ class Binder(BaseBinaryFile):
 
         binder_type = binder_kwargs.pop("binder_type")
         if binder_type[:3] == "BXF":
+            if cls.IS_SPLIT_BXF is False:
+                raise ValueError(f"Cannot load split BHD/BDT Binder for class `{cls.__name__}`.")
             is_split_bxf = True
         elif binder_type[:3] == "BND":
+            if cls.IS_SPLIT_BXF is True:
+                raise ValueError(f"Can only load split BHD/BDT Binder for class `{cls.__name__}`.")
             is_split_bxf = False
         else:
             raise ValueError(
@@ -577,6 +600,8 @@ class Binder(BaseBinaryFile):
     @classmethod
     def empty_bnd3(cls):
         """Create an empty Binder V3 (BND3)."""
+        if cls.IS_SPLIT_BXF is True:
+            raise ValueError(f"Can only load split BHD/BDT Binder for class `{cls.__name__}`.")
         return cls(version=BinderVersion.V3, v4_info=None)
 
     @classmethod
@@ -585,16 +610,22 @@ class Binder(BaseBinaryFile):
 
         NOTE: `Binder` already defaults to this, but this is more explicit.
         """
+        if cls.IS_SPLIT_BXF is True:
+            raise ValueError(f"Can only load split BHD/BDT Binder for class `{cls.__name__}`.")
         return cls(version=BinderVersion.V4, v4_info=BinderVersion4Info(**info_kwargs))
 
     @classmethod
     def empty_bxf3(cls):
         """Create an empty split Binder V3 (BXF3)."""
+        if cls.IS_SPLIT_BXF is False:
+            raise ValueError(f"Cannot load split BHD/BDT Binder for class `{cls.__name__}`.")
         return cls(version=BinderVersion.V3, v4_info=None, is_split_bxf=True)
 
     @classmethod
     def empty_bxf4(cls, **info_kwargs):
         """Create an empty split Binder V4 (BXF4)."""
+        if cls.IS_SPLIT_BXF is False:
+            raise ValueError(f"Cannot load split BHD/BDT Binder for class `{cls.__name__}`.")
         return cls(version=BinderVersion.V4, v4_info=BinderVersion4Info(**info_kwargs), is_split_bxf=True)
 
     # endregion
@@ -603,7 +634,10 @@ class Binder(BaseBinaryFile):
 
     def entry_autogen(self):
         """Method that `Binder` subclasses (e.g. `CHRBND`, `GameParamBND`, etc.) can override to automatically create
-        entries from loaded `BaseBinaryFile` instances with known IDs and paths."""
+        entries from loaded `BaseBinaryFile` instances with known IDs and paths.
+
+        Called in `__bytes__()` before base class call and in `get_split_bytes()`.
+        """
         pass
 
     def write(
@@ -633,13 +667,13 @@ class Binder(BaseBinaryFile):
         Returns:
             list[Path]: path of written BND file or BHD and BDT files. Empty if nothing new is written.
         """
-        self.entry_autogen()
-
         file_path = self.get_file_path(file_path)
         if make_dirs:
             file_path.parent.mkdir(parents=True, exist_ok=True)
 
         if self.is_split_bxf:
+            if self.IS_SPLIT_BXF is False:
+                raise ValueError(f"Cannot write split BHD/BDT Binder for class `{self.__name__}`.")
             if bdt_file_path is None:
                 # Auto-set BDT path.
                 name_parts = file_path.name.split(".")
@@ -665,6 +699,10 @@ class Binder(BaseBinaryFile):
 
         if bdt_file_path is not None:
             raise ValueError("Cannot pass in `bdt_file_path` when `Binder.is_split_bxf == False`.")
+
+        if self.IS_SPLIT_BXF is True:
+            raise ValueError(f"Can only write split BHD/BDT Binder for class `{self.__name__}`.")
+
         super(Binder, self).write(file_path, make_dirs=make_dirs, check_hash=check_hash)
 
         return [file_path]
@@ -675,7 +713,7 @@ class Binder(BaseBinaryFile):
         bdt_path_or_entry: None | str | Path | BinderEntry,
         make_dirs=True,
         check_hash=False,
-    ):
+    ) -> None:
         """Writes both the `BHD` and `BDT` files at once, but also supports writing their data into an existing
         `BinderEntry`. Most useful for split 'CHRTPFBHD/BDT' files in `chr` folders, where the BHD header file is
         inside the `chrbnd` but the BDT file is a real file sitting next to it.
@@ -747,6 +785,8 @@ class Binder(BaseBinaryFile):
                 "the two split BHD/BDT files directly."
             )
 
+        self.entry_autogen()
+
         if self.version == BinderVersion.V3:
             writer = self._header_to_writer_v3()
             self._entries_into_writer_v3(writer, writer)
@@ -764,6 +804,8 @@ class Binder(BaseBinaryFile):
     def _to_split_writers(self) -> tuple[BinaryWriter, BinaryWriter]:
         if not self.is_split_bxf:
             _LOGGER.warning("Calling `_to_writer_split()` on `Binder` with `is_split_bxf=False`, which is unusual.")
+
+        self.entry_autogen()
 
         if self.version == BinderVersion.V3:
             header_writer = self._header_to_writer_v3()

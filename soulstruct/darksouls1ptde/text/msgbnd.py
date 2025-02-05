@@ -15,6 +15,7 @@ class MSGBND(Binder):
     Does NOT handle FMGs; `MSGDirectory` does that by managing both `item` and `menu` MSGBNDs together.
     """
 
+    IS_SPLIT_BXF: tp.ClassVar[bool] = False
     DEFAULT_ENTRY_ROOT: tp.ClassVar[str] = f"{DARK_SOULS_PTDE.interroot_prefix}\\Msb\\Data_ENGLISH\\win32"
 
     dcx_type = DARK_SOULS_PTDE.default_dcx_type

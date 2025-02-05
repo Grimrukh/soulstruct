@@ -3,6 +3,7 @@ from __future__ import annotations
 __all__ = ["BaseNVMBND"]
 
 import abc
+import typing as tp
 from dataclasses import field
 
 from soulstruct.containers import Binder, EntryNotFoundError
@@ -11,6 +12,8 @@ from .nvm import NVM
 
 class BaseNVMBND(Binder, abc.ABC):
     """Manage `NVM` entries in a Binder. Game-specific subclasses will want to set their own Binder defaults."""
+
+    IS_SPLIT_BXF: tp.ClassVar[bool] = False
 
     map_stem: str = ""
 

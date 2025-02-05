@@ -20,6 +20,8 @@ _LOGGER = logging.getLogger("soulstruct")
 class FLVERBinder(Binder, abc.ABC):
     """Base class for Binders that contain one or more FLVER files and an optional TPF file."""
 
+    # No BXF FLVER Binders have yet been encountered. They can set this to `True` if they ever exist.
+    IS_SPLIT_BXF: tp.ClassVar[bool] = False
     TPF_ENTRY_ID: tp.ClassVar[int] = 100  # -1 if no TPF ever exists
     FLVER_FIRST_ENTRY_ID: tp.ClassVar[int] = 200
     MAX_FLVER_COUNT: tp.ClassVar[int] = 1

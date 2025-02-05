@@ -539,6 +539,8 @@ class MTDBND(Binder):
     NOTE: This is NOT an abstract class. It can be used for any supported game (i.e. up to Sekiro).
     """
 
+    IS_SPLIT_BXF: tp.ClassVar[bool] = False
+
     _BUNDLED: tp.ClassVar[dict[Game, MTDBND]] = {}
 
     mtds: dict[str, MTD] = field(default_factory=dict)  # keys are lower case

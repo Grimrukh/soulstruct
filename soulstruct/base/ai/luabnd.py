@@ -30,10 +30,19 @@ _LUA_SCRIPT_RE = re.compile(r"(.*)\.lua$")
 class LuaBND(Binder):
     """Automatically loads all scripts, LuaInfo, and LuaGNL objects."""
 
+    IS_SPLIT_BXF: tp.ClassVar[bool] = False
+
     goals: list[LuaGoalScript] = field(default_factory=list)
     unknown_scripts: list[LuaUnknownScript] = field(default_factory=list)
 
     is_lua_32: bool = False  # as opposed to 64-bit (can't decompile 32-bit at present)
+
+    # Options applied on `entry_autogen()` call when converting to Binder entries.
+    pack_decompiled_goals: bool = True
+    pack_decompiled_unknown_scripts: bool = False
+    pack_new_scripts_as_compiled: bool = True
+    pack_luainfo: bool = True
+    pack_luagnl: bool = True
 
     @classmethod
     def from_reader(cls, reader: BinaryReader, bdt_reader: BinaryReader | None = None) -> tp.Self:
@@ -305,14 +314,7 @@ class LuaBND(Binder):
             names += [unknown.script_name for unknown in self.unknown_scripts]
         return names
 
-    def regenerate_entries(
-        self,
-        use_decompiled_goals=True,
-        use_decompiled_unknown_scripts=False,
-        compile_scripts=True,
-        pack_luainfo=True,
-        pack_luagnl=True,
-    ):
+    def entry_autogen(self):
         """Scan `goals` and `unknown_scripts` to rebuild Binder script entries and (if requested) `LuaInfo` and
         `LuaGNL` files."""
 
@@ -324,7 +326,7 @@ class LuaBND(Binder):
 
         entries_by_id = self.get_entries_by_id()
 
-        if pack_luagnl:
+        if self.pack_luagnl:
             if 1000000 not in entries_by_id:
                 _LOGGER.warning(f"No existing `LuaGNL` file in {self.path.name}. Will not write a new one.")
             else:
@@ -333,7 +335,7 @@ class LuaBND(Binder):
                 gnl_names = self.get_gnl_names()
                 luagnl = LuaGNL(names=gnl_names)
                 entries_by_id[1000000].set_from_binary_file(luagnl)
-        if pack_luainfo:
+        if self.pack_luainfo:
             if 1000001 not in entries_by_id:
                 _LOGGER.warning(f"No existing `LuaInfo` file in {self.path.name}. Will not write a new one.")
             else:
@@ -341,12 +343,12 @@ class LuaBND(Binder):
                 entries_by_id[1000001].set_from_binary_file(luainfo)
         for lua_list, use_decompiled in zip(
             (self.goals, self.unknown_scripts),
-            (use_decompiled_goals, use_decompiled_unknown_scripts),
+            (self.pack_decompiled_goals, self.pack_decompiled_unknown_scripts),
         ):
             for lua_entry in lua_list:
                 if use_decompiled and lua_entry.script:
                     try:
-                        self.add_script_lua_file(lua_entry, compile_scripts, x64=not self.is_lua_32)
+                        self.add_script_lua_file(lua_entry, self.pack_new_scripts_as_compiled, x64=not self.is_lua_32)
                     except LuaCompileError:
                         if lua_entry.bytecode:
                             _LOGGER.error(f"Could not compile script {lua_entry.script_name}. Using existing bytecode.")
@@ -366,22 +368,6 @@ class LuaBND(Binder):
                     and lua_entry.goal_name not in DS1_GOALS_WITH_NO_SCRIPT
                 ):
                     _LOGGER.warning(f"Skipping unexpected goal that has no script or bytecode: {lua_entry.goal_name}")
-
-    def write(
-        self,
-        file_path: None | str | Path = None,
-        bdt_file_path: None | str | Path = None,
-        make_dirs=True,
-        check_hash=False,
-        use_decompiled_goals=True,
-        use_decompiled_unknown_scripts=False,
-    ) -> list[Path]:
-        if bdt_file_path is not None:
-            raise TypeError(f"Cannot write `LuaBND` to a split `BXF` file. (Invalid `bdt_file_path`: {bdt_file_path})")
-        self.regenerate_entries(
-            use_decompiled_goals=use_decompiled_goals, use_decompiled_unknown_scripts=use_decompiled_unknown_scripts
-        )
-        return super().write(file_path, make_dirs=make_dirs, check_hash=check_hash)
 
     def get_goal(self, goal_id, goal_type=GoalType.Battle) -> LuaGoalScript:
         goals = [g for g in self.goals if g.goal_id == goal_id and g.goal_type == goal_type]

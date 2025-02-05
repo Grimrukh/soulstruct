@@ -28,6 +28,8 @@ class TypedParamError(SoulstructError):
 class GameParamBND(Binder, abc.ABC):
 
     EXT: tp.ClassVar[str] = ".parambnd"
+    IS_SPLIT_BXF: tp.ClassVar[bool] = False
+
     PARAMDEF_MODULE: tp.ClassVar[ModuleType]
 
     # Maps internal param names (some game-specific) to more friendly Soulstruct names. Two-way dictionary.
@@ -38,10 +40,8 @@ class GameParamBND(Binder, abc.ABC):
 
     # Maps internal param stems, e.g. `NpcParam`, to `Param` or generic `ParamDict` instance.
     params: dict[str, Param | ParamDict] = field(default_factory=dict)
-    _reload_warning_given: bool = field(init=False)
 
     def __post_init__(self):
-        self._reload_warning_given = False
         if self.params:  # passed to constructor; do not unpack from entries
             return
 
@@ -114,28 +114,6 @@ class GameParamBND(Binder, abc.ABC):
             if not entry.data:
                 _LOGGER.debug(f"New Param entry added to `GameParamBND`: {entry_path}")
             entry.set_from_binary_file(param)
-
-    def write(
-        self,
-        file_path: None | str | Path = None,
-        bdt_file_path: None | str | Path = None,
-        make_dirs=True,
-        check_hash=False,
-    ) -> list[Path]:
-        """Write the `GameParamBND` file after updating the binary BND entries from the loaded `Param` instances.
-
-        See `GameFile.write()` for more.
-        """
-        if bdt_file_path is not None:
-            raise TypeError(
-                f"Cannot write `GameParamBND` to a split `BXF` file. (Invalid `bdt_file_path`: {bdt_file_path})"
-            )
-        written = super(GameParamBND, self).write(file_path, make_dirs=make_dirs, check_hash=check_hash)
-        _LOGGER.info("GameParamBND written successfully.")
-        if not self._reload_warning_given:
-            _LOGGER.info("Remember to reload your game to see changes.")
-            self._reload_warning_given = True
-        return written
 
     @classmethod
     def from_dict(cls, data: dict) -> tp.Self:
