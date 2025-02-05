@@ -63,7 +63,7 @@ __all__ = [
 ]
 
 import typing as tp
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import unique
 
 from .basic_types import GameObject, GameObjectInt
@@ -107,6 +107,10 @@ class Map(GameObject):
     verbose_name: str = ""  # e.g. "Firelink Shrine"
     variable_name: str | None = None  # e.g. `FIRELINK_SHRINE`. Must be given for map to be useable in EVS.
 
+    # True stem of map, e.g. for asset subdirectory in `map`.
+    # Auto-generated from area and block IDs or left as `None` for non-asset maps.
+    map_stem: str | None = field(default=None, init=False)
+
     # Stems of related map files. If left as "", they will be auto-set based on the map stem (mAA_BB_CC_DD).
     # If explicitly set to `None`, that indicates that the associated file does not exist.
     emevd_file_stem: str | None = ""
@@ -123,7 +127,7 @@ class Map(GameObject):
         if self.area_id is not None and self.block_id is not None:
             cc_id = self.cc_id or 0
             dd_id = self.dd_id or 0
-            map_stem = f"m{self.area_id:02d}_{self.block_id:02d}_{cc_id:02d}_{dd_id:02d}"
+            self.map_stem = f"m{self.area_id:02d}_{self.block_id:02d}_{cc_id:02d}_{dd_id:02d}"
 
             # We can set defaults for base entity ID and base flag from area and block IDs.
             if self.base_entity_id == 0:
@@ -131,19 +135,19 @@ class Map(GameObject):
             if self.base_flag == 0:
                 self.base_flag = 1000 + 10 * self.area_id + self.block_id
         else:
-            map_stem = None
+            self.map_stem = None
 
         if not self.name:
-            if map_stem is None:
+            if self.map_stem is None:
                 raise ValueError("Map must have an area ID and block ID to auto-set `name` from its map stem.")
-            self.name = map_stem
+            self.name = self.map_stem
         # `variable_name` must be set for map to be used in EVS. It has no default string value.
         if not self.verbose_name:
             self.verbose_name = self.name
 
         for stem in ("emevd", "msb", "ai", "esd"):
             if getattr(self, f"{stem}_file_stem") == "":
-                setattr(self, f"{stem}_file_stem", map_stem)
+                setattr(self, f"{stem}_file_stem", self.map_stem)
 
         if self.area_id is not None:
             self.base_entity_id = 100000 * self.area_id + 10000 * self.block_id
