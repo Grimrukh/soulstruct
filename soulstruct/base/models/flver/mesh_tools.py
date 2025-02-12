@@ -353,7 +353,7 @@ class MergedMesh:
                     uv_layer_name = f"UVMap{uv_i}"  # default
                     if material_uv_layer_names:
                         try:
-                            # Real UV names are generally 'UVTexture{i}', 'UVFur', 'UVData_WindMain', etc.
+                            # Real UV names are generally 'UVTexture{i}', 'UVFur', 'UVData_WindA', etc.
                             uv_layer_name = material_uv_layer_names[material_index][uv_i]
                         except IndexError:
                             _LOGGER.warning(

@@ -8,6 +8,7 @@ __all__ = [
     "read_json",
     "write_json",
     "get_blake2b_hash",
+    "get_blake2b_hash_hex",
 ]
 
 import hashlib
@@ -72,7 +73,8 @@ def restore_bak(target: Path | str, delete_baks=False, bak_suffix=".bak") -> int
     """Restores '.bak' files, deleting whatever they would replace.
 
     `target` can be a file or directory path. If it's a file, it can be the BAK file itself, or the file for which a
-    BAK file exists. If it's a directory, all '.bak' files in the directory will be restored (NOT recursive)."""
+    BAK file exists. If it's a directory, all '.bak' files in the directory will be restored (NOT recursive).
+    """
     target = Path(target)
     if target.is_file():
         if target.suffix == bak_suffix:
@@ -105,6 +107,10 @@ def restore_bak(target: Path | str, delete_baks=False, bak_suffix=".bak") -> int
         if count == 0:
             _LOGGER.warning(f"Could not find any '{bak_suffix}' files to restore in directory '{str(target)}'.")
         return count
+
+    raise RestoreBackupError(
+        f"Could not restore backup for target '{str(target)}' because it is not a file or directory."
+    )
 
 
 def import_arbitrary_module(path: str | Path) -> types.ModuleType:
@@ -167,5 +173,22 @@ def get_blake2b_hash(data: bytes | str | Path) -> bytes:
 
     if isinstance(data, bytes):
         return hashlib.blake2b(data).digest()
+
+    raise TypeError(f"Can only get hash of `bytes` or `str`/`Path` of file, not {type(data)}.")
+
+
+def get_blake2b_hash_hex(data: bytes | str | Path) -> str:
+    """Get BLAKE2b hash of given `bytes` or `str`/`Path` of file."""
+    if isinstance(data, (str, Path)):
+        file_hash = hashlib.blake2b()
+        with Path(data).open("rb") as f:
+            chunk = f.read(8192)
+            while chunk:
+                file_hash.update(chunk)
+                chunk = f.read(8192)
+        return file_hash.hexdigest()
+
+    if isinstance(data, bytes):
+        return hashlib.blake2b(data).hexdigest()
 
     raise TypeError(f"Can only get hash of `bytes` or `str`/`Path` of file, not {type(data)}.")

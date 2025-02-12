@@ -27,9 +27,8 @@ class MatDef(_BaseMatDef):
         UVTexture0 = 0
         UVTexture1 = 1
         UVLightmap = 2
-        UVData_WindIvy = 3  # used by Ivy (only two unique values)
-        UVData_WindMain = 4  # used by both Foliage and Ivy
-        UVData_WindEmpty = 5  # used by both Foliage and Ivy, always seems to be zeroed
+        UVData_WindA = 3  # used mostly by Foliage and occasionally by Ivy
+        UVData_WindB = 4  # used mostly by Ivy and always zero for Foliage
 
     SAMPLER_ALIASES: tp.ClassVar[dict[str, str]] = {
         "g_Diffuse": "Main 0 Albedo",
@@ -63,8 +62,10 @@ class MatDef(_BaseMatDef):
     }
 
     EXTRA_SHADER_UV_LAYERS: tp.ClassVar[dict[str, list[UVLayer]]] = {
-        "Foliage": [UVLayer.UVData_WindMain, UVLayer.UVData_WindEmpty],
-        "Ivy": [UVLayer.UVData_WindIvy, UVLayer.UVData_WindMain, UVLayer.UVData_WindEmpty],
+        # NOTE: These are used differently by Foliage and Ivy. Foliage uses mostly A, and Ivy mostly B (both of which
+        # will appear to stretch the texture from one edge to the opposite).
+        "Foliage": [UVLayer.UVData_WindA, UVLayer.UVData_WindB],
+        "Ivy": [UVLayer.UVData_WindA, UVLayer.UVData_WindB],
     }
 
     KNOWN_SHADER_MTD_STEMS: tp.ClassVar[dict[str, list[str | re.Pattern]]] = {

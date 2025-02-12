@@ -25,7 +25,7 @@ class MatDef(_BaseMatDef):
         UVTexture1 = 1
         UVBloodMaskOrLightmap = 2  # lightmap ('DOLTexture') for Map Pieces, blood mask for characters
         UVBlendMask = 3
-        UVData_WindMain = 4
+        UVData_WindA = 4
         # TODO: other data UVs?
 
     SAMPLER_ALIASES: tp.ClassVar[dict[str, str]] = {
@@ -72,7 +72,7 @@ class MatDef(_BaseMatDef):
     }
 
     EXTRA_SHADER_UV_LAYERS: tp.ClassVar[dict[str, list[UVLayer]]] = {
-        "Grass": [UVLayer.UVData_WindMain],
+        "Grass": [UVLayer.UVData_WindA],
     }
 
     KNOWN_SHADER_STEMS: tp.ClassVar[dict[str, list[str | re.Pattern]]] = {
