@@ -17,7 +17,7 @@ _LOGGER = logging.getLogger("soulstruct")
 class DivBinder(Binder):
     """Binder that optionally supports division into multiple sub-Binders when written, based on `.blf` Binder entries.
 
-    Identical to `Binder` if `use_blf_division` is `False`.
+    Identical to `Binder` if `write_blf_division` is `False`.
 
     NOTE: These Binders can sometimes have clashing entry IDs across the different sub-Binders (that end up being unique
     when those sub-Binders are written). Example: the HKX compendium files in Elden Ring's divided ANIBNDs (7000000).
