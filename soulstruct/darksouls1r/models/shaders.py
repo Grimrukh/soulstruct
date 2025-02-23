@@ -8,6 +8,7 @@ from pathlib import Path
 
 from soulstruct.base.models.mtd import MTD
 from soulstruct.darksouls1ptde.models.shaders import MatDef as _PTDE_MatDef
+from soulstruct.utilities.maths import Vector2
 
 
 @dataclass(slots=True)
@@ -30,6 +31,9 @@ class MatDef(_PTDE_MatDef):
             - All FLVER vertex arrays have normals, at least one vertex color.
         """
         matdef = super(MatDef, cls).from_mtd(mtd)
+        detail_samp = matdef.get_sampler_with_alias("Detail 0 Normal")
+        if detail_samp is not None:
+            detail_samp.uv_scale = Vector2(mtd.get_param("g_DetailBump_UVScale", default=[1.0, 1.0]))
 
         if matdef.shader_category == "Snow":
             # In DS1R, some snow shaders (those with "Snow Metal Mask" MTD param) have a THIRD normal texture. I believe

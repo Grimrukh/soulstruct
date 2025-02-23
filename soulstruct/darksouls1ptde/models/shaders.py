@@ -136,11 +136,10 @@ class MatDef(_BaseMatDef):
         matdef = super(MatDef, cls).from_mtd_name(mtd_name)
 
         if matdef.get_sampler_with_alias("Main 0 Normal"):
-            # Add useless "Detail 0 Normal" sampler for completion.
+            # Add Detail 0 Normal with scaling from the mtd params if possible
             # TODO: Some DS1 shaders, even with 'g_Bumpmap', do not have this. I have no way to detect from the name.
             #  Currently assuming that it doesn't matter at all if FLVERs have an (empty) texture definition for it.
-            matdef.add_sampler(alias="Detail 0 Normal", uv_layer=cls.UVLayer.UVTexture0)
-
+            matdef.add_sampler(alias="Detail 0 Normal", uv_layer=cls.UVLayer.UVTexture0, uv_scale=matdef.mtd.get_param("g_DetailBump_UVScale", default=[1.0,1.0]))
         return matdef
 
     def get_map_piece_layout(self) -> VertexArrayLayout:
