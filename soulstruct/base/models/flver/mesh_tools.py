@@ -839,8 +839,9 @@ class MergedMesh:
             if 0 < max_mesh_vertex_count < len(mesh_vertices):
                 raise ValueError(
                     f"Mesh {material_index} has {len(mesh_vertices)} vertices, which is greater than the "
-                    f"maximum of {max_mesh_vertex_count}. You need to simplify this mesh (material name "
-                    f"{mesh_materials[material_index].name}) or try lowering `normal_tangent_dot_max` to merge "
+                    f"maximum of {max_mesh_vertex_count}. You need to (a) simplify this mesh (material name "
+                    f"{mesh_materials[material_index].name}), (b) manually split it into multiple meshes by "
+                    f"duplicating its material slot, or (c) try lowering `normal_tangent_dot_max` to merge "
                     f"vertices with similar normals/tangents more aggressively (current value = "
                     f"{normal_tangent_dot_threshold})."
                 )
