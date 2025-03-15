@@ -72,7 +72,12 @@ class FLVERMesh:
         _vertex_array_count: int = binary(asserted=[1, 2, 3])
         _vertex_array_offset: int
 
+    # If `True`, deformations of this mesh from animations will occur RELATIVE to FLVER bone transforms.
+    # Otherwise, mesh deformations will be absolute (i.e. relative to an identity transform).
+    # Typically `True` for rigged meshes (characters, equipment, most objects) and `False` for unrigged meshes (map
+    # pieces, some objects).
     is_bind_pose: bool
+
     material: Material
     default_bone_index: int
     bone_indices: np.ndarray | None  # NOTE: cannot be `None` in `FLVER0` (always a 28-element array)

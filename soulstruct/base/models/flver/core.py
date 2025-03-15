@@ -922,6 +922,9 @@ class FLVER(GameFile):
     def any_bind_pose(self) -> bool:
         return any(mesh.is_bind_pose for mesh in self.meshes)
 
+    def all_bind_pose(self) -> bool:
+        return all(mesh.is_bind_pose for mesh in self.meshes)
+
     def sort_mesh_bone_indices(self):
         """Sort local `bone_indices` of each mesh, if used."""
         for mesh in self.meshes:
@@ -1188,8 +1191,8 @@ class FLVER(GameFile):
         NOTE: Not intended for use with map pieces that use bones to place individual trees and shrubs whose mesh data
         is centered at the origin, which is an actual good way to use bones in a Map Piece!
         """
-        if any(mesh.is_bind_pose for mesh in self.meshes):
-            raise ValueError("Cannot debone FLVER models with any `is_bind_pose` meshes (i.e. must be Map Piece).")
+        if self.any_bind_pose():
+            raise ValueError("Cannot debone FLVER models with any `is_bind_pose = True` meshes.")
 
         if not default_bone_name:
             if self.path:
@@ -1308,6 +1311,8 @@ class FLVER(GameFile):
 
     # endregion
 
+    # region Other
+
     def __setstate__(self, state: tuple[None, dict[str, tp.Any]]):
         """Dereference bone connections after restoring state."""
         _, slot_dict = state
@@ -1321,3 +1326,14 @@ class FLVER(GameFile):
             f"FLVER({self.version.name}, {len(self.meshes)} meshes, "
             f"{len(self.bones)} bones, {len(self.dummies)} dummies)"
         )
+
+    def print_mesh_material_summary(self):
+        """Print a simple table of meshes and their basic material info."""
+        s = f"{'Mesh':>4} {'Material':>30} {'MatDef':>30} {'Texture 0':>30}"
+        print(s)
+        print("-" * len(s))
+        for mesh in self.meshes:
+            mat = mesh.material
+            print(f"{mesh.index:>4} {mat.name:>30} {mat.mat_def_stem:>30} {mat.textures[0].stem:>30}")
+
+    # endregion
