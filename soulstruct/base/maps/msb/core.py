@@ -27,7 +27,7 @@ from .events import BaseMSBEvent
 from .models import BaseMSBModel
 from .parts import BaseMSBPart
 from .regions import BaseMSBRegion
-from .utils import GroupBitSet, MSBSubtypeInfo
+from .utils import BitSet, MSBSubtypeInfo
 
 if tp.TYPE_CHECKING:
     from .enums import BaseMSBSubtype
@@ -82,7 +82,7 @@ class MSB(GameFile, tp.Generic[MSB_MODEL_T, MSB_EVENT_T, MSB_REGION_T, MSB_PART_
         def default(self, obj):
             if isinstance(obj, RegionShape):
                 return obj.to_json_dict()
-            if isinstance(obj, (Vector2, Vector3, Vector4, GroupBitSet)):
+            if isinstance(obj, (Vector2, Vector3, Vector4, BitSet)):
                 return repr(obj)
 
     EXT: tp.ClassVar[str] = ".msb"
@@ -105,8 +105,14 @@ class MSB(GameFile, tp.Generic[MSB_MODEL_T, MSB_EVENT_T, MSB_REGION_T, MSB_PART_
     # Maps MSB entry supertype names (parts, etc.) to the relative offsets of their subtype enums, which we check in
     # advance to determine which `MSBEntry` subclass to use.
     MSB_ENTRY_SUBTYPE_OFFSETS: tp.ClassVar[dict[str, int]]
+    # Entry classes. Game-specific subclasses must define these, and may add more (e.g. `ROUTE_CLASS`).
+    MODEL_CLASS: tp.ClassVar[type[BaseMSBModel]]
+    EVENT_CLASS: tp.ClassVar[type[BaseMSBEvent]]
+    REGION_CLASS: tp.ClassVar[type[BaseMSBRegion]]
+    PART_CLASS: tp.ClassVar[type[BaseMSBPart]]
     # Maps entry subtype names ("characters", "sounds", etc.) to their corresponding `BaseGameType`, if applicable.
     ENTITY_GAME_TYPES: tp.ClassVar[dict[str, type[MapEntity]]]
+
     # Cached when first accessed. Maps subtype list names, e.g. 'map_pieces', to the list. Immutable.
     _SUBTYPE_LIST_NAMES: tp.ClassVar[tuple[str, ...]] = None
 
@@ -273,7 +279,34 @@ class MSB(GameFile, tp.Generic[MSB_MODEL_T, MSB_EVENT_T, MSB_REGION_T, MSB_PART_
 
     def get_parts(self) -> IDList[MSB_PART_T]:
         # noinspection PyTypeChecker
-        return self.get_supertype_list("PARTS_PARAM_ST")    
+        return self.get_supertype_list("PARTS_PARAM_ST")
+
+    def get_supertype_subtype_dict(self, supertype: str) -> dict[BaseMSBSubtype, MSBEntryList]:
+        """Construct a dictionary mapping each subtype enum within the given supertype to the true lists of entries.
+
+        NOTE: The dictionary values are the actual MSB entry lists, not copies.
+        """
+        supertype = self.resolve_supertype_name(supertype)
+        subtype_dict = {}
+        for subtype_enum, subtype_info in self.MSB_ENTRY_SUBTYPES[supertype].items():
+            subtype_dict[subtype_enum] = getattr(self, subtype_info.subtype_list_name)
+        return subtype_dict
+
+    def get_models_dict(self) -> dict[BaseMSBSubtype, MSBEntryList[MSB_MODEL_T]]:
+        # noinspection PyTypeChecker
+        return self.get_supertype_subtype_dict("MODEL_PARAM_ST")
+
+    def get_events_dict(self) -> dict[BaseMSBSubtype, MSBEntryList[MSB_EVENT_T]]:
+        # noinspection PyTypeChecker
+        return self.get_supertype_subtype_dict("EVENT_PARAM_ST")
+
+    def get_regions_dict(self) -> dict[BaseMSBSubtype, MSBEntryList[MSB_REGION_T]]:
+        # noinspection PyTypeChecker
+        return self.get_supertype_subtype_dict("POINT_PARAM_ST")
+
+    def get_parts_dict(self) -> dict[BaseMSBSubtype, MSBEntryList[MSB_PART_T]]:
+        # noinspection PyTypeChecker
+        return self.get_supertype_subtype_dict("PARTS_PARAM_ST")
 
     def get_regions_with_shape(self, shape_name: str) -> list[MSB_REGION_T]:
         """Find all regions with given shape name. Not case-sensitive, but doesn't work with plurals."""
@@ -381,6 +414,16 @@ class MSB(GameFile, tp.Generic[MSB_MODEL_T, MSB_EVENT_T, MSB_REGION_T, MSB_PART_
     @abc.abstractmethod
     def pack_supertype_name(self, writer: BinaryWriter, supertype_name: str):
         """Differs between versions slightly."""
+
+    # region Auto Model Creation
+
+    def auto_model(self, msb_part: BaseMSBPart, model_name: str, map_stem="") -> MSB_MODEL_T | None:
+        """Not implemented/available by default. Games must implement (WIP)."""
+        raise NotImplemented(
+            f"Auto model creation is not implemented for this game's MSB class ({self.get_game().name})."
+        )
+
+    # endregion
 
     def find_entry_name(
         self, name: str, supertypes: tp.Iterable[str] = (), subtypes: tp.Iterable[str] = ()
@@ -614,7 +657,7 @@ class MSB(GameFile, tp.Generic[MSB_MODEL_T, MSB_EVENT_T, MSB_REGION_T, MSB_PART_
             subtype_dict = data[supertype_name]
             for subtype_enum_name, subtype_list in subtype_dict.items():
                 subtype_enum = cls.MSB_SUPERTYPE_SUBTYPE_ENUMS[supertype_name][subtype_enum_name]
-                subtype_info = cls.MSB_ENTRY_SUBTYPES[supertype_name][subtype_enum]
+                subtype_info = cls.MSB_ENTRY_SUBTYPES[supertype_name][subtype_enum]  # TODO: ignore PyCharm glitch...
                 entries = []
                 subtype_deferred = deferred_refs[subtype_info.subtype_list_name] = []
                 for entry_dict in subtype_list:

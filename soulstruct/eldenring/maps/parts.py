@@ -19,7 +19,7 @@ from dataclasses import dataclass, field
 from soulstruct.base.maps.msb.field_info import MapFieldInfo
 from soulstruct.base.maps.msb.msb_entry import *
 from soulstruct.base.maps.msb.parts import *
-from soulstruct.base.maps.msb.utils import GroupBitSet256, GroupBitSet1024
+from soulstruct.base.maps.msb.utils import BitSet256, BitSet1024
 from soulstruct.eldenring.game_types import *
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3
@@ -116,9 +116,9 @@ class PartHeaderStruct(MSBHeaderStruct):
 
 class DrawInfo1(MSBBinaryStruct):
     # TODO: Name 'DrawInfoData1'?
-    display_groups: GroupBitSet256 = binary_array(8, uint)
-    draw_groups: GroupBitSet256 = binary_array(8, uint)
-    collision_mask: GroupBitSet1024 = binary_array(32, uint)
+    display_groups: BitSet256 = binary_array(8, uint)
+    draw_groups: BitSet256 = binary_array(8, uint)
+    collision_mask: BitSet1024 = binary_array(32, uint)
     condition_1a: byte
     condition_1b: byte
     unk1_c2: byte
@@ -131,7 +131,7 @@ class DrawInfo1(MSBBinaryStruct):
 class DrawInfo2(MSBBinaryStruct):
     # TODO: Name 'DrawInfoData2'?
     condition_2: int
-    display_groups_2: GroupBitSet256 = binary_array(8, uint)
+    display_groups_2: BitSet256 = binary_array(8, uint)
     unk2_24: short
     unk2_26: short
     _pad1: bytes = binary_pad(0x20, init=False)
@@ -229,7 +229,7 @@ class UnkStruct11(MSBBinaryStruct):
 
 
 @dataclass(slots=True, eq=False, repr=False)
-class MSBPart(BaseMSBPart, abc.ABC):
+class MSBPart(BaseMSBPart[BitSet256], abc.ABC):
 
     HEADER_STRUCT = PartHeaderStruct
     # All disabled by default, except supertype.
@@ -248,7 +248,7 @@ class MSBPart(BaseMSBPart, abc.ABC):
     }
 
     NAME_ENCODING: tp.ClassVar[str] = "utf-16-le"
-    GROUP_BIT_COUNT: tp.ClassVar[int] = 256
+    BIT_SET_TYPE: tp.ClassVar = BitSet256
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\GR\\data\\Model\\map\\{map_stem}\\sib\\layout.SIB"
 
     # Entity ID default override.
@@ -311,9 +311,9 @@ class MSBMapPiece(MSBPart):
     model: MSBMapPieceModel = None
 
     # UNK STRUCT 1
-    display_groups: GroupBitSet256 = field(default_factory=GroupBitSet256.all_off)
-    draw_groups: GroupBitSet256 = field(default_factory=GroupBitSet256.all_on)
-    collision_mask: GroupBitSet1024 = field(default_factory=GroupBitSet1024.all_off)
+    display_groups: BitSet256 = field(default_factory=BitSet256.all_off)
+    draw_groups: BitSet256 = field(default_factory=BitSet256.all_on)
+    collision_mask: BitSet1024 = field(default_factory=BitSet1024.all_off)
     condition_1a: int = 0
     condition_1b: int = 0
     unk1_c2: int = 0
@@ -530,9 +530,9 @@ class MSBAsset(MSBPart):
     _unk_parts_indices: list[int] = binary_array(6, default=None)
 
     # UNK STRUCT 1
-    display_groups: GroupBitSet256 = field(default_factory=GroupBitSet256.all_off)
-    draw_groups: GroupBitSet256 = field(default_factory=GroupBitSet256.all_on)
-    collision_mask: GroupBitSet1024 = field(default_factory=GroupBitSet1024.all_off)
+    display_groups: BitSet256 = field(default_factory=BitSet256.all_off)
+    draw_groups: BitSet256 = field(default_factory=BitSet256.all_on)
+    collision_mask: BitSet1024 = field(default_factory=BitSet1024.all_off)
     condition_1a: int = 0
     condition_1b: int = 0
     unk1_c2: int = 0
@@ -542,7 +542,7 @@ class MSBAsset(MSBPart):
 
     # UNK STRUCT 2
     condition_2: int = -1
-    display_groups_2: GroupBitSet256 = field(default_factory=GroupBitSet256.all_on)
+    display_groups_2: BitSet256 = field(default_factory=BitSet256.all_on)
     unk2_24: int = 0
     unk2_26: int = -1
 
@@ -694,9 +694,9 @@ class MSBCharacter(MSBPart):
     _patrol_route_event_index: int = None  # NOTE: local event subtype index!
 
     # UNK STRUCT 1
-    display_groups: GroupBitSet256 = field(default_factory=GroupBitSet256.all_off)
-    draw_groups: GroupBitSet256 = field(default_factory=GroupBitSet256.all_on)
-    collision_mask: GroupBitSet1024 = field(default_factory=GroupBitSet1024.all_off)
+    display_groups: BitSet256 = field(default_factory=BitSet256.all_off)
+    draw_groups: BitSet256 = field(default_factory=BitSet256.all_on)
+    collision_mask: BitSet1024 = field(default_factory=BitSet1024.all_off)
     condition_1a: int = 0
     condition_1b: int = 0
     unk1_c2: int = 0
@@ -758,9 +758,9 @@ class MSBPlayerStart(MSBPart):
     player_start_unk_00: int = 0
 
     # UNK STRUCT 1
-    display_groups: GroupBitSet256 = field(default_factory=GroupBitSet256.all_off)
-    draw_groups: GroupBitSet256 = field(default_factory=GroupBitSet256.all_on)
-    collision_mask: GroupBitSet1024 = field(default_factory=GroupBitSet1024.all_off)
+    display_groups: BitSet256 = field(default_factory=BitSet256.all_off)
+    draw_groups: BitSet256 = field(default_factory=BitSet256.all_on)
+    collision_mask: BitSet1024 = field(default_factory=BitSet1024.all_off)
     condition_1a: int = 0
     condition_1b: int = 0
     unk1_c2: int = 0
@@ -831,7 +831,7 @@ class MSBCollision(MSBPart):
         "unk11_data": UnkStruct11,
     }
 
-    # Field type overrides.
+    # Field type/default overrides.
     model: MSBCollisionModel = None
 
     # COLLISION DATA
@@ -858,9 +858,9 @@ class MSBCollision(MSBPart):
     col_unk_4e: int = -1
 
     # UNK STRUCT 1
-    display_groups: GroupBitSet256 = field(default_factory=GroupBitSet256.all_off)
-    draw_groups: GroupBitSet256 = field(default_factory=GroupBitSet256.all_off)
-    collision_mask: GroupBitSet1024 = field(default_factory=GroupBitSet1024.all_off)
+    display_groups: BitSet256 = field(default_factory=BitSet256.all_off)
+    draw_groups: BitSet256 = field(default_factory=BitSet256.all_off)
+    collision_mask: BitSet1024 = field(default_factory=BitSet1024.all_off)
     condition_1a: int = 0
     condition_1b: int = 0
     unk1_c2: int = 0
@@ -870,7 +870,7 @@ class MSBCollision(MSBPart):
 
     # UNK STRUCT 2
     condition_2: int = -1
-    display_groups_2: GroupBitSet256 = field(default_factory=GroupBitSet256.all_off)
+    display_groups_2: BitSet256 = field(default_factory=BitSet256.all_off)
     unk2_24: int = 0
     unk2_26: int = -1
 
@@ -950,9 +950,9 @@ class MSBConnectCollision(MSBPart):
     _collision_index: int = None
 
     # UNK STRUCT 1
-    display_groups: GroupBitSet256 = field(default_factory=GroupBitSet256.all_off)
-    draw_groups: GroupBitSet256 = field(default_factory=GroupBitSet256.all_on)
-    collision_mask: GroupBitSet1024 = field(default_factory=GroupBitSet1024.all_off)
+    display_groups: BitSet256 = field(default_factory=BitSet256.all_off)
+    draw_groups: BitSet256 = field(default_factory=BitSet256.all_on)
+    collision_mask: BitSet1024 = field(default_factory=BitSet1024.all_off)
     condition_1a: int = 0
     condition_1b: int = 0
     unk1_c2: int = 0
@@ -962,7 +962,7 @@ class MSBConnectCollision(MSBPart):
 
     # UNK STRUCT 2
     condition_2: int = -1
-    display_groups_2: GroupBitSet256 = field(default_factory=GroupBitSet256.all_on)
+    display_groups_2: BitSet256 = field(default_factory=BitSet256.all_on)
     unk2_24: int = 0
     unk2_26: int = -1
 
@@ -1015,9 +1015,9 @@ class MSBDummyAsset(MSBPart):
     model: MSBAssetModel = None
 
     # UNK STRUCT 1
-    display_groups: GroupBitSet256 = field(default_factory=GroupBitSet256.all_off)
-    draw_groups: GroupBitSet256 = field(default_factory=GroupBitSet256.all_on)
-    collision_mask: GroupBitSet1024 = field(default_factory=GroupBitSet1024.all_off)
+    display_groups: BitSet256 = field(default_factory=BitSet256.all_off)
+    draw_groups: BitSet256 = field(default_factory=BitSet256.all_on)
+    collision_mask: BitSet1024 = field(default_factory=BitSet1024.all_off)
     condition_1a: int = 0
     condition_1b: int = 0
     unk1_c2: int = 0

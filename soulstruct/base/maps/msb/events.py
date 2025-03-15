@@ -11,6 +11,8 @@ from .msb_entry import MSBEntry
 
 if tp.TYPE_CHECKING:
     from soulstruct.utilities.misc import IDList
+    from .parts import BaseMSBPart
+    from .regions import BaseMSBRegion
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -23,8 +25,8 @@ class BaseMSBEvent(MSBEntry, abc.ABC):
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region"]
 
     entity_id: int = -1
-    attached_part: MSBEntry = None
-    attached_region: MSBEntry = None
+    attached_part: BaseMSBPart | None = None
+    attached_region: BaseMSBRegion | None = None
     
     # Temporary indices used during unpacking, before `MSBEntry` instances above can be assigned.
     # Set to `None` once consumed.

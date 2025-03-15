@@ -29,7 +29,7 @@ from soulstruct.utilities.text import pad_chars
 
 from .enums import BaseMSBSubtype, MSBSupertype
 from .field_info import MapFieldMetadata, FIELD_INFO
-from .utils import MSBBrokenEntryReference, GroupBitSet128, GroupBitSet256, GroupBitSet1024
+from .utils import MSBBrokenEntryReference, BitSet128, BitSet256, BitSet1024
 from .region_shapes import RegionShape, RegionShapeType, SHAPE_TYPE_CLASSES
 
 if tp.TYPE_CHECKING:
@@ -50,9 +50,9 @@ _BASIC_ENTRY_TYPES = {
     "list[int]": list,
     "list[float]": list,
     # No `tuple` fields in entries (makes element assignment too annoying).
-    "GroupBitSet128": GroupBitSet128,
-    "GroupBitSet256": GroupBitSet256,
-    "GroupBitSet1024": GroupBitSet1024,
+    "BitSet128": BitSet128,
+    "BitSet256": BitSet256,
+    "BitSet1024": BitSet1024,
     "Vector2": Vector2,
     "Vector3": Vector3,
     "Vector4": Vector4,
@@ -384,12 +384,12 @@ class MSBEntry(abc.ABC):
         if cls._CUSTOM_JSON_DECODERS is None:
             decoders = {}
             for f in cls.get_entry_fields():
-                if f.type in (GroupBitSet128, GroupBitSet128.__name__):
-                    decoders[f.name] = GroupBitSet128.from_repr
-                elif f.type in (GroupBitSet256, GroupBitSet256.__name__):
-                    decoders[f.name] = GroupBitSet256.from_repr
-                elif f.type in (GroupBitSet1024, GroupBitSet1024.__name__):
-                    decoders[f.name] = GroupBitSet1024.from_repr
+                if f.type in (BitSet128, BitSet128.__name__):
+                    decoders[f.name] = BitSet128.from_repr
+                elif f.type in (BitSet256, BitSet256.__name__):
+                    decoders[f.name] = BitSet256.from_repr
+                elif f.type in (BitSet1024, BitSet1024.__name__):
+                    decoders[f.name] = BitSet1024.from_repr
                 else:
                     for check_type in (Vector2, Vector3, Vector4):
                         if f.type in (check_type, check_type.__name__):
@@ -540,7 +540,7 @@ class MSBEntry(abc.ABC):
             elif isinstance(value, BaseVector):
                 data[name] = list(value)
             else:
-                # Custom types like `Vector3`, `GroupBitSet`, and `RegionShape` can decode their own string `repr`.
+                # Custom types like `Vector3`, `BitSet`, and `RegionShape` can decode their own string `repr`.
                 data[name] = value
         return data
 
@@ -694,16 +694,16 @@ class MSBEntry(abc.ABC):
                     super(MSBEntry, self).__setattr__(field_name, value)
                     return
 
-                if field_type in {"GroupBitSet128", "GroupBitSet256", "GroupBitSet1024"}:
-                    # `GroupBitSet` subclass of some maximum count.
-                    if not isinstance(value, (GroupBitSet128, GroupBitSet256, GroupBitSet1024)):
+                if field_type in {"BitSet128", "BitSet256", "BitSet1024"}:
+                    # `BitSet` subclass of some maximum count.
+                    if not isinstance(value, (BitSet128, BitSet256, BitSet1024)):
                         # Lists will be interpreted as packed uints, and sets as enabled bits.
                         if field_type.endswith("128"):
-                            value = GroupBitSet128(value)
+                            value = BitSet128(value)
                         elif field_type.endswith("256"):
-                            value = GroupBitSet256(value)
+                            value = BitSet256(value)
                         else:  # field_type.endswith("1024"):
-                            value = GroupBitSet1024(value)
+                            value = BitSet1024(value)
                     super(MSBEntry, self).__setattr__(field_name, value)
                     return
 
@@ -862,12 +862,12 @@ class MSBEntry(abc.ABC):
                             display_type = bool
                         case "str":
                             display_type = str
-                        case "GroupBitSet128":
-                            display_type = GroupBitSet128
-                        case "GroupBitSet256":
-                            display_type = GroupBitSet256
-                        case "GroupBitSet1024":
-                            display_type = GroupBitSet1024
+                        case "BitSet128":
+                            display_type = BitSet128
+                        case "BitSet256":
+                            display_type = BitSet256
+                        case "BitSet1024":
+                            display_type = BitSet1024
                         case "RegionShape":
                             display_type = RegionShape
                         case "Vector2":

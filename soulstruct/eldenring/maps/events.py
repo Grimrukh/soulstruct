@@ -73,7 +73,7 @@ class MSBEvent(BaseMSBEvent, abc.ABC):
 
     NAME_ENCODING: tp.ClassVar[str] = "utf-16-le"
 
-    # Field type overrides.
+    # Field type/default overrides.
     attached_part: MSBPart = None
     attached_region: MSBRegion = None
 

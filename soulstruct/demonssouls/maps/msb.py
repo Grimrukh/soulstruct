@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["MSB", "MSBSubtypeInfo", "MSBSupertype"]
+__all__ = ["MSB", "MSBSubtypeInfo", "MSBSupertype", "BitSet128"]
 
 import typing as tp
 from dataclasses import field
@@ -9,7 +9,7 @@ from enum import StrEnum
 from soulstruct.darksouls1ptde.game_types.map_types import *
 from soulstruct.dcx import DCXType
 from soulstruct.base.maps.msb import MSB as _BaseMSB, MSBEntryList, MSBEntry, BaseMSBSubtype
-from soulstruct.base.maps.msb.utils import MSBSubtypeInfo
+from soulstruct.base.maps.msb.utils import MSBSubtypeInfo, BitSet128
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3
 from soulstruct.utilities.misc import IDList
@@ -104,6 +104,10 @@ class MSB(_BaseMSB[MSBModel, MSBEvent, MSBRegion, MSBPart]):
         MSBSupertype.PARTS: 4,
         MSBSupertype.TREES: -1,  # no subtype index
     }
+    MODEL_CLASS: tp.ClassVar[type[MSBModel]] = MSBModel
+    EVENT_CLASS: tp.ClassVar[type[MSBEvent]] = MSBEvent
+    REGION_CLASS: tp.ClassVar[type[MSBRegion]] = MSBRegion
+    PART_CLASS: tp.ClassVar[type[MSBPart]] = MSBPart
     ENTITY_GAME_TYPES: tp.ClassVar[dict[str, MapEntity]] = {
         "map_pieces": MapPiece,
         "objects": Object,

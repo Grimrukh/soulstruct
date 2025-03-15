@@ -8,7 +8,7 @@ import typing as tp
 from dataclasses import dataclass, field
 
 from soulstruct.utilities.maths import Vector3
-from soulstruct.base.maps.msb.utils import GroupBitSet
+from soulstruct.base.maps.msb.utils import BitSet
 
 from .enums import BaseMSBPartSubtype, MSBSupertype
 from .models import BaseMSBModel
@@ -20,17 +20,19 @@ if tp.TYPE_CHECKING:
 
 _LOGGER = logging.getLogger("soulstruct")
 
+BIT_SET_T = tp.TypeVar("BIT_SET_T", bound=BitSet)
+
 
 @dataclass(slots=True, eq=False, repr=False)
-class BaseMSBPart(MSBEntry, abc.ABC):
+class BaseMSBPart(MSBEntry, abc.ABC, tp.Generic[BIT_SET_T]):
+    """Base class for all MSB Parts entries in all games. Includes a generic parameter for `BitSet` type."""
 
     SUPERTYPE_ENUM: tp.ClassVar[MSBSupertype] = MSBSupertype.PARTS
     SUBTYPE_ENUM: tp.ClassVar[BaseMSBPartSubtype]
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = None
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model"]
 
-    # Number of bits in draw/display/navmesh/backread groups (e.g. 128 or 256).
-    GROUP_BIT_COUNT: tp.ClassVar[int]
+    BIT_SET_TYPE: tp.ClassVar[type[BitSet]]  # matches `BIT_SET_T`
 
     model: BaseMSBModel = None
     entity_id: int = -1
@@ -39,9 +41,9 @@ class BaseMSBPart(MSBEntry, abc.ABC):
     rotate: Vector3 = field(default_factory=Vector3.zero)  # XZY-order Euler angles in DEGREES
     scale: Vector3 = field(default_factory=lambda: Vector3.one())
 
-    # Concrete, sized `GroupBitSet` subclass is overridden per game.
-    draw_groups: GroupBitSet = field(default_factory=set)
-    display_groups: GroupBitSet = field(default_factory=set)
+    # Concrete, sized `BitSet` subclass is overridden per game.
+    draw_groups: BIT_SET_T = field(default_factory=set)
+    display_groups: BIT_SET_T = field(default_factory=set)
 
     _model_index: int = None
 

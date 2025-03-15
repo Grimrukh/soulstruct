@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["MSB", "MSBSupertype"]
+__all__ = ["MSB", "MSBSubtypeInfo", "MSBSupertype", "BitSet256", "BitSet1024"]
 
 import typing as tp
 from dataclasses import field
@@ -9,7 +9,7 @@ from enum import Enum, StrEnum
 from soulstruct.base.game_types.map_types import MapEntity
 from soulstruct.base.maps.msb import MSB as _BaseMSB, MSBEntryList, MSBEntry
 from soulstruct.base.maps.msb.enums import BaseMSBSubtype
-from soulstruct.base.maps.msb.utils import MSBSubtypeInfo
+from soulstruct.base.maps.msb.utils import MSBSubtypeInfo, BitSet256, BitSet1024
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.misc import IDList
 
@@ -146,6 +146,11 @@ class MSB(_BaseMSB[MSBModel, MSBEvent, MSBRegion, MSBPart]):
         "LAYER_PARAM_ST": -1,  # empty supertype (no known subtypes)
         "PARTS_PARAM_ST": 12,
     }
+    MODEL_CLASS: tp.ClassVar[type[MSBModel]] = MSBModel
+    EVENT_CLASS: tp.ClassVar[type[MSBEvent]] = MSBEvent
+    REGION_CLASS: tp.ClassVar[type[MSBRegion]] = MSBRegion
+    PART_CLASS: tp.ClassVar[type[MSBPart]] = MSBPart
+    ROUTE_CLASS: tp.ClassVar[type[MSBRoute]] = MSBRoute
     ENTITY_GAME_TYPES: tp.ClassVar[dict[str, MapEntity]] = {}  # TODO for Elden Ring
 
     HAS_HEADER: tp.ClassVar[bool] = True

@@ -20,7 +20,7 @@ from dataclasses import dataclass, field
 from soulstruct.base.maps.msb.msb_entry import *
 from soulstruct.base.maps.msb.parts import *
 from soulstruct.base.maps.msb.field_info import MapFieldInfo
-from soulstruct.base.maps.msb.utils import GroupBitSet128
+from soulstruct.base.maps.msb.utils import BitSet128
 from soulstruct.darksouls1ptde.game_types import *
 from soulstruct.exceptions import InvalidFieldValueError
 from soulstruct.utilities.binary import *
@@ -45,8 +45,8 @@ class PartHeaderStruct(MSBHeaderStruct):
     translate: Vector3
     rotate: Vector3
     scale: Vector3
-    draw_groups: GroupBitSet128 = binary_array(4, uint)
-    display_groups: GroupBitSet128 = binary_array(4, uint)
+    draw_groups: BitSet128 = binary_array(4, uint)
+    display_groups: BitSet128 = binary_array(4, uint)
     supertype_data_offset: int
     subtype_data_offset: int
     # No other structs (Gparam, SceneGparam, etc.).
@@ -123,7 +123,7 @@ class PartSupertypeData(MSBBinaryStruct):
 
 
 @dataclass(slots=True, eq=False, repr=False)
-class MSBPart(BaseMSBPart, abc.ABC):
+class MSBPart(BaseMSBPart[BitSet128], abc.ABC):
 
     HEADER_STRUCT = PartHeaderStruct
     STRUCTS = {
@@ -132,13 +132,13 @@ class MSBPart(BaseMSBPart, abc.ABC):
     }
 
     NAME_ENCODING: tp.ClassVar[str] = "shift-jis"  # NOT `shift_jis_2004` (backslashes in SIB paths)
-    GROUP_BIT_COUNT: tp.ClassVar[int] = 128  # 4 ints
+    BIT_SET_TYPE: tp.ClassVar = BitSet128
 
     # NOTE: `model` type overridden by subclasses.
     # Subclasses may also use more appropriate defaults for convenience, as these Part supertype fields in DS1 are
     # really sporadic in which Part subtypes actually use each of them.
-    draw_groups: GroupBitSet128 = field(default_factory=GroupBitSet128.all_off)
-    display_groups: GroupBitSet128 = field(default_factory=GroupBitSet128.all_off)
+    draw_groups: BitSet128 = field(default_factory=BitSet128.all_off)
+    display_groups: BitSet128 = field(default_factory=BitSet128.all_off)
     ambient_light_id: int = field(default=-1, **MapFieldInfo(game_type=BakedLightParam))
     fog_id: int = field(default=-1, **MapFieldInfo(game_type=FogParam))
     scattered_light_id: int = field(default=-1, **MapFieldInfo(game_type=ScatteredLightParam))
@@ -372,7 +372,7 @@ class CollisionDataStruct(MSBBinaryStruct):
     sound_space_type: byte
     _environment_event_index: short = field(**EntryRef("environments"))
     reflect_plane_height: float
-    navmesh_groups: GroupBitSet128 = binary_array(4, uint)
+    navmesh_groups: BitSet128 = binary_array(4, uint)
     vagrant_entity_ids: list[int] = binary_array(3)
     place_name_banner_id_: short  # -1 means use map area/block, and any negative value means banner is forced
     starts_disabled: bool
@@ -448,9 +448,9 @@ class MSBCollision(MSBPart):
     _play_region_id: int = field(default=0, repr=False)
     _stable_footing_flag: int = field(default=0, repr=False)
 
-    # Field type overrides.
+    # Field type/default overrides.
     model: MSBCollisionModel = None
-    display_groups: GroupBitSet128 = field(default_factory=GroupBitSet128.all_on)  # all ON by default
+    display_groups: BitSet128 = field(default_factory=BitSet128.all_on)  # all ON by default
     is_shadow_source: bool = True
     is_shadow_destination: bool = True
     draw_by_reflect_cam: bool = True
@@ -461,7 +461,7 @@ class MSBCollision(MSBPart):
     # I recommend ignoring this field and calling `MSB.set_collision_environment_references()` before exporting.
     environment_event: MSBEnvironmentEvent = None
     reflect_plane_height: float = 0.0
-    navmesh_groups: GroupBitSet128 = None  # defaults to being the same as `display_groups`
+    navmesh_groups: BitSet128 = None  # defaults to being the same as `display_groups`
     vagrant_entity_ids: list[int] = field(default_factory=lambda: [-1, -1, -1])
     place_name_banner_id: int = field(default=-1, **MapFieldInfo(game_type=PlaceName))
     force_place_name_banner: bool = True  # necessary default because `place_name_banner_id` defaults to -1
@@ -560,7 +560,7 @@ MSBCollision.play_region_id = property(
 
 
 class NavmeshDataStruct(MSBBinaryStruct):
-    navmesh_groups: GroupBitSet128 = binary_array(4, uint)
+    navmesh_groups: BitSet128 = binary_array(4, uint)
     _pad1: bytes = binary_pad(16)
 
 
@@ -574,7 +574,7 @@ class MSBNavmesh(MSBPart):
     # Type/default overrides.
     model: MSBNavmeshModel = None
 
-    navmesh_groups: GroupBitSet128 = field(default_factory=GroupBitSet128.all_off)  # all OFF by default
+    navmesh_groups: BitSet128 = field(default_factory=BitSet128.all_off)  # all OFF by default
 
     HIDE_FIELDS = (
         "scale",

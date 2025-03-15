@@ -3,10 +3,10 @@ from __future__ import annotations
 __all__ = [
     "MSBBrokenEntryReference",
     "MSBSubtypeInfo",
-    "GroupBitSet",
-    "GroupBitSet128",
-    "GroupBitSet256",
-    "GroupBitSet1024",
+    "BitSet",
+    "BitSet128",
+    "BitSet256",
+    "BitSet1024",
 ]
 
 import abc
@@ -54,7 +54,7 @@ class MSBSubtypeInfo(tp.NamedTuple):
 
 
 @dataclass(slots=True)
-class GroupBitSet(abc.ABC):
+class BitSet(abc.ABC):
     """Stores the huge, multi-`uint` bitfields used for draw/display/backread/navmesh groups in MSBs.
 
     Handles `list[uint]` representation, `set[int]` representation, and allows custom JSON encoding.
@@ -65,7 +65,7 @@ class GroupBitSet(abc.ABC):
     # Only field.
     enabled_bits: set[int]
 
-    def __init__(self, uint_list_or_bit_set: GroupBitSet | list[int] | set[int] | None):
+    def __init__(self, uint_list_or_bit_set: BitSet | list[int] | set[int] | None):
         if uint_list_or_bit_set is None:
             # Default is no enabled bits.
             self.enabled_bits = set()
@@ -87,7 +87,7 @@ class GroupBitSet(abc.ABC):
 
     @classmethod
     def from_range(cls, first_bit: int, last_bit: int) -> tp.Self:
-        """Create a `GroupBitSet` with all bits in the given range enabled (inclusive at both ends)."""
+        """Create a `BitSet` with all bits in the given range enabled (inclusive at both ends)."""
         if not 0 <= first_bit <= last_bit <= cls.BIT_COUNT:
             raise ValueError(f"Invalid range for `{cls.__name__}`: {first_bit} to {last_bit} (max {cls.BIT_COUNT}).")
         return cls(set(range(first_bit, last_bit + 1)))
@@ -181,22 +181,22 @@ class GroupBitSet(abc.ABC):
 
 
 @dataclass(slots=True, init=False, repr=False)
-class GroupBitSet128(GroupBitSet):
+class BitSet128(BitSet):
     BIT_COUNT: tp.ClassVar[int] = 128
-    _REPR_RE: tp.ClassVar[re.Pattern] = re.compile(r"^GroupBitSet128(\([\d, ]*\))$")
+    _REPR_RE: tp.ClassVar[re.Pattern] = re.compile(r"^BitSet128(\([\d, ]*\))$")
 
 
 @dataclass(slots=True, init=False, repr=False)
-class GroupBitSet256(GroupBitSet):
+class BitSet256(BitSet):
     BIT_COUNT: tp.ClassVar[int] = 256
-    _REPR_RE: tp.ClassVar[re.Pattern] = re.compile(r"^GroupBitSet256(\([\d, ]*\))$")
+    _REPR_RE: tp.ClassVar[re.Pattern] = re.compile(r"^BitSet256(\([\d, ]*\))$")
 
 
 @dataclass(slots=True, init=False, repr=False)
-class GroupBitSet1024(GroupBitSet):
+class BitSet1024(BitSet):
     """For Part collision masks in Elden Ring."""
     BIT_COUNT: tp.ClassVar[int] = 1024
-    _REPR_RE: tp.ClassVar[re.Pattern] = re.compile(r"^GroupBitSet1024(\([\d, ]*\))$")
+    _REPR_RE: tp.ClassVar[re.Pattern] = re.compile(r"^BitSet1024(\([\d, ]*\))$")
 
 
 def merge(msb_1: MSB, msb_2: MSB, filter_func: tp.Callable = None, allow_repeated_names=False) -> MSB:

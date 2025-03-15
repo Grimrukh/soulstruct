@@ -21,7 +21,7 @@ from dataclasses import dataclass, field
 from soulstruct.base.maps.msb.field_info import MapFieldInfo
 from soulstruct.base.maps.msb.msb_entry import *
 from soulstruct.base.maps.msb.parts import *
-from soulstruct.base.maps.msb.utils import GroupBitSet256
+from soulstruct.base.maps.msb.utils import BitSet256
 from soulstruct.bloodborne.game_types import *
 from soulstruct.exceptions import InvalidFieldValueError
 from soulstruct.utilities.binary import *
@@ -47,9 +47,9 @@ class PartHeaderStruct(MSBHeaderStruct):
     translate: Vector3
     rotate: Vector3
     scale: Vector3
-    draw_groups: GroupBitSet256 = binary_array(8, uint)
-    display_groups: GroupBitSet256 = binary_array(8, uint)
-    backread_groups: GroupBitSet256 = binary_array(8, uint)
+    draw_groups: BitSet256 = binary_array(8, uint)
+    display_groups: BitSet256 = binary_array(8, uint)
+    backread_groups: BitSet256 = binary_array(8, uint)
     _pad1: bytes = binary_pad(4, init=False)
     supertype_data_offset: long
     subtype_data_offset: long
@@ -145,7 +145,7 @@ class SceneGParamDataStruct(MSBBinaryStruct):
 
 
 @dataclass(slots=True, eq=False, repr=False)
-class MSBPart(BaseMSBPart, abc.ABC):
+class MSBPart(BaseMSBPart[BitSet256], abc.ABC):
 
     HEADER_STRUCT = PartHeaderStruct
     STRUCTS = {
@@ -154,10 +154,10 @@ class MSBPart(BaseMSBPart, abc.ABC):
 
     NAME_ENCODING: tp.ClassVar[str] = "utf-16-le"
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\SPRJ\\data\\Model\\map\\{map_stem}\\sib\\layout.SIB"
-    GROUP_BIT_COUNT: tp.ClassVar[int] = 256
+    BIT_SET_TYPE: tp.ClassVar = BitSet256
 
     # NOTE: `model` defined by subclasses.
-    backread_groups: GroupBitSet256 = field(default_factory=GroupBitSet256.all_off)
+    backread_groups: BitSet256 = field(default_factory=BitSet256.all_off)
     part_unk_x04_x05: int = field(default=-1, **MapFieldInfo(
         "Unknown Parts Data [x04-x05]", "Unknown parts integer. Common values: -1, 0, 8"))
     part_unk_x05_x06: int = field(default=-1, **MapFieldInfo(
@@ -414,9 +414,9 @@ class MSBCollision(MSBPart):
     _play_region_id: int = field(default=0, repr=False)
     _stable_footing_flag: int = field(default=0, repr=False)
 
-    # Field type overrides.
+    # Field type/default overrides.
     model: MSBCollisionModel = None
-    display_groups: GroupBitSet256 = field(default_factory=GroupBitSet256.all_on)
+    display_groups: BitSet256 = field(default_factory=BitSet256.all_on)
 
     hit_filter_id: int = field(default=CollisionHitFilter.Normal.value, **MapFieldInfo(game_type=CollisionHitFilter))
     sound_space_type: int = 0

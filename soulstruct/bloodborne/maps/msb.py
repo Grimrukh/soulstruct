@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["MSB", "MSBSubtypeInfo", "MSBSupertype"]
+__all__ = ["MSB", "MSBSubtypeInfo", "MSBSupertype", "BitSet256"]
 
 import typing as tp
 from enum import StrEnum
@@ -8,7 +8,7 @@ from dataclasses import field
 
 from soulstruct.base.game_types.map_types import MapEntity
 from soulstruct.base.maps.msb import MSB as _BaseMSB, MSBEntryList, MSBEntry, BaseMSBSubtype
-from soulstruct.base.maps.msb.utils import MSBSubtypeInfo
+from soulstruct.base.maps.msb.utils import MSBSubtypeInfo, BitSet256
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.misc import IDList
 
@@ -107,6 +107,10 @@ class MSB(_BaseMSB[MSBModel, MSBEvent, MSBRegion, MSBPart]):
         MSBSupertype.REGIONS: 8,  # always 0
         MSBSupertype.PARTS: 20,
     }
+    MODEL_CLASS: tp.ClassVar[type[MSBModel]] = MSBModel
+    EVENT_CLASS: tp.ClassVar[type[MSBEvent]] = MSBEvent
+    REGION_CLASS: tp.ClassVar[type[MSBRegion]] = MSBRegion
+    PART_CLASS: tp.ClassVar[type[MSBPart]] = MSBPart
     ENTITY_GAME_TYPES: tp.ClassVar[dict[str, MapEntity]] = {}  # TODO for Bloodborne
     
     HAS_HEADER: tp.ClassVar[bool] = True

@@ -56,7 +56,7 @@ class MSBEvent(BaseMSBEvent, abc.ABC):
 
     NAME_ENCODING = "shift-jis"
 
-    # Field type overrides.
+    # Field type/default overrides.
     attached_part: MSBPart = None
     attached_region: MSBRegion = None
 
