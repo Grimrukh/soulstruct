@@ -41,7 +41,7 @@ class BaseMSBPart(MSBEntry, abc.ABC, tp.Generic[BIT_SET_T]):
     rotate: Vector3 = field(default_factory=Vector3.zero)  # XZY-order Euler angles in DEGREES
     scale: Vector3 = field(default_factory=lambda: Vector3.one())
 
-    # Concrete, sized `BitSet` subclass is overridden per game.
+    # Sized `BitSet` subclass is overridden per concrete game-specific subclass.
     draw_groups: BIT_SET_T = field(default_factory=set)
     display_groups: BIT_SET_T = field(default_factory=set)
 

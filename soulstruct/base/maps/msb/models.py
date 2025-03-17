@@ -23,7 +23,7 @@ class BaseMSBModel(MSBEntry, abc.ABC):
     SUPERTYPE_ENUM: tp.ClassVar[MSBSupertype] = MSBSupertype.MODELS
     SUBTYPE_ENUM: tp.ClassVar[BaseMSBModelSubtype]
     NAME_ENCODING: tp.ClassVar[str] = ""
-    STRUCTS: tp.ClassVar[str, MSBBinaryStruct] = {}  # no data, just name and SIB path
+    STRUCTS: tp.ClassVar[dict[str, MSBBinaryStruct]] = {}  # no data, just name and SIB path
 
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = ""
 

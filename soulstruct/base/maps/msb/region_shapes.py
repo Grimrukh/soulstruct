@@ -50,7 +50,8 @@ class RegionShapeType(IntEnum):
 class RegionShape(abc.ABC):
     """Shape structure for any `MSBRegion` entry."""
     SHAPE_TYPE: tp.ClassVar[RegionShapeType]
-    SHAPE_DIMS: tp.ClassVar[str]
+    SHAPE_FIELDS: tp.ClassVar[tuple[str]]
+    SHAPE_DIMS: tp.ClassVar[str]  # up to three characters corresponding to internal 'XYZ' dimensions
 
     @classmethod
     @abc.abstractmethod
@@ -96,6 +97,7 @@ class PointShape(RegionShape):
     way the player will be facing when they spawn at or teleport to this point)."""
 
     SHAPE_TYPE = RegionShapeType.Point
+    SHAPE_FIELDS = ()
     SHAPE_DIMS = ""
 
     @classmethod
@@ -119,6 +121,7 @@ class CircleShape(RegionShape):
     """Almost never used (no volume)."""
 
     SHAPE_TYPE = RegionShapeType.Circle
+    SHAPE_FIELDS = ("radius",)
     SHAPE_DIMS = "R"
 
     radius: float = 1.0
@@ -150,6 +153,7 @@ class CircleShape(RegionShape):
 class SphereShape(RegionShape):
 
     SHAPE_TYPE = RegionShapeType.Sphere
+    SHAPE_FIELDS = ("radius",)
     SHAPE_DIMS = "R"
 
     radius: float = 1.0
@@ -181,6 +185,7 @@ class SphereShape(RegionShape):
 class CylinderShape(RegionShape):
 
     SHAPE_TYPE = RegionShapeType.Cylinder
+    SHAPE_FIELDS = ("radius", "height")
     SHAPE_DIMS = "RH"
 
     radius: float = 1.0
@@ -224,6 +229,7 @@ class RectShape(RegionShape):
     """Almost never used (no volume)."""
 
     SHAPE_TYPE = RegionShapeType.Rect
+    SHAPE_FIELDS = ("width", "depth")
     SHAPE_DIMS = "W D"
 
     width: float = 1.0
@@ -266,6 +272,7 @@ class RectShape(RegionShape):
 class BoxShape(RegionShape):
 
     SHAPE_TYPE = RegionShapeType.Box
+    SHAPE_FIELDS = ("width", "depth", "height")
     SHAPE_DIMS = "WHD"
 
     width: float = 1.0  # game X
@@ -321,6 +328,7 @@ class BoxShape(RegionShape):
 class CompositeShape(RegionShape):
 
     SHAPE_TYPE = RegionShapeType.Composite
+    SHAPE_FIELDS = ()
     SHAPE_DIMS = ""
 
     region_indices: list[int] = field(default_factory=lambda: [-1] * 8)

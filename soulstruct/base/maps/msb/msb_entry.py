@@ -495,7 +495,7 @@ class MSBEntry(abc.ABC):
         """NOTE: This converts types to JSON-ready types. Use `.asdict()` for a straightforward field value mapping."""
         default_values = self.get_default_values() if ignore_defaults else {}
 
-        data = {"name": self.name}
+        data = {"name": self.name}  # type: dict[str, str | dict | list]
         if not ignore_defaults or self.description:
             data["description"] = self.description
 
