@@ -14,13 +14,14 @@ __all__ = [
     "VertexTangent",
     "VertexBitangent",
     "VertexColor",
+    "VertexIgnore",
     "VertexArrayLayout",
 ]
 
 import abc
 import logging
 import typing as tp
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import IntEnum
 
 import numpy as np
@@ -90,6 +91,8 @@ class VertexDataFormatEnum(IntEnum):
     FourShortsToFloatsB = 0x2E
     FourBytesD = 0x2F
     EdgeCompressed = 0xF0  # not supported by Soulstruct
+
+    Ignored = 0xFF  # for Soulstruct use only with `VertexIgnore`
 
     def get_size(self):
         return VERTEX_FORMAT_ENUM_SIZES[self]
@@ -182,7 +185,13 @@ class VertexDataType(abc.ABC):
     # Offset of this type's data in the vertex array it describes. Optional, as data is tightly packed anyway.
     data_offset: int | None = None
 
-    def __init__(self, format_enum: VertexDataFormatEnum, instance_index=0, unk_x00=0, data_offset=0):
+    def __init__(
+        self,
+        format_enum: VertexDataFormatEnum,
+        instance_index=0,
+        unk_x00=0,
+        data_offset=0,
+    ):
         self.format_enum = format_enum
         self.instance_index = instance_index
         self.unk_x00 = unk_x00
@@ -424,6 +433,24 @@ class VertexColor(VertexDataType):
     }
 
 
+@dataclass(slots=True, init=False, repr=False, eq=False)
+class VertexIgnore(VertexDataType):
+    """Just ignores a fixed amount of data when READING vertices, and omits it when WRITING vertices."""
+
+    type_int = -1  # never used
+    formats = {}  # never used
+
+    ignore_size: int = 0
+
+    def __init__(self, ignore_size: int):
+        super(VertexIgnore, self).__init__(format_enum=VertexDataFormatEnum.Ignored)
+        self.ignore_size = ignore_size
+
+    @property
+    def size(self) -> int:
+        return self.ignore_size
+
+
 # Data type subclass lookup.
 VERTEX_DATA_TYPES = {
     VertexPosition.type_int: VertexPosition,
@@ -437,7 +464,7 @@ VERTEX_DATA_TYPES = {
 }  # type: dict[int, type[VertexDataType]]
 
 
-class VertexArrayLayout(list[VertexDataType]):
+class VertexArrayLayout:
     """List of `VertexDataType` instances that describes a vertex array layout.
 
     Functions as a standard list, with extra methods for constructing combined `np.dtype` and reading/packing arrays.
@@ -453,11 +480,32 @@ class VertexArrayLayout(list[VertexDataType]):
         _pad0: bytes = binary_pad(8, init=False)
         layout_types_offset: int
 
+    # Types are accessed through `read_types` and `write_types`. The latter ignores `VertexIgnore` types.
+    _types: list[VertexDataType]
     byte_order: ByteOrder
 
-    def __init__(self, *args, byte_order: ByteOrder = ByteOrder.LittleEndian, **kwargs):
-        super().__init__(*args, **kwargs)
+    @tp.overload
+    def __init__(self, types_list: list[VertexDataType], byte_order: ByteOrder = ByteOrder.LittleEndian):
+        ...
+
+    @tp.overload
+    def __init__(self, *types: VertexDataType, byte_order: ByteOrder = ByteOrder.LittleEndian):
+        ...
+
+    def __init__(self, *types: VertexDataType | list[VertexDataType], byte_order: ByteOrder = ByteOrder.LittleEndian):
+        if len(types) == 1 and isinstance(types[0], list):
+            self._types = types[0]
+        else:
+            self._types = list(types)
         self.byte_order = byte_order
+
+    @property
+    def read_types(self) -> list[VertexDataType]:
+        return self._types.copy()
+
+    @property
+    def write_types(self) -> list[VertexDataType]:
+        return [data_type for data_type in self._types if not isinstance(data_type, VertexIgnore)]
 
     @classmethod
     def from_flver0_reader(cls, reader: BinaryReader) -> tp.Self:
@@ -492,7 +540,7 @@ class VertexArrayLayout(list[VertexDataType]):
                 f"{layout_struct.struct_size}."
             )
 
-        return cls(data_types, byte_order=reader.byte_order)
+        return cls(*data_types, byte_order=reader.byte_order)
 
     @classmethod
     def from_flver2_reader(cls, reader: BinaryReader) -> VertexArrayLayout:
@@ -520,14 +568,20 @@ class VertexArrayLayout(list[VertexDataType]):
                 data_types.append(data_type)
                 tight_data_offset += VERTEX_FORMAT_ENUM_SIZES[data_type.format_enum]
 
-        return cls(data_types, byte_order=reader.byte_order)
+        return cls(*data_types, byte_order=reader.byte_order)
 
     def to_flver0_writer(self, writer: BinaryWriter):
-        """Data is written here as well."""
-        layout_struct = self.STRUCT0(layout_types_count=len(self), struct_size=self.get_total_data_size())
+        """Data is written here as well.
+
+        Exported layout type count ignores `VertexIgnore` types.
+        """
+        layout_struct = self.STRUCT0(
+            layout_types_count=len(self.write_types),
+            struct_size=self.get_total_data_size(include_ignored=False),
+        )
         layout_struct.to_writer(writer, reserve_obj=self)
         data_type_offset = 0
-        for data_type in self:
+        for data_type in self.write_types:
             VertexDataType.STRUCT.object_to_writer(
                 data_type,
                 writer,
@@ -538,7 +592,8 @@ class VertexArrayLayout(list[VertexDataType]):
         return layout_struct  # not needed
 
     def to_flver2_writer(self, writer: BinaryWriter):
-        layout_struct = self.STRUCT2(layout_types_count=len(self), layout_types_offset=RESERVED)
+        """Exported layout type count ignores `VertexIgnore` types."""
+        layout_struct = self.STRUCT2(layout_types_count=len(self.write_types), layout_types_offset=RESERVED)
         layout_struct.to_writer(writer, reserve_obj=self)
         return layout_struct
 
@@ -546,7 +601,7 @@ class VertexArrayLayout(list[VertexDataType]):
         """Write actual layout data type information and fill header offset field."""
         writer.fill_with_position("layout_types_offset", obj=self)
         data_type_offset = 0
-        for data_type in self:
+        for data_type in self.write_types:
             VertexDataType.STRUCT.object_to_writer(
                 data_type,
                 writer,
@@ -557,10 +612,35 @@ class VertexArrayLayout(list[VertexDataType]):
 
     # region Array Methods
 
+    def _ignore_data(self, data: bytes) -> bytes:
+        """Remove any bytes in each vertex that correspond to `VertexIgnore` data types.
+
+        TODO: Probably would be better to have a `compressed_dtype` that supported the `asserted` data type, so
+         we can slice out the data more efficiently.
+        """
+        vertex_count = len(data) // self.get_total_data_size(include_ignored=True)
+        kept_data = bytearray()
+        data_offset = 0
+        for _ in range(vertex_count):
+            for data_type in self.read_types:
+                data_type_bytes = data[data_offset:data_offset + data_type.size]
+                if not isinstance(data_type, VertexIgnore):
+                    kept_data.extend(data_type_bytes)
+                    data_offset += data_type.size
+                    continue
+                # Otherwise, ignore data.
+                data_offset += data_type.size
+
+        return bytes(kept_data)
+
     def unpack_vertex_array(self, data: bytes, uv_factor: int) -> np.ndarray:
         """Use this layout to read a structured array of vertex data from the given raw FLVER array data."""
         compressed_dtype, decompressed_dtype = self.get_dtypes()
         codecs = self.get_codecs(uv_factor=uv_factor)
+
+        # First, we check for any `assert_and_discard` data types, validate their data, and remove it.
+        if any(isinstance(data_type, VertexIgnore) for data_type in self.read_types):
+            data = self._ignore_data(data)
 
         compressed_array = np.frombuffer(data, dtype=compressed_dtype)
         decompressed_array = np.empty(len(compressed_array), dtype=decompressed_dtype)
@@ -590,7 +670,7 @@ class VertexArrayLayout(list[VertexDataType]):
         uv_index = 0
         color_index = 0
 
-        for data_type in self:
+        for data_type in self.write_types:
             if data_type.format_enum == VertexDataFormatEnum.EdgeCompressed:
                 # Explicitly not implemented yet.
                 raise NotImplementedError("Cannot yet read FLVERs with edge-compressed vertex data. Sorry!")
@@ -643,7 +723,7 @@ class VertexArrayLayout(list[VertexDataType]):
         this layout."""
         codecs = []
 
-        for data_type in self:
+        for data_type in self.write_types:
             if data_type.format_enum == VertexDataFormatEnum.EdgeCompressed:
                 # Explicitly not implemented yet.
                 raise NotImplementedError("Cannot yet read FLVERs with edge-compressed vertex data. Sorry!")
@@ -660,38 +740,43 @@ class VertexArrayLayout(list[VertexDataType]):
 
         return codecs
 
-    def get_total_data_size(self) -> int:
-        return sum(data_type.size for data_type in self)
+    def get_total_data_size(self, include_ignored: bool) -> int:
+        """Caller must specify if they want to include `VertexIgnore` data types (typically yes for FLVER
+        binary read, no otherwise)."""
+        if include_ignored:
+            return sum(data_type.size for data_type in self.read_types)
+        return sum(data_type.size for data_type in self.write_types)
 
     def get_uv_count(self) -> int:
         """Count total number of UV coordinate layers in layout (could be one or two per UV data type)"""
         uv_count = 0
-        for data_type in self:
+        for data_type in self.write_types:
             if isinstance(data_type, VertexUV):
                 uv_count += 2 if data_type.format_enum.has_two_uvs() else 1
         return uv_count
 
     def set_unk_x00(self, unk_x00: int):
-        for data_type in self:
+        for data_type in self.write_types:
             data_type.unk_x00 = unk_x00
 
     # endregion
 
     def __eq__(self, other: tp.Self):
-        if not isinstance(other, self.__class__) or len(self) != len(other):
+        if not isinstance(other, self.__class__) or len(self._types) != len(other._types):
             return False
-        for self_data_type, other_data_type in zip(self, other):
+        for self_data_type, other_data_type in zip(self._types, other._types):
             if self_data_type != other_data_type:
                 return False
         return True
 
     def __hash__(self) -> int:
-        return hash(tuple((data_type.type_int, data_type.format_enum) for data_type in self))
+        # TODO: Should I discard `VertexIgnore` data types from hash?
+        return hash(tuple((data_type.type_int, data_type.format_enum) for data_type in self._types))
 
     def __repr__(self):
-        data_types = ",\n    ".join(repr(data_type) for data_type in self)
+        data_types = ",\n    ".join(repr(data_type) for data_type in self._types)
         return (
             f"VertexArrayLayout(\n"
             f"    {data_types},\n"
-            f") <size={self.get_total_data_size()}>"
+            f") <size={self.get_total_data_size(include_ignored=True)}>"
         )

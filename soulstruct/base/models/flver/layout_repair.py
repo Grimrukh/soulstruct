@@ -33,7 +33,7 @@ OTHER_CORRECTED_QLOC_LAYOUTS = {
         VertexPosition(VertexDataFormatEnum.Float3, 0),
         VertexBoneIndices(VertexDataFormatEnum.FourBytesB, 0),
         VertexNormal(VertexDataFormatEnum.FourBytesC, 0),
-        VertexTangent(VertexDataFormatEnum.FourBytesC, 0),  # not actually used by shader, I believe
+        VertexIgnore(4),  # useless `VertexTangent`
         VertexColor(VertexDataFormatEnum.FourBytesC, 0),
         VertexUV(VertexDataFormatEnum.UV, 0),
     ]),
@@ -42,7 +42,7 @@ OTHER_CORRECTED_QLOC_LAYOUTS = {
         VertexPosition(VertexDataFormatEnum.Float3, 0),
         VertexBoneIndices(VertexDataFormatEnum.FourBytesB, 0),
         VertexNormal(VertexDataFormatEnum.FourBytesC, 0),
-        VertexTangent(VertexDataFormatEnum.FourBytesC, 0),  # not actually used by shader, I believe
+        VertexIgnore(4),  # useless `VertexTangent`
         VertexColor(VertexDataFormatEnum.FourBytesC, 0),
         VertexUV(VertexDataFormatEnum.UV, 0),
     ]),
@@ -53,14 +53,34 @@ OTHER_CORRECTED_QLOC_LAYOUTS = {
         VertexPosition(VertexDataFormatEnum.Float3, 0),
         VertexBoneIndices(VertexDataFormatEnum.FourBytesB, 0),
         VertexNormal(VertexDataFormatEnum.FourBytesC, 0),
-        VertexTangent(VertexDataFormatEnum.FourBytesC, 0),  # not actually used by shader, I believe
-        VertexBitangent(VertexDataFormatEnum.FourBytesC, 0),  # not actually used by shader, I believe
+        VertexIgnore(8),  # useless `VertexTangent` and `VertexBitangent`
         VertexColor(VertexDataFormatEnum.FourBytesC, 0),
         VertexUV(VertexDataFormatEnum.UV, 0),
     ]),
 
-    # TODO: 'A19_Division[D]_Alp.mtd' in m0001B1A18 has 60-byte vertices but a 32-byte header?
-    # TODO: 'A19_Fly[DSB]_edge.mtd' in m0001B1A18 has 60-byte vertices but a 32-byte header?
+    # Used for a couple of patches in the Asylum starting cell (m0001B1A18) that aren't really visible anyway.
+    # In PTDE, this is just a straightforward no-tangent layout with five members.
+    "A19_Division[D]_Alp.mtd": lambda: VertexArrayLayout([
+        VertexPosition(VertexDataFormatEnum.Float3, 0),
+        VertexBoneIndices(VertexDataFormatEnum.FourBytesB, 0),
+        VertexNormal(VertexDataFormatEnum.FourBytesC, 0),
+        # NOTE: We have eight four-byte members that shouldn't be in the vertex data. The first looks like the tangent
+        # as expected. Then we have six four-byte sets that are ALMOST always (0, 0, 0, 255). Then we have what looks
+        # like a possible bitangent, except it's not normalized. We ignore all of these.
+        VertexIgnore(32),  # useless `VertexTangent`, six useless sets, useless `VertexBitangent`
+        VertexColor(VertexDataFormatEnum.FourBytesC, 6),
+        VertexUV(VertexDataFormatEnum.UV, 0),
+    ]),
+    # Used once in DS1, for the swarm of flies in the Asylum starting cell (m0001B1A18).
+    # In PTDE, this is just a straightforward no-tangent layout with five members (and the flies actually show).
+    "A19_Fly[DSB]_edge.mtd": lambda: VertexArrayLayout([
+        VertexPosition(VertexDataFormatEnum.Float3, 0),
+        VertexBoneIndices(VertexDataFormatEnum.FourBytesB, 0),
+        VertexNormal(VertexDataFormatEnum.FourBytesC, 0),
+        VertexIgnore(32),  # useless `VertexTangent`, six useless sets, useless `VertexBitangent`
+        VertexColor(VertexDataFormatEnum.FourBytesC, 0),
+        VertexUV(VertexDataFormatEnum.UV, 0),
+    ]),
 
 }
 
@@ -82,18 +102,19 @@ def check_ds1_layouts(
     for i, mesh in enumerate(flver_meshes):
         mtd_name = mesh.material.mat_def_name
         if not mtd_name.endswith(".mtd"):
-            return  # definitely not DS1
+            continue  # definitely not DS1
+
         # noinspection PyProtectedMember
         for array_index in mesh._vertex_array_indices:
             header = array_headers[array_index]
             layout = array_layouts[header.layout_index]
+            layout_size = layout.get_total_data_size(include_ignored=True)
 
-            if header.vertex_size != (layout_size := layout.get_total_data_size()):
+            if header.vertex_size != layout_size:
                 # BAD LAYOUT. Try to guess the layout from the MTD name.
                 _LOGGER.info(
-                    f"Attempting to fix bad vertex data layout for FLVER mesh {i}.\n"
-                    f"    MTD: {mtd_name})\n"
-                    f"    Layout size {layout_size} vs. header vertex size {header.vertex_size}"
+                    f"Attempting to fix bad vertex data layout for FLVER mesh {i} (MTD '{mtd_name}', "
+                    f"layout size {layout_size} != header vertex size {header.vertex_size})."
                 )
 
                 if mtd_name in OTHER_CORRECTED_QLOC_LAYOUTS:
@@ -111,7 +132,7 @@ def check_ds1_layouts(
                     _LOGGER.warning(f"Attempt failed. No corrected DS1R layout known for MTD {mtd_name}.")
                     continue
 
-                guessed_layout_size = guessed_layout.get_total_data_size()
+                guessed_layout_size = guessed_layout.get_total_data_size(include_ignored=True)
                 if guessed_layout_size != header.vertex_size:
                     _LOGGER.error(
                         f"Attempted to repair FLVER layout, but predicted layout size {guessed_layout_size} still does "
@@ -119,10 +140,12 @@ def check_ds1_layouts(
                     )
                 else:
                     # New layout works. We do NOT replace the original, as it may be used correctly by other meshes.
+                    _LOGGER.info(
+                        f"Successfully repaired layout for FLVER mesh {i} with MTD '{mtd_name}'. "
+                        f"Size: {layout_size} -> {guessed_layout_size}"
+                    )
                     header.layout_index = len(array_layouts)
                     array_layouts.append(guessed_layout)
 
                     # Mesh should now be able to read vertex array correctly...?
                     mesh.layout_fixed = True
-
-    return True

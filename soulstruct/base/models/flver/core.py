@@ -455,7 +455,7 @@ class FLVER(GameFile):
             layouts_to_pack = material_layouts_to_pack[material_index]
             hashed_layout_indices = material_hashed_layout_indices[material_index]
             layout = mesh.vertex_arrays[0].layout
-            layout_hash = hash(tuple((data_type.type_int, data_type.format_enum) for data_type in layout))
+            layout_hash = hash(layout)
             if layout_hash in hashed_layout_indices:
                 # Identical layout already used by a Mesh that uses this Material. Reuse it.
                 material_layout_index = hashed_layout_indices[layout_hash]
@@ -1329,11 +1329,20 @@ class FLVER(GameFile):
 
     def print_mesh_material_summary(self):
         """Print a simple table of meshes and their basic material info."""
-        s = f"{'Mesh':>4} {'Material':>30} {'MatDef':>30} {'Texture 0':>30}"
+        max_textures = max(len(mesh.material.textures) for mesh in self.meshes)
+        s = f"{'Mesh':>4} {'Material':>30} {'Layout Size':>16} {'MatDef':>30}"
+        for i in range(max_textures):
+            s += f" {f'Texture {i}':>30}"
         print(s)
         print("-" * len(s))
         for mesh in self.meshes:
             mat = mesh.material
-            print(f"{mesh.index:>4} {mat.name:>30} {mat.mat_def_stem:>30} {mat.textures[0].stem:>30}")
+            print(
+                f"{mesh.index:>4} {mat.name:>30} {mesh.layout.get_total_data_size(False):>16} {mat.mat_def_stem:>30}",
+                end="",
+            )
+            for tex in mat.textures:
+                print(f" {tex.stem:>30}", end="")
+            print()
 
     # endregion

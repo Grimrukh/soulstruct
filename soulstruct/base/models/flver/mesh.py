@@ -304,7 +304,7 @@ class FLVERMesh:
         vertex_array = self.vertex_arrays[0]
         vertex_count = len(vertex_array.array)
         vertex_index_count = face_set.vertex_indices.size  # NOT `len()`
-        vertex_array_data_size = vertex_array.layout.get_total_data_size() * vertex_count
+        vertex_array_data_size = vertex_array.layout.get_total_data_size(include_ignored=False) * vertex_count
 
         bone_indices = self.bone_indices.tolist()
         if len(bone_indices) < 28:
@@ -427,7 +427,7 @@ class FLVERMesh:
         """Check that per-mesh unique `MemberType`s do not occur more than once among all members of all arrays."""
         existing_types = set()
         for vertex_array in self.vertex_arrays:
-            for data_type in vertex_array.layout:
+            for data_type in vertex_array.layout.write_types:
                 if data_type.unique:
                     name = data_type.__class__.__name__
                     if name in existing_types:

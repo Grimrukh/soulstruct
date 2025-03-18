@@ -90,10 +90,12 @@ class VertexArray:
             )
 
         layout = layouts[array_header.layout_index]
-        layout_size = layout.get_total_data_size()
+        layout_size = layout.get_total_data_size(include_ignored=True)
+
         if layout_size != array_header.vertex_size:
-            # TODO: This happens in vanilla DSR FLVERs. I try to fix it ahead of time by studying material MTD names,
-            #  but if we reach here, that hasn't worked. Causes seem to be missing or unexpected tangents/bitangents.
+            # This happens in vanilla DSR FLVERs for a variety of dodgy reasons, such as materials missing tangents
+            # and/or bitangents (or having them when not needed), or just weird fixed data. Note that this is a SEPARATE
+            # issue from some DS1R Map Piece FLVERs just being straight-up corrupted, which is handled elsewhere.
             raise VertexDataSizeError(array_header.vertex_size, layout_size)
 
         with flver_reader.temp_offset(vertex_data_offset + array_header.array_offset):
@@ -126,7 +128,7 @@ class VertexArray:
         layout_index: int,
     ):
         """Note that `layout_index` will be into a merged FLVER-wide list."""
-        layout_size = self.layout.get_total_data_size()
+        layout_size = self.layout.get_total_data_size(include_ignored=False)
         vertex_count = len(self.array)
         self.HEADER0.object_to_writer(
             self,
@@ -144,7 +146,7 @@ class VertexArray:
         array_index: int,
     ):
         """Note that `layout_index` will be into a merged FLVER-wide list."""
-        layout_size = self.layout.get_total_data_size()
+        layout_size = self.layout.get_total_data_size(include_ignored=False)
         vertex_count = len(self.array)
         self.HEADER2.object_to_writer(
             self,
