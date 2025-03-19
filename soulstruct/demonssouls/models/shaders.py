@@ -45,7 +45,7 @@ class MatDef(_BaseMatDef):
     SAMPLER_GAME_NAMES: tp.ClassVar[dict[str, str]] = {v: k for k, v in SAMPLER_ALIASES.items()}
 
     # Class regex patterns for MTD name parsing.
-    NAME_TAG_RE: tp.ClassVar[str, re.Pattern] = {
+    NAME_TAG_RE: tp.ClassVar[dict[str, re.Pattern]] = {
         "Albedo": re.compile(r".*\[.*D.*\].*"),
         "Specular": re.compile(r".*\[.*S.*\].*"),
         # No "Shininess" samplers in DeS.
@@ -137,7 +137,7 @@ class MatDef(_BaseMatDef):
     #  this from their MTD names alone. I may have to guess that they do unless the MTD file is provided.
 
     @classmethod
-    def get_shader_category(cls, shader_stem: str) -> str:
+    def _get_shader_category(cls, shader_stem: str) -> str:
         """Parse stem as 'FRPG_{category}_*' and return the category."""
         return shader_stem.removeprefix("FRPG_").split("_")[0]
 

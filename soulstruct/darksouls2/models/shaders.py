@@ -46,7 +46,7 @@ class MatDef(_BaseMatDef):
     SAMPLER_GAME_NAMES: tp.ClassVar[dict[str, str]] = {v: k for k, v in SAMPLER_ALIASES.items()}
 
     # Class regex patterns for MTD name parsing.
-    NAME_TAG_RE: tp.ClassVar[str, re.Pattern] = {
+    NAME_TAG_RE: tp.ClassVar[dict[str, re.Pattern]] = {
         "Albedo": re.compile(r".*\[.*D.*\].*"),
         "Metallic": re.compile(r".*\[.*S.*\].*"),
         "Shininess": re.compile(r".*\[.*B.*\].*"),
@@ -97,7 +97,7 @@ class MatDef(_BaseMatDef):
         return matdef
 
     @classmethod
-    def get_shader_category(cls, shader_stem: str) -> str:
+    def _get_shader_category(cls, shader_stem: str) -> str:
         """99% of DS2 shaders start with 'GXFlver'."""
         return shader_stem.removeprefix("GXFlver_").split("_")[0]
 
@@ -129,7 +129,7 @@ class MatDef(_BaseMatDef):
             VertexColor(VertexDataFormatEnum.FourBytesC, 0),
             VertexColor(VertexDataFormatEnum.FourBytesC, 1),
             # UV/UVPair fields will be appended here if needed.
-        ]
+        ]  # type: list[VertexDataType]
 
         if self.get_sampler_with_alias("Main 0 Normal"):
             # Uses tangent vertex data.
@@ -184,7 +184,7 @@ class MatDef(_BaseMatDef):
             VertexPosition(VertexDataFormatEnum.Float3, 0),
             VertexNormal(VertexDataFormatEnum.FourBytesB, 0),
             VertexTangent(VertexDataFormatEnum.FourBytesB, 0),
-        ]
+        ]  # type: list[VertexDataType]
 
         if self.is_cloth:
             # Single tangent, but with no bones, color, or UVs.

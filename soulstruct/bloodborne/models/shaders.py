@@ -47,7 +47,7 @@ class MatDef(_BaseMatDef):
     SAMPLER_GAME_NAMES: tp.ClassVar[dict[str, str]] = {v: k for k, v in SAMPLER_ALIASES.items()}
 
     # Class regex patterns for MTD name parsing.
-    NAME_TAG_RE: tp.ClassVar[str, re.Pattern] = {
+    NAME_TAG_RE: tp.ClassVar[dict[str, re.Pattern]] = {
         "Albedo": re.compile(r".*\[.*A.*\].*"),
         "Metallic": re.compile(r".*\[.*R.*\].*"),
         "Shininess": re.compile(r".*\[.*S.*\].*"),
@@ -97,7 +97,7 @@ class MatDef(_BaseMatDef):
         return matdef
 
     @classmethod
-    def get_shader_category(cls, shader_stem: str) -> str:
+    def _get_shader_category(cls, shader_stem: str) -> str:
         """99% of Bloodborne shaders start with 'GXFlver'."""
         return shader_stem.removeprefix("GXFlver_").split("_")[0]
 

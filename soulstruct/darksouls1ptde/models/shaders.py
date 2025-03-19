@@ -10,8 +10,9 @@ import typing as tp
 from dataclasses import dataclass
 from enum import IntEnum
 
-from soulstruct.base.models.shaders import MatDef as _BaseMatDef
+from soulstruct.base.models.shaders import MTD, MatDef as _BaseMatDef
 from soulstruct.base.models.flver.vertex_array_layout import *
+from soulstruct.utilities.maths import Vector2
 
 _LOGGER = logging.getLogger("soulstruct")
 
@@ -42,7 +43,7 @@ class MatDef(_BaseMatDef):
     SAMPLER_GAME_NAMES: tp.ClassVar[dict[str, str]] = {v: k for k, v in SAMPLER_ALIASES.items()}
 
     # Class regex patterns for MTD name parsing.
-    NAME_TAG_RE: tp.ClassVar[str, re.Pattern] = {
+    NAME_TAG_RE: tp.ClassVar[dict[str, re.Pattern]] = {
         "Albedo": re.compile(r".*\[.*D.*\].*"),
         "Specular": re.compile(r".*\[.*S.*\].*"),
         # No "Shininess" samplers in DS1.
@@ -127,12 +128,23 @@ class MatDef(_BaseMatDef):
     #  this from their MTD names alone. I may have to guess that they do unless the MTD file is provided.
 
     @classmethod
-    def get_shader_category(cls, shader_stem: str) -> str:
+    def _get_shader_category(cls, shader_stem: str) -> str:
         """Parse stem as 'FRPG_{category}_*' and return the category."""
         return shader_stem.removeprefix("FRPG_").split("_")[0]
 
     @classmethod
-    def from_mtd_name(cls, mtd_name: str):
+    def from_mtd(cls, mtd: MTD) -> tp.Self:
+        """Extract critical MTD information (mainly for generating FLVER vertex array layouts) directly from MTD.
+
+        Adds UV scaling for 'Detail 0 Normal' bumpmap from "g_DetailBump_UVScale" MTD param.
+        """
+        matdef = super(MatDef, cls).from_mtd(mtd)
+        if detail_sampler := matdef.get_sampler_with_alias("Detail 0 Normal"):
+            detail_sampler.uv_scale = Vector2(mtd.get_param("g_DetailBump_UVScale", default=[1.0, 1.0]))
+        return matdef
+
+    @classmethod
+    def from_mtd_name(cls, mtd_name: str) -> tp.Self:
         matdef = super(MatDef, cls).from_mtd_name(mtd_name)
 
         if matdef.get_sampler_with_alias("Main 0 Normal"):
@@ -152,7 +164,7 @@ class MatDef(_BaseMatDef):
             # Tangent/Bitangent will be inserted here if needed.
             VertexColor(VertexDataFormatEnum.FourBytesC, 0),
             # UV/UVPair will be inserted here if needed.
-        ]
+        ]  # type: list[VertexDataType]
 
         if self.get_sampler_with_alias("Main 0 Normal"):
             # Uses tangent vertex data.
@@ -192,7 +204,7 @@ class MatDef(_BaseMatDef):
             VertexNormal(VertexDataFormatEnum.FourBytesC, 0),
             VertexTangent(VertexDataFormatEnum.FourBytesC, 0),
             VertexColor(VertexDataFormatEnum.FourBytesC, 0),
-        ]
+        ]  # type: list[VertexDataType]
 
         uv_count = len(self.get_used_uv_layers())
         if uv_count == 2:  # has Bitangent and UVPair

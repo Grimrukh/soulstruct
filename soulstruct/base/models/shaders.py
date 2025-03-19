@@ -137,16 +137,16 @@ class MatDef(abc.ABC):
 
     def __post_init__(self):
         if self.shader_stem and not self.shader_category:
-            self.shader_category = self.get_shader_category(self.shader_stem)
+            self.shader_category = self._get_shader_category(self.shader_stem)
 
     @classmethod
-    def get_shader_category(cls, shader_stem: str) -> str:
+    def _get_shader_category(cls, shader_stem: str) -> str:
         """Subclasses can specify how they determine categories from full stems. Default is equal, so every unique
         stem is a category."""
         return shader_stem
 
     @classmethod
-    def from_mtd(cls, mtd: MTD):
+    def from_mtd(cls, mtd: MTD) -> tp.Self:
         """Extract critical MTD information (mainly for generating FLVER vertex array layouts) directly from MTD."""
         matdef = cls(
             shader_stem=mtd.shader_name.split(".")[0],
@@ -173,7 +173,7 @@ class MatDef(abc.ABC):
         return matdef
 
     @classmethod
-    def from_mtd_name(cls, mtd_name: str):
+    def from_mtd_name(cls, mtd_name: str) -> tp.Self:
         """Guess as much information about the shader as possible purely from its name.
 
         Obviously, getting the texture names right is the most important part, but we can also guess whether the shader
