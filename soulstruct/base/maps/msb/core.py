@@ -84,6 +84,7 @@ class MSB(GameFile, tp.Generic[MSB_MODEL_T, MSB_EVENT_T, MSB_REGION_T, MSB_PART_
                 return obj.to_json_dict()
             if isinstance(obj, (Vector2, Vector3, Vector4, BitSet)):
                 return repr(obj)
+            return None  # not handled
 
     EXT: tp.ClassVar[str] = ".msb"
 
@@ -344,6 +345,8 @@ class MSB(GameFile, tp.Generic[MSB_MODEL_T, MSB_EVENT_T, MSB_REGION_T, MSB_PART_
                     names.add(entry.name)
 
         # Get model instance counts. We collect them all here at once to save on multiple iterations.
+        # We also confirm that 'c0000_0000' is an `MSBPlayerStart` and not an `MSBCharacter`. (Valid for all games.)
+        player_found = False
         model_instance_counts = {}
         for part in entry_lists["PARTS_PARAM_ST"]:
             part: MSB_PART_T
@@ -353,6 +356,20 @@ class MSB(GameFile, tp.Generic[MSB_MODEL_T, MSB_EVENT_T, MSB_REGION_T, MSB_PART_
                 model_instance_counts[part.model.name] += 1
             else:
                 model_instance_counts[part.model.name] = 1
+
+            if part.name == "c0000_0000":
+                if part.SUBTYPE_ENUM.name == "PlayerStart":
+                    player_found = True
+                else:
+                    _LOGGER.warning(
+                        f"MSB entry 'c0000_0000' should always be an `MSBPlayerStart`, not an `{part.cls_name}`."
+                    )
+
+        if not player_found:
+            # TODO: This warning is probably too aggressive for Elden Ring large/medium tiles?
+            _LOGGER.warning(
+                f"MSB entry 'c0000_0000' is missing from MSB '{self.path_name}'. It should be an `MSBPlayerStart`."
+            )
 
         # TODO: use writer.long_varints to communicate encoding?
         writer = BinaryWriter(byte_order=self.byte_order, long_varints=self.LONG_VARINTS)
@@ -394,15 +411,17 @@ class MSB(GameFile, tp.Generic[MSB_MODEL_T, MSB_EVENT_T, MSB_REGION_T, MSB_PART_
                             f"  Entry: {entry}"
                         )
                         raise
-                else:
-                    try:
-                        entry.to_msb_writer(writer, supertype_index, subtype_index, entry_lists)
-                    except Exception as ex:
-                        _LOGGER.error(
-                            f"Exception occurred while trying to write entry '{entry.name}': {ex}.\n"
-                            f"  Entry: {entry}"
-                        )
-                        raise
+                    continue
+
+                # Non-Models:
+                try:
+                    entry.to_msb_writer(writer, supertype_index, subtype_index, entry_lists)
+                except Exception as ex:
+                    _LOGGER.error(
+                        f"Exception occurred while trying to write entry '{entry.name}': {ex}.\n"
+                        f"  Entry: {entry}"
+                    )
+                    raise
 
             if supertype_name == last_supertype_name:
                 writer.fill("next_list_offset", 0, obj=supertype_list)  # zero offset
@@ -610,7 +629,7 @@ class MSB(GameFile, tp.Generic[MSB_MODEL_T, MSB_EVENT_T, MSB_REGION_T, MSB_PART_
         NOTE: No MSB header information needs to be recorded. Just the version info.
         """
         entry_lists = self.get_all_subtype_lists()
-        msb_dict = {"version": self.get_version_dict()}  # type: dict[str, dict[str, tp.Any]]
+        msb_dict = {"version": self.get_version_dict()}  # type: dict[str, tp.Any]
         for subtype_list in entry_lists:
             for supertype_name in self.MSB_ENTRY_SUPERTYPES:
                 if subtype_list.supertype == supertype_name:
