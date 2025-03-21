@@ -15,3 +15,4 @@ from .chrbnd import CHRBND
 from .objbnd import OBJBND
 from .partsbnd import PARTSBND
 from .mapbnd import MAPBND
+# TODO: `from .shaders import MatDef`
