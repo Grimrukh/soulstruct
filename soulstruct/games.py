@@ -34,6 +34,7 @@ class Game:
 
     variable_name: str
     name: str
+    abbreviated_name: str
     submodule_name: str = ""
     aliases: tuple[str, ...] = ()
     default_dcx_type: DCXType = DCXType.Null
@@ -100,6 +101,7 @@ class Game:
 DEMONS_SOULS = Game(
     "DEMONS_SOULS",
     "Demon's Souls",
+    abbreviated_name="des",
     submodule_name="demonssouls",
     aliases=("demonssouls", "des"),
     default_dcx_type=DCXType.DCX_EDGE,
@@ -132,6 +134,7 @@ DEMONS_SOULS = Game(
 DEMONS_SOULS_REMAKE = Game(
     "DEMONS_SOULS_REMAKE",
     "Demon's Souls Remake",
+    abbreviated_name="desr",
     aliases=("demonssoulsremake", "desr"),
     default_dcx_type=DCXType.Unknown,  # TODO: Unknown.
     default_game_path=DESR_PATH,
@@ -141,6 +144,7 @@ DEMONS_SOULS_REMAKE = Game(
 DARK_SOULS_PTDE = Game(
     "DARK_SOULS_PTDE",
     "Dark Souls: Prepare to Die Edition",
+    abbreviated_name="ptde",
     submodule_name="darksouls1ptde",
     aliases=("darksoulspreparetodieedition", "darksoulsptde", "ptde", "darksouls1ptde"),
     default_dcx_type=DCXType.Null,  # DCX not used anywhere
@@ -171,6 +175,7 @@ DARK_SOULS_PTDE = Game(
 DARK_SOULS_DSR = Game(
     "DARK_SOULS_DSR",
     "Dark Souls: Remastered",
+    abbreviated_name="ds1r",
     submodule_name="darksouls1r",
     aliases=("darksoulsremastered", "darksoulsdsr", "dsr", "ds1r", "darksouls1r"),
     default_dcx_type=DCXType.DCX_DFLT_10000_24_9,
@@ -211,6 +216,7 @@ DARK_SOULS_DSR = Game(
 DARK_SOULS_2 = Game(
     "DARK_SOULS_2",
     "Dark Souls II",
+    abbreviated_name="ds2",
     submodule_name="darksouls2",
     aliases=("darksouls2", "ds2", "dks2"),
     default_dcx_type=DCXType.DCX_DFLT_10000_24_9,
@@ -221,6 +227,7 @@ DARK_SOULS_2 = Game(
 DARK_SOULS_2_SOTFS = Game(
     "DARK_SOULS_2_SOTFS",
     "Dark Souls II: Scholar of the First Sin",
+    abbreviated_name="ds2sotfs",
     submodule_name="darksouls2",  # TODO: Currently identical to DS2.
     aliases=("darksouls2sotfs", "ds2sotfs", "dks2sotfs", "sotfs"),
     default_dcx_type=DCXType.DCX_DFLT_10000_24_9,
@@ -231,6 +238,7 @@ DARK_SOULS_2_SOTFS = Game(
 BLOODBORNE = Game(
     "BLOODBORNE",
     "Bloodborne",
+    abbreviated_name="bb",
     submodule_name="bloodborne",
     aliases=("bloodborne", "bb"),
     default_dcx_type=DCXType.DCX_DFLT_10000_44_9,
@@ -258,6 +266,7 @@ BLOODBORNE = Game(
 DARK_SOULS_3 = Game(
     "DARK_SOULS_3",
     "Dark Souls III",
+    abbreviated_name="ds3",
     submodule_name="darksouls3",
     aliases=("darksouls3", "ds3", "dks3"),
     default_dcx_type=DCXType.DCX_DFLT_10000_44_9,
@@ -270,6 +279,7 @@ DARK_SOULS_3 = Game(
 SEKIRO = Game(
     "SEKIRO",
     "Sekiro: Shadows Die Twice",
+    abbreviated_name="sdt",
     submodule_name="sekiro",
     aliases=("sekiro", "sekiroshadowsdietwice", "sdt"),
     default_dcx_type=DCXType.DCX_KRAK,
@@ -281,6 +291,7 @@ SEKIRO = Game(
 ELDEN_RING = Game(
     "ELDEN_RING",
     "Elden Ring",
+    abbreviated_name="er",
     submodule_name="eldenring",
     aliases=("eldenring", "er"),
     default_dcx_type=DCXType.DCX_KRAK,
