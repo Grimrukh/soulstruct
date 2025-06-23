@@ -345,10 +345,15 @@ class AdvancedDecompiler:
         self.i += 1
 
         # Recur decompiler on indented `if` block (which contains no skips, as per above).
-        self.out_lines.extend(self.adv_decompile(
-            [f"{indent}    {if_line.lstrip()}" for if_line in if_block_lines],
-            conditions_only=False,  # nested `if` blocks can be decompiled
-        ))
+        # If it's empty, we make sure to add a `pass` statement to avoid syntax errors (e.g. conditional skip of an
+        # unconditional skip -- `else` -- only). TODO: Ideally these conditions would be negated.
+        if not if_block_lines:
+            self.out_lines.append(f"{indent}    pass")
+        else:
+            self.out_lines.extend(self.adv_decompile(
+                [f"{indent}    {if_line.lstrip()}" for if_line in if_block_lines],
+                conditions_only=False,  # nested `if` blocks can be decompiled
+            ))
         self.i += line_count
 
         if else_block_lines:
