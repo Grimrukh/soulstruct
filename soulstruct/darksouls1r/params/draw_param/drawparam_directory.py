@@ -13,7 +13,7 @@ from pathlib import Path
 from soulstruct.base.game_file_directory import GameFileDirectory
 from .drawparambnd import DrawParamBND
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 def drawparambnd_property(area_name: str):

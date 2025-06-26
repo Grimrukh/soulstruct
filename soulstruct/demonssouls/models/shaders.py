@@ -15,7 +15,7 @@ from soulstruct.base.models.shaders import MatDef as _BaseMatDef
 from soulstruct.base.models.flver.vertex_array_layout import *
 from soulstruct.utilities.binary import ByteOrder
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)

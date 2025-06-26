@@ -8,7 +8,7 @@ from soulstruct.darksouls1ptde.maps.msb import MSB as _PTDE_MSB, MSBSupertype
 from .constants import VANILLA_MSB_TRANSLATIONS, get_map
 from .utilities import import_map_piece_flver
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class MSB(_PTDE_MSB):  # generic entry types are the same as PTDE parent

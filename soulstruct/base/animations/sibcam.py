@@ -18,7 +18,7 @@ from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class FrameRef(BinaryStruct):

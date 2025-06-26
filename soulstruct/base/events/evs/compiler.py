@@ -17,7 +17,7 @@ from .utils import get_write_offset
 if tp.TYPE_CHECKING:
     from .conditions import EVSConditionManager, ConditionGroupState
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class EVSInstructionCompiler(abc.ABC):

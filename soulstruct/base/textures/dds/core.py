@@ -26,7 +26,7 @@ from soulstruct.utilities.binary import *
 from soulstruct.base.textures.texconv import texconv
 from .enums import *
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class DDSPixelFormat(BinaryStruct):

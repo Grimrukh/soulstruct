@@ -18,7 +18,7 @@ if tp.TYPE_CHECKING:
     from soulstruct.utilities.misc import IDList
 
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 BIT_SET_T = tp.TypeVar("BIT_SET_T", bound=BitSet)
 

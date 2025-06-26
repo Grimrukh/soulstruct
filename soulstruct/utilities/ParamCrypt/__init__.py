@@ -8,7 +8,7 @@ from pathlib import Path
 
 from soulstruct.exceptions import SoulstructError
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 PARAM_CRYPT_EXE = Path(__file__).parent / "ParamCrypt.exe"

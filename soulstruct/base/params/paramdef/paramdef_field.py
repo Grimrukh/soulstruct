@@ -18,7 +18,7 @@ from .exceptions import ParamDefError
 if tp.TYPE_CHECKING:
     from soulstruct.base.params.param_row import ParamRow
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class ParamDefEditFlags(int):

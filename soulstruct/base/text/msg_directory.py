@@ -17,7 +17,7 @@ from soulstruct.utilities.files import read_json, write_json
 
 from .fmg import FMG
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class MSGDirectory(GameFileDirectory, abc.ABC):

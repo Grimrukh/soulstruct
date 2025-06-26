@@ -18,7 +18,7 @@ from soulstruct.utilities.misc import IDList
 from .msb import MSB, MSBEntry, MSBEntryList
 from .msb.region_shapes import RegionShapeType
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 MAP_NAME_RE = re.compile(r"m(\d{2})_(\d{2})_(\d{2})_(\d{2})")
 TRAILING_DIGIT_RE = re.compile(r"(.*?)(\d+)")

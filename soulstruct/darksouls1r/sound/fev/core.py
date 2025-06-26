@@ -21,7 +21,7 @@ from soulstruct.darksouls1r.sound.utilities import move_extracted_mp3
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector2
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 def tag(tag_name: str, value: tp.Any = ""):

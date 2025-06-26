@@ -18,7 +18,7 @@ from .event_layers import EventLayers
 from ..enums import OnRestBehavior
 from ..evs.adv_decompiler import AdvancedDecompiler
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 # TODO: Merge with `binary` module types.

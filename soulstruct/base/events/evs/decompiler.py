@@ -21,7 +21,7 @@ from soulstruct.base.game_types import GameObjectInt
 if tp.TYPE_CHECKING:
     from soulstruct.base.events.emevd.emedf import EMEDF_TYPING
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 def reprocess_opt_args(integer_args, arg_type_string):

@@ -26,20 +26,14 @@ from binascii import hexlify
 from functools import wraps
 from pathlib import Path
 
-import colorama
 import numpy as np
+from rich.console import Console
 
 from .maths import BaseVector
 from .misc import IDList
 from .text import indent_lines
 
-_LOGGER = logging.getLogger("soulstruct")
-
-colorama.just_fix_windows_console()
-GREEN = colorama.Fore.GREEN
-YELLOW = colorama.Fore.YELLOW
-RED = colorama.Fore.RED
-RESET = colorama.Fore.RESET
+_LOGGER = logging.getLogger(__name__)
 
 
 def get_dataclass_repr(dataclass_instance: tp.Any, _indent=0, _recursed_ids=None) -> str:
@@ -86,12 +80,14 @@ def compare_dataclasses(
     close_float_threshold=0.001,
     unequal_only=False,
 ):
+    console = Console()
+    
     if not dataclasses.is_dataclass(obj1):
         raise ValueError(f"First object {obj1} is not a dataclass instance.")
     if not dataclasses.is_dataclass(obj2):
         raise ValueError(f"Second object {obj2} is not a dataclass instance.")
     if type(obj1) is not type(obj2):
-        print(f"{RED}Objects are not of the same type: ({type(obj1).__name__} vs. {type(obj2).__name__}){RESET}")
+        console.print(f"[red]Objects are not of the same type: ({type(obj1).__name__} vs. {type(obj2).__name__})")
         return
 
     if repr_funcs is None:
@@ -106,7 +102,7 @@ def compare_dataclasses(
             continue
         max_field_name_length = max(max_field_name_length, len(name))
 
-    print(f"Comparing instances of {obj_type.__name__}:")
+    console.print(f"Comparing instances of {obj_type.__name__}:")
 
     for field in dataclasses.fields(obj1):
         name = field.name
@@ -118,8 +114,10 @@ def compare_dataclasses(
 
         if type(value1) is not type(value2):
             # TODO: Permitted for `None` and non-primitive instances.
-            print(f"{RED}{name:>{max_field_name_length}}: "
-                  f"Field types differ: {type(value1).__name__} vs. {type(value2).__name__}{RESET}")
+            console.print(
+                f"[red]{name:>{max_field_name_length}}: "
+                f"Field types differ: {type(value1).__name__} vs. {type(value2).__name__}"
+            )
             continue
 
         field_type = type(value1)
@@ -134,31 +132,31 @@ def compare_dataclasses(
         if is_eq_funcs is not None and field_type in is_eq_funcs:
             if is_eq_funcs[field_type](value1, value2):
                 if not unequal_only:
-                    print(f"{GREEN}{name:>{max_field_name_length}}: {repr1} == {repr2}{RESET}")
+                    console.print(f"[green]{name:>{max_field_name_length}}: {repr1} == {repr2}")
                 continue
-            print(f"{RED}{name:>{max_field_name_length}}: {repr1} != {repr2}{RESET}")
+            console.print(f"[red]{name:>{max_field_name_length}}: {repr1} != {repr2}")
             continue
         if value1 == value2:
             if not unequal_only:
-                print(f"{GREEN}{name:>{max_field_name_length}}: {repr1} == {repr2}{RESET}")
+                console.print(f"[green]{name:>{max_field_name_length}}: {repr1} == {repr2}")
             continue
         if field_type in is_close_funcs:
             if is_close_funcs[field_type](value1, value2):
                 if not unequal_only:
-                    print(f"{YELLOW}{name:>{max_field_name_length}}: {repr1} ~= {repr2}{RESET}")
+                    console.print(f"[yellow]{name:>{max_field_name_length}}: {repr1} ~= {repr2}")
                 continue
         if isinstance(value1, BaseVector) and close_vector_threshold > 0:
             if (value1 - value2).get_magnitude() < close_vector_threshold:
                 if not unequal_only:
-                    print(f"{YELLOW}{name:>{max_field_name_length}}: {repr1} ~= {repr2}{RESET}")
+                    console.print(f"[yellow]{name:>{max_field_name_length}}: {repr1} ~= {repr2}")
                 continue
         if isinstance(value1, float) and close_float_threshold > 0:
             if abs(value1 - value2) < close_float_threshold:
                 if not unequal_only:
-                    print(f"{YELLOW}{name:>{max_field_name_length}}: {repr1} ~= {repr2}{RESET}")
+                    console.print(f"[yellow]{name:>{max_field_name_length}}: {repr1} ~= {repr2}")
                 continue
 
-        print(f"{RED}{field.name}: {repr1} != {repr2}{RESET}")
+        console.print(f"[red]{field.name}: {repr1} != {repr2}")
 
 
 def get_diff_indices(bytes1: bytes, bytes2: bytes) -> list[int]:
@@ -173,7 +171,7 @@ def try_ascii(bytes_: bytes, default=".", red_indices=()) -> str:
     """Try to decode each character in `bytes` with given encoding, returning `default` if it fails."""
     string = ""
     for i, b in enumerate(bytes_):
-        string += RED if i in red_indices else GREEN
+        string += "[red]" if i in red_indices else "[green]"
         if b <= 0x20:  # special characters
             string += default
         else:
@@ -181,7 +179,6 @@ def try_ascii(bytes_: bytes, default=".", red_indices=()) -> str:
                 string += chr(b)
             except UnicodeDecodeError:
                 string += default
-    string += RESET
     return string
 
 
@@ -195,6 +192,8 @@ def compare_binary_data(
     header1="Data 1",
     header2="Data 2",
 ):
+    console = Console()
+
     offset = 0
     last_diff_row_offset = -1
     if with_ascii:
@@ -207,7 +206,7 @@ def compare_binary_data(
 
     last_rows = []  # type: list[tuple[int, bytes, bytes]]
 
-    print(f"{YELLOW}Offset{RESET} | {YELLOW}{header1:<{pad}}{RESET} | {YELLOW}{header2:<{pad}}{RESET} ")
+    console.print(f"[yellow]Offset | [yellow]{header1:<{pad}} | [yellow]{header2:<{pad}} ")
 
     diff_count = 0
     while offset < min(len(data1), len(data2)):
@@ -215,17 +214,17 @@ def compare_binary_data(
         row2 = data2[offset : offset + row_size]
         if row1 != row2:
             if offset != 0 and offset - last_diff_row_offset > row_size:
-                print(f"...    | {'...':<{pad}}  | {'...':<{pad}} ")
+                console.print(f"...    | {'...':<{pad}}  | {'...':<{pad}} ")
             for row_offset, r1, r2 in last_rows:
                 # Print out last `context_rows` rows. All guaranteed to be identical.
                 if with_ascii:
-                    print(
+                    console.print(
                         f"{row_offset:06X} "
-                        f"| {GREEN}{r1.hex(' ')} {try_ascii(r1)}{RESET} "
-                        f"| {GREEN}{r2.hex(' ')} {try_ascii(r2)}{RESET}"
+                        f"| [green]{r1.hex(' ')} {try_ascii(r1)} "
+                        f"| [green]{r2.hex(' ')} {try_ascii(r2)}"
                     )
                 else:
-                    print(f"{row_offset:06X} | {GREEN}{r1.hex(' ')}{RESET} | {GREEN}{r2.hex(' ')}{RESET}")
+                    console.print(f"{row_offset:06X} | [green]{r1.hex(' ')} | [green]{r2.hex(' ')}")
             for _ in range(context_rows + 1):
                 if offset >= min(len(data1), len(data2)):
                     break  # less than `context_rows` rows left
@@ -235,19 +234,19 @@ def compare_binary_data(
                 d1 = ""
                 d2 = ""
                 for i, h in enumerate(r1.hex(' ').split(' ')):
-                    d1 += f" {RED if i in red_indices else GREEN}{h}{RESET}"
+                    d1 += f" {'[red]' if i in red_indices else '[green]'}{h}"
                 for i, h in enumerate(r2.hex(' ').split(' ')):
-                    d2 += f" {RED if i in red_indices else GREEN}{h}{RESET}"
+                    d2 += f" {'[red]' if i in red_indices else '[green]'}{h}"
                 d1 = d1.lstrip()
                 d2 = d2.lstrip()
                 if with_ascii:
-                    print(
+                    console.print(
                         f"{offset:06X} "
                         f"| {d1} {try_ascii(r1, red_indices=red_indices)} "
                         f"| {d2} {try_ascii(r2, red_indices=red_indices)}"
                     )
                 else:
-                    print(f"{offset:06X} | {d1} | {d2}")
+                    console.print(f"{offset:06X} | {d1} | {d2}")
                 offset += row_size
             last_rows.clear()
             last_diff_row_offset = offset
@@ -261,7 +260,7 @@ def compare_binary_data(
             offset += row_size
 
     if last_diff_row_offset == -1:
-        print(f"{header1} and {header2} are identical.")
+        console.print(f"{header1} and {header2} are identical.")
 
 
 def compare_binary_files(
@@ -273,9 +272,11 @@ def compare_binary_files(
     max_diff_count=-1,
 ):
     """Compare two binary files, printing out any differences."""
+    console = Console()
+
     file1_path = Path(file1_path)
     file2_path = Path(file2_path)
-    print(f"Comparing '{file1_path.name}' and '{file2_path.name}':")
+    console.print(f"Comparing '{file1_path.name}' and '{file2_path.name}':")
 
     data1 = file1_path.read_bytes()
     data2 = file2_path.read_bytes()
@@ -294,6 +295,7 @@ def compare_binary_files(
 
 def compare_lines(lines1: str | list[str], lines2: str | list[str], pad=False):
     """Compare two lists of strings, line by line."""
+    console = Console()
     if isinstance(lines1, str):
         lines1 = lines1.split("\n")
     if isinstance(lines2, str):
@@ -303,13 +305,14 @@ def compare_lines(lines1: str | list[str], lines2: str | list[str], pad=False):
         line1 = lines1[i] if i < len(lines1) else ""
         line2 = lines2[i] if i < len(lines2) else ""
         if line1 != line2:
-            print(f"{YELLOW}{str(i):>4}: {line1:<{pad_str}} -> {RED}{line2}{RESET}")
+            console.print(f"[yellow]{str(i):>4}: {line1:<{pad_str}} -> [red]{line2}")
         else:
-            print(f"{GREEN}{str(i):>4}: {line1}{RESET}")
+            console.print(f"[green]{str(i):>4}: {line1}")
 
 
 def print_binary_as_integers(file_path: Path):
     """Tool for inspecting data you assume or suspect is integers."""
+    console = Console()
     with file_path.open("rb") as file:
         offset = 0
         data = file.read(4)
@@ -319,7 +322,7 @@ def print_binary_as_integers(file_path: Path):
             except struct.error:
                 _LOGGER.warning("Finished with less than four bytes remaining.")
                 return
-            print(f"{offset} | {hex(offset)} | {integer}")
+            console.print(f"{offset} | {hex(offset)} | {integer}")
             data = file.read(4)
             offset += 4
 
@@ -349,12 +352,13 @@ def write_hex_repr(data: bytes, file_path: Path | str, with_line_numbers=True, w
 
 def profile_function(print_count: int, sort="tottime", strip_dirs=True):
     """Decorator constructor that uses `cProfile` and prints stats."""
+    console = Console()
 
     def decorator(func: tp.Callable):
 
         @wraps(func)
         def decorated(*args, **kwargs):
-            print(f"Profiling function: {func.__name__}")
+            console.print(f"Profiling function: {func.__name__}")
             with cProfile.Profile() as pr:
                 returned = func(*args, **kwargs)
             p = pstats.Stats(pr)

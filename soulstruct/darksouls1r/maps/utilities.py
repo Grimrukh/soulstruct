@@ -12,7 +12,7 @@ from soulstruct.base.models.flver import FLVER
 from soulstruct.config import DSR_PATH
 
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 _MAP_PIECE_RE = re.compile(r"^m(\d\d\d\d)B(\d)A(\d\d)\.flver\.dcx$")
 

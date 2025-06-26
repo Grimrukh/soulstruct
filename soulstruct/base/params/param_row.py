@@ -26,7 +26,7 @@ from soulstruct.base.params.paramdef.field_types import base_type
 from soulstruct.utilities.binary import *
 from constrata.metadata import PRIMITIVE_FIELD_TYPING
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 # Param `game_type` (or display type) could be a `GameObjectInt` subclass or just a Python primitive type.

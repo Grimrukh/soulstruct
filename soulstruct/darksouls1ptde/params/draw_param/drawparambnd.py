@@ -23,7 +23,7 @@ from .core import DrawParam, TypedDrawParam
 from .. import paramdef
 from ..paramdef import *
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 _DRAW_PARAM_FILE_NAME_RE = re.compile(r"([ms]\d\d|default)(_\d)?(_\w+)\.param")  # e.g. 'm12_1_LensFlare.param'
 

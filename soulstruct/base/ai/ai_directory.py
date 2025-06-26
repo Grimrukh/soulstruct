@@ -11,7 +11,7 @@ from pathlib import Path
 from soulstruct.base.game_file_directory import GameFileMapDirectory
 from .luabnd import LuaBND
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class AIScriptDirectory(GameFileMapDirectory[LuaBND], abc.ABC):

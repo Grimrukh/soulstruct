@@ -10,7 +10,7 @@ import numpy as np
 
 from soulstruct.utilities.binary import *
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class FaceSetFlags(IntEnum):

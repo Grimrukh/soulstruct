@@ -28,7 +28,7 @@ from soulstruct.utilities.files import read_json, write_json, get_blake2b_hash
 from .binder_hash import BinderHashTable
 from .entry import BinderEntry, BinderEntryHeader
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 # Flexible entry-finding typing that can be passed to `Binder.__getitem__` and a few other methods.

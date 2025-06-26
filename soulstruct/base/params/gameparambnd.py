@@ -18,7 +18,7 @@ from soulstruct.utilities.misc import BiDict
 from .param import Param, TypedParam, ParamDict
 from .paramdef.paramdefbnd import ParamDefBND
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class TypedParamError(SoulstructError):

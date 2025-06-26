@@ -14,7 +14,7 @@ from soulstruct.base.models.flver import FLVER
 from .core import Binder, EntryNotFoundError
 from .tpf import TPF
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class FLVERBinder(Binder, abc.ABC):

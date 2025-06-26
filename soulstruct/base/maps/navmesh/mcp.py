@@ -32,7 +32,7 @@ if tp.TYPE_CHECKING:
     MSB_TYPING = tp.Union[MSB_PTDE, MSB_DSR, MSB_DES, MSB_BB]
     MSB_NAVMESH_TYPING = tp.Union[MSBNavmesh_PTDE, MSBNavmesh_DSR, MSBNavmesh_DES, MSBNavmesh_BB]
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 MAP_STEM_RE = re.compile(r"^m(?P<area>\d\d)_(?P<block>\d\d)_(?P<cc>\d\d)_(?P<dd>\d\d)$")
 

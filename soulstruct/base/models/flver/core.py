@@ -29,7 +29,7 @@ from .version import FLVERVersion
 from .vertex_array import VertexArray, VertexDataSizeError
 from .vertex_array_layout import VertexArrayLayout
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class FLVER(GameFile):

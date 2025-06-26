@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 
 from .exceptions import ConditionNameError, ConditionLimitError
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)

@@ -30,7 +30,7 @@ from soulstruct.utilities.binary import *
 from soulstruct.utilities.files import read_json, write_json
 
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class TPFPlatform(IntEnum):

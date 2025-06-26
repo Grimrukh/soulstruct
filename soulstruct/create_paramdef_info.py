@@ -1,15 +1,13 @@
+"""TODO: I can't even remember what this was for. Commented part looks like one-off generation."""
+
 import inspect
 import re
+
+from rich.console import Console
 
 from soulstruct.bloodborne.params import paramdef as paramdef_module, ParamDefBND
 from soulstruct.base.params.param_row import *
 from soulstruct.utilities.files import read_json, write_json
-
-import colorama
-colorama.just_fix_windows_console()
-RED = colorama.Fore.RED
-YELLOW = colorama.Fore.YELLOW
-RESET = colorama.Fore.RESET
 
 
 # def make_nickname_json():
@@ -85,6 +83,8 @@ def add_game_types():
         "sortid",
     }
 
+    console = Console()
+
     json_dict = read_json("darksouls1r/params/paramdef/paramdef_info.json")
     for paramdef_stem, paramdef in json_dict.items():
         for field_name, field_info in paramdef.items():
@@ -96,22 +96,22 @@ def add_game_types():
                 continue
 
             if paramdef_stem == "EQUIP_PARAM_WEAPON_ST" and field_name == "reinforceTypeId":
-                print(f"{YELLOW}{paramdef_stem}[{field_name}] = WeaponUpgradeParam{RESET}")
+                console.print(f"[yellow]{paramdef_stem}[{field_name}] = WeaponUpgradeParam")
                 field_info["game_type"] = "WeaponUpgradeParam"
                 continue
             elif paramdef_stem == "EQUIP_PARAM_PROTECTOR_ST" and field_name == "reinforceTypeId":
-                print(f"{YELLOW}{paramdef_stem}[{field_name}] = ArmorUpgradeParam{RESET}")
+                console.print(f"[yellow]{paramdef_stem}[{field_name}] = ArmorUpgradeParam")
                 field_info["game_type"] = "ArmorUpgradeParam"
                 continue
 
             for game_type_name, pattern in patterns.items():
                 if pattern.search(field_name.lower()):
-                    print(f"{YELLOW}{paramdef_stem}[{field_name}] = {game_type_name}{RESET}")
+                    console.print(f"[yellow]{paramdef_stem}[{field_name}] = {game_type_name}")
                     field_info["game_type"] = game_type_name
                     break
             else:
                 if "Id" in field_name or "ID" in field_name:
-                    print(f"{RED}{paramdef_stem}[{field_name}] = ???{RESET}")
+                    console.print(f"[red]{paramdef_stem}[{field_name}] = ???")
 
     write_json("darksouls1r/params/paramdef/paramdef_info.json", json_dict)
 

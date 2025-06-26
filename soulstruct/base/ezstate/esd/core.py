@@ -20,7 +20,7 @@ from .state import State
 from .esp_compiler import ESPCompiler
 from .ezl_parser import SET_INTERNAL_SYMBOLS
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class ESDExternalHeaderStruct(BinaryStruct):

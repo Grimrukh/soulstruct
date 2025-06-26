@@ -1,1 +1,0 @@
-"%~dp0..\..\venv311\Scripts\python.exe" -m soulstruct --restorebak "%~1"

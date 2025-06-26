@@ -11,7 +11,7 @@ from soulstruct.base.game_file import GameFile
 from soulstruct.containers.core import Binder, BinderEntry
 from soulstruct.utilities.binary import BinaryReader, BinaryWriter
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class DivBinder(Binder):

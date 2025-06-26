@@ -7,18 +7,11 @@ import logging
 import typing as tp
 from pathlib import Path
 
-import colorama
-
 from soulstruct.darksouls1r.constants import CHARACTER_MODELS
 from soulstruct.darksouls1r.maps import MSB, get_map
 from soulstruct.darksouls1r.utilities.memory import DSRMemoryHook, MemoryHookCallError
 
-_LOGGER = logging.getLogger("soulstruct")
-
-
-RED = colorama.Fore.RED
-YELLOW = colorama.Fore.YELLOW
-RESET = colorama.Fore.RESET
+_LOGGER = logging.getLogger(__name__)
 
 
 class MapChrInfo(tp.NamedTuple):
@@ -130,8 +123,8 @@ class MapMonitor(DSRMemoryHook):
             model_name = CHARACTER_MODELS.get(int(memory_chr.model_name[1:]), memory_chr.model_name)
             output = f"{msb_chr.name:>40}: {memory_chr.current_hp} / {memory_chr.max_hp} <{model_name}>"
             if memory_chr.current_hp == 0:
-                print(f"{RED}{output}{RESET}")
+                monitor._console.print(f"[red]{output}")
             elif memory_chr.current_hp < memory_chr.max_hp:
-                print(f"{YELLOW}{output}{RESET}")
+                monitor._console.print(f"[yellow]{output}")
             else:
-                print(output)
+                monitor._console.print(output)

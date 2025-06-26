@@ -21,7 +21,7 @@ if tp.TYPE_CHECKING:
     from .emedf import EMEDF_TYPING
     from soulstruct.utilities.binary import BinaryReader
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 _OPTIONAL_ARGS_ALLOWED = ((2000, 0), (2000, 6))
 

@@ -12,7 +12,7 @@ from soulstruct.containers.tpf import TPF, TPFPlatform, TPFTexture
 from soulstruct.dcx import DCXType
 from .msb import MSB
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)

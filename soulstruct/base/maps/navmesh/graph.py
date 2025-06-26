@@ -130,7 +130,7 @@ if tp.TYPE_CHECKING:
     MSB_NAVMESH_TYPING = tp.Union[MSBNavmesh_PTDE, MSBNavmesh_DSR, MSBNavmesh_DES, MSBNavmesh_BB]
     NAVMESH_SPEC = tp.Union[MSB_NAVMESH_TYPING, str, int]
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True, init=False)

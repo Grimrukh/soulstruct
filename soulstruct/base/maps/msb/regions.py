@@ -17,7 +17,7 @@ if tp.TYPE_CHECKING:
     from soulstruct.utilities.misc import IDList
 
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True, eq=False, repr=False)

@@ -13,7 +13,7 @@ from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.files import read_json
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class FMGVersion(IntEnum):

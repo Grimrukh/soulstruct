@@ -33,7 +33,7 @@ if tp.TYPE_CHECKING:
     from .enums import BaseMSBSubtype
 
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 MAP_NAME_RE = re.compile(r"m(\d\d)_(\d\d)_(\d\d)_(\d\d)")

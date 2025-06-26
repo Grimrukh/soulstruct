@@ -13,7 +13,7 @@ from soulstruct.exceptions import SoulstructError
 from soulstruct.utilities.binary import *
 from .vertex_array_layout import VertexArrayLayout
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 KNOWN_CORRUPTED_DS1R_ARRAYS = {
     "m0208B0A14": b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'

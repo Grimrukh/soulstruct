@@ -9,7 +9,6 @@ __all__ = [
 
 import copy
 import logging
-import pickle
 import struct
 import typing as tp
 from types import MappingProxyType
@@ -17,12 +16,11 @@ from types import MappingProxyType
 from soulstruct.darksouls1r.params import Param, GameParamBND, ParamRow
 from soulstruct.utilities.binary import ByteOrder
 from soulstruct.utilities.memory import *
-from soulstruct.utilities.files import PACKAGE_PATH
 
 if tp.TYPE_CHECKING:
     from soulstruct.darksouls1r.params.draw_param import DrawParam
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 _PLAYER_TRANSFORM_PTRS = (0x68, 0x68, 0x28)  # WORLD_CHR_BASE
@@ -37,6 +35,7 @@ class DSRMemoryHook(MemoryHook):
 
     PROCESS_NAME = "DarkSoulsRemastered.exe"
     BASE_ADDRESS = 0x140000000
+    ADDRESS_CACHE_NAME = "ds1r_cache"
     EVENT_FLAG_OFFSETS = (0x141D19950, 0, 0)
 
     # NOTE: Still needed for `GameParam` for now.
@@ -251,7 +250,7 @@ class DSRMemoryHook(MemoryHook):
         If an address is already cached, it is validated using `param_type` (e.g. "NPC_THINK_PARAM_ST" or
         "LIGHT_SCATTERING_BANK") first.
         """
-        cached_address = self._address_cache.get("ds1r", {}).get(param_file_name, None)
+        cached_address = self._address_cache.get(param_file_name, None)
         if cached_address is not None:
             if not force_recache:
                 # Try cached address first.
@@ -264,7 +263,7 @@ class DSRMemoryHook(MemoryHook):
             extra_memory_regions = ()
 
         # Search for address.
-        print(f"Getting address of param {param_file_name}")
+        self._console.print(f"Getting address of param {param_file_name}")
         encoded_name = param_file_name.encode("utf-16-le")
         param_string_address = self.single_param_scan(
             encoded_name, extra_memory_regions=extra_memory_regions
@@ -280,7 +279,7 @@ class DSRMemoryHook(MemoryHook):
             raise MemoryError(f"Could not find memory address of Param '{param_file_name}' table in game memory.")
         # print(f"{param_file_name} string offset address: {hex(string_offset_address)}")
         data_address = self.read(string_offset_address + 56, 8, "q")
-        self._address_cache.setdefault("ds1r", {})[param_file_name] = data_address
+        self._address_cache[param_file_name] = data_address
         return data_address
 
     @memory_hook_validate
@@ -295,18 +294,12 @@ class DSRMemoryHook(MemoryHook):
         if len(param_file_names) != len(param_types):
             raise ValueError("Number of param file names and paramdef names to scan for must match.")
 
-        try:
-            with PACKAGE_PATH("__address_cache__").open("rb") as f:
-                self._address_cache = pickle.load(f)
-        except (FileNotFoundError, EOFError, ValueError):
-            self._address_cache = {}
-
         params_to_find = list(param_file_names)
-        param_addresses = {param_file_name: None for param_file_name in param_file_names}
+        param_addresses = {param_file_name: None for param_file_name in param_file_names}  # type: dict[str, int | None]
 
         if not force_recache:
             for param_file_name, param_type in zip(param_addresses.keys(), param_types):
-                cached_address = self._address_cache.get("ds1r", {}).get(param_file_name, None)
+                cached_address = self._address_cache.get(param_file_name, None)
                 if cached_address is not None:
                     # Try cached address first.
                     param_type_at_cached = self.read(cached_address + 12, 32).rstrip(b"\0")  # paramdef name string
@@ -317,7 +310,7 @@ class DSRMemoryHook(MemoryHook):
         # Use cached address as a clue to memory region.
         extra_memory_regions = []
         for param_file_name in param_addresses:
-            cached_address = self._address_cache.get("ds1r", {}).get(param_file_name, None)
+            cached_address = self._address_cache.get(param_file_name, None)
             if cached_address is not None:
                 extra_memory_region_start = cached_address // 0x1000000 * 0x1000000  # e.g., `0x33000000`
                 extra_memory_regions.append((extra_memory_region_start, extra_memory_region_start + 0x1000000))
@@ -344,10 +337,7 @@ class DSRMemoryHook(MemoryHook):
                 raise MemoryError(f"Could not find memory address of Param '{param_file_name}' table in game memory.")
             else:
                 param_addresses[param_file_name] = self.read(offset_address + 56, 8, "q")
-                self._address_cache.setdefault("ds1r", {})[param_file_name] = param_addresses[param_file_name]
-
-        with PACKAGE_PATH("__address_cache__").open("wb") as f:
-            pickle.dump(self._address_cache, f)
+                self._address_cache[param_file_name] = param_addresses[param_file_name]
 
         return param_addresses
 
@@ -358,7 +348,7 @@ class DSRMemoryHook(MemoryHook):
         ignore_repeats=False,
     ) -> dict[str, int | None]:
         for address_range in tuple(extra_memory_regions) + self.PARAM_MEM_SEARCH_REGIONS:
-            print(f"Searching mem region: {hex(address_range[0])} - {hex(address_range[1])}")
+            self._console.print(f"Searching mem region: {hex(address_range[0])} - {hex(address_range[1])}")
             result = self.scan(patterns, address_range=address_range, ignore_repeats=ignore_repeats)
             if all(v is not None for v in result.values()):
                 return result  # all patterns found
@@ -366,7 +356,7 @@ class DSRMemoryHook(MemoryHook):
 
     def single_param_scan(self, pattern: bytes, extra_memory_regions=(), ignore_repeats=False) -> int | None:
         for address_range in tuple(extra_memory_regions) + self.PARAM_MEM_SEARCH_REGIONS:
-            print(f"Searching mem region: {hex(address_range[0])} - {hex(address_range[1])}")
+            self._console.print(f"Searching mem region: {hex(address_range[0])} - {hex(address_range[1])}")
             result = self.single_scan(
                 pattern, address_range=address_range, ignore_repeats=ignore_repeats
             )
@@ -501,11 +491,11 @@ class MemoryDrawParam(tp.Generic[PARAM_ROW_DATA_T]):
         param_row_ptr_address = param_data_address + self.PARAM_ROW_POINTER_OFFSET  # first row pointer
         for i in range(row_count):
             row_id = self.hook.read_int32(param_row_ptr_address + i * 12 + 0)
-            data_offset = self.hook.read_int32(param_row_ptr_address + i * 12 + 4)
-            name_offset = self.hook.read_int32(param_row_ptr_address + i * 12 + 8)
-            raw_name = self.hook.read_z_bytes(param_data_address + name_offset)
-            if raw_name:
-                _LOGGER.debug(f"Loaded {self.draw_param_stem} row {row_id} with RawName: {raw_name}")
+            data_offset, raw_name = self._get_row_data_offset_raw_name(
+                param_row_ptr_address + i * 12, param_data_address
+            )
+            # if raw_name:
+            #     _LOGGER.debug(f"Loaded {self.draw_param_stem} row {row_id} with RawName: {raw_name}")
             try:
                 name = raw_name.decode("shift_jis_2004")
             except UnicodeDecodeError:
@@ -526,12 +516,18 @@ class MemoryDrawParam(tp.Generic[PARAM_ROW_DATA_T]):
         param_row_ptr_address = param_data_address + self.PARAM_ROW_POINTER_OFFSET  # first row pointer
         for i, (row_id, row_data) in enumerate(self.row_dict.items()):
             row_data: PARAM_ROW_DATA_T
-            data_offset = self.hook.read_int32(param_row_ptr_address + i * 12 + 4)
-            name_offset = self.hook.read_int32(param_row_ptr_address + i * 12 + 8)
-            raw_name = self.hook.read_z_bytes(param_data_address + name_offset)
-            if raw_name:
-                _LOGGER.debug(f"Writing {self.draw_param_stem} row {row_id} with RawName: {raw_name}")
+            data_offset, raw_name = self._get_row_data_offset_raw_name(
+                param_row_ptr_address + i * 12, param_data_address
+            )
+            # if raw_name:
+            #     _LOGGER.debug(f"Writing {self.draw_param_stem} row {row_id} with RawName: {raw_name}")
             self.hook.write(param_data_address + data_offset, row_data.to_bytes(byte_order=ByteOrder.LittleEndian))
+
+    def _get_row_data_offset_raw_name(self, row_base_addr: int, param_data_base_addr: int) -> tuple[int, bytes]:
+        data_offset = self.hook.read_int32(row_base_addr + 4)
+        name_offset = self.hook.read_int32(row_base_addr + 8)
+        raw_name = self.hook.read_z_bytes(param_data_base_addr + name_offset)
+        return data_offset, raw_name
 
     def _get_area_draw_param_list_address(self):
         draw_param_list_address = self.hook.read_int64(self.DRAW_PARAM_BASE)

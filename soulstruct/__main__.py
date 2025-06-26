@@ -1,159 +1,175 @@
-"""SOULSTRUCT
-
-Command Line Usage:
-
-python -m soulstruct
-    [--binderpack]
-    [--binderunpack]
-    [--tpfpack]
-    [--tpfunpack]
-    [--restorebak]
-    [--consoleLogLevel]
-    [--fileLogLevel]
 """
-import argparse
+Soulstruct command-line interface (and `python -m soulstruct` main script).
+
+Runs as either
+
+    python -m soulstruct ...
+
+or the console script installed from pyproject.toml:
+
+    soulstruct ...
+
+Global logging options come first, followed by sub-commands.
+"""
+from __future__ import annotations
+
+__all__ = [
+    "app",
+]
+
 import logging
 from pathlib import Path
 
-from soulstruct._logging import CONSOLE_HANDLER, FILE_HANDLER
+import typer
+
+from soulstruct.logging_utils import setup
 from soulstruct.utilities.files import create_bak
-from soulstruct.utilities.text import word_wrap
 
 LOG_LEVELS = {"debug", "info", "warning", "error", "fatal", "critical"}
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
-parser = argparse.ArgumentParser(prog="soulstruct", description="Launch Soulstruct programs or adjust settings.")
+def _parse_level(value: str) -> int:
+    """Convert a level name (info) or int string (20) ➜ logging level."""
+    if value.isdigit():
+        return int(value)
+    if value.lower() in LOG_LEVELS:
+        return getattr(logging, value.upper())
+    raise typer.BadParameter(f"Log level must be int or one of {LOG_LEVELS}")
 
-parser.add_argument("--undcx", action="store", help=word_wrap("Remove DCX compression and extension from file."))
-parser.add_argument("--binderpack", action="store", help=word_wrap("Repack a BND/BXF from the given source directory."))
-parser.add_argument("--binderunpack", action="store", help=word_wrap("Unpack a BND/BXF from the given source file."))
-parser.add_argument("--tpfpack", action="store", help=word_wrap("Repack a TPF from the given source directory."))
-parser.add_argument("--tpfunpack", action="store", help=word_wrap("Unpack a TPF from the given source file."))
-parser.add_argument("--msbtojson", action="store", help=word_wrap("Convert an MSB file to JSON (DS1R only)."))
-parser.add_argument("--jsontomsb", action="store", help=word_wrap("Convert a JSON file to MSB (DS1R only)."))
-parser.add_argument("--restorebak", action="store", help=word_wrap("Restore a BAK file, overwriting any non-BAK file."))
-parser.add_argument(
-    "--consoleLogLevel",
-    action="store",
-    default="INFO",
-    help=word_wrap(
-        "Set the console log level to 'DEBUG', 'INFO', 'WARNING', 'ERROR', or 'CRITICAL'. Note that the console is "
-        "disabled for frozen executable releases."
+
+# Typer application.
+app = typer.Typer(
+    add_completion=False,
+    help="Launch Soulstruct utilities (packing/unpacking, conversion, etc.).",
+)
+
+# Global options executed before any sub-command.
+@app.callback()
+def main(
+    console_log_level: str = typer.Option(
+        "INFO", "--console-log-level", "-cl", help="Console log level (DEBUG/INFO/…)."
     ),
-)
-parser.add_argument(
-    "--fileLogLevel",
-    action="store",
-    default="DEBUG",
-    help=word_wrap("Set the file log level to 'DEBUG', 'INFO', 'WARNING', 'ERROR', or 'CRITICAL'."),
-)
+    file_log_level: str = typer.Option(
+        "DEBUG", "--file-log-level", "-fl", help="Log-file level (DEBUG/INFO/…)."
+    ),
+    file_log_path: Path = typer.Option(
+        None,
+        "--file-log-path",
+        "-fp",
+        help="Path to log file (default: `soulstruct.log` in current directory).",
+    ),
+):
+    """Global logging controls (executed before sub-commands)."""
+    setup(
+        console_level=console_log_level,
+        file_level=file_log_level,
+        log_path=file_log_path,
+        rich_tracebacks=True,
+        clear_old_handlers=True,
+    )
 
 
-def soulstruct_main(ss_args):
+# region Commands
 
+@app.command()
+def undcx(path: Path):
+    """Remove DCX compression (writes *.undcx or suffix-free file)."""
+    from soulstruct.dcx import decompress
+
+    uncompressed, _dcx_type = decompress(path)
+    out = path.with_suffix("") if path.suffix == ".dcx" else path.with_suffix(".undcx")
+    if out.exists():
+        create_bak(out)
+    out.write_bytes(uncompressed)
+    _LOGGER.info("Wrote %s", out)
+
+
+@app.command()
+def binderpack(source_dir: Path):
+    """Re-pack a BND/BXF from directory *SOURCE_DIR*."""
+    from soulstruct.containers import Binder
+
+    Binder.from_unpacked_path(source_dir).write()
+
+
+@app.command()
+def binderunpack(binder_file: Path):
+    """Unpack a BND/BXF file."""
+    from soulstruct.containers import Binder
+
+    Binder.from_path(binder_file).write_unpacked_directory()
+
+
+@app.command()
+def tpfpack(source_dir: Path):
+    """Re-pack a TPF from directory *SOURCE_DIR*."""
+    from soulstruct.containers.tpf import TPF
+
+    TPF.from_unpacked_path(source_dir).write()
+
+
+@app.command()
+def tpfunpack(tpf_file: Path):
+    """Unpack a TPF file."""
+    from soulstruct.containers.tpf import TPF
+
+    TPF.from_path(tpf_file).write_unpacked_directory()
+
+
+@app.command()
+def msbtojson(msb_path: Path):
+    """Convert an MSB file to JSON (DS1R only)."""
+    from soulstruct.darksouls1r.maps import MSB
+
+    msb = MSB.from_path(msb_path)
+    out = msb.path.with_suffix(f"{msb.path.suffix}.json")
+    msb.write_json(out)
+    _LOGGER.info("Wrote %s", out)
+
+
+@app.command()
+def jsontomsb(json_path: Path):
+    """Convert a JSON file back to MSB (DS1R only)."""
+    from soulstruct.darksouls1r.maps import MSB
+
+    msb = MSB.from_json(json_path)
+    out = msb.path.with_name(f"{msb.path_minimal_stem}.msb")
+    msb.write(out)
+    _LOGGER.info("Wrote %s", out)
+
+
+@app.command()
+def restorebak(
+    target: Path,
+    yes: bool = typer.Option(False, "--yes", "-y", help="Skip confirmation prompts."),
+):
+    """Restore *.bak files, overwriting originals."""
+    from soulstruct.utilities.files import restore_bak
+
+    def _confirm(msg: str) -> bool:
+        return yes or typer.confirm(msg)
+
+    if target.is_file():
+        repl = target.with_name(target.name.removesuffix(".bak"))
+        if repl.exists() and not _confirm(f"Overwrite {repl} with {target}?"):
+            raise typer.Abort()
+    elif target.is_dir():
+        if not _confirm(f"Restore all .bak files in {target}?"):
+            raise typer.Abort()
+    else:
+        _LOGGER.warning("No such file or directory: %s", target)
+        raise typer.Exit(1)
+
+    count = restore_bak(target, delete_baks=False)
+    _LOGGER.info("Restored %s bak files (bak files kept).", count)
+
+# endregion
+
+
+if __name__ == "__main__":
     try:
-        console_log_level = int(ss_args.consoleLogLevel)
-    except ValueError:
-        if ss_args.consoleLogLevel.lower() not in LOG_LEVELS:
-            raise argparse.ArgumentError(ss_args.consoleLogLevel, f"Log level must be one of: {LOG_LEVELS}")
-        console_log_level = getattr(logging, ss_args.consoleLogLevel.upper())
-    CONSOLE_HANDLER.setLevel(console_log_level)
-
-    try:
-        file_log_level = int(ss_args.fileLogLevel)
-    except ValueError:
-        if ss_args.fileLogLevel.lower() not in LOG_LEVELS:
-            raise argparse.ArgumentError(ss_args.fileLogLevel, f"Log level must be one of: {LOG_LEVELS}")
-        file_log_level = getattr(logging, ss_args.fileLogLevel.upper())
-    FILE_HANDLER.setLevel(file_log_level)
-
-    if ss_args.undcx is not None:
-        from soulstruct.dcx import decompress
-        dcx_path = Path(ss_args.undcx)
-        uncompressed, dcx_type = decompress(dcx_path)
-        undcx_path = dcx_path.with_suffix("") if dcx_path.suffix == ".dcx" else dcx_path.with_suffix(".undcx")
-        if undcx_path.is_file():
-            create_bak(undcx_path)
-        with undcx_path.open("wb") as f:
-            f.write(uncompressed)
-        return
-
-    # TODO: `dcx` command to compress a file. (Requires user to specify DCX type, or assert a metafile saying such.)
-
-    if ss_args.binderpack is not None:
-        from soulstruct.containers import Binder
-        binder = Binder.from_unpacked_path(ss_args.binderpack)
-        binder.write()
-        return
-
-    if ss_args.binderunpack is not None:
-        from soulstruct.containers import Binder
-        binder = Binder.from_path(ss_args.binderunpack)
-        binder.write_unpacked_directory()
-        return
-
-    if ss_args.tpfunpack is not None:
-        from soulstruct.containers.tpf import TPF
-        tpf = TPF.from_path(ss_args.tpfunpack)
-        tpf.write_unpacked_directory()
-        return
-
-    if ss_args.tpfpack is not None:
-        from soulstruct.containers.tpf import TPF
-        tpf = TPF.from_unpacked_path(ss_args.tpfpack)
-        tpf.write()
-        return
-
-    if ss_args.msbtojson is not None:
-        from soulstruct.darksouls1r.maps import MSB
-        try:
-            msb = MSB.from_path(ss_args.msbtojson)
-        except ValueError as ex:
-            _LOGGER.error(f"Could not load MSB file: {ex}")
-            raise
-        msb.write_json(msb.path.with_suffix(f"{msb.path.suffix}.json"))
-        return
-
-    if ss_args.jsontomsb is not None:
-        from soulstruct.darksouls1r.maps import MSB
-        try:
-            msb = MSB.from_json(ss_args.jsontomsb)
-        except ValueError as ex:
-            _LOGGER.error(f"Could not load JSON file as MSB: {ex}")
-            raise
-        msb.write(msb.path.with_name(f"{msb.path_minimal_stem}.msb"))
-        return
-
-    if ss_args.restorebak is not None:
-        from soulstruct.utilities.files import restore_bak
-        # NOTE: Dangerous enough that I require user confirmation if the non-BAK file exists.
-        target = Path(ss_args.restorebak)
-        if target.is_file():
-            replaced_path = Path(target.with_name(target.name.removesuffix(".bak")))
-            if replaced_path.is_file() and input(
-                f"Are you sure you want to overwrite file {replaced_path} with restored BAK file? "
-                f"Type 'y' to confirm: "
-            ).lower() != "y":
-                return
-        elif target.is_dir():
-            if input(
-                f"Are you sure you want to restore all BAK files in {ss_args.restorebak} (overwriting non-BAK files)? "
-                f"Type 'y' to confirm: "
-            ).lower() != "y":
-                return
-        else:
-            _LOGGER.warning(f"Could not find file or directory {ss_args.restorebak} to restore.")
-            return
-        count = restore_bak(ss_args.restorebak, delete_baks=False)
-        _LOGGER.info(f"{count} bak files restored (bak files not deleted).")
-        return
-
-    return
-
-
-try:
-    soulstruct_main(parser.parse_args())
-except Exception as main_ex:
-    _LOGGER.exception(f"Error occurred in soulstruct.__main__: {main_ex}")
-    input("Press any key to exit.")
+        app()
+    except Exception as ex:
+        _LOGGER.exception("Unhandled exception: %s", ex)
+        input("Press any key to exit.")

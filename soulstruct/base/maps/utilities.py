@@ -8,7 +8,7 @@ from pathlib import Path
 
 from soulstruct.base.game_types.map_types import Map
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 SPECIAL_MAP_NAMES = (
     "aicommon",

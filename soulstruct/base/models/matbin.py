@@ -15,7 +15,7 @@ from soulstruct.containers import Binder, EntryNotFoundError
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector2
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class MATBIN(GameFile):

@@ -26,7 +26,7 @@ if tp.TYPE_CHECKING:
     from .parts import BaseMSBPart
     from .regions import BaseMSBRegion
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)

@@ -27,7 +27,7 @@ from .dataclass_meta import DataclassMeta
 if tp.TYPE_CHECKING:
     from soulstruct.containers.entry import BinderEntry
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 _GAME_MODULE_RE = re.compile(r"^soulstruct\.(\w+)\..*$")
 

@@ -9,7 +9,7 @@ from enum import Enum
 
 from .param import Param, ParamRow
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class ParamFieldComparisonType(Enum):

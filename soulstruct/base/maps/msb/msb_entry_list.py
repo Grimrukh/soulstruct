@@ -14,7 +14,7 @@ from .msb_entry import MSBEntry
 if tp.TYPE_CHECKING:
     from .core import MSB
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 # Generic type to use when type-hinting list attributes on `MSB` subclasses.
 MSBEntryType = tp.TypeVar("MSBEntryType", bound=MSBEntry)

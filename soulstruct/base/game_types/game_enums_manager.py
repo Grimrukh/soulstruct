@@ -17,7 +17,7 @@ from types import ModuleType
 from soulstruct.utilities.files import import_arbitrary_module
 from soulstruct.base.game_types import *
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 MAP_NAME_RE = re.compile(r"(m\d\d_\d\d_\d\d_)(\d\d)(.*)")
 
