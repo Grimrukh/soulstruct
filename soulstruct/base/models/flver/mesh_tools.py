@@ -26,7 +26,7 @@ from .vertex_array_layout import VertexArrayLayout
 if tp.TYPE_CHECKING:
     from .core import FLVER
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class SplitMeshDef(tp.NamedTuple):

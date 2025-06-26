@@ -23,7 +23,7 @@ from .param_row import ParamRow
 from .flags import ParamFlags1, ParamFlags2
 from .paramdef import ParamDef, ParamDefField, ParamDefBND, field_types as ft
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 PARAM_ROW_DATA_T = tp.TypeVar("PARAM_ROW_DATA_T", bound=ParamRow)

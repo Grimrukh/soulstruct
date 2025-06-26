@@ -19,7 +19,7 @@ if tp.TYPE_CHECKING:
     from soulstruct.utilities.misc import IDList
     from soulstruct.base.maps.msb import MSBEntry
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class RegionHeaderStruct(MSBHeaderStruct):

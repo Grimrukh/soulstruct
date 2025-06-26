@@ -23,7 +23,7 @@ import ast
 import logging
 import typing as tp
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class NoNegateError(Exception):

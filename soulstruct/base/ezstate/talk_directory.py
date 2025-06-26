@@ -14,7 +14,7 @@ from soulstruct.base.game_file_directory import GameFileMapDirectory
 if tp.TYPE_CHECKING:
     from .talkesdbnd import TalkESDBND
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class TalkDirectory(GameFileMapDirectory, abc.ABC):

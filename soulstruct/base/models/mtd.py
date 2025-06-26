@@ -20,7 +20,7 @@ from soulstruct.games import Game, get_game
 from soulstruct.containers import Binder
 from soulstruct.utilities.binary import *
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class MTDBlock(tp.NamedTuple):

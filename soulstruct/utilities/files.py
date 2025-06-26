@@ -2,6 +2,7 @@ from __future__ import annotations
 
 __all__ = [
     "PACKAGE_PATH",
+    "APPDATA_PATH",
     "create_bak",
     "restore_bak",
     "import_arbitrary_module",
@@ -24,7 +25,7 @@ from pathlib import Path
 
 from soulstruct.exceptions import RestoreBackupError
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 LOG_BACKUP_CREATION = True
 
 
@@ -46,6 +47,21 @@ def PACKAGE_PATH(*relative_parts) -> Path:
     # Standard Python package:
     package_path = Path(__file__).parent.parent.parent.resolve()  # go up three levels to package directory
     return package_path / relative_path
+
+
+def APPDATA_PATH(*relative_parts) -> Path:
+    """Returns resolved path of given files in the `soulstruct` appdata directory. Path parts must start with "soulstruct"
+    or it will be automatically added (for PyInstaller compatibility).
+    """
+    if not relative_parts:
+        # Return appdata directory.
+        relative_path = Path("soulstruct")
+    else:
+        relative_path = Path(*relative_parts)
+        if relative_path.parts[0] != "soulstruct":
+            relative_path = Path("soulstruct", relative_path)
+
+    return Path(os.getenv("AppData", Path.home() / ".soulstruct")) / relative_path
 
 
 def create_bak(file_path: Path | str, bak_suffix=".bak") -> bool:

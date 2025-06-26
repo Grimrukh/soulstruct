@@ -12,7 +12,7 @@ from pathlib import Path
 from soulstruct.containers import Binder
 from .esd import ESD
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 _TALK_RE = re.compile(r"t(\d+)")
 _TALK_ESD_RE = re.compile(r"t(\d+)\.esd$")

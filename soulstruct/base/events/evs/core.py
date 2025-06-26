@@ -23,7 +23,7 @@ from .conditions import EVSConditionManager, ConditionGroupState
 from .exceptions import *
 from .utils import *
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class EVSParser(abc.ABC):

@@ -14,7 +14,7 @@ from soulstruct.utilities.maths import Vector3, Matrix3
 
 import numpy as np
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)

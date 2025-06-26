@@ -22,7 +22,7 @@ from soulstruct.utilities.binary import *
 
 from . import oodle
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class DCXError(SoulstructError):

@@ -22,7 +22,7 @@ from soulstruct.utilities.maths import Vector2
 if tp.TYPE_CHECKING:
     from .flver.vertex_array_layout import VertexArrayLayout
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class MatDefError(SoulstructError):

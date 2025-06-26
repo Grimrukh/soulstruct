@@ -24,7 +24,7 @@ if tp.TYPE_CHECKING:
     from soulstruct.base.events.evs import EVSParser
     from soulstruct.base.game_types.game_enums_manager import GameEnumsManager
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 _EVENT_CALL_RE = re.compile(r"( *)(Event|CommonFunc)_(\d+)\(([\d\-,. \n]+)\) *(\n|$)?")
 

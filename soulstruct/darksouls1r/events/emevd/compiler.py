@@ -22,7 +22,7 @@ from soulstruct.darksouls1ptde.events.emevd.compiler import EVSInstructionCompil
 from .emedf import EMEDF_ALIASES
 
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class EVSInstructionCompiler(_BasePTDECompiler):

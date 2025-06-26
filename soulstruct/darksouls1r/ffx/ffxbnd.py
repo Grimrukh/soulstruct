@@ -8,7 +8,6 @@ __all__ = [
 import logging
 import re
 import typing as tp
-from dataclasses import dataclass
 from pathlib import Path
 
 from soulstruct.containers import Binder, BinderEntry
@@ -16,7 +15,7 @@ from soulstruct.containers import Binder, BinderEntry
 if tp.TYPE_CHECKING:
     from soulstruct.darksouls1r.maps import MSB
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 # All FFX/FLVER/TPF IDs required by vanilla enemy models.

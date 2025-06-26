@@ -19,7 +19,7 @@ if tp.TYPE_CHECKING:
     from .core import FLVER
     from .mesh import FLVERMesh
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)

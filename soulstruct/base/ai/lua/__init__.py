@@ -18,7 +18,7 @@ from soulstruct.exceptions import SoulstructError
 from soulstruct.utilities.files import PACKAGE_PATH
 from soulstruct.utilities.misc import get_startupinfo
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 COMPILER_x64 = str(PACKAGE_PATH("base/ai/lua/x64/LuaC.exe"))
 COMPILER_x86 = str(PACKAGE_PATH("base/ai/lua/x86/luac50.exe"))

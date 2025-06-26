@@ -1,7 +1,4 @@
-from pathlib import Path
-
-# Set up loggers.
-import soulstruct._logging
+import importlib.metadata
 
 from soulstruct.config import *
 from soulstruct.containers import Binder, EntryNotFoundError
@@ -11,7 +8,6 @@ from soulstruct.base.models.flver import FLVER
 
 
 try:
-    with (Path(__file__).parent / "../VERSION").open("r") as _vfp:
-        __version__ = _vfp.read().strip()
+    __version__ = importlib.metadata.version("soulstruct")
 except FileNotFoundError:
-    __version = "UNKNOWN"
+    __version__ = "UNKNOWN"

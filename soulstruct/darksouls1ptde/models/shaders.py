@@ -14,7 +14,7 @@ from soulstruct.base.models.shaders import MTD, MatDef as _BaseMatDef
 from soulstruct.base.models.flver.vertex_array_layout import *
 from soulstruct.utilities.maths import Vector2
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)

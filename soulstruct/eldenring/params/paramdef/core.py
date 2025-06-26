@@ -11,7 +11,7 @@ from pathlib import Path
 from soulstruct.base.params.paramdef import ParamDef, ParamDefBND as _BaseParamDefBND
 from soulstruct.utilities.files import PACKAGE_PATH
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class ParamDefBND(_BaseParamDefBND):

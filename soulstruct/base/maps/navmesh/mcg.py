@@ -21,7 +21,7 @@ if tp.TYPE_CHECKING:
     from soulstruct.darksouls1r.maps.parts import MSBNavmesh
     from .mcp import NavmeshAABB
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)

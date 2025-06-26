@@ -14,7 +14,7 @@ from soulstruct.base.game_file_directory import GameFileMapDirectory
 from soulstruct.utilities.files import write_json
 from .msb import MSB
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 MSB_T = tp.TypeVar("MSB_T", bound=MSB)
 

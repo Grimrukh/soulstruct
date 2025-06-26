@@ -15,13 +15,16 @@ import ctypes as c
 import functools
 import io
 import logging
-import pickle
 import re
 import struct
 import typing as tp
+from dataclasses import dataclass, field
+
+import numpy
+from rich.console import Console
 
 from soulstruct.exceptions import SoulstructError
-from soulstruct.utilities.files import PACKAGE_PATH
+from soulstruct.utilities.files import APPDATA_PATH, read_json, write_json
 from soulstruct.utilities.kernel32 import *
 
 if tp.TYPE_CHECKING:
@@ -29,17 +32,11 @@ if tp.TYPE_CHECKING:
 
 try:
     # noinspection PyPackageRequirements
-    import numpy
-except ImportError:
-    numpy = None
-
-try:
-    # noinspection PyPackageRequirements
     import psutil
 except ImportError:
     psutil = None
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class UnhookedError(SoulstructError):
@@ -59,7 +56,7 @@ class BasePointerSearch(tp.NamedTuple):
 
 class MemoryValue(tp.NamedTuple):
     pointer: str
-    jumps: tp.Sequence[int, ...]
+    jumps: tp.Sequence[int]
     size: int
     fmt: str
 
@@ -82,105 +79,122 @@ def memory_hook_validate(method):
 
 
 def memory_hook_cache(method):
-    """Updates cache from `__address_cache__` file before calling method, then writes latest `__address_cache__`."""
+    """Updates cache from address cache file before calling method, then writes latest address cache."""
 
     @functools.wraps(method)
     def wrapped(*args, **kwargs):
         self = args[0]  # type: MemoryHook
-        try:
-            with PACKAGE_PATH("__address_cache__").open("rb") as f:
-                self._address_cache = pickle.load(f)
-        except (FileNotFoundError, EOFError, ValueError):
-            self._address_cache = {}
+        if not self.ADDRESS_CACHE_NAME:
+            return method(*args, **kwargs)
+
+        self._read_cached()
         result = method(*args, **kwargs)
-        with PACKAGE_PATH("__address_cache__").open("wb") as f:
-            pickle.dump(self._address_cache, f)
+        self._write_cached()
+
         return result
 
     return wrapped
 
 
+@dataclass(slots=True)
+class BufferedMemory(io.BufferedIOBase):
+    """Interface that mimics `io.BufferedIOBase` with data from a hooked memory process, from a given start address.
+
+    Currently only implements `read(n)`, `tell()`, and `seek(offset, whence)`.
+
+    Args:
+        hook (MemoryHook): hooked process to read from.
+        start_address (int): initial address to read from.
+        chunk_size (int): number of bytes to read at once.
+        max_size (int): if given, raise an `IOError` if more than this many bytes are read.
+    """
+
+    hook: MemoryHook = field(repr=False)
+    start_address: int
+    chunk_size: int = 1024  # number of bytes to read at once
+    max_size: int | None = None
+
+    _current_address: int = field(init=False, default=0)  # next process address to buffer data from
+    _stream_offset: int = field(init=False, default=0)  # relative to `start_address`
+    _bytes_read: int = field(init=False, default=0)
+    _buffer: bytes = field(init=False, default=b"")
+
+    # noinspection PyMethodOverriding
+    def read(self, size: int) -> bytes:
+        output = b""
+        if self.max_size is not None and self._bytes_read + size > self.max_size:
+            raise IOError(f"Tried to read more than specified maximum bytes ({self.max_size}) from process.")
+        bytes_to_read = size
+
+        while bytes_to_read > 0:
+            if not self._buffer:
+                self._buffer = self.hook.read(self._current_address, self.chunk_size)
+                self._current_address += self.chunk_size  # address for next buffer read
+
+            if bytes_to_read >= len(self._buffer):
+                output += self._buffer
+                bytes_to_read -= len(self._buffer)
+                self._buffer = b""
+            else:  # less than buffer size
+                output += self._buffer[:bytes_to_read]
+                self._buffer = self._buffer[bytes_to_read:]
+                bytes_to_read = 0
+        self._stream_offset += size
+        return output
+
+    def tell(self):
+        return self._stream_offset
+
+    def seek(self, offset: int, whence: int = None):
+        self._current_address = self.start_address + offset
+        self._stream_offset = offset
+        self._buffer = b""
+
+
 class MemoryHook(abc.ABC):
     """Hooks into running game and edits values at given memory addresses (like CheatEngine)."""
 
-    PROCESS_NAME: str
-    BASE_ADDRESS: int
+    PROCESS_NAME: tp.ClassVar[str]
+    BASE_ADDRESS: tp.ClassVar[int]
+    ADDRESS_CACHE_NAME: tp.ClassVar[str] = ""  # must be defined to read/write cached addresses
 
-    EVENT_FLAG_OFFSETS = ()  # base address and jump offsets for event flags (not including flag-specific offset)
-    BASE_POINTER_TABLE: dict[str, tp.Union[int, BasePointerSearch]] = {}
-    VALUE_TABLE: dict[str, MemoryValue] = {}
+    BASE_POINTER_TABLE: tp.ClassVar[dict[str, tp.Union[int, BasePointerSearch]]] = {}
+    VALUE_TABLE: tp.ClassVar[dict[str, MemoryValue]] = {}
+
+    # Base address and at least one jump offset for event flags (not including flag-specific offset).
+    EVENT_FLAG_OFFSETS: tp.ClassVar[tuple[int, ...]] = ()
 
     MemoryHookCallError = MemoryHookCallError
     UnhookedError = UnhookedError
 
-    class _ProcessStream(io.BufferedIOBase):
-
-        def __init__(self, hook: MemoryHook, address: int, chunk_size: int = 1024, maximum_size: int = None):
-            """Interface that mimics `io.BufferedIOBase` with data from a hooked memory process.
-
-            Currently only implements `read(n)`.
-
-            Args:
-                hook (MemoryHook): hooked process to read from.
-                address (int): initial address to read from.
-                chunk_size (int): number of bytes to read at once.
-                maximum_size (int): if given, raise an `IOError` if more than this many bytes are read.
-            """
-            self._hook = hook
-            self._start_address = address
-            self._current_address = address  # next process address to buffer data from
-            self._stream_offset = 0  # relative to `self._start_address`
-            self._chunk_size = chunk_size
-            self._max_size = maximum_size
-            self._bytes_read = 0
-            self._buffer = b""
-
-        # noinspection PyMethodOverriding
-        def read(self, size: int) -> bytes:
-            output = b""
-            if self._max_size is not None and self._bytes_read + size > self._max_size:
-                raise IOError(f"Tried to read more than specified maximum bytes ({self._max_size}) from process.")
-            bytes_to_read = size
-
-            while bytes_to_read > 0:
-                if not self._buffer:
-                    self._buffer = self._hook.read(self._current_address, self._chunk_size)
-                    self._current_address += self._chunk_size  # address for next buffer read
-
-                if bytes_to_read >= len(self._buffer):
-                    output += self._buffer
-                    bytes_to_read -= len(self._buffer)
-                    self._buffer = b""
-                else:  # less than buffer size
-                    output += self._buffer[:bytes_to_read]
-                    self._buffer = self._buffer[bytes_to_read:]
-                    bytes_to_read = 0
-            self._stream_offset += size
-            return output
-
-        def tell(self):
-            return self._stream_offset
-
-        def seek(self, offset: int, whence: int = None):
-            self._current_address = self._start_address + offset
-            self._stream_offset = offset
-            self._buffer = b""
-
     process: psutil.Process | None
     p_handle: w.HANDLE | None
 
-    def __init__(self):
+    value_table: dict[str, MemoryValue]  # mapping of value names to `MemoryValue` objects
+    _address_cache: dict[str, int]  # cached addresses for pointers (loaded from/written to `ADDRESS_CACHE_NAME` file)
+    base_pointer_table: dict[str, int]  # named, resolved base pointer addresses
+    process: psutil.Process | None  # process handle for the hooked game
+    p_handle: w.HANDLE | None  # Windows handle for the hooked process (for reading/writing memory)
+    _console: Console
+
+    def __init__(self, clear_address_cache: bool = False):
 
         if psutil is None:
             raise ModuleNotFoundError("`psutil` package required to use Soulstruct `MemoryHook`.")
 
-        self.value_table = self.VALUE_TABLE
+        self.value_table = self.VALUE_TABLE.copy()
         self._address_cache = {}
-        self.base_pointer_table = {}  # type: dict[str, int]  # named, resolved base pointer addresses
+        self.base_pointer_table = {}
+
+        if clear_address_cache and self.ADDRESS_CACHE_NAME:
+            self._write_cached()
+            _LOGGER.info(f"Cleared address cache for '{self.PROCESS_NAME}'.")
 
         self.process = None
         self.p_handle = None
         self.find_process()
+
+        self._console = Console()
 
         if self.p_handle and self.BASE_POINTER_TABLE:
             self._load_pointer_table(self.BASE_POINTER_TABLE)
@@ -266,8 +280,8 @@ class MemoryHook(abc.ABC):
         except WindowsError as e:
             raise MemoryHookCallError(e)
 
-    def BufferedProcessMemory(self, address: int, chunk_size: int = 1024, maximum_size: int = None):
-        return self._ProcessStream(self, address, chunk_size, maximum_size)
+    def get_buffer_at_address(self, address: int, chunk_size: int = 1024, maximum_size: int = None):
+        return BufferedMemory(self, address, chunk_size, maximum_size)
 
     def read_int16(self, address):
         return self.read(address, size=2, fmt="<h")
@@ -354,36 +368,33 @@ class MemoryHook(abc.ABC):
         return self.write(address, data=(value,), fmt="<d")
 
     @abc.abstractmethod
-    def get_event_flag_offset_mask(self, flag_id: int):
+    def get_event_flag_offset_mask(self, flag_id: int) -> tuple[int, int]:
         pass
 
     @memory_hook_validate
     def read_event_flag(self, flag_id: int) -> bool:
-        offset, mask = self.get_event_flag_offset_mask(flag_id)
-
-        if not self.EVENT_FLAG_OFFSETS:
-            raise ValueError(f"No `EVENT_FLAG_OFFSETS` defined for `{self.__class__.__name__}`.")
-        address = self.EVENT_FLAG_OFFSETS[0]
-        for jump in self.EVENT_FLAG_OFFSETS[1:]:
-            address = self.read_int64(address + jump)
-        flags32 = self.read_uint32(address + offset)
+        _, _, mask, flags32 = self._get_address_offset_mask_flags32(flag_id)
         return flags32 & mask != 0
 
     @memory_hook_validate
     def write_event_flag(self, flag_id: int, state: bool):
-        offset, mask = self.get_event_flag_offset_mask(flag_id)
-
-        if not self.EVENT_FLAG_OFFSETS:
-            raise ValueError(f"No `EVENT_FLAG_OFFSETS` defined for `{self.__class__.__name__}`.")
-        address = self.EVENT_FLAG_OFFSETS[0]
-        for jump in self.EVENT_FLAG_OFFSETS[1:]:
-            address = self.read_int64(address + jump)
-        flags32 = self.read_uint32(address + offset)
+        address, offset, mask, flags32 = self._get_address_offset_mask_flags32(flag_id)
         if state:
             flags32 |= mask
         else:
             flags32 &= ~mask
         self.write_uint32(address + offset, flags32)
+
+    def _get_address_offset_mask_flags32(self, flag_id: int) -> tuple[int, int, int, int]:
+        """Code common to read/write for event flags."""
+        offset, mask = self.get_event_flag_offset_mask(flag_id)
+
+        if not self.EVENT_FLAG_OFFSETS:
+            raise ValueError(f"No `EVENT_FLAG_OFFSETS` defined for `{self.__class__.__name__}`.")
+        address = self.EVENT_FLAG_OFFSETS[0]
+        for jump in self.EVENT_FLAG_OFFSETS[1:]:
+            address = self.read_int64(address + jump)
+        return self.read_uint32(address + offset)
 
     @staticmethod
     def _rolling_window(a, size):
@@ -450,7 +461,7 @@ class MemoryHook(abc.ABC):
             max_address = 0x7FFFFFFF
         else:
             search_from_address, max_address = address_range
-        found_pointers = {pointer_name: None for pointer_name in pointers}
+        found_pointers = {pointer_name: None for pointer_name in pointers}  # type: dict[str, int | None]
         while True:
 
             if max_address is not None and search_from_address > max_address:
@@ -585,6 +596,22 @@ class MemoryHook(abc.ABC):
             # Lost (or never found) process. Try to reconnect.
             return self.find_process()
         return True
+
+    def _read_cached(self):
+        """TODO: Ideally wouldn't be calling this (and the write) on frequent real-time calls."""
+        _cache_path = APPDATA_PATH(self.ADDRESS_CACHE_NAME)
+        try:
+            self._address_cache = read_json(_cache_path)
+        except (FileNotFoundError, EOFError, ValueError):
+            self._address_cache = {}
+
+    def _write_cached(self):
+        _cache_path = APPDATA_PATH(self.ADDRESS_CACHE_NAME)
+        try:
+            write_json(_cache_path, self._address_cache)
+        except (PermissionError, ValueError):
+            _LOGGER.error(f"Could not write address cache for '{self.PROCESS_NAME}' hook to '{_cache_path}'.")
+            _LOGGER.debug("This may be because the file is read-only or you do not have permission to write to it.")
 
     @property
     def pid(self):

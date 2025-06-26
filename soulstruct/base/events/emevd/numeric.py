@@ -13,7 +13,7 @@ from .instruction import EventArgRepl
 if tp.TYPE_CHECKING:
     from .event import Event
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 INSTRUCTION_RE = re.compile(r" +(\d+)\[(\d+)] \(([iIhHbBfs|]*)\)\[([\d, .-]*)] ?(<[\d, ]*>)?")

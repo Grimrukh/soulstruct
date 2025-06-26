@@ -13,7 +13,7 @@ from soulstruct.base.game_types.map_types import Map
 from soulstruct.base.game_file_directory import GameFileMapDirectory
 from .emevd import EMEVD
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class EventDirectory(GameFileMapDirectory[EMEVD], abc.ABC):

@@ -35,7 +35,7 @@ from .region_shapes import RegionShape, RegionShapeType, SHAPE_TYPE_CLASSES
 if tp.TYPE_CHECKING:
     from .core import MSB
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 # Maps valid `MSBEntry` field type annotation strings to their actual types.

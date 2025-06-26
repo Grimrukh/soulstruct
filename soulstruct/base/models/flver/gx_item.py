@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from soulstruct.utilities.binary import *
 from .version import FLVERVersion
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)

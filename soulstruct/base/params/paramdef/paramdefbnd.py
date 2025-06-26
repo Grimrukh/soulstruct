@@ -13,7 +13,7 @@ from soulstruct.games import Game, get_game
 
 from .core import ParamDef
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 _PARAMDEF_RE = re.compile(r".*\.paramdef")
 

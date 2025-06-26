@@ -12,7 +12,7 @@ from soulstruct.darksouls1ptde.maps.constants import *
 if tp.TYPE_CHECKING:
     from soulstruct.base.ai.luabnd import LuaBND
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class AIScriptDirectory(_BaseScriptDirectory):

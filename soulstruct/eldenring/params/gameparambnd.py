@@ -15,7 +15,7 @@ from soulstruct.utilities.ParamCrypt import ParamCrypt
 
 from . import paramdef
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 # if tp.TYPE_CHECKING:
 #     from ..text.msg_directory import MSGDirectory

@@ -18,7 +18,7 @@ from .. import enums
 from ..enums import *
 from .emedf import EMEDF
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 # This dictionary maps IDs, i.e. `(category, index)` pairs, to functions that generate EVS text.

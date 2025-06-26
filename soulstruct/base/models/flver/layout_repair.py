@@ -10,7 +10,7 @@ if tp.TYPE_CHECKING:
     from .mesh import FLVERMesh
     from .vertex_array import VertexArray
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 # List of MTD names for which QLOC incorrectly listed tangents in the exported in DS1R.

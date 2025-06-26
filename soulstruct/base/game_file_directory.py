@@ -17,7 +17,7 @@ if tp.TYPE_CHECKING:
     from .game_types.map_types import Map
     from .maps.utilities import GET_MAP_TYPING
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 GAME_FILE_DIRECTORY_T = tp.TypeVar("GAME_FILE_DIRECTORY_T", bound="GameFileDirectory")

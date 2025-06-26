@@ -21,7 +21,7 @@ from soulstruct.utilities.files import read_json, write_json, PACKAGE_PATH
 from soulstruct.utilities.maths import Vector2
 from soulstruct.utilities.text import natural_keys
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class SamplerGroupType(IntEnum):

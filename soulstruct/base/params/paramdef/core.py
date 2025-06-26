@@ -13,7 +13,7 @@ from soulstruct.utilities.binary import *
 
 from .paramdef_field import ParamDefField
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class ParamDef(GameFile):

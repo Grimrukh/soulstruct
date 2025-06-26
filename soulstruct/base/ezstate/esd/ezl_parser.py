@@ -21,7 +21,7 @@ from soulstruct.utilities.binary import BinaryReader
 from .exceptions import ESDError
 from .functions import TEST_FUNCTIONS
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 _REGISTERS = [""] * 8
 _SHOW_INTERNAL_SYMBOLS = False

@@ -18,7 +18,7 @@ from .vertex_array import VertexArray
 from .vertex_array_layout import VertexArrayLayout
 from .version import FLVERVersion
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)

@@ -13,6 +13,9 @@ __all__ = [
     "ELDEN_RING_PATH",
 
     "PARAMDEX_PATH",
+    "LOG_PATH",
+    "CONSOLE_LOG_LEVEL",
+    "FILE_LOG_LEVEL",
 
     "GET_CONFIG",
     "SET_CONFIG",
@@ -24,7 +27,7 @@ import sys
 import typing as tp
 from pathlib import Path
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 _DEFAULT_STEAM_PATH = r"C:\Program Files (x86)\Steam\steamapps\common"
 _CONFIG_DEFAULTS = {
@@ -41,6 +44,10 @@ _CONFIG_DEFAULTS = {
     "SEKIRO_PATH": _DEFAULT_STEAM_PATH + r"\Sekiro",  # TODO: 'Game'?
     "ELDEN_RING_PATH": _DEFAULT_STEAM_PATH + r"\ELDEN RING\Game",
     "PARAMDEX_PATH": "",  # will default to PACKAGE_PATH
+    "AUTO_SETUP_LOG": True,
+    "LOG_PATH": "soulstruct.log",  # relative to current working directory
+    "CONSOLE_LOG_LEVEL": "INFO",
+    "FILE_LOG_LEVEL": "DEBUG",
 }
 
 
@@ -117,3 +124,23 @@ DS3_PATH = __config.get("DS3_PATH")
 SEKIRO_PATH = __config.get("SEKIRO_PATH")
 ELDEN_RING_PATH = __config.get("ELDEN_RING_PATH")
 PARAMDEX_PATH = __config.get("PARAMDEX_PATH")
+
+LOG_PATH = __config.get("LOG_PATH")
+CONSOLE_LOG_LEVEL = __config.get("CONSOLE_LOG_LEVEL")
+FILE_LOG_LEVEL = __config.get("FILE_LOG_LEVEL")
+
+def _auto_setup_log():
+    # Automatically set up logging if this is enabled in the config.
+    from soulstruct.logging_utils import setup
+
+    setup(
+        console_level=CONSOLE_LOG_LEVEL,
+        file_level=FILE_LOG_LEVEL,
+        log_path=LOG_PATH,
+        rich_tracebacks=True,  # always use Rich tracebacks
+        clear_old_handlers=True,
+    )
+
+
+if __config.get("AUTO_SETUP_LOG"):
+    _auto_setup_log()

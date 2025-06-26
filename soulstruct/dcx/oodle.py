@@ -26,17 +26,8 @@ from pathlib import Path
 from soulstruct import SEKIRO_PATH, ELDEN_RING_PATH
 from soulstruct.utilities.files import PACKAGE_PATH
 
-try:
-    # noinspection PyPackageRequirements
-    import colorama  # already initialized
-    YELLOW = colorama.Fore.YELLOW
-    RESET = colorama.Fore.RESET
-except ImportError:
-    colorama = None
-    YELLOW = RESET = ""
 
-
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 __DLL_NAME = "oo2core_6_win64.dll"
@@ -277,10 +268,10 @@ def find_oodle_dll() -> str:
             return str(_location)
 
     # DLL not found in one of these default locations.
-    print(
-        f"{YELLOW}# WARNING: Could not find `oo2core_6_win64.dll` in Soulstruct, Sekiro, or Elden Ring paths.\n"
-        f"# You will not be able to compress/decompress Sekiro or Elden Ring files using Soulstruct.\n"
-        f"# Call `oodle.LOAD_DLL(path)` to load the DLL from an arbitrary path.{RESET}"
+    _LOGGER.warning(
+        f"Could not find `oo2core_6_win64.dll` in Soulstruct, Sekiro, or Elden Ring paths.\n"
+        f"You will not be able to compress/decompress Sekiro or Elden Ring files using Soulstruct.\n"
+        f"Call `oodle.LOAD_DLL(path)` to load the DLL from an arbitrary path."
     )
     return ""
 
@@ -329,6 +320,7 @@ def LOAD_DLL(dll_path: str = ""):
 
     __DLL_CompressOptions_GetDefault = __DLL["OodleLZ_CompressOptions_GetDefault"]
     __DLL_CompressOptions_GetDefault.restype = c.POINTER(CompressOptions)
+    # noinspection PyTypeChecker
     __DLL_CompressOptions_GetDefault.argtypes = (
         Compressor,  # compressor
         CompressionLevel,  # lzLevel

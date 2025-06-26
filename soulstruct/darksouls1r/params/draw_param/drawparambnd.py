@@ -17,7 +17,7 @@ from soulstruct.darksouls1ptde.params.paramdef import (
 from .. import paramdef
 from ..paramdef import *
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 
 class DrawParamBND(DrawParamBND_PTDE):

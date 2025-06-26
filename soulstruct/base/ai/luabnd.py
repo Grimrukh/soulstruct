@@ -20,7 +20,7 @@ from .luainfo import LuaInfo
 from .luagnl import LuaGNL
 from .lua_scripts import LuaScriptBase, GoalType, LuaGoalScript, LuaUnknownScript
 
-_LOGGER = logging.getLogger("soulstruct")
+_LOGGER = logging.getLogger(__name__)
 
 _SNAKE_CASE_RE = re.compile(r"(?<!^)(?=[A-Z])")
 _GOAL_SCRIPT_RE = re.compile(r"^(\d{6})_(battle|logic)\.lua$")

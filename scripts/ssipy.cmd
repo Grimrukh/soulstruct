@@ -1,1 +1,0 @@
-"%~dp0..\..\venv311\Scripts\ipython.exe"
