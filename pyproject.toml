@@ -29,11 +29,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-interactive   = ["IPython"]
 runtime       = ["psutil"]
 graphs        = ["matplotlib"]
-translate     = ["googletrans>=3.1.0a0"]
-regulation    = ["aes"]
 sound         = ["pydub"]
 
 [project.scripts]
