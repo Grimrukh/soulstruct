@@ -1,9 +1,10 @@
 __all__ = [
-    "navmesh",
+    "MSB",
+    "MapStudioDirectory",
     "ALL_MAPS",
     "get_map",
-    "MSB",
-    "MapStudioDirectory"
+    "navmesh",
+    "EnumModuleGenerator",
 ]
 
 from . import navmesh
@@ -11,3 +12,4 @@ from . import navmesh
 from .constants import ALL_MAPS, get_map
 from .map_studio_directory import MapStudioDirectory
 from .msb import MSB
+from soulstruct.base.maps.enum_module_generator import EnumModuleGenerator

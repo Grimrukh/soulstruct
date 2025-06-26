@@ -1148,7 +1148,7 @@ class FFXBND(Binder):
         ffx_search_directories: tp.Sequence[Path] | Path,
         required_ffx_id_overrides: dict[int, list[int]] = None,
         remapped_character_ffx_sources: dict[int, int | None] = None,
-        ignore_if_in_ffxbnds: tp.Sequence[Binder] | Binder = None,
+        ignore_if_in_ffxbnds: tp.Sequence[FFXBND] | FFXBND = None,
         prefer_ffxbnd_bak=True,
     ):
         """Iterate over all character models and VFX events in given `msb` and ensure all their FFX files (including
