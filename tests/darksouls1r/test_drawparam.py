@@ -1,4 +1,4 @@
-from soulstruct import DSR_PATH
+from soulstruct.config import DSR_PATH
 from soulstruct.darksouls1r.params.draw_param import DrawParamDirectory
 
 

@@ -16,7 +16,7 @@ class MSBTest(unittest.TestCase):
             pass
 
     def test_dir_rewrite(self):
-        from soulstruct import PTDE_PATH
+        from soulstruct.config import PTDE_PATH
 
         with Timer("Map Studio Directory Read"):
             msd = MapStudioDirectory.from_path(PTDE_PATH + "/map/MapStudio")

@@ -1,6 +1,6 @@
 import unittest
 
-from soulstruct.base.models.flver import FLVER
+from soulstruct.flver import FLVER
 from soulstruct.utilities.inspection import Timer
 
 

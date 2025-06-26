@@ -1,5 +1,5 @@
-from soulstruct import FLVER, DSR_PATH
-from soulstruct.base.models.flver.mesh_tools import MergedMesh
+from soulstruct.config import FLVER, DSR_PATH
+from soulstruct.flver.mesh_tools import MergedMesh
 
 
 def test_flver_rewrite():

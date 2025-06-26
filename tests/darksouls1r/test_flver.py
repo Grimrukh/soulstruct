@@ -2,7 +2,7 @@ import os
 import unittest
 from pathlib import Path
 
-from soulstruct.base.models.flver import FLVER
+from soulstruct.flver import FLVER
 from soulstruct.utilities.inspection import profile_function, Timer
 
 

@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-from soulstruct.base.models.flver import FLVER
+from soulstruct.flver import FLVER
 
 
 def draw_skeleton(flver: FLVER):

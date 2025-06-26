@@ -1,11 +1,3 @@
-[build-system]
-requires = ["setuptools>=69"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["soulstruct"]
-
 [project]
 name = "soulstruct"
 description = "Inspect and mod FromSoftware games."
@@ -37,6 +29,6 @@ sound         = ["pydub"]
 soulstruct = "soulstruct.__main__:app"
 
 [project.urls]
-Homepage  = "https://github.com/Grimrukh/soulstruct"
-Source    = "https://github.com/Grimrukh/soulstruct"
-Tracker   = "https://github.com/Grimrukh/soulstruct/issues"
+homepage      = "https://github.com/Grimrukh/soulstruct"
+repository    = "https://github.com/Grimrukh/soulstruct"
+"Issues"      = "https://github.com/Grimrukh/soulstruct/issues"
