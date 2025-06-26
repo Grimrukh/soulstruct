@@ -3,7 +3,7 @@ from soulstruct.config import DS3_PATH
 
 
 def main():
-    ed = EventDirectory(DS3_PATH + "/event")
+    ed = EventDirectory(DS3_PATH / "event")
     ed.write_evs("vanilla")
 
     # For fun.

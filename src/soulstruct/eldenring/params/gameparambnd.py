@@ -70,7 +70,7 @@ def examine_er_params():
     from soulstruct.config import ELDEN_RING_PATH
     from soulstruct.eldenring.params import paramdef
 
-    reg = GameParamBND.from_encrypted_path(ELDEN_RING_PATH + "/regulation.bin")
+    reg = GameParamBND.from_encrypted_path(ELDEN_RING_PATH / "regulation.bin")
     for entry in reg.entries:
         param_type = Param.detect_param_type(entry.data)
         try:

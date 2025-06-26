@@ -38,5 +38,5 @@ def convert_dds_dump(source_dds_dump: Path, dest_dds_dump: Path, output_format="
 
 
 if __name__ == '__main__':
-    # dump_map_dds(Path(DSR_PATH + "/map"), Path("D:/dds_dump_original"))
+    # dump_map_dds(DSR_PATH / "map", Path("D:/dds_dump_original"))
     convert_dds_dump(Path("D:/dds_dump_original"), Path("D:/dds_dump"))

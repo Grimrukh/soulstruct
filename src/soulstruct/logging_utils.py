@@ -29,42 +29,62 @@ __all__ = [
 ]
 
 import logging
+import os
 import sys
+import typing as tp
 from pathlib import Path
 
 from rich.console import Console
 from rich.logging import RichHandler
 from rich.traceback import install as rich_tb
 
-_BASE_MODULE_NAME = "soulstruct"
-
 # Console and file format strings for log records.
-_CONSOLE_FMT = "{levelname:>7} ┃ {modulepath:<40} ┃ {lineno:>4d} ┃ {message}"
+_CONSOLE_FMT = "{level_col} ┃ {modulepath:<40} ┃ {lineno:>4d} ┃ {message}"
 _FILE_FMT    = "{asctime} ┃ {levelname:>7} ┃ {pathname:<35} ┃ line {lineno:>4d} ┃ {message}"
 
-# LogRecord factory to inject `modulepath` once per record                     #
-_default_factory = logging.getLogRecordFactory()
 
+class _SoulstructFormatter(logging.Formatter):
+    """Adds `modulepath` and colorised `level_col` only for this handler."""
 
-def _record_factory(*args, **kwargs):  # type: ignore[override]
-    record: logging.LogRecord = _default_factory(*args, **kwargs)
-    path_tag = f"\\{_BASE_MODULE_NAME}\\"
-    if path_tag in record.pathname:
-        relative = (
-            record.pathname.split(path_tag, 1)[-1]
-            .replace("\\", ".")
-            .removesuffix(".py")
-        )
-        record.modulepath = f"{_BASE_MODULE_NAME}.{relative}"
-    else:
-        record.modulepath = record.pathname
-    return record
+    _LEVEL_COLORS: dict[str, str] = {
+        "DEBUG": "cyan",
+        "INFO": "green",
+        "WARNING": "yellow",
+        "ERROR": "red",
+        "CRITICAL": "bold red",
+    }
 
+    def __init__(
+        self,
+        base_module_name: str,
+        fmt: str,
+        *,
+        style: tp.Literal['%', '$', '{'] = "{",
+        color: bool = False,
+    ):
+        super().__init__(fmt, style=style)
+        self._base_tag = f"{os.sep}{base_module_name}{os.sep}"
+        self._base_name = base_module_name
+        self._use_color = color
 
-logging.setLogRecordFactory(_record_factory)
+    def format(self, record: logging.LogRecord) -> str:
+        if self._base_tag in record.pathname:
+            relative = (
+                record.pathname.split(self._base_tag, 1)[-1]
+                .replace(os.sep, ".")
+                .removesuffix(".py")
+            )
+            record.modulepath = f"{self._base_name}.{relative}"
+        else:
+            record.modulepath = record.pathname
 
-# Ensure library emits safely even if host never calls `setup()`.
-logging.getLogger(_BASE_MODULE_NAME).addHandler(logging.NullHandler())
+        if self._use_color:
+            color = self._LEVEL_COLORS.get(record.levelname, "white")
+            record.level_col = f"[{color}]{record.levelname:>7}[/]"
+        else:
+            record.level_col = f"{record.levelname:>7}"
+
+        return super().format(record)
 
 
 def setup(
@@ -74,22 +94,28 @@ def setup(
     log_path: str | Path | None = None,
     rich_tracebacks: bool = True,
     clear_old_handlers=True,
+    base_logger: logging.Logger | None = None,
+    base_module_name="soulstruct",
 ) -> tuple[RichHandler, logging.FileHandler | None]:
     """
     Configure Soulstruct logging.
 
     Args:
-        console_level: Logging level for the coloured console output.
+        console_level: Logging level for the colored console output.
         file_level: Logging level for the plain text file output (ignored if *log_path* is None).
         log_path: Path to the log file.  If None, no file handler is created.
         rich_tracebacks: If True, install Rich's pretty traceback hook.
         clear_old_handlers: If False, do not clear all old handlers from library's base logger.
+        base_logger: If provided, use this logger instead of the default *soulstruct* logger.
+        base_module_name: The base module name to use for the logger (default is "soulstruct"). This is used to add a
+            'modulepath' attribute to log records, which is the module path relative to the base module name. It is also
+            used to find the base logger if *base_logger* is None.
 
     Returns:
         (console_handler, file_handler): The two handlers added to the *soulstruct* logger.  *file_handler* is
         None if *log_path* was None.
     """
-    logger = logging.getLogger(_BASE_MODULE_NAME)
+    logger = base_logger or logging.getLogger(base_module_name)
     logger.setLevel(logging.NOTSET)  # let handlers filter
 
     if clear_old_handlers:
@@ -101,14 +127,14 @@ def setup(
     console = Console()
     console_handler = RichHandler(
         console=console,
-        markup=False,  # we're formatting plaintext, no [tags]
+        markup=True,
         show_time=False,
         show_level=False,
         show_path=False,
         rich_tracebacks=False,  # we install tracebacks globally below
     )
     console_handler.setLevel(console_level)
-    console_handler.setFormatter(logging.Formatter(_CONSOLE_FMT, style="{"))
+    console_handler.setFormatter(_SoulstructFormatter(base_module_name, _CONSOLE_FMT, color=True))
     logger.addHandler(console_handler)
 
     # File handler.
@@ -118,7 +144,7 @@ def setup(
         log_path.parent.mkdir(parents=True, exist_ok=True)
         file_handler = logging.FileHandler(log_path, mode="w", encoding="utf-8")
         file_handler.setLevel(file_level)
-        file_handler.setFormatter(logging.Formatter(_FILE_FMT, style="{"))
+        file_handler.setFormatter(_SoulstructFormatter(base_module_name, _FILE_FMT, color=False))
         logger.addHandler(file_handler)
 
     # Pretty tracebacks.

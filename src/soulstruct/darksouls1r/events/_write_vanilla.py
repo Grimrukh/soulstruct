@@ -3,7 +3,7 @@ from soulstruct.config import DSR_PATH
 
 
 def main():
-    ed = EventDirectory(DSR_PATH + "/event")
+    ed = EventDirectory(DSR_PATH / "event")
     ed.write_evs("vanilla")
 
     # Test EVS read.

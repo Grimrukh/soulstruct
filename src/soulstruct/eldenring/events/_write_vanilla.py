@@ -3,7 +3,7 @@ from pathlib import Path
 from soulstruct.eldenring.events import EventDirectory
 from soulstruct.config import ELDEN_RING_PATH
 
-VANILLA_EVENT_PATH = Path(ELDEN_RING_PATH) / "event"
+VANILLA_EVENT_PATH = ELDEN_RING_PATH / "event"
 ENTITIES_DIR = Path(__file__).parent / "vanilla/enums"
 
 

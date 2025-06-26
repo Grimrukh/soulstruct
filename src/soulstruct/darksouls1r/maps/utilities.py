@@ -135,7 +135,7 @@ def dump_all_map_textures(dump_directory: str | Path, map_directory: str | Path 
     """
     dump_directory = Path(dump_directory)
     dump_directory.mkdir(parents=True, exist_ok=True)
-    map_directory = Path(map_directory) if map_directory is not None else Path(DSR_PATH) / "map"
+    map_directory = Path(map_directory) if map_directory is not None else DSR_PATH / "map"
 
     for area in range(10, 18 + 1):
         area_dir = map_directory / f"m{area}"

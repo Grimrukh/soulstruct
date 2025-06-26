@@ -57,7 +57,7 @@ class MSB(_PTDE_MSB):  # generic entry types are the same as PTDE parent
 
         if map_directory is None:
             from soulstruct.config import DSR_PATH
-            map_directory = Path(DSR_PATH) / "map"
+            map_directory = DSR_PATH / "map"
         else:
             map_directory = Path(map_directory)
 

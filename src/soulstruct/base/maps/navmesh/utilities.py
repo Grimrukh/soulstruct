@@ -39,13 +39,14 @@ def backup_all_mcp_msg(source_map, dest_map):
 def draw_multiple_maps(map_ids):
     plt = import_matplotlib_plt(raise_if_missing=True)
     from soulstruct.config import DSR_PATH
-    from .core import NavmeshGraph
+    from .graph import NavmeshGraph
 
     fig = plt.figure(figsize=(8, 8))
     axes = fig.add_subplot(111, projection="3d")
     colors = ("cyan", "blue", "green", "pink")
     for i, map_id in enumerate(map_ids):
-        graph = NavmeshGraph(DSR_PATH + f"/map/{map_id}")
+        # TODO: Requires MSB class and MSBs.
+        graph = NavmeshGraph(DSR_PATH / "map/{map_id}")
         graph.draw(axes=axes, auto_show=False, aabb_color=colors[i])
     plt.show()
 

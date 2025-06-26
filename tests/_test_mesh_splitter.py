@@ -3,8 +3,8 @@ from soulstruct.flver.mesh_tools import MergedMesh
 
 
 def test_flver_rewrite():
-    # flver = FLVER.from_path(DSR_PATH + "/map/m10_02_00_00/m2000B2A10.flver.dcx")
-    flver = FLVER.from_path(DSR_PATH + "/map/m10_02_00_00/m5060B2A10.flver.dcx")
+    # flver = FLVER.from_path(DSR_PATH / "map/m10_02_00_00/m2000B2A10.flver.dcx")
+    flver = FLVER.from_path(DSR_PATH / "map/m10_02_00_00/m5060B2A10.flver.dcx")
 
     flver.write("test.flver.dcx")
     re_flver = FLVER.from_path("test.flver.dcx")
@@ -14,9 +14,9 @@ def test_flver_rewrite():
 
 
 def test_merge_and_split():
-    # flver = FLVER.from_path(DSR_PATH + "/map/m10_01_00_00/m3210B1A10.flver.dcx")
-    # flver = FLVER.from_path(DSR_PATH + "/map/m10_02_00_00/m2000B2A10.flver.dcx")
-    flver = FLVER.from_path(DSR_PATH + "/map/m10_02_00_00/m5060B2A10.flver.dcx")
+    # flver = FLVER.from_path(DSR_PATH / "map/m10_01_00_00/m3210B1A10.flver.dcx")
+    # flver = FLVER.from_path(DSR_PATH / "map/m10_02_00_00/m2000B2A10.flver.dcx")
+    flver = FLVER.from_path(DSR_PATH / "map/m10_02_00_00/m5060B2A10.flver.dcx")
 
     # TODO: For testing here, throwing away submesh info and just using their FLVER material.
     # Will of course need to create new indices into 'material' representations that include critical submesh fields.
@@ -178,7 +178,7 @@ def inspect_c5280():
     with wildly varying normals (e.g. one of the vertex normals is inverted from the other two).
     """
 
-    flver = FLVER.from_binder_path(DSR_PATH + "/chr/c5280.chrbnd.dcx", 200)
+    flver = FLVER.from_binder_path(DSR_PATH / "chr/c5280.chrbnd.dcx", 200)
     for i, submesh in enumerate(flver.meshes):
         print(i, submesh.face_sets[0].use_backface_culling, submesh.material.textures[0].stem)
 

@@ -19,7 +19,7 @@ class MSBTest(unittest.TestCase):
         from soulstruct.config import PTDE_PATH
 
         with Timer("Map Studio Directory Read"):
-            msd = MapStudioDirectory.from_path(PTDE_PATH + "/map/MapStudio")
+            msd = MapStudioDirectory.from_path(PTDE_PATH / "map/MapStudio")
 
         with Timer("Map Studio Directory Write"):
             msd.write("_test_MapStudio")

@@ -3,7 +3,7 @@ from soulstruct.config import PTDE_PATH
 
 
 def main():
-    ed = EventDirectory(PTDE_PATH + "/event")
+    ed = EventDirectory(PTDE_PATH / "event")
     ed.write_evs("vanilla")
 
     # For fun.

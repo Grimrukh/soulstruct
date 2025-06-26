@@ -11,7 +11,7 @@ class TestTalk(unittest.TestCase):
     def test_talk_dir(self):
 
         from soulstruct.config import DSR_PATH
-        td = TalkDirectory.from_path(DSR_PATH + "/script/talk")
+        td = TalkDirectory.from_path(DSR_PATH / "script/talk")
         td.write_esp_directory("_test_talk_directory")
         tdd = TalkDirectory.from_path("_test_talk_directory")
         print(tdd.Depths[100010])

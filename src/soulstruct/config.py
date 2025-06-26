@@ -1,6 +1,4 @@
 __all__ = [
-    "DEFAULT_PROJECT_PATH",
-    "DEFAULT_TEXT_EDITOR_FONT_SIZE",
     "DES_PATH",
     "DESR_PATH",
     "PTDE_PATH",
@@ -29,23 +27,21 @@ from pathlib import Path
 
 _LOGGER = logging.getLogger(__name__)
 
-_DEFAULT_STEAM_PATH = r"C:\Program Files (x86)\Steam\steamapps\common"
+_DEFAULT_STEAM_PATH = Path(r"C:/Program Files (x86)/Steam/steamapps/common")
 _CONFIG_DEFAULTS = {
-    "DEFAULT_PROJECT_PATH": "",
-    "DEFAULT_TEXT_EDITOR_FONT_SIZE": 14,
-    "DES_PATH": r"C:\Demon's Souls\PS3_GAME\USRDIR",
-    "DESR_PATH": r"C:\Demon's Souls Remake\dvdroot_ps5",
-    "PTDE_PATH": _DEFAULT_STEAM_PATH + r"\Dark Souls Prepare to Die Edition\DATA",
-    "DSR_PATH": _DEFAULT_STEAM_PATH + r"\DARK SOULS REMASTERED",
-    "DS2_PATH": _DEFAULT_STEAM_PATH + r"\Dark Souls II\Game",
-    "DS2_SOTFS_PATH": _DEFAULT_STEAM_PATH + r"\Dark Souls II Scholar of the First Sin\Game",
-    "BB_PATH": r"C:\Bloodborne\dvdroot_ps4",
-    "DS3_PATH": _DEFAULT_STEAM_PATH + r"\DARK SOULS III\Game",
-    "SEKIRO_PATH": _DEFAULT_STEAM_PATH + r"\Sekiro",  # TODO: 'Game'?
-    "ELDEN_RING_PATH": _DEFAULT_STEAM_PATH + r"\ELDEN RING\Game",
+    "DES_PATH": Path(r"C:/Demon's Souls/PS3_GAME/USRDIR"),
+    "DESR_PATH": Path(r"C:/Demon's Souls Remake/dvdroot_ps5"),
+    "PTDE_PATH": _DEFAULT_STEAM_PATH / "Dark Souls Prepare to Die Edition/DATA",
+    "DSR_PATH": _DEFAULT_STEAM_PATH / "DARK SOULS REMASTERED",
+    "DS2_PATH": _DEFAULT_STEAM_PATH / "Dark Souls II/Game",
+    "DS2_SOTFS_PATH": _DEFAULT_STEAM_PATH / "Dark Souls II Scholar of the First Sin/Game",
+    "BB_PATH": Path("C:/Bloodborne/dvdroot_ps4"),
+    "DS3_PATH": _DEFAULT_STEAM_PATH / "DARK SOULS III/Game",
+    "SEKIRO_PATH": _DEFAULT_STEAM_PATH / "Sekiro",  # TODO: 'Game'?
+    "ELDEN_RING_PATH": _DEFAULT_STEAM_PATH / "ELDEN RING/Game",
     "PARAMDEX_PATH": "",  # will default to PACKAGE_PATH
     "AUTO_SETUP_LOG": True,
-    "LOG_PATH": "soulstruct.log",  # relative to current working directory
+    "LOG_PATH": Path("soulstruct.log"),  # relative to current working directory
     "CONSOLE_LOG_LEVEL": "INFO",
     "FILE_LOG_LEVEL": "DEBUG",
 }
@@ -64,11 +60,17 @@ def GET_CONFIG() -> dict[str, tp.Any]:
             raise FileNotFoundError(f"Could not find 'soulstruct_config.json' in Soulstruct package.")
     with config_path.open("r") as f:
         try:
-            return json.load(f)
+            config = json.load(f)
         except json.JSONDecodeError as ex:
             raise json.JSONDecodeError(
                 f"Error while loading 'soulstruct_config.json': {ex.msg}", "soulstruct_config.json", ex.lineno
             )
+    # For keys ending in '_PATH', convert to Path objects.
+    for k, v in config.items():
+        if k.endswith("_PATH"):
+            config[k] = Path(v)
+
+    return config
 
 
 def SET_CONFIG(**kwargs):
@@ -91,9 +93,13 @@ def SET_CONFIG(**kwargs):
     if kwargs:
         raise KeyError(f"Invalid config key(s): {list(kwargs)}")
     config_dir = Path(sys.executable if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS") else __file__).parent
-    with (config_dir / "soulstruct_config.json").open("w") as f:
-        json.dump(config, f, indent=4)
 
+    # Convert all Path objects to strings for JSON serialization.
+    config_json = {
+        k: str(v) if isinstance(v, Path) else v for k, v in config.items()
+    }
+    with (config_dir / "soulstruct_config.json").open("w") as f:
+        json.dump(config_json, f, indent=4)
 
 try:
     __config = GET_CONFIG()
@@ -110,24 +116,27 @@ except FileNotFoundError:
         )
     SET_CONFIG()
     __config = GET_CONFIG()
+else:
+    if len(__config) != len(_CONFIG_DEFAULTS):
+        # Make sure we write and reload to get (and save) default values.
+        SET_CONFIG()
+        __config = GET_CONFIG()
 
-DEFAULT_PROJECT_PATH = __config.get("DEFAULT_PROJECT_PATH")
-DEFAULT_TEXT_EDITOR_FONT_SIZE = __config.get("DEFAULT_TEXT_EDITOR_FONT_SIZE")
-DES_PATH = __config.get("DES_PATH")
-DESR_PATH = __config.get("DESR_PATH")
-PTDE_PATH = __config.get("PTDE_PATH")
-DSR_PATH = __config.get("DSR_PATH")
-DS2_PATH = __config.get("DS2_PATH")
-DS2_SOTFS_PATH = __config.get("DS2_SOTFS_PATH")
-BB_PATH = __config.get("BB_PATH")
-DS3_PATH = __config.get("DS3_PATH")
-SEKIRO_PATH = __config.get("SEKIRO_PATH")
-ELDEN_RING_PATH = __config.get("ELDEN_RING_PATH")
-PARAMDEX_PATH = __config.get("PARAMDEX_PATH")
+DES_PATH = __config.get("DES_PATH")  # type: Path
+DESR_PATH = __config.get("DESR_PATH")  # type: Path
+PTDE_PATH = __config.get("PTDE_PATH")  # type: Path
+DSR_PATH = __config.get("DSR_PATH")  # type: Path
+DS2_PATH = __config.get("DS2_PATH")  # type: Path
+DS2_SOTFS_PATH = __config.get("DS2_SOTFS_PATH")  # type: Path
+BB_PATH = __config.get("BB_PATH")  # type: Path
+DS3_PATH = __config.get("DS3_PATH")  # type: Path
+SEKIRO_PATH = __config.get("SEKIRO_PATH")  # type: Path
+ELDEN_RING_PATH = __config.get("ELDEN_RING_PATH")  # type: Path
+PARAMDEX_PATH = __config.get("PARAMDEX_PATH")  # type: Path
 
-LOG_PATH = __config.get("LOG_PATH")
-CONSOLE_LOG_LEVEL = __config.get("CONSOLE_LOG_LEVEL")
-FILE_LOG_LEVEL = __config.get("FILE_LOG_LEVEL")
+LOG_PATH = __config.get("LOG_PATH")  # type: Path
+CONSOLE_LOG_LEVEL = __config.get("CONSOLE_LOG_LEVEL")  # type: str
+FILE_LOG_LEVEL = __config.get("FILE_LOG_LEVEL")  # type: str
 
 def _auto_setup_log():
     # Automatically set up logging if this is enabled in the config.
