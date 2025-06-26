@@ -30,8 +30,9 @@ LOG_BACKUP_CREATION = True
 
 
 def PACKAGE_PATH(*relative_parts) -> Path:
-    """Returns resolved path of given files in `soulstruct` package directory. Path parts must start with "soulstruct"
-    or it will be automatically added (for PyInstaller compatibility).
+    """Returns resolved path of given files in `soulstruct` namespace package directory.
+
+    Path parts must start with "soulstruct" or it will be automatically added (for PyInstaller compatibility).
     """
     if not relative_parts:
         # Return package directory.
@@ -42,11 +43,13 @@ def PACKAGE_PATH(*relative_parts) -> Path:
             relative_path = Path("soulstruct", relative_path)
 
     if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
-        return Path(getattr(sys, "_MEIPASS"), relative_path)
+        return Path(getattr(sys, "_MEIPASS"), relative_path)  # TODO: confirm this is still correct with 'src'
 
     # Standard Python package:
-    package_path = Path(__file__).parent.parent.parent.resolve()  # go up three levels to package directory
-    return package_path / relative_path
+    parent = Path(__file__).parent
+    while parent.name != "soulstruct":
+        parent = parent.parent
+    return (parent.parent / relative_path).resolve()
 
 
 def APPDATA_PATH(*relative_parts) -> Path:

@@ -28,6 +28,7 @@ from pathlib import Path
 _LOGGER = logging.getLogger(__name__)
 
 _DEFAULT_STEAM_PATH = Path(r"C:/Program Files (x86)/Steam/steamapps/common")
+_SOULSTRUCT_APPDATA = Path("~/AppData/Roaming/soulstruct").expanduser()
 _CONFIG_DEFAULTS = {
     "DES_PATH": Path(r"C:/Demon's Souls/PS3_GAME/USRDIR"),
     "DESR_PATH": Path(r"C:/Demon's Souls Remake/dvdroot_ps5"),
@@ -41,7 +42,7 @@ _CONFIG_DEFAULTS = {
     "ELDEN_RING_PATH": _DEFAULT_STEAM_PATH / "ELDEN RING/Game",
     "PARAMDEX_PATH": "",  # will default to PACKAGE_PATH
     "AUTO_SETUP_LOG": True,
-    "LOG_PATH": Path("soulstruct.log"),  # relative to current working directory
+    "LOG_PATH": _SOULSTRUCT_APPDATA / "soulstruct.log",
     "CONSOLE_LOG_LEVEL": "INFO",
     "FILE_LOG_LEVEL": "DEBUG",
 }
@@ -54,10 +55,10 @@ def GET_CONFIG() -> dict[str, tp.Any]:
         if not config_path.exists:
             raise FileNotFoundError(f"Could not find 'soulstruct_config.json' next to Soulstruct executable.")
     else:
-        # Look for `soulstruct_config.json` in `soulstruct` package.
-        config_path = Path(__file__).parent / "soulstruct_config.json"
+        # Look for `soulstruct_config.json` in user data.
+        config_path = _SOULSTRUCT_APPDATA / "soulstruct_config.json"
         if not config_path.exists:
-            raise FileNotFoundError(f"Could not find 'soulstruct_config.json' in Soulstruct package.")
+            raise FileNotFoundError(f"Could not find 'soulstruct_config.json' in user data: {config_path}.")
     with config_path.open("r") as f:
         try:
             config = json.load(f)
@@ -92,13 +93,17 @@ def SET_CONFIG(**kwargs):
             config.setdefault(k, default_value)
     if kwargs:
         raise KeyError(f"Invalid config key(s): {list(kwargs)}")
-    config_dir = Path(sys.executable if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS") else __file__).parent
+
+    if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+        config_path = Path(sys.executable).parent / "soulstruct_config.json"
+    else:
+        config_path = _SOULSTRUCT_APPDATA / "soulstruct_config.json"
 
     # Convert all Path objects to strings for JSON serialization.
     config_json = {
         k: str(v) if isinstance(v, Path) else v for k, v in config.items()
     }
-    with (config_dir / "soulstruct_config.json").open("w") as f:
+    with config_path.open("w") as f:
         json.dump(config_json, f, indent=4)
 
 try:

@@ -6,10 +6,10 @@ import logging
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from soulstruct.base.models import FLVER
 from soulstruct.containers import Binder, BinderEntry
 from soulstruct.containers.tpf import TPF, TPFPlatform, TPFTexture
 from soulstruct.dcx import DCXType
+from soulstruct.flver import FLVER
 from .msb import MSB
 
 _LOGGER = logging.getLogger(__name__)
