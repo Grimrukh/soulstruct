@@ -7,6 +7,13 @@ __all__ = [
     "BitSet128",
     "BitSet256",
     "BitSet1024",
+
+    "merge",
+    "rotate_entry",
+    "move_map",
+    "rotate_part_or_region",
+    "rotate_all_in_world",
+    "translate_all",
 ]
 
 import abc
