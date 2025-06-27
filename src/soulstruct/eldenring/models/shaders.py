@@ -17,7 +17,7 @@ from soulstruct.flver.vertex_array_layout import *
 from soulstruct.base.models.shaders import MatDef as _BaseMatDef, MatDefError
 from soulstruct.containers import Binder, BinderEntry, EntryNotFoundError
 from soulstruct.utilities.binary import BinaryReader
-from soulstruct.utilities.files import read_json, write_json, PACKAGE_PATH
+from soulstruct.utilities.files import read_json, write_json, SOULSTRUCT_PATH
 from soulstruct.utilities.maths import Vector2
 from soulstruct.utilities.text import natural_keys
 
@@ -120,7 +120,7 @@ class MatDef(_BaseMatDef):
             return cls.UVTexture0
 
     METAPARAMS: tp.ClassVar[dict[str, dict[str, list[tuple[str, str]]]]] = read_json(
-        PACKAGE_PATH("eldenring/models/resources/er_shader_sampler_groups.json")
+        SOULSTRUCT_PATH("eldenring/models/resources/er_shader_sampler_groups.json")
     )
 
     NAME_TAG_RE: tp.ClassVar[dict[str, re.Pattern]] = {

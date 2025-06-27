@@ -24,7 +24,7 @@ import numpy
 from rich.console import Console
 
 from soulstruct.exceptions import SoulstructError
-from soulstruct.utilities.files import APPDATA_PATH, read_json, write_json
+from soulstruct.utilities.files import SOULSTRUCT_USER_DATA_PATH, read_json, write_json
 from soulstruct.utilities.kernel32 import *
 
 if tp.TYPE_CHECKING:
@@ -599,14 +599,14 @@ class MemoryHook(abc.ABC):
 
     def _read_cached(self):
         """TODO: Ideally wouldn't be calling this (and the write) on frequent real-time calls."""
-        _cache_path = APPDATA_PATH(self.ADDRESS_CACHE_NAME)
+        _cache_path = SOULSTRUCT_USER_DATA_PATH(self.ADDRESS_CACHE_NAME)
         try:
             self._address_cache = read_json(_cache_path)
         except (FileNotFoundError, EOFError, ValueError):
             self._address_cache = {}
 
     def _write_cached(self):
-        _cache_path = APPDATA_PATH(self.ADDRESS_CACHE_NAME)
+        _cache_path = SOULSTRUCT_USER_DATA_PATH(self.ADDRESS_CACHE_NAME)
         try:
             write_json(_cache_path, self._address_cache)
         except (PermissionError, ValueError):

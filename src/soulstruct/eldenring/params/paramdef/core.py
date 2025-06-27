@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from soulstruct.base.params.paramdef import ParamDef, ParamDefBND as _BaseParamDefBND
-from soulstruct.utilities.files import PACKAGE_PATH
+from soulstruct.utilities.files import SOULSTRUCT_PATH
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -34,7 +34,7 @@ class ParamDefBND(_BaseParamDefBND):
     def from_paramdex(cls, paramdex_er_defs_path: Path | str = None):
         if paramdex_er_defs_path is None:
             # Default to Erd-Tools-Defs.
-            paramdex_er_defs_path = PACKAGE_PATH("eldenring/params/paramdef/Erd-Tools-Defs")
+            paramdex_er_defs_path = SOULSTRUCT_PATH("eldenring/params/paramdef/Erd-Tools-Defs")
         else:
             paramdex_er_defs_path = Path(paramdex_er_defs_path)
             if not paramdex_er_defs_path.is_dir():

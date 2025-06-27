@@ -9,7 +9,7 @@ import typing as tp
 from soulstruct.base.events.emevd.emedf import *
 from soulstruct.darksouls3.game_types import *
 from soulstruct.darksouls3.maps.constants import get_map_variable_name
-from soulstruct.utilities.files import PACKAGE_PATH
+from soulstruct.utilities.files import SOULSTRUCT_PATH
 from ..enums import *
 
 __all__ = ["EMEDF", "EMEDF_ALIASES", "EMEDF_TESTS", "EMEDF_COMPARISON_TESTS"]
@@ -5089,7 +5089,7 @@ EMEDF = {
 }
 
 
-add_common_emedf_info(EMEDF, PACKAGE_PATH("darksouls3/events/emevd/ds3-common.emedf.json"))
+add_common_emedf_info(EMEDF, SOULSTRUCT_PATH("darksouls3/events/emevd/ds3-common.emedf.json"))
 EMEDF_ALIASES, EMEDF_TESTS, EMEDF_COMPARISON_TESTS = build_emedf_aliases_tests(EMEDF)
 
 # Extra tests that use custom instructions from `compiler`.

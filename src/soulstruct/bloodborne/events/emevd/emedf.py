@@ -10,7 +10,7 @@ from soulstruct.base.events.emevd.emedf import *
 from soulstruct.darksouls1ptde.events.emevd.emedf import EMEDF as PTDE_EMEDF
 from soulstruct.bloodborne.maps.constants import get_map_variable_name
 from soulstruct.bloodborne.game_types import *
-from soulstruct.utilities.files import PACKAGE_PATH
+from soulstruct.utilities.files import SOULSTRUCT_PATH
 from ..enums import *
 
 __all__ = ["EMEDF", "EMEDF_ALIASES", "EMEDF_TESTS", "EMEDF_COMPARISON_TESTS"]
@@ -4472,7 +4472,7 @@ EMEDF = PTDE_EMEDF | {
 EMEDF = {k: EMEDF[k] for k in sorted(EMEDF.keys())}
 
 
-add_common_emedf_info(EMEDF, PACKAGE_PATH("bloodborne/events/emevd/bb-common.emedf.json"))
+add_common_emedf_info(EMEDF, SOULSTRUCT_PATH("bloodborne/events/emevd/bb-common.emedf.json"))
 EMEDF_ALIASES, EMEDF_TESTS, EMEDF_COMPARISON_TESTS = build_emedf_aliases_tests(EMEDF)
 
 # Extra tests that use custom instructions from `compiler`.

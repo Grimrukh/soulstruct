@@ -18,7 +18,7 @@ from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.files import PACKAGE_PATH
+from soulstruct.utilities.files import SOULSTRUCT_PATH
 
 __all__ = ["FSB", "FSBSample", "FSBSampleHeader", "FSBHeaderVersion", "FSBHeaderMode", "FSBSampleMode", "fsbext"]
 
@@ -27,7 +27,7 @@ _LOGGER = logging.getLogger(__name__)
 
 def fsbext(fsb_path: Path | str, options=""):
     """Call `fsbext.exe` with given options on `fsb_path`."""
-    executable = PACKAGE_PATH("darksouls1r/sound/fsbext.exe")
+    executable = SOULSTRUCT_PATH("darksouls1r/sound/fsbext.exe")
     if not executable.is_file():
         raise FileNotFoundError("`fsbext.exe` is missing from Soulstruct package. Cannot extract FSB file.")
     sp.call(f"{executable} {options} {fsb_path}")

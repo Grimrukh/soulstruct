@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 __all__ = [
-    "PACKAGE_PATH",
-    "APPDATA_PATH",
+    "SOULSTRUCT_PATH",
+    "SOULSTRUCT_USER_DATA_PATH",
     "create_bak",
     "restore_bak",
     "import_arbitrary_module",
@@ -29,42 +29,28 @@ _LOGGER = logging.getLogger(__name__)
 LOG_BACKUP_CREATION = True
 
 
-def PACKAGE_PATH(*relative_parts) -> Path:
-    """Returns resolved path of given files in `soulstruct` namespace package directory.
+def SOULSTRUCT_PATH(*relative_parts) -> Path:
+    """Returns resolved path of given files in `soulstruct` namespace package directory."""
 
-    Path parts must start with "soulstruct" or it will be automatically added (for PyInstaller compatibility).
-    """
-    if not relative_parts:
-        # Return package directory.
-        relative_path = Path("soulstruct")
-    else:
-        relative_path = Path(*relative_parts)
-        if relative_path.parts[0] != "soulstruct":
-            relative_path = Path("soulstruct", relative_path)
-
-    if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
-        return Path(getattr(sys, "_MEIPASS"), relative_path)  # TODO: confirm this is still correct with 'src'
-
-    # Standard Python package:
     parent = Path(__file__).parent
     while parent.name != "soulstruct":
         parent = parent.parent
-    return (parent.parent / relative_path).resolve()
 
-
-def APPDATA_PATH(*relative_parts) -> Path:
-    """Returns resolved path of given files in the `soulstruct` appdata directory. Path parts must start with "soulstruct"
-    or it will be automatically added (for PyInstaller compatibility).
-    """
     if not relative_parts:
-        # Return appdata directory.
-        relative_path = Path("soulstruct")
-    else:
-        relative_path = Path(*relative_parts)
-        if relative_path.parts[0] != "soulstruct":
-            relative_path = Path("soulstruct", relative_path)
+        return parent.resolve()  # 'soulstruct' namespace directory
 
-    return Path(os.getenv("AppData", Path.home() / ".soulstruct")) / relative_path
+    return Path(parent, *relative_parts).resolve()
+
+
+def SOULSTRUCT_USER_DATA_PATH(*relative_parts) -> Path:
+    """Returns resolved path of given files in the `soulstruct` AppData directory:
+
+    If environment variable `AppData` is set:
+        %USERPROFILE%/AppData/Roaming/soulstruct/{*relative_parts}
+    Otherwise:
+        ~/.soulstruct/{*relative_parts}
+    """
+    return Path(os.getenv("AppData", Path.home() / ".soulstruct"), *relative_parts).resolve()
 
 
 def create_bak(file_path: Path | str, bak_suffix=".bak") -> bool:

@@ -6,7 +6,7 @@ import re
 import typing as tp
 from ast import literal_eval
 from pathlib import Path
-from soulstruct.utilities.files import read_json, PACKAGE_PATH
+from soulstruct.utilities.files import read_json, SOULSTRUCT_PATH
 
 
 def _generate(old_instr_module, emedf_json_path):
@@ -15,7 +15,7 @@ def _generate(old_instr_module, emedf_json_path):
     arg_re = re.compile(r"(\w[\w_]*)(: \w[\w_]*)?( *= *.*)?")
     doc_re = re.compile(r"^[ \"\n]*(.*?)[ \"\n]*$", re.DOTALL)  # strips all quotes and spaces
 
-    # base_module = PACKAGE_PATH("base/events/emevd/instructions.py").read_text().split("\n")
+    # base_module = SOULSTRUCT_PATH("base/events/emevd/instructions.py").read_text().split("\n")
     # game_module = Path("instructions.py").read_text().split("\n")
     instr_module = Path(old_instr_module).read_text().split("\n")
 
@@ -137,6 +137,6 @@ def _generate(old_instr_module, emedf_json_path):
 
 if __name__ == '__main__':
     _generate(
-        PACKAGE_PATH("eldenring/events/emevd/instructions.py"),
-        PACKAGE_PATH("eldenring/events/emevd/er-common.emedf.json"),
+        SOULSTRUCT_PATH("eldenring/events/emevd/instructions.py"),
+        SOULSTRUCT_PATH("eldenring/events/emevd/er-common.emedf.json"),
     )

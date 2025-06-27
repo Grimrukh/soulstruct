@@ -26,7 +26,7 @@ from pathlib import Path
 
 from soulstruct.config import *
 from soulstruct.dcx import DCXType
-from soulstruct.utilities.files import PACKAGE_PATH
+from soulstruct.utilities.files import SOULSTRUCT_PATH
 
 
 @dataclass(slots=True, frozen=True)
@@ -112,7 +112,7 @@ DEMONS_SOULS = Game(
         ".nvmbnd": DCXType.Null,
     },
     bundled_resource_paths={
-        "MTDBND": PACKAGE_PATH("demonssouls/models/resources/mtd.mtdbnd.dcx"),
+        "MTDBND": SOULSTRUCT_PATH("demonssouls/models/resources/mtd.mtdbnd.dcx"),
     },
     steam_appid=None,
     default_game_path=DES_PATH,
@@ -149,8 +149,8 @@ DARK_SOULS_PTDE = Game(
     aliases=("darksoulspreparetodieedition", "darksoulsptde", "ptde", "darksouls1ptde"),
     default_dcx_type=DCXType.Null,  # DCX not used anywhere
     bundled_resource_paths={
-        "PARAMDEFBND": PACKAGE_PATH("darksouls1ptde/params/resources/paramdef.paramdefbnd"),
-        "MTDBND": PACKAGE_PATH("darksouls1ptde/models/resources/Mtd.mtdbnd"),
+        "PARAMDEFBND": SOULSTRUCT_PATH("darksouls1ptde/params/resources/paramdef.paramdefbnd"),
+        "MTDBND": SOULSTRUCT_PATH("darksouls1ptde/models/resources/Mtd.mtdbnd"),
     },
     steam_appid=211420,
     default_game_path=PTDE_PATH,
@@ -189,9 +189,9 @@ DARK_SOULS_DSR = Game(
         ".tpfbdt": DCXType.Null,
     },
     bundled_resource_paths={
-        "PARAMDEFBND": PACKAGE_PATH("darksouls1r/params/resources/darksouls1r.paramdefbnd.dcx"),
-        "MTDBND": PACKAGE_PATH("darksouls1r/models/resources/Mtd.mtdbnd.dcx"),
-        "PATCH_MTDBND": PACKAGE_PATH("darksouls1r/models/resources/MtdPatch.mtdbnd.dcx"),
+        "PARAMDEFBND": SOULSTRUCT_PATH("darksouls1r/params/resources/darksouls1r.paramdefbnd.dcx"),
+        "MTDBND": SOULSTRUCT_PATH("darksouls1r/models/resources/Mtd.mtdbnd.dcx"),
+        "PATCH_MTDBND": SOULSTRUCT_PATH("darksouls1r/models/resources/MtdPatch.mtdbnd.dcx"),
     },
     steam_appid=570940,
     default_game_path=DSR_PATH,
@@ -243,8 +243,8 @@ BLOODBORNE = Game(
     aliases=("bloodborne", "bb"),
     default_dcx_type=DCXType.DCX_DFLT_10000_44_9,
     bundled_resource_paths={
-        "PARAMDEFBND": PACKAGE_PATH("bloodborne/params/resources/bloodborne.paramdefbnd.dcx"),
-        "MTDBND": PACKAGE_PATH("bloodborne/models/resources/allmaterialbnd.mtdbnd.dcx"),
+        "PARAMDEFBND": SOULSTRUCT_PATH("bloodborne/params/resources/bloodborne.paramdefbnd.dcx"),
+        "MTDBND": SOULSTRUCT_PATH("bloodborne/models/resources/allmaterialbnd.mtdbnd.dcx"),
     },
     steam_appid=None,
     default_game_path=BB_PATH,
@@ -299,9 +299,9 @@ ELDEN_RING = Game(
         ".bin": DCXType.Null,
     },
     bundled_resource_paths={
-        "MATBINBND": PACKAGE_PATH("eldenring/models/resources/allmaterial.matbinbnd.dcx"),
-        "dlc01_MATBINBND": PACKAGE_PATH("eldenring/models/resources/allmaterial_dlc01.matbinbnd.dcx"),
-        "dlc02_MATBINBND": PACKAGE_PATH("eldenring/models/resources/allmaterial_dlc02.matbinbnd.dcx"),
+        "MATBINBND": SOULSTRUCT_PATH("eldenring/models/resources/allmaterial.matbinbnd.dcx"),
+        "dlc01_MATBINBND": SOULSTRUCT_PATH("eldenring/models/resources/allmaterial_dlc01.matbinbnd.dcx"),
+        "dlc02_MATBINBND": SOULSTRUCT_PATH("eldenring/models/resources/allmaterial_dlc02.matbinbnd.dcx"),
     },
     steam_appid=1245620,
     default_game_path=ELDEN_RING_PATH,

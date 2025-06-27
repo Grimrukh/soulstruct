@@ -24,7 +24,7 @@ from functools import wraps
 from pathlib import Path
 
 from soulstruct.config import SEKIRO_PATH, ELDEN_RING_PATH
-from soulstruct.utilities.files import PACKAGE_PATH
+from soulstruct.utilities.files import SOULSTRUCT_PATH
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -258,8 +258,8 @@ def decompress(comp_buf: bytes, decompressed_size: int):
 def find_oodle_dll() -> str:
     """Try to find DLL at Soulstruct, Sekiro, or Elden Ring paths."""
     _auto_oodle_locations = (
-        PACKAGE_PATH(__DLL_NAME),
-        PACKAGE_PATH("..", __DLL_NAME),
+        SOULSTRUCT_PATH(__DLL_NAME),
+        SOULSTRUCT_PATH("..", __DLL_NAME),
         SEKIRO_PATH / __DLL_NAME,
         ELDEN_RING_PATH / __DLL_NAME,
     )

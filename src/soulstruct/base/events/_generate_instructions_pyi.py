@@ -14,7 +14,7 @@ import typing as tp
 from enum import IntEnum
 from pathlib import Path
 
-from soulstruct.utilities.files import PACKAGE_PATH
+from soulstruct.utilities.files import SOULSTRUCT_PATH
 
 
 _DEF_TEMPLATE = "\n\n# ({category}, {index})\ndef {alias}({args}):"
@@ -411,7 +411,7 @@ def darksouls1ptde():
         EMEDF_TESTS,
         EMEDF_COMPARISON_TESTS,
         ConditionGroup,
-        PACKAGE_PATH("darksouls1ptde/events/instructions.pyi"),
+        SOULSTRUCT_PATH("darksouls1ptde/events/instructions.pyi"),
         compiler,
     )
 
@@ -427,7 +427,7 @@ def darksouls1r():
         EMEDF_TESTS,
         EMEDF_COMPARISON_TESTS,
         ConditionGroup,
-        PACKAGE_PATH("darksouls1r/events/instructions.pyi"),
+        SOULSTRUCT_PATH("darksouls1r/events/instructions.pyi"),
         compiler,
     )
 
@@ -443,7 +443,7 @@ def bloodborne():
         EMEDF_TESTS,
         EMEDF_COMPARISON_TESTS,
         ConditionGroup,
-        PACKAGE_PATH("bloodborne/events/instructions.pyi"),
+        SOULSTRUCT_PATH("bloodborne/events/instructions.pyi"),
         compiler,
     )
 
@@ -459,7 +459,7 @@ def darksouls3():
         EMEDF_TESTS,
         EMEDF_COMPARISON_TESTS,
         ConditionGroup,
-        PACKAGE_PATH("darksouls3/events/instructions.pyi"),
+        SOULSTRUCT_PATH("darksouls3/events/instructions.pyi"),
         compiler,
         has_event_layers=True,
     )
@@ -477,7 +477,7 @@ def eldenring():
         EMEDF_TESTS,
         EMEDF_COMPARISON_TESTS,
         ConditionGroup,
-        PACKAGE_PATH("eldenring/events/instructions.pyi"),
+        SOULSTRUCT_PATH("eldenring/events/instructions.pyi"),
         compiler,
         has_event_layers=True,
         has_run_common_event=True,

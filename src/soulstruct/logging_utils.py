@@ -103,7 +103,7 @@ def setup(
     Args:
         console_level: Logging level for the colored console output.
         file_level: Logging level for the plain text file output (ignored if *log_path* is None).
-        log_path: Path to the log file.  If None, no file handler is created.
+        log_path: Path to the log file. If None, no file handler is created.
         rich_tracebacks: If True, install Rich's pretty traceback hook.
         clear_old_handlers: If False, do not clear all old handlers from library's base logger.
         base_logger: If provided, use this logger instead of the default *soulstruct* logger.

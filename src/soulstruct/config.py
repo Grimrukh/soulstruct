@@ -40,7 +40,7 @@ _CONFIG_DEFAULTS = {
     "DS3_PATH": _DEFAULT_STEAM_PATH / "DARK SOULS III/Game",
     "SEKIRO_PATH": _DEFAULT_STEAM_PATH / "Sekiro",  # TODO: 'Game'?
     "ELDEN_RING_PATH": _DEFAULT_STEAM_PATH / "ELDEN RING/Game",
-    "PARAMDEX_PATH": "",  # will default to PACKAGE_PATH
+    "PARAMDEX_PATH": "",  # will default to SOULSTRUCT_PATH
     "AUTO_SETUP_LOG": True,
     "LOG_PATH": _SOULSTRUCT_APPDATA / "soulstruct.log",
     "CONSOLE_LOG_LEVEL": "INFO",

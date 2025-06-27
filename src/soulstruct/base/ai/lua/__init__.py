@@ -15,14 +15,14 @@ from contextlib import contextmanager
 from pathlib import Path
 
 from soulstruct.exceptions import SoulstructError
-from soulstruct.utilities.files import PACKAGE_PATH
+from soulstruct.utilities.files import SOULSTRUCT_PATH
 from soulstruct.utilities.misc import get_startupinfo
 
 _LOGGER = logging.getLogger(__name__)
 
-COMPILER_x64 = str(PACKAGE_PATH("base/ai/lua/x64/LuaC.exe"))
-COMPILER_x86 = str(PACKAGE_PATH("base/ai/lua/x86/luac50.exe"))
-DECOMPILER_x64 = str(PACKAGE_PATH("base/ai/lua/x64/DSLuaDecompiler.exe"))
+COMPILER_x64 = str(SOULSTRUCT_PATH("base/ai/lua/x64/LuaC.exe"))
+COMPILER_x86 = str(SOULSTRUCT_PATH("base/ai/lua/x86/luac50.exe"))
+DECOMPILER_x64 = str(SOULSTRUCT_PATH("base/ai/lua/x64/DSLuaDecompiler.exe"))
 # No x86 decompiler.
 
 
@@ -40,7 +40,7 @@ class LuaDecompileError(LuaError):
 
 @contextmanager
 def _temp_lua_path(content, as_bytes=False, encoding=None, set_cwd=False):
-    temp = PACKAGE_PATH("base/ai/lua/temp")
+    temp = SOULSTRUCT_PATH("base/ai/lua/temp")
     if set_cwd:
         previous_cwd = os.getcwd()
         os.chdir(str(temp.parent))
@@ -50,7 +50,7 @@ def _temp_lua_path(content, as_bytes=False, encoding=None, set_cwd=False):
         f.write(content)
     yield temp
     try:
-        os.remove(str(PACKAGE_PATH("base/ai/lua/temp")))
+        os.remove(str(SOULSTRUCT_PATH("base/ai/lua/temp")))
     except FileNotFoundError:
         pass
     if previous_cwd:

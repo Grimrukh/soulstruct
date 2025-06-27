@@ -8,7 +8,7 @@ __all__ = ["COMMANDS", "TEST_FUNCTIONS", "State"]
 import re
 
 from soulstruct.base.ezstate.esd.esd_type import ESDType
-from soulstruct.utilities.files import PACKAGE_PATH
+from soulstruct.utilities.files import SOULSTRUCT_PATH
 
 
 COMMANDS = {ESDType.CHR: {}, ESDType.TALK: {}}
@@ -45,7 +45,7 @@ def _parse_function_def(i_: int, line: str):
     return name_, tuple(args_), tuple(type_hints_)
 
 
-_stubs_path = PACKAGE_PATH("base/ezstate/esd/functions.pyi")
+_stubs_path = SOULSTRUCT_PATH("base/ezstate/esd/functions.pyi")
 with open(_stubs_path) as f:
     _stub_lines = f.readlines()
 i = 0

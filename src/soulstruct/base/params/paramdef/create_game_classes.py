@@ -4,7 +4,7 @@ import textwrap
 
 from soulstruct.base.params.param_row import *
 from soulstruct.base.params.paramdef.paramdefbnd import ParamDefBND
-from soulstruct.utilities.files import PACKAGE_PATH, read_json, write_json
+from soulstruct.utilities.files import SOULSTRUCT_PATH, read_json, write_json
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -36,7 +36,7 @@ DSR_PARAMDEFS = (
 
 def create_paramdef_info(paramdefbnd: ParamDefBND, game_submodule, template_info: dict = None):
     """Create default info JSON, with nicknames generated from field names and no tooltips/defaults/etc."""
-    paramdef_dir = PACKAGE_PATH(f"{game_submodule}/params/paramdef")
+    paramdef_dir = SOULSTRUCT_PATH(f"{game_submodule}/params/paramdef")
     json_path = paramdef_dir / "paramdef_info.json"
     if json_path.exists():
         raise FileExistsError(f"Cannot replace existing `paramdef_info.json` with default one.")
@@ -69,7 +69,7 @@ def create_paramdef_info(paramdefbnd: ParamDefBND, game_submodule, template_info
 
 def create_game_classes(paramdefbnd: ParamDefBND, game_submodule: str, no_info: bool = False):
     """My script to convert these 'display info' dictionaries to BinaryStruct representations of ParamDefs."""
-    paramdef_dir = PACKAGE_PATH(f"{game_submodule}/params/paramdef")
+    paramdef_dir = SOULSTRUCT_PATH(f"{game_submodule}/params/paramdef")
 
     if no_info:
         paramdefbnd_info = {}
@@ -241,7 +241,7 @@ def create_game_classes(paramdefbnd: ParamDefBND, game_submodule: str, no_info: 
 
 def modify_paramdef_info(game_submodule):
     """Transient functions to edit JSON."""
-    paramdef_dir = PACKAGE_PATH(f"{game_submodule}/params/paramdef")
+    paramdef_dir = SOULSTRUCT_PATH(f"{game_submodule}/params/paramdef")
     json_path = paramdef_dir / "paramdef_info.json"
     paramdef_info = read_json(json_path)
     param_info = paramdef_info["CHARACTER_INIT_PARAM"]

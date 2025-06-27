@@ -3,7 +3,7 @@
 import re
 from pathlib import Path
 
-from soulstruct.utilities.files import PACKAGE_PATH, write_json
+from soulstruct.utilities.files import SOULSTRUCT_PATH, write_json
 
 
 category_re = re.compile(r"^(\d+) - (.*)$")
@@ -110,5 +110,5 @@ def emedf_txt_to_json(txt_path: Path | str, json_path: Path | str):
 if __name__ == '__main__':
     emedf_txt_to_json(
         r"C:\Users\Scott\Downloads\er-emedf-common-partial.txt",
-        PACKAGE_PATH("eldenring/events/emevd/er-common.emedf.json"),
+        SOULSTRUCT_PATH("eldenring/events/emevd/er-common.emedf.json"),
     )
