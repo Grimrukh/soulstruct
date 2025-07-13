@@ -11,11 +11,14 @@ __all__ = [
     "is_dcx",
 ]
 
+import io
 import logging
 import typing as tp
 import zlib
 from enum import Enum
 from pathlib import Path
+
+import zstandard as zstd
 
 from soulstruct.exceptions import SoulstructError
 from soulstruct.utilities.binary import *
@@ -34,7 +37,7 @@ class DCXVersionInfo(tp.NamedTuple):
     version1: int
     version2: int
     version3: int | None  # not constant for `DCX_EDGE`
-    version4: int
+    compression_level: int | None  # not constant for `DCX_ZSTD`
     version5: int
     version6: int
     version7: int
@@ -71,15 +74,17 @@ class DCXType(Enum):
     DCX_DFLT_10000_44_9 = 6  # DCX header, deflate compression. Primarily used in BB and DS3.
     DCX_DFLT_11000_44_8 = 7  # DCX header, deflate compression. Used for the backup regulation in DS3 save files.
     DCX_DFLT_11000_44_9 = 8  # DCX header, deflate compression. Used in Sekiro.
-    DCX_DFLT_11000_44_9_15 = 9  # DCX header, deflate compression. Used in the ER regulation.
+    DCX_DFLT_11000_44_9_15 = 9  # DCX header, deflate compression. Used in old ER regulation.
     DCX_KRAK = 10  # DCX header, Oodle compression. Used in Sekiro and Elden Ring.
+    DCX_ZSTD = 11  # ZSTD compression. Used in new ER regulation.
 
     # Game default aliases.
     DES = DCX_EDGE
     DS1_DS2 = DCX_DFLT_10000_24_9
     BB_DS3 = DCX_DFLT_10000_44_9
     SEKIRO = DCX_DFLT_11000_44_9
-    ER_REGULATION = DCX_DFLT_11000_44_9_15
+    ER = DCX_KRAK
+    ER_REGULATION = DCX_ZSTD
 
     def get_version_info(self) -> DCXVersionInfo:
         return DCX_VERSION_INFO[self]
@@ -147,15 +152,17 @@ class DCXType(Enum):
             return cls.Unknown
 
 
+# Captures the field values that actually vary across DCX versions.
 DCX_VERSION_INFO = {
-    DCXType.DCP_DFLT: None,
-    DCXType.DCX_EDGE: DCXVersionInfo(b"EDGE", 0x10000, 0x24, None, 0x9000000, 0x10000, 0, 0x100100),
-    DCXType.DCX_DFLT_10000_24_9: DCXVersionInfo(b"DFLT", 0x10000, 0x24, 0x2C, 0x9000000, 0, 0, 0x10100),
-    DCXType.DCX_DFLT_10000_44_9: DCXVersionInfo(b"DFLT", 0x10000, 0x44, 0x4C, 0x9000000, 0, 0, 0x10100),
-    DCXType.DCX_DFLT_11000_44_8: DCXVersionInfo(b"DFLT", 0x11000, 0x44, 0x4C, 0x8000000, 0, 0, 0x10100),
-    DCXType.DCX_DFLT_11000_44_9: DCXVersionInfo(b"DFLT", 0x11000, 0x44, 0x4C, 0x9000000, 0, 0, 0x10100),
-    DCXType.DCX_DFLT_11000_44_9_15: DCXVersionInfo(b"DFLT", 0x11000, 0x44, 0x4C, 0x9000000, 0, 0xF000000, 0x10100),
-    DCXType.DCX_KRAK: DCXVersionInfo(b"KRAK", 0x11000, 0x44, 0x4C, 0x6000000, 0, 0, 0x10100),
+    DCXType.DCP_DFLT:               None,
+    DCXType.DCX_EDGE:               DCXVersionInfo(b"EDGE", 0x10000, 0x24, None, 9,    0x10000, 0,         0x100100),
+    DCXType.DCX_DFLT_10000_24_9:    DCXVersionInfo(b"DFLT", 0x10000, 0x24, 0x2C, 9,    0,       0,         0x010100),
+    DCXType.DCX_DFLT_10000_44_9:    DCXVersionInfo(b"DFLT", 0x10000, 0x44, 0x4C, 9,    0,       0,         0x010100),
+    DCXType.DCX_DFLT_11000_44_8:    DCXVersionInfo(b"DFLT", 0x11000, 0x44, 0x4C, 8,    0,       0,         0x010100),
+    DCXType.DCX_DFLT_11000_44_9:    DCXVersionInfo(b"DFLT", 0x11000, 0x44, 0x4C, 9,    0,       0,         0x010100),
+    DCXType.DCX_DFLT_11000_44_9_15: DCXVersionInfo(b"DFLT", 0x11000, 0x44, 0x4C, 9,    0,       0xF000000, 0x010100),
+    DCXType.DCX_KRAK:               DCXVersionInfo(b"KRAK", 0x11000, 0x44, 0x4C, 6,    0,       0,         0x010100),
+    DCXType.DCX_ZSTD:               DCXVersionInfo(b"ZSTD", 0x11000, 0x44, 0x4C, None, 0,       0,         0x010100),
 }
 
 
@@ -186,9 +193,10 @@ class DCXHeaderStruct(BinaryStruct):
     decompressed_size: int
     compressed_size: int
     dcp: bytes = binary_string(4, asserted=b"DCP", init=False)
-    compression_type: bytes = binary_string(4, asserted=(b"EDGE", b"DFLT", b"KRAK"))
+    compression_type: bytes = binary_string(4, asserted=(b"ZSTD", b"EDGE", b"DFLT", b"KRAK"))
     unk3: int = binary(asserted=0x20, init=False)
-    version4: int  # [0x6000000, 0x8000000, 0x9000000]
+    compression_level: byte  # [6, 8, 9, variable (DCX_ZSTD)]
+    _compression_level_pad: bytes = binary_pad(3, init=False)
     version5: int  # [0, 0x10000]
     version6: int  # [0, 0xF000000]
     unk5: int = binary(asserted=0, init=False)
@@ -203,7 +211,7 @@ class DCXHeaderStruct(BinaryStruct):
             version1=self.version1,
             version2=self.version2,
             version3=self.version3,
-            version4=self.version4,
+            compression_level=self.compression_level,
             version5=self.version5,
             version6=self.version6,
             version7=self.version7,
@@ -288,7 +296,12 @@ def decompress(dcx_source: bytes | BinaryReader | tp.BinaryIO | Path | str) -> t
     reader.unpack_value("i", asserted=8)  # compressed header size
     compressed = reader.read(header.compressed_size)
 
-    if dcx_type == DCXType.DCX_KRAK:
+    if dcx_type == DCXType.DCX_ZSTD:
+        # TODO: Use compression level from header?
+        dctx = zstd.ZstdDecompressor()
+        with dctx.stream_reader(io.BytesIO(compressed)) as r:
+            decompressed = r.read()  # read() until EOF
+    elif dcx_type == DCXType.DCX_KRAK:
         decompressed = oodle.decompress(compressed, header.decompressed_size)
     else:
         decompressed = zlib.decompressobj().decompress(compressed)
@@ -315,7 +328,7 @@ def _compress_dcx_edge(raw_data: bytes) -> bytes:
         compression_type=version_info.compression_type,
         decompressed_size=len(raw_data),
         compressed_size=RESERVED,
-        version4=version_info.version4,
+        compression_level=version_info.compression_level,
         version5=version_info.version5,
         version6=version_info.version6,
         version7=version_info.version7,
@@ -365,15 +378,30 @@ def _compress_dcx_edge(raw_data: bytes) -> bytes:
     return bytes(writer)
 
 
+def _compress_dcx_zstd(raw_data: bytes, compression_level=15) -> bytes:
+    cparams = zstd.ZstdCompressionParameters.from_level(
+        compression_level,
+        window_log=16,
+    )
+    cctx = zstd.ZstdCompressor(
+        compression_params=cparams,
+        write_content_size=False,
+    )
+    return cctx.compress(raw_data)
+
+
 def compress(raw_data: bytes, dcx_type: DCXType) -> bytes:
     """Compress `raw_data` with DCX of `dcx_type`.
 
     Returns bytes that are ready to be written to a DCX file.
     """
     if dcx_type == DCXType.DCX_EDGE:
+        # This does enough differently that we build the DCX header inside the sub-function.
         return _compress_dcx_edge(raw_data)
 
-    if dcx_type == DCXType.DCX_KRAK:
+    if dcx_type == DCXType.DCX_ZSTD:
+        compressed = _compress_dcx_zstd(raw_data)
+    elif dcx_type == DCXType.DCX_KRAK:
         compressed = oodle.compress(raw_data)  # default compressor and compression level are correct
     else:
         compressed = zlib.compress(raw_data, level=7)
@@ -392,7 +420,7 @@ def compress(raw_data: bytes, dcx_type: DCXType) -> bytes:
             compression_type=version_info.compression_type,
             decompressed_size=len(raw_data),
             compressed_size=len(compressed),
-            version4=version_info.version4,
+            compression_level=version_info.compression_level,
             version5=version_info.version5,
             version6=version_info.version6,
             version7=version_info.version7,
