@@ -52,12 +52,12 @@ def GET_CONFIG() -> dict[str, tp.Any]:
     if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
         # Look for `soulstruct_config.json` next to PyInstaller executable.
         config_path = Path(sys.executable).parent / "soulstruct_config.json"
-        if not config_path.exists:
+        if not config_path.exists():
             raise FileNotFoundError(f"Could not find 'soulstruct_config.json' next to Soulstruct executable.")
     else:
         # Look for `soulstruct_config.json` in user data.
         config_path = _SOULSTRUCT_APPDATA / "soulstruct_config.json"
-        if not config_path.exists:
+        if not config_path.exists():
             raise FileNotFoundError(f"Could not find 'soulstruct_config.json' in user data: {config_path}.")
     with config_path.open("r") as f:
         try:
@@ -103,6 +103,7 @@ def SET_CONFIG(**kwargs):
     config_json = {
         k: str(v) if isinstance(v, Path) else v for k, v in config.items()
     }
+    config_path.parent.mkdir(parents=True, exist_ok=True)
     with config_path.open("w") as f:
         json.dump(config_json, f, indent=4)
 
