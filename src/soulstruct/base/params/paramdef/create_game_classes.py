@@ -3,6 +3,7 @@ import logging
 import textwrap
 
 from soulstruct.base.params.paramdef.paramdefbnd import ParamDefBND
+from soulstruct.games import get_game
 from soulstruct.utilities.files import SOULSTRUCT_PATH, read_json, write_json
 
 _LOGGER = logging.getLogger(__name__)
@@ -25,19 +26,6 @@ MAP_PARAM_TYPES = {
     "s32": "int32",
     "f32": "float32",
     "f64": "float64",
-    "fixstr": "str",  # decoded
-    "fixstrW": "str",  # decoded
-}
-MAP_PARAM_TYPES = {
-    "dummy8": "byte",  # pad field
-    "u8": "byte",
-    "u16": "ushort",
-    "u32": "uint",
-    "s8": "sbyte",
-    "s16": "short",
-    "s32": "int",
-    "f32": "float",
-    "f64": "double",
     "fixstr": "str",  # decoded
     "fixstrW": "str",  # decoded
 }
@@ -282,12 +270,12 @@ def create_game_classes(
 
         cls_string = "\n".join(lines)
 
-        # if param_enums_used:
-        # Import param enums.
-        import_lines.insert(5, f"from soulstruct.{game_submodule}.params.enums import *")
-        # if game_types_used:
-        # Import game types.
-        import_lines.insert(5, f"from soulstruct.{game_submodule}.game_types import *")
+        if param_enums_used:
+            # Import param enums.
+            import_lines.insert(5, f"from soulstruct.{game_submodule}.params.enums import *")
+        if game_types_used:
+            # Import game types.
+            import_lines.insert(5, f"from soulstruct.{game_submodule}.game_types import *")
 
         if dynamic_imports:
             import_lines.extend(["", f"from .dynamics import {', '.join(dynamic_imports)}"])
@@ -340,9 +328,23 @@ def modify_paramdef_info(game_submodule: str):
     write_json(json_path, paramdef_info, indent=4)
 
 
-if __name__ == '__main__':
+def create_for_game(game_module_name: str):
+    game = get_game(game_module_name)
+    paramdef_module = game.import_game_submodule("params", "paramdef")
+    _paramdefbnd = paramdef_module.ParamDefBND.from_bundled(game_module_name)
+    update_paramdef_info(_paramdefbnd, game_module_name)
+    modify_paramdef_info(game_module_name)
+    create_game_classes(_paramdefbnd, game_module_name)
+
+
+def create_for_elden_ring():
+    """Uses Elden Ring's"""
     from soulstruct.eldenring.params.paramdef import ParamDefBND
-    _paramdefbnd = ParamDefBND.from_bundled("ELDEN_RING")
+    _paramdefbnd = ParamDefBND.from_bundled("eldenring")
     update_paramdef_info(_paramdefbnd, "eldenring")
     modify_paramdef_info("eldenring")
     create_game_classes(_paramdefbnd, "eldenring")
+
+
+if __name__ == '__main__':
+    create_for_game("darksouls1r")

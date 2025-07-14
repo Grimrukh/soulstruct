@@ -12,7 +12,7 @@ class ParamTest(unittest.TestCase):
         from soulstruct.eldenring.params.paramdef import ParamDef
         from soulstruct.utilities.files import SOULSTRUCT_PATH
 
-        paramdef = ParamDef.from_paramdex_xml(SOULSTRUCT_PATH("eldenring/params/paramdef/Erd-Tools-Defs/AtkParam.xml"))
+        paramdef = ParamDef.from_paramdex_xml(SOULSTRUCT_PATH("eldenring/params/paramdef/Paramdex/AtkParam.xml"))
         print(paramdef)
         print(sum([p.size for _, p in paramdef.fields.items()]))
 

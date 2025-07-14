@@ -301,7 +301,7 @@ ELDEN_RING = Game(
         ".bin": DCXType.Null,
     },
     bundled_resource_paths={
-        "PARAMDEFBND": SOULSTRUCT_PATH("eldenring/params/paramdef/Erd-Tools-Defs"),  # loaded as Paramdex XML
+        "PARAMDEFBND": SOULSTRUCT_PATH("eldenring/params/paramdef/Paramdex"),  # loaded as Paramdex XML
         "MATBINBND": SOULSTRUCT_PATH("eldenring/models/resources/allmaterial.matbinbnd.dcx"),
         "dlc01_MATBINBND": SOULSTRUCT_PATH("eldenring/models/resources/allmaterial_dlc01.matbinbnd.dcx"),
         "dlc02_MATBINBND": SOULSTRUCT_PATH("eldenring/models/resources/allmaterial_dlc02.matbinbnd.dcx"),
@@ -339,8 +339,8 @@ def get_game(game_name: str | Game):
     game_name = game_name.lower()
     for old, new in ((" ", ""), ("'", ""), (":", ""), ("iii", "3"), ("ii", "2")):
         game_name.replace(old, new)
-    if game_name in {"darksouls", "darksouls1", "dks"}:
-        raise ValueError(f"Ambiguous game name: {game_name}. Try 'ptde' or 'dsr' instead.")
+    if game_name in {"darksouls", "darksouls1", "dks", "ds1", "ds"}:
+        raise ValueError(f"Ambiguous game name: {game_name}. For Dark Souls 1, try 'ptde' or 'dsr' instead.")
     hits = []
     for game in GAMES:
         if game_name == game.name.lower() or game_name == game.variable_name.lower() or game_name in game.aliases:

@@ -3,50 +3,48 @@ from __future__ import annotations
 __all__ = ["SOUND_AUTO_REVERB_SELECT_PARAM_ST"]
 
 from soulstruct.base.params.param_row import *
-from soulstruct.eldenring.game_types import *
-from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
 class SOUND_AUTO_REVERB_SELECT_PARAM_ST(ParamRow):
     ReverbType: int = ParamField(
-        uint, "reverbType", default=0,
+        uint32, "reverbType", default=0,
         tooltip="TOOLTIP-TODO",
     )
     AreaNo: int = ParamField(
-        int, "AreaNo", default=-1,
+        int32, "AreaNo", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     IndoorOutdoor: int = ParamField(
-        sbyte, "IndoorOutdoor", default=-1,
+        int8, "IndoorOutdoor", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     UseDistNoA: int = ParamField(
-        sbyte, "useDistNoA", default=-1,
+        int8, "useDistNoA", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     UseDistNoB: int = ParamField(
-        sbyte, "useDistNoB", default=-1,
+        int8, "useDistNoB", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(1, "pad0[1]")
     DistMinA: float = ParamField(
-        float, "DistMinA", default=-1.0,
+        float32, "DistMinA", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     DistMaxA: float = ParamField(
-        float, "DistMaxA", default=-1.0,
+        float32, "DistMaxA", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     DistMinB: float = ParamField(
-        float, "DistMinB", default=-1.0,
+        float32, "DistMinB", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     DistMaxB: float = ParamField(
-        float, "DistMaxB", default=-1.0,
+        float32, "DistMaxB", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     NoHitNumMin: int = ParamField(
-        int, "NoHitNumMin", default=-1,
+        int32, "NoHitNumMin", default=-1,
         tooltip="TOOLTIP-TODO",
     )

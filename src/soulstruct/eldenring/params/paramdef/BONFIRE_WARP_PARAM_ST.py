@@ -3,308 +3,307 @@ from __future__ import annotations
 __all__ = ["BONFIRE_WARP_PARAM_ST"]
 
 from soulstruct.base.params.param_row import *
-from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
 class BONFIRE_WARP_PARAM_ST(ParamRow):
     DisableParamNT: bool = ParamField(
-        byte, "disableParam_NT:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
+        uint8, "disableParam_NT:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
+    _BitPad0: int = ParamBitPad(uint8, "disableParamReserve1:7", bit_count=7)
     _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
     EventflagId: int = ParamField(
-        uint, "eventflagId", default=0,
+        uint32, "eventflagId", default=0,
         tooltip="TOOLTIP-TODO",
     )
     BonfireEntityId: int = ParamField(
-        uint, "bonfireEntityId", default=0,
+        uint32, "bonfireEntityId", default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad1: bytes = ParamPad(2, "pad4[2]")
     BonfireSubCategorySortId: int = ParamField(
-        ushort, "bonfireSubCategorySortId", default=0,
+        uint16, "bonfireSubCategorySortId", default=0,
         tooltip="TOOLTIP-TODO",
     )
     ForbiddenIconId: int = ParamField(
-        ushort, "forbiddenIconId", default=0,
+        uint16, "forbiddenIconId", default=0,
         tooltip="TOOLTIP-TODO",
     )
     DispMinZoomStep: int = ParamField(
-        byte, "dispMinZoomStep", default=0,
+        uint8, "dispMinZoomStep", default=0,
         tooltip="TOOLTIP-TODO",
     )
     SelectMinZoomStep: int = ParamField(
-        byte, "selectMinZoomStep", default=0,
+        uint8, "selectMinZoomStep", default=0,
         tooltip="TOOLTIP-TODO",
     )
     BonfireSubCategoryId: int = ParamField(
-        int, "bonfireSubCategoryId", default=-1,
+        int32, "bonfireSubCategoryId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     ClearedEventFlagId: int = ParamField(
-        uint, "clearedEventFlagId", default=0,
+        uint32, "clearedEventFlagId", default=0,
         tooltip="TOOLTIP-TODO",
     )
     IconId: int = ParamField(
-        ushort, "iconId", default=0,
+        uint16, "iconId", default=0,
         tooltip="TOOLTIP-TODO",
     )
     DispMask00: bool = ParamField(
-        byte, "dispMask00:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
+        uint8, "dispMask00:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
     DispMask01: bool = ParamField(
-        byte, "dispMask01:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
+        uint8, "dispMask01:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _BitPad1: int = ParamBitPad(byte, "pad1_old:6", bit_count=6)
+    _BitPad1: int = ParamBitPad(uint8, "pad1_old:6", bit_count=6)
     DispMask02: bool = ParamField(
-        byte, "dispMask02:1", bit_count=1, default=False,
+        uint8, "dispMask02:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _BitPad2: int = ParamBitPad(byte, "pad1:5", bit_count=5)
+    _BitPad2: int = ParamBitPad(uint8, "pad1:5", bit_count=5)
     _Pad2: bytes = ParamPad(1, "pad2[1]")
     AreaNo: int = ParamField(
-        byte, "areaNo", default=0,
+        uint8, "areaNo", default=0,
         tooltip="TOOLTIP-TODO",
     )
     GridXNo: int = ParamField(
-        byte, "gridXNo", default=0,
+        uint8, "gridXNo", default=0,
         tooltip="TOOLTIP-TODO",
     )
     GridZNo: int = ParamField(
-        byte, "gridZNo", default=0,
+        uint8, "gridZNo", default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad3: bytes = ParamPad(1, "pad3[1]")
     PosX: float = ParamField(
-        float, "posX", default=0.0,
+        float32, "posX", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
     PosY: float = ParamField(
-        float, "posY", default=0.0,
+        float32, "posY", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
     PosZ: float = ParamField(
-        float, "posZ", default=0.0,
+        float32, "posZ", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
     TextId1: int = ParamField(
-        int, "textId1", default=-1,
+        int32, "textId1", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     TextEnableFlagId1: int = ParamField(
-        uint, "textEnableFlagId1", default=0,
+        uint32, "textEnableFlagId1", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextDisableFlagId1: int = ParamField(
-        uint, "textDisableFlagId1", default=0,
+        uint32, "textDisableFlagId1", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextId2: int = ParamField(
-        int, "textId2", default=-1,
+        int32, "textId2", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     TextEnableFlagId2: int = ParamField(
-        uint, "textEnableFlagId2", default=0,
+        uint32, "textEnableFlagId2", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextDisableFlagId2: int = ParamField(
-        uint, "textDisableFlagId2", default=0,
+        uint32, "textDisableFlagId2", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextId3: int = ParamField(
-        int, "textId3", default=-1,
+        int32, "textId3", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     TextEnableFlagId3: int = ParamField(
-        uint, "textEnableFlagId3", default=0,
+        uint32, "textEnableFlagId3", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextDisableFlagId3: int = ParamField(
-        uint, "textDisableFlagId3", default=0,
+        uint32, "textDisableFlagId3", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextId4: int = ParamField(
-        int, "textId4", default=-1,
+        int32, "textId4", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     TextEnableFlagId4: int = ParamField(
-        uint, "textEnableFlagId4", default=0,
+        uint32, "textEnableFlagId4", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextDisableFlagId4: int = ParamField(
-        uint, "textDisableFlagId4", default=0,
+        uint32, "textDisableFlagId4", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextId5: int = ParamField(
-        int, "textId5", default=-1,
+        int32, "textId5", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     TextEnableFlagId5: int = ParamField(
-        uint, "textEnableFlagId5", default=0,
+        uint32, "textEnableFlagId5", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextDisableFlagId5: int = ParamField(
-        uint, "textDisableFlagId5", default=0,
+        uint32, "textDisableFlagId5", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextId6: int = ParamField(
-        int, "textId6", default=-1,
+        int32, "textId6", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     TextEnableFlagId6: int = ParamField(
-        uint, "textEnableFlagId6", default=0,
+        uint32, "textEnableFlagId6", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextDisableFlagId6: int = ParamField(
-        uint, "textDisableFlagId6", default=0,
+        uint32, "textDisableFlagId6", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextId7: int = ParamField(
-        int, "textId7", default=-1,
+        int32, "textId7", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     TextEnableFlagId7: int = ParamField(
-        uint, "textEnableFlagId7", default=0,
+        uint32, "textEnableFlagId7", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextDisableFlagId7: int = ParamField(
-        uint, "textDisableFlagId7", default=0,
+        uint32, "textDisableFlagId7", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextId8: int = ParamField(
-        int, "textId8", default=-1,
+        int32, "textId8", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     TextEnableFlagId8: int = ParamField(
-        uint, "textEnableFlagId8", default=0,
+        uint32, "textEnableFlagId8", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextDisableFlagId8: int = ParamField(
-        uint, "textDisableFlagId8", default=0,
+        uint32, "textDisableFlagId8", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextType1: int = ParamField(
-        byte, "textType1", WORLD_MAP_POINT_TEXT_TYPE, default=0,
+        uint8, "textType1", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextType2: int = ParamField(
-        byte, "textType2", WORLD_MAP_POINT_TEXT_TYPE, default=0,
+        uint8, "textType2", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextType3: int = ParamField(
-        byte, "textType3", WORLD_MAP_POINT_TEXT_TYPE, default=0,
+        uint8, "textType3", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextType4: int = ParamField(
-        byte, "textType4", WORLD_MAP_POINT_TEXT_TYPE, default=0,
+        uint8, "textType4", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextType5: int = ParamField(
-        byte, "textType5", WORLD_MAP_POINT_TEXT_TYPE, default=0,
+        uint8, "textType5", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextType6: int = ParamField(
-        byte, "textType6", WORLD_MAP_POINT_TEXT_TYPE, default=0,
+        uint8, "textType6", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextType7: int = ParamField(
-        byte, "textType7", WORLD_MAP_POINT_TEXT_TYPE, default=0,
+        uint8, "textType7", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextType8: int = ParamField(
-        byte, "textType8", WORLD_MAP_POINT_TEXT_TYPE, default=0,
+        uint8, "textType8", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     NoIgnitionSfxDmypolyId0: int = ParamField(
-        int, "noIgnitionSfxDmypolyId_0", default=-1,
+        int32, "noIgnitionSfxDmypolyId_0", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     NoIgnitionSfxId0: int = ParamField(
-        int, "noIgnitionSfxId_0", default=-1,
+        int32, "noIgnitionSfxId_0", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     NoIgnitionSfxDmypolyId1: int = ParamField(
-        int, "noIgnitionSfxDmypolyId_1", default=-1,
+        int32, "noIgnitionSfxDmypolyId_1", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     NoIgnitionSfxId1: int = ParamField(
-        int, "noIgnitionSfxId_1", default=-1,
+        int32, "noIgnitionSfxId_1", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     TextEnableFlag2Id1: int = ParamField(
-        int, "textEnableFlag2Id1", default=0,
+        int32, "textEnableFlag2Id1", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextEnableFlag2Id2: int = ParamField(
-        int, "textEnableFlag2Id2", default=0,
+        int32, "textEnableFlag2Id2", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextEnableFlag2Id3: int = ParamField(
-        int, "textEnableFlag2Id3", default=0,
+        int32, "textEnableFlag2Id3", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextEnableFlag2Id4: int = ParamField(
-        int, "textEnableFlag2Id4", default=0,
+        int32, "textEnableFlag2Id4", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextEnableFlag2Id5: int = ParamField(
-        int, "textEnableFlag2Id5", default=0,
+        int32, "textEnableFlag2Id5", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextEnableFlag2Id6: int = ParamField(
-        int, "textEnableFlag2Id6", default=0,
+        int32, "textEnableFlag2Id6", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextEnableFlag2Id7: int = ParamField(
-        int, "textEnableFlag2Id7", default=0,
+        int32, "textEnableFlag2Id7", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextEnableFlag2Id8: int = ParamField(
-        int, "textEnableFlag2Id8", default=0,
+        int32, "textEnableFlag2Id8", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextDisableFlag2Id1: int = ParamField(
-        int, "textDisableFlag2Id1", default=0,
+        int32, "textDisableFlag2Id1", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextDisableFlag2Id2: int = ParamField(
-        int, "textDisableFlag2Id2", default=0,
+        int32, "textDisableFlag2Id2", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextDisableFlag2Id3: int = ParamField(
-        int, "textDisableFlag2Id3", default=0,
+        int32, "textDisableFlag2Id3", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextDisableFlag2Id4: int = ParamField(
-        int, "textDisableFlag2Id4", default=0,
+        int32, "textDisableFlag2Id4", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextDisableFlag2Id5: int = ParamField(
-        int, "textDisableFlag2Id5", default=0,
+        int32, "textDisableFlag2Id5", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextDisableFlag2Id6: int = ParamField(
-        int, "textDisableFlag2Id6", default=0,
+        int32, "textDisableFlag2Id6", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextDisableFlag2Id7: int = ParamField(
-        int, "textDisableFlag2Id7", default=0,
+        int32, "textDisableFlag2Id7", default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextDisableFlag2Id8: int = ParamField(
-        int, "textDisableFlag2Id8", default=0,
+        int32, "textDisableFlag2Id8", default=0,
         tooltip="TOOLTIP-TODO",
     )
     AltIconId: int = ParamField(
-        ushort, "altIconId", default=0,
+        uint16, "altIconId", default=0,
         tooltip="TOOLTIP-TODO",
     )
     AltForbiddenIconId: int = ParamField(
-        ushort, "altForbiddenIconId", default=0,
+        uint16, "altForbiddenIconId", default=0,
         tooltip="TOOLTIP-TODO",
     )

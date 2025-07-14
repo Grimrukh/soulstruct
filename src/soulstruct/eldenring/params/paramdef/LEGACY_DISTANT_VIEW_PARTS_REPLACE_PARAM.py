@@ -3,82 +3,80 @@ from __future__ import annotations
 __all__ = ["LEGACY_DISTANT_VIEW_PARTS_REPLACE_PARAM"]
 
 from soulstruct.base.params.param_row import *
-from soulstruct.eldenring.game_types import *
-from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
 class LEGACY_DISTANT_VIEW_PARTS_REPLACE_PARAM(ParamRow):
     TargetMapId: int = ParamField(
-        int, "TargetMapId", default=-1,
+        int32, "TargetMapId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     TargetEventId: int = ParamField(
-        uint, "TargetEventId", default=0,
+        uint32, "TargetEventId", default=0,
         tooltip="TOOLTIP-TODO",
     )
     SrcAssetId: int = ParamField(
-        int, "SrcAssetId", default=-1,
+        int32, "SrcAssetId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     SrcAssetPartsNo: int = ParamField(
-        int, "SrcAssetPartsNo", default=-1,
+        int32, "SrcAssetPartsNo", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     DstAssetId: int = ParamField(
-        int, "DstAssetId", default=-1,
+        int32, "DstAssetId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     DstAssetPartsNo: int = ParamField(
-        int, "DstAssetPartsNo", default=-1,
+        int32, "DstAssetPartsNo", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     SrcAssetIdRangeMin: int = ParamField(
-        int, "SrcAssetIdRangeMin", default=-1,
+        int32, "SrcAssetIdRangeMin", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     SrcAssetIdRangeMax: int = ParamField(
-        int, "SrcAssetIdRangeMax", default=-1,
+        int32, "SrcAssetIdRangeMax", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     DstAssetIdRangeMin: int = ParamField(
-        int, "DstAssetIdRangeMin", default=-1,
+        int32, "DstAssetIdRangeMin", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     DstAssetIdRangeMax: int = ParamField(
-        int, "DstAssetIdRangeMax", default=-1,
+        int32, "DstAssetIdRangeMax", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     LimitedMapRegionId0: int = ParamField(
-        sbyte, "LimitedMapRegionId0", default=-1,
+        int8, "LimitedMapRegionId0", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     LimitedMapRegionId1: int = ParamField(
-        sbyte, "LimitedMapRegionId1", default=-1,
+        int8, "LimitedMapRegionId1", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     LimitedMapRegionId2: int = ParamField(
-        sbyte, "LimitedMapRegionId2", default=-1,
+        int8, "LimitedMapRegionId2", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     LimitedMapRegionId3: int = ParamField(
-        sbyte, "LimitedMapRegionId3", default=-1,
+        int8, "LimitedMapRegionId3", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(4, "reserve[4]")
     LimitedMapRegionAssetId: int = ParamField(
-        int, "LimitedMapRegionAssetId", default=-1,
+        int32, "LimitedMapRegionAssetId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     LimitedMapRegioAssetPartsNo: int = ParamField(
-        int, "LimitedMapRegioAssetPartsNo", default=-1,
+        int32, "LimitedMapRegioAssetPartsNo", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     LimitedMapRegioAssetIdRangeMin: int = ParamField(
-        int, "LimitedMapRegioAssetIdRangeMin", default=-1,
+        int32, "LimitedMapRegioAssetIdRangeMin", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     LimitedMapRegioAssetIdRangeMax: int = ParamField(
-        int, "LimitedMapRegioAssetIdRangeMax", default=-1,
+        int32, "LimitedMapRegioAssetIdRangeMax", default=-1,
         tooltip="TOOLTIP-TODO",
     )

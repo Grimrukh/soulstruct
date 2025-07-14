@@ -3,18 +3,17 @@ from __future__ import annotations
 __all__ = ["RUNTIME_BONE_CONTROL_PARAM_ST"]
 
 from soulstruct.base.params.param_row import *
-from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
 
 class RUNTIME_BONE_CONTROL_PARAM_ST(ParamRow):
     ChrId: int = ParamField(
-        uint, "chrId", default=0,
+        uint32, "chrId", default=0,
         tooltip="TOOLTIP-TODO",
     )
     CtrlType: int = ParamField(
-        byte, "ctrlType", RUNTIME_BONE_CONTROL_TYPE, default=0,
+        uint8, "ctrlType", RUNTIME_BONE_CONTROL_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(11, "pad[11]")
