@@ -111,7 +111,7 @@ def setup(
     console_level: str | int = "INFO",
     file_level: str | int = "DEBUG",
     log_path: str | Path | None = None,
-    rich_tracebacks: bool = True,
+    rich_tracebacks=True,
     clear_old_handlers=True,
     base_logger: logging.Logger | None = None,
     base_module_name="soulstruct",
@@ -135,7 +135,7 @@ def setup(
         None if *log_path* was None.
     """
     logger = base_logger or logging.getLogger(base_module_name)
-    logger.setLevel(logging.NOTSET)  # let handlers filter
+    logger.setLevel(1)  # let handlers filter
 
     if clear_old_handlers:
         # Clear all old handlers from the logger, so we don't get duplicate messages.
