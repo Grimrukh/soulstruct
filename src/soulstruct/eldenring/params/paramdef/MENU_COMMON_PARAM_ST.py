@@ -237,7 +237,6 @@ class MENU_COMMON_PARAM_ST(ParamRow):
         uint32, "pcHorseHpRecoverDispThreshold", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(32, "reserved33_old[32]")
     Unknown0xe0: int = ParamField(
         uint8, "unknown_0xe0", default=0,
         tooltip="TOOLTIP-TODO",
@@ -298,4 +297,4 @@ class MENU_COMMON_PARAM_ST(ParamRow):
         uint8, "unknown_0xee", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(17, "reserved33[17]")
+    _Pad2: bytes = ParamPad(17, "reserved33[17]")

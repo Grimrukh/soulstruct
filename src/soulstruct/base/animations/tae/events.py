@@ -114,7 +114,6 @@ __all__ = [
 ]
 
 import typing as tp
-from dataclasses import dataclass, field
 
 from soulstruct.utilities.binary import *
 

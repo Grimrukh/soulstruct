@@ -125,12 +125,11 @@ class NETWORK_PARAM_ST(ParamRow):
         float32, "breakInRequestTimeOutSec", default=20.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(4, "pad_1_old[4]")
     BreakInRequestAreaCount: int = ParamField(
         uint8, "breakInRequestAreaCount", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(3, "pad_1[3]")
+    _Pad2: bytes = ParamPad(3, "pad_1[3]")
     KeyGuideRange: float = ParamField(
         float32, "keyGuideRange", default=1.0,
         tooltip="TOOLTIP-TODO",
@@ -207,7 +206,7 @@ class NETWORK_PARAM_ST(ParamRow):
         float32, "downloadEvaluationSpan", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad4: bytes = ParamPad(4, "pad_2[4]")
+    _Pad3: bytes = ParamPad(4, "pad_2[4]")
     DeadingGhostStartPosThreshold: float = ParamField(
         float32, "deadingGhostStartPosThreshold", default=1.0,
         tooltip="TOOLTIP-TODO",
@@ -380,7 +379,7 @@ class NETWORK_PARAM_ST(ParamRow):
         int32, "replayBonfirePhantomParamId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad5: bytes = ParamPad(4, "ghostpad[4]")
+    _Pad4: bytes = ParamPad(4, "ghostpad[4]")
     ReloadVisitListCoolTime: float = ParamField(
         float32, "reloadVisitListCoolTime", default=1.0,
         tooltip="TOOLTIP-TODO",
@@ -421,7 +420,7 @@ class NETWORK_PARAM_ST(ParamRow):
         float32, "reloadSearch_RatKing_Max", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad6: bytes = ParamPad(8, "visitpad00[8]")
+    _Pad5: bytes = ParamPad(8, "visitpad00[8]")
     SrttMaxLimit: float = ParamField(
         float32, "srttMaxLimit", default=1000.0,
         tooltip="TOOLTIP-TODO",
@@ -518,8 +517,8 @@ class NETWORK_PARAM_ST(ParamRow):
         uint8, "bloodMessageDisplayMax", default=3,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad7: bytes = ParamPad(9, "pad00[9]")
-    _Pad8: bytes = ParamPad(32, "pad10[32]")
+    _Pad6: bytes = ParamPad(9, "pad00[9]")
+    _Pad7: bytes = ParamPad(32, "pad10[32]")
     SummonMessageInterval: float = ParamField(
         float32, "summonMessageInterval", default=1.0,
         tooltip="TOOLTIP-TODO",
@@ -560,7 +559,7 @@ class NETWORK_PARAM_ST(ParamRow):
         uint32, "BattleRoyalMatchSearchMax", default=1,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad9: bytes = ParamPad(8, "pad11[8]")
+    _Pad8: bytes = ParamPad(8, "pad11[8]")
     VisitorListMax: int = ParamField(
         uint32, "VisitorListMax", default=1,
         tooltip="TOOLTIP-TODO",
@@ -581,7 +580,7 @@ class NETWORK_PARAM_ST(ParamRow):
         float32, "wanderGhostIntervalLifeTime", default=40.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad10: bytes = ParamPad(12, "pad13[12]")
+    _Pad9: bytes = ParamPad(12, "pad13[12]")
     YellowMonkTimeOutTime: float = ParamField(
         float32, "YellowMonkTimeOutTime", default=1.0,
         tooltip="TOOLTIP-TODO",
@@ -594,5 +593,5 @@ class NETWORK_PARAM_ST(ParamRow):
         float32, "YellowMonkOverallFlowTimeOutTime", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad11: bytes = ParamPad(4, "pad14_0[4]")
-    _Pad12: bytes = ParamPad(8, "pad14_1[8]")
+    _Pad10: bytes = ParamPad(4, "pad14_0[4]")
+    _Pad11: bytes = ParamPad(8, "pad14_1[8]")

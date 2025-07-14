@@ -60,9 +60,8 @@ class CS_GRAPHICS_CONFIG_PARAM_ST(ParamRow):
         uint8, "m_volumetricEffectQuality", GX_QUALITY_LEVEL_ENUM, default=3,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(3, "m_dummy[3]")
     MRayTracingQuality: int = ParamField(
         uint8, "m_RayTracingQuality", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(2, "m_dummy[2]")
+    _Pad0: bytes = ParamPad(2, "m_dummy[2]")

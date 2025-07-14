@@ -238,12 +238,11 @@ class BULLET_PARAM_ST(ParamRow):
         uint8, "isPenetrateObj:1", ON_OFF, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _BitPad0: int = ParamBitPad(uint8, "pad_old:6", bit_count=6)
     MayRemoteDetonate: bool = ParamField(
         uint8, "mayRemoteDetonate:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _BitPad1: int = ParamBitPad(uint8, "pad:5", bit_count=5)
+    _BitPad0: int = ParamBitPad(uint8, "pad:5", bit_count=5)
     LaunchConditionType: int = ParamField(
         uint8, "launchConditionType", BULLET_LAUNCH_CONDITION_TYPE, default=0,
         tooltip="Condition for determing if a new bullet will be generated when this bullet lands or expires.",
@@ -398,7 +397,6 @@ class BULLET_PARAM_ST(ParamRow):
         uint8, "isUseBulletWallFilter:1", ON_OFF, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _BitPad2: int = ParamBitPad(uint8, "pad1:1", bit_count=1)
     IsDisableAiProjectileDodge: bool = ParamField(
         uint8, "isDisableAiProjectileDodge:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",

@@ -4,7 +4,7 @@ __all__ = ["GameParamBND"]
 
 import logging
 import typing as tp
-from dataclasses import dataclass, field
+from dataclasses import field
 from pathlib import Path
 
 from soulstruct.containers import BinderVersion, BinderVersion4Info
@@ -16,9 +16,6 @@ from soulstruct.utilities.ParamCrypt import ParamCrypt
 from . import paramdef
 
 _LOGGER = logging.getLogger(__name__)
-
-# if tp.TYPE_CHECKING:
-#     from ..text.msg_directory import MSGDirectory
 
 
 class GameParamBND(_BaseGameParamBND):

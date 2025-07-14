@@ -120,7 +120,6 @@ class ASSET_GEOMETORY_PARAM_ST(ParamRow):
         uint8, "isAttackBacklash:1", bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    _BitPad0: int = ParamBitPad(uint8, "Reserve_2:1", bit_count=1)
     Unknown0x3b7: bool = ParamField(
         uint8, "unknown_0x3b_7:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
@@ -497,7 +496,6 @@ class ASSET_GEOMETORY_PARAM_ST(ParamRow):
         uint8, "excludeActivateRatio_PS4_Legacy", ASSET_EXCLUDE_ACTIVATE_RATIO_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(32, "Reserve_0_old[32]")
     Unknown0x120: int = ParamField(
         uint8, "unknown_0x120", default=0,
         tooltip="TOOLTIP-TODO",
@@ -522,4 +520,4 @@ class ASSET_GEOMETORY_PARAM_ST(ParamRow):
         uint8, "unknown_0x125", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(26, "Reserve_0[26]")
+    _Pad0: bytes = ParamPad(26, "Reserve_0[26]")

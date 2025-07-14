@@ -43,7 +43,6 @@ class POSTURE_CONTROL_PARAM_WEP_LEFT_ST(ParamRow):
         int16, "a003_leftArmFB", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(14, "pad_old[14]")
     A003leftWristFB: int = ParamField(
         int16, "a003_leftWristFB", default=0,
         tooltip="TOOLTIP-TODO",
@@ -56,4 +55,4 @@ class POSTURE_CONTROL_PARAM_WEP_LEFT_ST(ParamRow):
         int16, "a003_leftWeaponRotation", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(8, "pad[8]")
+    _Pad0: bytes = ParamPad(8, "pad[8]")

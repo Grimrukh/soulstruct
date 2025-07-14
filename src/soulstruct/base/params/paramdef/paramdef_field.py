@@ -74,6 +74,10 @@ class ParamDefField:
     # Number of values (>1 for padding only; indicated by square brackets in name). Auto-computed.
     length: int = 1
 
+    # Versioning information provided by Paramdex, so that historical changes can be tracked.
+    removed_version: int = -1
+    first_version: int = -1
+
     # Python information.
     py_fmt: str = ""
     py_type: type[bool | int | float | str | bytes] = None
@@ -114,7 +118,10 @@ class ParamDefField:
         """
         encoding = "utf-16-le" if unicode else "shift_jis_2004"
         uses_string_offsets = format_version >= 202 or (106 <= format_version < 200)
-        kwargs = {"index": field_index, "param_type": param_type}
+        kwargs = {
+            "index": field_index,
+            "param_type": param_type,
+        }  # type: dict[str, int | float | str | type[field_types.base_type]]
 
         if uses_string_offsets:
             display_name_offset = reader["v"]
@@ -124,7 +131,6 @@ class ParamDefField:
             kwargs["display_name"] = raw_display_name.decode(encoding).rstrip("\0")
 
         display_type_name = reader.unpack_string(length=8, encoding="shift_jis_2004")
-        # print(display_type_str.rstrip().encode())
         try:
             kwargs["display_type"] = getattr(field_types, display_type_name)  # type: type[field_types.base_type]
         except AttributeError:
@@ -183,19 +189,20 @@ class ParamDefField:
         if format_version >= 203:
             # Numeric information is now here, with variable format.
             keys = ("default", "minimum", "maximum", "increment")
-            if issubclass(kwargs["display_type"], field_types.basestring):
+            display_type = kwargs["display_type"]  # type: type[field_types.base_type]
+            if issubclass(display_type, field_types.basestring):
                 kwargs["default"] = ""
                 for key in keys[1:]:
                     kwargs[key] = 0.0
                 reader.assert_pad(32)  # four null 64-bit values
-            elif issubclass(kwargs["display_type"], (field_types.f32, field_types.angle32)):
+            elif issubclass(display_type, (field_types.f32, field_types.angle32)):
                 for key in keys:
                     kwargs[key] = reader["f"]
                     reader.assert_pad(4)
-            elif issubclass(kwargs["display_type"], field_types.f64):
+            elif issubclass(display_type, field_types.f64):
                 for key in keys:
                     kwargs[key] = reader["d"]
-            elif kwargs["display_type"].size() <= 4:
+            elif display_type.size() <= 4:
                 for key in keys:
                     kwargs[key] = reader["i"]
                     reader.assert_pad(4)
@@ -221,7 +228,8 @@ class ParamDefField:
             "unk_xb8": "",
             "unk_xc0": "",
             "unk_xc8": "",
-
+            "removed_version": -1,
+            "first_version": -1,
         }
         def_string = xml_node.attrib["Def"]  # e.g., "s32 spEffectId0 = -1"
 
@@ -259,6 +267,15 @@ class ParamDefField:
         else:
             # Use sensible default (0 or 0.0 or empty string).
             kwargs["default"] = display_type.default()
+
+        try:
+            kwargs["removed_version"] = int(xml_node.attrib["RemovedVersion"])
+        except KeyError:
+            pass
+        try:
+            kwargs["first_version"] = int(xml_node.attrib["FirstVersion"])
+        except KeyError:
+            pass
 
         for child in xml_node:
             if child.tag == "DisplayName":

@@ -98,7 +98,6 @@ class OBJ_ACT_PARAM_ST(ParamRow):
         int32, "preActionSfxId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(40, "pad2_old[40]")
     SpQualifiedIdnew: int = ParamField(
         int32, "spQualifiedId_new", default=0,
         tooltip="TOOLTIP-TODO",
@@ -107,4 +106,4 @@ class OBJ_ACT_PARAM_ST(ParamRow):
         int32, "spQualifiedId2_new", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(32, "pad2[32]")
+    _Pad1: bytes = ParamPad(32, "pad2[32]")

@@ -24,7 +24,7 @@ from soulstruct.utilities.binary import *
 if tp.TYPE_CHECKING:
     from soulstruct.utilities.misc import IDList
     from .regions import BaseMSBRegion
-    from .core import MSBEntry
+    from .msb_entry import MSBEntry
 
 
 class RegionShapeType(IntEnum):

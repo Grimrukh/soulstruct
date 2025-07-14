@@ -18,7 +18,6 @@ class SIGN_PUDDLE_PARAM_ST(ParamRow):
         int32, "matchAreaId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(24, "pad1[24]")
     Unknown0x20: int = ParamField(
         int32, "unknown_0x20", default=0,
         tooltip="TOOLTIP-TODO",
@@ -39,7 +38,7 @@ class SIGN_PUDDLE_PARAM_ST(ParamRow):
         uint8, "gridZNo", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(1, "pad3[1]")
+    _Pad1: bytes = ParamPad(1, "pad3[1]")
     PosX: float = ParamField(
         float32, "posX", default=0.0,
         tooltip="TOOLTIP-TODO",
@@ -64,4 +63,4 @@ class SIGN_PUDDLE_PARAM_ST(ParamRow):
         int32, "sortId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(4, "endPad[4]")
+    _Pad2: bytes = ParamPad(4, "endPad[4]")

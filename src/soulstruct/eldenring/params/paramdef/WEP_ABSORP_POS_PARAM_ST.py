@@ -231,7 +231,6 @@ class WEP_ABSORP_POS_PARAM_ST(ParamRow):
         uint8, "dispPosType_leftHang_3", WEP_DISP_POS_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(12, "reserve_old[12]")
     Unknown0x54: int = ParamField(
         int8, "unknown_0x54", default=0,
         tooltip="TOOLTIP-TODO",
@@ -248,4 +247,4 @@ class WEP_ABSORP_POS_PARAM_ST(ParamRow):
         int8, "unknown_0x57", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(8, "reserve[8]")
+    _Pad2: bytes = ParamPad(8, "reserve[8]")

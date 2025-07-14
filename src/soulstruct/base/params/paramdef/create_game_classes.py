@@ -358,4 +358,4 @@ def create_for_elden_ring():
 
 
 if __name__ == '__main__':
-    create_for_game("bloodborne")
+    create_for_elden_ring()

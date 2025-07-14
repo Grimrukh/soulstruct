@@ -111,7 +111,6 @@ class BUDDY_PARAM_ST(ParamRow):
         int32, "generateAnimId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(4, "Reserve2[4]")
     Unknown0x5c: int = ParamField(
         uint32, "unknown_0x5c", default=0,
         tooltip="TOOLTIP-TODO",

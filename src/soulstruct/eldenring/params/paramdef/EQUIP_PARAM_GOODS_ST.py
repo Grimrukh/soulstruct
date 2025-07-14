@@ -109,7 +109,6 @@ class EQUIP_PARAM_GOODS_ST(ParamRow):
         tooltip="Determines compatibility with special effects that affect certain types of attacks. Set to 'Basic' "
                 "for thrown goods and 'No Category' otherwise.",
     )
-    _Pad2: bytes = ParamPad(1, "pad3[1]")
     Unknown0x40: int = ParamField(
         uint8, "unknown_0x40", default=0,
         tooltip="TOOLTIP-TODO",
@@ -133,7 +132,7 @@ class EQUIP_PARAM_GOODS_ST(ParamRow):
         tooltip="The special effect triggered by this good will replace any special effects in the same category as "
                 "this one. Used only by Dragon Stones.",
     )
-    _Pad3: bytes = ParamPad(2, "reserve4[2]")
+    _Pad2: bytes = ParamPad(2, "reserve4[2]")
     UseableByHumans: bool = ParamField(
         uint8, "enable_live:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="Determines if this good can be used by characters who have revived to Human status.",
@@ -346,7 +345,6 @@ class EQUIP_PARAM_GOODS_ST(ParamRow):
         uint8, "isUseNoAttackRegion:1", EQUIP_BOOL, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    _BitPad1: int = ParamBitPad(uint8, "pad1_old:7", bit_count=7)
     Unknown0x731: bool = ParamField(
         uint8, "unknown_0x73_1:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
@@ -355,7 +353,7 @@ class EQUIP_PARAM_GOODS_ST(ParamRow):
         uint8, "quickMatchReplenish:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _BitPad2: int = ParamBitPad(uint8, "pad1:5", bit_count=5)
+    _BitPad1: int = ParamBitPad(uint8, "pad1:5", bit_count=5)
     SaleValue: int = ParamField(
         int32, "saleValue", default=-1,
         tooltip="TOOLTIP-TODO",
@@ -464,9 +462,9 @@ class EQUIP_PARAM_GOODS_ST(ParamRow):
         uint16, "useLevel", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad4: bytes = ParamPad(2, "reserve5[2]")
+    _Pad3: bytes = ParamPad(2, "reserve5[2]")
     ItemGetTutorialFlagId: int = ParamField(
         uint32, "itemGetTutorialFlagId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad5: bytes = ParamPad(8, "reserve3[8]")
+    _Pad4: bytes = ParamPad(8, "reserve3[8]")

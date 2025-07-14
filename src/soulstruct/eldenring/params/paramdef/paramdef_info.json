@@ -1536,10 +1536,6 @@
             "nickname": "IsAttackBacklash",
             "tooltip": "TOOLTIP-TODO"
         },
-        "Reserve_2:1": {
-            "nickname": "Reserve2",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "isLadder:1": {
             "nickname": "IsLadder",
             "tooltip": "TOOLTIP-TODO"
@@ -1914,10 +1910,6 @@
         },
         "unkR1:2": {
             "nickname": "UnkR1",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "Reserve_0_old[32]": {
-            "nickname": "Reserve0old",
             "tooltip": "TOOLTIP-TODO"
         },
         "unknown_0x120": {
@@ -3021,10 +3013,6 @@
             "nickname": "Pad4",
             "tooltip": "TOOLTIP-TODO"
         },
-        "pad7_old[12]": {
-            "nickname": "Pad7old",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "subCategory3": {
             "nickname": "SubCategory3",
             "tooltip": "TOOLTIP-TODO"
@@ -3704,10 +3692,6 @@
             "nickname": "NoIgnitionSfxId1",
             "tooltip": "TOOLTIP-TODO"
         },
-        "pad1_old:6": {
-            "nickname": "Pad1old",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "dispMask02:1": {
             "nickname": "DispMask02",
             "tooltip": "TOOLTIP-TODO"
@@ -3960,10 +3944,6 @@
         },
         "generateAnimId": {
             "nickname": "GenerateAnimId",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "Reserve2[4]": {
-            "nickname": "Reserve2",
             "tooltip": "TOOLTIP-TODO"
         },
         "unknown_0x5c": {
@@ -4613,10 +4593,6 @@
             "nickname": "IsUseBulletWallFilter",
             "tooltip": "TOOLTIP-TODO"
         },
-        "pad1:1": {
-            "nickname": "Pad1",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "isNonDependenceMagicForFunnleNum:1": {
             "nickname": "IsNonDependenceMagicForFunnleNum",
             "tooltip": "TOOLTIP-TODO"
@@ -4715,10 +4691,6 @@
         },
         "pad4[8]": {
             "nickname": "Pad4",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "pad_old:6": {
-            "nickname": "Padold",
             "tooltip": "TOOLTIP-TODO"
         },
         "mayRemoteDetonate:1": {
@@ -5358,10 +5330,6 @@
             "nickname": "Reserve",
             "tooltip": "TOOLTIP-TODO"
         },
-        "pad8_old[4]": {
-            "nickname": "Pad8old",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "unknown_0x50": {
             "nickname": "Unknown0x50",
             "tooltip": "TOOLTIP-TODO"
@@ -5373,24 +5341,6 @@
         "pad8[2]": {
             "nickname": "Pad8",
             "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "CHARMAKEMENU_LISTITEM_PARAM_ST": {
-        "value": {
-            "nickname": "Value",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "captionId": {
-            "nickname": "CaptionId",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "iconId": {
-            "nickname": "IconId",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "reserved[7]": {
-            "nickname": "_Pad0",
-            "tooltip": "Null padding (7 bytes)."
         }
     },
     "CHARMAKEMENUTOP_PARAM_ST": {
@@ -5445,6 +5395,24 @@
         "reserved[4]": {
             "nickname": "Reserved",
             "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "CHARMAKEMENU_LISTITEM_PARAM_ST": {
+        "value": {
+            "nickname": "Value",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "captionId": {
+            "nickname": "CaptionId",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "iconId": {
+            "nickname": "IconId",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "reserved[7]": {
+            "nickname": "_Pad0",
+            "tooltip": "Null padding (7 bytes)."
         }
     },
     "CHR_ACTIVATE_CONDITION_PARAM_ST": {
@@ -5526,6 +5494,20 @@
         },
         "pad2[2]": {
             "nickname": "Pad2",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "CHR_EQUIP_MODEL_PARAM_ST": {
+        "unknown_0x0": {
+            "nickname": "Unknown0x0",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x4": {
+            "nickname": "Unknown0x4",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x8": {
+            "nickname": "Unknown0x8",
             "tooltip": "TOOLTIP-TODO"
         }
     },
@@ -5734,6 +5716,514 @@
         },
         "observeTime_3": {
             "nickname": "ObserveTime3",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "CS_AA_QUALITY_DETAIL": {
+        "enabled": {
+            "nickname": "Enabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "forceFXAA2": {
+            "nickname": "ForceFXAA2",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "dmy[2]": {
+            "nickname": "Dmy",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "CS_DECAL_QUALITY_DETAIL": {
+        "enabled": {
+            "nickname": "Enabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "dmy[3]": {
+            "nickname": "Dmy",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "CS_DOF_QUALITY_DETAIL": {
+        "enabled": {
+            "nickname": "Enabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "dmy[3]": {
+            "nickname": "Dmy",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "forceHiResoBlur": {
+            "nickname": "ForceHiResoBlur",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "maxBlurLevel": {
+            "nickname": "MaxBlurLevel",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "CS_EFFECT_QUALITY_DETAIL": {
+        "softParticleEnabled": {
+            "nickname": "SoftParticleEnabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "glowEnabled": {
+            "nickname": "GlowEnabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "distortionEnable": {
+            "nickname": "DistortionEnable",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "cs_upScaleEnabledType": {
+            "nickname": "CsupScaleEnabledType",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "fNumOnceEmitsScale": {
+            "nickname": "FNumOnceEmitsScale",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "fEmitSpanScale": {
+            "nickname": "FEmitSpanScale",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "fLodDistance1Scale": {
+            "nickname": "FLodDistance1Scale",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "fLodDistance2Scale": {
+            "nickname": "FLodDistance2Scale",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "fLodDistance3Scale": {
+            "nickname": "FLodDistance3Scale",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "fLodDistance4Scale": {
+            "nickname": "FLodDistance4Scale",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "fScaleRenderDistanceScale": {
+            "nickname": "FScaleRenderDistanceScale",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "dmy[4]": {
+            "nickname": "Dmy",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "CS_GRAPHICS_CONFIG_PARAM_ST": {
+        "m_textureFilterQuality": {
+            "nickname": "MtextureFilterQuality",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "m_aaQuality": {
+            "nickname": "MaaQuality",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "m_ssaoQuality": {
+            "nickname": "MssaoQuality",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "m_dofQuality": {
+            "nickname": "MdofQuality",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "m_motionBlurQuality": {
+            "nickname": "MmotionBlurQuality",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "m_shadowQuality": {
+            "nickname": "MshadowQuality",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "m_lightingQuality": {
+            "nickname": "MlightingQuality",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "m_effectQuality": {
+            "nickname": "MeffectQuality",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "m_decalQuality": {
+            "nickname": "MdecalQuality",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "m_reflectionQuality": {
+            "nickname": "MreflectionQuality",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "m_waterQuality": {
+            "nickname": "MwaterQuality",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "m_shaderQuality": {
+            "nickname": "MshaderQuality",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "m_volumetricEffectQuality": {
+            "nickname": "MvolumetricEffectQuality",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "m_RayTracingQuality": {
+            "nickname": "MRayTracingQuality",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "m_dummy[2]": {
+            "nickname": "Mdummy",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "CS_KEY_ASSIGN_MENUITEM_PARAM": {
+        "textID": {
+            "nickname": "TextID",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "key": {
+            "nickname": "Key",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "enableUnassign": {
+            "nickname": "EnableUnassign",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "enablePadConfig": {
+            "nickname": "EnablePadConfig",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "enableMouseConfig": {
+            "nickname": "EnableMouseConfig",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "group": {
+            "nickname": "Group",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "mappingTextID": {
+            "nickname": "MappingTextID",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "viewPad": {
+            "nickname": "ViewPad",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "viewKeyboardMouse": {
+            "nickname": "ViewKeyboardMouse",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "padding[6]": {
+            "nickname": "Padding",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "CS_LIGHTING_QUALITY_DETAIL": {
+        "localLightDistFactor": {
+            "nickname": "LocalLightDistFactor",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "localLightShadowEnabled": {
+            "nickname": "LocalLightShadowEnabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "forwardPassLightingEnabled": {
+            "nickname": "ForwardPassLightingEnabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "localLightShadowSpecLevelMax": {
+            "nickname": "LocalLightShadowSpecLevelMax",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "dmy[1]": {
+            "nickname": "Dmy",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "CS_MOTION_BLUR_QUALITY_DETAIL": {
+        "enabled": {
+            "nickname": "Enabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "ombEnabled": {
+            "nickname": "OmbEnabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "forceScaleVelocityBuffer": {
+            "nickname": "ForceScaleVelocityBuffer",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "cheapFilterMode": {
+            "nickname": "CheapFilterMode",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "sampleCountBias": {
+            "nickname": "SampleCountBias",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "recurrenceCountBias": {
+            "nickname": "RecurrenceCountBias",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "blurMaxLengthScale": {
+            "nickname": "BlurMaxLengthScale",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "CS_RAYTRACING_QUALITY_DETAIL": {
+        "enableRaytraceAO": {
+            "nickname": "EnableRaytraceAO",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "enableRaytraceShadows": {
+            "nickname": "EnableRaytraceShadows",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Unk0x02": {
+            "nickname": "Unk0x02",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Unk0x03": {
+            "nickname": "Unk0x03",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "UnkFloat0x04": {
+            "nickname": "UnkFloat0x04",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Unk0x08": {
+            "nickname": "Unk0x08",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "UnkFloat0x0C": {
+            "nickname": "UnkFloat0x0C",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Unk0x10": {
+            "nickname": "Unk0x10",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "penumbraSize": {
+            "nickname": "PenumbraSize",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "renderDistance": {
+            "nickname": "RenderDistance",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "CS_REFLECTION_QUALITY_DETAIL": {
+        "enabled": {
+            "nickname": "Enabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "localLightEnabled": {
+            "nickname": "LocalLightEnabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "localLightForceEnabled": {
+            "nickname": "LocalLightForceEnabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "dmy[1]": {
+            "nickname": "Dmy",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "resolutionDivider": {
+            "nickname": "ResolutionDivider",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "ssrEnabled": {
+            "nickname": "SsrEnabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "ssrGaussianBlurEnabled": {
+            "nickname": "SsrGaussianBlurEnabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "dmy2[2]": {
+            "nickname": "Dmy2",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "ssrDepthRejectThresholdScale": {
+            "nickname": "SsrDepthRejectThresholdScale",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "ssrRayTraceStepScale": {
+            "nickname": "SsrRayTraceStepScale",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "ssrFadeToViewerBias": {
+            "nickname": "SsrFadeToViewerBias",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "ssrFresnelRejectBias": {
+            "nickname": "SsrFresnelRejectBias",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "CS_SHADER_QUALITY_DETAIL": {
+        "sssEnabled": {
+            "nickname": "SssEnabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "tessellationEnabled": {
+            "nickname": "TessellationEnabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "highPrecisionNormalEnabled": {
+            "nickname": "HighPrecisionNormalEnabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "dmy[1]": {
+            "nickname": "Dmy",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "CS_SHADOW_QUALITY_DETAIL": {
+        "enabled": {
+            "nickname": "Enabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "maxFilterLevel": {
+            "nickname": "MaxFilterLevel",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "dmy[2]": {
+            "nickname": "Dmy",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "textureSizeScaler": {
+            "nickname": "TextureSizeScaler",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "textureSizeDivider": {
+            "nickname": "TextureSizeDivider",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "textureMinSize": {
+            "nickname": "TextureMinSize",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "textureMaxSize": {
+            "nickname": "TextureMaxSize",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "blurCountBias": {
+            "nickname": "BlurCountBias",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "CS_SSAO_QUALITY_DETAIL": {
+        "enabled": {
+            "nickname": "Enabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "cs_reprojEnabledType": {
+            "nickname": "CsreprojEnabledType",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "cs_upScaleEnabledType": {
+            "nickname": "CsupScaleEnabledType",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "cs_useNormalEnabledType": {
+            "nickname": "CsuseNormalEnabledType",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "dmy[1]": {
+            "nickname": "Dmy",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "CS_TEXTURE_FILTER_QUALITY_DETAIL": {
+        "filter": {
+            "nickname": "Filter",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "dmy[3]": {
+            "nickname": "Dmy",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "maxAnisoLevel": {
+            "nickname": "MaxAnisoLevel",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "CS_VOLUMETRIC_EFFECT_QUALITY_DETAIL": {
+        "fogEnabled": {
+            "nickname": "FogEnabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "fogShadowEnabled": {
+            "nickname": "FogShadowEnabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "dmy[2]": {
+            "nickname": "Dmy",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "fogShadowSampleCountBias": {
+            "nickname": "FogShadowSampleCountBias",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "fogLocalLightDistScale": {
+            "nickname": "FogLocalLightDistScale",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "fogVolueSizeScaler": {
+            "nickname": "FogVolueSizeScaler",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "fogVolueSizeDivider": {
+            "nickname": "FogVolueSizeDivider",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "fogVolumeDepthScaler": {
+            "nickname": "FogVolumeDepthScaler",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "fogVolumeDepthDivider": {
+            "nickname": "FogVolumeDepthDivider",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "fogVolumeEnabled": {
+            "nickname": "FogVolumeEnabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "fogVolumeUpScaleType": {
+            "nickname": "FogVolumeUpScaleType",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "fogVolumeEdgeCorrectionLevel": {
+            "nickname": "FogVolumeEdgeCorrectionLevel",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "fogVolumeRayMarcingSampleCountOffset": {
+            "nickname": "FogVolumeRayMarcingSampleCountOffset",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "fogVolumeShadowEnabled": {
+            "nickname": "FogVolumeShadowEnabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "fogVolumeForceShadowing": {
+            "nickname": "FogVolumeForceShadowing",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "fogVolumeResolution": {
+            "nickname": "FogVolumeResolution",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "pad2[1]": {
+            "nickname": "Pad2",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "CS_WATER_QUALITY_DETAIL": {
+        "interactionEnabled": {
+            "nickname": "InteractionEnabled",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "dmy[3]": {
+            "nickname": "Dmy",
             "tooltip": "TOOLTIP-TODO"
         }
     },
@@ -6064,10 +6554,6 @@
         },
         "HitParts_1": {
             "nickname": "HitParts1",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "reserved_2_old[12]": {
-            "nickname": "Reserved2old",
             "tooltip": "TOOLTIP-TODO"
         },
         "unknown_0x18": {
@@ -7902,10 +8388,6 @@
             "nickname": "CanMountWepTorch",
             "tooltip": "TOOLTIP-TODO"
         },
-        "reserved_canMountWep:4": {
-            "nickname": "ReservedcanMountWep",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "spEffectMsgId0": {
             "nickname": "SpEffectMsgId0",
             "tooltip": "TOOLTIP-TODO"
@@ -7934,10 +8416,6 @@
             "nickname": "Pad6",
             "tooltip": "TOOLTIP-TODO"
         },
-        "pad2_old[2]": {
-            "nickname": "Pad2old",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "isSpecialSwordArt": {
             "nickname": "IsSpecialSwordArt",
             "tooltip": "TOOLTIP-TODO"
@@ -7960,10 +8438,6 @@
         },
         "canMountWep_ThrowingWeapon:1": {
             "nickname": "CanMountWepThrowingWeapon",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "reserved2_canMountWep_old[3]": {
-            "nickname": "Reserved2canMountWepold",
             "tooltip": "TOOLTIP-TODO"
         },
         "canMountWep_ReverseHandSword:1": {
@@ -8102,10 +8576,6 @@
         "spEffectCategory": {
             "nickname": "SpecialEffectCategory",
             "tooltip": "Determines compatibility with special effects that affect certain types of attacks. Set to 'Basic' for thrown goods and 'No Category' otherwise."
-        },
-        "pad3[1]": {
-            "nickname": "Pad3",
-            "tooltip": "TOOLTIP-TODO"
         },
         "goodsUseAnim": {
             "nickname": "UseAnimation",
@@ -8464,10 +8934,6 @@
         },
         "unknown_0x40": {
             "nickname": "Unknown0x40",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "pad1_old:7": {
-            "nickname": "Pad1old",
             "tooltip": "TOOLTIP-TODO"
         },
         "unknown_0x73_1:1": {
@@ -10577,10 +11043,6 @@
             "nickname": "VsPlayerDmgCorrectRateCurse",
             "tooltip": "TOOLTIP-TODO"
         },
-        "unk1:3": {
-            "nickname": "Unk1",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "unknown_0x17c_5:1": {
             "nickname": "Unknown0x17c5",
             "tooltip": "TOOLTIP-TODO"
@@ -10591,10 +11053,6 @@
         },
         "isWeaponCatalyst:1": {
             "nickname": "IsWeaponCatalyst",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "pad_old[8]": {
-            "nickname": "Padold",
             "tooltip": "TOOLTIP-TODO"
         },
         "restrictSpecialSwordArt": {
@@ -12540,6 +12998,36 @@
             "tooltip": "TOOLTIP-TODO"
         }
     },
+    "FINAL_DAMAGE_RATE_PARAM_ST": {
+        "physRate": {
+            "nickname": "PhysRate",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "magRate": {
+            "nickname": "MagRate",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "fireRate": {
+            "nickname": "FireRate",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "thunRate": {
+            "nickname": "ThunRate",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "darkRate": {
+            "nickname": "DarkRate",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "staminaRate": {
+            "nickname": "StaminaRate",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "saRate": {
+            "nickname": "SaRate",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
     "FOOT_SFX_PARAM_ST": {
         "sfxId_00": {
             "nickname": "SfxId00",
@@ -14260,10 +14748,6 @@
             "nickname": "AiSightRatemidnightA",
             "tooltip": "TOOLTIP-TODO"
         },
-        "reserve4_2[4]": {
-            "nickname": "Reserve42",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "aiSightRate_sunloss_light": {
             "nickname": "AiSightRatesunlosslight",
             "tooltip": "TOOLTIP-TODO"
@@ -14636,14 +15120,6 @@
             "nickname": "Unknown0x230",
             "tooltip": "TOOLTIP-TODO"
         },
-        "reserved_124[48]": {
-            "nickname": "Reserved124",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "reserved_124[32]": {
-            "nickname": "Reserved124",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "unknown_0x2f0": {
             "nickname": "Unknown0x2f0",
             "tooltip": "TOOLTIP-TODO"
@@ -14816,10 +15292,6 @@
             "nickname": "Unknown0x344",
             "tooltip": "TOOLTIP-TODO"
         },
-        "pad_0x348[40]": {
-            "nickname": "Pad0x348",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "unknown_0x34c": {
             "nickname": "Unknown0x34c",
             "tooltip": "TOOLTIP-TODO"
@@ -14898,368 +15370,6 @@
         },
         "endPad[108]": {
             "nickname": "EndPad",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "CS_AA_QUALITY_DETAIL": {
-        "enabled": {
-            "nickname": "Enabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "forceFXAA2": {
-            "nickname": "ForceFXAA2",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "dmy[2]": {
-            "nickname": "Dmy",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "CS_DECAL_QUALITY_DETAIL": {
-        "enabled": {
-            "nickname": "Enabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "dmy[3]": {
-            "nickname": "Dmy",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "CS_DOF_QUALITY_DETAIL": {
-        "enabled": {
-            "nickname": "Enabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "dmy[3]": {
-            "nickname": "Dmy",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "forceHiResoBlur": {
-            "nickname": "ForceHiResoBlur",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "maxBlurLevel": {
-            "nickname": "MaxBlurLevel",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "CS_EFFECT_QUALITY_DETAIL": {
-        "softParticleEnabled": {
-            "nickname": "SoftParticleEnabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "glowEnabled": {
-            "nickname": "GlowEnabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "distortionEnable": {
-            "nickname": "DistortionEnable",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "cs_upScaleEnabledType": {
-            "nickname": "CsupScaleEnabledType",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "fNumOnceEmitsScale": {
-            "nickname": "FNumOnceEmitsScale",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "fEmitSpanScale": {
-            "nickname": "FEmitSpanScale",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "fLodDistance1Scale": {
-            "nickname": "FLodDistance1Scale",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "fLodDistance2Scale": {
-            "nickname": "FLodDistance2Scale",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "fLodDistance3Scale": {
-            "nickname": "FLodDistance3Scale",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "fLodDistance4Scale": {
-            "nickname": "FLodDistance4Scale",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "fScaleRenderDistanceScale": {
-            "nickname": "FScaleRenderDistanceScale",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "dmy[4]": {
-            "nickname": "Dmy",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "CS_LIGHTING_QUALITY_DETAIL": {
-        "localLightDistFactor": {
-            "nickname": "LocalLightDistFactor",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "localLightShadowEnabled": {
-            "nickname": "LocalLightShadowEnabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "forwardPassLightingEnabled": {
-            "nickname": "ForwardPassLightingEnabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "localLightShadowSpecLevelMax": {
-            "nickname": "LocalLightShadowSpecLevelMax",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "dmy[1]": {
-            "nickname": "Dmy",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "CS_MOTION_BLUR_QUALITY_DETAIL": {
-        "enabled": {
-            "nickname": "Enabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "ombEnabled": {
-            "nickname": "OmbEnabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "forceScaleVelocityBuffer": {
-            "nickname": "ForceScaleVelocityBuffer",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "cheapFilterMode": {
-            "nickname": "CheapFilterMode",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "sampleCountBias": {
-            "nickname": "SampleCountBias",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "recurrenceCountBias": {
-            "nickname": "RecurrenceCountBias",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "blurMaxLengthScale": {
-            "nickname": "BlurMaxLengthScale",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "CS_REFLECTION_QUALITY_DETAIL": {
-        "enabled": {
-            "nickname": "Enabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "localLightEnabled": {
-            "nickname": "LocalLightEnabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "localLightForceEnabled": {
-            "nickname": "LocalLightForceEnabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "dmy[1]": {
-            "nickname": "Dmy",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "resolutionDivider": {
-            "nickname": "ResolutionDivider",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "ssrEnabled": {
-            "nickname": "SsrEnabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "ssrGaussianBlurEnabled": {
-            "nickname": "SsrGaussianBlurEnabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "dmy2[2]": {
-            "nickname": "Dmy2",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "ssrDepthRejectThresholdScale": {
-            "nickname": "SsrDepthRejectThresholdScale",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "ssrRayTraceStepScale": {
-            "nickname": "SsrRayTraceStepScale",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "ssrFadeToViewerBias": {
-            "nickname": "SsrFadeToViewerBias",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "ssrFresnelRejectBias": {
-            "nickname": "SsrFresnelRejectBias",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "CS_SHADER_QUALITY_DETAIL": {
-        "sssEnabled": {
-            "nickname": "SssEnabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "tessellationEnabled": {
-            "nickname": "TessellationEnabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "highPrecisionNormalEnabled": {
-            "nickname": "HighPrecisionNormalEnabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "dmy[1]": {
-            "nickname": "Dmy",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "CS_SHADOW_QUALITY_DETAIL": {
-        "enabled": {
-            "nickname": "Enabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "maxFilterLevel": {
-            "nickname": "MaxFilterLevel",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "dmy[2]": {
-            "nickname": "Dmy",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "textureSizeScaler": {
-            "nickname": "TextureSizeScaler",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "textureSizeDivider": {
-            "nickname": "TextureSizeDivider",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "textureMinSize": {
-            "nickname": "TextureMinSize",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "textureMaxSize": {
-            "nickname": "TextureMaxSize",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "blurCountBias": {
-            "nickname": "BlurCountBias",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "CS_SSAO_QUALITY_DETAIL": {
-        "enabled": {
-            "nickname": "Enabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "cs_reprojEnabledType": {
-            "nickname": "CsreprojEnabledType",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "cs_upScaleEnabledType": {
-            "nickname": "CsupScaleEnabledType",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "cs_useNormalEnabledType": {
-            "nickname": "CsuseNormalEnabledType",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "dmy[1]": {
-            "nickname": "Dmy",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "CS_TEXTURE_FILTER_QUALITY_DETAIL": {
-        "filter": {
-            "nickname": "Filter",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "dmy[3]": {
-            "nickname": "Dmy",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "maxAnisoLevel": {
-            "nickname": "MaxAnisoLevel",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "CS_VOLUMETRIC_EFFECT_QUALITY_DETAIL": {
-        "fogEnabled": {
-            "nickname": "FogEnabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "fogShadowEnabled": {
-            "nickname": "FogShadowEnabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "dmy[2]": {
-            "nickname": "Dmy",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "fogShadowSampleCountBias": {
-            "nickname": "FogShadowSampleCountBias",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "fogLocalLightDistScale": {
-            "nickname": "FogLocalLightDistScale",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "fogVolueSizeScaler": {
-            "nickname": "FogVolueSizeScaler",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "fogVolueSizeDivider": {
-            "nickname": "FogVolueSizeDivider",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "fogVolumeDepthScaler": {
-            "nickname": "FogVolumeDepthScaler",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "fogVolumeDepthDivider": {
-            "nickname": "FogVolumeDepthDivider",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "fogVolumeEnabled": {
-            "nickname": "FogVolumeEnabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "fogVolumeUpScaleType": {
-            "nickname": "FogVolumeUpScaleType",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "fogVolumeEdgeCorrectionLevel": {
-            "nickname": "FogVolumeEdgeCorrectionLevel",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "fogVolumeRayMarcingSampleCountOffset": {
-            "nickname": "FogVolumeRayMarcingSampleCountOffset",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "fogVolumeShadowEnabled": {
-            "nickname": "FogVolumeShadowEnabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "fogVolumeForceShadowing": {
-            "nickname": "FogVolumeForceShadowing",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "fogVolumeResolution": {
-            "nickname": "FogVolumeResolution",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "pad2[1]": {
-            "nickname": "Pad2",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "CS_WATER_QUALITY_DETAIL": {
-        "interactionEnabled": {
-            "nickname": "InteractionEnabled",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "dmy[3]": {
-            "nickname": "Dmy",
             "tooltip": "TOOLTIP-TODO"
         }
     },
@@ -15344,72 +15454,6 @@
         },
         "reserved04[240]": {
             "nickname": "Reserved04",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "CS_GRAPHICS_CONFIG_PARAM_ST": {
-        "m_textureFilterQuality": {
-            "nickname": "MtextureFilterQuality",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "m_aaQuality": {
-            "nickname": "MaaQuality",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "m_ssaoQuality": {
-            "nickname": "MssaoQuality",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "m_dofQuality": {
-            "nickname": "MdofQuality",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "m_motionBlurQuality": {
-            "nickname": "MmotionBlurQuality",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "m_shadowQuality": {
-            "nickname": "MshadowQuality",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "m_lightingQuality": {
-            "nickname": "MlightingQuality",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "m_effectQuality": {
-            "nickname": "MeffectQuality",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "m_decalQuality": {
-            "nickname": "MdecalQuality",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "m_reflectionQuality": {
-            "nickname": "MreflectionQuality",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "m_waterQuality": {
-            "nickname": "MwaterQuality",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "m_shaderQuality": {
-            "nickname": "MshaderQuality",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "m_volumetricEffectQuality": {
-            "nickname": "MvolumetricEffectQuality",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "m_dummy[3]": {
-            "nickname": "Mdummy",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "m_RayTracingQuality": {
-            "nickname": "MRayTracingQuality",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "m_dummy[2]": {
-            "nickname": "Mdummy",
             "tooltip": "TOOLTIP-TODO"
         }
     },
@@ -16733,48 +16777,6 @@
             "tooltip": "TOOLTIP-TODO"
         }
     },
-    "CS_KEY_ASSIGN_MENUITEM_PARAM": {
-        "textID": {
-            "nickname": "TextID",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "key": {
-            "nickname": "Key",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "enableUnassign": {
-            "nickname": "EnableUnassign",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "enablePadConfig": {
-            "nickname": "EnablePadConfig",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "enableMouseConfig": {
-            "nickname": "EnableMouseConfig",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "group": {
-            "nickname": "Group",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "mappingTextID": {
-            "nickname": "MappingTextID",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "viewPad": {
-            "nickname": "ViewPad",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "viewKeyboardMouse": {
-            "nickname": "ViewKeyboardMouse",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "padding[6]": {
-            "nickname": "Padding",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
     "KEY_ASSIGN_PARAM_ST": {
         "padKeyId": {
             "nickname": "PadKeyId",
@@ -17988,6 +17990,92 @@
             "tooltip": "TOOLTIP-TODO"
         }
     },
+    "MAP_GRID_CREATE_HEIGHT_LIMIT_DETAIL_INFO_PARAM_ST": {
+        "mapId": {
+            "nickname": "MapId",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x4": {
+            "nickname": "Unknown0x4",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x8": {
+            "nickname": "Unknown0x8",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0xc": {
+            "nickname": "Unknown0xc",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x10": {
+            "nickname": "Unknown0x10",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x14": {
+            "nickname": "Unknown0x14",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x18": {
+            "nickname": "Unknown0x18",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x1c": {
+            "nickname": "Unknown0x1c",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x20": {
+            "nickname": "Unknown0x20",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x24": {
+            "nickname": "Unknown0x24",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x28": {
+            "nickname": "Unknown0x28",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x2c": {
+            "nickname": "Unknown0x2c",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x2d": {
+            "nickname": "Unknown0x2d",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x2e": {
+            "nickname": "Unknown0x2e",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x2f": {
+            "nickname": "Unknown0x2f",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x30": {
+            "nickname": "Unknown0x30",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x31": {
+            "nickname": "Unknown0x31",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x32": {
+            "nickname": "Unknown0x32",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x34": {
+            "nickname": "Unknown0x34",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x38": {
+            "nickname": "Unknown0x38",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x3c": {
+            "nickname": "Unknown0x3c",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
     "MAP_GRID_CREATE_HEIGHT_LIMIT_INFO_PARAM_ST": {
         "GridEnableCreateHeightMin": {
             "nickname": "GridEnableCreateHeightMin",
@@ -18094,6 +18182,80 @@
             "tooltip": "TOOLTIP-TODO"
         }
     },
+    "MAP_NAME_TEX_PARAM_ST_DLC02": {
+        "disableParam_NT:1": {
+            "nickname": "DisableParamNT",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "disableParamReserve1:7": {
+            "nickname": "DisableParamReserve1",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "disableParamReserve2[3]": {
+            "nickname": "DisableParamReserve2",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "srcR": {
+            "nickname": "SrcR",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "srcG": {
+            "nickname": "SrcG",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "srcB": {
+            "nickname": "SrcB",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "pad1[1]": {
+            "nickname": "Pad1",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "mapNameId": {
+            "nickname": "MapNameId",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0xc": {
+            "nickname": "Unknown0xc",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x10": {
+            "nickname": "Unknown0x10",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x11": {
+            "nickname": "Unknown0x11",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x12": {
+            "nickname": "Unknown0x12",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x13": {
+            "nickname": "Unknown0x13",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x14": {
+            "nickname": "Unknown0x14",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknownTextID_1": {
+            "nickname": "UnknownTextID1",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknownTextID_2": {
+            "nickname": "UnknownTextID2",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x20": {
+            "nickname": "Unknown0x20",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x24": {
+            "nickname": "Unknown0x24",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
     "MAP_PIECE_TEX_PARAM_ST": {
         "disableParam_NT:1": {
             "nickname": "DisableParamNT",
@@ -18132,6 +18294,68 @@
             "tooltip": "TOOLTIP-TODO"
         }
     },
+    "MAP_PIECE_TEX_PARAM_ST_DLC02": {
+        "disableParam_NT:1": {
+            "nickname": "DisableParamNT",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "disableParamReserve1:7": {
+            "nickname": "DisableParamReserve1",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "disableParamReserve2[3]": {
+            "nickname": "DisableParamReserve2",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "srcR": {
+            "nickname": "SrcR",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "srcG": {
+            "nickname": "SrcG",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "srcB": {
+            "nickname": "SrcB",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "pad1[1]": {
+            "nickname": "Pad1",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "saveMapNameId": {
+            "nickname": "SaveMapNameId",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "multiPlayAreaId": {
+            "nickname": "MultiPlayAreaId",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x10": {
+            "nickname": "Unknown0x10",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x14": {
+            "nickname": "Unknown0x14",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x18": {
+            "nickname": "Unknown0x18",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x1c": {
+            "nickname": "Unknown0x1c",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknownPlayRegion_1": {
+            "nickname": "UnknownPlayRegion1",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknownPlayRegion_2": {
+            "nickname": "UnknownPlayRegion2",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
     "MATERIAL_EX_PARAM_ST": {
         "paramName[32]": {
             "nickname": "ParamName",
@@ -18162,6 +18386,59 @@
             "tooltip": "TOOLTIP-TODO"
         },
         "pad[8]": {
+            "nickname": "Pad",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "MENUPROPERTY_LAYOUT": {
+        "LayoutPath[16]": {
+            "nickname": "LayoutPath",
+            "tooltip": "TODO"
+        },
+        "PropertyID": {
+            "nickname": "MenuPropertyID",
+            "tooltip": "TODO"
+        },
+        "CaptionTextID": {
+            "nickname": "CaptionTextID",
+            "tooltip": "TODO"
+        },
+        "HelpTextID": {
+            "nickname": "HelpTextID",
+            "tooltip": "TODO"
+        },
+        "reserved[4]": {
+            "nickname": "_Pad0",
+            "tooltip": "Null padding (4 bytes)."
+        }
+    },
+    "MENUPROPERTY_SPEC": {
+        "CaptionTextID": {
+            "nickname": "CaptionTextID",
+            "tooltip": "TODO"
+        },
+        "IconID": {
+            "nickname": "IconID",
+            "tooltip": "TODO",
+            "game_type": "Icon"
+        },
+        "RequiredPropertyID": {
+            "nickname": "RequiredPropertyID",
+            "tooltip": "TODO"
+        },
+        "CompareType": {
+            "nickname": "CompareType",
+            "tooltip": "TODO"
+        },
+        "pad2[1]": {
+            "nickname": "Pad2",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "FormatType": {
+            "nickname": "FormatType",
+            "tooltip": "TODO"
+        },
+        "pad[16]": {
             "nickname": "Pad",
             "tooltip": "TOOLTIP-TODO"
         }
@@ -18403,10 +18680,6 @@
             "nickname": "PcHorseHpRecoverDispThreshold",
             "tooltip": "TOOLTIP-TODO"
         },
-        "reserved33_old[32]": {
-            "nickname": "Reserved33old",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "unknown_0xe0": {
             "nickname": "Unknown0xe0",
             "tooltip": "TOOLTIP-TODO"
@@ -18580,59 +18853,6 @@
             "tooltip": "TOOLTIP-TODO"
         }
     },
-    "MENUPROPERTY_LAYOUT": {
-        "LayoutPath[16]": {
-            "nickname": "LayoutPath",
-            "tooltip": "TODO"
-        },
-        "PropertyID": {
-            "nickname": "MenuPropertyID",
-            "tooltip": "TODO"
-        },
-        "CaptionTextID": {
-            "nickname": "CaptionTextID",
-            "tooltip": "TODO"
-        },
-        "HelpTextID": {
-            "nickname": "HelpTextID",
-            "tooltip": "TODO"
-        },
-        "reserved[4]": {
-            "nickname": "_Pad0",
-            "tooltip": "Null padding (4 bytes)."
-        }
-    },
-    "MENUPROPERTY_SPEC": {
-        "CaptionTextID": {
-            "nickname": "CaptionTextID",
-            "tooltip": "TODO"
-        },
-        "IconID": {
-            "nickname": "IconID",
-            "tooltip": "TODO",
-            "game_type": "Icon"
-        },
-        "RequiredPropertyID": {
-            "nickname": "RequiredPropertyID",
-            "tooltip": "TODO"
-        },
-        "CompareType": {
-            "nickname": "CompareType",
-            "tooltip": "TODO"
-        },
-        "pad2[1]": {
-            "nickname": "Pad2",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "FormatType": {
-            "nickname": "FormatType",
-            "tooltip": "TODO"
-        },
-        "pad[16]": {
-            "nickname": "Pad",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
     "MENU_VALUE_TABLE_SPEC": {
         "value": {
             "nickname": "Value",
@@ -18686,6 +18906,60 @@
         },
         "pad2[4]": {
             "nickname": "Pad2",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "MIMICRY_ESTABLISHMENT_TEX_PARAM_ST_DLC02": {
+        "disableParam_NT:1": {
+            "nickname": "DisableParamNT",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "disableParamReserve1:7": {
+            "nickname": "DisableParamReserve1",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "disableParamReserve2[3]": {
+            "nickname": "DisableParamReserve2",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "srcR": {
+            "nickname": "SrcR",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "srcG": {
+            "nickname": "SrcG",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "srcB": {
+            "nickname": "SrcB",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "pad1[1]": {
+            "nickname": "Pad1",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "mimicryEstablishmentParamId": {
+            "nickname": "MimicryEstablishmentParamId",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0xc": {
+            "nickname": "Unknown0xc",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x10": {
+            "nickname": "Unknown0x10",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x14": {
+            "nickname": "Unknown0x14",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x18": {
+            "nickname": "Unknown0x18",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x1c": {
+            "nickname": "Unknown0x1c",
             "tooltip": "TOOLTIP-TODO"
         }
     },
@@ -19420,10 +19694,6 @@
             "nickname": "ForceJoinBlackCNpc",
             "tooltip": "TOOLTIP-TODO"
         },
-        "pad2[28]": {
-            "nickname": "Pad2",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "unknown_0xa4": {
             "nickname": "Unknown0xa4",
             "tooltip": "TOOLTIP-TODO"
@@ -19932,10 +20202,6 @@
         },
         "cellGroupBottomRange_0": {
             "nickname": "CellGroupBottomRange0",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "pad_1_old[4]": {
-            "nickname": "Pad1old",
             "tooltip": "TOOLTIP-TODO"
         },
         "breakInRequestAreaCount": {
@@ -21877,10 +22143,6 @@
             "nickname": "FreezeGuardResist",
             "tooltip": "TOOLTIP-TODO"
         },
-        "pad1[1]": {
-            "nickname": "Pad1",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "lockCameraParamId": {
             "nickname": "LockCameraParamId",
             "tooltip": "TOOLTIP-TODO"
@@ -22085,10 +22347,6 @@
             "nickname": "ChrNavimeshFlagDead",
             "tooltip": "TOOLTIP-TODO"
         },
-        "pad7[1]": {
-            "nickname": "Pad7",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "wheelRotType": {
             "nickname": "WheelRotType",
             "tooltip": "TOOLTIP-TODO"
@@ -22215,10 +22473,6 @@
         },
         "isConsideredUndead": {
             "nickname": "IsConsideredUndead",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "pad12_old[8]": {
-            "nickname": "Pad12old",
             "tooltip": "TOOLTIP-TODO"
         },
         "dlcGameClearSpEffectID": {
@@ -22648,117 +22902,6 @@
         },
         "surpriseAnimId": {
             "nickname": "SurpriseAnimId",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "OBJ_ACT_PARAM_ST": {
-        "actionEnableMsgId": {
-            "nickname": "PromptMessage",
-            "tooltip": "Message displayed in dialog box that prompts action (e.g. 'Open')."
-        },
-        "actionFailedMsgId": {
-            "nickname": "FailureMessage",
-            "tooltip": "Message displayed in dialog box upon failed action (e.g. 'It's locked')."
-        },
-        "spQualifiedPassEventFlag": {
-            "nickname": "FlagForAutomaticSuccess",
-            "tooltip": "Action will always be successful if this flag is enabled."
-        },
-        "playerAnimId": {
-            "nickname": "PlayerActionAnimation",
-            "tooltip": "Animation played by a player character when they successfully activate the object.",
-            "game_type": "Animation"
-        },
-        "chrAnimId": {
-            "nickname": "NonPlayerActionAnimation",
-            "tooltip": "Animation played by a non-player character when they successfully activate the object.",
-            "game_type": "Animation"
-        },
-        "validDist": {
-            "nickname": "MaxActionDistance",
-            "tooltip": "Maximum distance from action model point at which the object action will be prompted."
-        },
-        "objDummyId": {
-            "nickname": "ObjectActionModelPoint",
-            "tooltip": "Model point that specifies where the action occurs on the object (for snapping the player and distance check).",
-            "game_type": "ModelDummy"
-        },
-        "isEventKickSync": {
-            "nickname": "IsEventKickSync",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "objAnimId": {
-            "nickname": "ObjectActionAnimation",
-            "tooltip": "Animation played by the object when it is successfully activated.",
-            "game_type": "Animation"
-        },
-        "validPlayerAngle": {
-            "nickname": "MaxPlayerAngle",
-            "tooltip": "Maximum angle between the character's forward direction and the direction to the object action point for the action prompt to appear."
-        },
-        "spQualifiedType": {
-            "nickname": "SuccessCondition1Type",
-            "tooltip": "Type of first success condition."
-        },
-        "spQualifiedType2": {
-            "nickname": "SuccessCondition2Type",
-            "tooltip": "Type of second success condition."
-        },
-        "validObjAngle": {
-            "nickname": "MaxObjectAngle",
-            "tooltip": "Maximum angle between the object's forward direction and the direction to the player for the action prompt to appear."
-        },
-        "chrSorbType": {
-            "nickname": "CharacterSnapType",
-            "tooltip": "Type of method used to snap the character to the object before animations are played."
-        },
-        "eventKickTiming": {
-            "nickname": "EventTriggerDelay",
-            "tooltip": "I believe this is the delay between successful object activation and the outgoing 'success' trigger used by game events."
-        },
-        "pad1[2]": {
-            "nickname": "_Pad1",
-            "tooltip": "Null padding (2 bytes)."
-        },
-        "actionButtonParamId": {
-            "nickname": "ActionButtonParamID",
-            "tooltip": "TODO",
-            "game_type": "ActionButtonParam"
-        },
-        "enableTreasureDelaySec": {
-            "nickname": "EnableTreasureDelaySec",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "preActionSfxDmypolyId": {
-            "nickname": "PreActionSfxDmypolyId",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "preActionSfxId": {
-            "nickname": "PreActionSfxId",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "spQualifiedId_old": {
-            "nickname": "SpQualifiedIdold",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "spQualifiedId2_old": {
-            "nickname": "SpQualifiedId2old",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "pad2_old[40]": {
-            "nickname": "Pad2old",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "spQualifiedId_new": {
-            "nickname": "SpQualifiedIdnew",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "spQualifiedId2_new": {
-            "nickname": "SpQualifiedId2new",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "pad2[32]": {
-            "nickname": "Pad2",
             "tooltip": "TOOLTIP-TODO"
         }
     },
@@ -23204,6 +23347,113 @@
         },
         "pad_5[40]": {
             "nickname": "Pad5",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "OBJ_ACT_PARAM_ST": {
+        "actionEnableMsgId": {
+            "nickname": "PromptMessage",
+            "tooltip": "Message displayed in dialog box that prompts action (e.g. 'Open')."
+        },
+        "actionFailedMsgId": {
+            "nickname": "FailureMessage",
+            "tooltip": "Message displayed in dialog box upon failed action (e.g. 'It's locked')."
+        },
+        "spQualifiedPassEventFlag": {
+            "nickname": "FlagForAutomaticSuccess",
+            "tooltip": "Action will always be successful if this flag is enabled."
+        },
+        "playerAnimId": {
+            "nickname": "PlayerActionAnimation",
+            "tooltip": "Animation played by a player character when they successfully activate the object.",
+            "game_type": "Animation"
+        },
+        "chrAnimId": {
+            "nickname": "NonPlayerActionAnimation",
+            "tooltip": "Animation played by a non-player character when they successfully activate the object.",
+            "game_type": "Animation"
+        },
+        "validDist": {
+            "nickname": "MaxActionDistance",
+            "tooltip": "Maximum distance from action model point at which the object action will be prompted."
+        },
+        "objDummyId": {
+            "nickname": "ObjectActionModelPoint",
+            "tooltip": "Model point that specifies where the action occurs on the object (for snapping the player and distance check).",
+            "game_type": "ModelDummy"
+        },
+        "isEventKickSync": {
+            "nickname": "IsEventKickSync",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "objAnimId": {
+            "nickname": "ObjectActionAnimation",
+            "tooltip": "Animation played by the object when it is successfully activated.",
+            "game_type": "Animation"
+        },
+        "validPlayerAngle": {
+            "nickname": "MaxPlayerAngle",
+            "tooltip": "Maximum angle between the character's forward direction and the direction to the object action point for the action prompt to appear."
+        },
+        "spQualifiedType": {
+            "nickname": "SuccessCondition1Type",
+            "tooltip": "Type of first success condition."
+        },
+        "spQualifiedType2": {
+            "nickname": "SuccessCondition2Type",
+            "tooltip": "Type of second success condition."
+        },
+        "validObjAngle": {
+            "nickname": "MaxObjectAngle",
+            "tooltip": "Maximum angle between the object's forward direction and the direction to the player for the action prompt to appear."
+        },
+        "chrSorbType": {
+            "nickname": "CharacterSnapType",
+            "tooltip": "Type of method used to snap the character to the object before animations are played."
+        },
+        "eventKickTiming": {
+            "nickname": "EventTriggerDelay",
+            "tooltip": "I believe this is the delay between successful object activation and the outgoing 'success' trigger used by game events."
+        },
+        "pad1[2]": {
+            "nickname": "_Pad1",
+            "tooltip": "Null padding (2 bytes)."
+        },
+        "actionButtonParamId": {
+            "nickname": "ActionButtonParamID",
+            "tooltip": "TODO",
+            "game_type": "ActionButtonParam"
+        },
+        "enableTreasureDelaySec": {
+            "nickname": "EnableTreasureDelaySec",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "preActionSfxDmypolyId": {
+            "nickname": "PreActionSfxDmypolyId",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "preActionSfxId": {
+            "nickname": "PreActionSfxId",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "spQualifiedId_old": {
+            "nickname": "SpQualifiedIdold",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "spQualifiedId2_old": {
+            "nickname": "SpQualifiedId2old",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "spQualifiedId_new": {
+            "nickname": "SpQualifiedIdnew",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "spQualifiedId2_new": {
+            "nickname": "SpQualifiedId2new",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "pad2[32]": {
+            "nickname": "Pad2",
             "tooltip": "TOOLTIP-TODO"
         }
     },
@@ -23770,10 +24020,6 @@
             "nickname": "ResistCurseItemLotParamIdmap",
             "tooltip": "TOOLTIP-TODO"
         },
-        "reserved41_old[52]": {
-            "nickname": "Reserved41old",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "unknown_0xcc": {
             "nickname": "Unknown0xcc",
             "tooltip": "TOOLTIP-TODO"
@@ -24140,10 +24386,6 @@
             "nickname": "Pad5",
             "tooltip": "TOOLTIP-TODO"
         },
-        "pad1_old:7": {
-            "nickname": "Pad1old",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "unknown_0x45_1:1": {
             "nickname": "Unknown0x451",
             "tooltip": "TOOLTIP-TODO"
@@ -24462,10 +24704,6 @@
             "nickname": "A002leftWeaponRotation",
             "tooltip": "TOOLTIP-TODO"
         },
-        "pad_old[14]": {
-            "nickname": "Padold",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "a003_leftWeaponRotation": {
             "nickname": "A003leftWeaponRotation",
             "tooltip": "TOOLTIP-TODO"
@@ -24690,10 +24928,6 @@
         },
         "a016_leftWristIO": {
             "nickname": "A016leftWristIO",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "pad[4]": {
-            "nickname": "Pad",
             "tooltip": "TOOLTIP-TODO"
         },
         "a000_rightWeaponRotation": {
@@ -26077,10 +26311,6 @@
             "nickname": "MatchAreaId",
             "tooltip": "TOOLTIP-TODO"
         },
-        "pad1[24]": {
-            "nickname": "Pad1",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "unknown_0x20": {
             "nickname": "Unknown0x20",
             "tooltip": "TOOLTIP-TODO"
@@ -26131,6 +26361,46 @@
         },
         "endPad[4]": {
             "nickname": "EndPad",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "SIGN_PUDDLE_SUB_CATEGORY_PARAM_ST": {
+        "startPad[4]": {
+            "nickname": "StartPad",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "signPuddleCategoryText": {
+            "nickname": "SignPuddleCategoryText",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "signPuddleTabId": {
+            "nickname": "SignPuddleTabId",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0xa": {
+            "nickname": "Unknown0xa",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "endPad[4]": {
+            "nickname": "EndPad",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "SIGN_PUDDLE_TAB_PARAM_ST": {
+        "isDlcTab": {
+            "nickname": "IsDlcTab",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "tabTextId": {
+            "nickname": "TabTextId",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x8": {
+            "nickname": "Unknown0x8",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0xc": {
+            "nickname": "Unknown0xc",
             "tooltip": "TOOLTIP-TODO"
         }
     },
@@ -26415,10 +26685,6 @@
         },
         "EnterMapMuteStopTimeOnDrawCutscene": {
             "nickname": "EnterMapMuteStopTimeOnDrawCutscene",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "reserved_old[8]": {
-            "nickname": "Reservedold",
             "tooltip": "TOOLTIP-TODO"
         },
         "unknown_0x18": {
@@ -27868,10 +28134,6 @@
             "nickname": "RequestForceJoinBlackSOSB",
             "tooltip": "TOOLTIP-TODO"
         },
-        "pad2[1]": {
-            "nickname": "Pad2",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "changeSuperArmorPoint": {
             "nickname": "PoiseAddition",
             "tooltip": "Amount added (if positive) or subtracted (if negative) from character's poise."
@@ -27932,16 +28194,8 @@
             "nickname": "GoodsConsumptionRate",
             "tooltip": "TOOLTIP-TODO"
         },
-        "unk3[4]": {
-            "nickname": "Pad4",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "isDestinedDeathHpMult:1": {
             "nickname": "IsDestinedDeathHpMult",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "padbit_old:3": {
-            "nickname": "Padbitold",
             "tooltip": "TOOLTIP-TODO"
         },
         "isHpBurnEffect:1": {
@@ -28139,10 +28393,6 @@
             "nickname": "IsUseOffsetEnchantSfxSize",
             "tooltip": "TOOLTIP-TODO"
         },
-        "pad_1:1": {
-            "nickname": "Pad1",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "decalId1": {
             "nickname": "DecalId1",
             "tooltip": "TOOLTIP-TODO"
@@ -28275,10 +28525,6 @@
             "nickname": "Unknown0x2f7",
             "tooltip": "TOOLTIP-TODO"
         },
-        "pad_old[14]": {
-            "nickname": "Padold",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "unknown_0x96": {
             "nickname": "Unknown0x96",
             "tooltip": "TOOLTIP-TODO"
@@ -28383,10 +28629,6 @@
         },
         "useMagicPoint_R2": {
             "nickname": "UseMagicPointR2",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "shieldIconType": {
-            "nickname": "ShieldIconType",
             "tooltip": "TOOLTIP-TODO"
         },
         "iconId": {
@@ -29296,6 +29538,56 @@
             "tooltip": "TOOLTIP-TODO"
         }
     },
+    "WEATHER_LOT_TEX_PARAM_ST_DLC02": {
+        "disableParam_NT:1": {
+            "nickname": "DisableParamNT",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "disableParamReserve1:7": {
+            "nickname": "DisableParamReserve1",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "disableParamReserve2[3]": {
+            "nickname": "DisableParamReserve2",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "srcR": {
+            "nickname": "SrcR",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "srcG": {
+            "nickname": "SrcG",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "srcB": {
+            "nickname": "SrcB",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "pad1[1]": {
+            "nickname": "Pad1",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "weatherLogId": {
+            "nickname": "WeatherLogId",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0xc": {
+            "nickname": "Unknown0xc",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x10": {
+            "nickname": "Unknown0x10",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x14": {
+            "nickname": "Unknown0x14",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unknown_0x18": {
+            "nickname": "Unknown0x18",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
     "WEATHER_PARAM_ST": {
         "SfxId": {
             "nickname": "SfxId",
@@ -29597,10 +29889,6 @@
         },
         "dispPosType_leftHang_3": {
             "nickname": "DispPosTypeleftHang3",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "reserve_old[12]": {
-            "nickname": "Reserveold",
             "tooltip": "TOOLTIP-TODO"
         },
         "unknown_0x54": {
@@ -29967,10 +30255,6 @@
             "nickname": "DispMask01",
             "tooltip": "TOOLTIP-TODO"
         },
-        "pad2_0:6": {
-            "nickname": "Pad20",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "pad2[1]": {
             "nickname": "Pad2",
             "tooltip": "TOOLTIP-TODO"
@@ -30187,10 +30471,6 @@
             "nickname": "Pad20",
             "tooltip": "TOOLTIP-TODO"
         },
-        "pad4_old[9]": {
-            "nickname": "Pad4old",
-            "tooltip": "TOOLTIP-TODO"
-        },
         "unknown_0xb7": {
             "nickname": "Unknown0xb7",
             "tooltip": "TOOLTIP-TODO"
@@ -30283,458 +30563,6 @@
         },
         "ParamStr[32]": {
             "nickname": "ParamStr",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "CHR_EQUIP_MODEL_PARAM_ST": {
-        "unknown_0x0": {
-            "nickname": "Unknown0x0",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x4": {
-            "nickname": "Unknown0x4",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x8": {
-            "nickname": "Unknown0x8",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "FINAL_DAMAGE_RATE_PARAM_ST": {
-        "physRate": {
-            "nickname": "PhysRate",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "magRate": {
-            "nickname": "MagRate",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "fireRate": {
-            "nickname": "FireRate",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "thunRate": {
-            "nickname": "ThunRate",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "darkRate": {
-            "nickname": "DarkRate",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "staminaRate": {
-            "nickname": "StaminaRate",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "saRate": {
-            "nickname": "SaRate",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "CS_RAYTRACING_QUALITY_DETAIL": {
-        "enableRaytraceAO": {
-            "nickname": "EnableRaytraceAO",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "enableRaytraceShadows": {
-            "nickname": "EnableRaytraceShadows",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "Unk0x02": {
-            "nickname": "Unk0x02",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "Unk0x03": {
-            "nickname": "Unk0x03",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "UnkFloat0x04": {
-            "nickname": "UnkFloat0x04",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "Unk0x08": {
-            "nickname": "Unk0x08",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "UnkFloat0x0C": {
-            "nickname": "UnkFloat0x0C",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "Unk0x10": {
-            "nickname": "Unk0x10",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "penumbraSize": {
-            "nickname": "PenumbraSize",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "renderDistance": {
-            "nickname": "RenderDistance",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "MAP_GRID_CREATE_HEIGHT_LIMIT_DETAIL_INFO_PARAM_ST": {
-        "mapId": {
-            "nickname": "MapId",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x4": {
-            "nickname": "Unknown0x4",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x8": {
-            "nickname": "Unknown0x8",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0xc": {
-            "nickname": "Unknown0xc",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x10": {
-            "nickname": "Unknown0x10",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x14": {
-            "nickname": "Unknown0x14",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x18": {
-            "nickname": "Unknown0x18",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x1c": {
-            "nickname": "Unknown0x1c",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x20": {
-            "nickname": "Unknown0x20",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x24": {
-            "nickname": "Unknown0x24",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x28": {
-            "nickname": "Unknown0x28",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x2c": {
-            "nickname": "Unknown0x2c",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x2d": {
-            "nickname": "Unknown0x2d",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x2e": {
-            "nickname": "Unknown0x2e",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x2f": {
-            "nickname": "Unknown0x2f",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x30": {
-            "nickname": "Unknown0x30",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x31": {
-            "nickname": "Unknown0x31",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x32": {
-            "nickname": "Unknown0x32",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x34": {
-            "nickname": "Unknown0x34",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x38": {
-            "nickname": "Unknown0x38",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x3c": {
-            "nickname": "Unknown0x3c",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "MAP_NAME_TEX_PARAM_ST_DLC02": {
-        "disableParam_NT:1": {
-            "nickname": "DisableParamNT",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "disableParamReserve1:7": {
-            "nickname": "DisableParamReserve1",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "disableParamReserve2[3]": {
-            "nickname": "DisableParamReserve2",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "srcR": {
-            "nickname": "SrcR",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "srcG": {
-            "nickname": "SrcG",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "srcB": {
-            "nickname": "SrcB",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "pad1[1]": {
-            "nickname": "Pad1",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "mapNameId": {
-            "nickname": "MapNameId",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0xc": {
-            "nickname": "Unknown0xc",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x10": {
-            "nickname": "Unknown0x10",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x11": {
-            "nickname": "Unknown0x11",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x12": {
-            "nickname": "Unknown0x12",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x13": {
-            "nickname": "Unknown0x13",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x14": {
-            "nickname": "Unknown0x14",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknownTextID_1": {
-            "nickname": "UnknownTextID1",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknownTextID_2": {
-            "nickname": "UnknownTextID2",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x20": {
-            "nickname": "Unknown0x20",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x24": {
-            "nickname": "Unknown0x24",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "MAP_PIECE_TEX_PARAM_ST_DLC02": {
-        "disableParam_NT:1": {
-            "nickname": "DisableParamNT",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "disableParamReserve1:7": {
-            "nickname": "DisableParamReserve1",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "disableParamReserve2[3]": {
-            "nickname": "DisableParamReserve2",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "srcR": {
-            "nickname": "SrcR",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "srcG": {
-            "nickname": "SrcG",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "srcB": {
-            "nickname": "SrcB",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "pad1[1]": {
-            "nickname": "Pad1",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "saveMapNameId": {
-            "nickname": "SaveMapNameId",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "multiPlayAreaId": {
-            "nickname": "MultiPlayAreaId",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x10": {
-            "nickname": "Unknown0x10",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x14": {
-            "nickname": "Unknown0x14",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x18": {
-            "nickname": "Unknown0x18",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x1c": {
-            "nickname": "Unknown0x1c",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknownPlayRegion_1": {
-            "nickname": "UnknownPlayRegion1",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknownPlayRegion_2": {
-            "nickname": "UnknownPlayRegion2",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "MIMICRY_ESTABLISHMENT_TEX_PARAM_ST_DLC02": {
-        "disableParam_NT:1": {
-            "nickname": "DisableParamNT",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "disableParamReserve1:7": {
-            "nickname": "DisableParamReserve1",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "disableParamReserve2[3]": {
-            "nickname": "DisableParamReserve2",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "srcR": {
-            "nickname": "SrcR",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "srcG": {
-            "nickname": "SrcG",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "srcB": {
-            "nickname": "SrcB",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "pad1[1]": {
-            "nickname": "Pad1",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "mimicryEstablishmentParamId": {
-            "nickname": "MimicryEstablishmentParamId",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0xc": {
-            "nickname": "Unknown0xc",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x10": {
-            "nickname": "Unknown0x10",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x14": {
-            "nickname": "Unknown0x14",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x18": {
-            "nickname": "Unknown0x18",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x1c": {
-            "nickname": "Unknown0x1c",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "SIGN_PUDDLE_SUB_CATEGORY_PARAM_ST": {
-        "startPad[4]": {
-            "nickname": "StartPad",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "signPuddleCategoryText": {
-            "nickname": "SignPuddleCategoryText",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "signPuddleTabId": {
-            "nickname": "SignPuddleTabId",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0xa": {
-            "nickname": "Unknown0xa",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "endPad[4]": {
-            "nickname": "EndPad",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "SIGN_PUDDLE_TAB_PARAM_ST": {
-        "isDlcTab": {
-            "nickname": "IsDlcTab",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "tabTextId": {
-            "nickname": "TabTextId",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x8": {
-            "nickname": "Unknown0x8",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0xc": {
-            "nickname": "Unknown0xc",
-            "tooltip": "TOOLTIP-TODO"
-        }
-    },
-    "WEATHER_LOT_TEX_PARAM_ST_DLC02": {
-        "disableParam_NT:1": {
-            "nickname": "DisableParamNT",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "disableParamReserve1:7": {
-            "nickname": "DisableParamReserve1",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "disableParamReserve2[3]": {
-            "nickname": "DisableParamReserve2",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "srcR": {
-            "nickname": "SrcR",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "srcG": {
-            "nickname": "SrcG",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "srcB": {
-            "nickname": "SrcB",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "pad1[1]": {
-            "nickname": "Pad1",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "weatherLogId": {
-            "nickname": "WeatherLogId",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0xc": {
-            "nickname": "Unknown0xc",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x10": {
-            "nickname": "Unknown0x10",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x14": {
-            "nickname": "Unknown0x14",
-            "tooltip": "TOOLTIP-TODO"
-        },
-        "unknown_0x18": {
-            "nickname": "Unknown0x18",
             "tooltip": "TOOLTIP-TODO"
         }
     }

@@ -64,6 +64,7 @@ class GameParamBND(Binder, abc.ABC):
             else:
                 try:
                     self.params[entry.stem] = entry.to_binary_file(typed_param_class)
+                    _LOGGER.debug(f"Loaded Param: {entry.name}")
                 except Exception as ex:
                     _LOGGER.error(f"Could not load `Param` from `GameParamBND` entry '{entry.name}'.\n  Error: {ex}")
                     raise

@@ -7,7 +7,7 @@ from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
-from .dynamics import ItemLotReference, ItemLotReference, ItemLotReference, ItemLotReference, ItemLotReference, ItemLotReference, ItemLotReference, ItemLotReference
+from .dynamics import ItemLotReference
 
 
 class ITEMLOT_PARAM_ST(ParamRow):

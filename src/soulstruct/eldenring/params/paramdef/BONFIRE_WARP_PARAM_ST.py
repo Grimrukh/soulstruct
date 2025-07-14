@@ -59,12 +59,11 @@ class BONFIRE_WARP_PARAM_ST(ParamRow):
         uint8, "dispMask01:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _BitPad1: int = ParamBitPad(uint8, "pad1_old:6", bit_count=6)
     DispMask02: bool = ParamField(
         uint8, "dispMask02:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _BitPad2: int = ParamBitPad(uint8, "pad1:5", bit_count=5)
+    _BitPad1: int = ParamBitPad(uint8, "pad1:5", bit_count=5)
     _Pad2: bytes = ParamPad(1, "pad2[1]")
     AreaNo: int = ParamField(
         uint8, "areaNo", default=0,

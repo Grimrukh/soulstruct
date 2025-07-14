@@ -1427,10 +1427,6 @@ class SP_EFFECT_PARAM_ST(ParamRow):
         uint8, "isDestinedDeathHpMult:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    Padbitold: int = ParamField(
-        uint8, "padbit_old:3", bit_count=3, default=0,
-        tooltip="TOOLTIP-TODO",
-    )
     IsHpBurnEffect: bool = ParamField(
         uint8, "isHpBurnEffect:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
@@ -1443,7 +1439,6 @@ class SP_EFFECT_PARAM_ST(ParamRow):
         uint8, "unknown_0x352_7:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "pad2[1]")
     Unknown0x3530: bool = ParamField(
         uint8, "unknown_0x353_0:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
@@ -1533,4 +1528,3 @@ class SP_EFFECT_PARAM_ST(ParamRow):
         int32, "spiritDeathSpEffectId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(4, "unk3[4]")

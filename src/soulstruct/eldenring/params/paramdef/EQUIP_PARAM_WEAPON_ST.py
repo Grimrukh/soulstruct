@@ -719,7 +719,6 @@ class EQUIP_PARAM_WEAPON_ST(ParamRow):
         uint8, "invisibleOnRemo:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
-    _BitPad1: int = ParamBitPad(uint8, "unk1:3", bit_count=3)
     Unknown0x17c5: bool = ParamField(
         uint8, "unknown_0x17c_5:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
@@ -1120,9 +1119,8 @@ class EQUIP_PARAM_WEAPON_ST(ParamRow):
         float32, "vsPlayerDmgCorrectRate_Curse", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(8, "pad_old[8]")
     RestrictSpecialSwordArt: int = ParamField(
         uint8, "restrictSpecialSwordArt", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(7, "pad[7]")
+    _Pad1: bytes = ParamPad(7, "pad[7]")

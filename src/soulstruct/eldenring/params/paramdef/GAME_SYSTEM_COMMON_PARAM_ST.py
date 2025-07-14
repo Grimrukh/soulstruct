@@ -767,7 +767,6 @@ class GAME_SYSTEM_COMMON_PARAM_ST(ParamRow):
         float32, "aiSightRate_midnightA", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(4, "reserve4_2[4]")
     Unknown0x230: int = ParamField(
         int32, "unknown_0x230", default=0,
         tooltip="TOOLTIP-TODO",
@@ -852,7 +851,7 @@ class GAME_SYSTEM_COMMON_PARAM_ST(ParamRow):
         uint8, "weatherLotConditionStart_DayBreak_Minute", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(2, "weatherLotCondition_reserved[2]")
+    _Pad0: bytes = ParamPad(2, "weatherLotCondition_reserved[2]")
     PclightScaleChangeStartHour: int = ParamField(
         uint8, "pclightScaleChangeStart_Hour", default=18,
         tooltip="TOOLTIP-TODO",
@@ -1137,8 +1136,6 @@ class GAME_SYSTEM_COMMON_PARAM_ST(ParamRow):
         float32, "bonfireCheckEnemyRange", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(48, "reserved_124[48]")
-    _Pad3: bytes = ParamPad(32, "reserved_124[32]")
     Unknown0x2f0: int = ParamField(
         int32, "unknown_0x2f0", default=0,
         tooltip="TOOLTIP-TODO",
@@ -1311,7 +1308,6 @@ class GAME_SYSTEM_COMMON_PARAM_ST(ParamRow):
         float32, "unknown_0x344", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad4: bytes = ParamPad(40, "pad_0x348[40]")
     Unknown0x34c: int = ParamField(
         int32, "unknown_0x34c", default=0,
         tooltip="TOOLTIP-TODO",
@@ -1388,4 +1384,4 @@ class GAME_SYSTEM_COMMON_PARAM_ST(ParamRow):
         int32, "baseReveredSpiritTorrentBlessingSpEffectId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad5: bytes = ParamPad(108, "endPad[108]")
+    _Pad1: bytes = ParamPad(108, "endPad[108]")

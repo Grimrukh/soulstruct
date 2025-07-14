@@ -100,7 +100,12 @@ class ParamDef(GameFile):
         )
 
     @classmethod
-    def from_paramdex_xml(cls, xml_path: Path | str) -> tp.Self:
+    def from_paramdex_xml(cls, xml_path: Path | str, version=0) -> tp.Self:
+        """Construct `ParamDef` from a Paramdex XML file.
+
+        If `version` is non-zero, fields removed at or prior to that version are ignored, and fields added after that
+        version are ignored. Otherwise, the latest version is used by default (any field removed at any time ignored).
+        """
         root = ElementTree.parse(xml_path).getroot()
 
         # Find `ParamType` tag first.
@@ -125,6 +130,17 @@ class ParamDef(GameFile):
                 kwargs["format_version"] = int(child.text)
             elif child.tag == "Fields":
                 fields = [ParamDefField.from_paramdex_xml(i, node, param_type) for i, node in enumerate(child)]
+                # Filter by version.
+                if version > 0:
+                    fields = [
+                        f for f in fields
+                        if (f.removed_version == -1 or f.removed_version > version)
+                           and (f.first_version == -1 or f.first_version <= version)
+                    ]
+                else:
+                    # Use the newest version by just ignoring any removed field.
+                    fields = [f for f in fields if f.removed_version == -1]
+
                 kwargs["fields"] = {f.name: f for f in fields}
             else:
                 raise ValueError(f"Unknown Paramdex XML tag: {child.tag}")
@@ -139,6 +155,23 @@ class ParamDef(GameFile):
         if len(fields) != len(fields_dict):
             raise ValueError("One or more fields was repeated in list of `ParamDefField`s given to `ParamDef`.")
         return cls(param_type=param_type, fields=fields_dict)
+
+    def get_total_size(self) -> int:
+        """Sum over true sizes of all fields, including bit fields."""
+        size = 0
+        running_bit_count = 0
+        for f in self.fields.values():
+            if f.bit_count > 0:
+                running_bit_count += f.bit_count
+                while running_bit_count >= 8:
+                    running_bit_count -= 8
+                    size += 1
+            else:
+                if running_bit_count > 0:
+                    running_bit_count = 0  # pad out byte
+                    size += 1
+                size += f.size
+        return size
 
     def to_writer(self) -> BinaryWriter:
         raise TypeError("Cannot pack `ParamDef` to binary. Are you trying to make your own FromSoftware game...?")

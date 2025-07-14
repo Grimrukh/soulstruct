@@ -864,7 +864,6 @@ class ATK_PARAM_ST(ParamRow):
         int32, "finalDamageRateId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(12, "pad7_old[12]")
     SubCategory3: int = ParamField(
         uint8, "subCategory3", default=0,
         tooltip="TOOLTIP-TODO",
@@ -873,4 +872,4 @@ class ATK_PARAM_ST(ParamRow):
         uint8, "subCategory4", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(10, "pad7[10]")
+    _Pad2: bytes = ParamPad(10, "pad7[10]")

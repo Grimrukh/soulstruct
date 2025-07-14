@@ -39,7 +39,6 @@ class SOUND_CUTSCENE_PARAM_ST(ParamRow):
         float32, "EnterMapMuteStopTimeOnDrawCutscene", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(8, "reserved_old[8]")
     Unknown0x18: int = ParamField(
         uint8, "unknown_0x18", default=0,
         tooltip="TOOLTIP-TODO",
@@ -56,5 +55,5 @@ class SOUND_CUTSCENE_PARAM_ST(ParamRow):
         uint8, "unknown_0x1b", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(4, "reserved[4]")
-    _Pad4: bytes = ParamPad(4, "reserved2[4]")
+    _Pad2: bytes = ParamPad(4, "reserved[4]")
+    _Pad3: bytes = ParamPad(4, "reserved2[4]")

@@ -67,12 +67,11 @@ class WORLD_MAP_POINT_PARAM_ST(ParamRow):
         uint8, "dispMask01:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _BitPad2: int = ParamBitPad(uint8, "pad2_0:6", bit_count=6)
     DispMask02: bool = ParamField(
         uint8, "dispMask02:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _BitPad3: int = ParamBitPad(uint8, "pad2_0:5", bit_count=5)
+    _BitPad2: int = ParamBitPad(uint8, "pad2_0:5", bit_count=5)
     _Pad1: bytes = ParamPad(1, "pad2[1]")
     DistViewIconId: int = ParamField(
         uint16, "distViewIconId", default=0,
@@ -275,7 +274,6 @@ class WORLD_MAP_POINT_PARAM_ST(ParamRow):
         uint8, "entryFEType", WORLD_MAP_ENTRY_FE_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(9, "pad4_old[9]")
     Unknown0xb7: int = ParamField(
         uint8, "unknown_0xb7", default=0,
         tooltip="TOOLTIP-TODO",
@@ -284,7 +282,7 @@ class WORLD_MAP_POINT_PARAM_ST(ParamRow):
         uint16, "altIconId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad4: bytes = ParamPad(6, "pad4[6]")
+    _Pad3: bytes = ParamPad(6, "pad4[6]")
     TextEnableFlag2Id1: int = ParamField(
         int32, "textEnableFlag2Id1", default=0,
         tooltip="TOOLTIP-TODO",

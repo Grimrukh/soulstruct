@@ -177,7 +177,6 @@ class NETWORK_MSG_PARAM_ST(ParamRow):
         int32, "forceJoinBlack_C_Npc", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(28, "pad2[28]")
     Unknown0xa4: int = ParamField(
         int32, "unknown_0xa4", default=0,
         tooltip="TOOLTIP-TODO",
@@ -198,4 +197,4 @@ class NETWORK_MSG_PARAM_ST(ParamRow):
         int32, "unknown_0xb4", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(8, "pad2_new[8]")
+    _Pad1: bytes = ParamPad(8, "pad2_new[8]")

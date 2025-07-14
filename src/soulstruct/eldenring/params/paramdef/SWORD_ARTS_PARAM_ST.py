@@ -79,10 +79,6 @@ class SWORD_ARTS_PARAM_ST(ParamRow):
         int16, "useMagicPoint_R2", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ShieldIconType: int = ParamField(
-        int8, "shieldIconType", SWORD_ARTS_SHIELD_ICON_TYPE, default=0,
-        tooltip="TOOLTIP-TODO",
-    )
     SwordArtsTypeNew: int = ParamField(
         uint16, "swordArtsTypeNew", default=0,
         tooltip="TOOLTIP-TODO",

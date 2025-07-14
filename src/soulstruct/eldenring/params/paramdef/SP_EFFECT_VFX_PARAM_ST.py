@@ -133,7 +133,6 @@ class SP_EFFECT_VFX_PARAM_ST(ParamRow):
         uint8, "isUseOffsetEnchantSfxSize:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _BitPad0: int = ParamBitPad(uint8, "pad_1:1", bit_count=1)
     Unknown0x2f7: bool = ParamField(
         uint8, "unknown_0x2f_7:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
@@ -266,7 +265,6 @@ class SP_EFFECT_VFX_PARAM_ST(ParamRow):
         int16, "footDecalMaterialOffsetOverwriteId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(14, "pad_old[14]")
     Unknown0x96: int = ParamField(
         uint8, "unknown_0x96", default=0,
         tooltip="TOOLTIP-TODO",
@@ -287,4 +285,4 @@ class SP_EFFECT_VFX_PARAM_ST(ParamRow):
         uint8, "unknown_0x9a", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(9, "pad[9]")
+    _Pad0: bytes = ParamPad(9, "pad[9]")

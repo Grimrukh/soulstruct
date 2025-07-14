@@ -231,7 +231,6 @@ class POSTURE_CONTROL_PARAM_WEP_RIGHT_ST(ParamRow):
         int16, "a014_lefttWeaponRotation", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(4, "pad[4]")
     A015rightArmFB: int = ParamField(
         int16, "a015_rightArmFB", default=0,
         tooltip="TOOLTIP-TODO",

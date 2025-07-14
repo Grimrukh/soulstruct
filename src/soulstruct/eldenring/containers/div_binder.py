@@ -8,7 +8,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.containers.core import Binder, BinderEntry
+from soulstruct.containers.core import Binder
+from soulstruct.containers.entry import BinderEntry
 from soulstruct.utilities.binary import BinaryReader, BinaryWriter
 
 _LOGGER = logging.getLogger(__name__)

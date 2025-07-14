@@ -245,7 +245,6 @@ class PLAYER_COMMON_PARAM_ST(ParamRow):
         int32, "resistCurseItemLotParamId_map", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad6: bytes = ParamPad(52, "reserved41_old[52]")
     Unknown0xcc: int = ParamField(
         int32, "unknown_0xcc", default=0,
         tooltip="TOOLTIP-TODO",
@@ -270,4 +269,4 @@ class PLAYER_COMMON_PARAM_ST(ParamRow):
         int32, "unknown_0xe0", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad7: bytes = ParamPad(28, "reserved41[28]")
+    _Pad6: bytes = ParamPad(28, "reserved41[28]")
