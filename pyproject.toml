@@ -2,7 +2,7 @@
 name = "soulstruct"
 description = "Inspect and mod FromSoftware games."
 readme = "README.md"
-version = "2.0.0"
+version = "2.1.0"
 license = "GPL-3.0-or-later"
 requires-python = ">=3.11"  # maximum allowed for Blender 4.4 support
 keywords = ["modding", "FromSoftware", "Dark Souls", "Bloodborne", "Elden Ring", "Sekiro", "Demon's Souls"]
