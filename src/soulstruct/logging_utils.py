@@ -35,12 +35,23 @@ import typing as tp
 from pathlib import Path
 
 from rich.console import Console
-from rich.logging import RichHandler
 from rich.traceback import install as rich_tb
+
+if tp.TYPE_CHECKING:
+    from rich.console import Console
 
 # Console and file format strings for log records.
 _CONSOLE_FMT = "{level_col} ┃ {modulepath:<40} ┃ {lineno:>4d} ┃ {message}"
 _FILE_FMT    = "{asctime} ┃ {levelname:>7} ┃ {pathname:<35} ┃ line {lineno:>4d} ┃ {message}"
+
+
+_CONSOLE = Console(soft_wrap=True)
+
+
+class BasicRichHandler(logging.Handler):
+
+    def emit(self, record: logging.LogRecord):
+        _CONSOLE.print(self.format(record))
 
 
 class _SoulstructFormatter(logging.Formatter):
@@ -78,11 +89,21 @@ class _SoulstructFormatter(logging.Formatter):
         else:
             record.modulepath = record.pathname
 
+        # Module path links to file and line number.
+        record.modulepath = (
+            f"[link={Path(record.pathname).as_uri()}:{record.lineno}]"
+            f"{record.modulepath}"
+            f"[/link]"
+        )
+        # NOTE: The string pattern 'File {path}, line {line}' in JetBrains will automatically generate an IDE link.
+
         if self._use_color:
             color = self._LEVEL_COLORS.get(record.levelname, "white")
             record.level_col = f"[{color}]{record.levelname:>7}[/]"
         else:
             record.level_col = f"{record.levelname:>7}"
+
+        print(record.modulepath)
 
         return super().format(record)
 
@@ -96,7 +117,7 @@ def setup(
     clear_old_handlers=True,
     base_logger: logging.Logger | None = None,
     base_module_name="soulstruct",
-) -> tuple[RichHandler, logging.FileHandler | None]:
+) -> tuple[BasicRichHandler, logging.FileHandler | None]:
     """
     Configure Soulstruct logging.
 
@@ -124,15 +145,7 @@ def setup(
             logger.removeHandler(handler)
 
     # --------------------------- console handler ----------------------------
-    console = Console()
-    console_handler = RichHandler(
-        console=console,
-        markup=True,
-        show_time=False,
-        show_level=False,
-        show_path=False,
-        rich_tracebacks=False,  # we install tracebacks globally below
-    )
+    console_handler = BasicRichHandler()
     console_handler.setLevel(console_level)
     console_handler.setFormatter(_SoulstructFormatter(base_module_name, _CONSOLE_FMT, color=True))
     logger.addHandler(console_handler)
