@@ -41,8 +41,8 @@ class Game:
     special_dcx_types: dict[str, DCXType] = field(default_factory=dict)
     bundled_resource_paths: dict[str, Path] = field(default_factory=dict)
     steam_appid: int | None = None
-    default_game_path: str = ""
-    generic_game_path: str = ""
+    default_game_path: Path = ""
+    generic_game_path: Path = ""
     save_file_path: Path | None = None
     executable_name: str = ""
     interroot_prefix: str = ""
@@ -154,7 +154,7 @@ DARK_SOULS_PTDE = Game(
     },
     steam_appid=211420,
     default_game_path=PTDE_PATH,
-    generic_game_path="C:/Program Files (x86)/Steam/steamapps/common/Dark Souls Prepare to Die Edition/DATA",
+    generic_game_path=Path("C:/Program Files (x86)/Steam/steamapps/common/Dark Souls Prepare to Die Edition/DATA"),
     save_file_path=Path("~/Documents/NBGI/DarkSouls").expanduser(),
     executable_name="DARKSOULS.exe",
     interroot_prefix="N:\\FRPG\\data\\INTERROOT_win32",
@@ -195,7 +195,7 @@ DARK_SOULS_DSR = Game(
     },
     steam_appid=570940,
     default_game_path=DSR_PATH,
-    generic_game_path="C:/Program Files (x86)/Steam/steamapps/common/DARK SOULS REMASTERED/",
+    generic_game_path=Path("C:/Program Files (x86)/Steam/steamapps/common/DARK SOULS REMASTERED"),
     save_file_path=Path("~/Documents/NBGI/DARK SOULS REMASTERED").expanduser(),
     executable_name="DarkSoulsRemastered.exe",
     interroot_prefix="N:\\FRPG\\data\\INTERROOT_x64",
@@ -248,7 +248,7 @@ BLOODBORNE = Game(
     },
     steam_appid=None,
     default_game_path=BB_PATH,
-    generic_game_path="{DISC}/Image0/dvdroot_ps4",
+    generic_game_path=Path("C:/Bloodborne/DISC/Image0/dvdroot_ps4"),  # dummy
     executable_name="../eboot.bin",
     interroot_prefix="N:\\SPRJ\\data\\INTERROOT_ps4",
     default_file_paths={
@@ -271,6 +271,7 @@ DARK_SOULS_3 = Game(
     aliases=("darksouls3", "ds3", "dks3"),
     default_dcx_type=DCXType.DCX_DFLT_10000_44_9,
     default_game_path=DS3_PATH,
+    generic_game_path=Path("C:/Program Files (x86)/Steam/steamapps/common/DARK SOULS III/Game"),
     executable_name="DarkSoulsIII.exe",
     interroot_prefix="N:\\FDP\\data\\INTERROOT_win64",
 )
@@ -284,6 +285,7 @@ SEKIRO = Game(
     aliases=("sekiro", "sekiroshadowsdietwice", "sdt"),
     default_dcx_type=DCXType.DCX_KRAK,
     default_game_path=SEKIRO_PATH,
+    generic_game_path=Path("C:/Program Files (x86)/Steam/steamapps/common/Sekiro"),  # TODO: "/Game"?
     interroot_prefix="N:\\NTC\\data\\Target\\INTERROOT_win64",
 )
 
@@ -299,6 +301,7 @@ ELDEN_RING = Game(
         ".bin": DCXType.Null,
     },
     bundled_resource_paths={
+        "PARAMDEFBND": SOULSTRUCT_PATH("eldenring/params/paramdef/Erd-Tools-Defs"),  # loaded as Paramdex XML
         "MATBINBND": SOULSTRUCT_PATH("eldenring/models/resources/allmaterial.matbinbnd.dcx"),
         "dlc01_MATBINBND": SOULSTRUCT_PATH("eldenring/models/resources/allmaterial_dlc01.matbinbnd.dcx"),
         "dlc02_MATBINBND": SOULSTRUCT_PATH("eldenring/models/resources/allmaterial_dlc02.matbinbnd.dcx"),

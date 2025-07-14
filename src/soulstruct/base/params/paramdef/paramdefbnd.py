@@ -64,10 +64,10 @@ class ParamDefBND(Binder, abc.ABC):
         game = get_game(game_or_name)
         if game in cls._BUNDLED:
             return cls._BUNDLED[game]
-        if "PARAMDEFBND" not in game.bundled_resource_paths.items():
+        if "PARAMDEFBND" not in game.bundled_resource_paths:
             raise FileNotFoundError(f"No bundled PARAMDEFBND found for {game.name}.")
         try:
-            paramdefbnd = cls.from_path(game.bundled_resource_paths["PARAMDEF"])
+            paramdefbnd = cls.from_path(game.bundled_resource_paths["PARAMDEFBND"])
         except Exception as ex:
             raise FileNotFoundError(f"Could not load bundled PARAMDEFBND for {game.name}.") from ex
         cls._BUNDLED[game] = paramdefbnd

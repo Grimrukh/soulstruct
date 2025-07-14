@@ -15,7 +15,8 @@ from soulstruct.exceptions import SoulstructError
 from soulstruct.utilities.files import read_json, write_json
 from soulstruct.utilities.misc import BiDict
 
-from .param import Param, TypedParam, ParamDict
+from .param import Param, TypedParam
+from .param_dict import ParamDict
 from .paramdef.paramdefbnd import ParamDefBND
 
 _LOGGER = logging.getLogger(__name__)
@@ -84,7 +85,10 @@ class GameParamBND(Binder, abc.ABC):
         return TypedParam(row_type)
 
     def unpack_all_param_rows(self, paramdefbnd: ParamDefBND = None):
-        """Unpack all row data of all `Param` entries with `paramdefbnd` (defaults to bundled file)."""
+        """Unpack all row data of all `ParamDict` entries using `paramdefbnd` (defaults to bundled file).
+
+        Ignores true `Param` entries that are already using the generated `ParamRow` subclasses.
+        """
         if paramdefbnd is None:
             paramdefbnd = ParamDefBND.from_bundled(self.get_game())
         unpacked = []

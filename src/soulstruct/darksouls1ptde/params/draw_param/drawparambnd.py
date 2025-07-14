@@ -17,7 +17,7 @@ from soulstruct.utilities.files import read_json, write_json
 from soulstruct.utilities.misc import BiDict
 
 from soulstruct.base.params.paramdef import ParamDefBND
-from soulstruct.base.params.param import ParamDict
+from soulstruct.base.params.param_dict import ParamDict
 
 from .core import DrawParam, TypedDrawParam
 from .. import paramdef

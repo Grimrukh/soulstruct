@@ -6,7 +6,6 @@ __all__ = [
     "pad_field",
     "bit_pad_field",
     "ParamRow",
-    "MAP_PARAM_TYPES",
     "PARAM_VALUE_TYPING",
     "ParamFieldMetadata",
     "ParamField",
@@ -24,7 +23,7 @@ from types import MappingProxyType
 from soulstruct.base.game_types import GAME_INT_TYPE
 from soulstruct.base.params.paramdef.field_types import base_type
 from soulstruct.utilities.binary import *
-from constrata.metadata import PRIMITIVE_FIELD_TYPING
+from constrata.field_types.type_info import PRIMITIVE_FIELD_TYPING
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -61,22 +60,6 @@ def pad_field(n):
 
 def bit_pad_field(n):
     return f"<BitPad:{n}>"
-
-
-# TODO: Param types should just use these new binary types.
-MAP_PARAM_TYPES = {
-    "dummy8": byte,  # pad field
-    "u8": byte,
-    "u16": ushort,
-    "u32": uint,
-    "s8": sbyte,
-    "s16": short,
-    "s32": int,
-    "f32": float,
-    "f64": double,
-    "fixstr": str,  # decoded
-    "fixstrW": str,  # decoded
-}
 
 
 PARAM_VALUE_TYPING = tp.Union[int, bool, float, str, bytes]

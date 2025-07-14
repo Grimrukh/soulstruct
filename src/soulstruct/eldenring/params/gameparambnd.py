@@ -66,7 +66,8 @@ class GameParamBND(_BaseGameParamBND):
 
 def examine_er_params():
 
-    from soulstruct.base.params.param import Param, TypedParam, ParamDict
+    from soulstruct.base.params.param import Param, TypedParam
+    from soulstruct.base.params.param_dict import ParamDict
     from soulstruct.config import ELDEN_RING_PATH
     from soulstruct.eldenring.params import paramdef
 
