@@ -103,8 +103,6 @@ class _SoulstructFormatter(logging.Formatter):
         else:
             record.level_col = f"{record.levelname:>7}"
 
-        print(record.modulepath)
-
         return super().format(record)
 
 
