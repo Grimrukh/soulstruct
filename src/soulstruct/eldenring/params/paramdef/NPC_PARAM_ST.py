@@ -2,8 +2,6 @@ from __future__ import annotations
 
 __all__ = ["NPC_PARAM_ST"]
 
-from dataclasses import dataclass
-
 from soulstruct.base.params.param_row import *
 from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.params.enums import *
@@ -971,6 +969,10 @@ class NPC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     _Pad1: bytes = ParamPad(1, "pad1[1]")
+    HpBurnDamageRate: int = ParamField(
+        byte, "hpBurnDamageRate", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
     LockCameraParamId: int = ParamField(
         int, "lockCameraParamId", default=-1,
         tooltip="TOOLTIP-TODO",
@@ -1176,6 +1178,10 @@ class NPC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     _Pad2: bytes = ParamPad(1, "pad7[1]")
+    IsConsideredUndead: int = ParamField(
+        byte, "isConsideredUndead", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
     WheelRotType: int = ParamField(
         byte, "wheelRotType", NPC_WHEEL_ROT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
@@ -1297,4 +1303,9 @@ class NPC_PARAM_ST(ParamRow):
         float, "lockScoreOffset", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(8, "pad12[8]")
+    _Pad3: bytes = ParamPad(8, "pad12_old[8]")
+    DlcGameClearSpEffectID: int = ParamField(
+        int, "dlcGameClearSpEffectID", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    _Pad4: bytes = ParamPad(4, "pad12[4]")

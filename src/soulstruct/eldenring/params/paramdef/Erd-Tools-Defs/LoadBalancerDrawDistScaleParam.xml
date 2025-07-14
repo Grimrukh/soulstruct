@@ -7,8 +7,7 @@
   <FormatVersion>203</FormatVersion>
   <Fields>
     <Field Def="f32 Lv00 = 1">
-      <DisplayName>Lv00 - Lv00</DisplayName>
-      <Description>Lv00 Drawing distance scale - Lv00 描画距離スケール</Description>
+      <Description>Lv00 描画距離スケール</Description>
       <EditFlags>None</EditFlags>
       <Minimum>0</Minimum>
       <Maximum>2</Maximum>
@@ -16,8 +15,7 @@
       <UnkC8>描画距離スケール</UnkC8>
     </Field>
     <Field Def="f32 Lv01 = 1">
-      <DisplayName>Lv01 - Lv01</DisplayName>
-      <Description>Lv01 Drawing distance scale - Lv01 描画距離スケール</Description>
+      <Description>Lv01 描画距離スケール</Description>
       <EditFlags>None</EditFlags>
       <Minimum>0</Minimum>
       <Maximum>2</Maximum>
@@ -25,8 +23,7 @@
       <UnkC8>描画距離スケール</UnkC8>
     </Field>
     <Field Def="f32 Lv02 = 1">
-      <DisplayName>Lv02 - Lv02</DisplayName>
-      <Description>Lv02 Drawing distance scale - Lv02 描画距離スケール</Description>
+      <Description>Lv02 描画距離スケール</Description>
       <EditFlags>None</EditFlags>
       <Minimum>0</Minimum>
       <Maximum>2</Maximum>
@@ -34,8 +31,7 @@
       <UnkC8>描画距離スケール</UnkC8>
     </Field>
     <Field Def="f32 Lv03 = 1">
-      <DisplayName>Lv03 - Lv03</DisplayName>
-      <Description>Lv03 Drawing distance scale - Lv03 描画距離スケール</Description>
+      <Description>Lv03 描画距離スケール</Description>
       <EditFlags>None</EditFlags>
       <Minimum>0</Minimum>
       <Maximum>2</Maximum>
@@ -43,8 +39,7 @@
       <UnkC8>描画距離スケール</UnkC8>
     </Field>
     <Field Def="f32 Lv04 = 1">
-      <DisplayName>Lv04 - Lv04</DisplayName>
-      <Description>Lv04 Drawing distance scale - Lv04 描画距離スケール</Description>
+      <Description>Lv04 描画距離スケール</Description>
       <EditFlags>None</EditFlags>
       <Minimum>0</Minimum>
       <Maximum>2</Maximum>
@@ -52,8 +47,7 @@
       <UnkC8>描画距離スケール</UnkC8>
     </Field>
     <Field Def="f32 Lv05 = 1">
-      <DisplayName>Lv05 - Lv05</DisplayName>
-      <Description>Lv05 Drawing distance scale - Lv05 描画距離スケール</Description>
+      <Description>Lv05 描画距離スケール</Description>
       <EditFlags>None</EditFlags>
       <Minimum>0</Minimum>
       <Maximum>2</Maximum>
@@ -61,8 +55,7 @@
       <UnkC8>描画距離スケール</UnkC8>
     </Field>
     <Field Def="f32 Lv06 = 1">
-      <DisplayName>Lv06 - Lv06</DisplayName>
-      <Description>Lv06 Drawing distance scale - Lv06 描画距離スケール</Description>
+      <Description>Lv06 描画距離スケール</Description>
       <EditFlags>None</EditFlags>
       <Minimum>0</Minimum>
       <Maximum>2</Maximum>
@@ -70,8 +63,7 @@
       <UnkC8>描画距離スケール</UnkC8>
     </Field>
     <Field Def="f32 Lv07 = 1">
-      <DisplayName>Lv07 - Lv07</DisplayName>
-      <Description>Lv07 Drawing distance scale - Lv07 描画距離スケール</Description>
+      <Description>Lv07 描画距離スケール</Description>
       <EditFlags>None</EditFlags>
       <Minimum>0</Minimum>
       <Maximum>2</Maximum>
@@ -79,8 +71,7 @@
       <UnkC8>描画距離スケール</UnkC8>
     </Field>
     <Field Def="f32 Lv08 = 1">
-      <DisplayName>Lv08 - Lv08</DisplayName>
-      <Description>Lv08 Drawing distance scale - Lv08 描画距離スケール</Description>
+      <Description>Lv08 描画距離スケール</Description>
       <EditFlags>None</EditFlags>
       <Minimum>0</Minimum>
       <Maximum>2</Maximum>
@@ -88,8 +79,7 @@
       <UnkC8>描画距離スケール</UnkC8>
     </Field>
     <Field Def="f32 Lv09 = 1">
-      <DisplayName>Lv09 - Lv09</DisplayName>
-      <Description>Lv09 Drawing distance scale - Lv09 描画距離スケール</Description>
+      <Description>Lv09 描画距離スケール</Description>
       <EditFlags>None</EditFlags>
       <Minimum>0</Minimum>
       <Maximum>2</Maximum>
@@ -97,8 +87,7 @@
       <UnkC8>描画距離スケール</UnkC8>
     </Field>
     <Field Def="f32 Lv10 = 1">
-      <DisplayName>Lv10 - Lv10</DisplayName>
-      <Description>Lv10 Drawing distance scale - Lv10 描画距離スケール</Description>
+      <Description>Lv10 描画距離スケール</Description>
       <EditFlags>None</EditFlags>
       <Minimum>0</Minimum>
       <Maximum>2</Maximum>
@@ -106,8 +95,7 @@
       <UnkC8>描画距離スケール</UnkC8>
     </Field>
     <Field Def="f32 Lv11 = 1">
-      <DisplayName>Lv11 - Lv11</DisplayName>
-      <Description>Lv11 Drawing distance scale - Lv11 描画距離スケール</Description>
+      <Description>Lv11 描画距離スケール</Description>
       <EditFlags>None</EditFlags>
       <Minimum>0</Minimum>
       <Maximum>2</Maximum>
@@ -115,8 +103,7 @@
       <UnkC8>描画距離スケール</UnkC8>
     </Field>
     <Field Def="f32 Lv12 = 1">
-      <DisplayName>Lv12 - Lv12</DisplayName>
-      <Description>Lv12 Drawing distance scale - Lv12 描画距離スケール</Description>
+      <Description>Lv12 描画距離スケール</Description>
       <EditFlags>None</EditFlags>
       <Minimum>0</Minimum>
       <Maximum>2</Maximum>
@@ -124,8 +111,7 @@
       <UnkC8>描画距離スケール</UnkC8>
     </Field>
     <Field Def="f32 Lv13 = 1">
-      <DisplayName>Lv13 - Lv13</DisplayName>
-      <Description>Lv13 Drawing distance scale - Lv13 描画距離スケール</Description>
+      <Description>Lv13 描画距離スケール</Description>
       <EditFlags>None</EditFlags>
       <Minimum>0</Minimum>
       <Maximum>2</Maximum>
@@ -133,8 +119,7 @@
       <UnkC8>描画距離スケール</UnkC8>
     </Field>
     <Field Def="f32 Lv14 = 1">
-      <DisplayName>Lv14 - Lv14</DisplayName>
-      <Description>Lv14 Drawing distance scale - Lv14 描画距離スケール</Description>
+      <Description>Lv14 描画距離スケール</Description>
       <EditFlags>None</EditFlags>
       <Minimum>0</Minimum>
       <Maximum>2</Maximum>
@@ -142,8 +127,7 @@
       <UnkC8>描画距離スケール</UnkC8>
     </Field>
     <Field Def="f32 Lv15 = 1">
-      <DisplayName>Lv15 - Lv15</DisplayName>
-      <Description>Lv15 Drawing distance scale - Lv15 描画距離スケール</Description>
+      <Description>Lv15 描画距離スケール</Description>
       <EditFlags>None</EditFlags>
       <Minimum>0</Minimum>
       <Maximum>2</Maximum>
@@ -151,8 +135,7 @@
       <UnkC8>描画距離スケール</UnkC8>
     </Field>
     <Field Def="f32 Lv16 = 1">
-      <DisplayName>Lv16 - Lv16</DisplayName>
-      <Description>Lv16 Drawing distance scale - Lv16 描画距離スケール</Description>
+      <Description>Lv16 描画距離スケール</Description>
       <EditFlags>None</EditFlags>
       <Minimum>0</Minimum>
       <Maximum>2</Maximum>
@@ -160,8 +143,7 @@
       <UnkC8>描画距離スケール</UnkC8>
     </Field>
     <Field Def="f32 Lv17 = 1">
-      <DisplayName>Lv17 - Lv17</DisplayName>
-      <Description>Lv17 Drawing distance scale - Lv17 描画距離スケール</Description>
+      <Description>Lv17 描画距離スケール</Description>
       <EditFlags>None</EditFlags>
       <Minimum>0</Minimum>
       <Maximum>2</Maximum>
@@ -169,8 +151,7 @@
       <UnkC8>描画距離スケール</UnkC8>
     </Field>
     <Field Def="f32 Lv18 = 1">
-      <DisplayName>Lv18 - Lv18</DisplayName>
-      <Description>Lv18 Drawing distance scale - Lv18 描画距離スケール</Description>
+      <Description>Lv18 描画距離スケール</Description>
       <EditFlags>None</EditFlags>
       <Minimum>0</Minimum>
       <Maximum>2</Maximum>
@@ -178,8 +159,7 @@
       <UnkC8>描画距離スケール</UnkC8>
     </Field>
     <Field Def="f32 Lv19 = 1">
-      <DisplayName>Lv19 - Lv19</DisplayName>
-      <Description>Lv19 Drawing distance scale - Lv19 描画距離スケール</Description>
+      <Description>Lv19 描画距離スケール</Description>
       <EditFlags>None</EditFlags>
       <Minimum>0</Minimum>
       <Maximum>2</Maximum>
@@ -187,8 +167,7 @@
       <UnkC8>描画距離スケール</UnkC8>
     </Field>
     <Field Def="f32 Lv20 = 1">
-      <DisplayName>Lv20 - Lv20</DisplayName>
-      <Description>Lv20 Drawing distance scale - Lv20 描画距離スケール</Description>
+      <Description>Lv20 描画距離スケール</Description>
       <EditFlags>None</EditFlags>
       <Minimum>0</Minimum>
       <Maximum>2</Maximum>
@@ -196,8 +175,8 @@
       <UnkC8>描画距離スケール</UnkC8>
     </Field>
     <Field Def="dummy8 reserve[44]">
-      <DisplayName>Reserve - 予備</DisplayName>
-      <Description>Reserve - 予備</Description>
+      <DisplayName>予備</DisplayName>
+      <Description>予備</Description>
       <SortID>23</SortID>
       <UnkC8>その他</UnkC8>
     </Field>

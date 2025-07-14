@@ -60,7 +60,12 @@ class BONFIRE_WARP_PARAM_ST(ParamRow):
         byte, "dispMask01:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _BitPad1: int = ParamBitPad(byte, "pad1:6", bit_count=6)
+    _BitPad1: int = ParamBitPad(byte, "pad1_old:6", bit_count=6)
+    DispMask02: bool = ParamField(
+        byte, "dispMask02:1", bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
+    _BitPad2: int = ParamBitPad(byte, "pad1:5", bit_count=5)
     _Pad2: bytes = ParamPad(1, "pad2[1]")
     AreaNo: int = ParamField(
         byte, "areaNo", default=0,
@@ -231,71 +236,75 @@ class BONFIRE_WARP_PARAM_ST(ParamRow):
         int, "noIgnitionSfxId_1", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    UnkA8: int = ParamField(
-        int, "unkA8", default=0,
+    TextEnableFlag2Id1: int = ParamField(
+        int, "textEnableFlag2Id1", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkAC: int = ParamField(
-        int, "unkAC", default=0,
+    TextEnableFlag2Id2: int = ParamField(
+        int, "textEnableFlag2Id2", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkB0: int = ParamField(
-        int, "unkB0", default=0,
+    TextEnableFlag2Id3: int = ParamField(
+        int, "textEnableFlag2Id3", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkB4: int = ParamField(
-        int, "unkB4", default=0,
+    TextEnableFlag2Id4: int = ParamField(
+        int, "textEnableFlag2Id4", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkB8: int = ParamField(
-        int, "unkB8", default=0,
+    TextEnableFlag2Id5: int = ParamField(
+        int, "textEnableFlag2Id5", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkBC: int = ParamField(
-        int, "unkBC", default=0,
+    TextEnableFlag2Id6: int = ParamField(
+        int, "textEnableFlag2Id6", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkC0: int = ParamField(
-        int, "unkC0", default=0,
+    TextEnableFlag2Id7: int = ParamField(
+        int, "textEnableFlag2Id7", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkC4: int = ParamField(
-        int, "unkC4", default=0,
+    TextEnableFlag2Id8: int = ParamField(
+        int, "textEnableFlag2Id8", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkC8: int = ParamField(
-        int, "unkC8", default=0,
+    TextDisableFlag2Id1: int = ParamField(
+        int, "textDisableFlag2Id1", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkCC: int = ParamField(
-        int, "unkCC", default=0,
+    TextDisableFlag2Id2: int = ParamField(
+        int, "textDisableFlag2Id2", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkD0: int = ParamField(
-        int, "unkD0", default=0,
+    TextDisableFlag2Id3: int = ParamField(
+        int, "textDisableFlag2Id3", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkD4: int = ParamField(
-        int, "unkD4", default=0,
+    TextDisableFlag2Id4: int = ParamField(
+        int, "textDisableFlag2Id4", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkD8: int = ParamField(
-        int, "unkD8", default=0,
+    TextDisableFlag2Id5: int = ParamField(
+        int, "textDisableFlag2Id5", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkDC: int = ParamField(
-        int, "unkDC", default=0,
+    TextDisableFlag2Id6: int = ParamField(
+        int, "textDisableFlag2Id6", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkE0: int = ParamField(
-        int, "unkE0", default=0,
+    TextDisableFlag2Id7: int = ParamField(
+        int, "textDisableFlag2Id7", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkE4: int = ParamField(
-        int, "unkE4", default=0,
+    TextDisableFlag2Id8: int = ParamField(
+        int, "textDisableFlag2Id8", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkE8: int = ParamField(
-        int, "unkE8", default=0,
+    AltIconId: int = ParamField(
+        ushort, "altIconId", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    AltForbiddenIconId: int = ParamField(
+        ushort, "altForbiddenIconId", default=0,
         tooltip="TOOLTIP-TODO",
     )

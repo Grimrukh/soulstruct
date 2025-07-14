@@ -21,13 +21,13 @@ class NETWORK_PARAM_ST(ParamRow):
         float, "summonTimeoutTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(4, "pad[4]")
+    _Pad0: bytes = ParamPad(4, "pad_0[4]")
     SignPuddleActiveMessageIntervalSec: float = ParamField(
         float, "signPuddleActiveMessageIntervalSec", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    KeyGuideHeight: float = ParamField(
-        float, "keyGuideHeight", default=1.0,
+    KeyGuideHeight0: float = ParamField(
+        float, "keyGuideHeight_0", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     ReloadSignIntervalTime1: float = ParamField(
@@ -38,44 +38,44 @@ class NETWORK_PARAM_ST(ParamRow):
         float, "reloadSignIntervalTime2", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    ReloadSignTotalCount: int = ParamField(
-        uint, "reloadSignTotalCount", default=1,
+    ReloadSignTotalCount0: int = ParamField(
+        uint, "reloadSignTotalCount_0", default=1,
         tooltip="TOOLTIP-TODO",
     )
-    ReloadSignCellCount: int = ParamField(
-        uint, "reloadSignCellCount", default=1,
+    ReloadSignCellCount0: int = ParamField(
+        uint, "reloadSignCellCount_0", default=1,
         tooltip="TOOLTIP-TODO",
     )
     UpdateSignIntervalTime: float = ParamField(
         float, "updateSignIntervalTime", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    BasicExclusiveRange: float = ParamField(
-        float, "basicExclusiveRange", default=1.0,
+    BasicExclusiveRange0: float = ParamField(
+        float, "basicExclusiveRange_0", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    BasicExclusiveHeight: float = ParamField(
-        float, "basicExclusiveHeight", default=1.0,
+    BasicExclusiveHeight0: float = ParamField(
+        float, "basicExclusiveHeight_0", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     PreviewChrWaitingTime: float = ParamField(
         float, "previewChrWaitingTime", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    SignVisibleRange: float = ParamField(
-        float, "signVisibleRange", default=1.0,
+    SignVisibleRange0: float = ParamField(
+        float, "signVisibleRange_0", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    CellGroupHorizontalRange: int = ParamField(
-        uint, "cellGroupHorizontalRange", default=1,
+    CellGroupHorizontalRange0: int = ParamField(
+        uint, "cellGroupHorizontalRange_0", default=1,
         tooltip="TOOLTIP-TODO",
     )
-    CellGroupTopRange: int = ParamField(
-        uint, "cellGroupTopRange", default=1,
+    CellGroupTopRange0: int = ParamField(
+        uint, "cellGroupTopRange_0", default=1,
         tooltip="TOOLTIP-TODO",
     )
-    CellGroupBottomRange: int = ParamField(
-        uint, "cellGroupBottomRange", default=1,
+    CellGroupBottomRange0: int = ParamField(
+        uint, "cellGroupBottomRange_0", default=1,
         tooltip="TOOLTIP-TODO",
     )
     MinWhitePhantomLimitTimeScale: float = ParamField(
@@ -127,8 +127,22 @@ class NETWORK_PARAM_ST(ParamRow):
         float, "breakInRequestTimeOutSec", default=20.0,
         tooltip="TOOLTIP-TODO",
     )
+    _Pad2: bytes = ParamPad(4, "pad_1_old[4]")
+    BreakInRequestAreaCount: int = ParamField(
+        byte, "breakInRequestAreaCount", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    _Pad3: bytes = ParamPad(3, "pad_1[3]")
     KeyGuideRange: float = ParamField(
         float, "keyGuideRange", default=1.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    KeyGuideHeight1: float = ParamField(
+        float, "keyGuideHeight_1", default=1.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    ReloadSignTotalCount1: int = ParamField(
+        uint, "reloadSignTotalCount_1", default=1,
         tooltip="TOOLTIP-TODO",
     )
     ReloadNewSignCellCount: int = ParamField(
@@ -139,12 +153,24 @@ class NETWORK_PARAM_ST(ParamRow):
         uint, "reloadRandomSignCellCount", default=1,
         tooltip="TOOLTIP-TODO",
     )
-    MaxSignTotalCount: int = ParamField(
-        uint, "maxSignTotalCount", default=1,
+    MaxSignTotalCount0: int = ParamField(
+        uint, "maxSignTotalCount_0", default=1,
         tooltip="TOOLTIP-TODO",
     )
-    MaxSignCellCount: int = ParamField(
-        uint, "maxSignCellCount", default=1,
+    MaxSignCellCount0: int = ParamField(
+        uint, "maxSignCellCount_0", default=1,
+        tooltip="TOOLTIP-TODO",
+    )
+    BasicExclusiveRange1: float = ParamField(
+        float, "basicExclusiveRange_1", default=1.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    BasicExclusiveHeight1: float = ParamField(
+        float, "basicExclusiveHeight_1", default=1.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    SignVisibleRange1: float = ParamField(
+        float, "signVisibleRange_1", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     MaxWriteSignCount: int = ParamField(
@@ -155,24 +181,41 @@ class NETWORK_PARAM_ST(ParamRow):
         uint, "maxReadSignCount", default=1,
         tooltip="TOOLTIP-TODO",
     )
-    ReloadSignIntervalTime: float = ParamField(
-        float, "reloadSignIntervalTime", default=1.0,
+    ReloadSignIntervalTime0: float = ParamField(
+        float, "reloadSignIntervalTime_0", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    LifeTime: int = ParamField(
-        uint, "lifeTime", default=1,
+    CellGroupHorizontalRange1: int = ParamField(
+        uint, "cellGroupHorizontalRange_1", default=1,
         tooltip="TOOLTIP-TODO",
     )
-    DownloadSpan: float = ParamField(
-        float, "downloadSpan", default=0.0,
+    CellGroupTopRange1: int = ParamField(
+        uint, "cellGroupTopRange_1", default=1,
+        tooltip="TOOLTIP-TODO",
+    )
+    CellGroupBottomRange1: int = ParamField(
+        uint, "cellGroupBottomRange_1", default=1,
+        tooltip="TOOLTIP-TODO",
+    )
+    LifeTime0: int = ParamField(
+        uint, "lifeTime_0", default=1,
+        tooltip="TOOLTIP-TODO",
+    )
+    DownloadSpan0: float = ParamField(
+        float, "downloadSpan_0", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
     DownloadEvaluationSpan: float = ParamField(
         float, "downloadEvaluationSpan", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
+    _Pad4: bytes = ParamPad(4, "pad_2[4]")
     DeadingGhostStartPosThreshold: float = ParamField(
         float, "deadingGhostStartPosThreshold", default=1.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    KeyGuideHeight2: float = ParamField(
+        float, "keyGuideHeight_2", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     KeyGuideRangePlayer: float = ParamField(
@@ -183,12 +226,64 @@ class NETWORK_PARAM_ST(ParamRow):
         float, "keyGuideHeightPlayer", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
+    ReloadSignTotalCount2: int = ParamField(
+        uint, "reloadSignTotalCount_2", default=1,
+        tooltip="TOOLTIP-TODO",
+    )
+    ReloadSignCellCount1: int = ParamField(
+        uint, "reloadSignCellCount_1", default=1,
+        tooltip="TOOLTIP-TODO",
+    )
+    MaxSignTotalCount1: int = ParamField(
+        uint, "maxSignTotalCount_1", default=1,
+        tooltip="TOOLTIP-TODO",
+    )
+    MaxSignCellCount1: int = ParamField(
+        uint, "maxSignCellCount_1", default=1,
+        tooltip="TOOLTIP-TODO",
+    )
+    ReloadSignIntervalTime1: float = ParamField(
+        float, "reloadSignIntervalTime_1", default=1.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    SignVisibleRange2: float = ParamField(
+        float, "signVisibleRange_2", default=1.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    BasicExclusiveRange2: float = ParamField(
+        float, "basicExclusiveRange_2", default=1.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    BasicExclusiveHeight2: float = ParamField(
+        float, "basicExclusiveHeight_2", default=1.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    CellGroupHorizontalRange2: int = ParamField(
+        uint, "cellGroupHorizontalRange_2", default=1,
+        tooltip="TOOLTIP-TODO",
+    )
+    CellGroupTopRange2: int = ParamField(
+        uint, "cellGroupTopRange_2", default=1,
+        tooltip="TOOLTIP-TODO",
+    )
+    CellGroupBottomRange2: int = ParamField(
+        uint, "cellGroupBottomRange_2", default=1,
+        tooltip="TOOLTIP-TODO",
+    )
+    LifeTime1: int = ParamField(
+        uint, "lifeTime_1", default=1,
+        tooltip="TOOLTIP-TODO",
+    )
     RecordDeadingGhostTotalTime: float = ParamField(
         float, "recordDeadingGhostTotalTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
     RecordDeadingGhostMinTime: float = ParamField(
         float, "recordDeadingGhostMinTime", default=5.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    DownloadSpan1: float = ParamField(
+        float, "downloadSpan_1", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
     StatueCreatableDistance: float = ParamField(
@@ -267,6 +362,14 @@ class NETWORK_PARAM_ST(ParamRow):
         float, "reloadGhostIntervalTime", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
+    CellGroupHorizontalRange3: int = ParamField(
+        uint, "cellGroupHorizontalRange_3", default=1,
+        tooltip="TOOLTIP-TODO",
+    )
+    CellGroupTopRange3: int = ParamField(
+        uint, "cellGroupTopRange_3", default=1,
+        tooltip="TOOLTIP-TODO",
+    )
     ReplayBonfirePhantomParamIdForCodename: int = ParamField(
         int, "replayBonfirePhantomParamIdForCodename", default=0,
         tooltip="TOOLTIP-TODO",
@@ -279,7 +382,7 @@ class NETWORK_PARAM_ST(ParamRow):
         int, "replayBonfirePhantomParamId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(4, "ghostpad[4]")
+    _Pad5: bytes = ParamPad(4, "ghostpad[4]")
     ReloadVisitListCoolTime: float = ParamField(
         float, "reloadVisitListCoolTime", default=1.0,
         tooltip="TOOLTIP-TODO",
@@ -320,7 +423,7 @@ class NETWORK_PARAM_ST(ParamRow):
         float, "reloadSearch_RatKing_Max", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(8, "visitpad00[8]")
+    _Pad6: bytes = ParamPad(8, "visitpad00[8]")
     SrttMaxLimit: float = ParamField(
         float, "srttMaxLimit", default=1000.0,
         tooltip="TOOLTIP-TODO",
@@ -417,8 +520,8 @@ class NETWORK_PARAM_ST(ParamRow):
         byte, "bloodMessageDisplayMax", default=3,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad4: bytes = ParamPad(9, "pad00[9]")
-    _Pad5: bytes = ParamPad(32, "pad10[32]")
+    _Pad7: bytes = ParamPad(9, "pad00[9]")
+    _Pad8: bytes = ParamPad(32, "pad10[32]")
     SummonMessageInterval: float = ParamField(
         float, "summonMessageInterval", default=1.0,
         tooltip="TOOLTIP-TODO",
@@ -459,7 +562,7 @@ class NETWORK_PARAM_ST(ParamRow):
         uint, "BattleRoyalMatchSearchMax", default=1,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad6: bytes = ParamPad(8, "pad11[8]")
+    _Pad9: bytes = ParamPad(8, "pad11[8]")
     VisitorListMax: int = ParamField(
         uint, "VisitorListMax", default=1,
         tooltip="TOOLTIP-TODO",
@@ -468,8 +571,8 @@ class NETWORK_PARAM_ST(ParamRow):
         float, "VisitorTimeOutTime", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    DownloadSpan: float = ParamField(
-        float, "DownloadSpan", default=1.0,
+    DownloadSpan2: float = ParamField(
+        float, "DownloadSpan_2", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     VisitorGuestRequestMessageIntervalSec: float = ParamField(
@@ -480,7 +583,7 @@ class NETWORK_PARAM_ST(ParamRow):
         float, "wanderGhostIntervalLifeTime", default=40.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad7: bytes = ParamPad(12, "pad13[12]")
+    _Pad10: bytes = ParamPad(12, "pad13[12]")
     YellowMonkTimeOutTime: float = ParamField(
         float, "YellowMonkTimeOutTime", default=1.0,
         tooltip="TOOLTIP-TODO",
@@ -493,5 +596,5 @@ class NETWORK_PARAM_ST(ParamRow):
         float, "YellowMonkOverallFlowTimeOutTime", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad8: bytes = ParamPad(4, "pad14[4]")
-    _Pad9: bytes = ParamPad(8, "pad14[8]")
+    _Pad11: bytes = ParamPad(4, "pad14_0[4]")
+    _Pad12: bytes = ParamPad(8, "pad14_1[8]")

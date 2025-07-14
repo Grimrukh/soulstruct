@@ -179,3 +179,24 @@ class NETWORK_MSG_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     _Pad1: bytes = ParamPad(28, "pad2[28]")
+    Unknown0xa4: int = ParamField(
+        int, "unknown_0xa4", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0xa8: int = ParamField(
+        int, "unknown_0xa8", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0xac: int = ParamField(
+        int, "unknown_0xac", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0xb0: int = ParamField(
+        int, "unknown_0xb0", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0xb4: int = ParamField(
+        int, "unknown_0xb4", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    _Pad2: bytes = ParamPad(8, "pad2_new[8]")

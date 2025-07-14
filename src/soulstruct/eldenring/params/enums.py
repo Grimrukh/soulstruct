@@ -325,7 +325,7 @@ class DefaultKeyAssignPrioritySuppression(u8):
     pass
 
 
-class DefaultKeyAssignPcKey(s32):
+class DefaultKeyAssignPadKey(s32):
     pass
 
 
@@ -342,6 +342,10 @@ class DefaultKeyAssignApplyTarget(u8):
 
 
 class DefaultKeyAssignDigitalAnalog(u8):
+    pass
+
+
+class DefaultKeyAssignPcKey(s32):
     pass
 
 

@@ -2,8 +2,6 @@ from __future__ import annotations
 
 __all__ = ["SWORD_ARTS_PARAM_ST"]
 
-from dataclasses import dataclass
-
 from soulstruct.base.params.param_row import *
 from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.params.enums import *
@@ -86,7 +84,10 @@ class SWORD_ARTS_PARAM_ST(ParamRow):
         sbyte, "shieldIconType", SWORD_ARTS_SHIELD_ICON_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(1, "pad[1]")
+    SwordArtsTypeNew: int = ParamField(
+        ushort, "swordArtsTypeNew", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
     IconId: int = ParamField(
         ushort, "iconId", default=0,
         tooltip="TOOLTIP-TODO",

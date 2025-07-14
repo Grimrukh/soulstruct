@@ -89,7 +89,16 @@ class CHARACTER_INIT_PARAM(ParamRow):
         int, "equip_Accessory04", game_type=AccessoryParam, default=-1,
         tooltip="Fourth talisman equipped.",
     )
-    _Pad0: bytes = ParamPad(4, "pad8[4]")
+    _Pad0: bytes = ParamPad(4, "pad8_old[4]")
+    Unknown0x50: int = ParamField(
+        byte, "unknown_0x50", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x51: int = ParamField(
+        byte, "unknown_0x51", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    _Pad1: bytes = ParamPad(2, "pad8[2]")
     Elixirmaterial00: int = ParamField(
         int, "elixir_material00", default=-1,
         tooltip="TOOLTIP-TODO",
@@ -206,7 +215,7 @@ class CHARACTER_INIT_PARAM(ParamRow):
         ushort, "subBoltNum", default=0,
         tooltip="Count of bolts equipped in slot 2.",
     )
-    _Pad1: bytes = ParamPad(6, "pad4[6]")
+    _Pad2: bytes = ParamPad(6, "pad4[6]")
     Level: int = ParamField(
         short, "soulLv", default=0,
         tooltip="Soul level, independent of actual stats. Determines amount of souls rewarded by human NPCs.",
@@ -291,7 +300,7 @@ class CHARACTER_INIT_PARAM(ParamRow):
         byte, "itemNum_10", default=0,
         tooltip="Count of good equipped in slot 10.",
     )
-    _Pad2: bytes = ParamPad(5, "pad5[5]")
+    _Pad3: bytes = ParamPad(5, "pad5[5]")
     Gesture1: int = ParamField(
         sbyte, "gestureId0", default=-1,
         tooltip="First equipped gesture.",
@@ -341,7 +350,7 @@ class CHARACTER_INIT_PARAM(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     _BitPad0: int = ParamBitPad(byte, "pad:3", bit_count=3)
-    _Pad3: bytes = ParamPad(2, "pad6[2]")
+    _Pad4: bytes = ParamPad(2, "pad6[2]")
     WepParamTypeRight1: int = ParamField(
         byte, "wepParamType_Right1", CHARA_INIT_WEP_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
@@ -366,7 +375,7 @@ class CHARACTER_INIT_PARAM(ParamRow):
         byte, "wepParamType_Left3", CHARA_INIT_WEP_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad4: bytes = ParamPad(26, "pad2[26]")
+    _Pad5: bytes = ParamPad(26, "pad2[26]")
     EquipSubwepRight3: int = ParamField(
         int, "equip_Subwep_Right3", game_type=WeaponParam, default=-1,
         tooltip="TOOLTIP-TODO",
@@ -375,7 +384,7 @@ class CHARACTER_INIT_PARAM(ParamRow):
         int, "equip_Subwep_Left3", game_type=WeaponParam, default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad5: bytes = ParamPad(4, "pad3[4]")
+    _Pad6: bytes = ParamPad(4, "pad3[4]")
     SecondaryGoodSlot1: int = ParamField(
         int, "secondaryItem_01", default=-1,
         tooltip="TODO",
@@ -432,9 +441,9 @@ class CHARACTER_INIT_PARAM(ParamRow):
         sbyte, "MpEstMax", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad6: bytes = ParamPad(5, "pad7[5]")
+    _Pad7: bytes = ParamPad(5, "pad7[5]")
     VoiceType: int = ParamField(
         byte, "voiceType", default=0,
         tooltip="Voice type.",
     )
-    _Pad7: bytes = ParamPad(6, "reserve[6]")
+    _Pad8: bytes = ParamPad(6, "reserve[6]")

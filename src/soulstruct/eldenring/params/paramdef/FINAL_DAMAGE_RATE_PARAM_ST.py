@@ -2,8 +2,6 @@ from __future__ import annotations
 
 __all__ = ["FINAL_DAMAGE_RATE_PARAM_ST"]
 
-from dataclasses import dataclass
-
 from soulstruct.base.params.param_row import *
 from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.params.enums import *
@@ -11,31 +9,31 @@ from soulstruct.utilities.binary import *
 
 
 class FINAL_DAMAGE_RATE_PARAM_ST(ParamRow):
-    Physrate: float = ParamField(
-        float, "physrate", default=0.0,
+    PhysRate: float = ParamField(
+        float, "physRate", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    Magrate: float = ParamField(
-        float, "magrate", default=0.0,
+    MagRate: float = ParamField(
+        float, "magRate", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    Firerate: float = ParamField(
-        float, "firerate", default=0.0,
+    FireRate: float = ParamField(
+        float, "fireRate", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    Thunrate: float = ParamField(
-        float, "thunrate", default=0.0,
+    ThunRate: float = ParamField(
+        float, "thunRate", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    Darkrate: float = ParamField(
-        float, "darkrate", default=0.0,
+    DarkRate: float = ParamField(
+        float, "darkRate", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    Staminarate: float = ParamField(
-        float, "staminarate", default=0.0,
+    StaminaRate: float = ParamField(
+        float, "staminaRate", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    Sarate: float = ParamField(
-        float, "sarate", default=0.0,
+    SaRate: float = ParamField(
+        float, "saRate", default=0.0,
         tooltip="TOOLTIP-TODO",
     )

@@ -2,8 +2,6 @@ from __future__ import annotations
 
 __all__ = ["PLAY_REGION_PARAM_ST"]
 
-from dataclasses import dataclass
-
 from soulstruct.base.params.param_row import *
 from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.params.enums import *
@@ -153,7 +151,12 @@ class PLAY_REGION_PARAM_ST(ParamRow):
         byte, "isAutoIntrudePoint:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _BitPad1: int = ParamBitPad(byte, "pad1:7", bit_count=7)
+    _BitPad1: int = ParamBitPad(byte, "pad1_old:7", bit_count=7)
+    Unknown0x451: bool = ParamField(
+        byte, "unknown_0x45_1:1", bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
+    _BitPad2: int = ParamBitPad(byte, "pad1:6", bit_count=6)
     _Pad1: bytes = ParamPad(2, "pad2[2]")
     MultiPlayHASHostLimitEventFlagId: int = ParamField(
         uint, "multiPlayHASHostLimitEventFlagId", default=0,

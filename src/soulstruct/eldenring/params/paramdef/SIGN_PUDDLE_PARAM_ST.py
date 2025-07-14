@@ -20,3 +20,49 @@ class SIGN_PUDDLE_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     _Pad1: bytes = ParamPad(24, "pad1[24]")
+    Unknown0x20: int = ParamField(
+        int, "unknown_0x20", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x24: int = ParamField(
+        int, "unknown_0x24", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    AreaNo: int = ParamField(
+        byte, "areaNo", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    GridXNo: int = ParamField(
+        byte, "gridXNo", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    GridZNo: int = ParamField(
+        byte, "gridZNo", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    _Pad2: bytes = ParamPad(1, "pad3[1]")
+    PosX: float = ParamField(
+        float, "posX", default=0.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    PosY: float = ParamField(
+        float, "posY", default=0.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    PosZ: float = ParamField(
+        float, "posZ", default=0.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    SignSubCategoryId: int = ParamField(
+        int, "signSubCategoryId", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    LocationTextId: int = ParamField(
+        int, "locationTextId", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    SortId: int = ParamField(
+        int, "sortId", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    _Pad3: bytes = ParamPad(4, "endPad[4]")

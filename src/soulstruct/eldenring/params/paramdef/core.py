@@ -5,11 +5,11 @@ __all__ = ["ParamDef", "ParamDefBND"]
 
 import logging
 import typing as tp
-from dataclasses import dataclass, field
+from dataclasses import field
 from pathlib import Path
 
 from soulstruct.base.params.paramdef import ParamDef, ParamDefBND as _BaseParamDefBND
-from soulstruct.utilities.files import SOULSTRUCT_PATH
+from soulstruct.games import Game, get_game, ELDEN_RING
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -33,8 +33,7 @@ class ParamDefBND(_BaseParamDefBND):
     @classmethod
     def from_paramdex(cls, paramdex_er_defs_path: Path | str = None):
         if paramdex_er_defs_path is None:
-            # Default to Erd-Tools-Defs.
-            paramdex_er_defs_path = SOULSTRUCT_PATH("eldenring/params/paramdef/Erd-Tools-Defs")
+            paramdex_er_defs_path = ELDEN_RING.bundled_resource_paths["PARAMDEFBND"]
         else:
             paramdex_er_defs_path = Path(paramdex_er_defs_path)
             if not paramdex_er_defs_path.is_dir():
@@ -54,3 +53,21 @@ class ParamDefBND(_BaseParamDefBND):
             paramdefs[paramdef.param_type] = paramdef
 
         return cls(path=paramdex_er_defs_path, paramdefs=paramdefs)
+
+    @classmethod
+    def from_bundled(cls, game_or_name: Game | str) -> tp.Self:
+        """Supports bundled Paramdex XML directory for Elden Ring."""
+        game = get_game(game_or_name)
+        if game in cls._BUNDLED:
+            return cls._BUNDLED[game]
+        if game is not ELDEN_RING:
+            return super().from_bundled(game)
+
+        if "PARAMDEFBND" not in game.bundled_resource_paths:
+            raise FileNotFoundError(f"No bundled Paramdex XML directory found for {game.name}.")
+        try:
+            paramdefbnd = cls.from_paramdex(game.bundled_resource_paths["PARAMDEFBND"])
+        except Exception as ex:
+            raise FileNotFoundError(f"Could not load bundled Paramdex XML directory for {game.name}.") from ex
+        cls._BUNDLED[game] = paramdefbnd
+        return paramdefbnd

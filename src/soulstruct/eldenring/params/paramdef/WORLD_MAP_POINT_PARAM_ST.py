@@ -69,6 +69,11 @@ class WORLD_MAP_POINT_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     _BitPad2: int = ParamBitPad(byte, "pad2_0:6", bit_count=6)
+    DispMask02: bool = ParamField(
+        byte, "dispMask02:1", bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
+    _BitPad3: int = ParamBitPad(byte, "pad2_0:5", bit_count=5)
     _Pad1: bytes = ParamPad(1, "pad2[1]")
     DistViewIconId: int = ParamField(
         ushort, "distViewIconId", default=0,
@@ -271,68 +276,77 @@ class WORLD_MAP_POINT_PARAM_ST(ParamRow):
         byte, "entryFEType", WORLD_MAP_ENTRY_FE_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(9, "pad4[9]")
-    UnkC0: int = ParamField(
-        int, "unkC0", default=0,
+    _Pad3: bytes = ParamPad(9, "pad4_old[9]")
+    Unknown0xb7: int = ParamField(
+        byte, "unknown_0xb7", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkC4: int = ParamField(
-        int, "unkC4", default=0,
+    AltIconId: int = ParamField(
+        ushort, "altIconId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkC8: int = ParamField(
-        int, "unkC8", default=0,
+    _Pad4: bytes = ParamPad(6, "pad4[6]")
+    TextEnableFlag2Id1: int = ParamField(
+        int, "textEnableFlag2Id1", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkCC: int = ParamField(
-        int, "unkCC", default=0,
+    TextEnableFlag2Id2: int = ParamField(
+        int, "textEnableFlag2Id2", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkD0: int = ParamField(
-        int, "unkD0", default=0,
+    TextEnableFlag2Id3: int = ParamField(
+        int, "textEnableFlag2Id3", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkD4: int = ParamField(
-        int, "unkD4", default=0,
+    TextEnableFlag2Id4: int = ParamField(
+        int, "textEnableFlag2Id4", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkD8: int = ParamField(
-        int, "unkD8", default=0,
+    TextEnableFlag2Id5: int = ParamField(
+        int, "textEnableFlag2Id5", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkDC: int = ParamField(
-        int, "unkDC", default=0,
+    TextEnableFlag2Id6: int = ParamField(
+        int, "textEnableFlag2Id6", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkE0: int = ParamField(
-        int, "unkE0", default=0,
+    TextEnableFlag2Id7: int = ParamField(
+        int, "textEnableFlag2Id7", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkE4: int = ParamField(
-        int, "unkE4", default=0,
+    TextEnableFlag2Id8: int = ParamField(
+        int, "textEnableFlag2Id8", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkE8: int = ParamField(
-        int, "unkE8", default=0,
+    TextDisableFlag2Id1: int = ParamField(
+        int, "textDisableFlag2Id1", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkEC: int = ParamField(
-        int, "unkEC", default=0,
+    TextDisableFlag2Id2: int = ParamField(
+        int, "textDisableFlag2Id2", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkF0: int = ParamField(
-        int, "unkF0", default=0,
+    TextDisableFlag2Id3: int = ParamField(
+        int, "textDisableFlag2Id3", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkF4: int = ParamField(
-        int, "unkF4", default=0,
+    TextDisableFlag2Id4: int = ParamField(
+        int, "textDisableFlag2Id4", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkF8: int = ParamField(
-        int, "unkF8", default=0,
+    TextDisableFlag2Id5: int = ParamField(
+        int, "textDisableFlag2Id5", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UnkFC: int = ParamField(
-        int, "unkFC", default=0,
+    TextDisableFlag2Id6: int = ParamField(
+        int, "textDisableFlag2Id6", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    TextDisableFlag2Id7: int = ParamField(
+        int, "textDisableFlag2Id7", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    TextDisableFlag2Id8: int = ParamField(
+        int, "textDisableFlag2Id8", default=0,
         tooltip="TOOLTIP-TODO",
     )

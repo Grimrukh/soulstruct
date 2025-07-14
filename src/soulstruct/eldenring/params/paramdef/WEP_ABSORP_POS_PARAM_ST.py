@@ -2,8 +2,6 @@ from __future__ import annotations
 
 __all__ = ["WEP_ABSORP_POS_PARAM_ST"]
 
-from dataclasses import dataclass
-
 from soulstruct.base.params.param_row import *
 from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.params.enums import *
@@ -234,4 +232,21 @@ class WEP_ABSORP_POS_PARAM_ST(ParamRow):
         byte, "dispPosType_leftHang_3", WEP_DISP_POS_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(12, "reserve[12]")
+    _Pad2: bytes = ParamPad(12, "reserve_old[12]")
+    Unknown0x54: int = ParamField(
+        sbyte, "unknown_0x54", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x55: int = ParamField(
+        sbyte, "unknown_0x55", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x56: int = ParamField(
+        sbyte, "unknown_0x56", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x57: int = ParamField(
+        sbyte, "unknown_0x57", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    _Pad3: bytes = ParamPad(8, "reserve[8]")

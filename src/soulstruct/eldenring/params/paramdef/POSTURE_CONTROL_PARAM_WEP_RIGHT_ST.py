@@ -21,6 +21,10 @@ class POSTURE_CONTROL_PARAM_WEP_RIGHT_ST(ParamRow):
         short, "a000_rightWristIO", default=0,
         tooltip="TOOLTIP-TODO",
     )
+    A000rightWeaponRotation: int = ParamField(
+        short, "a000_rightWeaponRotation", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
     A000leftArmFB: int = ParamField(
         short, "a000_leftArmFB", default=0,
         tooltip="TOOLTIP-TODO",
@@ -31,6 +35,10 @@ class POSTURE_CONTROL_PARAM_WEP_RIGHT_ST(ParamRow):
     )
     A000leftWristIO: int = ParamField(
         short, "a000_leftWristIO", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    A000lefttWeaponRotation: int = ParamField(
+        short, "a000_lefttWeaponRotation", default=0,
         tooltip="TOOLTIP-TODO",
     )
     A002rightArmFB: int = ParamField(
@@ -45,6 +53,10 @@ class POSTURE_CONTROL_PARAM_WEP_RIGHT_ST(ParamRow):
         short, "a002_rightWristIO", default=0,
         tooltip="TOOLTIP-TODO",
     )
+    A002rightWeaponRotation: int = ParamField(
+        short, "a002_rightWeaponRotation", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
     A002leftArmFB: int = ParamField(
         short, "a002_leftArmFB", default=0,
         tooltip="TOOLTIP-TODO",
@@ -55,6 +67,10 @@ class POSTURE_CONTROL_PARAM_WEP_RIGHT_ST(ParamRow):
     )
     A002leftWristIO: int = ParamField(
         short, "a002_leftWristIO", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    A002lefttWeaponRotation: int = ParamField(
+        short, "a002_lefttWeaponRotation", default=0,
         tooltip="TOOLTIP-TODO",
     )
     A003rightArmFB: int = ParamField(
@@ -69,6 +85,10 @@ class POSTURE_CONTROL_PARAM_WEP_RIGHT_ST(ParamRow):
         short, "a003_rightWristIO", default=0,
         tooltip="TOOLTIP-TODO",
     )
+    A003rightWeaponRotation: int = ParamField(
+        short, "a003_rightWeaponRotation", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
     A003leftArmFB: int = ParamField(
         short, "a003_leftArmFB", default=0,
         tooltip="TOOLTIP-TODO",
@@ -79,6 +99,10 @@ class POSTURE_CONTROL_PARAM_WEP_RIGHT_ST(ParamRow):
     )
     A003leftWristIO: int = ParamField(
         short, "a003_leftWristIO", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    A003lefttWeaponRotation: int = ParamField(
+        short, "a003_lefttWeaponRotation", default=0,
         tooltip="TOOLTIP-TODO",
     )
     A010rightArmFB: int = ParamField(
@@ -93,6 +117,10 @@ class POSTURE_CONTROL_PARAM_WEP_RIGHT_ST(ParamRow):
         short, "a010_rightWristIO", default=0,
         tooltip="TOOLTIP-TODO",
     )
+    A010rightWeaponRotation: int = ParamField(
+        short, "a010_rightWeaponRotation", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
     A010leftArmFB: int = ParamField(
         short, "a010_leftArmFB", default=0,
         tooltip="TOOLTIP-TODO",
@@ -103,6 +131,10 @@ class POSTURE_CONTROL_PARAM_WEP_RIGHT_ST(ParamRow):
     )
     A010leftWristIO: int = ParamField(
         short, "a010_leftWristIO", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    A010lefttWeaponRotation: int = ParamField(
+        short, "a010_lefttWeaponRotation", default=0,
         tooltip="TOOLTIP-TODO",
     )
     A012rightArmFB: int = ParamField(
@@ -117,6 +149,10 @@ class POSTURE_CONTROL_PARAM_WEP_RIGHT_ST(ParamRow):
         short, "a012_rightWristIO", default=0,
         tooltip="TOOLTIP-TODO",
     )
+    A012rightWeaponRotation: int = ParamField(
+        short, "a012_rightWeaponRotation", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
     A012leftArmFB: int = ParamField(
         short, "a012_leftArmFB", default=0,
         tooltip="TOOLTIP-TODO",
@@ -127,6 +163,10 @@ class POSTURE_CONTROL_PARAM_WEP_RIGHT_ST(ParamRow):
     )
     A012leftWristIO: int = ParamField(
         short, "a012_leftWristIO", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    A012lefttWeaponRotation: int = ParamField(
+        short, "a012_lefttWeaponRotation", default=0,
         tooltip="TOOLTIP-TODO",
     )
     A013rightArmFB: int = ParamField(
@@ -141,6 +181,10 @@ class POSTURE_CONTROL_PARAM_WEP_RIGHT_ST(ParamRow):
         short, "a013_rightWristIO", default=0,
         tooltip="TOOLTIP-TODO",
     )
+    A013rightWeaponRotation: int = ParamField(
+        short, "a013_rightWeaponRotation", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
     A013leftArmFB: int = ParamField(
         short, "a013_leftArmFB", default=0,
         tooltip="TOOLTIP-TODO",
@@ -151,6 +195,10 @@ class POSTURE_CONTROL_PARAM_WEP_RIGHT_ST(ParamRow):
     )
     A013leftWristIO: int = ParamField(
         short, "a013_leftWristIO", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    A013lefttWeaponRotation: int = ParamField(
+        short, "a013_lefttWeaponRotation", default=0,
         tooltip="TOOLTIP-TODO",
     )
     A014rightArmFB: int = ParamField(
@@ -165,6 +213,10 @@ class POSTURE_CONTROL_PARAM_WEP_RIGHT_ST(ParamRow):
         short, "a014_rightWristIO", default=0,
         tooltip="TOOLTIP-TODO",
     )
+    A014rightWeaponRotation: int = ParamField(
+        short, "a014_rightWeaponRotation", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
     A014leftArmFB: int = ParamField(
         short, "a014_leftArmFB", default=0,
         tooltip="TOOLTIP-TODO",
@@ -177,6 +229,11 @@ class POSTURE_CONTROL_PARAM_WEP_RIGHT_ST(ParamRow):
         short, "a014_leftWristIO", default=0,
         tooltip="TOOLTIP-TODO",
     )
+    A014lefttWeaponRotation: int = ParamField(
+        short, "a014_lefttWeaponRotation", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    _Pad0: bytes = ParamPad(4, "pad[4]")
     A015rightArmFB: int = ParamField(
         short, "a015_rightArmFB", default=0,
         tooltip="TOOLTIP-TODO",
@@ -187,6 +244,10 @@ class POSTURE_CONTROL_PARAM_WEP_RIGHT_ST(ParamRow):
     )
     A015rightWristIO: int = ParamField(
         short, "a015_rightWristIO", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    A015rightWeaponRotation: int = ParamField(
+        short, "a015_rightWeaponRotation", default=0,
         tooltip="TOOLTIP-TODO",
     )
     A015leftArmFB: int = ParamField(
@@ -201,6 +262,10 @@ class POSTURE_CONTROL_PARAM_WEP_RIGHT_ST(ParamRow):
         short, "a015_leftWristIO", default=0,
         tooltip="TOOLTIP-TODO",
     )
+    A015lefttWeaponRotation: int = ParamField(
+        short, "a015_lefttWeaponRotation", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
     A016rightArmFB: int = ParamField(
         short, "a016_rightArmFB", default=0,
         tooltip="TOOLTIP-TODO",
@@ -211,6 +276,10 @@ class POSTURE_CONTROL_PARAM_WEP_RIGHT_ST(ParamRow):
     )
     A016rightWristIO: int = ParamField(
         short, "a016_rightWristIO", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    A016rightWeaponRotation: int = ParamField(
+        short, "a016_rightWeaponRotation", default=0,
         tooltip="TOOLTIP-TODO",
     )
     A016leftArmFB: int = ParamField(
@@ -225,4 +294,7 @@ class POSTURE_CONTROL_PARAM_WEP_RIGHT_ST(ParamRow):
         short, "a016_leftWristIO", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(4, "pad[4]")
+    A016lefttWeaponRotation: int = ParamField(
+        short, "a016_lefttWeaponRotation", default=0,
+        tooltip="TOOLTIP-TODO",
+    )

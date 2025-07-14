@@ -30,4 +30,12 @@ class TOUGHNESS_PARAM_ST(ParamRow):
         float, "proCorrectionRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(16, "pad1[16]")
+    Unk1: float = ParamField(
+        float, "unk1", default=1.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unk2: float = ParamField(
+        float, "unk2", default=1.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    _Pad1: bytes = ParamPad(8, "pad1[8]")

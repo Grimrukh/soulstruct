@@ -2,8 +2,6 @@ from __future__ import annotations
 
 __all__ = ["MENU_COMMON_PARAM_ST"]
 
-from dataclasses import dataclass
-
 from soulstruct.base.params.param_row import *
 from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.params.enums import *
@@ -241,4 +239,65 @@ class MENU_COMMON_PARAM_ST(ParamRow):
         uint, "pcHorseHpRecoverDispThreshold", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(32, "reserved33[32]")
+    _Pad2: bytes = ParamPad(32, "reserved33_old[32]")
+    Unknown0xe0: int = ParamField(
+        byte, "unknown_0xe0", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0xe1: int = ParamField(
+        byte, "unknown_0xe1", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0xe2: int = ParamField(
+        byte, "unknown_0xe2", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0xe3: int = ParamField(
+        byte, "unknown_0xe3", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0xe4: int = ParamField(
+        byte, "unknown_0xe4", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0xe5: int = ParamField(
+        byte, "unknown_0xe5", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0xe6: int = ParamField(
+        byte, "unknown_0xe6", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0xe7: int = ParamField(
+        byte, "unknown_0xe7", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0xe8: int = ParamField(
+        byte, "unknown_0xe8", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0xe9: int = ParamField(
+        byte, "unknown_0xe9", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0xea: int = ParamField(
+        byte, "unknown_0xea", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0xeb: int = ParamField(
+        byte, "unknown_0xeb", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0xec: int = ParamField(
+        byte, "unknown_0xec", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0xed: int = ParamField(
+        byte, "unknown_0xed", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0xee: int = ParamField(
+        byte, "unknown_0xee", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    _Pad3: bytes = ParamPad(17, "reserved33[17]")

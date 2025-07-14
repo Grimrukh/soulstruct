@@ -150,7 +150,7 @@ class SP_EFFECT_PARAM_ST(ParamRow):
         tooltip="Value to add to or subtract from character's lightning defense.",
     )
     NoGuardIncomingDamageMultiplier: float = ParamField(
-        float, "NoGuardDamageRate", default=1.0,
+        float, "NoGuardDamageRate", default=0.0,
         tooltip="Multiplier to use instead of usual multiplier if character is not guarding. (Always set to 0 in "
                 "vanilla game, which must deactivate it. Only an educated guess that it refers to incoming damage, "
                 "not outgoing.)",
@@ -1423,11 +1423,48 @@ class SP_EFFECT_PARAM_ST(ParamRow):
         byte, "requestForceJoinBlackSOS_B:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    Unk3534: bool = ParamField(
-        byte, "unk353_4:1", SP_EFFECT_BOOL, bit_count=1, default=False,
+    IsDestinedDeathHpMult: bool = ParamField(
+        byte, "isDestinedDeathHpMult:1", SP_EFFECT_BOOL, bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
+    Padbitold: int = ParamField(
+        byte, "padbit_old:3", bit_count=3, default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    IsHpBurnEffect: bool = ParamField(
+        byte, "isHpBurnEffect:1", SP_EFFECT_BOOL, bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x3526: bool = ParamField(
+        byte, "unknown_0x352_6:1", SP_EFFECT_BOOL, bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x3527: bool = ParamField(
+        byte, "unknown_0x352_7:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(1, "pad2[1]")
+    Unknown0x3530: bool = ParamField(
+        byte, "unknown_0x353_0:1", bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x3531: bool = ParamField(
+        byte, "unknown_0x353_1:1", bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x3532: bool = ParamField(
+        byte, "unknown_0x353_2:1", bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x3533: bool = ParamField(
+        byte, "unknown_0x353_3:1", bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x3534: bool = ParamField(
+        byte, "unknown_0x353_4:1", bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
+    _BitPad0: int = ParamBitPad(byte, "unknown_0x353_5:3", bit_count=3)
     PoiseAddition: float = ParamField(
         float, "changeSuperArmorPoint", default=0.0,
         tooltip="Amount added (if positive) or subtracted (if negative) from character's poise.",
@@ -1488,8 +1525,12 @@ class SP_EFFECT_PARAM_ST(ParamRow):
         float, "goodsConsumptionRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    Pad3: float = ParamField(
-        float, "unk2", default=0.0,
+    GuardStaminaMult: float = ParamField(
+        float, "guardStaminaMult", default=1.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    SpiritDeathSpEffectId: int = ParamField(
+        int, "spiritDeathSpEffectId", default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad1: bytes = ParamPad(4, "unk3[4]")

@@ -2,15 +2,44 @@
 import logging
 import textwrap
 
-from soulstruct.base.params.param_row import *
 from soulstruct.base.params.paramdef.paramdefbnd import ParamDefBND
 from soulstruct.utilities.files import SOULSTRUCT_PATH, read_json, write_json
 
 _LOGGER = logging.getLogger(__name__)
 
 # ParamDef field names with miserable weird characters that I've redirected.
+# Remapping the entire names, rather than just the weird characters, to keep a better record.
 BAD_NAMES = {
     "ｇradFactor": "gradFactor",
+}
+
+
+# Maps ParamDef type names to matching `constrata` type names (alias with bit size).
+MAP_PARAM_TYPES = {
+    "dummy8": "uint8",  # pad field
+    "u8": "uint8",
+    "u16": "uint16",
+    "u32": "uint32",
+    "s8": "int8",
+    "s16": "int16",
+    "s32": "int32",
+    "f32": "float32",
+    "f64": "float64",
+    "fixstr": "str",  # decoded
+    "fixstrW": "str",  # decoded
+}
+MAP_PARAM_TYPES = {
+    "dummy8": "byte",  # pad field
+    "u8": "byte",
+    "u16": "ushort",
+    "u32": "uint",
+    "s8": "sbyte",
+    "s16": "short",
+    "s32": "int",
+    "f32": "float",
+    "f64": "double",
+    "fixstr": "str",  # decoded
+    "fixstrW": "str",  # decoded
 }
 
 
@@ -34,74 +63,107 @@ DSR_PARAMDEFS = (
 )
 
 
-def create_paramdef_info(paramdefbnd: ParamDefBND, game_submodule, template_info: dict = None):
-    """Create default info JSON, with nicknames generated from field names and no tooltips/defaults/etc."""
+def update_paramdef_info(paramdefbnd: ParamDefBND, game_submodule: str, template_info: dict = None):
+    """Add nicknames and tooltips to 'paramdef_info.json' for given game.
+
+    Any fields that are missing from the corresponding ParamDef in `paramdefbnd` will be removed, and any that are
+    missing in the JSON will be added, optionally using `template_info[paramdef_stem][field_name]` as a starting point.
+    """
     paramdef_dir = SOULSTRUCT_PATH(f"{game_submodule}/params/paramdef")
     json_path = paramdef_dir / "paramdef_info.json"
     if json_path.exists():
-        raise FileExistsError(f"Cannot replace existing `paramdef_info.json` with default one.")
+        json_dict = read_json(json_path)
+    else:
+        json_dict = {}  # completely fresh
 
     if template_info is None:
         template_info = {}
 
-    json_dict = {}
     for paramdef_stem, paramdef in paramdefbnd.paramdefs.items():
-        paramdef_dict = json_dict[paramdef_stem] = {}
+        paramdef_dict = json_dict.setdefault(paramdef_stem, {})
+        existing_field_names = list(paramdef_dict)
+
         for field_name in paramdef.fields.keys():
-            try:
-                template_field = template_info[paramdef_stem][field_name]
-            except KeyError:
-                template_field = {}
-            nickname = template_field.get("nickname", get_default_nickname(field_name))
-            tooltip = template_field.get("tooltip", "TOOLTIP-TODO")
+            if field_name not in existing_field_names:
+                # New field must be added to JSON.
+                try:
+                    template_field = template_info[paramdef_stem][field_name]
+                except KeyError:
+                    template_field = {}
+                nickname = template_field.get("nickname", get_default_nickname(field_name))
+                tooltip = template_field.get("tooltip", "TOOLTIP-TODO")
+                paramdef_dict[field_name] = {"nickname": nickname, "tooltip": tooltip}
+                if template_field:
+                    for optional_key in ("default", "game_type", "dynamic_callback"):
+                        try:
+                            paramdef_dict[field_name][optional_key] = template_field[optional_key]
+                        except KeyError:
+                            pass  # these keys are optional
+            else:
+                existing_field_names.remove(field_name)
 
-            paramdef_dict[field_name] = {"nickname": nickname, "tooltip": tooltip}
-
-            if template_field:
-                for optional_key in ("default", "game_type", "dynamic_callback"):
-                    try:
-                        paramdef_dict[field_name][optional_key] = template_field[optional_key]
-                    except KeyError:
-                        pass
+        # Delete any outdated keys that are not in the given (presumably newer) `paramdefbnd`.
+        for old_field_name in existing_field_names:
+            paramdef_dict.pop(old_field_name)
 
     write_json(json_path, json_dict)
 
 
-def create_game_classes(paramdefbnd: ParamDefBND, game_submodule: str, no_info: bool = False):
-    """My script to convert these 'display info' dictionaries to BinaryStruct representations of ParamDefs."""
+def create_game_classes(
+    paramdefbnd: ParamDefBND,
+    game_submodule: str,
+    no_info: bool = False,
+    only_paramdefs: set[str] = (),
+):
+    """Use given `paramdefbnd` to generate `ParamRow` (`BinaryStruct`) subclasses, e.g. `ATK_PARAM_ST`.
+
+    Unless disabled, `paramdef_
+    """
     paramdef_dir = SOULSTRUCT_PATH(f"{game_submodule}/params/paramdef")
 
     if no_info:
         paramdefbnd_info = {}
     else:
-        paramdefbnd_info = read_json(paramdef_dir / "paramdef_info.json")
+        paramdef_info_path = paramdef_dir / "paramdef_info.json"
+        try:
+            # Named to distinguish it from the per-ParamDef sub-dictionaries used below.
+            paramdefbnd_info = read_json(paramdef_info_path)
+        except FileNotFoundError:
+            raise FileNotFoundError(
+                f"Could not find ParamDef info JSON: {paramdef_info_path}. Create it first with "
+                f"`create_paramdef_info()` or ignore it with `no_info=True` argument."
+            )
 
-    # TODO: Collect all used values of all enums by iterating over actual GameParam.
+    # TODO: Collect all *USED* values of all enums by iterating over actual GameParam.
     all_enums = {}  # maps display type names to internal_type
 
     for paramdef_stem, paramdef in paramdefbnd.paramdefs.items():
+
+        if only_paramdefs and paramdef_stem not in only_paramdefs:
+            continue
+
         print(f"Creating `{game_submodule}` class for: {paramdef_stem}")
 
         bitpad_count = 0
         pad_count = 0
 
         import_lines = [
-            "from __future__ import annotations\n",
-            f"__all__ = [\"{paramdef_stem}\"]\n",
-            "from dataclasses import dataclass\n",
+            "from __future__ import annotations",
+            "",
+            f"__all__ = [\"{paramdef_stem}\"]",
+            "",
             "from soulstruct.base.params.param_row import *",
-            f"from soulstruct.{game_submodule}.game_types import *",
-            f"from soulstruct.{game_submodule}.params.enums import *",
             "from soulstruct.utilities.binary import *",
         ]
 
         dynamic_imports = []
 
         lines = [
-            "# noinspection PyDataclass",
-            f"@dataclass(slots=True)",
-            f"class {paramdef_stem}(ParamRow):",
+            f"class {paramdef_stem}(ParamRow):",  # dataclass built in to `BinaryStruct`
         ]
+
+        game_types_used = False
+        param_enums_used = False
 
         try:
             paramdef_info = paramdefbnd_info[paramdef_stem]
@@ -118,7 +180,7 @@ def create_game_classes(paramdefbnd: ParamDefBND, game_submodule: str, no_info: 
             display_type_name = paramdef_field.display_type.__name__
             enum_name = paramdef_field.internal_type_name
             if not enum_name:
-                if field_name == "sfxMultiplier":  # known bug in DSR ParamDef
+                if game_submodule == "darksouls1r" and field_name == "sfxMultiplier":  # known bug in DSR ParamDef
                     enum_name = display_type_name
 
             try:
@@ -127,14 +189,14 @@ def create_game_classes(paramdefbnd: ParamDefBND, game_submodule: str, no_info: 
                 raise KeyError(f"No info for field `{field_name}` in paramdef {paramdef_stem}.")
 
             fmt = MAP_PARAM_TYPES[display_type_name]
-            field_args = [fmt.__name__, f"\"{field_name}\""]
+            field_args = [fmt, f"\"{field_name}\""]
 
             ind = " " * 8
 
             if display_type_name == "dummy8":  # pad
                 if paramdef_field.bit_count != -1:  # bit pad
                     lines.append(
-                        f"    _BitPad{bitpad_count}: int = ParamBitPad({fmt.__name__}, \"{field_name}\", "
+                        f"    _BitPad{bitpad_count}: int = ParamBitPad({fmt}, \"{field_name}\", "
                         f"bit_count={paramdef_field.bit_count})"
                     )
                     bitpad_count += 1
@@ -147,7 +209,8 @@ def create_game_classes(paramdefbnd: ParamDefBND, game_submodule: str, no_info: 
 
             # Get display type enum (if given).
             if enum_name != display_type_name:
-                field_args.append(f"{enum_name}")  # no keyword
+                field_args.append(enum_name)  # no keyword
+                param_enums_used = True
                 if enum_name not in all_enums:
                     all_enums[enum_name] = display_type_name
                 elif all_enums[enum_name] != display_type_name:
@@ -166,6 +229,7 @@ def create_game_classes(paramdefbnd: ParamDefBND, game_submodule: str, no_info: 
 
             if "game_type" in info:
                 field_args.append(f"game_type={info['game_type']}")
+                game_types_used = True
 
             # Get field type annotation.
             if display_type_name in {"fixstr", "fixstrW"}:
@@ -218,38 +282,48 @@ def create_game_classes(paramdefbnd: ParamDefBND, game_submodule: str, no_info: 
 
         cls_string = "\n".join(lines)
 
+        # if param_enums_used:
+        # Import param enums.
+        import_lines.insert(5, f"from soulstruct.{game_submodule}.params.enums import *")
+        # if game_types_used:
+        # Import game types.
+        import_lines.insert(5, f"from soulstruct.{game_submodule}.game_types import *")
+
         if dynamic_imports:
-            dynamic_imports_line = f"\n\nfrom .dynamics import {', '.join(dynamic_imports)}"
-        else:
-            dynamic_imports_line = ""
+            import_lines.extend(["", f"from .dynamics import {', '.join(dynamic_imports)}"])
 
-        module_text = "\n".join(import_lines) + dynamic_imports_line + "\n\n\n" + cls_string + "\n"
+        module_text = "\n".join(import_lines) + "\n\n\n" + cls_string + "\n"
 
+        # TODO: Was this transient?
         if game_submodule == "darksouls1r" and paramdef_stem not in DSR_PARAMDEFS:
             continue  # we still create the module to validate it, but don't write it
 
         (paramdef_dir / f"{paramdef_stem}.py").write_text(module_text)
 
-    # Write enums.
-    enum_module_text = "from soulstruct.base.params.paramdef.field_types import *"
-    for display_name, internal_name in all_enums.items():
-        enum_module_text += f"\n\n\nclass {display_name}({internal_name}):\n    pass"
-    enum_module_text += "\n"
+    # We don't rewrite partial enums!
+    if not only_paramdefs:
 
-    (paramdef_dir / "enums.py").write_text(enum_module_text)
+        # Write enums.
+        enum_module_text = "from soulstruct.base.params.paramdef.field_types import *"
+        for display_name, internal_name in all_enums.items():
+            enum_module_text += f"\n\n\nclass {display_name}({internal_name}):\n    pass"
+        enum_module_text += "\n"
+
+        # Enums are written to the `params` parent directory.
+        (paramdef_dir / "../enums.py").write_text(enum_module_text)
 
 
-def modify_paramdef_info(game_submodule):
+def modify_paramdef_info(game_submodule: str):
     """Transient functions to edit JSON."""
     paramdef_dir = SOULSTRUCT_PATH(f"{game_submodule}/params/paramdef")
     json_path = paramdef_dir / "paramdef_info.json"
     paramdef_info = read_json(json_path)
-    param_info = paramdef_info["CHARACTER_INIT_PARAM"]
 
+    # Set some dynamic game types.
+    chara_init_param_info = paramdef_info["CHARACTER_INIT_PARAM"]
     armor_suffixes = {"Helm", "Armer", "Gaunt", "Leg"}
     ammo_suffixes = {"Arrow", "Bolt", "SubArrow", "SubBolt"}
-
-    for key, info in param_info.items():
+    for key, info in chara_init_param_info.items():
         if "_Wep_" in key or "_Subwep_" in key:
             info["game_type"] = "WeaponParam"
         elif key.split("_")[-1] in armor_suffixes:
@@ -268,6 +342,7 @@ def modify_paramdef_info(game_submodule):
 
 if __name__ == '__main__':
     from soulstruct.eldenring.params.paramdef import ParamDefBND
-    modify_paramdef_info("eldenring")
     _paramdefbnd = ParamDefBND.from_bundled("ELDEN_RING")
+    update_paramdef_info(_paramdefbnd, "eldenring")
+    modify_paramdef_info("eldenring")
     create_game_classes(_paramdefbnd, "eldenring")

@@ -110,6 +110,10 @@ class EQUIP_PARAM_GOODS_ST(ParamRow):
                 "for thrown goods and 'No Category' otherwise.",
     )
     _Pad2: bytes = ParamPad(1, "pad3[1]")
+    Unknown0x40: int = ParamField(
+        byte, "unknown_0x40", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
     UseAnimation: int = ParamField(
         byte, "goodsUseAnim", GOODS_USE_ANIM, default=0,
         tooltip="Points to basic animation used when good is used. Visual/sound effects are set by the variation ID.",
@@ -342,7 +346,16 @@ class EQUIP_PARAM_GOODS_ST(ParamRow):
         byte, "isUseNoAttackRegion:1", EQUIP_BOOL, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    _BitPad1: int = ParamBitPad(byte, "pad1:7", bit_count=7)
+    _BitPad1: int = ParamBitPad(byte, "pad1_old:7", bit_count=7)
+    Unknown0x731: bool = ParamField(
+        byte, "unknown_0x73_1:1", bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
+    QuickMatchReplenish: bool = ParamField(
+        byte, "quickMatchReplenish:1", bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
+    _BitPad2: int = ParamBitPad(byte, "pad1:5", bit_count=5)
     SaleValue: int = ParamField(
         int, "saleValue", default=-1,
         tooltip="TOOLTIP-TODO",

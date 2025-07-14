@@ -200,7 +200,12 @@ class EQUIP_PARAM_GEM_ST(ParamRow):
         byte, "defaultWepAttr", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(2, "pad2[2]")
+    _Pad1: bytes = ParamPad(2, "pad2_old[2]")
+    IsSpecialSwordArt: int = ParamField(
+        byte, "isSpecialSwordArt", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    _Pad2: bytes = ParamPad(1, "pad2[1]")
     CanMountWepDagger: bool = ParamField(
         byte, "canMountWep_Dagger:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
@@ -346,7 +351,41 @@ class EQUIP_PARAM_GEM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     _BitPad2: int = ParamBitPad(byte, "reserved_canMountWep:4", bit_count=4)
-    _Pad2: bytes = ParamPad(3, "reserved2_canMountWep[3]")
+    CanMountWepHandToHand: bool = ParamField(
+        byte, "canMountWep_HandToHand:1", bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
+    CanMountWepPerfumeBottle: bool = ParamField(
+        byte, "canMountWep_PerfumeBottle:1", bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
+    CanMountWepThrustingShield: bool = ParamField(
+        byte, "canMountWep_ThrustingShield:1", bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
+    CanMountWepThrowingWeapon: bool = ParamField(
+        byte, "canMountWep_ThrowingWeapon:1", bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
+    _Pad3: bytes = ParamPad(3, "reserved2_canMountWep_old[3]")
+    CanMountWepReverseHandSword: bool = ParamField(
+        byte, "canMountWep_ReverseHandSword:1", bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
+    CanMountWepLightGreatsword: bool = ParamField(
+        byte, "canMountWep_LightGreatsword:1", bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
+    CanMountWepGreatKatana: bool = ParamField(
+        byte, "canMountWep_GreatKatana:1", bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
+    CanMountWepBeastClaw: bool = ParamField(
+        byte, "canMountWep_BeastClaw:1", bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
+    _BitPad3: int = ParamBitPad(byte, "reserved_canMountWep_0x3d_4:4", bit_count=4)
+    _Pad4: bytes = ParamPad(2, "reserved2_canMountWep[2]")
     SpEffectMsgId0: int = ParamField(
         int, "spEffectMsgId0", default=-1,
         tooltip="TOOLTIP-TODO",
@@ -371,4 +410,4 @@ class EQUIP_PARAM_GEM_ST(ParamRow):
         int, "mountWepTextId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(8, "pad6[8]")
+    _Pad5: bytes = ParamPad(8, "pad6[8]")

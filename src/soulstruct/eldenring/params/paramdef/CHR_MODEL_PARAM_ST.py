@@ -31,3 +31,7 @@ class CHR_MODEL_PARAM_ST(ParamRow):
         float, "reportAnimMemSizeMb", default=12.0,
         tooltip="TOOLTIP-TODO",
     )
+    Unk: int = ParamField(
+        uint, "unk", default=0,
+        tooltip="TOOLTIP-TODO",
+    )

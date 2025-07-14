@@ -2,8 +2,6 @@ from __future__ import annotations
 
 __all__ = ["BUDDY_PARAM_ST"]
 
-from dataclasses import dataclass
-
 from soulstruct.base.params.param_row import *
 from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.params.enums import *
@@ -114,71 +112,72 @@ class BUDDY_PARAM_ST(ParamRow):
         int, "generateAnimId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    Unk1: int = ParamField(
-        uint, "Unk1", default=0,
+    _Pad2: bytes = ParamPad(4, "Reserve2[4]")
+    Unknown0x5c: int = ParamField(
+        uint, "unknown_0x5c", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Unk2: int = ParamField(
-        uint, "Unk2", default=0,
+    Unknown0x60: int = ParamField(
+        uint, "unknown_0x60", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Unk3: int = ParamField(
-        int, "Unk3", default=0,
+    Unknown0x64: int = ParamField(
+        int, "unknown_0x64", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Unk4: int = ParamField(
-        int, "Unk4", default=0,
+    Unknown0x68: int = ParamField(
+        int, "unknown_0x68", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Unk5: int = ParamField(
-        int, "Unk5", default=0,
+    Unknown0x6c: int = ParamField(
+        int, "unknown_0x6c", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Unk6: int = ParamField(
-        int, "Unk6", default=0,
+    Unknown0x70: int = ParamField(
+        int, "unknown_0x70", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Unk7: int = ParamField(
-        int, "Unk7", default=0,
+    Unknown0x74: int = ParamField(
+        int, "unknown_0x74", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Unk8: int = ParamField(
-        int, "Unk8", default=0,
+    Unknown0x78: int = ParamField(
+        int, "unknown_0x78", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Unk9: int = ParamField(
-        int, "Unk9", default=0,
+    Unknown0x7c: int = ParamField(
+        int, "unknown_0x7c", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Unk10: int = ParamField(
-        int, "Unk10", default=0,
+    Unknown0x80: int = ParamField(
+        int, "unknown_0x80", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Unk11: int = ParamField(
-        uint, "Unk11", default=0,
+    Unknown0x84: int = ParamField(
+        uint, "unknown_0x84", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Unk12: int = ParamField(
-        int, "Unk12", default=0,
+    Unknown0x88: int = ParamField(
+        int, "unknown_0x88", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Unk13: int = ParamField(
-        int, "Unk13", default=0,
+    Unknown0x8c: int = ParamField(
+        int, "unknown_0x8c", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Unk14: int = ParamField(
-        int, "Unk14", default=0,
+    Unknown0x90: int = ParamField(
+        int, "unknown_0x90", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Unk15: int = ParamField(
-        int, "Unk15", default=0,
+    Unknown0x94: int = ParamField(
+        int, "unknown_0x94", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Unk16: int = ParamField(
-        int, "Unk16", default=0,
+    Unknown0x98: int = ParamField(
+        int, "unknown_0x98", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Unk17: int = ParamField(
-        uint, "Unk17", default=0,
+    Unknown0x9c: int = ParamField(
+        uint, "unknown_0x9c", default=0,
         tooltip="TOOLTIP-TODO",
     )

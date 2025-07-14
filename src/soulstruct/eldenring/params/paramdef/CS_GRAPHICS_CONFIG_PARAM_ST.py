@@ -62,3 +62,8 @@ class CS_GRAPHICS_CONFIG_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(3, "m_dummy[3]")
+    MRayTracingQuality: int = ParamField(
+        byte, "m_RayTracingQuality", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    _Pad1: bytes = ParamPad(2, "m_dummy[2]")

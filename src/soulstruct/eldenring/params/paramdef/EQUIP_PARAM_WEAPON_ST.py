@@ -2,8 +2,6 @@ from __future__ import annotations
 
 __all__ = ["EQUIP_PARAM_WEAPON_ST"]
 
-from dataclasses import dataclass
-
 from soulstruct.base.params.param_row import *
 from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.params.enums import *
@@ -721,7 +719,19 @@ class EQUIP_PARAM_WEAPON_ST(ParamRow):
         byte, "invisibleOnRemo:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
-    _BitPad1: int = ParamBitPad(byte, "pad2:3", bit_count=3)
+    _BitPad1: int = ParamBitPad(byte, "unk1:3", bit_count=3)
+    Unknown0x17c5: bool = ParamField(
+        byte, "unknown_0x17c_5:1", bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
+    QuickMatchReplenish: bool = ParamField(
+        byte, "quickMatchReplenish:1", bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
+    IsWeaponCatalyst: bool = ParamField(
+        byte, "isWeaponCatalyst:1", bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
     CorrectTypeMagic: int = ParamField(
         byte, "correctType_Magic", WEP_CORRECT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
@@ -1110,4 +1120,9 @@ class EQUIP_PARAM_WEAPON_ST(ParamRow):
         float, "vsPlayerDmgCorrectRate_Curse", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(8, "pad[8]")
+    _Pad1: bytes = ParamPad(8, "pad_old[8]")
+    RestrictSpecialSwordArt: int = ParamField(
+        byte, "restrictSpecialSwordArt", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    _Pad2: bytes = ParamPad(7, "pad[7]")

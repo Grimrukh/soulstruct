@@ -2,8 +2,6 @@ from __future__ import annotations
 
 __all__ = ["SP_EFFECT_VFX_PARAM_ST"]
 
-from dataclasses import dataclass
-
 from soulstruct.base.params.param_row import *
 from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.params.enums import *
@@ -136,6 +134,10 @@ class SP_EFFECT_VFX_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     _BitPad0: int = ParamBitPad(byte, "pad_1:1", bit_count=1)
+    Unknown0x2f7: bool = ParamField(
+        byte, "unknown_0x2f_7:1", bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
     DecalId1: int = ParamField(
         int, "decalId1", default=-1,
         tooltip="TOOLTIP-TODO",
@@ -264,4 +266,25 @@ class SP_EFFECT_VFX_PARAM_ST(ParamRow):
         short, "footDecalMaterialOffsetOverwriteId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(14, "pad[14]")
+    _Pad0: bytes = ParamPad(14, "pad_old[14]")
+    Unknown0x96: int = ParamField(
+        byte, "unknown_0x96", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x97: int = ParamField(
+        byte, "unknown_0x97", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x98: int = ParamField(
+        byte, "unknown_0x98", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x99: int = ParamField(
+        byte, "unknown_0x99", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x9a: int = ParamField(
+        byte, "unknown_0x9a", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    _Pad1: bytes = ParamPad(9, "pad[9]")

@@ -2,8 +2,6 @@ from __future__ import annotations
 
 __all__ = ["ATK_PARAM_ST"]
 
-from dataclasses import dataclass
-
 from soulstruct.base.params.param_row import *
 from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.params.enums import *
@@ -861,9 +859,18 @@ class ATK_PARAM_ST(ParamRow):
         byte, "defSfxMaterialVariationValue", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(19, "pad4[19]")
+    _Pad1: bytes = ParamPad(3, "pad4[3]")
     FinalDamageRateID: int = ParamField(
         int, "finalDamageRateId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(12, "pad7[12]")
+    _Pad2: bytes = ParamPad(12, "pad7_old[12]")
+    SubCategory3: int = ParamField(
+        byte, "subCategory3", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    SubCategory4: int = ParamField(
+        byte, "subCategory4", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    _Pad3: bytes = ParamPad(10, "pad7[10]")

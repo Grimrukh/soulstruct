@@ -7,8 +7,6 @@ from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
-from .dynamics import ObjActSuccessCondition, ObjActSuccessCondition
-
 
 class OBJ_ACT_PARAM_ST(ParamRow):
     PromptMessage: int = ParamField(
@@ -35,13 +33,13 @@ class OBJ_ACT_PARAM_ST(ParamRow):
         ushort, "validDist", default=150,
         tooltip="Maximum distance from action model point at which the object action will be prompted.",
     )
-    SuccessConditionID1: int = ParamField(
-        ushort, "spQualifiedId", default=0, dynamic_callback=ObjActSuccessCondition(1),
-        tooltip="TODO",
+    SpQualifiedIdold: int = ParamField(
+        ushort, "spQualifiedId_old", default=0,
+        tooltip="TOOLTIP-TODO",
     )
-    SuccessConditionID2: int = ParamField(
-        ushort, "spQualifiedId2", default=0, dynamic_callback=ObjActSuccessCondition(2),
-        tooltip="TODO",
+    SpQualifiedId2old: int = ParamField(
+        ushort, "spQualifiedId2_old", default=0,
+        tooltip="TOOLTIP-TODO",
     )
     ObjectActionModelPoint: int = ParamField(
         byte, "objDummyId", game_type=ModelDummy, default=0,
@@ -100,4 +98,13 @@ class OBJ_ACT_PARAM_ST(ParamRow):
         int, "preActionSfxId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(40, "pad2[40]")
+    _Pad1: bytes = ParamPad(40, "pad2_old[40]")
+    SpQualifiedIdnew: int = ParamField(
+        int, "spQualifiedId_new", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    SpQualifiedId2new: int = ParamField(
+        int, "spQualifiedId2_new", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    _Pad2: bytes = ParamPad(32, "pad2[32]")

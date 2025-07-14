@@ -2,8 +2,6 @@ from __future__ import annotations
 
 __all__ = ["GAME_SYSTEM_COMMON_PARAM_ST"]
 
-from dataclasses import dataclass
-
 from soulstruct.base.params.param_row import *
 from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.params.enums import *
@@ -772,6 +770,10 @@ class GAME_SYSTEM_COMMON_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(4, "reserve4_2[4]")
+    Unknown0x230: int = ParamField(
+        int, "unknown_0x230", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
     AiSightRatesunlosslight: float = ParamField(
         float, "aiSightRate_sunloss_light", default=1.0,
         tooltip="TOOLTIP-TODO",
@@ -1137,4 +1139,255 @@ class GAME_SYSTEM_COMMON_PARAM_ST(ParamRow):
         float, "bonfireCheckEnemyRange", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(128, "reserved_124[128]")
+    _Pad2: bytes = ParamPad(48, "reserved_124[48]")
+    _Pad3: bytes = ParamPad(32, "reserved_124[32]")
+    Unknown0x2f0: int = ParamField(
+        int, "unknown_0x2f0", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingLevelUnkUpperRel: int = ParamField(
+        byte, "matchingLevelUnkUpperRel", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingLevelUnkUpperAbs: int = ParamField(
+        byte, "matchingLevelUnkUpperAbs", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk0: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_0", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk1: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_1", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk2: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_2", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk3: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_3", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk4: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_4", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk5: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_5", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk6: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_6", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk7: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_7", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk8: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_8", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk9: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_9", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk10: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_10", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk11: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_11", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk12: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_12", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk13: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_13", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk14: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_14", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk15: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_15", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk16: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_16", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk17: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_17", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk18: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_18", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk19: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_19", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk20: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_20", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk21: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_21", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk22: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_22", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk23: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_23", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk24: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_24", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    MatchingWeaponLevelUpperUnk25: int = ParamField(
+        byte, "matchingWeaponLevelUpperUnk_25", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x310: float = ParamField(
+        float, "unknown_0x310", default=0.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x314: float = ParamField(
+        float, "unknown_0x314", default=0.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x318: float = ParamField(
+        float, "unknown_0x318", default=0.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x31c: float = ParamField(
+        float, "unknown_0x31c", default=0.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x320: float = ParamField(
+        float, "unknown_0x320", default=0.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x324: float = ParamField(
+        float, "unknown_0x324", default=0.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x328: float = ParamField(
+        float, "unknown_0x328", default=0.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x32c: float = ParamField(
+        float, "unknown_0x32c", default=0.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x330: float = ParamField(
+        float, "unknown_0x330", default=0.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x334: float = ParamField(
+        float, "unknown_0x334", default=0.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x338: float = ParamField(
+        float, "unknown_0x338", default=0.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x33c: float = ParamField(
+        float, "unknown_0x33c", default=0.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x340: float = ParamField(
+        float, "unknown_0x340", default=0.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x344: float = ParamField(
+        float, "unknown_0x344", default=0.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    _Pad4: bytes = ParamPad(40, "pad_0x348[40]")
+    Unknown0x34c: int = ParamField(
+        int, "unknown_0x34c", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x350: int = ParamField(
+        int, "unknown_0x350", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x354: int = ParamField(
+        int, "unknown_0x354", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x358: int = ParamField(
+        int, "unknown_0x358", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x35c: int = ParamField(
+        int, "unknown_0x35c", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    BaseScaduBlessingSpEffectId: int = ParamField(
+        int, "baseScaduBlessingSpEffectId", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    BaseReveredSpiritAshBlessingSpEffectId: int = ParamField(
+        int, "baseReveredSpiritAshBlessingSpEffectId", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x368: int = ParamField(
+        int, "unknown_0x368", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x36c: int = ParamField(
+        int, "unknown_0x36c", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x370: int = ParamField(
+        int, "unknown_0x370", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    RidingSAReceivedRatePlayer: float = ParamField(
+        float, "ridingSAReceivedRatePlayer", default=0.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    RidingSAReceivedRateNotPlayer: float = ParamField(
+        float, "ridingSAReceivedRateNotPlayer", default=0.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    GlovewortCrystalSpiritBuffSpEffectId: int = ParamField(
+        int, "glovewortCrystalSpiritBuffSpEffectId", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x380: int = ParamField(
+        int, "unknown_0x380", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x384: float = ParamField(
+        float, "unknown_0x384", default=0.0,
+        tooltip="TOOLTIP-TODO",
+    )
+    UnknownSpEffectId0x388: int = ParamField(
+        int, "unknownSpEffectId_0x388", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    UnknownSpEffectId0x38c: int = ParamField(
+        int, "unknownSpEffectId_0x38c", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    UnknownSpEffectId0x390: int = ParamField(
+        int, "unknownSpEffectId_0x390", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    BaseReveredSpiritTorrentBlessingSpEffectId: int = ParamField(
+        int, "baseReveredSpiritTorrentBlessingSpEffectId", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    _Pad5: bytes = ParamPad(108, "endPad[108]")

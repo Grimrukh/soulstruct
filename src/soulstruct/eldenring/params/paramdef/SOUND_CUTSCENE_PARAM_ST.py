@@ -2,8 +2,6 @@ from __future__ import annotations
 
 __all__ = ["SOUND_CUTSCENE_PARAM_ST"]
 
-from dataclasses import dataclass
-
 from soulstruct.base.params.param_row import *
 from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.params.enums import *
@@ -42,4 +40,22 @@ class SOUND_CUTSCENE_PARAM_ST(ParamRow):
         float, "EnterMapMuteStopTimeOnDrawCutscene", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(8, "reserved[8]")
+    _Pad2: bytes = ParamPad(8, "reserved_old[8]")
+    Unknown0x18: int = ParamField(
+        byte, "unknown_0x18", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x19: int = ParamField(
+        byte, "unknown_0x19", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x1a: int = ParamField(
+        byte, "unknown_0x1a", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x1b: int = ParamField(
+        byte, "unknown_0x1b", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    _Pad3: bytes = ParamPad(4, "reserved[4]")
+    _Pad4: bytes = ParamPad(4, "reserved2[4]")

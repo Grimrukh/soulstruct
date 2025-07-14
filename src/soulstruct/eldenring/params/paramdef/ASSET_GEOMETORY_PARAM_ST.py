@@ -122,6 +122,10 @@ class ASSET_GEOMETORY_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     _BitPad0: int = ParamBitPad(byte, "Reserve_2:1", bit_count=1)
+    Unknown0x3b7: bool = ParamField(
+        byte, "unknown_0x3b_7:1", bit_count=1, default=False,
+        tooltip="TOOLTIP-TODO",
+    )
     IsLadder: bool = ParamField(
         byte, "isLadder:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
@@ -366,8 +370,14 @@ class ASSET_GEOMETORY_PARAM_ST(ParamRow):
         byte, "penetrationBulletType", ASSET_PENETRATION_BULLET_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "Reserve_3[1]")
-    _Pad1: bytes = ParamPad(4, "Reserve_4[4]")
+    UnkR3: int = ParamField(
+        byte, "unkR3", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    UnkR4: float = ParamField(
+        float, "unkR4", default=0.0,
+        tooltip="TOOLTIP-TODO",
+    )
     SoundBreakSECpId: int = ParamField(
         int, "soundBreakSECpId", default=-1,
         tooltip="TOOLTIP-TODO",
@@ -432,7 +442,10 @@ class ASSET_GEOMETORY_PARAM_ST(ParamRow):
         byte, "isEnableSignPostBreak:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    _BitPad1: int = ParamBitPad(byte, "Reserve_1:2", bit_count=2)
+    UnkR1: int = ParamField(
+        byte, "unkR1:2", bit_count=2, default=0,
+        tooltip="TOOLTIP-TODO",
+    )
     GenerateMultiForbiddenRegion: int = ParamField(
         byte, "generateMultiForbiddenRegion", MULTI_FORBIDDEN_REGION_GENERATE_ATTRIBUTE, default=0,
         tooltip="TOOLTIP-TODO",
@@ -485,4 +498,29 @@ class ASSET_GEOMETORY_PARAM_ST(ParamRow):
         byte, "excludeActivateRatio_PS4_Legacy", ASSET_EXCLUDE_ACTIVATE_RATIO_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(32, "Reserve_0[32]")
+    _Pad0: bytes = ParamPad(32, "Reserve_0_old[32]")
+    Unknown0x120: int = ParamField(
+        byte, "unknown_0x120", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x121: int = ParamField(
+        byte, "unknown_0x121", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x122: int = ParamField(
+        byte, "unknown_0x122", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x123: int = ParamField(
+        byte, "unknown_0x123", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x124: int = ParamField(
+        byte, "unknown_0x124", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unknown0x125: int = ParamField(
+        byte, "unknown_0x125", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    _Pad1: bytes = ParamPad(26, "Reserve_0[26]")

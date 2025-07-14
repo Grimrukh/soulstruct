@@ -39,12 +39,17 @@ class CUTSCENE_MAP_ID_PARAM_ST(ParamRow):
         int, "RefCamPosHitPartsID", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(12, "reserved_2[12]")
+    _Pad1: bytes = ParamPad(12, "reserved_2_old[12]")
+    Unknown0x18: int = ParamField(
+        int, "unknown_0x18", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    _Pad2: bytes = ParamPad(8, "reserved_2[8]")
     ClientDisableViewTimeForProgress: int = ParamField(
         ushort, "ClientDisableViewTimeForProgress", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(2, "reserved[2]")
+    _Pad3: bytes = ParamPad(2, "reserved[2]")
     HitParts0: int = ParamField(
         int, "HitParts_0", default=-1,
         tooltip="TOOLTIP-TODO",
