@@ -189,7 +189,7 @@ DARK_SOULS_DSR = Game(
         ".tpfbdt": DCXType.Null,
     },
     bundled_resource_paths={
-        "PARAMDEFBND": SOULSTRUCT_PATH("darksouls1r/params/resources/darksouls1r.paramdefbnd.dcx"),
+        "PARAMDEFBND": SOULSTRUCT_PATH("darksouls1r/params/resources/paramdef.paramdefbnd.dcx"),
         "MTDBND": SOULSTRUCT_PATH("darksouls1r/models/resources/Mtd.mtdbnd.dcx"),
         "PATCH_MTDBND": SOULSTRUCT_PATH("darksouls1r/models/resources/MtdPatch.mtdbnd.dcx"),
     },
@@ -243,7 +243,7 @@ BLOODBORNE = Game(
     aliases=("bloodborne", "bb"),
     default_dcx_type=DCXType.DCX_DFLT_10000_44_9,
     bundled_resource_paths={
-        "PARAMDEFBND": SOULSTRUCT_PATH("bloodborne/params/resources/bloodborne.paramdefbnd.dcx"),
+        "PARAMDEFBND": SOULSTRUCT_PATH("bloodborne/params/resources/paramdef.paramdefbnd.dcx"),
         "MTDBND": SOULSTRUCT_PATH("bloodborne/models/resources/allmaterialbnd.mtdbnd.dcx"),
     },
     steam_appid=None,

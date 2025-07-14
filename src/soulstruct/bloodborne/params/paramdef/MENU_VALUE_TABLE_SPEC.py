@@ -2,25 +2,22 @@ from __future__ import annotations
 
 __all__ = ["MENU_VALUE_TABLE_SPEC"]
 
-from dataclasses import dataclass
-
 from soulstruct.base.params.param_row import *
-from soulstruct.bloodborne.game_types import *
 from soulstruct.bloodborne.params.enums import *
 from soulstruct.utilities.binary import *
 
 
 class MENU_VALUE_TABLE_SPEC(ParamRow):
     Value: float = ParamField(
-        float, "value", default=0.0,
+        float32, "value", default=0.0,
         tooltip="TODO",
     )
     TextID: int = ParamField(
-        int, "textId", default=0,
+        int32, "textId", default=0,
         tooltip="TODO",
     )
     CompareType: int = ParamField(
-        sbyte, "compareType", MENU_VALUE_TABLE_CMP_TYPE, default=0,
+        int8, "compareType", MENU_VALUE_TABLE_CMP_TYPE, default=0,
         tooltip="TODO",
     )
     _Pad0: bytes = ParamPad(3, "padding[3]")

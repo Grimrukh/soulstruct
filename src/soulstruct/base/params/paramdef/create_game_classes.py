@@ -37,6 +37,7 @@ def get_default_nickname(field_name: str):
     return nickname
 
 
+# `darksouls1r` module imports all `ParamRow` classes from `darksouls1ptde`, except for these.
 DSR_PARAMDEFS = (
     # NEW
     "COOL_TIME_PARAM_ST",
@@ -72,6 +73,10 @@ def update_paramdef_info(paramdefbnd: ParamDefBND, game_submodule: str, template
         existing_field_names = list(paramdef_dict)
 
         for field_name in paramdef.fields.keys():
+
+            if field_name in BAD_NAMES:
+                field_name = BAD_NAMES[field_name]
+
             if field_name not in existing_field_names:
                 # New field must be added to JSON.
                 try:
@@ -94,6 +99,9 @@ def update_paramdef_info(paramdefbnd: ParamDefBND, game_submodule: str, template
         for old_field_name in existing_field_names:
             paramdef_dict.pop(old_field_name)
 
+    # Alphabetize ParamDef keys.
+    json_dict = {k: json_dict[k] for k in sorted(json_dict)}
+
     write_json(json_path, json_dict)
 
 
@@ -101,6 +109,7 @@ def create_game_classes(
     paramdefbnd: ParamDefBND,
     game_submodule: str,
     no_info: bool = False,
+    no_enums: bool = True,
     only_paramdefs: set[str] = (),
 ):
     """Use given `paramdefbnd` to generate `ParamRow` (`BinaryStruct`) subclasses, e.g. `ATK_PARAM_ST`.
@@ -278,18 +287,20 @@ def create_game_classes(
             import_lines.insert(5, f"from soulstruct.{game_submodule}.game_types import *")
 
         if dynamic_imports:
-            import_lines.extend(["", f"from .dynamics import {', '.join(dynamic_imports)}"])
+            dynamic_imports_sorted = sorted(set(dynamic_imports))
+            import_lines.extend(["", f"from .dynamics import {', '.join(dynamic_imports_sorted)}"])
 
         module_text = "\n".join(import_lines) + "\n\n\n" + cls_string + "\n"
 
-        # TODO: Was this transient?
         if game_submodule == "darksouls1r" and paramdef_stem not in DSR_PARAMDEFS:
-            continue  # we still create the module to validate it, but don't write it
+            # This ParamDef is identical to PTDE, which we import and use for DS1R.
+            # (We still created the module above to validate it.)
+            continue
 
         (paramdef_dir / f"{paramdef_stem}.py").write_text(module_text)
 
     # We don't rewrite partial enums!
-    if not only_paramdefs:
+    if not only_paramdefs and not no_enums:
 
         # Write enums.
         enum_module_text = "from soulstruct.base.params.paramdef.field_types import *"
@@ -347,4 +358,4 @@ def create_for_elden_ring():
 
 
 if __name__ == '__main__':
-    create_for_game("darksouls1r")
+    create_for_game("bloodborne")

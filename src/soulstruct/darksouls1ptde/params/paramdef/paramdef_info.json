@@ -1,4 +1,166 @@
 {
+    "AI_STANDARD_INFO_BANK": {
+        "RadarRange": {
+            "nickname": "RadarRange",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "RadarAngleX": {
+            "nickname": "RadarAngleX",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "RadarAngleY": {
+            "nickname": "RadarAngleY",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "TerritorySize": {
+            "nickname": "TerritorySize",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "ThreatBeforeAttackRate": {
+            "nickname": "ThreatBeforeAttackRate",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "ForceThreatOnFirstLocked": {
+            "nickname": "ForceThreatOnFirstLocked",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "reserve0[24]": {
+            "nickname": "Reserve0",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack1_Distance": {
+            "nickname": "Attack1Distance",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack1_Margin": {
+            "nickname": "Attack1Margin",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack1_Rate": {
+            "nickname": "Attack1Rate",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack1_ActionID": {
+            "nickname": "Attack1ActionID",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack1_DelayMin": {
+            "nickname": "Attack1DelayMin",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack1_DelayMax": {
+            "nickname": "Attack1DelayMax",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack1_ConeAngle": {
+            "nickname": "Attack1ConeAngle",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "reserve10[7]": {
+            "nickname": "Reserve10",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack2_Distance": {
+            "nickname": "Attack2Distance",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack2_Margin": {
+            "nickname": "Attack2Margin",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack2_Rate": {
+            "nickname": "Attack2Rate",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack2_ActionID": {
+            "nickname": "Attack2ActionID",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack2_DelayMin": {
+            "nickname": "Attack2DelayMin",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack2_DelayMax": {
+            "nickname": "Attack2DelayMax",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack2_ConeAngle": {
+            "nickname": "Attack2ConeAngle",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "reserve11[7]": {
+            "nickname": "Reserve11",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack3_Distance": {
+            "nickname": "Attack3Distance",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack3_Margin": {
+            "nickname": "Attack3Margin",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack3_Rate": {
+            "nickname": "Attack3Rate",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack3_ActionID": {
+            "nickname": "Attack3ActionID",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack3_DelayMin": {
+            "nickname": "Attack3DelayMin",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack3_DelayMax": {
+            "nickname": "Attack3DelayMax",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack3_ConeAngle": {
+            "nickname": "Attack3ConeAngle",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "reserve12[7]": {
+            "nickname": "Reserve12",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack4_Distance": {
+            "nickname": "Attack4Distance",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack4_Margin": {
+            "nickname": "Attack4Margin",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack4_Rate": {
+            "nickname": "Attack4Rate",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack4_ActionID": {
+            "nickname": "Attack4ActionID",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack4_DelayMin": {
+            "nickname": "Attack4DelayMin",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack4_DelayMax": {
+            "nickname": "Attack4DelayMax",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Attack4_ConeAngle": {
+            "nickname": "Attack4ConeAngle",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "reserve13[7]": {
+            "nickname": "Reserve13",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "reserve_last[32]": {
+            "nickname": "Reservelast",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
     "ATK_PARAM_ST": {
         "hit0_Radius": {
             "nickname": "Hitbox0Radius",
@@ -1167,6 +1329,96 @@
         "dispersionSq": {
             "nickname": "BlurSquaredDispersion",
             "tooltip": "Squared dispersion of depth of field blur (greater value means more blur)."
+        }
+    },
+    "ENEMY_STANDARD_INFO_BANK": {
+        "EnemyBehaviorID": {
+            "nickname": "EnemyBehaviorID",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "HP": {
+            "nickname": "HP",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "AttackPower": {
+            "nickname": "AttackPower",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "ChrType": {
+            "nickname": "ChrType",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "HitHeight": {
+            "nickname": "HitHeight",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "HitRadius": {
+            "nickname": "HitRadius",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Weight": {
+            "nickname": "Weight",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "DynamicFriction": {
+            "nickname": "DynamicFriction",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "StaticFriction": {
+            "nickname": "StaticFriction",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "UpperDefState": {
+            "nickname": "UpperDefState",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "ActionDefState": {
+            "nickname": "ActionDefState",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "RotY_per_Second": {
+            "nickname": "RotYperSecond",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "reserve0[20]": {
+            "nickname": "Reserve0",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "RotY_per_Second_old": {
+            "nickname": "RotYperSecondold",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "EnableSideStep": {
+            "nickname": "EnableSideStep",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "UseRagdollHit": {
+            "nickname": "UseRagdollHit",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "reserve_last[5]": {
+            "nickname": "Reservelast",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "stamina": {
+            "nickname": "Stamina",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "staminaRecover": {
+            "nickname": "StaminaRecover",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "staminaConsumption": {
+            "nickname": "StaminaConsumption",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "deffenct_Phys": {
+            "nickname": "DeffenctPhys",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "reserve_last2[48]": {
+            "nickname": "Reservelast2",
+            "tooltip": "TOOLTIP-TODO"
         }
     },
     "ENV_LIGHT_TEX_BANK": {
@@ -4001,6 +4253,132 @@
             "tooltip": "If True, all cumulative points in this slot will be reset when the slot is actually dropped."
         }
     },
+    "KNOCKBACK_PARAM_ST": {
+        "damage_Min_ContTime": {
+            "nickname": "DamageMinContTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "damage_S_ContTime": {
+            "nickname": "DamageSContTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "damage_M_ContTime": {
+            "nickname": "DamageMContTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "damage_L_ContTime": {
+            "nickname": "DamageLContTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "damage_BlowS_ContTime": {
+            "nickname": "DamageBlowSContTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "damage_BlowM_ContTime": {
+            "nickname": "DamageBlowMContTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "damage_Strike_ContTime": {
+            "nickname": "DamageStrikeContTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "damage_Uppercut_ContTime": {
+            "nickname": "DamageUppercutContTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "damage_Push_ContTime": {
+            "nickname": "DamagePushContTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "damage_Breath_ContTime": {
+            "nickname": "DamageBreathContTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "damage_HeadShot_ContTime": {
+            "nickname": "DamageHeadShotContTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "guard_S_ContTime": {
+            "nickname": "GuardSContTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "guard_L_ContTime": {
+            "nickname": "GuardLContTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "guard_LL_ContTime": {
+            "nickname": "GuardLLContTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "guardBrake_ContTime": {
+            "nickname": "GuardBrakeContTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "damage_Min_DecTime": {
+            "nickname": "DamageMinDecTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "damage_S_DecTime": {
+            "nickname": "DamageSDecTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "damage_M_DecTime": {
+            "nickname": "DamageMDecTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "damage_L_DecTime": {
+            "nickname": "DamageLDecTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "damage_BlowS_DecTime": {
+            "nickname": "DamageBlowSDecTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "damage_BlowM_DecTime": {
+            "nickname": "DamageBlowMDecTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "damage_Strike_DecTime": {
+            "nickname": "DamageStrikeDecTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "damage_Uppercut_DecTime": {
+            "nickname": "DamageUppercutDecTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "damage_Push_DecTime": {
+            "nickname": "DamagePushDecTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "damage_Breath_DecTime": {
+            "nickname": "DamageBreathDecTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "damage_HeadShot_DecTime": {
+            "nickname": "DamageHeadShotDecTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "guard_S_DecTime": {
+            "nickname": "GuardSDecTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "guard_L_DecTime": {
+            "nickname": "GuardLDecTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "guard_LL_DecTime": {
+            "nickname": "GuardLLDecTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "guardBrake_DecTime": {
+            "nickname": "GuardBrakeDecTime",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "pad[8]": {
+            "nickname": "Pad",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
     "LENS_FLARE_BANK": {
         "texId": {
             "nickname": "LensFlareTextureID",
@@ -5873,6 +6251,120 @@
             "tooltip": "Alpha channel (0-255) of point light."
         }
     },
+    "QWC_CHANGE_PARAM_ST": {
+        "pcAttrB": {
+            "nickname": "PcAttrB",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "pcAttrW": {
+            "nickname": "PcAttrW",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "pcAttrL": {
+            "nickname": "PcAttrL",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "pcAttrR": {
+            "nickname": "PcAttrR",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "areaAttrB": {
+            "nickname": "AreaAttrB",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "areaAttrW": {
+            "nickname": "AreaAttrW",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "areaAttrL": {
+            "nickname": "AreaAttrL",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "areaAttrR": {
+            "nickname": "AreaAttrR",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "QWC_JUDGE_PARAM_ST": {
+        "pcJudgeUnderWB": {
+            "nickname": "PcJudgeUnderWB",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "pcJudgeTopWB": {
+            "nickname": "PcJudgeTopWB",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "pcJudgeUnderLR": {
+            "nickname": "PcJudgeUnderLR",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "pcJudgeTopLR": {
+            "nickname": "PcJudgeTopLR",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "areaJudgeUnderWB": {
+            "nickname": "AreaJudgeUnderWB",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "areaJudgeTopWB": {
+            "nickname": "AreaJudgeTopWB",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "areaJudgeUnderLR": {
+            "nickname": "AreaJudgeUnderLR",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "areaJudgeTopLR": {
+            "nickname": "AreaJudgeTopLR",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
+    "RAGDOLL_PARAM_ST": {
+        "hierarchyGain": {
+            "nickname": "HierarchyGain",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "velocityDamping": {
+            "nickname": "VelocityDamping",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "accelGain": {
+            "nickname": "AccelGain",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "velocityGain": {
+            "nickname": "VelocityGain",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "positionGain": {
+            "nickname": "PositionGain",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "maxLinerVelocity": {
+            "nickname": "MaxLinerVelocity",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "maxAngularVelocity": {
+            "nickname": "MaxAngularVelocity",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "snapGain": {
+            "nickname": "SnapGain",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "enable": {
+            "nickname": "Enable",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "partsHitMaskNo": {
+            "nickname": "PartsHitMaskNo",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "pad[14]": {
+            "nickname": "Pad",
+            "tooltip": "TOOLTIP-TODO"
+        }
+    },
     "REINFORCE_PARAM_PROTECTOR_ST": {
         "physicsDefRate": {
             "nickname": "PhysicalDefenseMultiplier",
@@ -6154,6 +6646,112 @@
         "pad_0[8]": {
             "nickname": "_Pad0",
             "tooltip": "Null padding (8 bytes)."
+        }
+    },
+    "SKELETON_PARAM_ST": {
+        "neckTurnGain": {
+            "nickname": "NeckTurnGain",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "originalGroundHeightMS": {
+            "nickname": "OriginalGroundHeightMS",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "minAnkleHeightMS": {
+            "nickname": "MinAnkleHeightMS",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "maxAnkleHeightMS": {
+            "nickname": "MaxAnkleHeightMS",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "cosineMaxKneeAngle": {
+            "nickname": "CosineMaxKneeAngle",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "cosineMinKneeAngle": {
+            "nickname": "CosineMinKneeAngle",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "footPlantedAnkleHeightMS": {
+            "nickname": "FootPlantedAnkleHeightMS",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "footRaisedAnkleHeightMS": {
+            "nickname": "FootRaisedAnkleHeightMS",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "raycastDistanceUp": {
+            "nickname": "RaycastDistanceUp",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "raycastDistanceDown": {
+            "nickname": "RaycastDistanceDown",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "footEndLS_X": {
+            "nickname": "FootEndLSX",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "footEndLS_Y": {
+            "nickname": "FootEndLSY",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "footEndLS_Z": {
+            "nickname": "FootEndLSZ",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "onOffGain": {
+            "nickname": "OnOffGain",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "groundAscendingGain": {
+            "nickname": "GroundAscendingGain",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "groundDescendingGain": {
+            "nickname": "GroundDescendingGain",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "footRaisedGain": {
+            "nickname": "FootRaisedGain",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "footPlantedGain": {
+            "nickname": "FootPlantedGain",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "footUnlockGain": {
+            "nickname": "FootUnlockGain",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "kneeAxisType": {
+            "nickname": "KneeAxisType",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "useFootLocking": {
+            "nickname": "UseFootLocking",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "footPlacementOn": {
+            "nickname": "FootPlacementOn",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "twistKneeAxisType": {
+            "nickname": "TwistKneeAxisType",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "neckTurnPriority": {
+            "nickname": "NeckTurnPriority",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "neckTurnMaxAngle": {
+            "nickname": "NeckTurnMaxAngle",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "pad1[2]": {
+            "nickname": "Pad1",
+            "tooltip": "TOOLTIP-TODO"
         }
     },
     "SP_EFFECT_PARAM_ST": {
