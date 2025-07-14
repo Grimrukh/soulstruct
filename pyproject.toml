@@ -14,11 +14,11 @@ authors = [
 ]
 
 dependencies = [
-    "constrata",    # required for binary read/write (my package)
-    "numpy",        # required for math classes/operations
-    "rich>=13",     # required for nice printing/logging
-    "typer",        # required for CLI
-    "zstandard",    # required for ZSTD compression (Elden Ring regulation DCX)
+    "constrata>=1.2.0",     # required for binary read/write (my package)
+    "numpy",                # required for math classes/operations
+    "rich>=13",             # required for nice printing/logging
+    "typer",                # required for CLI
+    "zstandard",            # required for ZSTD compression (Elden Ring regulation DCX)
 ]
 
 [project.optional-dependencies]
