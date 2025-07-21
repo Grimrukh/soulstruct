@@ -199,29 +199,29 @@ class SIBCAM(GameFile):
             first_rotation = full_camera_animation[0].rotation
             first_scale = full_camera_animation[0].scale
             
-            if not first_position.is_close(header.initial_position):
+            if not first_position.allclose(header.initial_position):
                 _LOGGER.warning(
                     f"Initial camera position in SIBCAM does not match header:\n"
                     f"    {first_position} != {header.initial_position}"
                 )
-            if not first_rotation.is_close(header.initial_rotation):
+            if not first_rotation.allclose(header.initial_rotation):
                 _LOGGER.warning(
                     f"Initial camera rotation in SIBCAM does not match header:\n"
                     f"    {first_rotation} != {header.initial_rotation}"
                 )
-            if not first_scale.is_close(header.initial_scale):
+            if not first_scale.allclose(header.initial_scale):
                 _LOGGER.warning(
                     f"Initial camera scale in SIBCAM does not match header:\n"
                     f"    {first_scale} != {header.initial_scale}"
                 )
 
             # For the initial rotation values in the frame data header, we check them against the header, not data.
-            if not header.initial_rotation.is_close(frame_data_header.initial_rotation_1):
+            if not header.initial_rotation.allclose(frame_data_header.initial_rotation_1):
                 _LOGGER.warning(
                     f"SIBCAM header initial rotation does not match frame data header (first occurrence):\n"
                     f"    {first_rotation} != {frame_data_header.initial_rotation_1}"
                 )
-            if not header.initial_rotation.is_close(frame_data_header.initial_rotation_2):
+            if not header.initial_rotation.allclose(frame_data_header.initial_rotation_2):
                 _LOGGER.warning(
                     f"SIBCAM header initial rotation does not match frame data header (second occurrence):\n"
                     f"    {first_rotation} != {frame_data_header.initial_rotation_2}"

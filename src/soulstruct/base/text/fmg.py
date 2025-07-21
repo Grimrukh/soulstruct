@@ -28,21 +28,55 @@ GAME_MAX_LINES = {
 }
 
 
-class FMGHeader(BinaryStruct):
+class FMGHeaderV0(BinaryStruct):
     _pad1: bytes = binary_pad(1)
     big_endian: bool
     version: FMGVersion = binary(byte)
     _pad2: bytes = binary_pad(1)
     file_size: int
     _one: byte = binary(asserted=1)
-    unknown1: byte  # -1 for version 0, 0 for version 1/2
+    _minus_one: byte = binary(asserted=-1)
     _pad3: bytes = binary_pad(2)
     range_count: int
     string_count: int
-    unknown2: int = binary(asserted=255, should_skip_func=lambda _, values: values["version"] < 2)
-    string_offsets_offset: varint
+    # unknown2: int = binary(asserted=255)
+    string_offsets_offset: int
     _pad4: bytes = binary_pad(4)
-    _pad5: bytes = binary_pad(4, should_skip_func=lambda _, values: values["version"] < 2)
+    # _pad5: bytes = binary_pad(4)
+
+
+class FMGHeaderV1(BinaryStruct):
+    _pad1: bytes = binary_pad(1)
+    big_endian: bool
+    version: FMGVersion = binary(byte)
+    _pad2: bytes = binary_pad(1)
+    file_size: int
+    _one: byte = binary(asserted=1)
+    _zero: byte = binary(asserted=0)
+    _pad3: bytes = binary_pad(2)
+    range_count: int
+    string_count: int
+    # unknown2: int = binary(asserted=255)
+    string_offsets_offset: int
+    _pad4: bytes = binary_pad(4)
+    # _pad5: bytes = binary_pad(4)
+
+
+class FMGHeaderV2(BinaryStruct):
+    _pad1: bytes = binary_pad(1)
+    big_endian: bool
+    version: FMGVersion = binary(byte)
+    _pad2: bytes = binary_pad(1)
+    file_size: int
+    _one: byte = binary(asserted=1)
+    _zero: byte = binary(asserted=0)
+    _pad3: bytes = binary_pad(2)
+    range_count: int
+    string_count: int
+    unknown2: int = binary(asserted=255)
+    string_offsets_offset: long
+    _pad4: bytes = binary_pad(4)
+    _pad5: bytes = binary_pad(4)
 
 
 class FMG(GameFile):
@@ -52,6 +86,11 @@ class FMG(GameFile):
     """
 
     EXT: tp.ClassVar[str] = ".fmg"
+    HEADER_VERSIONS: tp.ClassVar[dict[FMGVersion, type[FMGHeaderV0] | type[FMGHeaderV1] | type[FMGHeaderV2]]] = {
+        FMGVersion.V0: FMGHeaderV0,
+        FMGVersion.V1: FMGHeaderV1,
+        FMGVersion.V2: FMGHeaderV2,
+    }
 
     entries: dict[int, str] = field(default_factory=dict)
     version: int = 2  # default to newest version (Bloodborne onwards)
@@ -60,9 +99,9 @@ class FMG(GameFile):
     def from_reader(cls, reader: BinaryReader) -> tp.Self:
 
         version = FMGVersion(reader["b", 2])
-        reader.byte_order = ByteOrder.BigEndian if version == 0 else ByteOrder.LittleEndian
+        reader.byte_order = ByteOrder.big_endian_bool(version == FMGVersion.V0)
         reader.long_varints = version >= 2
-        header = FMGHeader.from_bytes(reader)
+        header = cls.HEADER_VERSIONS[version].from_bytes(reader)  # type: FMGHeaderV0 | FMGHeaderV1 | FMGHeaderV2
 
         # Groups of contiguous text string IDs are defined by ranges (first ID, last ID) to save space.
         ranges = []
@@ -75,7 +114,7 @@ class FMG(GameFile):
         if reader.position != header.string_offsets_offset:
             _LOGGER.warning("Range data did not end at string data offset given in unpacked FMG header.")
 
-        string_offsets = reader.unpack(f"{header.string_count}v")
+        string_offsets = reader.unpack(f"{header.string_count}v")  # type: tuple[int, ...]
 
         # Text pointer table corresponds to all the IDs (joined together) of the above ranges, in order.
         entries = {}
@@ -162,7 +201,9 @@ class FMG(GameFile):
             long_varints=self.version >= 2,
         )
 
-        FMGHeader.object_to_writer(
+        header_cls = self.HEADER_VERSIONS[FMGVersion(self.version)]
+
+        header_cls.object_to_writer(
             self,
             writer,
             big_endian=self.version == 0,

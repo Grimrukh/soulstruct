@@ -140,20 +140,21 @@ class FaceSet:
         Both counts are always the same for non-strip vertex indices. For strips, the 'true' count is zero if this
         face set has the `MotionBlur` flag set and otherwise excludes degenerate (point/line) faces.
         """
-        if self.is_triangle_strip:
-            true_face_count = 0
-            total_face_count = 0
-            for i in range(len(self.vertex_indices) - 2):
-                triplet = self.vertex_indices[i:i + 3]
-                if not uses_0xffff_separators or 0xFFFF not in triplet:
-                    total_face_count += 1
-                    if not self.has_flag(FaceSetFlags.MotionBlur) and len(set(triplet)) == 3:
-                        # Vertices are not MotionBlur and not degenerate.
-                        true_face_count += 1
-            return true_face_count, total_face_count
+        if not self.is_triangle_strip:
+            # True and total face counts are the same.
+            return len(self.vertex_indices), len(self.vertex_indices)
 
-        # True and total face counts are the same.
-        return len(self.vertex_indices), len(self.vertex_indices)
+        true_face_count = 0
+        total_face_count = 0
+        for i in range(len(self.vertex_indices) - 2):
+            triplet = self.vertex_indices[i:i + 3]
+            if uses_0xffff_separators and 0xFFFF in triplet:
+                continue  # ignore triplet
+            total_face_count += 1
+            if not self.has_flag(FaceSetFlags.MotionBlur) and len(set(triplet)) == 3:
+                # Vertices are not MotionBlur and not degenerate.
+                true_face_count += 1
+        return true_face_count, total_face_count
 
     def needs_32bit_indices(self) -> bool:
         """Check if vertices can be written as unsigned shorts (16-bit), which is only possible if they are all less

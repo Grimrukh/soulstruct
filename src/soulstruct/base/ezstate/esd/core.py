@@ -82,22 +82,25 @@ EXTERNAL_HEADER_VARINT_ASSERTED = {
 }
 
 
-class ESDInternalHeaderStruct(BinaryStruct):
+class ESDInternalHeaderStruct32(BinaryStruct):
     _one: int = binary(asserted=1)
     magic: list[int] = binary_array(4)  # TODO: check if this is constant per game
-    _pad1: bytes = binary_pad(4, should_skip_func=lambda long_varints, _: not long_varints)
-    state_machine_headers_offset: varint  # 44 or 72
-    state_machine_count: varint  # same as external header
-    esd_name_offset: varint  # accurate, unlike external header
-    esd_name_length: varint  # same as value in external header
-    footer: list[varint] = binary_array(2, asserted=([0, 0], [-1, -1]))  # [0, 0] in PTDE/DSR only
+    state_machine_headers_offset: int = binary(asserted=44)
+    state_machine_count: int  # same as external header
+    esd_name_offset: int  # accurate, unlike external header
+    esd_name_length: int  # same as value in external header
+    footer: list[int] = binary_array(2, asserted=([0, 0], [-1, -1]))  # [0, 0] in PTDE/DSR only
 
 
-INTERNAL_HEADER_VARINT_ASSERTED = {
-    # NOTE: We can't assert `footer` here as it depends on `game_version`, not `long_varints`.
-    False: {"state_machine_headers_offset": 44},
-    True: {"state_machine_headers_offset": 72},
-}
+class ESDInternalHeaderStruct64(BinaryStruct):
+    _one: int = binary(asserted=1)
+    magic: list[int] = binary_array(4)  # TODO: check if this is constant per game
+    _pad1: bytes = binary_pad(4)
+    state_machine_headers_offset: long = binary(asserted=72)
+    state_machine_count: long  # same as external header
+    esd_name_offset: long  # accurate, unlike external header
+    esd_name_length: long  # same as value in external header
+    footer: list[long] = binary_array(2, asserted=([0, 0], [-1, -1]))  # [0, 0] in PTDE/DSR only
 
 
 class StateMachineHeaderStruct(BinaryStruct):
@@ -156,6 +159,10 @@ class ESD(GameFile, abc.ABC):
             if isinstance(esd_source, bytes):
                 esd = cls.from_bytes(esd_source)
                 return esd, "esd"
+            raise TypeError(
+                f"Cannot load `ESD` from source of type {type(esd_source)}. "
+                f"Expected Path, str, bytes, or BinaryReader."
+            )
         except Exception as ex:
             raise TypeError(f"Could not load binary `esd_source` as an ESD: {ex}")
 
@@ -182,11 +189,11 @@ class ESD(GameFile, abc.ABC):
         # Internal offsets start here, so we reset the reader to make these offsets naturally correct.
         reader = BinaryReader(reader.read(), byte_order=ByteOrder.LittleEndian, long_varints=cls.LONG_VARINTS)
 
-        internal_header = ESDInternalHeaderStruct.from_bytes(reader)
-        internal_header.assert_field_values(
-            footer=[0, 0] if cls.VERSION == 1 else [-1, -1],
-            **INTERNAL_HEADER_VARINT_ASSERTED[cls.LONG_VARINTS]
-        )
+        internal_header_cls = ESDInternalHeaderStruct64 if cls.LONG_VARINTS else ESDInternalHeaderStruct32
+
+        internal_header = internal_header_cls.from_bytes(reader)
+        internal_header.assert_field_values(footer=[0, 0] if cls.VERSION == 1 else [-1, -1])
+
         state_machine_header_structs = [
             StateMachineHeaderStruct.from_bytes(reader)
             for _ in range(header.state_machine_count)
@@ -290,9 +297,14 @@ class ESD(GameFile, abc.ABC):
                 elif line.startswith("MAGIC = "):
                     magic_str = line[len("MAGIC = "):]
                     try:
-                        magic = tuple(ast.literal_eval(magic_str))  # type: tuple[int, int, int, int]
+                        magic = tuple(ast.literal_eval(magic_str))  # type: tuple[int, ...]
                     except ValueError:
                         raise ValueError(f"Could not read MAGIC value from ESD_Header: {magic_str}")
+                    if len(magic) != 4:
+                        raise ValueError(
+                            f"Invalid MAGIC value in ESD_Header: {magic_str}. Expected four integers, got {len(magic)}."
+                        )
+                    magic: tuple[int, int, int, int]
                 else:
                     raise ValueError(f"Invalid ESD Header line: {line}")
         if len(magic) != 4:
@@ -317,7 +329,8 @@ class ESD(GameFile, abc.ABC):
         )
 
         # Pack internal header. This is the writer we use throughout, except when filling external header offsets.
-        writer = ESDInternalHeaderStruct.object_to_writer(
+        internal_header_cls = ESDInternalHeaderStruct64 if self.LONG_VARINTS else ESDInternalHeaderStruct32
+        writer = internal_header_cls.object_to_writer(
             self,
             byte_order=ByteOrder.LittleEndian,
             long_varints=self.LONG_VARINTS,
@@ -325,7 +338,6 @@ class ESD(GameFile, abc.ABC):
             esd_name_offset=RESERVED,  # only reserved field in internal header
             esd_name_length=len(self.esd_name) // 2,  # number of UTF-16 characters, NOT size of encoded bytes
             footer=[0, 0] if self.VERSION == 1 else [-1, -1],
-            **INTERNAL_HEADER_VARINT_ASSERTED[self.LONG_VARINTS],
         )
 
         for state_machine_index, states in self.state_machines.items():

@@ -1,35 +1,45 @@
 from __future__ import annotations
 
 __all__ = [
-    "shift_msb_coordinates",
-    "shift",
+    "ROTATION_TYPING",
+    "local_translate",
     "resolve_rotation",
     "get_distance",
 ]
 
 import math
+import typing as tp
 
 from .matrix import Matrix3
 from .vector import Vector3
 
 
-def shift_msb_coordinates(distance: float, translate=(0.0, 0.0, 0.0), ry=0.0):
-    """Shift an MSB entity forward (if `distance > 0` or backward (if `distance < 0`)."""
-    ry_rad = math.radians(ry)
-    delta_x = -distance * math.sin(ry_rad)
-    delta_z = -distance * math.cos(ry_rad)
-    return translate[0] + delta_x, translate[1], translate[2] + delta_z
+# Valid rotation types for `resolve_rotation()` (`None` also allowed, which returns identity matrix).
+ROTATION_TYPING = tp.Union[Matrix3 | Vector3 | list | tuple | int | float]
 
 
-def shift(rel_x, rel_z, origin=(0, 0), rotation=0):
-    rot_rad = math.radians(rotation)
-    r, th = math.hypot(rel_x, rel_z), math.atan2(rel_z, rel_x)
-    th += rot_rad
-    dx, dz = r * -math.sin(th), r * -math.cos(th)
-    return origin[0] + dx, origin[1] + dz
+def local_translate(
+    pos: Vector3, rot: ROTATION_TYPING, distance: float, local_axis: Vector3 = None, radians=False
+) -> Vector3:
+    """Slide given world-sapce `pos` vector by `distance` along `local_axis` vector, which defaults to -Z axis.
+
+    `rot` is a rotation (in degrees by default) used to convert `axis` to world space.
+    """
+    rot_matrix = resolve_rotation(rot, radians=radians)
+    if local_axis is None:
+        local_axis = Vector3((0.0, 0.0, -1.0))  # standard 'forward-facing' direction of MSB entities
+    if not isinstance(local_axis, Vector3):
+        local_axis = Vector3(local_axis)
+    local_axis = local_axis.normalize()
+    if not isinstance(pos, Vector3):
+        pos = Vector3(pos)
+    if distance == 0.0:
+        return pos
+    # Rotate the axis vector by the rotation matrix and scale it by `distance`, then add it to `pos`.
+    return pos + distance * (rot_matrix @ local_axis)
 
 
-def resolve_rotation(rotation: Matrix3 | Vector3 | list | tuple | int | float | None, radians=False) -> Matrix3:
+def resolve_rotation(rotation: ROTATION_TYPING | None, radians=False) -> Matrix3:
     """Return a rotation `Matrix3` from various shortcut input types (e.g. single value or Euler angle vector).
 
     `None` is returned as the identity matrix.
@@ -47,6 +57,7 @@ def resolve_rotation(rotation: Matrix3 | Vector3 | list | tuple | int | float | 
 
 
 def get_distance(x1: Vector3, x2: Vector3, squared=False):
+    """Get distance (or `squared` distance) between two `Vector3`-like objects."""
     if not isinstance(x1, Vector3):
         x1 = Vector3(x1)
     if not isinstance(x2, Vector3):

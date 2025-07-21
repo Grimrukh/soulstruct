@@ -2,9 +2,9 @@
 name = "soulstruct"
 description = "Inspect and mod FromSoftware games."
 readme = "README.md"
-version = "2.1.0"
+version = "2.1.1"
 license = "GPL-3.0-or-later"
-requires-python = ">=3.11"  # maximum allowed for Blender 4.4 support
+requires-python = ">=3.11"  # maximum allowed for Blender 4.5 support
 keywords = ["modding", "FromSoftware", "Dark Souls", "Bloodborne", "Elden Ring", "Sekiro", "Demon's Souls"]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -14,7 +14,7 @@ authors = [
 ]
 
 dependencies = [
-    "constrata>=1.2.0",     # required for binary read/write (my package)
+    "constrata>=1.3.1",     # required for binary read/write (my package)
     "numpy",                # required for math classes/operations
     "rich>=13",             # required for nice printing/logging
     "typer",                # required for CLI

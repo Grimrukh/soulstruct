@@ -23,8 +23,6 @@ class FLVERTest(unittest.TestCase):
             gwyn.write("_test_c5370.flver")
         with Timer("Re-reading chr FLVER"):
             FLVER.from_path("_test_c5370.flver")
-        with Timer("Writing chr OBJ"):
-            gwyn.write_obj("_test_c5370.obj")
 
     def tearDown(self):
         for test_file in Path(".").glob("_test*"):

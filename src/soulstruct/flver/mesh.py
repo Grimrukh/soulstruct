@@ -479,21 +479,26 @@ class FLVERMesh:
 
         lines = [f"o {name}"]
 
-        # Check if vertices record array has 'uv_u_1' field:
-        vertex = self.vertices[0]
-        if "uv_u_1" in vertex:
+        # Check if vertex data has multiple UVs (unsupported in OBJ):
+        if "uv_1" in self.vertices.dtype.names:
             raise NotImplementedError("Cannot convert mesh to OBJ because one or more vertices has multiple UVs.")
         array = self.vertex_arrays[0]
 
-        for position in array[[f"position_{c}" for c in "xyz"]]:
+        for position in array["position"]:
             pos_str = " ".join(str(x) for x in position)
             lines.append(f"v {pos_str}")
-        for normal in array[[f"normal_{c}" for c in "abcd"]]:
-            normal_str = " ".join(str(x) for x in normal)
-            lines.append(f"vn {normal_str}")
-        for uv in array[["uv_u_0", "uv_v_0"]]:
-            uv_str = " ".join(str(x) for x in uv)
-            lines.append(f"vt {uv_str}")
+        if "normal" in array.dtype.names:
+            for normal in array["normal"]:
+                normal_str = " ".join(str(x) for x in normal)
+                lines.append(f"vn {normal_str}")
+        else:
+            _LOGGER.warning("Mesh has no normals. Normals will not be included in OBJ export.")
+        if "uv_0" in self.vertices.dtype.names:
+            for uv in array["uv_0"]:
+                uv_str = " ".join(str(x) for x in uv)
+                lines.append(f"vt {uv_str}")
+        else:
+            _LOGGER.warning("Mesh has no UVs. UVs will not be included in OBJ export.")
         for i, face_set in enumerate(self.face_sets):
             lines.append(f"# Face Set {i}")
             triangles = face_set.triangulate(uses_0xffff_separators=len(self.vertex_arrays[vertex_array]) <= 0xFFFF)
@@ -607,7 +612,13 @@ class FLVERMesh:
         random_face_colors=False,
         **kwargs,
     ):
-        import matplotlib.pyplot as plt
+        try:
+            import matplotlib.pyplot as plt
+        except ImportError:
+            raise ImportError(
+                "Cannot draw FLVER mesh because `matplotlib` is not installed. "
+                "Install it with `pip install matplotlib`."
+            )
         if axes is None:
             axes = plt.figure().add_subplot(111, projection="3d")
         array = self.vertex_arrays[0]
@@ -622,7 +633,13 @@ class FLVERMesh:
         if show_face_sets == "all":
             show_face_sets = tuple(range(len(self.face_sets)))
         if show_face_sets:
-            from mpl_toolkits.mplot3d import art3d
+            try:
+                from mpl_toolkits.mplot3d import art3d
+            except ImportError:
+                raise ImportError(
+                    "Cannot draw FLVER mesh faces because `matplotlib` is not installed. "
+                    "Install it with `pip install matplotlib`."
+                )
             faces = []
             for i, face_set in enumerate(self.face_sets):
                 if i in show_face_sets:

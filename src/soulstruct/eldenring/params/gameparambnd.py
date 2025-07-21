@@ -10,10 +10,14 @@ from pathlib import Path
 from soulstruct.containers import BinderVersion, BinderVersion4Info
 from soulstruct.dcx import DCXType
 from soulstruct.base.params.gameparambnd import GameParamBND as _BaseGameParamBND, param_property
+from soulstruct.base.params.ParamCrypt import ParamCrypt
 from soulstruct.utilities.files import SOULSTRUCT_PATH
-from soulstruct.utilities.ParamCrypt import ParamCrypt
 
 from . import paramdef
+
+if tp.TYPE_CHECKING:
+    from soulstruct.base.params.param import Param
+    from .paramdef import *
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -272,10 +276,10 @@ def examine_er_params():
             data_type = getattr(paramdef, param_type)
         except AttributeError:
             # Fall back to `ParamDict` (with no `ParamDef`).
-            param = entry.to_binary_file(ParamDict)
+            entry.to_binary_file(ParamDict)
             print(f"{entry.name} read as a ParamDict.")
         else:
-            param = entry.to_binary_file(TypedParam(data_type))
+            entry.to_binary_file(TypedParam(data_type))
             print(f"{entry.name} read successfully.")
 
 

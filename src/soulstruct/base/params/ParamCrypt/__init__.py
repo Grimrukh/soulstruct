@@ -18,6 +18,7 @@ class ParamCryptError(SoulstructError):
     pass
 
 
+# noinspection PyPep8Naming
 def ParamCrypt(input_file_path: Path | str, mode="", game_type="", output_file_path: Path | str = ""):
     """Run `ParamCrypt` executable to encrypt/decrypt DS3 or ER Param binder.
 

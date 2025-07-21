@@ -19,7 +19,7 @@ class MSBTest(unittest.TestCase):
 
     @profile_function(20)
     def test_dir_rewrite(self):
-        from soulstruct.config import DSR_PATH
+        from soulstruct.config import DSR_PATH  # TODO: not a clean test
 
         with Timer("Map Studio Directory Read"):
             msd = MapStudioDirectory.from_path(DSR_PATH / "map/MapStudio")
@@ -70,7 +70,8 @@ class MSBTest(unittest.TestCase):
                     test_entry = test_entries[i]
                     self.assertEqual(entry, test_entry)
         finally:
-            os.remove("_test.msb")
+            # os.remove("_test.msb")
+            pass
 
     def test_json(self):
         msb = MSB.from_path("resources/m10_00_00_00.msb")
