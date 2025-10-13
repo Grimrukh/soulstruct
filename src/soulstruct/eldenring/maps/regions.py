@@ -63,7 +63,7 @@ from soulstruct.base.maps.msb.regions import *
 from soulstruct.base.maps.msb.region_shapes import *
 from soulstruct.eldenring.game_types import GameObjectIntSequence, Region, MapPart
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.maths import Vector3
+from soulstruct.utilities.maths import EulerDeg, Vector3
 
 from .enums import MSBRegionSubtype
 
@@ -79,7 +79,7 @@ class RegionHeaderStruct(MSBHeaderStruct):
     subtype_index: int
     shape_type_int: int
     translate: Vector3
-    rotate: Vector3  # Euler angles in radians
+    rotate: EulerDeg
     supertype_index: int
     unk_shorts_a_offset: long
     unk_shorts_b_offset: long

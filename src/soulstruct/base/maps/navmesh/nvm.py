@@ -372,7 +372,7 @@ class NVM(GameFile):
         self,
         rotation: Vector3 = None,
         translation: Vector3 = None,
-        padding: tp.Sequence[float, float, float] | float | int = None,
+        padding: tp.Sequence[float] | float | int = None,
     ) -> tuple[Vector3, Vector3]:
         """Get min/max bounds of all vertices.
 
@@ -381,7 +381,7 @@ class NVM(GameFile):
         """
         if rotation is not None:
             # Euler angles in radians given (e.g. from MSB). Use to rotate all vertices before computing AABB.
-            rot_mat = Matrix3.from_euler_angles(rotation, radians=True)
+            rot_mat = Matrix3.from_euler_angles_rad(rotation)
             aabb_vertices = self.vertices @ rot_mat.data  # rotate each vertex (row)
         else:
             aabb_vertices = self.vertices  # won't be modified

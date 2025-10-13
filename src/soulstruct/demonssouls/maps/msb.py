@@ -11,7 +11,7 @@ from soulstruct.dcx import DCXType
 from soulstruct.base.maps.msb import MSB as _BaseMSB, MSBEntryList, MSBEntry, BaseMSBSubtype
 from soulstruct.base.maps.msb.utils import MSBSubtypeInfo, BitSet128
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.maths import Vector3
+from soulstruct.utilities.maths import EulerDeg, Vector3
 from soulstruct.utilities.misc import IDList
 
 from .constants import get_map
@@ -376,8 +376,8 @@ class MSB(_BaseMSB[MSBModel, MSBEvent, MSBRegion, MSBPart]):
 
     def new_light_event_with_point(
         self,
-        translate: tp.Union[Vector3, tuple, list],
-        rotate: tp.Union[Vector3, tuple, list],
+        translate: Vector3 | tuple[float, float, float] | list[float],
+        rotate: EulerDeg | tuple[float, float, float] | list[float],
         **light_event_kwargs,
     ) -> MSBLightEvent:
         if "base_region_name" in light_event_kwargs:
@@ -393,8 +393,8 @@ class MSB(_BaseMSB[MSBModel, MSBEvent, MSBRegion, MSBPart]):
 
     def new_sound_event_with_box(
         self,
-        translate: Vector3,
-        rotate: Vector3,
+        translate: Vector3 | tuple[float, float, float] | list[float],
+        rotate: EulerDeg | tuple[float, float, float] | list[float],
         width: float,
         depth: float,
         height: float,
@@ -417,8 +417,8 @@ class MSB(_BaseMSB[MSBModel, MSBEvent, MSBRegion, MSBPart]):
 
     def new_sound_event_with_sphere(
         self,
-        translate: Vector3,
-        rotate: Vector3,
+        translate: Vector3 | tuple[float, float, float] | list[float],
+        rotate: EulerDeg | tuple[float, float, float] | list[float],
         radius: float,
         **sound_event_kwargs,
     ) -> MSBSoundEvent:
@@ -438,8 +438,8 @@ class MSB(_BaseMSB[MSBModel, MSBEvent, MSBRegion, MSBPart]):
 
     def new_vfx_event_with_point(
         self,
-        translate: Vector3,
-        rotate: Vector3,
+        translate: Vector3 | tuple[float, float, float] | list[float],
+        rotate: EulerDeg | tuple[float, float, float] | list[float],
         point_entity_enum: Region = None,
         **vfx_event_kwargs,
     ) -> MSBVFXEvent:
@@ -465,8 +465,8 @@ class MSB(_BaseMSB[MSBModel, MSBEvent, MSBRegion, MSBPart]):
 
     def new_message_event_with_point(
         self,
-        translate: Vector3,
-        rotate: Vector3,
+        translate: Vector3 | tuple[float, float, float] | list[float],
+        rotate: EulerDeg | tuple[float, float, float] | list[float],
         **message_event_kwargs,
     ) -> MSBMessageEvent:
         if "attached_region" in message_event_kwargs:

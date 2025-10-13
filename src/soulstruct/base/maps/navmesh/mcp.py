@@ -14,7 +14,7 @@ from soulstruct.base.game_file import GameFile
 from soulstruct.containers import Binder, EntryNotFoundError
 from soulstruct.dcx import DCXType
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
+from soulstruct.utilities.maths import Vector3, get_rotmat3, ROTATION_TYPING
 
 from .mcg import MCG
 from .nvm import NVM
@@ -108,7 +108,7 @@ class NavmeshAABB:
 
     def rotate_in_world(
         self,
-        rotation: Matrix3 | Vector3 | list | tuple | int | float,
+        rotation: ROTATION_TYPING,
         pivot_point: Vector3 | list | tuple = (0, 0, 0),
         radians=False,
         enclose_original=True,
@@ -119,16 +119,16 @@ class NavmeshAABB:
         If `enclose_original=True` (default), the size of the rotated AABB will be modified to fully enclose what the
         original AABB would have looked like if it were properly rotated (as the AABB is aligned to the world axes).
         """
-        rotation = resolve_rotation(rotation, radians=radians)
+        m_rotation = get_rotmat3(rotation, radians=radians)
         pivot_point = Vector3(pivot_point)
 
         if enclose_original:
-            rotated_vertices = [(rotation @ (Vector3(v) - pivot_point)) + pivot_point for v in self.get_vertices()]
+            rotated_vertices = [(m_rotation @ (Vector3(v) - pivot_point)) + pivot_point for v in self.get_vertices()]
             self.aabb_start = Vector3([min(v[i] for v in rotated_vertices) for i in range(3)])
             self.aabb_end = Vector3([max(v[i] for v in rotated_vertices) for i in range(3)])
         else:
-            self.aabb_start = (rotation @ (self.aabb_start - pivot_point)) + pivot_point
-            self.aabb_end = (rotation @ (self.aabb_end - pivot_point)) + pivot_point
+            self.aabb_start = (m_rotation @ (self.aabb_start - pivot_point)) + pivot_point
+            self.aabb_end = (m_rotation @ (self.aabb_end - pivot_point)) + pivot_point
 
     @property
     def volume_center(self):
@@ -173,7 +173,10 @@ class NavmeshAABB:
 
     def draw(self, label="", axes=None, show=False, aabb_color="cyan"):
         plt = import_matplotlib_plt(raise_if_missing=True)
-        from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+        try:
+            from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+        except ImportError as ex:
+            raise ImportError("Could not import `mpl_toolkits.mplot3d.art3d`. Is `matplotlib` installed?") from ex
 
         if axes is None:
             fig = plt.figure()
@@ -236,7 +239,7 @@ class MCP(GameFile):
         msb_path: Path | str = None,
         mcg_path: Path | str = None,
         nvmbnd_path: Path | str = None,
-        aabb_padding: tp.Sequence[float, float, float] = None,
+        aabb_padding: tp.Sequence[float] = None,
         custom_connected_navmeshes: tp.Sequence[tuple[MSB_NAVMESH_TYPING, MSB_NAVMESH_TYPING]] = None,
     ) -> tp.Self:
         """Automatically generate MCP file from other map navmesh component files.
@@ -416,8 +419,8 @@ class MCP(GameFile):
         self,
         start_translate: Vector3 = None,
         end_translate: Vector3 = None,
-        start_rotate: Vector3 = None,
-        end_rotate: Vector3 = None,
+        start_rotate: ROTATION_TYPING | None = None,
+        end_rotate: ROTATION_TYPING | None = None,
         enclose_original=True,
         selected_aabbs: tp.Collection[int | NavmeshAABB] = None,
     ):
@@ -440,18 +443,9 @@ class MCP(GameFile):
             end_translate = Vector3.zero()
         elif not isinstance(end_translate, Vector3):
             raise TypeError(f"`end_translate` must be a `Vector3`, not {type(end_translate)}.")
-        if start_rotate is None:
-            start_rotate = Vector3.zero()
-        elif not isinstance(start_rotate, Vector3):
-            raise TypeError(f"`start_rotate` must be a `Vector3`, not {type(start_rotate)}.")
-        if end_rotate is None:
-            end_rotate = Vector3.zero()
-        elif not isinstance(end_rotate, Vector3):
-            raise TypeError(f"`end_rotate` must be a `Vector3`, not {type(end_rotate)}.")
-
         # Compute global rotation matrix required to get from `start_rotate` to `end_rotate`.
-        m_start_rotate = Matrix3.from_euler_angles(start_rotate)
-        m_end_rotate = Matrix3.from_euler_angles(end_rotate)
+        m_start_rotate = get_rotmat3(start_rotate)
+        m_end_rotate = get_rotmat3(end_rotate)
         m_world_rotate = m_end_rotate @ m_start_rotate.T
 
         # Apply global rotation to start point to determine required global translation.
@@ -464,7 +458,7 @@ class MCP(GameFile):
 
     def rotate_all_aabbs_in_world(
         self,
-        rotation: Matrix3 | Vector3 | list | tuple | int | float,
+        rotation: ROTATION_TYPING,
         pivot_point=(0, 0, 0),
         radians=False,
         enclose_original=True,
@@ -476,11 +470,11 @@ class MCP(GameFile):
 
         Use `selected_aabbs` (indices or `NavmeshAABB` instances) to specify only a subset of AABBs to move.
         """
-        rotation = resolve_rotation(rotation)
+        m_rotation = get_rotmat3(rotation)
         pivot_point = Vector3(pivot_point)
         for i, aabb in enumerate(self.aabbs):
             if selected_aabbs is None or i in selected_aabbs or aabb in selected_aabbs:
-                aabb.rotate_in_world(rotation, pivot_point, radians=radians, enclose_original=enclose_original)
+                aabb.rotate_in_world(m_rotation, pivot_point, radians=radians, enclose_original=enclose_original)
 
     def translate_all(
         self,

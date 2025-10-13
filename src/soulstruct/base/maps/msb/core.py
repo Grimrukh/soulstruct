@@ -17,7 +17,7 @@ from soulstruct.base.game_types import GAME_INT_TYPE
 from soulstruct.base.game_types.map_types import MapEntity
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.files import write_json
-from soulstruct.utilities.maths import Vector2, Vector3, Vector4
+from soulstruct.utilities.maths import Vector2, Vector3, Vector4, EulerDeg
 from soulstruct.utilities.misc import IDList
 from .region_shapes import RegionShape
 
@@ -82,7 +82,7 @@ class MSB(GameFile, tp.Generic[MSB_MODEL_T, MSB_EVENT_T, MSB_REGION_T, MSB_PART_
         def default(self, obj):
             if isinstance(obj, RegionShape):
                 return obj.to_json_dict()
-            if isinstance(obj, (Vector2, Vector3, Vector4, BitSet)):
+            if isinstance(obj, (EulerDeg, Vector2, Vector3, Vector4, BitSet)):
                 return repr(obj)
             return None  # not handled
 

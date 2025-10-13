@@ -23,7 +23,7 @@ from types import MappingProxyType, ModuleType
 
 from constrata.metadata import *
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.maths import BaseVector, Vector2, Vector3, Vector4
+from soulstruct.utilities.maths import BaseVector, Vector2, Vector3, Vector4, EulerDeg
 from soulstruct.utilities.misc import IDList
 from soulstruct.utilities.text import pad_chars
 
@@ -56,6 +56,7 @@ _BASIC_ENTRY_TYPES = {
     "Vector2": Vector2,
     "Vector3": Vector3,
     "Vector4": Vector4,
+    "EulerDeg": EulerDeg,  # EulerRad does not appear in MSB entries
     # "BaseShape": BaseShape,  # TODO: move to base module
 }
 
@@ -85,7 +86,7 @@ def EntryRef(list_name: str, field_name="", array_size: int = None) -> dict[str,
 class MSBBinaryStruct(BinaryStruct, abc.ABC):
     """Allows more `MSBEntry` arguments for unpacking/packing."""
 
-    _MSB_REF_FIELDS: tp.ClassVar[dict[str, tuple[str, ...]]] = None
+    _MSB_REF_FIELDS: tp.ClassVar[dict[str, tuple[str, ...]] | None] = None
 
     @classmethod
     def reader_to_entry_kwargs(
@@ -191,7 +192,7 @@ class MSBHeaderStruct(MSBBinaryStruct, abc.ABC):
         entry: MSBEntry,
         writer: BinaryWriter,
         entry_offset: int,
-        entry_lists: [dict[str, IDList[MSBEntry]]],  # may be required by subclasses
+        entry_lists: dict[str, IDList[MSBEntry]],  # may be required by subclasses
     ):
         # Name is always packed first.
         writer.fill("name_offset", writer.position - entry_offset, obj=entry)
@@ -219,7 +220,9 @@ class MSBEntry(abc.ABC):
     # Cached when first accessed. Maps field names to `MSBFieldDisplayInfo` triplets of nickname, tooltip, display type.
     _FIELD_DISPLAY_INFO: tp.ClassVar[MappingProxyType[str, MSBFieldDisplayInfo]] = None
     # Cached when first accessed. Maps field names to functions that convert JSON string values to that field's type.
-    _CUSTOM_JSON_DECODERS: tp.ClassVar[MappingProxyType[str, tp.Callable[[str], tp.Any]]] = None
+    # Each field name can be mapped to multiple functions that are tried in order. If the first fails, a deprecation
+    # warning will be logged.
+    _CUSTOM_JSON_DECODERS: tp.ClassVar[MappingProxyType[str, list[tp.Callable[[str], tp.Any]]]] = None
 
     _FIELD_REGEX = {
         "msb_ref": re.compile(r"^(MSB[A-Za-z0-9]+)$"),
@@ -379,21 +382,25 @@ class MSBEntry(abc.ABC):
         )
 
     @classmethod
-    def get_custom_json_decoders(cls) -> MappingProxyType[str, tp.Callable[[str], tp.Any]]:
+    def get_custom_json_decoders(cls) -> MappingProxyType[str, list[tp.Callable[[str], tp.Any]]]:
         """Get a dictionary mapping field names to string-parsing decoders for JSON."""
         if cls._CUSTOM_JSON_DECODERS is None:
             decoders = {}
             for f in cls.get_entry_fields():
                 if f.type in (BitSet128, BitSet128.__name__):
-                    decoders[f.name] = BitSet128.from_repr
+                    decoders[f.name] = [BitSet128.from_repr]
                 elif f.type in (BitSet256, BitSet256.__name__):
-                    decoders[f.name] = BitSet256.from_repr
+                    decoders[f.name] = [BitSet256.from_repr]
                 elif f.type in (BitSet1024, BitSet1024.__name__):
-                    decoders[f.name] = BitSet1024.from_repr
+                    decoders[f.name] = [BitSet1024.from_repr]
+                elif f.type in (EulerDeg, EulerDeg.__name__):
+                    # LEGACY: 'Vector3' JSON strings can be read as EulerDeg.
+                    decoders[f.name] = [EulerDeg.from_repr, Vector3.from_repr]
                 else:
                     for check_type in (Vector2, Vector3, Vector4):
                         if f.type in (check_type, check_type.__name__):
                             decoders[f.name] = check_type
+                            break
             cls._CUSTOM_JSON_DECODERS = MappingProxyType(decoders)
 
         return cls._CUSTOM_JSON_DECODERS
@@ -429,7 +436,26 @@ class MSBEntry(abc.ABC):
         decoders = cls.get_custom_json_decoders()
         for field_name, field_value in data.items():
             if field_name in decoders:
-                kwargs[field_name] = decoders[field_name](field_value)
+                # Try each custom string decoder for this field, in order (only first is non-deprecated).
+                for i in range(len(decoders[field_name])):
+                    try:
+                        kwargs[field_name] = decoders[field_name][i](field_value)
+                    except Exception as ex:
+                        if i == 0:
+                            _LOGGER.warning(
+                                f"Custom JSON decoder for field '{field_name}' in `{cls.__name__}` failed: {ex}. "
+                                f"Trying deprecated alternatives."
+                            )
+                        elif i == len(decoders[field_name]) - 1:
+                            raise ValueError(
+                                f"All custom JSON decoders for field '{field_name}' in `{cls.__name__}` failed."
+                            ) from ex
+                    else:
+                        if i > 0:
+                            _LOGGER.warning(
+                                f"Used deprecated custom JSON decoder for field '{field_name}' in `{cls.__name__}`."
+                            )
+                        break  # succeeded
             elif isinstance(field_value, dict):
                 if "shape_type" in field_value:
                     # Load as shape.

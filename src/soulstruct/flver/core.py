@@ -13,7 +13,7 @@ import numpy as np
 from soulstruct.base.game_file import GameFile
 from soulstruct.containers import Binder, TPF
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.maths import Vector3, Vector4, Matrix3, SINGLE_MIN, SINGLE_MAX
+from soulstruct.utilities.maths import EulerRad, Vector3, Vector4, Matrix3, SINGLE_MIN, SINGLE_MAX
 from soulstruct.utilities.misc import IDList
 
 from .bone import FLVERBone
@@ -805,7 +805,11 @@ class FLVER(GameFile):
         return MergedMesh.from_flver(self, mesh_material_indices, material_uv_layer_names, merge_vertices)
 
     def draw(self, auto_show=False, show_mesh_face_sets=(), show_origin=False, axes=None, **kwargs):
-        import matplotlib.pyplot as plt
+        try:
+            import matplotlib.pyplot as plt
+        except ImportError as ex:
+            raise ImportError("Cannot draw FLVER: matplotlib is not installed.") from ex
+
         if show_mesh_face_sets == "all":
             show_mesh_face_sets = tuple(range(len(self.meshes)))
         if axes is None:
@@ -918,6 +922,13 @@ class FLVER(GameFile):
     # endregion
 
     # region Bones
+
+    def find_bone(self, name: str) -> FLVERBone:
+        """Find a bone by name. Raises `KeyError` if not found."""
+        for bone in self.bones:
+            if bone.name == name:
+                return bone
+        raise KeyError(f"Bone '{name}' not found in FLVER.")
 
     def any_bind_pose(self) -> bool:
         return any(mesh.is_bind_pose for mesh in self.meshes)
@@ -1207,7 +1218,7 @@ class FLVER(GameFile):
         if len(self.bones) == 1:
             if (
                 self.bones[0].translate == Vector3.zero()
-                and self.bones[0].rotate == Vector3.zero()
+                and self.bones[0].rotate == EulerRad.zero()
                 and self.bones[0].scale == Vector3.one()
             ):
                 print(f"FLVER {self.path.name} is already deboned (only has one bone at the origin).")
@@ -1215,7 +1226,7 @@ class FLVER(GameFile):
 
         bone_transforms = {}
         for i, bone in enumerate(self.bones):
-            bone_transforms[i] = (bone.translate, Matrix3.from_euler_angles(bone.rotate, radians=True), bone.scale)
+            bone_transforms[i] = (bone.translate, Matrix3.from_euler_angles_rad(bone.rotate), bone.scale)
 
         for mesh in self.meshes:
             for vertex_array in mesh.vertex_arrays:

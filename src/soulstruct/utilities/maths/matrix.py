@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
+from .euler import EulerBase, EulerDeg, EulerRad, EULER_DEG_LIKE, EULER_RAD_LIKE
 from .vector import Vector3, Vector4
 
 
@@ -61,9 +62,14 @@ class Matrix3:
         """Return the inverse of this matrix."""
         return Matrix3(np.linalg.inv(self._data))
 
-    def __matmul__(self, other: Matrix3 | Vector3 | np.ndarray):
+    def __matmul__(self, other: Matrix3 | Vector3 | EulerBase | np.ndarray):
+        """Multiple a matrix, vector, or Euler angles by this matrix, returning the appropriate type."""
         if isinstance(other, Matrix3):
             return Matrix3(np.matmul(self._data, other._data))
+        elif isinstance(other, EulerDeg):
+            return (self @ Matrix3.from_euler_angles_deg(other)).to_euler_angles_deg()
+        elif isinstance(other, EulerRad):
+            return (self @ Matrix3.from_euler_angles_rad(other)).to_euler_angles_rad()
         elif isinstance(other, Vector3):
             return Vector3(np.inner(self._data, other._data))
         # Assume array-like.
@@ -71,9 +77,14 @@ class Matrix3:
             return Vector3(np.matmul(self._data, other))
         return Matrix3(np.matmul(self._data, other))
 
-    def __rmatmul__(self, other: Matrix3 | Vector3 | np.ndarray):
+    def __rmatmul__(self, other: Matrix3 | Vector3 | EulerBase | np.ndarray):
+        """Multiple a matrix, vector, or Euler angles by this matrix, returning the appropriate type."""
         if isinstance(other, Matrix3):
             return Matrix3(np.matmul(other._data, self._data))
+        elif isinstance(other, EulerDeg):
+            return (Matrix3.from_euler_angles_deg(other) @ self).to_euler_angles_deg()
+        elif isinstance(other, EulerRad):
+            return (Matrix3.from_euler_angles_rad(other) @ self).to_euler_angles_rad()
         elif isinstance(other, Vector3):
             return Vector3(np.inner(other._data, self._data))
         # Assume array-like.
@@ -107,11 +118,9 @@ class Matrix3:
         return Matrix3(self._data.T)
 
     @classmethod
-    def from_euler_angles(cls, euler_xyz, radians=False, order="xzy") -> Matrix3:
+    def from_euler_angles_rad(cls, euler_xyz: EULER_RAD_LIKE, order="xzy") -> Matrix3:
         """Order defaults to XZY as per FromSoft usage (i.e. will be applied to point `p` as `Ry @ Rz @ Rx @ p`)."""
         rx, ry, rz = euler_xyz
-        if not radians:
-            rx, ry, rz = math.radians(rx), math.radians(ry), math.radians(rz)
         sx, sy, sz = math.sin(rx), math.sin(ry), math.sin(rz)
         cx, cy, cz = math.cos(rx), math.cos(ry), math.cos(rz)
         m = {
@@ -121,7 +130,12 @@ class Matrix3:
         }
         return m[order[2]] @ m[order[1]] @ m[order[0]]
 
-    def to_euler_angles(self, radians=False, order="xzy") -> Vector3:
+    @classmethod
+    def from_euler_angles_deg(cls, euler_xyz: EULER_DEG_LIKE, order="xzy") -> Matrix3:
+        """Order defaults to XZY as per FromSoft usage (i.e. will be applied to point `p` as `Ry @ Rz @ Rx @ p`)."""
+        return cls.from_euler_angles_rad(euler_xyz.to_rad(), order=order)
+
+    def to_euler_angles_rad(self, order="xzy") -> EulerRad:
         """Only supports order XZY for now (standard FromSoft usage)."""
 
         # TODO: testing XYZ
@@ -138,9 +152,7 @@ class Matrix3:
                 x = math.atan2(-self[1, 2], self[1, 1])
                 y = math.atan2(-self[2, 0], sy)
                 z = 0
-            if radians:
-                return Vector3([x, y, z])
-            return Vector3([math.degrees(x), math.degrees(y), math.degrees(z)])
+            return EulerRad([x, y, z])
 
         if order != "xzy":
             raise ValueError("Can only convert `Matrix3` to Euler angles for XZY rotation (FromSoft standard).")
@@ -162,9 +174,11 @@ class Matrix3:
             y = math.atan2(self[2, 1], self[2, 2])
             x = 0
 
-        if radians:
-            return Vector3([x, y, z])
-        return Vector3([math.degrees(x), math.degrees(y), math.degrees(z)])
+        return EulerRad([x, y, z])
+
+    def to_euler_angles_deg(self, order="xzy") -> EulerDeg:
+        """Only supports order XZY for now (standard FromSoft usage)."""
+        return self.to_euler_angles_rad(order=order).to_deg()
 
     def to_swapped_yz(self) -> Matrix3:
         """Swaps Y and Z axes of a rotation matrix."""
@@ -173,6 +187,15 @@ class Matrix3:
             self[2, 0], self[2, 2], self[2, 1],
             self[1, 0], self[1, 2], self[1, 1],
         ])
+
+    def to_matrix4(self) -> Matrix4:
+        """Convert to a 4x4 matrix with bottom row [0, 0, 0, 1] and rightmost column [0, 0, 0, 1]^T."""
+        return Matrix4(np.array([
+            [self._data[0, 0], self._data[0, 1], self._data[0, 2], 0.0],
+            [self._data[1, 0], self._data[1, 1], self._data[1, 2], 0.0],
+            [self._data[2, 0], self._data[2, 1], self._data[2, 2], 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ], dtype=float))
 
 
 @dataclass(slots=True)

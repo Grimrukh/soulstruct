@@ -9,7 +9,6 @@ __all__ = [
     "BitSet1024",
 
     "merge",
-    "rotate_entry",
     "move_map",
     "rotate_part_or_region",
     "rotate_all_in_world",
@@ -24,7 +23,7 @@ import typing as tp
 from dataclasses import dataclass, fields
 
 from soulstruct.utilities.conversion import int_group_to_bit_set, bit_set_to_int_group
-from soulstruct.utilities.maths import Matrix3, Vector3, resolve_rotation
+from soulstruct.utilities.maths import Matrix3, Vector3, get_rotmat3, ROTATION_TYPING
 
 if tp.TYPE_CHECKING:
     from .core import MSB
@@ -247,29 +246,14 @@ def merge(msb_1: MSB, msb_2: MSB, filter_func: tp.Callable = None, allow_repeate
     return msb_1.__class__(**merged_entry_lists)
 
 
-def rotate_entry(
-    entry: MSBEntry,
-    rotation: Matrix3 | Vector3 | list | tuple | int | float,
-    pivot_point: Vector3 | tuple[float, float, float] = (0.0, 0.0, 0.0),
-    radians=False,
-):
-    """Modify entity `translate` and `rotate` by rotating entry around some `pivot_point` in world coordinates.
-
-    Default `pivot_point` is the world origin (0, 0, 0). Default rotation units are degrees.
-    """
-    rotation = resolve_rotation(rotation, radians)
-    pivot_point = Vector3(pivot_point)
-    entry.rotate = (rotation @ Matrix3.from_euler_angles(entry.rotate)).to_euler_angles()
-    entry.translate = (rotation @ (entry.translate - pivot_point)) + pivot_point
-
-
 def move_map(
     msb: MSB,
     start_translate: Vector3 | None = None,
     end_translate: Vector3 | None = None,
-    start_rotate: Vector3 | None = None,
-    end_rotate: Vector3 | None = None,
+    start_rotate: ROTATION_TYPING = (0.0, 0.0, 0.0),
+    end_rotate: ROTATION_TYPING = (0.0, 0.0, 0.0),
     selected_entries=(),
+    radians=False,
 ):
     """Move everything with a transform in given `MSB` relative to an initial and a final reference point.
 
@@ -281,6 +265,7 @@ def move_map(
         end_rotate: final `(x, y, z)` rotate of final reference point, or simply `y` if a number is given.
         selected_entries: if not empty, move only these given entries. Each element in this sequence can be
             an `MSBEntry` instance or the name (if unique) of a Part or Region.
+        radians: hint to units of `rotation` if it is ambiguous.
 
     Optionally, move only a subset of entry names given in `selected_entry_names`.
     """
@@ -288,14 +273,10 @@ def move_map(
         start_translate = Vector3.zero()
     if end_translate is None:
         end_translate = Vector3.zero()
-    if start_rotate is None:
-        start_rotate = Vector3.zero()
-    if end_rotate is None:
-        end_rotate = Vector3.zero()
 
     # Compute global rotation matrix required to get from `start_rotate` to `end_rotate`.
-    m_start_rotate = Matrix3.from_euler_angles(start_rotate)
-    m_end_rotate = Matrix3.from_euler_angles(end_rotate)
+    m_start_rotate = get_rotmat3(start_rotate, radians)
+    m_end_rotate = get_rotmat3(end_rotate, radians)
     m_world_rotation = m_end_rotate @ m_start_rotate.T
 
     # Apply global rotation to start point to determine required global translation.
@@ -307,30 +288,37 @@ def move_map(
 
 def rotate_part_or_region(
     entry: BaseMSBPart | BaseMSBRegion,
-    rotation: Matrix3 | Vector3 | list | tuple | int | float,
+    rotation: ROTATION_TYPING,
     pivot_point: Vector3 | tuple[float, float, float] = (0.0, 0.0, 0.0),
     radians=False,
 ):
     """Modify entity `translate` and `rotate` by rotating entity around some `pivot_point` in world coordinates.
-    Default `pivot_point` is the world origin (0, 0, 0). Default rotation units are degrees.
+    Default `pivot_point` is the world origin (0, 0, 0).
+
+    Args:
+        entry: Part or Region to rotate.
+        rotation: Euler angles, as specified by `(x, y, z)`, an Euler rotation matrix, or a single value to apply
+            simple `y` rotation only.
+        pivot_point: point around with `rotation` will be applied. Defaults to world origin, `(0, 0, 0)`.
+        radians: hint to units of `rotation` if it is ambiguous.
     """
     if not hasattr(entry, "translate") or not hasattr(entry, "rotate"):
         raise TypeError(
             f"Cannot rotate MSB entry type: `{entry.__class__.__name__}`. "
-            f"It must have `translate` and `rotate` attributes."
+            f"It must have `translate` and `rotate` attributes (typicall MSBPart or MSBRegion only)."
         )
-    rotation = resolve_rotation(rotation, radians)
+    m_rotation = get_rotmat3(rotation, radians)
     pivot_point = Vector3(pivot_point)
-    entry.rotate = (rotation @ Matrix3.from_euler_angles(entry.rotate)).to_euler_angles()
-    entry.translate = (rotation @ (entry.translate - pivot_point)) + pivot_point
+    entry.rotate = m_rotation @ entry.rotate  # returns `EulerDeg`
+    entry.translate = (m_rotation @ (entry.translate - pivot_point)) + pivot_point
 
 
 def rotate_all_in_world(
     msb: MSB,
-    rotation: Matrix3 | Vector3 | list | tuple | int | float,
+    rotation: ROTATION_TYPING,
     pivot_point: Vector3 | tuple[float, float, float] = (0.0, 0.0, 0.0),
-    radians=False,
     selected_entries=(),
+    radians=False,
 ):
     """Rotate every Part and Region in the map around the given `pivot_point` by the Euler angles specified by
     `rotation`, modifying both `.rotate` and (unless equal to `pivot_point`) `.translate` for each entry.
@@ -340,20 +328,20 @@ def rotate_all_in_world(
         rotation: Euler angles, as specified by `(x, y, z)`, an Euler rotation matrix, or a single value to apply
             simple `y` rotation only.
         pivot_point: point around with `rotation` will be applied. Defaults to world origin, `(0, 0, 0)`.
-        radians: if True, given `rotation` is in radians; degrees otherwise. Defaults to `False` (degrees).
         selected_entries: if not empty, move only these given entries. Each element in this sequence can be
             an `MSBEntry` instance or the name (if unique) of a Part or Region.
+        radians: hint to units of `rotation` if it is ambiguous.
     """
     selected_entries = msb.resolve_entries_list(selected_entries, supertypes=("parts", "regions"))
 
-    rotation_m = resolve_rotation(rotation)
+    m_rotation = get_rotmat3(rotation)
     pivot_point = Vector3(pivot_point)
     for part in msb.get_parts():
         if not selected_entries or part in selected_entries:
-            rotate_part_or_region(part, rotation_m, pivot_point=pivot_point, radians=radians)
+            rotate_part_or_region(part, m_rotation, pivot_point=pivot_point, radians=radians)
     for region in msb.get_regions():
         if not selected_entries or region in selected_entries:
-            rotate_part_or_region(region, rotation_m, pivot_point=pivot_point, radians=radians)
+            rotate_part_or_region(region, m_rotation, pivot_point=pivot_point, radians=radians)
 
 
 def translate_all(msb: MSB, translate: Vector3, selected_entries=()):

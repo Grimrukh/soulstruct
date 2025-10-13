@@ -25,7 +25,7 @@ from soulstruct.base.maps.msb.utils import BitSet128
 from soulstruct.darksouls1ptde.game_types import *
 from soulstruct.exceptions import InvalidFieldValueError
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.maths import Vector3
+from soulstruct.utilities.maths import EulerDeg, Vector3
 
 from .enums import *
 from .models import *
@@ -41,7 +41,7 @@ class PartHeaderStruct(MSBHeaderStruct):
     _model_index: int = field(**EntryRef("MODEL_PARAM_ST"))
     sib_path_offset: int
     translate: Vector3
-    rotate: Vector3
+    rotate: EulerDeg
     scale: Vector3
     draw_groups: BitSet128 = binary_array(4, uint)
     display_groups: BitSet128 = binary_array(4, uint)

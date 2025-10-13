@@ -2,6 +2,7 @@ from __future__ import annotations
 
 __all__ = [
     "VertexArray",
+    "VertexDataSizeError",
 ]
 
 import logging

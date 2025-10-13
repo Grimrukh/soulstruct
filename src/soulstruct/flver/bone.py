@@ -5,12 +5,13 @@ __all__ = [
     "FLVERBone",
 ]
 
+import copy
 import typing as tp
 from dataclasses import dataclass, field, fields
 from enum import IntEnum
 
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.maths import Vector3, Matrix3
+from soulstruct.utilities.maths import EulerRad, Vector3, Matrix3
 from soulstruct.utilities.misc import IDList
 
 
@@ -32,7 +33,7 @@ class FLVERBone:
     class STRUCT(BinaryStruct):
         translate: Vector3
         _name_offset: int
-        rotate: Vector3  # Euler angles (radians)
+        rotate: EulerRad
         _parent_bone_index: short
         _child_bone_index: short
         scale: Vector3
@@ -45,7 +46,7 @@ class FLVERBone:
 
     name: str
     translate: Vector3 = field(default_factory=Vector3.zero)
-    rotate: Vector3 = field(default_factory=Vector3.zero)  # Euler angles (radians)
+    rotate: EulerRad = field(default_factory=EulerRad.zero)
     scale: Vector3 = field(default_factory=Vector3.one)
     # Mesh vertices weighted to this bone will only be drawn if this bounding box is in the camera's current view.
     # NOTE: units are in local bone space for character
@@ -164,13 +165,13 @@ class FLVERBone:
 
     def get_local_transform(self) -> tuple[Vector3, Matrix3, Vector3]:
         """Return combined local transform of `FLVERBone`, converting rotation Euler to a 3x3 matrix."""
-        rot_mat3 = Matrix3.from_euler_angles(self.rotate, radians=True, order="xzy")
-        return self.translate.copy(), rot_mat3, self.scale.copy()
+        rot_mat3 = Matrix3.from_euler_angles_rad(self.rotate, order="xzy")
+        return copy.copy(self.translate), rot_mat3, self.scale.copy()
 
     def set_local_transform(self, transform: tuple[Vector3, Matrix3, Vector3]):
         """Set local transform of `FLVERBone`, converting rotation 3x3 matrix to Euler."""
         self.translate = transform[0].copy()
-        self.rotate = transform[1].to_euler_angles(radians=True, order="xzy")
+        self.rotate = transform[1].to_euler_angles_rad(order="xzy")
         self.scale = transform[2].copy()
 
     def get_armature_space_transform(self) -> tuple[Vector3, Matrix3, Vector3]:
@@ -180,11 +181,11 @@ class FLVERBone:
         efficient, as it avoids recalculating the same parent transforms more than once.
         """
         absolute_translate = Vector3.zero()
-        rotate = Matrix3.identity()
+        m_rotate = Matrix3.identity()
         for bone in self.get_all_parents(include_self=True):
-            absolute_translate += rotate @ bone.translate
-            rotate @= Matrix3.from_euler_angles(bone.rotate, radians=True, order="xzy")
-        return absolute_translate, rotate, self.scale.copy()
+            absolute_translate += m_rotate @ bone.translate
+            m_rotate @= Matrix3.from_euler_angles_rad(bone.rotate)
+        return absolute_translate, m_rotate, self.scale.copy()
 
     @property
     def is_default_origin(self):
@@ -193,7 +194,7 @@ class FLVERBone:
         one = Vector3.one()
         return (
             self.translate == zero
-            and self.rotate == zero
+            and self.rotate == EulerRad.zero()
             and self.scale == one
             and self.usage_flags == 0
         )

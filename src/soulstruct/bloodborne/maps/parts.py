@@ -25,7 +25,7 @@ from soulstruct.base.maps.msb.utils import BitSet256
 from soulstruct.bloodborne.game_types import *
 from soulstruct.exceptions import InvalidFieldValueError
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.maths import Vector3
+from soulstruct.utilities.maths import EulerDeg, Vector3
 
 from .enums import *
 from .models import *
@@ -45,7 +45,7 @@ class PartHeaderStruct(MSBHeaderStruct):
     _model_index: int = field(**EntryRef("MODEL_PARAM_ST"))
     sib_path_offset: long
     translate: Vector3
-    rotate: Vector3
+    rotate: EulerDeg
     scale: Vector3
     draw_groups: BitSet256 = binary_array(8, uint)
     display_groups: BitSet256 = binary_array(8, uint)

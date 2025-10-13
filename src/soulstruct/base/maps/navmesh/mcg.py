@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
+from soulstruct.utilities.maths import Vector3, Matrix3, get_rotmat3, ROTATION_TYPING
 from soulstruct.utilities.misc import MISSING_REF, IDList
 
 from .utilities import ExistingConnectionError, import_matplotlib_plt
@@ -168,14 +168,14 @@ class MCGNode:
 
     def rotate_in_world(
         self,
-        rotation: Matrix3 | Vector3 | list | tuple | int | float,
+        rotation: ROTATION_TYPING,
         pivot_point: Vector3 | tuple[float, float, float] = (0.0, 0.0, 0.0),
         radians=False,
     ):
         """Modify node `translate` by rotating it around some `pivot_point` by `rotation` Euler angles in world."""
-        rotation = resolve_rotation(rotation, radians=radians)
+        m_rotation = get_rotmat3(rotation, radians=radians)
         pivot_point = Vector3(pivot_point)
-        self.translate = (rotation @ (self.translate - pivot_point)) + pivot_point
+        self.translate = (m_rotation @ (self.translate - pivot_point)) + pivot_point
 
     def __repr__(self) -> str:
         if self.dead_end_navmesh is not MISSING_REF:
@@ -659,10 +659,10 @@ class MCG(GameFile):
 
     def move_in_world(
         self,
-        start_translate: Vector3 = None,
-        end_translate: Vector3 = None,
-        start_rotate: Vector3 | list | tuple | int | float = None,
-        end_rotate: Vector3 | list | tuple | int | float = None,
+        start_translate: Vector3 | None = None,
+        end_translate: Vector3 | None = None,
+        start_rotate: ROTATION_TYPING = (0.0, 0.0, 0.0),
+        end_rotate: ROTATION_TYPING = (0.0, 0.0, 0.0),
         selected_nodes: tp.Iterable[int | MCGNode] = None,
     ):
         """Rotate and then translate all nodes in MCG in world coordinates, so that an entity with a translate of
@@ -679,8 +679,8 @@ class MCG(GameFile):
             end_translate = Vector3.zero()
         elif not isinstance(end_translate, Vector3):
             raise TypeError(f"`end_translate` must be a `Vector3`, not {end_translate}.")
-        m_start_rotate = resolve_rotation(start_rotate)
-        m_end_rotate = resolve_rotation(end_rotate)
+        m_start_rotate = get_rotmat3(start_rotate)
+        m_end_rotate = get_rotmat3(end_rotate)
 
         # Compute global rotation matrix required to get from `start_rotate` to `end_rotate`.
         m_world_rotate = m_end_rotate @ m_start_rotate.T
@@ -693,7 +693,7 @@ class MCG(GameFile):
 
     def rotate_all_nodes_in_world(
         self,
-        rotation: Matrix3 | Vector3 | list | tuple | int | float,
+        rotation: ROTATION_TYPING,
         pivot_point: Vector3 | tuple[float, float, float] = (0.0, 0.0, 0.0),
         radians=False,
         selected_nodes: tp.Iterable[int | NavmeshAABB] = None,
@@ -702,11 +702,11 @@ class MCG(GameFile):
 
         The pivot defaults to the world origin.
         """
-        rotation = resolve_rotation(rotation)
+        m_rotation = get_rotmat3(rotation)
         pivot_point = Vector3(pivot_point)
         for i, node in enumerate(self.nodes):
             if selected_nodes is None or i in selected_nodes or node in selected_nodes:
-                node.rotate_in_world(rotation, pivot_point=pivot_point, radians=radians)
+                node.rotate_in_world(m_rotation, pivot_point=pivot_point, radians=radians)
 
     def translate_all(
         self,

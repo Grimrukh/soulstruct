@@ -7,7 +7,7 @@ import logging
 import typing as tp
 from dataclasses import dataclass, field
 
-from soulstruct.utilities.maths import Vector3
+from soulstruct.utilities.maths import EulerDeg, Vector3
 
 from .enums import BaseMSBRegionSubtype, MSBSupertype
 from .msb_entry import MSBEntry
@@ -39,7 +39,7 @@ class BaseMSBRegion(MSBEntry, abc.ABC):
     }
 
     translate: Vector3 = field(default_factory=Vector3.zero)
-    rotate: Vector3 = field(default_factory=Vector3.zero)
+    rotate: EulerDeg = field(default_factory=EulerDeg.zero)
     entity_id: int = -1
     shape: RegionShape = field(default_factory=PointShape)  # default is Point
 

@@ -12,7 +12,7 @@ from soulstruct.base.maps.msb.msb_entry import *
 from soulstruct.base.maps.msb.regions import *
 from soulstruct.base.maps.msb.region_shapes import RegionShape
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.maths import Vector3
+from soulstruct.utilities.maths import EulerDeg, Vector3
 from .enums import MSBRegionSubtype
 
 if tp.TYPE_CHECKING:
@@ -28,7 +28,7 @@ class RegionHeaderStruct(MSBHeaderStruct):
     supertype_index: int
     shape_type_int: int
     translate: Vector3
-    rotate: Vector3  # Euler angles in radians
+    rotate: EulerDeg
     null_struct_0_offset: long
     null_struct_1_offset: long
     shape_data_offset: long

@@ -3,19 +3,20 @@ from __future__ import annotations
 __all__ = [
     "ROTATION_TYPING",
     "local_translate",
-    "resolve_rotation",
+    "get_rotmat3",
     "get_distance",
 ]
 
 import math
 import typing as tp
 
+from .euler import EulerDeg, EulerRad
 from .matrix import Matrix3
 from .vector import Vector3
 
 
 # Valid rotation types for `resolve_rotation()` (`None` also allowed, which returns identity matrix).
-ROTATION_TYPING = tp.Union[Matrix3 | Vector3 | list | tuple | int | float]
+ROTATION_TYPING = tp.Union[Matrix3 | Vector3 | EulerDeg | EulerRad | list | tuple | int | float]
 
 
 def local_translate(
@@ -25,7 +26,7 @@ def local_translate(
 
     `rot` is a rotation (in degrees by default) used to convert `axis` to world space.
     """
-    rot_matrix = resolve_rotation(rot, radians=radians)
+    rot_matrix = get_rotmat3(rot, radians=radians)
     if local_axis is None:
         local_axis = Vector3((0.0, 0.0, -1.0))  # standard 'forward-facing' direction of MSB entities
     if not isinstance(local_axis, Vector3):
@@ -39,7 +40,7 @@ def local_translate(
     return pos + distance * (rot_matrix @ local_axis)
 
 
-def resolve_rotation(rotation: ROTATION_TYPING | None, radians=False) -> Matrix3:
+def get_rotmat3(rotation: ROTATION_TYPING | None, radians=False) -> Matrix3:
     """Return a rotation `Matrix3` from various shortcut input types (e.g. single value or Euler angle vector).
 
     `None` is returned as the identity matrix.
@@ -48,12 +49,20 @@ def resolve_rotation(rotation: ROTATION_TYPING | None, radians=False) -> Matrix3
         return Matrix3.identity()
     elif isinstance(rotation, (int, float)):
         # Single rotation value is a shortcut for Y rotation (i.e. around vertical in-game axis).
-        return Matrix3.from_euler_angles((0.0, rotation, 0.0), radians=radians)
+        if radians:
+            return Matrix3.from_euler_angles_rad((0.0, rotation, 0.0))
+        return Matrix3.from_euler_angles_deg((0.0, rotation, 0.0))
+    elif isinstance(rotation, EulerDeg):
+        return Matrix3.from_euler_angles_deg(rotation)
+    elif isinstance(rotation, EulerRad):
+        return Matrix3.from_euler_angles_rad(rotation)
     elif isinstance(rotation, (Vector3, list, tuple)):
-        return Matrix3.from_euler_angles(rotation, radians=radians)
+        if radians:
+            return Matrix3.from_euler_angles_rad(rotation)
+        return Matrix3.from_euler_angles_deg(rotation)
     elif isinstance(rotation, Matrix3):
         return rotation
-    raise TypeError("`rotation` must be a Matrix3, Vector3/list/tuple, or int/float (for Y rotation only).")
+    raise TypeError("`rotation` must be a Matrix3, EulerRad/EulerDeg, Vector3/list/tuple, or int/float (Y rotation).")
 
 
 def get_distance(x1: Vector3, x2: Vector3, squared=False):

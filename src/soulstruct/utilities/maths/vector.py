@@ -41,13 +41,18 @@ class BaseVector(abc.ABC):
             arr = data._data.copy()
         else:
             arr = np.asarray(data, dtype=float)
-        arr.setflags(write=False)  # read-only
+        arr.flags.writeable = False
         object.__setattr__(self, "_data", arr)
 
     def __array__(self, dtype=None):
         return self._data if dtype is None else self._data.astype(dtype, copy=False)
 
     # READ-ONLY
+
+    @property
+    def data(self) -> np.ndarray:
+        """Get the (read-only) NumPy array of the vector data."""
+        return self._data
 
     def __setattr__(self, name: str, value: tp.Any):
         raise AttributeError(f"{self.__class__.__name__} is immutable.")
@@ -62,6 +67,16 @@ class BaseVector(abc.ABC):
     def __deepcopy__(self, memo: tp.Dict[int, tp.Any]) -> tp.Self:
         """Vector is immutable, so deep copy is the same as this vector."""
         return self
+
+    def copy(self) -> tp.Self:
+        """Vector is immutable, so copy is the same as this vector."""
+        return self
+
+    def __getstate__(self):
+        return tuple(self._data)
+
+    def __setstate__(self, state: tuple[float, ...]):
+        object.__setattr__(self, "_data", np.array(state, dtype=float))
 
     # NUMPY ARRAY-LIKE OPERATIONS
 

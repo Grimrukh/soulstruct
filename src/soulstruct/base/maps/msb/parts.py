@@ -7,7 +7,7 @@ import logging
 import typing as tp
 from dataclasses import dataclass, field
 
-from soulstruct.utilities.maths import Vector3
+from soulstruct.utilities.maths import EulerDeg, Vector3
 from soulstruct.base.maps.msb.utils import BitSet
 
 from .enums import BaseMSBPartSubtype, MSBSupertype
@@ -38,7 +38,7 @@ class BaseMSBPart(MSBEntry, abc.ABC, tp.Generic[BIT_SET_T]):
     entity_id: int = -1
     sib_path: str = ""
     translate: Vector3 = field(default_factory=Vector3.zero)
-    rotate: Vector3 = field(default_factory=Vector3.zero)  # XZY-order Euler angles in DEGREES
+    rotate: EulerDeg = field(default_factory=EulerDeg.zero)
     scale: Vector3 = field(default_factory=lambda: Vector3.one())
 
     # Sized `BitSet` subclass is overridden per concrete game-specific subclass.

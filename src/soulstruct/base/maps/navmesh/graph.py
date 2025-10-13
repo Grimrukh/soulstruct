@@ -111,7 +111,7 @@ from pathlib import Path
 
 from soulstruct.base.maps.msb import MSB
 from soulstruct.base.maps.msb.parts import BaseMSBPart
-from soulstruct.utilities.maths import Vector3
+from soulstruct.utilities.maths import EulerDeg, Vector3
 
 from .mcp import MCP, NavmeshAABB
 from .mcg import MCG, MCGNode, MCGEdge
@@ -390,8 +390,8 @@ class NavmeshGraph:
         self,
         start_translate: Vector3 | list | tuple = None,
         end_translate: Vector3 | list | tuple = None,
-        start_rotate: Vector3 | list | tuple | int | float = None,
-        end_rotate: Vector3 | list | tuple | int | float = None,
+        start_rotate: EulerDeg | list | tuple | int | float = None,
+        end_rotate: EulerDeg | list | tuple | int | float = None,
         enclose_original=True,
         selected_aabbs: tp.Iterable[int | NavmeshAABB] = None,
         selected_nodes: tp.Iterable[int | MCGNode] = None,
