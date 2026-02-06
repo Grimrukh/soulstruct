@@ -195,26 +195,27 @@ class MatDef(_BaseMatDef):
 
         return VertexArrayLayout(data_types)
 
-    def get_non_map_piece_layout(self) -> VertexArrayLayout:
+    def get_non_map_piece_layout(self, is_bind_pose: bool = True) -> VertexArrayLayout:
         """Get a standard vertex array layout for character (and probably object) materials in DS1."""
         data_types = [
             VertexPosition(VertexDataFormatEnum.Float3, 0),
             VertexBoneIndices(VertexDataFormatEnum.FourBytesB, 0),
-            VertexBoneWeights(VertexDataFormatEnum.FourShortsToFloats, 0),
             VertexNormal(VertexDataFormatEnum.FourBytesC, 0),
             VertexTangent(VertexDataFormatEnum.FourBytesC, 0),
             VertexColor(VertexDataFormatEnum.FourBytesC, 0),
         ]  # type: list[VertexDataType]
-
         uv_count = len(self.get_used_uv_layers())
         if uv_count == 2:  # has Bitangent and UVPair
-            data_types.insert(5, VertexBitangent(VertexDataFormatEnum.FourBytesC, 0))
+            data_types.insert(4, VertexBitangent(VertexDataFormatEnum.FourBytesC, 0))
             data_types.append(VertexUV(VertexDataFormatEnum.UVPair, 0))
         elif uv_count == 1:  # one UV
             data_types.append(VertexUV(VertexDataFormatEnum.UV, 0))
         else:
             raise ValueError(f"Invalid UV count for DS1 character layout: {uv_count}. Must be 1 or 2.")
-
+        if is_bind_pose:
+            # If the non-map piece is completely static, it might have Is Bind Pose off. In that case, bone weights
+            # need to be ignored.
+            data_types.insert(2, VertexBoneWeights(VertexDataFormatEnum.FourShortsToFloats, 0))
         for data_type in data_types:
             data_type.unk_x00 = 0  # DS1
 

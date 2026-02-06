@@ -160,7 +160,7 @@ class MatDef(_BaseMatDef):
 
         return VertexArrayLayout(data_types)
 
-    def get_non_map_piece_layout(self) -> VertexArrayLayout:
+    def get_non_map_piece_layout(self, is_bind_pose: bool = True) -> VertexArrayLayout:
         """Get a standard vertex array layout for character (and probably object) materials in DS2.
 
         NOTE: Every material seems to use two colors.
