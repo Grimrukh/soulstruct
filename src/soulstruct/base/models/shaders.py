@@ -301,7 +301,7 @@ class MatDef(abc.ABC):
         ...
 
     @abc.abstractmethod
-    def get_non_map_piece_layout(self) -> VertexArrayLayout:
+    def get_non_map_piece_layout(self, is_bind_pose: bool = True) -> VertexArrayLayout:
         ...
 
     # endregion
