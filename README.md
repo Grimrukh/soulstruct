@@ -12,6 +12,7 @@ Game abbreviations used below and in package:
 - **BB**: Bloodborne
 - **DS3**: Dark Souls III
 - **SEK**: Sekiro: Shadows Die Twice
+- **ER**: Elden Ring
 
 Features
 --------
