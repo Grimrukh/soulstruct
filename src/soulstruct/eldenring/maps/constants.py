@@ -1859,8 +1859,3 @@ def get_map_variable_name(source: MAP_SOURCE_TYPING):
         except ValueError:
             raise ValueError("Can only generate a variable name for an unknown map from source `(aa, bb, cc, dd)`.")
         return f"({area_id}, {block_id}, {cc_id}, {dd_id})"
-
-
-if __name__ == "__main__":
-    for m in ALL_DLC_MAPS:
-        print(f"    {m.name} = map_property({m.variable_name}),  # type: EMEVD")
