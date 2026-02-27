@@ -63,7 +63,7 @@ class Matrix3:
         return Matrix3(np.linalg.inv(self._data))
 
     def __matmul__(self, other: Matrix3 | Vector3 | EulerBase | np.ndarray):
-        """Multiple a matrix, vector, or Euler angles by this matrix, returning the appropriate type."""
+        """Multiply a matrix, vector, or Euler angles by this matrix, returning the appropriate type."""
         if isinstance(other, Matrix3):
             return Matrix3(np.matmul(self._data, other._data))
         elif isinstance(other, EulerDeg):
@@ -78,7 +78,7 @@ class Matrix3:
         return Matrix3(np.matmul(self._data, other))
 
     def __rmatmul__(self, other: Matrix3 | Vector3 | EulerBase | np.ndarray):
-        """Multiple a matrix, vector, or Euler angles by this matrix, returning the appropriate type."""
+        """Multiply a matrix, vector, or Euler angles by this matrix, returning the appropriate type."""
         if isinstance(other, Matrix3):
             return Matrix3(np.matmul(other._data, self._data))
         elif isinstance(other, EulerDeg):
