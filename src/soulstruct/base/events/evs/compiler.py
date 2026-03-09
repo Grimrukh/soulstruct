@@ -40,10 +40,15 @@ class EVSInstructionCompiler(abc.ABC):
         self.cond_manager = cond_manager
 
     def compile(self, instr_name: str, *args, **kwargs) -> list[str]:
-        """Compile instruction using `COMPILER` function if available, or fall back to `_base_compile`
-        that purely uses EMEDF. Also falls back if `instr_name` starts with an underscore (e.g. for a wrapped custom
-        instruction with the same name as an internal base EMEDF instruction).
+        """Compile instruction using a custom function if available, or fall back to `_base_compile`
+        that purely uses EMEDF (first stripping any underscore prefix used to force a custom function
+        sharing a name with a built-in).
+
+        First performs some checking that is general to ALL instructions in ALL games.
         """
+
+        self._sanitize_args(instr_name, args, kwargs)
+
         if instr_name in self._CUSTOM_FUNC_NAMES:
 
             if self.cond_manager.DEBUG_ENABLED:
@@ -341,6 +346,23 @@ class EVSInstructionCompiler(abc.ABC):
                     input_condition_index = i - 1  # ignore `self` argument
             
             cls._CUSTOM_FUNC_CONDITION_ARGS[method_name] = (condition_index, input_condition_index)
+
+    @staticmethod
+    def _sanitize_args(instr_name, args, kwargs):
+        if instr_name in {"RunEvent", "RunCommonEvent"}:
+            values = tuple(kwargs.get("args", ()))
+        else:
+            values = args + tuple(kwargs.values())
+
+        for value in values:
+            if instr_name not in {"TerminateEvent", "SetEventState", "StopEvent", "RestartEvent"}:
+                if isinstance(value, Flag) and value.name.startswith("_"):
+                    name = f"{type(value).__name__}.{value.name} = {value.value}"
+                    _LOGGER.warning(
+                        f"Used Flag {name} with underscore-prefixed name in instruction "
+                        f"`{instr_name}`. EVS convention is to only use underscore prefixes for Flags that are "
+                        f"used as event IDs only and never explicitly checked or manipulated."
+                    )
 
 
 @dataclass(slots=True)
