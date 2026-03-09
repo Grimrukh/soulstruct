@@ -147,7 +147,7 @@ def _SetAssetActivationWithIdx(obj: Asset, obj_act_id, relative_index, state: bo
 def _MoveAndSetDrawParent(
     character: Character,
     destination_type: CoordEntityType,
-    destination: tp.Union[Character, Asset, Region],
+    destination: Character | Asset | Region,
     dummy_id: int,
     set_draw_parent: MapPart,
 ):
@@ -164,7 +164,7 @@ def _MoveAndSetDrawParent(
 def _ShortMove(
     character: Character,
     destination_type: CoordEntityType,
-    destination: tp.Union[Character, Asset, Region],
+    destination: Character | Asset | Region,
     dummy_id: int,
 ):
     if not isinstance(destination_type, str) and destination_type.name == "Region" and dummy_id == -1:
@@ -180,9 +180,9 @@ def _ShortMove(
 def _MoveAndCopyDrawParent(
     character: Character,
     destination_type: CoordEntityType,
-    destination: tp.Union[Character, Asset, Region],
+    destination: Character | Asset | Region,
     dummy_id: int,
-    copy_draw_parent: tp.Union[Character, Asset],
+    copy_draw_parent: Character | Asset,
 ):
     if not isinstance(destination_type, str) and destination_type.name == "Region" and dummy_id == -1:
         if isinstance(destination, MapEntity):  # `destination_type` is implicit
@@ -219,7 +219,7 @@ def _IfPlayerItemStateIncludingStorage(condition: int, item_type: ItemType, item
 def _IfActionButton(
     condition: int,
     anchor_type: CoordEntityType,
-    anchor_entity: tp.Union[Character, Asset, Region],
+    anchor_entity: Character | Asset | Region,
     facing_angle: float,
     dummy_id: int,
     max_distance: float,
@@ -266,7 +266,7 @@ def _IfActionButton(
 def _IfActionButtonBasic(
     condition: int,
     anchor_type: CoordEntityType,
-    anchor_entity: tp.Union[Character, Asset, Region],
+    anchor_entity: Character | Asset | Region,
     facing_angle: float,
     dummy_id: int,
     max_distance: float,
@@ -293,7 +293,7 @@ def _IfActionButtonBasic(
 def _IfActionButtonBasic(
     condition: int,
     anchor_type: CoordEntityType,
-    anchor_entity: tp.Union[Character, Asset, Region],
+    anchor_entity: Character | Asset | Region,
     facing_angle: float,
     dummy_id: int,
     max_distance: float,
@@ -320,14 +320,14 @@ def _IfActionButtonBasic(
 def _IfActionButtonBasic(
     condition: int,
     anchor_type: CoordEntityType,
-    anchor_entity: tp.Union[Character, Asset, Region],
+    anchor_entity: Character | Asset | Region,
     facing_angle: float,
     dummy_id: int,
     max_distance: float,
     prompt_text: int,
     trigger_attribute: TriggerAttribute,
     button: int,
-    line_intersects: tp.Union[Character, Asset, Region],
+    line_intersects: Character | Asset | Region,
 ):
     return _IfActionButton(
         condition,
@@ -348,14 +348,14 @@ def _IfActionButtonBasic(
 def _IfActionButtonBasic(
     condition: int,
     anchor_type: CoordEntityType,
-    anchor_entity: tp.Union[Character, Asset, Region],
+    anchor_entity: Character | Asset | Region,
     facing_angle: float,
     dummy_id: int,
     max_distance: float,
     prompt_text: int,
     trigger_attribute: TriggerAttribute,
     button: int,
-    line_intersects: tp.Union[Character, Asset, Region],
+    line_intersects: Character | Asset | Region,
 ):
     return _IfActionButton(
         condition,
