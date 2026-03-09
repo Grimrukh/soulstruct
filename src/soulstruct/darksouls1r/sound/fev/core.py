@@ -427,7 +427,7 @@ class UserProperty(XMLObject):
 
     name: str
     property_type: UserProperty.PropertyType
-    value: tp.Union[int, float, str]
+    value: int | float | str
 
     @classmethod
     def from_fev_reader(cls, reader: BinaryReader):

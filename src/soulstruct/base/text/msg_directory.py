@@ -165,7 +165,7 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
                 raise
         return fmgs
 
-    def write_json_directory(self, directory: tp.Union[Path, str]):
+    def write_json_directory(self, directory: Path | str):
         """Write a folder containing custom MSGBND manifests linking to FMG JSON entry files.
 
         The resulting folder can be loaded with `from_json_directory(directory)`.

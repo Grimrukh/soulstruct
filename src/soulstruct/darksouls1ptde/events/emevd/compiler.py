@@ -75,7 +75,7 @@ class EVSInstructionCompiler(_BaseCompiler):
         vertical_translation: float = 0.0,
     ):
         """Unified instruction for playing cutscenes. EMEVD has several instructions for playing cutscenes that allow
-        different side-effects like playing the cutscene to a specific player, moving a player to a new region/map, or
+        different side effects like playing the cutscene to a specific player, moving a player to a new region/map, or
         rotating a player. This method detects the appropriate low-level instruction to call.
 
         Args:

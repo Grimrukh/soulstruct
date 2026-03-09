@@ -10,9 +10,8 @@ import typing as tp
 from enum import Enum
 
 from soulstruct.base.game_types import *
-from ..emevd.utils import EventArgumentData
+from ..emevd.utils import EventArgumentData, get_write_offset
 from .exceptions import NoNegateError, NoSkipOrReturnError
-from .utils import get_write_offset
 
 if tp.TYPE_CHECKING:
     from .conditions import EVSConditionManager, ConditionGroupState
@@ -241,7 +240,7 @@ class EVSInstructionCompiler(abc.ABC):
 
     def compile_game_object_test(
         self,
-        game_object: tp.Union[GameObject, tuple],
+        game_object: GameObject | tuple,
         game_object_type: GAME_TYPE = None,
         negate=False,
         condition_group: ConditionGroupState = None,
@@ -293,7 +292,7 @@ class EVSInstructionCompiler(abc.ABC):
             restart_event=restart_event,
         )
 
-    # noinspection PyUnusedLocal
+    # noinspection PyUnusedLocal,PyPep8Naming
     def RunEvent(self, event_id, slot=0, args=(0,), arg_types="", event_layers=None):
         """Run the given `event_id`, which must be defined in the same script.
 
