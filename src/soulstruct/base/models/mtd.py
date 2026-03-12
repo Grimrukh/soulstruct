@@ -560,6 +560,13 @@ class MTDBND(Binder):
         self.mtds[mtd_name] = mtd
         return mtd
 
+    def load_all_mtds(self):
+        for entry in self.entries:
+            if entry.name.lower().endswith(".mtd"):
+                mtd_name = entry.name.lower()
+                if mtd_name not in self.mtds:
+                    self.mtds[mtd_name] = entry.to_binary_file(MTD)
+
     @classmethod
     def from_bundled(cls, game_or_name: Game | str) -> MTDBND:
         game = get_game(game_or_name)

@@ -313,19 +313,7 @@ class MATBINBND(Binder):
 
     _BUNDLED: tp.ClassVar[dict[Game, MATBINBND]] = {}
 
-    use_lazy_load: bool = True  # if True, entries will only be loaded into `MATBIN` instances when requested
     matbins: dict[str, MATBIN] = field(default_factory=dict)
-
-    def __post_init__(self):
-        """Loads FIRST instance of each entry name as an MATBIN."""
-        if self.matbins or self.use_lazy_load:
-            return  # already passed in, or lazy loading enabled
-
-        self.matbins = {}
-        for entry in self.entries:
-            if entry.name in self.matbins:
-                continue  # ignore repeated names silently
-            self.matbins[entry.name] = entry.to_binary_file(MATBIN)
 
     def get_matbin(self, matbin_name: str) -> MATBIN:
         """Look up MATBIN name in Binder. Changes '.mtd' or '.matxml' suffix to '.matbin' if necessary."""
@@ -346,6 +334,13 @@ class MATBINBND(Binder):
             matbin = matbin_entry.to_binary_file(MATBIN)
             self.matbins[matbin_name] = matbin
             return matbin
+
+    def load_all_matbins(self):
+        """Load all MATBINs in the Binder into memory."""
+        for entry in self.entries:
+            if entry.name.lower().endswith(".matbin"):
+                matbin = entry.to_binary_file(MATBIN)
+                self.matbins[entry.name] = matbin
 
     @classmethod
     def from_bundled(cls, game_or_name: Game | str) -> MATBINBND:
