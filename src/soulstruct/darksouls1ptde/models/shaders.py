@@ -124,6 +124,8 @@ class MatDef(_BaseMatDef):
         "A19_Snow[L]",  # FRPG_Snow_Lit
     }
 
+    # Known MTDs that do NOT
+
     # TODO: Some shaders simply don't use the always-empty 'g_DetailBumpmap', but I can find no reliable way to detect
     #  this from their MTD names alone. I may have to guess that they do unless the MTD file is provided.
 
@@ -195,7 +197,7 @@ class MatDef(_BaseMatDef):
 
         return VertexArrayLayout(data_types)
 
-    def get_non_map_piece_layout(self, is_bind_pose: bool = True) -> VertexArrayLayout:
+    def get_non_map_piece_layout(self, is_dynamic_mesh: bool = True) -> VertexArrayLayout:
         """Get a standard vertex array layout for character (and probably object) materials in DS1."""
         data_types = [
             VertexPosition(VertexDataFormatEnum.Float3, 0),
@@ -212,7 +214,7 @@ class MatDef(_BaseMatDef):
             data_types.append(VertexUV(VertexDataFormatEnum.UV, 0))
         else:
             raise ValueError(f"Invalid UV count for DS1 character layout: {uv_count}. Must be 1 or 2.")
-        if is_bind_pose:
+        if is_dynamic_mesh:
             # If the non-map piece is completely static, it might have Is Bind Pose off. In that case, bone weights
             # need to be ignored.
             data_types.insert(2, VertexBoneWeights(VertexDataFormatEnum.FourShortsToFloats, 0))

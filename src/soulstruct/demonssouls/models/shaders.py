@@ -211,7 +211,7 @@ class MatDef(_BaseMatDef):
 
         return VertexArrayLayout(data_types, byte_order=ByteOrder.BigEndian)
 
-    def get_non_map_piece_layout(self, is_bind_pose: bool = True) -> VertexArrayLayout:
+    def get_non_map_piece_layout(self, is_dynamic_mesh: bool = True) -> VertexArrayLayout:
         """Get a standard vertex array layout for character (and probably object) materials in DeS."""
         data_types = [
             VertexPosition(VertexDataFormatEnum.Float3, 0),
@@ -230,7 +230,7 @@ class MatDef(_BaseMatDef):
             data_types.append(VertexUV(VertexDataFormatEnum.UV, 0))
         else:
             raise ValueError(f"Invalid UV count for DeS character layout: {uv_count}. Must be 1 or 2.")
-        if is_bind_pose:
+        if is_dynamic_mesh:
             # If the non-map piece is completely static, it might have Is Bind Pose off. In that case, bone weights
             # need to be ignored.
             data_types.insert(2, VertexBoneWeights(VertexDataFormatEnum.FourShortsToFloats, 0))

@@ -275,7 +275,7 @@ class VertexBoneIndices(VertexDataType):
     Indices may refer to other actual FLVER skeleton bone indices in `Submesh.bone_indices` (older games) or may just be
     FLVER skeleton bone indices themselves.
 
-    Usage differs between rigged models (`Submesh.is_bind_pose=True`) and non-rigged models. For rigged models, up to
+    Usage differs between rigged models (`FLVERMesh.is_dynamic=True`) and non-rigged models. For rigged models, up to
     four different bone indices may be used, with their own weights, as usual. But for non-rigged models, like map
     pieces, only one bone index is used (repeated four times), and is used to simply offset the vertex (usually the same
     for the whole mesh).
@@ -758,6 +758,26 @@ class VertexArrayLayout:
     def set_unk_x00(self, unk_x00: int):
         for data_type in self.write_types:
             data_type.unk_x00 = unk_x00
+
+    def has_vertex_data_type(self, data_type_cls: type[VertexDataType] | str, instance_index: int = None) -> bool:
+        """Check if this layout has a data type of the given class."""
+        if isinstance(data_type_cls, str):
+            data_type_cls = {
+                "position": VertexPosition,
+                "bone_weights": VertexBoneWeights,
+                "bone_indices": VertexBoneIndices,
+                "normal": VertexNormal,
+                "uv": VertexUV,
+                "tangent": VertexTangent,
+                "bitangent": VertexBitangent,
+                "color": VertexColor,
+            }[data_type_cls]
+        if instance_index is not None:
+            return any(
+                isinstance(data_type, data_type_cls) and data_type.instance_index == instance_index
+                for data_type in self.write_types
+            )
+        return any(isinstance(data_type, data_type_cls) for data_type in self.write_types)
 
     # endregion
 

@@ -49,7 +49,7 @@ def test_merge_and_split():
     for submesh, material_index in zip(flver.meshes, submesh_mat_indices):
         layout = submesh_layouts_dict[material_index]
         submesh_kwargs = {
-            "is_bind_pose": submesh.is_bind_pose,
+            "is_dynamic": submesh.is_dynamic,
             "default_bone_index": submesh.default_bone_index,
             "use_backface_culling": submesh.use_backface_culling,
         }

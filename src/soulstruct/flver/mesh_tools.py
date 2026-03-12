@@ -32,7 +32,7 @@ _LOGGER = logging.getLogger(__name__)
 class SplitMeshDef(tp.NamedTuple):
     material: Material
     layout: VertexArrayLayout
-    is_bind_pose: bool  # required for correct bone index handling and sets `FLVERMesh.is_bind_pose`
+    is_dynamic: bool  # required for correct bone index handling and sets `FLVERMesh.is_dynamic`
     kwargs: dict[str, tp.Any]
     uv_layer_names: list[str] | None = None
 
@@ -71,7 +71,7 @@ class SplitMeshDef(tp.NamedTuple):
             split_mesh_defs.append(
                 cls(
                     material=mesh.material,
-                    is_bind_pose=mesh.is_bind_pose,
+                    is_dynamic=mesh.is_dynamic,
                     layout=mesh.vertex_arrays[0].layout,
                     kwargs=kwargs,
                 )
@@ -138,7 +138,7 @@ class MergedMesh:
         face, which is sourced directly from argument `mesh_material_indices` (which should have the same length as
         `flver.meshes`) rather than using the original FLVER material index. This allows the definition of 'material'
         in the `MergedMesh` to be set to match the caller's purposes, usually to preserve distinct combinations of
-        mesh AND face set properties (e.g. `is_bind_pose` or `use_backface_culling`) that may be different for
+        mesh AND face set properties (e.g. `is_dynamic` or `use_backface_culling`) that may be different for
         meshes that share the same FLVER material index.
 
         If `material_uv_layer_names` is given, it should be a list of list of UV layer names that correspond to the UV
@@ -423,7 +423,7 @@ class MergedMesh:
             all_mesh_faces.append(mesh_faces)
             loop_offset += mesh.vertices.shape[0]
 
-        faces = np.row_stack(all_mesh_faces)
+        faces = np.vstack(all_mesh_faces)
         return faces
 
     @classmethod
@@ -570,7 +570,7 @@ class MergedMesh:
             loop_offset += len(mesh.vertex_arrays[0])
 
         vertex_data = all_vertices[reduced_vertex_indices]
-        faces = np.row_stack(all_mesh_faces)
+        faces = np.vstack(all_mesh_faces)
         return vertex_data, loop_vertex_indices, faces
 
     @staticmethod
@@ -694,7 +694,7 @@ class MergedMesh:
 
         As with `MergedMesh.from_flver()`, the definition of 'material' here should comprise any reason that the mesh
         needs to be split, and `faces[3]` should be set accordingly. Two split meshes may use the same FLVER
-        material in `split_mesh_defs`, for example, yet have different `is_bind_pose` values or `face_sets[
+        material in `split_mesh_defs`, for example, yet have different `is_dynamic` values or `face_sets[
         0].use_backface_culling` etc. The `FLVER` class will efficiently remove any duplicate FLVER materials or
         layouts when packed.
 
@@ -702,7 +702,7 @@ class MergedMesh:
 
         `is_rigged` must appear in each mesh kwargs dictionary, as it is used to determine bone index style. For
         modern `FLVER` format, it will also be used to set
-        TODO: Still not 100% sure if there are any FLVERs that use 'bind pose' for some meshes but not others. From
+        TODO: Still not 100% sure if there are any FLVERs that use 'is_dynamic' for some meshes but not others. From
          memory, I found a few cut content objects or something, but only checked the bool and not the indices.
 
         If `unused_bone_indices_are_minus_one` is True, it will be assumed that the bone indices in
@@ -726,7 +726,7 @@ class MergedMesh:
         # Split each `SplitMeshDef` into its component information for efficiency.
         mesh_materials = [mesh_def.material for mesh_def in split_mesh_defs]
         mesh_layouts = [mesh_def.layout for mesh_def in split_mesh_defs]
-        mesh_is_bind_pose = [mesh_def.is_bind_pose for mesh_def in split_mesh_defs]
+        mesh_is_dynamic = [mesh_def.is_dynamic for mesh_def in split_mesh_defs]
         mesh_kwargs = [mesh_def.kwargs for mesh_def in split_mesh_defs]
         mesh_uv_layer_names = [
             mesh_def.get_validated_uv_layer_names(self.loop_uvs, i)
@@ -812,7 +812,7 @@ class MergedMesh:
                 split_mesh_info += self.subsplit_faces(
                     material_index,
                     mesh_loops,
-                    is_rigged=mesh_is_bind_pose[material_index],
+                    is_dynamic=mesh_is_dynamic[material_index],
                     max_bones_per_mesh=max_bones_per_mesh,
                     unused_bone_indices_are_minus_one=unused_bone_indices_are_minus_one,
                 )
@@ -866,7 +866,7 @@ class MergedMesh:
                 material=material,
                 vertex_arrays=[vertex_array],
                 bone_indices=mesh_bone_indices,
-                **kwargs,  # e.g. 'default_bone_index', 'uses_bounding_boxes', 'is_bind_pose'
+                **kwargs,  # e.g. 'default_bone_index', 'uses_bounding_boxes', 'is_dynamic'
             )
             if not is_flver0:
                 # No point refreshing bounding boxes for FLVER0 versions.
@@ -980,7 +980,7 @@ class MergedMesh:
         cls,
         material_index: int,
         mesh_loops: np.ndarray,
-        is_rigged: bool,
+        is_dynamic: bool,
         max_bones_per_mesh: int,
         unused_bone_indices_are_minus_one: bool,
     ) -> list[tuple[int, np.ndarray, np.ndarray]]:
@@ -992,7 +992,7 @@ class MergedMesh:
 
         bone_indices = mesh_loops["bone_indices"]  # copied below if modified
 
-        if is_rigged:
+        if is_dynamic:
             # Up to four unique bones per vertex, so we need to more carefully collect as we go.
             if not unused_bone_indices_are_minus_one:
                 # Set all unused bone indices to -1, to distinguish them from true use of bone 0. Ideally, the

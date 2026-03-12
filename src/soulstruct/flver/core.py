@@ -930,11 +930,11 @@ class FLVER(GameFile):
                 return bone
         raise KeyError(f"Bone '{name}' not found in FLVER.")
 
-    def any_bind_pose(self) -> bool:
-        return any(mesh.is_bind_pose for mesh in self.meshes)
+    def any_dynamic(self) -> bool:
+        return any(mesh.is_dynamic for mesh in self.meshes)
 
-    def all_bind_pose(self) -> bool:
-        return all(mesh.is_bind_pose for mesh in self.meshes)
+    def all_dynamic(self) -> bool:
+        return all(mesh.is_dynamic for mesh in self.meshes)
 
     def sort_mesh_bone_indices(self):
         """Sort local `bone_indices` of each mesh, if used."""
@@ -1202,8 +1202,8 @@ class FLVER(GameFile):
         NOTE: Not intended for use with map pieces that use bones to place individual trees and shrubs whose mesh data
         is centered at the origin, which is an actual good way to use bones in a Map Piece!
         """
-        if self.any_bind_pose():
-            raise ValueError("Cannot debone FLVER models with any `is_bind_pose = True` meshes.")
+        if self.any_dynamic():
+            raise ValueError("Cannot debone FLVER models with any `is_dynamic = True` meshes.")
 
         if not default_bone_name:
             if self.path:

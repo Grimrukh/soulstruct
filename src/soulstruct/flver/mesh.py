@@ -39,7 +39,7 @@ class FLVERMesh:
     """
 
     class STRUCT0(BinaryStruct):
-        is_bind_pose: bool  # NOTE: named `dynamic` in SoulsFormats but clearly identical to `FLVER2.is_bind_pose`
+        is_dynamic: bool
         material_index: byte
         # start of "FaceSet properties"
         use_backface_culling: bool
@@ -59,7 +59,7 @@ class FLVERMesh:
         _pad0: bytes = binary_pad(4, init=False)
 
     class STRUCT2(BinaryStruct):
-        is_bind_pose: bool
+        is_dynamic: bool
         _pad1: bytes = binary_pad(3, init=False)
         _material_index: int
         _pad2: bytes = binary_pad(8, init=False)
@@ -72,11 +72,9 @@ class FLVERMesh:
         _vertex_array_count: int = binary(asserted=[1, 2, 3])
         _vertex_array_offset: int
 
-    # If `True`, deformations of this mesh from animations will occur RELATIVE to FLVER bone transforms.
-    # Otherwise, mesh deformations will be absolute (i.e. relative to an identity transform).
-    # Typically `True` for rigged meshes (characters, equipment, most objects) and `False` for unrigged meshes (map
-    # pieces, some objects).
-    is_bind_pose: bool
+    # Enabled for rigged meshes designed for animating, which have vertex bone indices/weights (most FLVERs).
+    # Disabeld for static meshes like Map Pieces, which have uniform bone weights (older) or use NormalW (newer).
+    is_dynamic: bool
 
     material: Material
     default_bone_index: int
@@ -190,7 +188,7 @@ class FLVERMesh:
         )
 
         return cls(
-            is_bind_pose=mesh_struct.is_bind_pose,
+            is_dynamic=mesh_struct.is_dynamic,
             material=material,
             default_bone_index=mesh_struct.default_bone_index,
             bone_indices=np.array(mesh_struct.bone_indices),
@@ -312,7 +310,7 @@ class FLVERMesh:
             bone_indices += [-1] * (28 - len(bone_indices))
 
         mesh_struct = self.STRUCT0(
-            is_bind_pose=self.is_bind_pose,
+            is_dynamic=self.is_dynamic,
             material_index=material_index,
             use_backface_culling=face_set.use_backface_culling,
             is_triangle_strip=face_set.is_triangle_strip,
@@ -668,8 +666,8 @@ class FLVERMesh:
             f"  bone_indices = {self.bone_indices}",
             f"  vertices = <{len(self.vertices)} vertices>",
         ]
-        if not self.is_bind_pose:
-            lines.append("  is_bind_pose = False")
+        if not self.is_dynamic:
+            lines.append("  is_dynamic = False")
         if self.uses_bounding_boxes:
             lines.append(f"  bounding_box_min = {self.bounding_box_min}")
             lines.append(f"  bounding_box_max = {self.bounding_box_max}")
