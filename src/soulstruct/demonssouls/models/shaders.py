@@ -111,21 +111,6 @@ class MatDef(_BaseMatDef):
         ],
     }
 
-    # Subset of `SNOW_STEMS` that use a 'FRPG_Snow*' SPX shader and also have a 'g_SnowMetalMask' param and an extra
-    # 'g_Bumpmap_3' texture type.
-    SNOW_METAL_MASK_STEMS: tp.ClassVar[set[str]] = {
-        "A10_slime[D][L]",  # FRPG_Snow_Lit
-        "A11_Snow",  # FRPG_Snow
-        "A11_Snow[L]",  # FRPG_Snow_Lit
-        "A11_Snow_stair",  # FRPG_Snow
-        "A11_Snow_stair[L]",  # FRPG_Snow_Lit
-        "A14_numa",  # FRPG_Snow (Blighttown swamp)
-        "A14_numa2",  # FRPG_Snow (Blighttown swamp)
-        "A15_Tar",  # FRPG_Snow
-        "A19_Snow",  # FRPG_Snow
-        "A19_Snow[L]",  # FRPG_Snow_Lit
-    }
-
     # Some older materials have a second albedo texture ('g_Diffuse_2') that still uses UV layer 0.
     HAS_DUPLICATE_ALBEDO_STEMS: tp.ClassVar[set[str]] = {
         "Cs_ShadowMan_skin",
@@ -180,7 +165,7 @@ class MatDef(_BaseMatDef):
             # Tangent/Bitangent will be inserted here if needed.
             VertexColor(VertexDataFormatEnum.FourBytesA, 0),
             # UV/UVPair will be inserted here if needed.
-        ]
+        ]  # type: list[VertexDataType]
 
         if self.get_sampler_with_alias("Main 0 Normal"):
             # Uses tangent vertex data.
@@ -219,7 +204,7 @@ class MatDef(_BaseMatDef):
             VertexNormal(VertexDataFormatEnum.FourBytesA, 0),
             VertexTangent(VertexDataFormatEnum.FourBytesA, 0),
             VertexColor(VertexDataFormatEnum.FourBytesA, 0),
-        ]
+        ]  # type: list[VertexDataType]
 
         uv_count = len(self.get_used_uv_layers())
         if uv_count == 2:  # has Bitangent and UVPair

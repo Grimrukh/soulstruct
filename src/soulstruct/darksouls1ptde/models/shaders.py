@@ -109,26 +109,6 @@ class MatDef(_BaseMatDef):
         ],
     }
 
-    # Subset of `SNOW_STEMS` that use a 'FRPG_Snow*' SPX shader and also have a 'g_SnowMetalMask' param and an extra
-    # 'g_Bumpmap_3' texture type.
-    SNOW_METAL_MASK_STEMS: tp.ClassVar[set[str]] = {
-        "A10_slime[D][L]",  # FRPG_Snow_Lit
-        "A11_Snow",  # FRPG_Snow
-        "A11_Snow[L]",  # FRPG_Snow_Lit
-        "A11_Snow_stair",  # FRPG_Snow
-        "A11_Snow_stair[L]",  # FRPG_Snow_Lit
-        "A14_numa",  # FRPG_Snow (Blighttown swamp)
-        "A14_numa2",  # FRPG_Snow (Blighttown swamp)
-        "A15_Tar",  # FRPG_Snow
-        "A19_Snow",  # FRPG_Snow
-        "A19_Snow[L]",  # FRPG_Snow_Lit
-    }
-
-    # Known MTDs that do NOT
-
-    # TODO: Some shaders simply don't use the always-empty 'g_DetailBumpmap', but I can find no reliable way to detect
-    #  this from their MTD names alone. I may have to guess that they do unless the MTD file is provided.
-
     @classmethod
     def _get_shader_category(cls, shader_stem: str) -> str:
         """Parse stem as 'FRPG_{category}_*' and return the category."""
@@ -153,7 +133,11 @@ class MatDef(_BaseMatDef):
             # Add Detail 0 Normal with scaling from the mtd params if possible
             # TODO: Some DS1 shaders, even with 'g_Bumpmap', do not have this. I have no way to detect from the name.
             #  Currently assuming that it doesn't matter at all if FLVERs have an (empty) texture definition for it.
-            matdef.add_sampler(alias="Detail 0 Normal", uv_layer=cls.UVLayer.UVTexture0, uv_scale=matdef.mtd.get_param("g_DetailBump_UVScale", default=[1.0,1.0]))
+            matdef.add_sampler(
+                alias="Detail 0 Normal",
+                uv_layer=cls.UVLayer.UVTexture0,
+                uv_scale=Vector2(matdef.mtd.get_param("g_DetailBump_UVScale", default=[1.0, 1.0])),
+            )
         return matdef
 
     def get_map_piece_layout(self) -> VertexArrayLayout:
@@ -220,5 +204,58 @@ class MatDef(_BaseMatDef):
             data_types.insert(2, VertexBoneWeights(VertexDataFormatEnum.FourShortsToFloats, 0))
         for data_type in data_types:
             data_type.unk_x00 = 0  # DS1
+
+        return VertexArrayLayout(data_types)
+
+    def get_vertex_array_layout(self, is_dynamic: bool) -> VertexArrayLayout:
+        """Unified method for determining the correct vertex array layout for FLVER meshes using this material.
+
+        The only external input required is `is_dynamic` from the FLVER mesh, which simply indicates whether vertex
+        bone weights are present (bone indices are always present in DS1 -- later games switch to using `NormalW`).
+        """
+
+        # Guaranteed start:
+        data_types = [
+            VertexPosition(VertexDataFormatEnum.Float3, 0),
+            VertexBoneIndices(VertexDataFormatEnum.FourBytesB, 0),
+        ]  # type: list[VertexDataType]
+
+        # Bone weights for dynamic meshes:
+        if is_dynamic:
+            data_types.append(VertexBoneWeights(VertexDataFormatEnum.FourShortsToFloats, 0))
+
+        # Guaranteed:
+        data_types.append(VertexNormal(VertexDataFormatEnum.FourBytesC, 0))
+
+        if self.get_sampler_with_alias("Main 0 Normal"):
+            # Uses tangent vertex data.
+            data_types.append(VertexTangent(VertexDataFormatEnum.FourBytesC, 0))
+        if self.get_sampler_with_alias("Main 1 Normal"):
+            # Uses bitangent vertex data for second texture group normal.
+            data_types.append(VertexBitangent(VertexDataFormatEnum.FourBytesC, 0))
+            if not self.get_sampler_with_alias("Main 0 Normal"):
+                # No known cases of this, so I want to hear about it.
+                _LOGGER.warning(
+                    f"Material MTD '{self.name}' has 'Main 1 Normal' but no 'Main 0 Normal'. This is "
+                    f"unusual and may lead to incorrect exported FLVER data."
+                )
+
+        # Guaranteed:
+        data_types.append(VertexColor(VertexDataFormatEnum.FourBytesC, 0))
+
+        # UVs:
+        uv_member_index = 0
+        uv_count = len(self.get_used_uv_layers())
+        while uv_count > 0:  # extra UVs
+            # For odd counts, single UV member is added first.
+            if uv_count % 2:
+                data_types.append(VertexUV(VertexDataFormatEnum.UV, uv_member_index))
+                uv_count -= 1
+                uv_member_index += 1
+            else:  # must be a non-zero even number remaining
+                # Use a UVPair member.
+                data_types.append(VertexUV(VertexDataFormatEnum.UVPair, uv_member_index))
+                uv_count -= 2
+                uv_member_index += 1
 
         return VertexArrayLayout(data_types)

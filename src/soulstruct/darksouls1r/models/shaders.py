@@ -8,11 +8,12 @@ from pathlib import Path
 
 from soulstruct.base.models.mtd import MTD
 from soulstruct.darksouls1ptde.models.shaders import MatDef as _PTDE_MatDef
+from soulstruct.flver.vertex_array_layout import VertexArrayLayout, VertexBitangent
 
 
 @dataclass(slots=True)
 class MatDef(_PTDE_MatDef):
-    """Identical to PTDE except for the possibility of a tertiary normal map in some snow shaders."""
+    """Identical to PTDE except for the possibility of a third normal sampler in some snow shaders."""
 
     # DSR snow shaders may have an extra normal texture.
     SAMPLER_ALIASES: tp.ClassVar[dict[str, str]] = _PTDE_MatDef.SAMPLER_ALIASES | {
@@ -20,6 +21,20 @@ class MatDef(_PTDE_MatDef):
     }
 
     SAMPLER_GAME_NAMES: tp.ClassVar[dict[str, str]] = {v: k for k, v in SAMPLER_ALIASES.items()}
+
+    # These DSR MTDs use a 'FRPG_Snow*' SPX shader with a 'g_SnowMetalMask' param and custom bumpmaps.
+    SNOW_METAL_MASK_STEMS: tp.ClassVar[set[str]] = {
+        "A10_slime[D][L]",  # FRPG_Snow_Lit (Depths slime)
+        "A11_Snow",  # FRPG_Snow
+        "A11_Snow[L]",  # FRPG_Snow_Lit
+        "A11_Snow_stair",  # FRPG_Snow
+        "A11_Snow_stair[L]",  # FRPG_Snow_Lit
+        "A14_numa",  # FRPG_Snow (Blighttown swamp)
+        "A14_numa2",  # FRPG_Snow (Blighttown swamp)
+        "A15_Tar",  # FRPG_Snow (Sen's Fortress tar)
+        "A19_Snow",  # FRPG_Snow
+        "A19_Snow[L]",  # FRPG_Snow_Lit
+    }
 
     @classmethod
     def from_mtd(cls, mtd: MTD) -> tp.Self:
@@ -30,14 +45,20 @@ class MatDef(_PTDE_MatDef):
         matdef = super(MatDef, cls).from_mtd(mtd)
 
         if matdef.shader_category == "Snow":
-            # In DS1R, some snow shaders (those with "Snow Metal Mask" MTD param) have a THIRD normal texture. I believe
-            # QLOC changed `g_Bumpmap_2` to use the first UV index in the shader so that the new `g_Bumpmap_3` could
-            # use the second UV index), but forgot to change the sampler's UV index in the MTD? We update it here.
+            # In DS1R, some snow shaders (those with "Snow Metal Mask" MTD param) have a very unusual setup using
+            # three normal samplers (g_Bumpmap*).
+            # The first contains a snow height map that is layered on top of itself at different scales. The second
+            # contains a detailed normal map. The third contains the standard normal map for the ground under the snow.
+            # There may also be a lightmap.
+            # The sampler UV indices in the MTD are wrong -- all three normal samplers use the first UV slot (0) and
+            # the lightmap, if present, uses the second UV slot (1).
             if mtd.has_param("g_SnowMetalMask"):
-                snow_normal_2 = matdef.get_sampler_with_alias("Main 2 Normal")
-                snow_normal_2.uv_layer = cls.UVLayer.UVTexture1
                 snow_normal_1 = matdef.get_sampler_with_alias("Main 1 Normal")
-                snow_normal_1.uv_layer = cls.UVLayer.UVTexture0
+                snow_normal_1.uv_layer = cls.UVLayer.UVTexture0  # *NOT* UVTexture1 as the MTD indicates
+                snow_normal_2 = matdef.get_sampler_with_alias("Main 2 Normal")
+                snow_normal_2.uv_layer = cls.UVLayer.UVTexture0  # explicit for clarity
+                if lightmap := matdef.get_sampler_with_alias("Lightmap"):
+                    lightmap.uv_layer = cls.UVLayer.UVLightmap  # explicit for clarity
 
         return matdef
 
@@ -46,7 +67,23 @@ class MatDef(_PTDE_MatDef):
         mtd_stem = Path(mtd_name).stem
         matdef = super(MatDef, cls).from_mtd_name(mtd_name)
         if matdef.shader_category == "Snow" and mtd_stem in cls.SNOW_METAL_MASK_STEMS:
-            matdef.add_sampler(alias="Main 2 Normal", uv_layer=cls.UVLayer.UVTexture1)
             snow_normal_1 = matdef.get_sampler_with_alias("Main 1 Normal")
             snow_normal_1.uv_layer = cls.UVLayer.UVTexture0
+            # Add third normal sampler, which the standard PTDE from-name method won't guess.
+            matdef.add_sampler(alias="Main 2 Normal", uv_layer=cls.UVLayer.UVTexture0)
+            if lightmap := matdef.get_sampler_with_alias("Lightmap"):  # for [L] MTDs
+                lightmap.uv_layer = cls.UVLayer.UVLightmap
+
         return matdef
+
+    def get_vertex_array_layout(self, is_dynamic: bool) -> VertexArrayLayout:
+        layout = super(MatDef, self).get_vertex_array_layout(is_dynamic)
+
+        # Handle three-bumpmap DSR snow shaders.
+        # These are the same, except we remove the Bitangent data (they don't use a real second normal texture).
+        if self.shader_category == "Snow" and self.get_sampler_with_alias("Main 2 Normal"):
+            layout = VertexArrayLayout(
+                [d for d in layout.read_types if not isinstance(d, VertexBitangent)]
+            )
+
+        return layout
