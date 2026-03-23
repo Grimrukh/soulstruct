@@ -790,14 +790,14 @@ class Binder(BaseBinaryFile):
         if self.version == BinderVersion.V3:
             writer = self._header_to_writer_v3()
             self._entries_into_writer_v3(writer, writer)
+            writer.fill_with_position("file_size", obj=self)
         elif self.version == BinderVersion.V4:
             writer = self._header_to_writer_v4()
             rebuild_hash_table = self._check_v4_hash_table() if self.v4_info.hash_table_type == 4 else False
             self._entries_into_writer_v4(writer, writer, rebuild_hash_table)
+            # No 'file_size' field in V4.
         else:
             raise ValueError(f"Cannot pack BND version: {self.version}")
-
-        writer.fill_with_position("file_size", obj=self)
 
         return writer
 
