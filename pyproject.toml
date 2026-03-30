@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "soulstruct"
 description = "Inspect and modify files in FromSoftware games."
@@ -20,6 +24,9 @@ dependencies = [
     "typer",                # required for CLI
     "zstandard",            # required for ZSTD compression (Elden Ring regulation DCX)
 ]
+
+[tool.setuptools.package-data]
+"*" = ["*.dll", "*.exe"]  # include embedded DLLs and EXEs in all subpackages
 
 [project.optional-dependencies]
 runtime       = ["psutil"]
