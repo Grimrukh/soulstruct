@@ -26,7 +26,7 @@ dependencies = [
 ]
 
 [tool.setuptools.package-data]
-"*" = ["*.dll", "*.exe", "*.json"]  # include embedded DLLs and EXEs in all subpackages
+"*" = ["*.dll", "*.exe", "*.json", "*.dcx"]  # include embedded DLLs and EXEs in all subpackages
 
 [project.optional-dependencies]
 runtime       = ["psutil"]
