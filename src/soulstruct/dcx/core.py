@@ -16,6 +16,7 @@ import logging
 import typing as tp
 import zlib
 from enum import Enum
+from functools import singledispatchmethod
 from pathlib import Path
 
 import zstandard as zstd
@@ -92,17 +93,21 @@ class DCXType(Enum):
     def has_dcx_extension(self):
         return self.value >= 2
 
-    def process_path(self, path: Path | str) -> Path | str:
-        """Add or remove '.dcx' extension to/from `path` as appropriate.
+    @singledispatchmethod
+    def process_path(self, path):
+        raise NotImplementedError("`DCXType.process_path` requires a str or Path argument.")
 
-        Returns `Path` or `str` (depending on input type).
-        """
-        is_path = isinstance(path, Path)
-        path = Path(path)
+    @process_path.register
+    def _(self, path: Path) -> Path:
+        """Add or remove '.dcx' extension to/from `path` as appropriate."""
         new_path = path.with_name(path.name.removesuffix(".dcx"))
         if self.has_dcx_extension():
             new_path = path.with_name(path.name + ".dcx")
-        return new_path if is_path else str(new_path)
+        return new_path
+
+    @process_path.register
+    def _(self, path: str) -> str:
+        return str(self.process_path(Path(path)))
 
     @classmethod
     def from_member_name(cls, member_name: str) -> DCXType:

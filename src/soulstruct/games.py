@@ -22,6 +22,7 @@ __all__ = [
 import importlib
 import typing as tp
 from dataclasses import dataclass, field
+from functools import singledispatchmethod
 from pathlib import Path
 
 from soulstruct.config import *
@@ -55,14 +56,17 @@ class Game:
     def get_dcx_type(self, file_type: str) -> DCXType:
         return self.special_dcx_types.get(file_type, self.default_dcx_type)
 
+    @singledispatchmethod
     def process_dcx_path(self, path: str | Path) -> str | Path:
         """Append or remove ".dcx" to/from given path according to `default_dcx_type` and/or `special_dcx_types`.
 
         Should NOT be called on directories; this method will not do any sort of validation, and the default DCX type
         will end up being attached to that directory name.
         """
-        is_str = isinstance(path, str)  # preserve return type
-        path = Path(path)
+        raise TypeError(f"process_dcx_path() has no registered converter for type {type(path)!r}")
+
+    @process_dcx_path.register
+    def _(self, path: Path) -> Path:
         if path.suffix == ".dcx":
             # Remove DCX to start.
             path = path.with_name(path.stem)
@@ -70,7 +74,12 @@ class Game:
         if dcx_type.has_dcx_extension():
             # Add DCX extension.
             path = path.with_name(path.name + ".dcx")
-        return str(path) if is_str else path
+        return path
+
+    @process_dcx_path.register
+    def _(self, path_str: str) -> str:
+        path = self.process_dcx_path(Path(path_str))
+        return str(path)
 
     def import_game_submodule(self, *args) -> tp.Any:
         if not self.submodule_name:
