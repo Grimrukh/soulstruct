@@ -18,7 +18,7 @@ import logging
 
 from soulstruct.base.events.evs.compiler import EVSInstructionCompiler as _BaseCompiler
 from soulstruct.base.events.emevd.utils import get_coord_entity_type
-from soulstruct.bloodborne.game_types import *
+from soulstruct.darksouls1ptde.game_types import *
 
 from .emedf import EMEDF_ALIASES
 from ..enums import *
