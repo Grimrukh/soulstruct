@@ -8,7 +8,6 @@ __all__ = [
     "GAMES",
     "get_game",
     "DEMONS_SOULS",
-    "DEMONS_SOULS_REMAKE",
     "DARK_SOULS_PTDE",
     "DARK_SOULS_DSR",
     "DARK_SOULS_2",
@@ -30,7 +29,7 @@ from soulstruct.dcx import DCXType
 from soulstruct.utilities.files import SOULSTRUCT_PATH
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass(slots=True, kw_only=True, frozen=True)
 class Game:
 
     variable_name: str
@@ -57,7 +56,7 @@ class Game:
         return self.special_dcx_types.get(file_type, self.default_dcx_type)
 
     @singledispatchmethod
-    def process_dcx_path(self, path: str | Path) -> str | Path:
+    def process_dcx_path(self, path):
         """Append or remove ".dcx" to/from given path according to `default_dcx_type` and/or `special_dcx_types`.
 
         Should NOT be called on directories; this method will not do any sort of validation, and the default DCX type
@@ -108,8 +107,8 @@ class Game:
 
 
 DEMONS_SOULS = Game(
-    "DEMONS_SOULS",
-    "Demon's Souls",
+    variable_name="DEMONS_SOULS",
+    name="Demon's Souls",
     abbreviated_name="des",
     submodule_name="demonssouls",
     aliases=("demonssouls", "des"),
@@ -140,19 +139,9 @@ DEMONS_SOULS = Game(
 )
 
 
-DEMONS_SOULS_REMAKE = Game(
-    "DEMONS_SOULS_REMAKE",
-    "Demon's Souls Remake",
-    abbreviated_name="desr",
-    aliases=("demonssoulsremake", "desr"),
-    default_dcx_type=DCXType.Unknown,  # TODO: Unknown.
-    default_game_path=DESR_PATH,
-)
-
-
 DARK_SOULS_PTDE = Game(
-    "DARK_SOULS_PTDE",
-    "Dark Souls: Prepare to Die Edition",
+    variable_name="DARK_SOULS_PTDE",
+    name="Dark Souls: Prepare to Die Edition",
     abbreviated_name="ptde",
     submodule_name="darksouls1ptde",
     aliases=("darksoulspreparetodieedition", "darksoulsptde", "ptde", "darksouls1ptde"),
@@ -182,8 +171,8 @@ DARK_SOULS_PTDE = Game(
 
 
 DARK_SOULS_DSR = Game(
-    "DARK_SOULS_DSR",
-    "Dark Souls: Remastered",
+    variable_name="DARK_SOULS_DSR",
+    name="Dark Souls: Remastered",
     abbreviated_name="ds1r",
     submodule_name="darksouls1r",
     aliases=("darksoulsremastered", "darksoulsdsr", "dsr", "ds1r", "darksouls1r"),
@@ -223,8 +212,8 @@ DARK_SOULS_DSR = Game(
 
 
 DARK_SOULS_2 = Game(
-    "DARK_SOULS_2",
-    "Dark Souls II",
+    variable_name="DARK_SOULS_2",
+    name="Dark Souls II",
     abbreviated_name="ds2",
     submodule_name="darksouls2",
     aliases=("darksouls2", "ds2", "dks2"),
@@ -234,8 +223,8 @@ DARK_SOULS_2 = Game(
 
 
 DARK_SOULS_2_SOTFS = Game(
-    "DARK_SOULS_2_SOTFS",
-    "Dark Souls II: Scholar of the First Sin",
+    variable_name="DARK_SOULS_2_SOTFS",
+    name="Dark Souls II: Scholar of the First Sin",
     abbreviated_name="ds2sotfs",
     submodule_name="darksouls2",  # TODO: Currently identical to DS2.
     aliases=("darksouls2sotfs", "ds2sotfs", "dks2sotfs", "sotfs"),
@@ -245,8 +234,8 @@ DARK_SOULS_2_SOTFS = Game(
 
 
 BLOODBORNE = Game(
-    "BLOODBORNE",
-    "Bloodborne",
+    variable_name="BLOODBORNE",
+    name="Bloodborne",
     abbreviated_name="bb",
     submodule_name="bloodborne",
     aliases=("bloodborne", "bb"),
@@ -273,8 +262,8 @@ BLOODBORNE = Game(
 
 
 DARK_SOULS_3 = Game(
-    "DARK_SOULS_3",
-    "Dark Souls III",
+    variable_name="DARK_SOULS_3",
+    name="Dark Souls III",
     abbreviated_name="ds3",
     submodule_name="darksouls3",
     aliases=("darksouls3", "ds3", "dks3"),
@@ -287,8 +276,8 @@ DARK_SOULS_3 = Game(
 
 
 SEKIRO = Game(
-    "SEKIRO",
-    "Sekiro: Shadows Die Twice",
+    variable_name="SEKIRO",
+    name="Sekiro: Shadows Die Twice",
     abbreviated_name="sdt",
     submodule_name="sekiro",
     aliases=("sekiro", "sekiroshadowsdietwice", "sdt"),
@@ -300,8 +289,8 @@ SEKIRO = Game(
 
 
 ELDEN_RING = Game(
-    "ELDEN_RING",
-    "Elden Ring",
+    variable_name="ELDEN_RING",
+    name="Elden Ring",
     abbreviated_name="er",
     submodule_name="eldenring",
     aliases=("eldenring", "er"),
@@ -327,9 +316,9 @@ ELDEN_RING = Game(
 )
 
 
+# List of all games.
 GAMES = (
     DEMONS_SOULS,
-    DEMONS_SOULS_REMAKE,
     DARK_SOULS_PTDE,
     DARK_SOULS_DSR,
     DARK_SOULS_2,
