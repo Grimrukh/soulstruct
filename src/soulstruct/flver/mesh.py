@@ -432,7 +432,8 @@ class FLVERMesh:
         """Get the total number of 'uv_*' fields across all vertex arrays."""
         count = 0
         for vertex_array in self.vertex_arrays:
-            count += len([f for f in vertex_array.field_names if f.startswith("uv_")])
+            if vertex_array.array.dtype.names is not None:
+                count += len([f for f in vertex_array.field_names if f.startswith("uv_")])
         return count
 
     @property
