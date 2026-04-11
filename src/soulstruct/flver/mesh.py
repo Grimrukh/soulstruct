@@ -428,6 +428,14 @@ class FLVERMesh:
         return self.vertex_arrays[0].layout
 
     @property
+    def uv_count(self) -> int:
+        """Get the total number of 'uv_*' fields across all vertex arrays."""
+        count = 0
+        for vertex_array in self.vertex_arrays:
+            count += len([f for f in vertex_array.field_names if f.startswith("uv_")])
+        return count
+
+    @property
     def use_backface_culling(self) -> bool:
         """Backface culling is set per `FaceSet`, which makes this slightly complicated. All face sets should have the
         same value, which is enforced here. If there are no face sets, a `ValueError` is also raised."""

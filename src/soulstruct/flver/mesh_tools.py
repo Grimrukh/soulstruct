@@ -500,11 +500,12 @@ class MergedMesh:
                     uv_layer_name = f"UVMap{uv_i}"  # default
                     if material_uv_layer_names:
                         try:
-                            # Real UV names are generally 'UVTexture{i}', 'UVFurCloth', 'UVData_WindA', etc.
+                            # Real UV names are generally 'UVTexture{i}', 'UVFurAlpha', 'UVData_WindA', etc.
                             uv_layer_name = material_uv_layer_names[material_index][uv_i]
                         except IndexError:
                             _LOGGER.warning(
-                                f"No UV layer name for material index {material_index} (UV {uv_i}, FLVER {flver_name})."
+                                f"No UV layer name for material index {material_index} "
+                                f"(UV {uv_i}, FLVER {flver_name}, matdef {mesh.material.mat_def_stem})."
                             )
 
                     if uv_layer_name in loops.uvs:
