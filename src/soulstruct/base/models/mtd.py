@@ -4,6 +4,7 @@ __all__ = [
     "MTD",
     "MTDParam",
     "MTDBND",
+    "MTD_PARAM_TYPING",
 ]
 
 import logging
@@ -23,6 +24,17 @@ from soulstruct.utilities.binary import *
 _LOGGER = logging.getLogger(__name__)
 
 
+MTD_PARAM_TYPING = tp.Union[
+    bool,
+    int,
+    tuple[int, int],
+    float,
+    tuple[float, float],
+    tuple[float, float, float],
+    tuple[float, float, float, float],
+]
+
+
 class MTDBlock(tp.NamedTuple):
     # Length is never kept.
     data_type: int
@@ -31,7 +43,7 @@ class MTDBlock(tp.NamedTuple):
 
 
 class MTD(GameFile):
-    """Material definition file used in older games. Replaced by similar but more powerful `MATBIN` in newer games
+    """Material definition file used in older games. Replaced by similar but more powerful `MTD` in newer games
     (from Elden Ring). Note that these newer games' FLVERs may still reference '.mtd' files, but the suffix is wrong."""
 
     shader_path: str = ""
@@ -136,7 +148,41 @@ class MTD(GameFile):
                 return True
         return False
 
-    def get_param(self, mtd_param_name: str, default=None) -> bool | int | list[int] | float | list[float]:
+    # Overloads of `get_param` that detect return type from `default` argument.
+
+    @tp.overload
+    def get_param(self, mtd_param_name: str, default: bool) -> bool:
+        ...
+
+    @tp.overload
+    def get_param(self, mtd_param_name: str, default: int) -> int:
+        ...
+
+    @tp.overload
+    def get_param(self, mtd_param_name: str, default: tuple[int, int]) -> tuple[int, int]:
+        ...
+
+    @tp.overload
+    def get_param(self, mtd_param_name: str, default: float) -> float:
+        ...
+
+    @tp.overload
+    def get_param(self, mtd_param_name: str, default: tuple[float, float]) -> tuple[float, float]:
+        ...
+
+    @tp.overload
+    def get_param(
+        self, mtd_param_name: str, default: tuple[float, float, float]
+    ) -> tuple[float, float, float]:
+        ...
+
+    @tp.overload
+    def get_param(
+        self, mtd_param_name: str, default: tuple[float, float, float, float]
+    ) -> tuple[float, float, float, float]:
+        ...
+
+    def get_param(self, mtd_param_name: str, default=None) -> MTD_PARAM_TYPING:
         for param in self.params:
             if param.name == mtd_param_name:
                 return param.value
@@ -219,72 +265,88 @@ class MTDParam:
 
     name: str
     param_type: MTDParamType
-    value: bool | int | list[int] | float | list[float]
+    _value: MTD_PARAM_TYPING
 
-    def __init__(self, name: str, param_type: MTDParamType, value: bool | int | list[int] | float | list[float] = None):
+    def __init__(self, name: str, param_type: MTDParamType, value: MTD_PARAM_TYPING = None):
         self.name = name
         self.param_type = param_type
-        self.value = self.get_default_value(param_type) if value is None else self.validate_type(param_type, value)
+        self._value = self.get_default_value(param_type) if value is None else self.validate_value_type(param_type, value)
+
+    @property
+    def value(self) -> MTD_PARAM_TYPING:
+        return self._value
+    
+    @value.setter
+    def value(self, value: MTD_PARAM_TYPING) -> None:
+        self.validate_value_type(self.param_type, value)
+        self._value = value
+
+    def __repr__(self):
+        return f"MTDParam(\"{self.name}\", {self.param_type.name}, value={self.value})"
 
     @staticmethod
-    def get_default_value(param_type: MTDParamType):
+    def get_default_value(param_type: MTDParamType) -> MTD_PARAM_TYPING:
         match param_type:
             case MTDParamType.Bool:
                 return False
             case MTDParamType.Int:
                 return 0
             case MTDParamType.Int2:
-                return [0, 0]
+                return 0, 0
             case MTDParamType.Float:
                 return 0.0
             case MTDParamType.Float2:
-                return [0.0, 0.0]
+                return 0.0, 0.0
             case MTDParamType.Float3:
-                return [0.0, 0.0, 0.0]
+                return 0.0, 0.0, 0.0
             case MTDParamType.Float4:
-                return [0.0, 0.0, 0.0, 0.0]
+                return 0.0, 0.0, 0.0, 0.0
             case _:
                 raise TypeError(f"Invalid `param_type` for MTDParam: {param_type}")
 
     @staticmethod
-    def validate_type(param_type: MTDParamType, value):
-        """Check given `value` is appropriate for `param_type`."""
+    def validate_value_type(param_type: MTDParamType, value: MTD_PARAM_TYPING) -> MTD_PARAM_TYPING:
         match param_type:
             case MTDParamType.Bool:
                 if not isinstance(value, bool):
-                    raise TypeError(f"Value for Bool MTDParam must be a `bool`, not: {value}")
+                    raise ValueError(f"Expected bool, got {type(value)}")
             case MTDParamType.Int:
                 if not isinstance(value, int):
-                    raise TypeError(f"Value for Int MTDParam must be an `int`, not: {value}")
+                    raise ValueError(f"Expected int, got {type(value)}")
             case MTDParamType.Int2:
-                if not isinstance(value, (list, tuple)) or not len(value) == 2 or not all(
-                    isinstance(x, int) for x in value
+                if (
+                    not isinstance(value, tuple)
+                    or len(value) != 2
+                    or not all(isinstance(v, int) for v in value)
                 ):
-                    raise TypeError(f"Value for Int2 MTDParam must be a list of `int`, not: {value}")
-                value = list(value)
+                    raise ValueError(f"Expected (int, int), got {value}")
             case MTDParamType.Float:
-                if not isinstance(value, float):
-                    raise TypeError(f"Value for Float MTDParam must be a `float`, not: {value}")
+                if not isinstance(value, (int, float)):
+                    raise ValueError(f"Expected float (or int), got {type(value)}")
             case MTDParamType.Float2:
-                if not isinstance(value, (list, tuple)) or not len(value) == 2 or not all(
-                    isinstance(x, float) for x in value
+                if (
+                    not isinstance(value, tuple)
+                    or len(value) != 2
+                    or not all(isinstance(v, (int, float)) for v in value)
                 ):
-                    raise TypeError(f"Value for Float2 MTDParam must be a list of `float`, not: {value}")
-                value = list(value)
+                    raise ValueError(f"Expected (int | float, int | float), got {value}")
             case MTDParamType.Float3:
-                if not isinstance(value, (list, tuple)) or not len(value) == 3 or not all(
-                    isinstance(x, float) for x in value
+                if (
+                    not isinstance(value, tuple)
+                    or len(value) != 3
+                    or not all(isinstance(v, (int, float)) for v in value)
                 ):
-                    raise TypeError(f"Value for Float3 MTDParam must be a list of `float`, not: {value}")
-                value = list(value)
+                    raise ValueError(f"Expected (int | float, int | float, int | float), got {value}")
             case MTDParamType.Float4:
-                if not isinstance(value, (list, tuple)) or not len(value) == 4 or not all(
-                    isinstance(x, float) for x in value
+                if (
+                    not isinstance(value, tuple)
+                    or len(value) != 4
+                    or not all(isinstance(v, (int, float)) for v in value)
                 ):
-                    raise TypeError(f"Value for Float4 MTDParam must be a list of `float`, not: {value}")
-                value = list(value)
+                    raise ValueError(f"Expected (int | float, int | float, int | float, int | float), got {value}")
             case _:
-                raise TypeError(f"Invalid `param_type` for MTDParam: {param_type}")
+                raise ValueError(f"Unknown MTD parameter type: {param_type}")
+
         return value
 
     @classmethod
@@ -305,15 +367,15 @@ class MTDParam:
             case MTDParamType.Int:
                 value = reader["i"]
             case MTDParamType.Int2:
-                value = list(reader.unpack("2i"))
+                value = reader.unpack("2i")
             case MTDParamType.Float:
                 value = reader["f"]
             case MTDParamType.Float2:
-                value = list(reader.unpack("2f"))
+                value = reader.unpack("2f")
             case MTDParamType.Float3:
-                value = list(reader.unpack("3f"))
+                value = reader.unpack("3f")
             case MTDParamType.Float4:
-                value = list(reader.unpack("4f"))
+                value = reader.unpack("4f")
             case _:
                 raise ValueError(f"Cannot parse MTD param type: {param_type}")
         assert_marker(reader, 0x04)
@@ -356,9 +418,6 @@ class MTDParam:
         mtd_writer.pad(4)
 
         param_block.fill(mtd_writer, "length", mtd_writer.position - param_block_offset)
-
-    def __repr__(self):
-        return f"MTDParam(\"{self.name}\", {self.param_type.name}, value={self.value})"
 
 
 @dataclass(slots=True)

@@ -29,12 +29,12 @@ class MatDef(_BaseMatDef):
         UVData_WindB = 4  # used mostly by Ivy and always zero for Foliage
 
     SAMPLER_ALIASES: tp.ClassVar[dict[str, str]] = {
-        "g_Diffuse": "Main 0 Albedo",
-        "g_Specular": "Main 0 Specular",
-        "g_Bumpmap": "Main 0 Normal",
-        "g_Diffuse_2": "Main 1 Albedo",
-        "g_Specular_2": "Main 1 Specular",
-        "g_Bumpmap_2": "Main 1 Normal",
+        "g_Diffuse": "DSB 0 Diffuse",
+        "g_Specular": "DSB 0 Specular",
+        "g_Bumpmap": "DSB 0 Normal",
+        "g_Diffuse_2": "DSB 1 Diffuse",
+        "g_Specular_2": "DSB 1 Specular",
+        "g_Bumpmap_2": "DSB 1 Normal",
         "g_Height": "Displacement",
         "g_Lightmap": "Lightmap",
         "g_DetailBumpmap": "Detail 0 Normal",
@@ -44,7 +44,7 @@ class MatDef(_BaseMatDef):
 
     # Class regex patterns for MTD name parsing.
     NAME_TAG_RE: tp.ClassVar[dict[str, re.Pattern]] = {
-        "Albedo": re.compile(r".*\[.*D.*\].*"),
+        "Diffuse": re.compile(r".*\[.*D.*\].*"),
         "Specular": re.compile(r".*\[.*S.*\].*"),
         # No "Shininess" samplers in DS1.
         "Normal": re.compile(r".*\[.*B.*\].*"),
@@ -52,8 +52,8 @@ class MatDef(_BaseMatDef):
         "Multi": re.compile(r".*\[.*M.*\].*"),  # two blended texture slots (ALBEDO, SPECULAR, and/or NORMAL)
         "Displacement": re.compile(r".*\[.*H.*\].*"),
         "Lightmap": re.compile(r".*\[.*L.*\].*"),
-        "NormalToAlpha": re.compile(r".*\[(Dn|.*N.*)\].*"),  # Main 0 Albedo only
-        "Water": re.compile(r".*\[We\].*"),  # Main 0 Normal only
+        "NormalToAlpha": re.compile(r".*\[(Dn|.*N.*)\].*"),  # DSB 0 Diffuse only
+        "Water": re.compile(r".*\[We\].*"),  # DSB 0 Normal only
 
         "Alpha": re.compile(r".*_Alp.*"),
         "Edge": re.compile(r".*_Edge.*"),
@@ -110,11 +110,6 @@ class MatDef(_BaseMatDef):
     }
 
     @classmethod
-    def _get_shader_category(cls, shader_stem: str) -> str:
-        """Parse stem as 'FRPG_{category}_*' and return the category."""
-        return shader_stem.removeprefix("FRPG_").split("_")[0]
-
-    @classmethod
     def from_mtd(cls, mtd: MTD) -> tp.Self:
         """Extract critical MTD information (mainly for generating FLVER vertex array layouts) directly from MTD.
 
@@ -122,21 +117,22 @@ class MatDef(_BaseMatDef):
         """
         matdef = super(MatDef, cls).from_mtd(mtd)
         if detail_sampler := matdef.get_sampler_with_alias("Detail 0 Normal"):
-            detail_sampler.uv_scale = Vector2(mtd.get_param("g_DetailBump_UVScale", default=[1.0, 1.0]))
+            detail_sampler.uv_scale = Vector2(mtd.get_param("g_DetailBump_UVScale", default=(1.0, 1.0)))
         return matdef
 
     @classmethod
     def from_mtd_name(cls, mtd_name: str) -> tp.Self:
         matdef = super(MatDef, cls).from_mtd_name(mtd_name)
 
-        if matdef.get_sampler_with_alias("Main 0 Normal"):
+        if matdef.get_sampler_with_alias("DSB 0 Normal"):
             # Add Detail 0 Normal with scaling from the mtd params if possible
             # TODO: Some DS1 shaders, even with 'g_Bumpmap', do not have this. I have no way to detect from the name.
             #  Currently assuming that it doesn't matter at all if FLVERs have an (empty) texture definition for it.
             matdef.add_sampler(
                 alias="Detail 0 Normal",
                 uv_layer=cls.UVLayer.UVTexture0,
-                uv_scale=Vector2(matdef.mtd.get_param("g_DetailBump_UVScale", default=[1.0, 1.0])),
+                # We can't guess the UV scaling param without the MTD.
+                uv_scale=Vector2.one(),
             )
         return matdef
 
@@ -152,13 +148,13 @@ class MatDef(_BaseMatDef):
             # UV/UVPair will be inserted here if needed.
         ]  # type: list[VertexDataType]
 
-        if self.get_sampler_with_alias("Main 0 Normal"):
+        if self.get_sampler_with_alias("DSB 0 Normal"):
             # Uses tangent vertex data.
             data_types.insert(3, VertexTangent(VertexDataFormatEnum.FourBytesC, 0))
-            if self.get_sampler_with_alias("Main 1 Normal"):
+            if self.get_sampler_with_alias("DSB 1 Normal"):
                 # Uses bitangent vertex data for second texture group normal.
                 data_types.insert(4, VertexBitangent(VertexDataFormatEnum.FourBytesC, 0))
-        elif self.get_sampler_with_alias("Main 1 Normal"):
+        elif self.get_sampler_with_alias("DSB 1 Normal"):
             # Uses bitangent only. NOTE: I highly doubt any game shaders do this.
             data_types.insert(3, VertexBitangent(VertexDataFormatEnum.FourBytesC, 0))
 
@@ -227,16 +223,16 @@ class MatDef(_BaseMatDef):
         # Guaranteed:
         data_types.append(VertexNormal(VertexDataFormatEnum.FourBytesC, 0))
 
-        if self.get_sampler_with_alias("Main 0 Normal"):
+        if self.get_sampler_with_alias("DSB 0 Normal"):
             # Uses tangent vertex data.
             data_types.append(VertexTangent(VertexDataFormatEnum.FourBytesC, 0))
-        if self.get_sampler_with_alias("Main 1 Normal"):
+        if self.get_sampler_with_alias("DSB 1 Normal"):
             # Uses bitangent vertex data for second texture group normal.
             data_types.append(VertexBitangent(VertexDataFormatEnum.FourBytesC, 0))
-            if not self.get_sampler_with_alias("Main 0 Normal"):
+            if not self.get_sampler_with_alias("DSB 0 Normal"):
                 # No known cases of this, so I want to hear about it.
                 _LOGGER.warning(
-                    f"Material MTD '{self.name}' has 'Main 1 Normal' but no 'Main 0 Normal'. This is "
+                    f"Material MTD '{self.name}' has 'DSB 1 Normal' but no 'DSB 0 Normal'. This is "
                     f"unusual and may lead to incorrect exported FLVER data."
                 )
 

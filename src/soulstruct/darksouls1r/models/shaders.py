@@ -15,9 +15,11 @@ from soulstruct.flver.vertex_array_layout import VertexArrayLayout, VertexBitang
 class MatDef(_PTDE_MatDef):
     """Identical to PTDE except for the possibility of a third normal sampler in some snow shaders."""
 
-    # DSR snow shaders may have an extra normal texture.
+    # New DSR snow shader has totally different bumpmap slot usage.
     SAMPLER_ALIASES: tp.ClassVar[dict[str, str]] = _PTDE_MatDef.SAMPLER_ALIASES | {
-        "g_Bumpmap_3": "Main 2 Normal",
+        "g_Bumpmap": "Snow Height",
+        "g_Bumpmap_2": "Snow Detail Normal",
+        "g_Bumpmap_3": "DSB 0 Normal",
     }
 
     SAMPLER_GAME_NAMES: tp.ClassVar[dict[str, str]] = {v: k for k, v in SAMPLER_ALIASES.items()}
@@ -44,7 +46,7 @@ class MatDef(_PTDE_MatDef):
         """
         matdef = super(MatDef, cls).from_mtd(mtd)
 
-        if matdef.shader_category == "Snow":
+        if "Snow" in matdef.shader_stem:
             # In DS1R, some snow shaders (those with "Snow Metal Mask" MTD param) have a very unusual setup using
             # three normal samplers (g_Bumpmap*).
             # The first contains a snow height map that is layered on top of itself at different scales. The second
@@ -53,10 +55,10 @@ class MatDef(_PTDE_MatDef):
             # The sampler UV indices in the MTD are wrong -- all three normal samplers use the first UV slot (0) and
             # the lightmap, if present, uses the second UV slot (1).
             if mtd.has_param("g_SnowMetalMask"):
-                snow_normal_1 = matdef.get_sampler_with_alias("Main 1 Normal")
-                snow_normal_1.uv_layer = cls.UVLayer.UVTexture0  # *NOT* UVTexture1 as the MTD indicates
-                snow_normal_2 = matdef.get_sampler_with_alias("Main 2 Normal")
-                snow_normal_2.uv_layer = cls.UVLayer.UVTexture0  # explicit for clarity
+                snow_detail_normal = matdef.get_sampler_with_alias("Snow Detail Normal")  # g_Bumpmap_2
+                snow_detail_normal.uv_layer = cls.UVLayer.UVTexture0  # *NOT* UVTexture1 as the MTD indicates
+                dsb_normal = matdef.get_sampler_with_alias("DSB 0 Normal")  # g_Bumpmap_3
+                dsb_normal.uv_layer = cls.UVLayer.UVTexture0  # explicit for clarity
                 if lightmap := matdef.get_sampler_with_alias("Lightmap"):
                     lightmap.uv_layer = cls.UVLayer.UVLightmap  # explicit for clarity
 
@@ -66,11 +68,22 @@ class MatDef(_PTDE_MatDef):
     def from_mtd_name(cls, mtd_name: str) -> tp.Self:
         mtd_stem = Path(mtd_name).stem
         matdef = super(MatDef, cls).from_mtd_name(mtd_name)
-        if matdef.shader_category == "Snow" and mtd_stem in cls.SNOW_METAL_MASK_STEMS:
-            snow_normal_1 = matdef.get_sampler_with_alias("Main 1 Normal")
-            snow_normal_1.uv_layer = cls.UVLayer.UVTexture0
+
+        if "Snow" in matdef.shader_stem and mtd_stem in cls.SNOW_METAL_MASK_STEMS:
+            # Repair guessing of DSR snow shader.
+
+            snow_height = matdef.get_sampler_with_alias("DSB 0 Normal")
+            snow_height.alias = "Snow Height"
+            snow_height.uv_layer = cls.UVLayer.UVTexture0
+
+            snow_detail_normal = matdef.get_sampler_with_alias("DSB 1 Normal")
+            snow_detail_normal.alias = "Snow Detail Normal"
+            snow_detail_normal.uv_layer = cls.UVLayer.UVTexture0
+
             # Add third normal sampler, which the standard PTDE from-name method won't guess.
-            matdef.add_sampler(alias="Main 2 Normal", uv_layer=cls.UVLayer.UVTexture0)
+            # Alias 'DSB 0 Normal' is freed up now by the above re-alias.
+            matdef.add_sampler(alias="DSB 0 Normal", uv_layer=cls.UVLayer.UVTexture0)
+
             if lightmap := matdef.get_sampler_with_alias("Lightmap"):  # for [L] MTDs
                 lightmap.uv_layer = cls.UVLayer.UVLightmap
 
@@ -81,7 +94,7 @@ class MatDef(_PTDE_MatDef):
 
         # Handle three-bumpmap DSR snow shaders.
         # These are the same, except we remove the Bitangent data (they don't use a real second normal texture).
-        if self.shader_category == "Snow" and self.get_sampler_with_alias("Main 2 Normal"):
+        if "Snow" in self.shader_stem and self.get_sampler_with_alias("DSB 2 Normal"):
             layout = VertexArrayLayout(
                 [d for d in layout.read_types if not isinstance(d, VertexBitangent)]
             )

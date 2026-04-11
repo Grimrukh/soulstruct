@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["MATBIN", "MATBINBND"]
+__all__ = ["MATBIN", "MATBINBND", "MATBIN_PARAM_TYPING"]
 
 import logging
 import re
@@ -17,6 +17,17 @@ from soulstruct.utilities.maths import Vector2
 
 _LOGGER = logging.getLogger(__name__)
 
+
+MATBIN_PARAM_TYPING = tp.Union[
+    bool,
+    int,
+    tuple[int, int],
+    float,
+    tuple[float, float],
+    tuple[float, float, float],
+    tuple[float, float, float, float],
+    tuple[float, float, float, float, float],  # new type not supported in MTD
+]
 
 class MATBIN(GameFile):
     """Material definition file used from Elden Ring onwards, completely replacing `MTD` format.
@@ -91,7 +102,48 @@ class MATBIN(GameFile):
                 return True
         return False
 
-    def get_param(self, matbin_param_name: str, default=None) -> bool | int | list[int] | float | list[float]:
+    # Overloads of `get_param` that detect return type from `default` argument.
+
+    @tp.overload
+    def get_param(self, matbin_param_name: str, default: bool) -> bool:
+        ...
+
+    @tp.overload
+    def get_param(self, matbin_param_name: str, default: int) -> int:
+        ...
+
+    @tp.overload
+    def get_param(self, matbin_param_name: str, default: tuple[int, int]) -> tuple[int, int]:
+        ...
+
+    @tp.overload
+    def get_param(self, matbin_param_name: str, default: float) -> float:
+        ...
+
+    @tp.overload
+    def get_param(self, matbin_param_name: str, default: tuple[float, float]) -> tuple[float, float]:
+        ...
+
+    @tp.overload
+    def get_param(
+        self, matbin_param_name: str, default: tuple[float, float, float]
+    ) -> tuple[float, float, float]:
+        ...
+
+    @tp.overload
+    def get_param(
+        self, matbin_param_name: str, default: tuple[float, float, float, float]
+    ) -> tuple[float, float, float, float]:
+        ...
+
+    @tp.overload
+    def get_param(
+        self, matbin_param_name: str, default: tuple[float, float, float, float, float]
+    ) -> tuple[float, float, float, float, float]:
+        ...
+
+    def get_param(self, matbin_param_name: str, default=None) -> MATBIN_PARAM_TYPING:
+        """Get param value by name, or a default value. If `default is None`, raises KeyError if param not found."""
         for param in self.params:
             if param.name == matbin_param_name:
                 return param.value
@@ -180,7 +232,7 @@ class MATBINParamType(IntEnum):
     Float5 = 12
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, init=False)
 class MATBINParam:
     """Generic parameter used in a MATBIN."""
 
@@ -192,9 +244,15 @@ class MATBINParam:
         _pad: bytes = binary_pad(16, init=False)
 
     name: str = ""
-    value: bool | int | list[int] | float | list[float] = 0
-    key: int = 0
     param_type: MATBINParamType = MATBINParamType.Int
+    _value: MATBIN_PARAM_TYPING = 0
+    key: int = 0
+
+    def __init__(self, name: str, param_type: MATBINParamType, value: MATBIN_PARAM_TYPING = None, key=0):
+        self.name = name
+        self.param_type = param_type
+        self._value = self.get_default_value(param_type) if value is None else self.validate_value_type(param_type, value)
+        self.key = key
 
     @classmethod
     def from_matbin_reader(cls, reader: BinaryReader):
@@ -209,21 +267,21 @@ class MATBINParam:
                 case MATBINParamType.Int:
                     value = reader["i"]
                 case MATBINParamType.Int2:
-                    value = list(reader.unpack("2i"))
+                    value = reader.unpack("2i")
                 case MATBINParamType.Float:
                     value = reader["f"]
                 case MATBINParamType.Float2:
-                    value = list(reader.unpack("2f"))
+                    value = reader.unpack("2f")
                 case MATBINParamType.Float3:
-                    value = list(reader.unpack("3f"))  # NOTE: Two extra (useless) floats ignored.
+                    value = reader.unpack("3f")  # NOTE: Two extra (useless) floats ignored
                 case MATBINParamType.Float4:
-                    value = list(reader.unpack("4f"))
+                    value = reader.unpack("4f")
                 case MATBINParamType.Float5:
-                    value = list(reader.unpack("5f"))
+                    value = reader.unpack("5f")
                 case _:
                     raise ValueError(f"Unknown MATBIN parameter type: {param_struct.param_type}")
 
-        return param_struct.to_object(cls, name=name, value=value)
+        return cls(name, param_struct.param_type, value, param_struct.key)
 
     def to_matbin_writer(self, writer: BinaryWriter):
         """Write header information. Name and value are written afterward (below)."""
@@ -234,8 +292,12 @@ class MATBINParam:
             _value_offset=RESERVED,
         )
 
+    # noinspection PyArgumentList
     def fill_matbin_data(self, writer: BinaryWriter):
-        """Fill name and data."""
+        """Fill name and data.
+
+        Type of `self.value` is ensured by `value.setter` property.
+        """
         writer.fill_with_position("_name_offset", self)
         writer.append(self.name.encode("utf-16-le"))
 
@@ -260,10 +322,93 @@ class MATBINParam:
             case _:
                 raise ValueError(f"Unknown MATBIN parameter type: {self.param_type}")
 
+    @property
+    def value(self) -> MATBIN_PARAM_TYPING:
+        return self._value
+
+    @value.setter
+    def value(self, value: MATBIN_PARAM_TYPING) -> None:
+        self._value = self.validate_value_type(self.param_type, value)
+
     def __repr__(self):
         """`key` isn't needed and `param_type` is already clear from the value type."""
         return f"MATBINParam({self.name}={self.value})"
 
+    @staticmethod
+    def get_default_value(param_type: MATBINParamType) -> MATBIN_PARAM_TYPING:
+        match param_type:
+            case MATBINParamType.Bool:
+                return False
+            case MATBINParamType.Int:
+                return 0
+            case MATBINParamType.Int2:
+                return 0, 0
+            case MATBINParamType.Float:
+                return 0.0
+            case MATBINParamType.Float2:
+                return 0.0, 0.0
+            case MATBINParamType.Float3:
+                return 0.0, 0.0, 0.0
+            case MATBINParamType.Float4:
+                return 0.0, 0.0, 0.0, 0.0
+            case MATBINParamType.Float5:
+                return 0.0, 0.0, 0.0, 0.0, 0.0
+            case _:
+                raise TypeError(f"Invalid `param_type` for MATBINParam: {param_type}")
+
+    @staticmethod
+    def validate_value_type(param_type: MATBINParamType, value: MATBIN_PARAM_TYPING) -> MATBIN_PARAM_TYPING:
+        match param_type:
+            case MATBINParamType.Bool:
+                if not isinstance(value, bool):
+                    raise ValueError(f"Expected bool, got {type(value)}")
+            case MATBINParamType.Int:
+                if not isinstance(value, int):
+                    raise ValueError(f"Expected int, got {type(value)}")
+            case MATBINParamType.Int2:
+                if (
+                    not isinstance(value, tuple)
+                    or len(value) != 2
+                    or not all(isinstance(v, int) for v in value)
+                ):
+                    raise ValueError(f"Expected (int, int), got {value}")
+            case MATBINParamType.Float:
+                if not isinstance(value, (int, float)):
+                    raise ValueError(f"Expected float (or int), got {type(value)}")
+            case MATBINParamType.Float2:
+                if (
+                    not isinstance(value, tuple)
+                    or len(value) != 2
+                    or not all(isinstance(v, (int, float)) for v in value)
+                ):
+                    raise ValueError(f"Expected (int | float, int | float), got {value}")
+            case MATBINParamType.Float3:
+                if (
+                    not isinstance(value, tuple)
+                    or len(value) != 3
+                    or not all(isinstance(v, (int, float)) for v in value)
+                ):
+                    raise ValueError(f"Expected (int | float, int | float, int | float), got {value}")
+            case MATBINParamType.Float4:
+                if (
+                    not isinstance(value, tuple)
+                    or len(value) != 4
+                    or not all(isinstance(v, (int, float)) for v in value)
+                ):
+                    raise ValueError(f"Expected (int | float, int | float, int | float, int | float), got {value}")
+            case MATBINParamType.Float5:
+                if (
+                    not isinstance(value, tuple)
+                    or len(value) != 5
+                    or not all(isinstance(v, (int, float)) for v in value)
+                ):
+                    raise ValueError(
+                        f"Expected (int | float, int | float, int | float, int | float, int | float), got {value}"
+                    )
+            case _:
+                raise ValueError(f"Unknown MATBIN parameter type: {param_type}")
+
+        return value
 
 @dataclass(slots=True)
 class MATBINSampler:

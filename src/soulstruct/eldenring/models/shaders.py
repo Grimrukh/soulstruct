@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 __all__ = [
-    "MatDef",
     "SamplerGroupType",
+    "MatDef",
 ]
 
 import logging
@@ -10,14 +10,11 @@ import re
 import typing as tp
 from dataclasses import dataclass, field
 from enum import IntEnum, auto
-from pathlib import Path
 
-from soulstruct.base.models.matbin import MATBIN, MATBINBND
+from soulstruct.base.models.matbin import MATBIN
+from soulstruct.base.models.shaders import MatDef as _BaseMatDef, MatDefError, MatDefSampler
 from soulstruct.flver.vertex_array_layout import *
-from soulstruct.base.models.shaders import MatDef as _BaseMatDef, MatDefError
-from soulstruct.containers import Binder, BinderEntry, EntryNotFoundError
-from soulstruct.utilities.binary import BinaryReader
-from soulstruct.utilities.files import read_json, write_json, SOULSTRUCT_PATH
+from soulstruct.utilities.files import read_json, SOULSTRUCT_PATH
 from soulstruct.utilities.maths import Vector2
 from soulstruct.utilities.text import natural_keys
 
@@ -25,9 +22,10 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class SamplerGroupType(IntEnum):
+    """Categories of sampler groups (which share a UV layer/scaling), based on present sampler types."""
 
-    Main = auto()  # has at least Albedo, Metallic, Normal - may have others (Emissive, Shininess, ...)
-    AlbedoNormal = auto()  # usually Detail
+    AMN = auto()  # Albedo/Metallic/Normal; may also have other samplers (Emissive, Shininess, ...)
+    AlbedoNormal = auto()  # usually Detail, sometimes Fur/Cloth
     AlbedoNormalMask3 = auto()  # first group in SSS shaders?
     ThreeNormals = auto()  # appears in SSS shaders
 
@@ -56,7 +54,7 @@ class SamplerGroupType(IntEnum):
                 return cls.DistortionAlbedo
         elif size >= 3:
             if all(f"{s}Map" in suffixes for s in ("Albedo", "Metallic", "Normal")):
-                return cls.Main
+                return cls.AMN
             if all(f"{s}Map" in suffixes for s in ("Albedo", "Normal", "Mask3")):
                 return cls.AlbedoNormalMask3
             if size == 3 and set(suffixes) == {"NormalMap"}:
@@ -85,36 +83,42 @@ class MatDef(_BaseMatDef):
         UVTexture0 = auto()
         UVTexture1 = auto()
         UVDetail = auto()
-        UVFur = auto()
-        UVSubNormals = auto()
+        UVFurCloth = auto()
+        UVSubNormals = auto()  # e.g. skin normals
         UVEye2D = auto()  # 2D second UV layer found only on 'P[ChrCustomize][Eye]' so far
         UVEye4D = auto()  # 4D third UV layer found only on 'P[ChrCustomize][Eye]' so far
 
         @classmethod
         def guess(cls, group_index: int, group_type: SamplerGroupType, type_index: int):
+            """Guess `UVLayer` from UV group context and sampler type index."""
+
+            # Albedo/Normal groups are either Detail or the primary Fur/Cloth texture.
             if group_type == SamplerGroupType.AlbedoNormal:
                 if group_index == 1:
-                    # Fur shaders have a detail-like (AN) group first, which uses a special additional UV layer.
+                    # Fur/Cloth shaders have a detail-like (AN) group first, which uses a special additional UV layer.
                     # Fortunately, we can detect it since it's always sampler "group_1". (So far...)
-                    return cls.UVFur
-                return cls.UVDetail
-            elif (
-                (group_index in {1, 5} or type_index == 0)
-                and group_type in {SamplerGroupType.Main, SamplerGroupType.AlbedoNormalMask3}
-            ):
-                # TODO: Carefully ignoring group 8 in 'C[DetailBlend], an AMN group that I've NEVER seen used and does
-                #  NOT bring an extra main UV layer to the table.
-                return cls.UVTexture0 if type_index == 0 else cls.UVTexture1
-            elif group_type == SamplerGroupType.ThreeNormals:
-                # TODO: Testing.
-                return cls.UVSubNormals
-            elif group_type in {
-                SamplerGroupType.AlbedoOnly, SamplerGroupType.NormalOnly, SamplerGroupType.DistortionAlbedo
-            }:
+                    return cls.UVFurCloth
+
+                # All other observed AlbedoNormal sampler groups are detail.
                 return cls.UVDetail
 
-            # TODO: No use of `UVTexture1` yet. Not just enough to use non-first 'Main' groups, since e.g. group 8 in
-            #  C[DetailBlend] does this but doesn't get its own UV layer.
+            if group_type in {SamplerGroupType.AMN, SamplerGroupType.AlbedoNormalMask3}:
+                if type_index == 0:
+                    return cls.UVTexture0
+                # TODO: Carefully ignoring group 8 in 'C[DetailBlend], an AMN group that I've NEVER seen used and does
+                #  NOT bring an extra UVTexture layer to the table.
+                if group_index in {1, 5}:
+                    return cls.UVTexture1
+
+            if group_type == SamplerGroupType.ThreeNormals:
+                # TODO: Testing.
+                return cls.UVSubNormals
+
+            if group_type in {
+                SamplerGroupType.AlbedoOnly, SamplerGroupType.NormalOnly, SamplerGroupType.DistortionAlbedo
+            }:
+                # Only observed with detail UV.
+                return cls.UVDetail
 
             # TODO: Also big assumption.
             return cls.UVTexture0
@@ -125,11 +129,11 @@ class MatDef(_BaseMatDef):
 
     NAME_TAG_RE: tp.ClassVar[dict[str, re.Pattern]] = {
         "Albedo": re.compile(r".*\[.*A.*\].*"),
-        "Specular": re.compile(r".*\[.*M.*\].*"),
+        "Metallic": re.compile(r".*\[.*M.*\].*"),
         "Shininess": re.compile(r".*\[.*S.*\].*"),  # rarely used
         "Normal": re.compile(r".*\[.*N.*\].*"),
         "Vector": re.compile(r".*\[.*V.*\].*"),  # TODO: not sure what this does
-        "Overlay": re.compile(r".*\[Ov_.*\].*"),  # don't mistake for a zero! e.g. '[Ov_N]'  # TODO: purpose?
+        "Overlay": re.compile(r".*\[Ov_.*\].*"),  # don't mistake 'O' for '0'! e.g. '[Ov_N]'  # TODO: purpose?
         "Far": re.compile(r".*\[Far_.*\].*"),  # e.g. '[Far_AN]'
         "Multi": re.compile(r".*\[Mb(\d+).*\].*"),  # e.g. '[Mb2]', note count in capture group 1
         "Mask": re.compile(r".*\[(\d+)Mask.*\].*"),
@@ -149,7 +153,7 @@ class MatDef(_BaseMatDef):
 
     SAMPLER_NAME_RE: tp.ClassVar[dict[str, re.Pattern]] = {
         "Albedo": re.compile(r".*_AlbedoMap(_\d+|$)", re.IGNORECASE),
-        "Specular": re.compile(r".*_MetallicMap(_\d+|$)", re.IGNORECASE),
+        "Metallic": re.compile(r".*_MetallicMap(_\d+|$)", re.IGNORECASE),
         "Shininess": re.compile(r".*_ShininessMap(_\d+|$)", re.IGNORECASE),  # rarely used
         "Normal": re.compile(r".*_NormalMap(_\d+|$)", re.IGNORECASE),
         "Vector": re.compile(r".*_VectorMap(_\d+|$)", re.IGNORECASE),
@@ -172,7 +176,7 @@ class MatDef(_BaseMatDef):
         # IGNORING: 'Shadowmap' (test only?), 'Extra__Base'
     }
 
-    EXTRA_SHADER_UV_LAYERS: tp.ClassVar[dict[str, list[str]]] = {
+    EXTRA_SHADER_UV_LAYERS: tp.ClassVar[dict[str, list[UVLayer]]] = {
         "P[ChrCustomize][Eye]": [UVLayer.UVEye2D, UVLayer.UVEye4D],
     }
 
@@ -183,8 +187,13 @@ class MatDef(_BaseMatDef):
 
     # Metaparam dictionary, currently required to determine sampler groups for Elden Ring.
     metaparam: dict[str, list[tuple[str, str]]] = field(default_factory=dict)
-    # Simiplified MATBIN params with useless parts of their prefixes removed, and natural key sorting.
+    # Simplified MATBIN params with useless parts of their prefixes removed, and natural key sorting.
     matbin_params: dict[str, tp.Any] = field(default_factory=dict)
+
+    # Is this a cloth shader?
+    cloth: bool = False
+    # Is this a fur shader?
+    fur: bool = False
 
     # TODO: Noting down my suspicions about MATBIN param usage (float, color) for 'C[DetailBlend]'.
     """
@@ -192,13 +201,6 @@ class MatDef(_BaseMatDef):
       float is SPECULAR ROUGHNESS MULTIPLIER, since it seems low for metal textures (e.g. 0.6) and high for leather 
       (e.g. 10)... sometimes.
     """
-
-    @classmethod
-    def _get_shader_category(cls, shader_stem: str) -> str:
-        """Not supremely useful. We get everything up to first closing square bracket, e.g. 'M[Water]' or 'C[c2000]'."""
-        if "]" not in shader_stem:
-            return shader_stem
-        return shader_stem.split("]")[0] + "]"
 
     @classmethod
     def from_matbin(cls, matbin: MATBIN):
@@ -221,7 +223,6 @@ class MatDef(_BaseMatDef):
         matdef = cls(
             name=matbin_name,
             shader_stem=matbin.shader_stem,
-            shader_category=matbin.shader_stem,
             metaparam=metaparam,
             matbin=matbin,
             matbin_params=matbin_params,
@@ -230,9 +231,13 @@ class MatDef(_BaseMatDef):
         # Still here in MATBIN, like in MTD.
         blend_mode = matbin.get_param("g_BlendMode", default=0)
         if blend_mode == 1:
-            matdef.edge = True  # TODO: not yet seen in ER?
+            matdef.edge = True  # TODO: not yet seen in ER? Need to check MPs.
         elif blend_mode == 2:
             matdef.alpha = True
+
+        # Very important Elden Ring material class. This is more reliable than checking if '_cloth' is in shader stem.
+        matdef.cloth = matbin.get_param("GXFT_Cloth", False)
+        matdef.fur = "[Fur]" in matbin.shader_stem
 
         grouped_sampler_names = {}  # type: dict[str, list[str]]
         sampler_default_texture_paths = {}  # type: dict[str, str]
@@ -284,9 +289,6 @@ class MatDef(_BaseMatDef):
 
         for group_name in sorted_group_names:
 
-            # NOTE: We don't need Meow's hack to detect fur shaders. We can detect them based on a 'Detail' group
-            # appearing before any 'Main' group.
-
             # Get group index (from name) and UV scale.
             # NOTE: May obviously be wrong for guessed groups with no metaparam groups at all.
             group_sampler_names = grouped_sampler_names[group_name]
@@ -301,37 +303,50 @@ class MatDef(_BaseMatDef):
             group_type = group_types[group_name]
             group_type_index = group_type_indices[group_type]
 
-            if matbin.get_param("GXFT_Cloth", False):
-                # However, 'Fur Cloth' shaders (marked with `GXFT_Cloth = True`) have NO UVs at all.
-                # TODO: Only tested against Blaidd at the moment.
-                group_uv_layer = None
-            else:
-                group_uv_layer = cls.UVLayer.guess(group_index, group_type, group_type_index)
+            group_uv_layer = cls.UVLayer.guess(group_index, group_type, group_type_index)
 
-            for sampler_name in group_sampler_names:
+            sampler_counts_in_group = {}
+            primed_first_sampler_types = {}  # type: dict[str, MatDefSampler]
+
+            for i, sampler_name in enumerate(group_sampler_names):
 
                 # TODO: 'Mask1Map' does not seem to use its own UV layer. Just goes with its group.
                 if cls.SAMPLER_NAME_RE["Mask3"].match(sampler_name):
-                    # TODO: Pretty sure this is wrong, and 'Mask3Map' does use its own UV layer.
+                    sampler_type = "Mask3"
                     uv_layer = cls.UVLayer.UVTexture0  # explicit
-                    alias = "Blend 3"
+                    alias = f"{group_type.name} {group_type_index} Mask3"
                 else:
                     uv_layer = group_uv_layer
 
                     # Alias just comes from sampler map type, if recognized.
                     alias = f"{group_type.name} {group_type_index}"
-                    for sampler_map in (
-                        "Albedo", "Specular", "Shininess", "Normal",
+                    for sampler_type in (
+                        "Albedo", "Metallic", "Shininess", "Normal",
                         "Vector", "Reflectance", "Emissive", "Mask1",
                     ):
-                        if cls.SAMPLER_NAME_RE[sampler_map].match(sampler_name):
-                            alias += f" {sampler_map}"
+                        if cls.SAMPLER_NAME_RE[sampler_type].match(sampler_name):
+                            alias += f" {sampler_type}"
                             break
                     else:
                         # Unknown sampler map type. No alias used.
+                        sampler_type = ""
                         alias = ""
 
-                matdef.add_sampler(
+                prime_first = False
+                if sampler_type:
+                    if sampler_type not in sampler_counts_in_group:
+                        prime_first = True
+                        sampler_counts_in_group[sampler_type] = 1
+                    else:
+                        count = sampler_counts_in_group[sampler_type]
+                        alias += f"_{count}"
+                        if sampler_type in primed_first_sampler_types:
+                            # Retroactively add '_0' suffix to first sampler.
+                            primed_first_sampler_types[sampler_type].alias += "_0"
+                            primed_first_sampler_types.pop(sampler_type)
+                        sampler_counts_in_group[sampler_type] += 1
+
+                sampler = matdef.add_sampler(
                     name=sampler_name,
                     alias=alias or sampler_name,  # fallback
                     uv_layer=uv_layer,
@@ -340,6 +355,9 @@ class MatDef(_BaseMatDef):
                     default_texture_path=sampler_default_texture_paths[sampler_name],
                     matbin_texture_path=matbin.get_sampler_path(sampler_name),
                 )
+
+                if prime_first:
+                    primed_first_sampler_types[sampler_type] = sampler
 
             group_type_indices[group_type] += 1
 
@@ -411,13 +429,17 @@ class MatDef(_BaseMatDef):
             # Tangent/Bitangent will be inserted here if needed.
             VertexColor(VertexDataFormatEnum.FourBytesC, 0),
             # UV/UVPair will be inserted here if needed.
-        ]
+        ]  # type: list[VERTEX_DATA_TYPING]
 
         sampler_names = set(sampler.name for sampler in self.samplers)
 
-        if "Main 0 Normal" in sampler_names:
+        if "AMN 0 Normal" in sampler_names:
+            # Tangent array required.
             data_types.insert(3, VertexTangent(VertexDataFormatEnum.FourBytesC, 0))
-            if any(s in sampler_names for s in ("Main 1 Normal", "Detail 0 Normal", "NormalOnly 0 Normal")):
+            if any(s in sampler_names for s in (
+                    "AMN 1 Normal", "Detail 0 Normal", "NormalOnly 0 Normal"
+            )):
+                # Additional tangent array required.
                 data_types.insert(4, VertexTangent(VertexDataFormatEnum.FourBytesC, 0))
 
         # Calculate total UV map count and use a combination of UVPair and UV format members below.
@@ -452,7 +474,7 @@ class MatDef(_BaseMatDef):
             VertexPosition(VertexDataFormatEnum.Float3, 0),
             VertexNormal(VertexDataFormatEnum.FourBytesB, 0),
             VertexTangent(VertexDataFormatEnum.FourBytesB, 0),  # calculated from `UVTexture0` (or empty)
-        ]
+        ]  # type: list[VERTEX_DATA_TYPING]
 
         uv_layers = self.get_used_uv_layers()
         if not uv_layers:
@@ -461,8 +483,9 @@ class MatDef(_BaseMatDef):
             layout = VertexArrayLayout(data_types)
             layout.set_unk_x00(self.type_unk_x00)
             return layout
-        elif self.UVLayer.UVFur in uv_layers:
-            # Extra Tangent array calculated from `UVFur`, with index 4, and continue with other data below.
+        elif self.UVLayer.UVFurCloth in uv_layers:
+            # TODO: This goes in vertex array 1.
+            # Extra Tangent array calculated from `UVFurCloth`, with index 4, and continue with other data below.
             data_types.insert(3, VertexTangent(VertexDataFormatEnum.FourBytesB, instance_index=4))
         # TODO: Need to look at other materials.
 
@@ -532,85 +555,3 @@ class MatDef(_BaseMatDef):
         #     lines.append(f"    metaparam={self.metaparam},")
         lines.append(")")
         return "\n".join(lines)
-
-
-def generate_metaparam(elden_ring_path: Path):
-    matbinbnd = MATBINBND.from_bundled("ELDEN_RING")
-    shaderbdlebnd_path = Path(elden_ring_path, "shader/shaderbdle.shaderbdlebnd.dcx")
-    shaderbdlebnd_dlc01_path = Path(elden_ring_path, "shader/shaderbdle_dlc01.shaderbdlebnd.dcx")
-    shaderbdlebnd_dlc02_path = Path(elden_ring_path, "shader/shaderbdle_dlc02.shaderbdlebnd.dcx")
-
-    shaderbdlebnd = Binder.from_path(shaderbdlebnd_path)
-    shaderbdlebnd_dlc01 = Binder.from_path(shaderbdlebnd_dlc01_path)
-    shaderbdlebnd_dlc02 = Binder.from_path(shaderbdlebnd_dlc02_path)
-
-    entries_by_name = shaderbdlebnd.get_entries_by_name()
-    for entry in shaderbdlebnd_dlc01.entries:
-        if entry.name in entries_by_name:
-            # Replace base game entry with DLC entry.
-            shaderbdlebnd.remove_entry_name(entry.name)
-        shaderbdlebnd.entries.append(entry)
-    for entry in shaderbdlebnd_dlc02.entries:
-        if entry.name in entries_by_name:
-            # Replace base game entry with DLC entry.
-            shaderbdlebnd.remove_entry_name(entry.name)
-        shaderbdlebnd.entries.append(entry)
-
-    all_shader_sampler_groups = {}
-
-    for matbin_entry in matbinbnd.entries:
-        matbin = MATBIN.from_binder_entry(matbin_entry)
-        shader_stem = matbin.shader_name.split(".")[0]
-        if shader_stem in all_shader_sampler_groups:
-            continue  # done from previous MATBIN
-
-        print(f"Finding metaparam for shader {shader_stem}...")
-        try:
-            shaderbdle_entry = shaderbdlebnd.find_entry_name(f"{shader_stem}.shaderbdle")
-        except EntryNotFoundError:
-            print(f"  No shaderbdle entry found for {shader_stem}.")
-            all_shader_sampler_groups[shader_stem] = []  # don't look again
-            continue
-
-        shaderbdle = Binder.from_binder_entry(shaderbdle_entry)
-        metaparam_entry = shaderbdle.find_entry_name(f"{shader_stem}.metaparam")
-
-        shader_sampler_groups = read_metaparam(metaparam_entry)
-        # Sort group keys.
-        shader_sampler_groups = {
-            group_name: shader_sampler_groups[group_name] for group_name in sorted(shader_sampler_groups)
-        }
-        all_shader_sampler_groups[shader_stem] = shader_sampler_groups
-
-    write_json("resources/er_shader_sampler_groups.json", all_shader_sampler_groups, indent=4)
-
-
-def read_metaparam(metaparam_entry: BinderEntry) -> dict[str, list[tuple[str, str]]]:
-    """Read metaparam data as a dictionary mapping sampler group names to lists of sampler names with their default
-    texture paths ('SYSTEX' stuff usually).
-
-    Note that an empty group name key may exist.
-    """
-    metaparam = BinaryReader(metaparam_entry.get_uncompressed_data())
-
-    shader_dict = {}
-    metaparam.seek(0xC)
-    sampler_count = metaparam.unpack_value("i")
-    for i in range(sampler_count):
-        metaparam.seek(0x98 + (0x30 * i))
-        sampler_name_offset = metaparam.unpack_value("q")
-        metaparam.seek(8, 1)
-        default_texture_path_offset = metaparam.unpack_value("q")
-        sampler_group_name_offset = metaparam.unpack_value("q")
-
-        sampler_name = metaparam.unpack_string(offset=sampler_name_offset, encoding="utf-16-le")
-        default_texture_path = metaparam.unpack_string(offset=default_texture_path_offset, encoding="utf-16-le")
-        group_name = metaparam.unpack_string(offset=sampler_group_name_offset, encoding="utf-16-le")  # could be empty
-
-        shader_dict.setdefault(group_name, []).append((sampler_name, default_texture_path))
-
-    return shader_dict
-
-
-if __name__ == '__main__':
-    generate_metaparam(Path(r"C:\Steam\steamapps\common\ELDEN RING (Modding 1.12)\Game"))

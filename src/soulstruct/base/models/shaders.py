@@ -34,7 +34,7 @@ class MatDefError(SoulstructError):
 class MatDefSampler:
 
     name: str  # e.g. 'g_Diffuse'; real, game-specific name of sampler
-    alias: str  # e.g. 'Main 0 Albedo'; used for Blender node names, etc., to improve porting
+    alias: str  # e.g. 'DSB 0 Albedo'; used for Blender node names, etc., to improve porting
     uv_layer: IntEnum | None  # game-specific UV layer enum (could be `None` for non-textured samplers)
     sampler_group: int = 0  # given explicitly in Elden Ring; inferred in earlier games
     uv_scale: Vector2 | None = None  # added from sampler group in later games
@@ -79,8 +79,8 @@ class MatDef(abc.ABC):
     have pre-loaded for all known MATBINs into a bundled JSON with Meow's help.
 
     The other function of this class is to map each known sampler name in each game to a game-agnostic 'alias' like
-    `Main 0 Albedo` (which appears as 'g_Diffuse' in DS1, 'g_DiffuseTexture' in BB, etc.). This makes it easier to port
-    FLVER materials across games and determines how they are held in my Blender add-on.
+    `DSB 0 Albedo` (which appears as 'g_Diffuse' in DS1, 'g_DiffuseTexture' in BB, etc.). This makes it easier to group
+    samplers together, port FLVER materials across games, and determine how they are held in my Blender add-on.
     """
 
     class UVLayer(IntEnum):
@@ -99,7 +99,7 @@ class MatDef(abc.ABC):
     # Game-specific mapping of shader categories to `MatDef` names known to use that category, which aids in creating
     # `MatDef`s from material definition names alone when files are unavailable.
     KNOWN_SHADER_MTD_STEMS: tp.ClassVar[dict[str, list[str | re.Pattern]]] = {}
-    # Game-specific mapping of game-specific `shader_category` values to lists of extra `UVLayer` members.
+    # Game-specific mapping of game-specific `shader_stem` substrings to lists of extra `UVLayer` members.
     EXTRA_SHADER_UV_LAYERS: tp.ClassVar[dict[str, list[UVLayer]]] = {}
     # Earlier games can easily have their sampler names mapped to global aliases.
     # Later games may not use this, as they have more complex sampler groups that need shaders to determine function.
@@ -113,8 +113,6 @@ class MatDef(abc.ABC):
 
     # Stem of shader name, if available.
     shader_stem: str = ""
-    # Category of shader, if detectable.
-    shader_category: str | None = None
     # List of samplers used by this material, and their information.
     samplers: list[MatDefSampler] = field(default_factory=list)
 
@@ -134,16 +132,6 @@ class MatDef(abc.ABC):
     alpha: bool = False
     # If true, this material should use thresholded alpha clipping (e.g. plant textures).
     edge: bool = False
-
-    def __post_init__(self):
-        if self.shader_stem and not self.shader_category:
-            self.shader_category = self._get_shader_category(self.shader_stem)
-
-    @classmethod
-    def _get_shader_category(cls, shader_stem: str) -> str:
-        """Subclasses can specify how they determine categories from full stems. Default is equal, so every unique
-        stem is a category."""
-        return shader_stem
 
     @classmethod
     def from_mtd(cls, mtd: MTD) -> tp.Self:
@@ -186,17 +174,19 @@ class MatDef(abc.ABC):
         for category, patterns in cls.KNOWN_SHADER_MTD_STEMS.items():
             for pattern in patterns:
                 if isinstance(pattern, re.Pattern) and pattern.match(mtd_stem):
-                    matdef.shader_category = category
+                    # Guessed shader stem.
+                    matdef.shader_stem = f"[{category}]"
                     break
-                elif isinstance(pattern, str) and pattern == mtd_stem:
-                    matdef.shader_category = category
+                if isinstance(pattern, str) and pattern == mtd_stem:
+                    # Guessed shader stem.
+                    matdef.shader_stem = f"[{category}]"
                     break
             else:
                 continue
             break
         else:
             # Failed to find category.
-            matdef.shader_category = ""
+            matdef.shader_stem = ""
 
         # Detect used sampler names.
         if (
@@ -204,23 +194,24 @@ class MatDef(abc.ABC):
             or mtd_stem in cls.KNOWN_SHADER_MTD_STEMS.get("NormalToAlpha", {})
         ):
             # Unshaded skyboxes, mist, some trees, etc.
-            matdef.shader_category = "NormalToAlpha"
-            matdef.add_sampler(alias="Main 0 Albedo", uv_layer=cls.UVLayer.UVTexture0)
+            matdef.shader_stem = "[NormalToAlpha]"
+            matdef.add_sampler(alias="DSB 0 Albedo", uv_layer=cls.UVLayer.UVTexture0)
         elif (
             matdef.has_name_tag("Water")
             or mtd_stem in cls.KNOWN_SHADER_MTD_STEMS.get("Water", {})
         ):
             # Water shaders with normals only.
-            matdef.shader_category = "Water"
-            matdef.add_sampler(alias="Main 0 Normal", uv_layer=cls.UVLayer.UVTexture0)
+            matdef.shader_stem = "[Water]"
+            matdef.add_sampler(alias="DSB 0 Normal", uv_layer=cls.UVLayer.UVTexture0)
         else:
             # Check for all other standard sampler types.
             for texture_tag, alias in (
-                ("Albedo", "Main 0 Albedo"),
-                ("Specular", "Main 0 Specular"),
-                ("Shininess", "Main 0 Shininess"),
-                ("Normal", "Main 0 Normal"),
+                ("Albedo", "DSB 0 Albedo"),
+                ("Specular", "DSB 0 Specular"),
+                ("Shininess", "DSB 0 Shininess"),
+                ("Normal", "DSB 0 Normal"),
                 ("Displacement", "Displacement"),
+                # NOTE: No MTD-using game has Metallic samplers.
             ):
                 if matdef.has_name_tag(texture_tag):
                     matdef.add_sampler(alias=alias, uv_layer=cls.UVLayer.UVTexture0)
@@ -234,8 +225,8 @@ class MatDef(abc.ABC):
         if matdef.has_name_tag("Multi"):
             # For each 'Main 0' alias sampler, create 'Main 1' alias sampler.
             for sampler in matdef.samplers:
-                if sampler.alias.startswith("Main 0"):
-                    secondary_alias = sampler.alias.replace("Main 0", "Main 1")
+                if sampler.alias.startswith("DSB 0"):
+                    secondary_alias = sampler.alias.replace("DSB 0", "DSB 1")
                     matdef.add_sampler(alias=secondary_alias, uv_layer=cls.UVLayer.UVTexture1)
 
         if matdef.has_name_tag("Lightmap"):
@@ -289,9 +280,13 @@ class MatDef(abc.ABC):
     def get_used_uv_layers(self) -> list[IntEnum]:
         """Value-sorted list of unique UV layer enums used by all samplers and any additional, otherwise undetectable
         shader function (e.g. foliage wind animation) specified in `cls.EXTRA_SHADER_UV_LAYERS`."""
-        all_uv_layers = set(sampler.uv_layer for sampler in self.samplers if not sampler.is_uv_unused) - {None}
-        for extra_uv_layer in self.EXTRA_SHADER_UV_LAYERS.get(self.shader_category, []):
-            all_uv_layers.add(extra_uv_layer)
+        all_uv_layers = {
+            sampler.uv_layer for sampler in self.samplers
+            if not sampler.is_uv_unused and sampler.uv_layer is not None
+        }
+        for shader_string, extra_uv_layers in self.EXTRA_SHADER_UV_LAYERS.items():
+            if shader_string in self.shader_stem:
+                all_uv_layers.update(extra_uv_layers)
         return sorted(all_uv_layers, key=lambda x: x.value)
 
     # region Abstract Methods/Properties
@@ -326,7 +321,7 @@ class MatDef(abc.ABC):
         uv_scale: Vector2 | None = None,
         default_texture_path="",
         matbin_texture_path="",
-    ):
+    ) -> MatDefSampler:
         if not name and not alias:
             raise ValueError("Sampler must have either a game name or an alias.")
         if not name:
@@ -339,17 +334,18 @@ class MatDef(abc.ABC):
                 alias = self.SAMPLER_ALIASES[name]
             except KeyError:
                 raise ValueError(f"Could not find sampler alias for game name '{name}'.")
-        self.samplers.append(
-            MatDefSampler(
-                name=name,
-                alias=alias,
-                uv_layer=uv_layer,
-                sampler_group=sampler_group,
-                uv_scale=uv_scale,
-                default_texture_path=default_texture_path,
-                matbin_texture_path=matbin_texture_path,
-            )
+
+        sampler = MatDefSampler(
+            name=name,
+            alias=alias,
+            uv_layer=uv_layer,
+            sampler_group=sampler_group,
+            uv_scale=uv_scale,
+            default_texture_path=default_texture_path,
+            matbin_texture_path=matbin_texture_path,
         )
+        self.samplers.append(sampler)
+        return sampler
 
     def get_sampler_with_alias(self, sampler_alias: str) -> MatDefSampler | None:
         for sampler in self.samplers:

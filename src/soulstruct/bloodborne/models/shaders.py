@@ -29,14 +29,14 @@ class MatDef(_BaseMatDef):
         # TODO: other data UVs?
 
     SAMPLER_ALIASES: tp.ClassVar[dict[str, str]] = {
-        "g_DiffuseTexture": "Main 0 Albedo",  # A
-        "g_SpecularTexture": "Main 0 Specular",  # R
-        "g_ShininessTexture": "Main 0 Shininess",  # S
-        "g_BumpmapTexture": "Main 0 Normal",  # N
-        "g_DiffuseTexture2": "Main 1 Albedo",  # NOTE: no underscore before '2' suffix in Bloodborne
-        "g_SpecularTexture2": "Main 1 Specular",
-        "g_ShininessTexture2": "Main 1 Shininess",
-        "g_Bumpmap2": "Main 1 Normal",
+        "g_DiffuseTexture": "DSB 0 Diffuse",  # A
+        "g_SpecularTexture": "DSB 0 Specular",  # R
+        "g_ShininessTexture": "DSB 0 Shininess",  # S
+        "g_BumpmapTexture": "DSB 0 Normal",  # N
+        "g_DiffuseTexture2": "DSB 1 Diffuse",  # NOTE: no underscore before '2' suffix in Bloodborne
+        "g_SpecularTexture2": "DSB 1 Specular",
+        "g_ShininessTexture2": "DSB 1 Shininess",
+        "g_Bumpmap2": "DSB 1 Normal",
         "g_BlendMaskTexture": "Blend 01",
         "g_DisplacementTexture": "Displacement",
         "g_DOLTexture1": "Lightmap 0",  # NOTE: does end with '1', unlike primaries above
@@ -48,16 +48,16 @@ class MatDef(_BaseMatDef):
 
     # Class regex patterns for MTD name parsing.
     NAME_TAG_RE: tp.ClassVar[dict[str, re.Pattern]] = {
-        "Albedo": re.compile(r".*\[.*A.*\].*"),
+        "Diffuse": re.compile(r".*\[.*A.*\].*"),
         "Metallic": re.compile(r".*\[.*R.*\].*"),
         "Shininess": re.compile(r".*\[.*S.*\].*"),
         "Normal": re.compile(r".*\[.*N.*\].*"),
         # "translucent": re.compile(r".*\[.*T.*\].*"),
         "Displacement": re.compile(r".*\[.*H.*\].*"),
-        "NormalToAlpha": re.compile(r".*\[Dn\].*"),  # 'Main 0 Albedo' only
-        "Water": re.compile(r".*\[We\].*"),  # 'Main 0 Normal' only
+        "NormalToAlpha": re.compile(r".*\[Dn\].*"),  # 'DSB 0 Diffuse' only
+        "Water": re.compile(r".*\[We\].*"),  # 'DSB 0 Normal' only
 
-        "Multi": re.compile(r".*_m(_.*|$)"),  # two blended texture slots (Albedo, Metallic, and/or Normal)
+        "Multi": re.compile(r".*_m(_.*|$)"),  # two blended texture slots (Diffuse, Metallic, and/or Normal)
         "Alpha": re.compile(r".*_Alp.*"),
         "Edge": re.compile(r".*_e(_.*|$).*"),
         "Blend": re.compile(r".*_blend(_.*|$)"),  # has Blend 01 texture
@@ -96,11 +96,6 @@ class MatDef(_BaseMatDef):
             matdef.is_cloth = True
         return matdef
 
-    @classmethod
-    def _get_shader_category(cls, shader_stem: str) -> str:
-        """99% of Bloodborne shaders start with 'GXFlver'."""
-        return shader_stem.removeprefix("GXFlver_").split("_")[0]
-
     def get_used_uv_layers(self) -> list[IntEnum]:
         """Need to handle 'Cloth' case, which has no UVs (or colors, or bone indices/weights).
 
@@ -128,13 +123,13 @@ class MatDef(_BaseMatDef):
             # UV/UVPair fields will be inserted here if needed.
         ]
 
-        if self.get_sampler_with_alias("Main 0 Normal"):
+        if self.get_sampler_with_alias("DSB 0 Normal"):
             # Uses tangent vertex data.
             data_types.insert(2, VertexTangent(VertexDataFormatEnum.FourBytesB, 0))
-            if self.get_sampler_with_alias("Main 1 Normal"):
+            if self.get_sampler_with_alias("DSB 1 Normal"):
                 # Uses second tangent vertex data for second texture group normal.
                 data_types.insert(3, VertexTangent(VertexDataFormatEnum.FourBytesB, 1))
-        elif self.get_sampler_with_alias("Main 1 Normal"):
+        elif self.get_sampler_with_alias("DSB 1 Normal"):
             # Still uses one tangent field. NOTE: I highly doubt any game shaders do this.
             data_types.insert(2, VertexTangent(VertexDataFormatEnum.FourBytesB, 0))
 
@@ -160,7 +155,7 @@ class MatDef(_BaseMatDef):
     def get_non_map_piece_layout(self, is_dynamic_mesh: bool = True) -> VertexArrayLayout:
         """Get a standard vertex array layout for character (and probably object) materials in BB."""
 
-        if len(self.samplers) == 1 and self.samplers[0].alias == "Main 0 Albedo":
+        if len(self.samplers) == 1 and self.samplers[0].alias == "DSB 0 Diffuse":
             # Diffuse-only, with no normals (e.g. 'C_1040_Phantom', 'C[A]_NoLight').
             layout = VertexArrayLayout([
                 VertexPosition(VertexDataFormatEnum.Float3, 0),

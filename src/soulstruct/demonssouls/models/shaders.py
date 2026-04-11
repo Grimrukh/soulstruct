@@ -31,12 +31,12 @@ class MatDef(_BaseMatDef):
         UVData_WindB = 4  # used mostly by Ivy and always zero for Foliage
 
     SAMPLER_ALIASES: tp.ClassVar[dict[str, str]] = {
-        "g_Diffuse": "Main 0 Albedo",
-        "g_Specular": "Main 0 Specular",
-        "g_Bumpmap": "Main 0 Normal",
-        "g_Diffuse_2": "Main 1 Albedo",
-        "g_Specular_2": "Main 1 Specular",
-        "g_Bumpmap_2": "Main 1 Normal",
+        "g_Diffuse": "DSB 0 Diffuse",
+        "g_Specular": "DSB 0 Specular",
+        "g_Bumpmap": "DSB 0 Normal",
+        "g_Diffuse_2": "DSB 1 Diffuse",
+        "g_Specular_2": "DSB 1 Specular",
+        "g_Bumpmap_2": "DSB 1 Normal",
         "g_Height": "Displacement",
         "g_Lightmap": "Lightmap",
         "g_DetailBumpmap": "Detail 0 Normal",
@@ -46,7 +46,7 @@ class MatDef(_BaseMatDef):
 
     # Class regex patterns for MTD name parsing.
     NAME_TAG_RE: tp.ClassVar[dict[str, re.Pattern]] = {
-        "Albedo": re.compile(r".*\[.*D.*\].*"),
+        "Diffuse": re.compile(r".*\[.*D.*\].*"),
         "Specular": re.compile(r".*\[.*S.*\].*"),
         # No "Shininess" samplers in DeS.
         "Normal": re.compile(r".*\[.*B.*\].*"),
@@ -54,13 +54,14 @@ class MatDef(_BaseMatDef):
         "Multi": re.compile(r".*\[.*M.*\].*"),  # two blended texture slots (ALBEDO, SPECULAR, and/or NORMAL)
         "Displacement": re.compile(r".*\[.*H.*\].*"),
         "Lightmap": re.compile(r".*\[.*L.*\].*"),
-        "NormalToAlpha": re.compile(r".*\[(Dn|.*N.*)\].*"),  # Main 0 Albedo only
-        "Water": re.compile(r".*\[We\].*"),  # Main 0 Normal only
+        "NormalToAlpha": re.compile(r".*\[(Dn|.*N.*)\].*"),  # DSB 0 Diffuse only
+        "Water": re.compile(r".*\[We\].*"),  # DSB 0 Normal only
 
         "Alpha": re.compile(r".*_Alp.*"),
         "Edge": re.compile(r".*_Edge.*"),
     }
 
+    # TODO: DeS has its own wind shaders...
     EXTRA_SHADER_UV_LAYERS: tp.ClassVar[dict[str, list[UVLayer]]] = {
         # NOTE: These are used differently by Foliage and Ivy. Foliage uses mostly A, and Ivy mostly B (both of which
         # will appear to stretch the texture from one edge to the opposite).
@@ -68,6 +69,7 @@ class MatDef(_BaseMatDef):
         "Ivy": [UVLayer.UVData_WindA, UVLayer.UVData_WindB],
     }
 
+    # TODO: These are all PTDE stems.
     KNOWN_SHADER_MTD_STEMS: tp.ClassVar[dict[str, list[str | re.Pattern]]] = {
         "Water": [
             "M_5Water[B]",  # FRPG_Water_Reflect
@@ -118,28 +120,20 @@ class MatDef(_BaseMatDef):
         "Ps_Wander_Ghost",
     }
 
-    # TODO: Some shaders simply don't use the always-empty 'g_DetailBumpmap', but I can find no reliable way to detect
-    #  this from their MTD names alone. I may have to guess that they do unless the MTD file is provided.
-
-    @classmethod
-    def _get_shader_category(cls, shader_stem: str) -> str:
-        """Parse stem as 'FRPG_{category}_*' and return the category."""
-        return shader_stem.removeprefix("FRPG_").split("_")[0]
-
     @classmethod
     def from_mtd(cls, mtd: MTD):
         matdef = super(MatDef, cls).from_mtd(mtd)
 
-        # Special known cases of a reused albedo UV layer, which we redirect to the first albedo UV.
+        # Special known cases of a reused diffuse UV layer, which we redirect to the first diffuse UV.
         if matdef.stem in cls.HAS_DUPLICATE_ALBEDO_STEMS:
-            main_0_sampler = matdef.get_sampler_with_alias("Main 0 Albedo")
-            main_1_sampler = matdef.get_sampler_with_alias("Main 1 Albedo")
-            if main_1_sampler is None:
+            dsb_0_sampler = matdef.get_sampler_with_alias("DSB 0 Diffuse")
+            dsb_1_sampler = matdef.get_sampler_with_alias("DSB 1 Diffuse")
+            if dsb_1_sampler is None:
                 _LOGGER.warning(
-                    f"MatDef '{matdef.name}' does not have expected 'Main 1 Albedo' sampler."
+                    f"MatDef '{matdef.name}' does not have expected 'DSB 1 Diffuse' sampler."
                 )
             else:
-                main_1_sampler.uv_layer = main_0_sampler.uv_layer
+                dsb_1_sampler.uv_layer = dsb_0_sampler.uv_layer
 
         return matdef
 
@@ -147,7 +141,7 @@ class MatDef(_BaseMatDef):
     def from_mtd_name(cls, mtd_name: str):
         matdef = super(MatDef, cls).from_mtd_name(mtd_name)
 
-        if matdef.get_sampler_with_alias("Main 0 Normal"):
+        if matdef.get_sampler_with_alias("DSB 0 Normal"):
             # Add useless "Detail 0 Normal" sampler for completion.
             # TODO: Some DeS shaders, even with 'g_Bumpmap', do not have this. I have no way to detect from the name.
             #  Currently assuming that it doesn't matter at all if FLVERs have an (empty) texture definition for it.
@@ -167,13 +161,13 @@ class MatDef(_BaseMatDef):
             # UV/UVPair will be inserted here if needed.
         ]  # type: list[VertexDataType]
 
-        if self.get_sampler_with_alias("Main 0 Normal"):
+        if self.get_sampler_with_alias("DSB 0 Normal"):
             # Uses tangent vertex data.
             data_types.insert(3, VertexTangent(VertexDataFormatEnum.FourBytesA, 0))
-            if self.get_sampler_with_alias("Main 1 Normal"):
+            if self.get_sampler_with_alias("DSB 1 Normal"):
                 # Uses bitangent vertex data for second texture group normal.
                 data_types.insert(4, VertexBitangent(VertexDataFormatEnum.FourBytesA, 0))
-        elif self.get_sampler_with_alias("Main 1 Normal"):
+        elif self.get_sampler_with_alias("DSB 1 Normal"):
             # Uses bitangent only. NOTE: I highly doubt any game shaders do this.
             data_types.insert(3, VertexBitangent(VertexDataFormatEnum.FourBytesA, 0))
 
