@@ -12,14 +12,15 @@ __all__ = [
 import abc
 import logging
 import math
-import multiprocessing
 import re
 import shutil
 import tempfile
 import typing as tp
 import zlib
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from enum import IntEnum
+from itertools import repeat
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
@@ -855,15 +856,16 @@ def _get_png_data(tex: TPFTexture, deswizzle_platform: TPFPlatform, fmt: str):
 def batch_get_tpf_texture_png_data(
     tpf_textures: list[TPFTexture], deswizzle_platform: TPFPlatform = None, fmt="rgba", processes: int = None
 ) -> list[bytes | None]:
-    """Use multiprocessing to retrieve PNG data (converted from DDS) for a collection of `TPFTexture`s.
+    """Use threading to retrieve PNG data (converted from DDS) for a collection of `TPFTexture`s.
+
+    Uses `ThreadPoolExecutor` because the heavy lifting is done by the `texconv` subprocess, which fully
+    releases the GIL. Threads avoid all IPC serialization overhead compared to multiprocessing.
 
     Failed conversions will put `None` into list rather than PNG bytes.
     """
 
-    mp_args = [(tpf_texture, deswizzle_platform, fmt) for tpf_texture in tpf_textures]
-
-    with multiprocessing.Pool(processes=processes) as pool:
-        png_data = pool.starmap(_get_png_data, mp_args)  # blocks here until all done
+    with ThreadPoolExecutor(max_workers=processes) as executor:
+        png_data = list(executor.map(_get_png_data, tpf_textures, repeat(deswizzle_platform), repeat(fmt)))
 
     return png_data
 
@@ -880,14 +882,15 @@ def _get_tga_data(tex: TPFTexture, deswizzle_platform: TPFPlatform):
 def batch_get_tpf_texture_tga_data(
     tpf_textures: list[TPFTexture], deswizzle_platform: TPFPlatform = None, processes: int = None
 ) -> list[bytes | None]:
-    """Use multiprocessing to retrieve TGA data (converted from DDS) for a collection of `TPFTexture`s.
+    """Use threading to retrieve TGA data (converted from DDS) for a collection of `TPFTexture`s.
+
+    Uses `ThreadPoolExecutor` because the heavy lifting is done by the `texconv` subprocess, which fully
+    releases the GIL. Threads avoid all IPC serialization overhead compared to multiprocessing.
 
     Failed conversions will put `None` into list rather than TGA bytes.
     """
 
-    mp_args = [(tpf_texture, deswizzle_platform) for tpf_texture in tpf_textures]
-
-    with multiprocessing.Pool(processes=processes) as pool:
-        tga_data = pool.starmap(_get_tga_data, mp_args)  # blocks here until all done
+    with ThreadPoolExecutor(max_workers=processes) as executor:
+        tga_data = list(executor.map(_get_tga_data, tpf_textures, repeat(deswizzle_platform)))
 
     return tga_data

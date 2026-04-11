@@ -278,7 +278,7 @@ def _decompress_dcx_edge(reader: BinaryReader, header: DCXHeaderStruct) -> tuple
     return decompressed, DCXType.DCX_EDGE
 
 
-def decompress(dcx_source: bytes | BinaryReader | tp.BinaryIO | Path | str) -> tuple[bytes, DCXType]:
+def decompress(dcx_source: bytes | bytearray | BinaryReader | io.BufferedIOBase | Path | str) -> tuple[bytes, DCXType]:
     """Decompress the given file path, raw bytes, or buffer/reader.
 
     Returns a tuple containing the decompressed `bytes` and a `DCXInfo` instance that can be used to compress later
@@ -293,9 +293,8 @@ def decompress(dcx_source: bytes | BinaryReader | tp.BinaryIO | Path | str) -> t
         header = DCPHeaderStruct.from_bytes(reader, byte_order=ByteOrder.BigEndian)
     else:
         header = DCXHeaderStruct.from_bytes(reader, byte_order=ByteOrder.BigEndian)
-
-    if dcx_type == DCXType.DCX_EDGE:
-        return _decompress_dcx_edge(reader, header)
+        if dcx_type == DCXType.DCX_EDGE:
+            return _decompress_dcx_edge(reader, header)
 
     reader.unpack_bytes(length=4, asserted=b"DCA")
     reader.unpack_value("i", asserted=8)  # compressed header size

@@ -15,6 +15,7 @@ __all__ = [
     "VertexBitangent",
     "VertexColor",
     "VertexIgnore",
+    "VERTEX_DATA_TYPING",
     "VertexArrayLayout",
 ]
 
@@ -462,6 +463,19 @@ VERTEX_DATA_TYPES = {
     VertexBitangent.type_int: VertexBitangent,
     VertexColor.type_int: VertexColor,
 }  # type: dict[int, type[VertexDataType]]
+
+
+VERTEX_DATA_TYPING = tp.Union[
+    VertexPosition,
+    VertexBoneWeights,
+    VertexBoneIndices,
+    VertexNormal,
+    VertexUV,
+    VertexTangent,
+    VertexBitangent,
+    VertexColor,
+    VertexIgnore,
+]
 
 
 class VertexArrayLayout:

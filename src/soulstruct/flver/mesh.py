@@ -299,6 +299,8 @@ class FLVERMesh:
         if face_set.unk_x06 != 0:
             _LOGGER.warning(f"FaceSet `unk_x06` not used in FLVER0. Non-zero value {face_set.unk_x06} ignored.")
 
+        if len(self.vertex_arrays) != 1:
+            raise ValueError("`FLVER0` mesh must have exactly one VertexArray.")
         vertex_array = self.vertex_arrays[0]
         vertex_count = len(vertex_array.array)
         vertex_index_count = face_set.vertex_indices.size  # NOT `len()`
@@ -391,17 +393,38 @@ class FLVERMesh:
     # region FLVERMesh Methods
 
     @property
+    def vertex_count(self) -> int:
+        """All vertex arrays have the same length; they just define different vertex data."""
+        return self.vertex_arrays[0].array.shape[0]
+
+    @property
+    def unique_field_names(self) -> set[str]:
+        field_names = set()
+        for vertex_array in self.vertex_arrays:
+            field_names.update(vertex_array.field_names)
+        return field_names
+
+    @property
     def vertices(self) -> np.ndarray:
-        """Shortcut for accessing the data of the first vertex array (generally the only array)."""
+        """Shortcut for accessing the data of the first vertex array (generally the only array).
+
+        Not valid for multi-array meshes (rare, e.g. Elden Ring cloth meshes).
+        """
+        if len(self.vertex_arrays) != 1:
+            raise ValueError("FLVER mesh must have exactly one VertexArray to use the `vertices` shortcut.")
         return self.vertex_arrays[0].array
 
     @property
     def vertices_dtype(self) -> np.dtype:
-        return self.vertices.dtype
+        if len(self.vertex_arrays) != 1:
+            raise ValueError("FLVER mesh must have exactly one VertexArray to use the `vertices_dtype` shortcut.")
+        return self.vertex_arrays[0].array.dtype
 
     @property
     def layout(self) -> VertexArrayLayout:
-        """Shortcut for accessing the layout of the first vertex array (always the only array)."""
+        """Shortcut for accessing the layout of the first vertex array."""
+        if len(self.vertex_arrays) != 1:
+            raise ValueError("FLVER mesh must have exactly one VertexArray to use the `layout` shortcut.")
         return self.vertex_arrays[0].layout
 
     @property
@@ -438,19 +461,22 @@ class FLVERMesh:
     def first_face_set(self) -> FaceSet:
         return self.face_sets[0]
 
+    @property
+    def can_use_0xffff_separators(self) -> bool:
+        """FLVER mesh can use 0xFFFF as a separator in face sets if it has sufficiently few vertices."""
+        return len(self.vertex_arrays[0]) < 0xFFFF
+
     def triangulate_flver0(self, include_degenerate_faces=False) -> np.ndarray:
         """Shortcut for triangulating first face set. Passes in vertices for a manual normal check set up by TK."""
-        uses_0xffff_separators = len(self.vertices) < 0xFFFF  # should always be true for `FLVER0`
         return self.face_sets[0].triangulate(
-            uses_0xffff_separators,
+            self.can_use_0xffff_separators,
             include_degenerate_faces,
-            flver0_vertices=self.vertices,
+            flver0_vertices=self.vertex_arrays[0].array,
         )
 
     def triangulate_flver2(self, include_degenerate_faces=False) -> np.ndarray:
         """Shortcut for triangulating first face set."""
-        uses_0xffff_separators = len(self.vertices) < 0xFFFF
-        return self.face_sets[0].triangulate(uses_0xffff_separators, include_degenerate_faces)
+        return self.face_sets[0].triangulate(self.can_use_0xffff_separators, include_degenerate_faces)
 
     def refresh_bounding_boxes(self):
         if not self.uses_bounding_boxes:
@@ -461,8 +487,10 @@ class FLVERMesh:
         self.bounding_box_min = Vector3.single_max()
         self.bounding_box_max = Vector3.single_min()
         for vertex_array in self.vertex_arrays:
-            self.bounding_box_min = np.minimum(self.bounding_box_min, vertex_array.array["position"].min(axis=0))
-            self.bounding_box_max = np.maximum(self.bounding_box_max, vertex_array.array["position"].max(axis=0))
+            if not vertex_array.has_field("position"):
+                continue
+            self.bounding_box_min = Vector3(np.minimum(self.bounding_box_min.data, vertex_array.array["position"].min(axis=0)))
+            self.bounding_box_max = Vector3(np.maximum(self.bounding_box_max.data, vertex_array.array["position"].max(axis=0)))
         if self.bounding_box_unknown is not None:
             _LOGGER.warning("Cannot refresh `bounding_box_unknown` for Mesh (unknown values).")
 
@@ -472,34 +500,35 @@ class FLVERMesh:
         Use `vertex_offset` to offset all vertex indices in face definitions (e.g. if other meshes' vertices have
         been defined in the same file).
         """
+        if len(self.vertex_arrays) > 1:
+            raise NotImplementedError("Cannot convert mesh to OBJ with more than one vertex array.")
+        # Check if vertex data has multiple UVs (unsupported in OBJ):
+        if self.vertex_arrays[0].has_field("uv_1"):
+            raise NotImplementedError("Cannot convert mesh to OBJ because one or more vertices has multiple UVs.")
+
         if name is None:
             name = f"{name}{self.index}"
-
         lines = [f"o {name}"]
+        vertex_array = self.vertex_arrays[0]
 
-        # Check if vertex data has multiple UVs (unsupported in OBJ):
-        if "uv_1" in self.vertices.dtype.names:
-            raise NotImplementedError("Cannot convert mesh to OBJ because one or more vertices has multiple UVs.")
-        array = self.vertex_arrays[0]
-
-        for position in array["position"]:
+        for position in vertex_array["position"]:
             pos_str = " ".join(str(x) for x in position)
             lines.append(f"v {pos_str}")
-        if "normal" in array.dtype.names:
-            for normal in array["normal"]:
+        if vertex_array.has_field("normal"):
+            for normal in vertex_array["normal"]:
                 normal_str = " ".join(str(x) for x in normal)
                 lines.append(f"vn {normal_str}")
         else:
             _LOGGER.warning("Mesh has no normals. Normals will not be included in OBJ export.")
-        if "uv_0" in self.vertices.dtype.names:
-            for uv in array["uv_0"]:
+        if vertex_array.has_field("uv_0"):
+            for uv in vertex_array["uv_0"]:
                 uv_str = " ".join(str(x) for x in uv)
                 lines.append(f"vt {uv_str}")
         else:
             _LOGGER.warning("Mesh has no UVs. UVs will not be included in OBJ export.")
         for i, face_set in enumerate(self.face_sets):
             lines.append(f"# Face Set {i}")
-            triangles = face_set.triangulate(uses_0xffff_separators=len(self.vertex_arrays[vertex_array]) <= 0xFFFF)
+            triangles = face_set.triangulate(self.can_use_0xffff_separators)
             for j in range(0, len(triangles), 3):
                 # TODO: Are these UV/normal assignments correct, given that each vertex has one?
                 face = " ".join("/".join([str(v + vertex_offset + 1)] * 3) for v in triangles[j:j + 3])
@@ -568,9 +597,9 @@ class FLVERMesh:
     ):
         def triangulate(face_set: FaceSet):
             return face_set.triangulate(
-                uses_0xffff_separators=len(self.vertices) <= 0xFFFF,
+                uses_0xffff_separators=self.can_use_0xffff_separators,
                 include_degenerate_faces=False,
-                flver0_vertices=self.vertices,
+                flver0_vertices=self.vertex_arrays[0].array,
             )
 
         self._draw(
@@ -591,7 +620,9 @@ class FLVERMesh:
         **kwargs,
     ):
         def triangulate(face_set: FaceSet):
-            return face_set.triangulate(uses_0xffff_separators=len(self.vertices) <= 0xFFFF)
+            return face_set.triangulate(
+                uses_0xffff_separators=self.can_use_0xffff_separators
+            )
 
         self._draw(
             triangulate,
@@ -619,7 +650,7 @@ class FLVERMesh:
             )
         if axes is None:
             axes = plt.figure().add_subplot(111, projection="3d")
-        array = self.vertex_arrays[0]
+        array = self.vertex_arrays[0].array
         positions = array["position"]
         axes.scatter(*zip(*positions), c=vertex_color, s=1, alpha=0.1)  # note y/z swapped
         if show_normals:
@@ -664,7 +695,7 @@ class FLVERMesh:
             f"  material = {material}",
             f"  default_bone_index = {self.default_bone_index}",
             f"  bone_indices = {self.bone_indices}",
-            f"  vertices = <{len(self.vertices)} vertices>",
+            f"  vertices = <{len(self.vertex_arrays[0])} vertices>",
         ]
         if not self.is_dynamic:
             lines.append("  is_dynamic = False")

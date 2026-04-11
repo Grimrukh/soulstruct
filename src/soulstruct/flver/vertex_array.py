@@ -172,8 +172,14 @@ class VertexArray:
 
     # region Vertex Array Methods
 
+    @property
+    def field_names(self) -> tuple[str, ...]:
+        if self.array.dtype.names is not None:
+            return self.array.dtype.names
+        raise ValueError("FLVER array has no array dtype names.")
+
     def has_field(self, name: str) -> bool:
-        return name in self.array.dtype.names
+        return name in self.field_names
 
     @property
     def dtype(self) -> np.dtype:
@@ -183,9 +189,9 @@ class VertexArray:
     @property
     def guess_has_normal_w_bone_indices(self):
         """Just checks if ANY `normal_w` values are not 127 and not 0."""
-        if "bone_indices" in self.array.dtype.names:
+        if "bone_indices" in self.field_names:
             return False  # has REAL bone indices
-        if "normal_w" not in self.array.dtype.names:
+        if "normal_w" not in self.field_names:
             return False
         # Check if any normal_w values are not 127 and not 0.
         return np.any((self.array["normal_w"] != 127) & (self.array["normal_w"] != 0))

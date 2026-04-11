@@ -9,11 +9,12 @@ __all__ = [
 
 import logging
 import multiprocessing
+import pickle
+import tempfile
 import typing as tp
 from collections import defaultdict
 from dataclasses import dataclass, field
-
-from soulstruct.utilities.misc import setdefault_lambda
+from pathlib import Path
 
 import numpy as np
 
@@ -80,12 +81,100 @@ class SplitMeshDef(tp.NamedTuple):
 
 
 @dataclass(slots=True)
+class MergedMeshLoops:
+    """Container for loop (per-face vertex arrays) for a `MergedMesh`."""
+
+    normals: np.ndarray | None         # XYZ (float32)
+    normals_w: np.ndarray | None       # W (uint8)
+    tangents: list[np.ndarray]         # XYZW (float32)
+    bitangents: np.ndarray | None      # XYZW (float32)
+    vertex_colors: list[np.ndarray]    # RGBA (float32)
+
+    # Maps UV layer names (which default to just 'UVMap{i}') to UV data arrays. UV layer names per merged mesh material
+    # need to be passed in. Column count may vary from 2D (almost always the case) to 4D.
+    uvs: dict[str, np.ndarray]         # 2-4 columns per array for 'u', 'v', etc. (float32) (depending on max dim)
+
+    # For Elden Ring cloth meshes, which use 3 vertex arrays containing a special tangent/bitangent:
+    cloth_tangents: np.ndarray | None      # XYZW (float32)
+    cloth_bitangents: np.ndarray | None    # XYZW (float32)
+
+    DEFAULTS: tp.ClassVar[dict[str, tp.Any]] = {
+        "position": 0.0,
+        "bone_weights": 0.0,
+        "bone_indices": 0,
+        "normal": (0.0, 1.0, 0.0),
+        "normal_w": 127,
+        "tangent": (1.0, 0.0, 0.0, 1.0),
+        "bitangent": (0.0, 0.0, 1.0, 1.0),
+        "color": (0.0, 0.0, 0.0, 1.0),
+        "cloth_tangent": (1.0, 0.0, 0.0, 1.0),
+        "cloth_bitangent": (-1.0, -1.0, -1.0, -1.0),
+    }
+
+    @classmethod
+    def get_empty(
+        cls,
+        field_names: set[str],
+        size: int,
+    ):
+        """Create empty (uninitialized) arrays for all present field names.
+
+        Non-loop field names (position, bone_weights, bone_indices) should not be passed in.
+        """
+
+        loop_normals = None
+        loop_normals_w = None
+        loop_tangents_dict = {}  # squashed to list below
+        loop_bitangents = None
+        loop_vertex_colors_dict = {}  # squashed to list below
+        loop_cloth_tangents = None
+        loop_cloth_bitangents = None
+
+        for name in field_names:
+
+            if name == "normal":
+                loop_normals = np.empty((size, 3), dtype=np.float32)
+            elif name == "normal_w":
+                loop_normals_w = np.empty((size, 1), dtype=np.uint8)  # still 2D!
+            elif name.startswith("tangent_"):
+                tangent_index = int(name.removeprefix("tangent_"))
+                loop_tangents_dict[tangent_index] = np.empty((size, 4), dtype=np.float32)
+            elif name == "bitangent":
+                # No game has multiple bitangent fields.
+                loop_bitangents = np.empty((size, 4), dtype=np.float32)
+            elif name.startswith("color_"):
+                color_index = int(name.removeprefix("color_"))
+                loop_vertex_colors_dict[color_index] = np.empty((size, 4), dtype=np.float32)
+            elif name.startswith("uv_"):
+                # UV arrays must be constructed as they are encountered to get the correct global `UVLayer` name.
+                continue
+            elif name == "cloth_tangent":
+                loop_cloth_tangents = np.empty((size, 4), dtype=np.float32)
+            elif name == "cloth_bitangent":
+                loop_cloth_bitangents = np.empty((size, 4), dtype=np.float32)
+            else:
+                raise ValueError(f"Unknown field for MergedMesh loops: {name}")
+
+        return cls(
+            normals=loop_normals,
+            normals_w=loop_normals_w,
+            tangents=[loop_tangents_dict[i] for i in sorted(loop_tangents_dict)],
+            bitangents=loop_bitangents,
+            vertex_colors=[loop_vertex_colors_dict[i] for i in sorted(loop_vertex_colors_dict)],
+            uvs={},  # must be constructed by caller
+            cloth_tangents=loop_cloth_tangents,
+            cloth_bitangents=loop_cloth_bitangents,
+        )
+
+@dataclass(slots=True)
 class MergedMesh:
     """Holds data for a single merged FLVER mesh created from all its meshes. Optimized for Blender meshes.
 
     The merging operation identifes all unique vertices across all meshes - as defined by their position, bone
     weights, and bone indices - and creates reduced 'vertex arrays' of these data for the entire mesh. Other data
-    defined by FLVER vertices are moved to 'loop arrays', as well as the indices of the new reduced vertices they use.
+    defined by FLVER vertices are moved to 'loop arrays' (per-face vertex arrays), as well as the indices of the
+    new reduced vertices they use.
+
     Each face indexes the loops it uses, as well as the material and vertex buffer layout it uses from the FLVER
     (unchanged indices from the mesh).
 
@@ -103,18 +192,9 @@ class MergedMesh:
     """
 
     vertex_data: np.ndarray  # holds `position`, `bone_weights`, and `bone_indices` fields
-
+    loop_data: MergedMeshLoops  # holds all other FLVER mesh fields
     loop_vertex_indices: np.ndarray  # 1D array indexing into `vertex_data` (uint32)
     vertices_merged: bool  # enabled to mark when vertices are merged (making `loop_vertex_indices` trivial)
-
-    loop_normals: np.ndarray | None  # three columns for 'x', 'y', and 'z' (float32)
-    loop_normals_w: np.ndarray | None  # one column for 'w' (uint8)
-    loop_tangents: list[np.ndarray]  # four columns per array for 'x', 'y', 'z', and `w` (float32)
-    loop_bitangents: np.ndarray | None  # four columns for 'x', 'y', and 'z' (float32)
-    loop_vertex_colors: list[np.ndarray]  # four columns per array for 'r', 'g', 'b', and 'a' (float32)
-    # Maps UV layer names (which default to just 'UVMap{i}') to UV data arrays. UV layer names per merged mesh material
-    # need to be passed in. Column count may vary from 2D (almost always the case) to 4D.
-    loop_uvs: dict[str, np.ndarray]  # 2-4 columns per array for 'u', 'v', etc. (float32) (depending on max UV dim)
 
     faces: np.ndarray  # integer array of `[loop0, loop1, loop2, material_index]` rows (uint32)
 
@@ -131,7 +211,7 @@ class MergedMesh:
         mesh_material_indices: tp.Sequence[int] = None,
         material_uv_layer_names: tp.Sequence[tp.Sequence[str]] = None,
         merge_vertices=True,
-    ):
+    ) -> tp.Self:
         """Construct merged mesh data from all `flver` meshes.
 
         The merged `faces` array contains a fourth column (`faces[:, 3]`) that records the 'material index' of each
@@ -141,7 +221,7 @@ class MergedMesh:
         mesh AND face set properties (e.g. `is_dynamic` or `use_backface_culling`) that may be different for
         meshes that share the same FLVER material index.
 
-        If `material_uv_layer_names` is given, it should be a list of list of UV layer names that correspond to the UV
+        If `material_uv_layer_names` is given, it should be a list of lists of UV layer names that correspond to the UV
         subarrays in the mesh's vertex buffer. This ensures that the UV maps across the entire merged FLVER are as
         compatible as possible, e.g. second texture UVs go into one map, lightmap UVs go into one map, etc. If not
         given, UV data will be assigned to default 'UVMap{i}' names created directly from the vertex array indices,
@@ -164,7 +244,7 @@ class MergedMesh:
         valid_mesh_material_indices = []
         for i, mesh in enumerate(flver.meshes):
             if any(
-                "position" in vertex_array.array.dtype.names
+                "position" in vertex_array.field_names
                 and np.isnan(vertex_array.array["position"]).any()
                 for vertex_array in mesh.vertex_arrays
             ):
@@ -177,8 +257,8 @@ class MergedMesh:
             valid_meshes.append(mesh)
             valid_mesh_material_indices.append(mesh_material_indices[i])
 
-        all_vertices, loop_data_dict = cls.build_stacked_loops(
-            valid_meshes, valid_mesh_material_indices, material_uv_layer_names, flver_name=flver.path_name
+        all_vertices, loop_data = cls.build_stacked_loops(
+            valid_meshes, valid_mesh_material_indices, material_uv_layer_names, flver_name=flver.path_name or "<UNK>"
         )
 
         if merge_vertices:
@@ -186,7 +266,7 @@ class MergedMesh:
                 meshes=valid_meshes,
                 all_vertices=all_vertices,
                 mesh_material_indices=valid_mesh_material_indices,
-                loop_normals=loop_data_dict["loop_normals"],
+                loop_normals=loop_data.normals,
                 is_flver0=flver.version.is_flver0(),
             )
         else:
@@ -202,9 +282,9 @@ class MergedMesh:
 
         return cls(
             vertex_data=vertex_data,
+            loop_data=loop_data,
             loop_vertex_indices=loop_vertex_indices,
             vertices_merged=merge_vertices,
-            **loop_data_dict,
             faces=faces,
             flver=flver,
         )
@@ -218,25 +298,46 @@ class MergedMesh:
     ) -> list[tp.Self | None]:
         """Use multiprocessing to create `MergedMesh` instances from given `FLVER` instances and args in parallel.
 
+        Uses temp files to transfer large objects between processes, avoiding IPC pipe size limits.
+        Only small booleans are returned through the pipe; all large data is read/written via disk.
+
         Failed conversions will put `None` into list rather than `MergedMesh`.
         """
-        mp_args = [
-            (flver, *args) for flver, args in zip(flvers, merged_mesh_args, strict=True)
-        ]
+        with tempfile.TemporaryDirectory(prefix="soulstruct_mesh_") as tmp_dir:
+            # Write inputs (FLVER + args) to temp files to avoid large pipe transfers.
+            mp_args = []
+            for i, (flver, args) in enumerate(zip(flvers, merged_mesh_args, strict=True)):
+                input_path = str(Path(tmp_dir) / f"input_{i}.pkl")
+                output_path = str(Path(tmp_dir) / f"output_{i}.pkl")
+                with open(input_path, "wb") as f:
+                    pickle.dump((flver, args), f, protocol=pickle.HIGHEST_PROTOCOL)
+                mp_args.append((input_path, output_path))
 
-        with multiprocessing.Pool(processes=processes) as pool:
-            merged_meshes = pool.starmap(_from_flver_mp, mp_args)  # blocks here until all done
+            with multiprocessing.Pool(processes=processes) as pool:
+                successes = pool.starmap(_from_flver_mp, mp_args)
 
-        return merged_meshes
+            # Read outputs from temp files.
+            results = []
+            for i, success in enumerate(successes):
+                if success:
+                    output_path = str(Path(tmp_dir) / f"output_{i}.pkl")
+                    with open(output_path, "rb") as f:
+                        merged_mesh = pickle.load(f)
+                    merged_mesh.flver = flvers[i]  # restore FLVER reference (not pickled in output)
+                    results.append(merged_mesh)
+                else:
+                    results.append(None)
+
+        return results
 
     @classmethod
     def build_stacked_loops(
         cls,
         meshes: list[FLVERMesh],
-        material_indices: list[int],
-        material_uv_layer_names: list[list[str]] | None,
+        material_indices: tp.Sequence[int],
+        material_uv_layer_names: tp.Sequence[tp.Sequence[str]] | None,
         flver_name: str,
-    ) -> tuple[np.ndarray, dict[str, np.ndarray | list[np.ndarray] | None]]:
+    ) -> tuple[np.ndarray, MergedMeshLoops]:
         """Row-stack all mesh vertices' position and bone data in a single structured array for later reduction (true
         'vertex' information rather than loop information) and return it along with a dictionary of loop data arrays or
         lists of arrays.
@@ -251,150 +352,186 @@ class MergedMesh:
             ("bone_weights", "f", 4),
             ("bone_indices", "i", 4),
         ]
-        total_vertex_count = sum(len(mesh.vertices) for mesh in meshes)
+        total_vertex_count = sum(mesh.vertex_count for mesh in meshes)
 
-        all_field_names = set()
-        for mesh in meshes:
-            all_field_names.update(mesh.vertex_arrays[0].array.dtype.names)
+        # Map merged field names to the mesh-index dict of VA index (usually 0) and field name (usually identical).
+        merged_field_sources = {}  # type: dict[str, dict[int, tuple[int, str]]]
+
+        for i, mesh in enumerate(meshes):
+
+            for va_0_field_name in mesh.vertex_arrays[0].field_names:
+                # All fields in VA 0 are always used.
+                merged_field_sources.setdefault(va_0_field_name, {}).update({i: (0, va_0_field_name)})
+
+            if len(mesh.vertex_arrays) > 1:
+                # The only supported multi-array configuration is Elden Ring cloth meshes.
+                basic_merge = False
+                if not (array_count := len(mesh.vertex_arrays)) == 3:
+                    _LOGGER.warning(
+                        f"FLVER Mesh {i} in {flver_name} has {array_count} vertex arrays. "
+                        f"This is not a configuration with special handling in Soulstruct. Later values with the same "
+                        f"field name will simply overwrite earlier values."
+                    )
+                    basic_merge = True
+                elif not np.all(mesh.vertex_arrays[0].array == mesh.vertex_arrays[2].array):
+                    _LOGGER.warning(
+                        f"FLVER Mesh {i} in {flver_name} has 3 vertex arrays, but array[0] != array[2]. "
+                        f"This is not a configuration with special handling in Soulstruct. Later values with the same "
+                        f"field name will simply overwrite earlier values."
+                    )
+                    basic_merge = True
+                else:
+                    # Try to handle as Elden Ring cloth. Remap tangent/bitangent in array[1] and ignore array[2].
+                    for va_1_field_name in mesh.vertex_arrays[1].field_names:
+                        if va_1_field_name == "tangent_0":
+                            merged_field_name = "cloth_tangent"
+                        elif va_1_field_name == "bitangent":
+                            merged_field_name = "cloth_bitangent"
+                        else:
+                            # Direct copy.
+                            merged_field_name = va_1_field_name
+
+                        merged_field_sources.setdefault(merged_field_name, {}).update({i: (1, va_1_field_name)})
+
+                if basic_merge:
+                    # Fallback: iterate over fields and add them, using the last VA source found.
+                    for extra_vertex_array in mesh.vertex_arrays[1:]:
+                        for field_name in extra_vertex_array.field_names:
+                            merged_field_sources.setdefault(field_name, {}).update({i: (0, field_name)})
 
         # Structured array for mixed dtypes.
         all_vertices = np.empty(total_vertex_count, dtype=dtype)  # will be fully initialized
 
-        # These four arrays will be fully initialized.
-        if "normal" in all_field_names:
-            loop_normals = np.empty((total_vertex_count, 3), dtype=np.float32)
-        else:
-            loop_normals = None
-        if "normal_w" in all_field_names:
-            loop_normals_w = np.empty((total_vertex_count, 1), dtype=np.uint8)  # still 2D!
-        else:
-            loop_normals_w = None
-        if "bitangent" in all_field_names:
-            loop_bitangents = np.empty((total_vertex_count, 4), dtype=np.float32)
-        else:
-            loop_bitangents = None
-
-        loop_tangents_dict = {}  # new arrays added as new tangent indices are encountered
-        loop_vertex_colors_dict = {}  # new arrays added as new color indices are encountered
-        loop_uvs = {}  # type: dict[str, np.ndarray]  # new arrays added as new global UV layer names used
+        loop_field_names = {name for name in merged_field_sources if name not in all_vertices.dtype.names}
+        loops = MergedMeshLoops.get_empty(loop_field_names, size=total_vertex_count)
 
         offset = 0
-        for mesh, material_index in zip(meshes, material_indices):
-            vertices = mesh.vertex_arrays[0].array
-            field_names = vertices.dtype.names
+
+        for mesh_index, (mesh, material_index) in enumerate(zip(meshes, material_indices)):
+
             i = offset
-            offset += len(vertices)
+            offset += mesh.vertex_count
             j = offset
 
             mesh_vertices = all_vertices[i:j]
 
-            if "position" in field_names:
-                mesh_vertices["position"] = vertices["position"]
-            else:
-                _LOGGER.warning(
-                    f"Mesh vertices have no 'position' data. This is unusual. Using zeroes. (FLVER {flver_name})"
-                )
-                mesh_vertices["position"] = 0.0
+            def _mesh_source_or_default(_name: str, _default: tp.Any):
+                """Get mesh source array/field or return default (for uninitialized arrays)."""
+                try:
+                    _va_index, _va_field_name = merged_field_sources[name][mesh_index]
+                except KeyError:
+                    return _default
+                return mesh.vertex_arrays[_va_index][_va_field_name]
 
-            if "bone_weights" in field_names:
-                mesh_vertices["bone_weights"] = vertices["bone_weights"]
-            else:  # no bone weights (standard in map piece FLVERs)
-                mesh_vertices["bone_weights"] = 0.0
+            # We iterate over every merged field name, and insert default data for meshes that do not
+            # provide a source (array_index, field_name) for that field.
 
-            if "bone_indices" in field_names:
-                bone_indices = np.array(vertices["bone_indices"])  # copy to avoid modifying FLVER
-                # Some FLVER files may use 255 to mark unused bone indices, rather than the standard game value of 0
-                # (with zero bone weight indicating it is unused). For ease of remapping indices, we remap 255 to 0.
-                bone_indices[bone_indices == 255] = 0
-                if mesh.bone_indices is not None:
-                    # Remap local to global bone indices (without modifying FLVER).
-                    bone_indices = mesh.bone_indices[bone_indices]
-                mesh_vertices["bone_indices"] = bone_indices
-            else:
-                # This is unusual in DS1, but not beyond that.
-                mesh_vertices["bone_indices"] = 0
+            for name in merged_field_sources.keys():
 
-            if "normal" in field_names:
-                loop_normals[i:j] = vertices["normal"]
-            elif loop_normals is not None:
-                # Default to upward (Y) vector.
-                loop_normals[i:j] = [0.0, 1.0, 0.0]
+                if name == "position":
+                    mesh_vertices["position"] = _mesh_source_or_default(
+                        "position", MergedMeshLoops.DEFAULTS["position"]
+                    )
+                    continue
 
-            if "normal_w" in field_names:
-                loop_normals_w[i:j] = vertices["normal_w"]
-            elif loop_normals_w is not None:
-                # Default to 127.
-                loop_normals_w[i:j] = 127
+                if name == "bone_weights":
+                    mesh_vertices["bone_weights"] = _mesh_source_or_default(
+                        "bone_weights", MergedMeshLoops.DEFAULTS["bone_weights"]
+                    )
+                    continue
 
-            if "bitangent" in field_names:
-                loop_bitangents[i:j] = vertices["bitangent"]
-            elif loop_bitangents is not None:
-                # Default to forward (Z) vector.
-                loop_bitangents[i:j] = [0.0, 0.0, 1.0, 1.0]
+                if name == "bone_indices":
+                    bone_indices = _mesh_source_or_default("bone_indices", None)
+                    if bone_indices is None:
+                        # This is unusual in DS1, but not beyond that, when `normal_w` is used as a sole bone index.
+                        # We leave that behavior up to the user of the `MergedMesh`.
+                        mesh_vertices["bone_indices"] = MergedMeshLoops.DEFAULTS["bone_indices"]
+                    else:
+                        # Copy bone indices so we can remap local to global without modifying the FLVER.
+                        bone_indices = np.array(bone_indices)
+                        # Some FLVER files may use 255 to mark unused bone indices, rather than the standard game value
+                        # of 0 (with zero bone weight indicating it is unused). For ease of remapping indices, we remap
+                        # 255 to 0.
+                        bone_indices[bone_indices == 255] = 0
+                        if mesh.bone_indices is not None:
+                            # Remap local to global bone indices (without modifying FLVER).
+                            bone_indices = mesh.bone_indices[bone_indices]
+                        mesh_vertices["bone_indices"] = bone_indices
+                    continue
 
-            # Tangent, color, and UV arrays are only created as used. They are created with `np.zeros()` so any vertices
-            # that don't use a given tangent, color, or UV index will be zeroes.
-            for name in field_names:
+                for loop_array, name_option in (
+                    (loops.normals, "normal"),
+                    (loops.normals_w, "normal_w"),
+                    (loops.bitangents, "bitangent"),
+                    (loops.cloth_tangents, "cloth_tangent"),
+                    (loops.cloth_bitangents, "cloth_bitangent"),
+                ):
+                    if name == name_option:
+                        assert loop_array is not None
+                        loop_array[i:j] = _mesh_source_or_default(name_option, MergedMeshLoops.DEFAULTS[name_option])
+                        continue
+
                 if name.startswith("tangent_"):
-                    # TODO: Might want to default to, say, a rightward unit vector rather than zeroes.
-                    t_i = int(name[-1])
-                    tangent_array = setdefault_lambda(
-                        loop_tangents_dict, t_i, lambda: np.zeros((total_vertex_count, 4), dtype=np.float32)
-                    )
-                    tangent_array[i:j] = vertices[f"tangent_{t_i}"]
-                elif name.startswith("color_"):
-                    c_i = int(name[-1])
-                    color_array = setdefault_lambda(
-                        loop_vertex_colors_dict, c_i, lambda: np.zeros((total_vertex_count, 4), dtype=np.float32)
-                    )
-                    color_array[i:j] = vertices[f"color_{c_i}"]
-                elif name.startswith("uv_"):
+                    t_i = int(name.removeprefix("tangent_"))
+                    tangent_array = loops.tangents[t_i]
+                    tangent_array[i:j] = _mesh_source_or_default(name, MergedMeshLoops.DEFAULTS["tangent"])
+                    continue
+
+                if name.startswith("color_"):
+                    c_i = int(name.removeprefix("color_"))
+                    color_array = loops.vertex_colors[c_i]
+                    color_array[i:j] = _mesh_source_or_default(name, MergedMeshLoops.DEFAULTS["color"])
+                    continue
+
+                # UV arrays are only created as used and are mapped to global UV layer names if available.
+                # New UV arrays are initialized with zeroes, so we can ignore meshes that don't use them.
+                if name.startswith("uv_"):
+
+                    try:
+                        va_index, va_field_name = merged_field_sources[name][mesh_index]
+                    except KeyError:
+                        # This mesh does not use this UV index.
+                        continue
+                    else:
+                        mesh_uv_array = mesh.vertex_arrays[va_index][va_field_name]
+                        mesh_uv_dim = mesh_uv_array.shape[1]
+
                     uv_i = int(name.removeprefix("uv_"))
                     uv_layer_name = f"UVMap{uv_i}"  # default
                     if material_uv_layer_names:
                         try:
-                            # Real UV names are generally 'UVTexture{i}', 'UVFur', 'UVData_WindA', etc.
+                            # Real UV names are generally 'UVTexture{i}', 'UVFurCloth', 'UVData_WindA', etc.
                             uv_layer_name = material_uv_layer_names[material_index][uv_i]
                         except IndexError:
                             _LOGGER.warning(
                                 f"No UV layer name for material index {material_index} (UV {uv_i}, FLVER {flver_name})."
                             )
-                    uv_dim = vertices[name].shape[1]
-                    if uv_layer_name in loop_uvs:
+
+                    if uv_layer_name in loops.uvs:
                         # UV layer array already created. However, we need to check its size.
-                        uv_array = loop_uvs[uv_layer_name]
-                        if uv_array.shape[1] < uv_dim:
+                        uv_array = loops.uvs[uv_layer_name]
+                        if uv_array.shape[1] < mesh_uv_dim:
                             old_uv_dim = uv_array.shape[1]
                             _LOGGER.warning(
                                 f"UV array for layer '{uv_layer_name}' in MergedMesh required a dimension upgrade from "
-                                f"{old_uv_dim} to {uv_dim}. This is unusual, as named layer dimensions should be "
+                                f"{old_uv_dim} to {mesh_uv_dim}. This is unusual, as named layer dimensions should be "
                                 f"consistent across their usage in FLVER meshes. (FLVER {flver_name})"
                             )
-                            new_uv_array = np.zeros((total_vertex_count, uv_dim), dtype=np.float32)
+                            new_uv_array = np.zeros((total_vertex_count, mesh_uv_dim), dtype=np.float32)
                             # Copy old array into new array. No need to copy past row `i`.
                             new_uv_array[:i, :old_uv_dim] = uv_array
-                            uv_array = loop_uvs[uv_layer_name] = new_uv_array
+                            uv_array = loops.uvs[uv_layer_name] = new_uv_array
                     else:
-                        # First use of this UV layer name. Create loop array.
-                        new_uv_array = np.zeros((total_vertex_count, uv_dim), dtype=np.float32)
-                        uv_array = loop_uvs[uv_layer_name] = new_uv_array
+                        # First use of this UV layer name. Create loop array with zeroes.
+                        new_uv_array = np.zeros((total_vertex_count, mesh_uv_dim), dtype=np.float32)
+                        uv_array = loops.uvs[uv_layer_name] = new_uv_array
 
                     # Write rows into (possibly just created or column-upgraded) UV array.
-                    uv_array[i:j] = vertices[name]
+                    uv_array[i:j] = mesh_uv_array
 
-        # Could be empty lists.
-        loop_tangents = [loop_tangents_dict[i] for i in sorted(loop_tangents_dict)]
-        loop_vertex_colors = [loop_vertex_colors_dict[i] for i in sorted(loop_vertex_colors_dict)]
         # NOTE: We don't sort `loop_uvs`. Their order shouldn't matter; the user can determine it, if needed.
 
-        return all_vertices, dict(
-            loop_normals=loop_normals,
-            loop_normals_w=loop_normals_w,
-            loop_tangents=loop_tangents,
-            loop_bitangents=loop_bitangents,
-            loop_vertex_colors=loop_vertex_colors,
-            loop_uvs=loop_uvs,
-        )
+        return all_vertices, loops
 
     @classmethod
     def get_stacked_faces(
@@ -421,7 +558,7 @@ class MergedMesh:
             triangles += loop_offset
             mesh_faces = np.column_stack([triangles, np.full(triangles.shape[0], material_index, dtype=np.uint32)])
             all_mesh_faces.append(mesh_faces)
-            loop_offset += mesh.vertices.shape[0]
+            loop_offset += mesh.vertex_count
 
         faces = np.vstack(all_mesh_faces)
         return faces
@@ -554,7 +691,7 @@ class MergedMesh:
                     loop_vertex_indices[loop_index] = existing_vertex_index
 
             # Check for any unused FLVER vertices (now loops).
-            all_loop_indices = set(range(loop_offset, loop_offset + len(mesh.vertices)))
+            all_loop_indices = set(range(loop_offset, loop_offset + mesh.vertex_count))
             unresolved_loop_indices = all_loop_indices - resolved_loop_indices
             if unresolved_loop_indices:
                 # This happens way too much in vanilla FLVER models to elevate above DEBUG log level.
@@ -578,13 +715,15 @@ class MergedMesh:
         triangle_vertex_indices: tuple[int, int, int],
         discard_degenerate_faces=False,
         discard_duplicate_faces=False,
-        existing_face_set: set = None,
+        existing_face_set: set[tuple[int, ...]] = None,
     ):
         """Returns True if triangle has two or more identical vertex indices or already exists in some vertex order."""
         if discard_degenerate_faces:
             if len(set(triangle_vertex_indices)) < 3:
                 return True  # face with duplicate vertices
         if discard_duplicate_faces:
+            if existing_face_set is None:
+                raise ValueError("Must pass `existing_face_set` if `discard_duplicate_faces == True`.")
             if (triangle_tuple := tuple(sorted(triangle_vertex_indices))) in existing_face_set:
                 return True  # face with same three vertices in any order
             existing_face_set.add(triangle_tuple)
@@ -597,13 +736,13 @@ class MergedMesh:
         As a minor optimization for Blender import, has the option to ignore tangents or bitangents.
         """
         self.vertex_data["position"] = self.vertex_data["position"][:, [0, 2, 1]]
-        if self.loop_normals is not None:
-            self.loop_normals = self.loop_normals[:, [0, 2, 1]]
-        if tangents:
-            for i, tangent_array in enumerate(self.loop_tangents):
-                self.loop_tangents[i] = tangent_array[:, [0, 2, 1, 3]]
-        if bitangents and self.loop_bitangents is not None:
-            self.loop_bitangents = self.loop_bitangents[:, [0, 2, 1, 3]]
+        if self.loop_data.normals is not None:
+            self.loop_data.normals = self.loop_data.normals[:, [0, 2, 1]]
+        if tangents and self.loop_data.tangents is not None:
+            for i, tangent_array in enumerate(self.loop_data.tangents):
+                self.loop_data.tangents[i] = tangent_array[:, [0, 2, 1, 3]]
+        if bitangents and self.loop_data.bitangents is not None:
+            self.loop_data.bitangents = self.loop_data.bitangents[:, [0, 2, 1, 3]]
 
     def invert_vertex_uv(self, invert_u=False, invert_v=True, invert_w=False, invert_3=False):
         """Transform loop UV data in place by subtracting UV coordinates from 1.
@@ -612,7 +751,7 @@ class MergedMesh:
 
         TODO: Should later indices be inverted in Blender?
         """
-        for loop_uv_array in self.loop_uvs.values():
+        for loop_uv_array in self.loop_data.uvs.values():
             if invert_u:
                 loop_uv_array[:, 0] = 1.0 - loop_uv_array[:, 0]
             if invert_v:
@@ -631,14 +770,14 @@ class MergedMesh:
         Soulstruct automatically, because this is lossy. However, Blender expects normalized vectors for its normal
         data, so this method is provided to normalize them in-place.
         """
-        if self.loop_normals is None:
+        if self.loop_data.normals is None:
             return
-        self.loop_normals /= np.linalg.norm(self.loop_normals, axis=1, keepdims=True)
+        self.loop_data.normals /= np.linalg.norm(self.loop_data.normals, axis=1, keepdims=True)
 
     def normalize_tangents(self):
         """Ditto for tangents. See above."""
-        for i in range(len(self.loop_tangents)):
-            self.loop_tangents[i] /= np.linalg.norm(self.loop_tangents[i], axis=1, keepdims=True)
+        for i in range(len(self.loop_data.tangents)):
+            self.loop_data.tangents[i] /= np.linalg.norm(self.loop_data.tangents[i], axis=1, keepdims=True)
 
     def round_normals(self, decimals=3):
         """Round loop normal data in place to a given number of decimal places.
@@ -648,14 +787,14 @@ class MergedMesh:
         "unique" too aggressively when splitting meshes and creating vertex arrays. Rounding the normals to a lower
         resolution can help to mitigate this issue.
         """
-        if self.loop_normals is None:
+        if self.loop_data.normals is None:
             return
-        self.loop_normals = np.round(self.loop_normals, decimals=decimals)
+        self.loop_data.normals = np.round(self.loop_data.normals, decimals=decimals)
 
     def round_tangents(self, decimals=3):
         """Ditto for tangents. See above."""
-        for i in range(len(self.loop_tangents)):
-            self.loop_tangents[i] = np.round(self.loop_tangents[i], decimals=decimals)
+        for i in range(len(self.loop_data.tangents)):
+            self.loop_data.tangents[i] = np.round(self.loop_data.tangents[i], decimals=decimals)
 
     def round_uvs(self, decimals=5):
         """UVs will likely need less rounding (and less often), but it may still cause issues if tiny differences in
@@ -663,8 +802,8 @@ class MergedMesh:
 
         Note that the default value of `decimals` is higher here, as these are usually compressed to 16-bit, not 8-bit.
         """
-        for key, loop_uv_array in self.loop_uvs.items():
-            self.loop_uvs[key] = np.round(loop_uv_array, decimals=decimals)
+        for key, loop_uv_array in self.loop_data.uvs.items():
+            self.loop_data.uvs[key] = np.round(loop_uv_array, decimals=decimals)
 
     def split_mesh(
         self,
@@ -683,12 +822,12 @@ class MergedMesh:
         these values (and maybe further split by bone maximum if `use_mesh_bone_indices == True`) and the created
         `Mesh` and `FaceSet` instances will take their materials, layouts, and miscellaneous kwargs from this list.
 
-        If `uv_layer_names` is given for a `split_mesh_defs` element, it should be a list of list of UV layer
-        names that indicate which keys in `MergedMesh.loop_uvs` are used by each corresponding mesh. This will
+        If `uv_layer_names` is given for a `split_mesh_defs` element, it should be a list of lists of UV layer
+        names that indicate which keys in `MergedMesh.loop_data.uvs` are used by each corresponding mesh. This will
         ensure that each FLVER mesh vertex buffer can tightly pack only the global arrays that it uses: for
         example, a lightmapped one-texture mesh material may have UV layer names `['UVTexture0', 'UVLightmap']`,
         which will become its `uv_0` and `uv_1` vertex buffer fields, respectively. If `mesh_uv_layer_names` is
-        not given, each mesh will simply look up UV keys 'UVMap{i}' in `MergedMesh.loop_uvs` for `i < n`,
+        not given, each mesh will simply look up UV keys 'UVMap{i}' in `MergedMesh.loop_data.uvs` for `i < n`,
         where `n` is the number of UVs it uses (determined by its given layout). This is fine, assuming that the
         `MergedMesh` was also constructed this way, with no UV layer names given.
 
@@ -700,10 +839,8 @@ class MergedMesh:
 
         If a mesh material index has no faces, it will be ignored.
 
-        `is_rigged` must appear in each mesh kwargs dictionary, as it is used to determine bone index style. For
-        modern `FLVER` format, it will also be used to set
-        TODO: Still not 100% sure if there are any FLVERs that use 'is_dynamic' for some meshes but not others. From
-         memory, I found a few cut content objects or something, but only checked the bool and not the indices.
+        `is_dynamic` must appear in each mesh kwargs dictionary, as it is used to determine bone index style. For
+        modern `FLVER` format, it will also be used to set `mesh.is_dynamic`.
 
         If `unused_bone_indices_are_minus_one` is True, it will be assumed that the bone indices in
         `self.vertex_bone_indices` have been set to -1 when unused, rather than the FLVER standard of zero (which can be
@@ -719,6 +856,8 @@ class MergedMesh:
         If `max_mesh_vertex_count` is >0, an error will be raised if any mesh has more than this number of
         vertices. This is useful for ensuring that meshes are not too large for the game to handle, as earlier games
         restrict face vertex indices to being 16-bit.
+
+        TODO: Handle multiple-VA meshes with cloth_tangent and cloth_bitangent.
         """
         if use_mesh_bone_indices and max_bones_per_mesh < 3:
             raise ValueError("`max_bones_per_mesh` must be >= 3 (and realistically should be much higher).")
@@ -729,7 +868,7 @@ class MergedMesh:
         mesh_is_dynamic = [mesh_def.is_dynamic for mesh_def in split_mesh_defs]
         mesh_kwargs = [mesh_def.kwargs for mesh_def in split_mesh_defs]
         mesh_uv_layer_names = [
-            mesh_def.get_validated_uv_layer_names(self.loop_uvs, i)
+            mesh_def.get_validated_uv_layer_names(self.loop_data.uvs, i)
             for i, mesh_def in enumerate(split_mesh_defs)
         ]
 
@@ -1006,7 +1145,7 @@ class MergedMesh:
         all_face_bone_indices = bone_indices.reshape((-1, 12))
 
         # Rather than filtering out values of -1, we make sure it's always in the set, and offset the check.
-        # Slightly suboptimal for `is_rigged = False`, as every face should only have up to 3 bones, but
+        # Slightly suboptimal for `is_dynamic = False`, as every face should only have up to 3 bones, but
         # worth the complexity trade-off.
         max_bones = max_bones_per_mesh + 1
         unique_indices = {-1}
@@ -1044,11 +1183,12 @@ class MergedMesh:
         """Combine the appropriate loop data, in the given order, into a single structured array for indexing by loop
         row ('FLVER vertex row') or field name (so mesh materials can retrieve only the fields they need).
 
-        The returned array, therefore, is essentially a merged version of the complete FLVER `mesh.vertices` arrays
+        The returned array, therefore, is essentially a merged version of the complete FLVER `mesh.vertex_arrays`
         for all meshes using a 'maximal' dtype.
 
         The only exception is the UV data arrays, whose fields still have their global names (e.g. 'UVTexture0' or
-        'UVMap1'). The final split meshes will simply rename the fields they actually use and discard the remainder.
+        'UVMap1'), as the 'meaning' of mesh-local UV indices is inconsistent. The final split meshes will simply rename
+        the fields they actually use and discard the remainder.
 
         Note that the order of fields in `combined_dtype` likely won't matter if materials are using their own subset
         dtypes anyway.
@@ -1068,31 +1208,37 @@ class MergedMesh:
             bone_indices = self.vertex_data["bone_indices"][self.loop_vertex_indices]  # (loop_count, 4)
             combined_array["bone_indices"] = bone_indices
         if "normal" in names:
-            if self.loop_normals is None:
-                raise ValueError("`MergedMesh.loop_normals` is None, but 'normal' appears in full FLVER dtype.")
-            combined_array["normal"] = self.loop_normals
+            if self.loop_data.normals is None:
+                raise ValueError(
+                    "`MergedMesh.loop_data.normals` is None, but 'normal' appears in full FLVER dtype."
+                )
+            combined_array["normal"] = self.loop_data.normals
         if "normal_w" in names:
-            if self.loop_normals_w is None:
-                raise ValueError("`MergedMesh.loop_normals_w` is None, but 'normal_w' appears in full FLVER dtype.")
-            combined_array["normal_w"] = self.loop_normals_w
+            if self.loop_data.normals_w is None:
+                raise ValueError(
+                    "`MergedMesh.loop_data.normals_w` is None, but 'normal_w' appears in full FLVER dtype."
+                )
+            combined_array["normal_w"] = self.loop_data.normals_w
         if "bitangent" in names:
-            if self.loop_bitangents is None:
-                raise ValueError("`MergedMesh.loop_bitangents` is None, but 'bitangent' appears in full FLVER dtype.")
-            combined_array["bitangent"] = self.loop_bitangents
+            if self.loop_data.bitangents is None:
+                raise ValueError(
+                    "`MergedMesh.loop_data.bitangents` is None, but 'bitangent' appears in full FLVER dtype."
+                )
+            combined_array["bitangent"] = self.loop_data.bitangents
 
         tangent_names = [n for n in names if n.startswith("tangent_")]
         for tangent_name in tangent_names:
             t_i = int(tangent_name[-1])
-            combined_array[f"tangent_{t_i}"] = self.loop_tangents[t_i]  # (loop_count, 4)
+            combined_array[f"tangent_{t_i}"] = self.loop_data.tangents[t_i]  # (loop_count, 4)
 
         # Combined array still uses global UV layer names.
-        for uv_layer_name in self.loop_uvs:
-            combined_array[uv_layer_name] = self.loop_uvs[uv_layer_name]
+        for uv_layer_name in self.loop_data.uvs:
+            combined_array[uv_layer_name] = self.loop_data.uvs[uv_layer_name]
 
         color_names = [n for n in names if n.startswith("color_")]
         for color_name in color_names:
             c_i = int(color_name[-1])
-            combined_array[f"color_{c_i}"] = self.loop_vertex_colors[c_i]  # (loop_count, 4)
+            combined_array[f"color_{c_i}"] = self.loop_data.vertex_colors[c_i]  # (loop_count, 4)
 
         return combined_array
 
@@ -1113,17 +1259,24 @@ class MergedMesh:
         return np.argwhere(used == 1)[:, 0]
 
 
-def _from_flver_mp(
-    flver: FLVER,
-    mesh_material_indices: list[int],
-    material_uv_layer_names: list[list[str]],
-    merge_vertices: bool,
-) -> MergedMesh | None:
-    if not flver.meshes:
-        _LOGGER.info(f"FLVER '{flver.path_name}' has no meshes. No MergedMesh created.")
-        return None
+def _from_flver_mp(input_path: str, output_path: str) -> bool:
+    """Worker function that reads FLVER and args from a temp file, creates `MergedMesh`, and writes result to a temp
+    file. Only a small boolean is returned through the IPC pipe; all large data is transferred via temp files on disk.
+    """
     try:
-        return MergedMesh.from_flver(flver, mesh_material_indices, material_uv_layer_names, merge_vertices)
+        with open(input_path, "rb") as f:
+            flver, (mesh_material_indices, material_uv_layer_names, merge_vertices) = pickle.load(f)
+
+        if not flver.meshes:
+            _LOGGER.info(f"FLVER '{flver.path_name}' has no meshes. No MergedMesh created.")
+            return False
+
+        merged_mesh = MergedMesh.from_flver(flver, mesh_material_indices, material_uv_layer_names, merge_vertices)
+        merged_mesh.flver = None  # don't pickle the FLVER reference back (restored by caller)
+
+        with open(output_path, "wb") as f:
+            pickle.dump(merged_mesh, f, protocol=pickle.HIGHEST_PROTOCOL)
+        return True
     except Exception as ex:
-        _LOGGER.error(f"Failed to load FLVER '{flver.path_name}' as MergedMesh: {ex}")
-        return None
+        _LOGGER.error(f"Failed to load FLVER as MergedMesh from temp input '{input_path}': {ex}")
+        return False

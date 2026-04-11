@@ -8,10 +8,13 @@ __all__ = [
 
 import abc
 import copy
+import io
 import json
 import logging
 import multiprocessing
+import pickle
 import re
+import tempfile
 import traceback
 import typing as tp
 from dataclasses import asdict, field, fields
@@ -26,6 +29,8 @@ from .dataclass_meta import DataclassMeta
 
 if tp.TYPE_CHECKING:
     from soulstruct.containers.entry import BinderEntry
+    BASE_BINARY_BYTES_TYPING = tp.Union[bytes, bytearray, io.BufferedIOBase, BinaryReader, BinderEntry]
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -33,6 +38,8 @@ _GAME_MODULE_RE = re.compile(r"^soulstruct\.(\w+)\..*$")
 
 
 BASE_BINARY_FILE_T = tp.TypeVar("BASE_BINARY_FILE_T", bound="BaseBinaryFile")
+
+# Valid types for `BaseBinaryFile.from_bytes()` and similar methods:
 
 
 @tp.dataclass_transform(kw_only_default=False)
@@ -113,56 +120,78 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
     def to_bytes_batch(cls, files: list[BASE_BINARY_FILE_T], processes: int = None) -> list[bytes | None]:
         """Use multiprocessing to pack all `BaseBinaryFile`s in parallel.
 
+        Uses temp files to transfer large objects between processes, avoiding IPC pipe size limits.
         Failed conversions will put `None` into list rather than `bytes`.
         """
-        mp_args = [(file,) for file in files]
-        with multiprocessing.Pool(processes=processes) as pool:
-            file_data = pool.starmap(_to_bytes_mp, mp_args)  # blocks here until all done
-        return file_data
+        with tempfile.TemporaryDirectory(prefix="soulstruct_bbf_") as tmp_dir:
+            mp_args = []
+            for i, file in enumerate(files):
+                input_path = str(Path(tmp_dir) / f"input_{i}.pkl")
+                output_path = str(Path(tmp_dir) / f"output_{i}.bin")
+                with open(input_path, "wb") as f:
+                    pickle.dump(file, f, protocol=pickle.HIGHEST_PROTOCOL)
+                mp_args.append((input_path, output_path))
+
+            with multiprocessing.Pool(processes=processes) as pool:
+                successes = pool.starmap(_to_bytes_mp, mp_args)
+
+            results = []
+            for i, success in enumerate(successes):
+                if success:
+                    with open(str(Path(tmp_dir) / f"output_{i}.bin"), "rb") as f:
+                        results.append(f.read())
+                else:
+                    results.append(None)
+        return results
 
     @classmethod
     def from_path(cls, path: str | Path) -> tp.Self:
-        path = Path(path)
+        _path = Path(path)
         try:
-            binary_file = cls.from_bytes(BinaryReader(path))
+            binary_file = cls.from_bytes(BinaryReader(_path))
         except Exception:
             traceback.print_exc()
-            _LOGGER.error(f"Error occurred while reading `{cls.__name__}` with path '{path}'. See traceback.")
+            _LOGGER.error(f"Error occurred while reading `{cls.__name__}` with path '{_path}'. See traceback.")
             raise
-        if path.suffix == ".bak":
+        if _path.suffix == ".bak":
             # Automatically removes '.bak' from `path`, for safety/convnience. User can change `path` manually.
-            binary_file.path = path.with_suffix("")
+            binary_file.path = _path.with_suffix("")
         else:
-            binary_file.path = path
+            binary_file.path = _path
         return binary_file
 
     @classmethod
     def from_path_batch(cls, paths: list[Path | str], processes: int = None) -> list[BASE_BINARY_FILE_T | None]:
         """Use multiprocessing to read `BaseBinaryFile` of given subtype from each path in `paths` in parallel.
 
+        Uses temp files to transfer large parsed results back, avoiding IPC pipe size limits.
         Failed conversions will put `None` into list rather than a `BaseBinaryFile` instance.
         """
+        with tempfile.TemporaryDirectory(prefix="soulstruct_bbf_") as tmp_dir:
+            mp_args = []
+            output_paths = []
+            for i, path in enumerate(paths):
+                output_path = str(Path(tmp_dir) / f"output_{i}.pkl")
+                mp_args.append((cls, str(Path(path)), output_path))
+                output_paths.append(output_path)
 
-        mp_args = [(cls, Path(path)) for path in paths]
+            with multiprocessing.Pool(processes=processes) as pool:
+                successes = pool.starmap(_from_path_mp, mp_args)
 
-        with multiprocessing.Pool(processes=processes) as pool:
-            files = pool.starmap(_from_path_mp, mp_args)  # blocks here until all done
-
-        return files
+            results = []
+            for i, success in enumerate(successes):
+                if success:
+                    with open(output_paths[i], "rb") as f:
+                        results.append(pickle.load(f))
+                else:
+                    results.append(None)
+        return results
 
     @classmethod
-    def from_bytes(cls, data: bytes | bytearray | tp.BinaryIO | BinaryReader | BinderEntry) -> tp.Self:
+    def from_bytes(cls, data: BASE_BINARY_BYTES_TYPING) -> tp.Self:
         """Load instance from binary data or binary stream (or `BinderEntry.data`)."""
-        reader = BinaryReader(data) if not isinstance(data, BinaryReader) else data  # type: BinaryReader
 
-        if is_dcx(reader):
-            try:
-                data, dcx_type = decompress(reader)
-            finally:
-                reader.close()
-            reader = BinaryReader(data)
-        else:
-            dcx_type = DCXType.Null
+        reader, dcx_type = cls._get_reader_and_dcx_type(data)
 
         try:
             binary_file = cls.from_reader(reader)
@@ -179,12 +208,24 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
     def from_bytes_batch(cls, data_list: list[bytes], processes: int = None) -> list[BASE_BINARY_FILE_T | None]:
         """Use multiprocessing to read `BaseBinaryFile` of given subtype from each `bytes` in `datas` in parallel.
 
+        Uses temp files to transfer large input/output data, avoiding IPC pipe size limits.
         Failed conversions will put `None` into list rather than a `BaseBinaryFile` instance.
         """
-        mp_args = [(cls, data) for data in data_list]
-        with multiprocessing.Pool(processes=processes) as pool:
-            files = pool.starmap(_from_bytes_mp, mp_args)  # blocks here until all done
-        return files
+        with tempfile.TemporaryDirectory(prefix="soulstruct_bbf_") as tmp_dir:
+            mp_args = []
+            output_paths = []
+            for i, data in enumerate(data_list):
+                input_path = str(Path(tmp_dir) / f"input_{i}.bin")
+                output_path = str(Path(tmp_dir) / f"output_{i}.pkl")
+                with open(input_path, "wb") as f:
+                    f.write(data)
+                mp_args.append((cls, input_path, output_path))
+                output_paths.append(output_path)
+
+            results = []
+            _multiprocess_files(output_paths, results, _from_bytes_mp, mp_args, processes=processes)
+
+        return results
 
     @classmethod
     def from_binder_entry(cls, binder_entry: BinderEntry) -> tp.Self:
@@ -197,12 +238,24 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
     ) -> list[BASE_BINARY_FILE_T | None]:
         """Use multiprocessing to read `BaseBinaryFile` of given subtype from each `BinderEntry` in parallel.
 
+        Uses temp files to transfer large data, avoiding IPC pipe size limits.
         Failed conversions will put `None` into list rather than a `BaseBinaryFile` instance.
         """
-        mp_args = [(cls, entry) for entry in entry_list]
-        with multiprocessing.Pool(processes=processes) as pool:
-            files = pool.starmap(_from_binder_entry_mp, mp_args)  # blocks here until all done
-        return files
+        with tempfile.TemporaryDirectory(prefix="soulstruct_bbf_") as tmp_dir:
+            mp_args = []
+            output_paths = []
+            for i, entry in enumerate(entry_list):
+                input_path = str(Path(tmp_dir) / f"input_{i}.pkl")
+                output_path = str(Path(tmp_dir) / f"output_{i}.pkl")
+                with open(input_path, "wb") as f:
+                    pickle.dump(entry.get_uncompressed_data(), f, protocol=pickle.HIGHEST_PROTOCOL)
+                mp_args.append((cls, input_path, output_path))
+                output_paths.append(output_path)
+
+            results = []
+            _multiprocess_files(output_paths, results, _from_bytes_mp, mp_args, processes=processes)
+
+        return results
 
     @classmethod
     def from_dict(cls, data: dict) -> tp.Self:
@@ -213,11 +266,42 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
     @classmethod
     def from_json(cls, json_path: str | Path) -> tp.Self:
         json_dict = read_json(json_path)
+        if not isinstance(json_dict, dict):
+            raise TypeError(
+                f"Expected root-level dict in JSON {json_path} for class {cls.__name__}, not: {type(json_dict)}"
+            )
         # TODO: Some kind of fancy recursive JSON reader that checks field types and converts dictionaries to
         #  `BaseBinaryFile` subclasses.
         file = cls.from_dict(json_dict)
         file.path = Path(json_path)
         return file
+
+    @staticmethod
+    def _get_reader_and_dcx_type(
+        data: BASE_BINARY_BYTES_TYPING,
+    ) -> tuple[BinaryReader, DCXType]:
+        """Resolve type of `data` into a `BinaryReader` and `DCXType`."""
+
+        # Avoid circular imports from `containers` package.
+        from soulstruct.containers.entry import BinderEntry
+
+        if isinstance(data, BinderEntry):
+            reader = BinaryReader(data.get_uncompressed_data())
+        elif isinstance(data, BinaryReader):
+            reader = data
+        else:
+            reader = BinaryReader(data)
+
+        if is_dcx(reader):
+            try:
+                uncompressed_data, dcx_type = decompress(reader)
+            finally:
+                reader.close()
+            reader = BinaryReader(uncompressed_data)
+        else:
+            dcx_type = DCXType.Null
+
+        return reader, dcx_type
 
     # endregion
 
@@ -240,17 +324,17 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
             list[Path]: paths that were written to (extensions may be adjusted, e.g. for DCX). Empty if nothing new is
             written. (Child classes may write multiple files.)
         """
-        file_path = self.get_file_path(file_path)
+        _file_path = self.get_file_path(file_path)
         if make_dirs:
-            file_path.parent.mkdir(parents=True, exist_ok=True)
+            _file_path.parent.mkdir(parents=True, exist_ok=True)
         packed_dcx = bytes(self)
-        if check_hash and file_path.is_file():
-            if get_blake2b_hash(file_path) == get_blake2b_hash(packed_dcx):
+        if check_hash and _file_path.is_file():
+            if get_blake2b_hash(_file_path) == get_blake2b_hash(packed_dcx):
                 return []  # don't write file
-        create_bak(file_path)
-        with file_path.open("wb") as f:
+        create_bak(_file_path)
+        with _file_path.open("wb") as f:
             f.write(packed_dcx)
-        return [file_path]
+        return [_file_path]
 
     def to_dict(self) -> dict[str, tp.Any]:
         """Create a dictionary from file instance. Uses `dataclasses.asdict()` by default and ignores internals."""
@@ -269,17 +353,18 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
         if file_path is None:
             if self.path is None:
                 raise ValueError("You must specify `file_path` because file default `path` has not been set.")
-            file_path = self.path
-        file_path = Path(file_path)
-        if file_path.suffix != ".json":
-            file_path = file_path.with_suffix(file_path.suffix + ".json")
-        write_json(file_path, json_dict, indent=indent, encoding=encoding, encoder=BaseJSONEncoder)
+            _file_path = self.path
+        else:
+            _file_path = Path(file_path)
+        if _file_path.suffix != ".json":
+            _file_path = _file_path.with_suffix(_file_path.suffix + ".json")
+        write_json(_file_path, json_dict, indent=indent, encoding=encoding, encoder=BaseJSONEncoder)
 
     def create_bak(self, file_path: None | str | Path = None, make_dirs=True):
-        file_path = self.get_file_path(file_path)
+        _file_path = self.get_file_path(file_path)
         if make_dirs:
-            file_path.parent.mkdir(parents=True, exist_ok=True)
-        create_bak(file_path)
+            _file_path.parent.mkdir(parents=True, exist_ok=True)
+        create_bak(_file_path)
 
     def copy(self):
         return copy.deepcopy(self)
@@ -289,26 +374,27 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
         if file_path is None:
             if self.path is None:
                 raise ValueError("You must specify `file_path` because file default `path` has not been set.")
-            file_path = self.path
-        file_path = Path(file_path)
+            _file_path = self.path
+        else:
+            _file_path = Path(file_path)
 
         # 0. If file path ends in '.bak', never change anything.
-        if file_path.suffix == ".bak":
-            return file_path
+        if _file_path.suffix == ".bak":
+            return _file_path
 
         # 1. Remove any existing ".dcx" extension.
-        while file_path.suffix == ".dcx":
-            file_path = file_path.with_suffix("")  # remove '.dcx' (may add back below)
+        while _file_path.suffix == ".dcx":
+            _file_path = _file_path.with_suffix("")  # remove '.dcx' (may add back below)
 
         # 2. If `EXT` is defined, add that extension to the path.
-        if add_auto_ext and self.EXT and file_path.suffix != self.EXT:
-            file_path = file_path.with_suffix(file_path.suffix + self.EXT)
+        if add_auto_ext and self.EXT and _file_path.suffix != self.EXT:
+            _file_path = _file_path.with_suffix(_file_path.suffix + self.EXT)
 
         # 3. If `dcx_type` is not `Null`, add ".dcx" extension to the path.
-        if self._get_dcx_type() != DCXType.Null and not file_path.suffix == ".dcx":
-            file_path = file_path.with_suffix(file_path.suffix + ".dcx")  # add ".dcx"
+        if self._get_dcx_type() != DCXType.Null and not _file_path.suffix == ".dcx":
+            _file_path = _file_path.with_suffix(_file_path.suffix + ".dcx")  # add ".dcx"
 
-        return file_path
+        return _file_path
 
     @classmethod
     def get_default_extension(cls) -> str:
@@ -334,16 +420,16 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
     @classmethod
     def from_bak(cls, file_path: Path | str, create_bak_if_missing=True) -> tp.Self:
         """Looks for a `.bak` version of the given path to open preferentially, or optionally creates it if missing."""
-        file_path = Path(file_path)
-        bak_path = file_path.with_name(file_path.name + ".bak")
+        _file_path = Path(file_path)
+        bak_path = _file_path.with_name(_file_path.name + ".bak")
         if bak_path.is_file():
             binary_file = cls.from_path(bak_path)
             binary_file.path = binary_file.path.with_suffix("")  # remove ".bak" extension
             return binary_file
         else:
-            binary_file = cls.from_path(file_path)
+            binary_file = cls.from_path(_file_path)
             if create_bak_if_missing:
-                create_bak(file_path)
+                create_bak(_file_path)
             return binary_file
 
     @classmethod
@@ -373,7 +459,7 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
         """Removes ALL suffixes from `path` name, e.g. 'c1000.chrbnd.dcx' -> 'c1000'."""
         return self.path.stem.split(".")[0] if self.path else None
 
-    def get_dcx_type(self) -> DCXType:
+    def get_dcx_type(self) -> DCXType | None:
         return self._dcx_type
 
     def set_dcx_type(self, dcx_type: DCXType):
@@ -417,41 +503,81 @@ class BaseJSONEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, DCXType):
             return o.name
+        return None
 
 
-def _from_path_mp(file_type: type[BASE_BINARY_FILE_T], path: Path) -> BASE_BINARY_FILE_T | None:
-    """Function for batch operator."""
+def _from_path_mp(file_type: type[BASE_BINARY_FILE_T], path: str, output_path: str) -> bool:
+    """Worker: reads file from `path`, writes parsed result to `output_path`. Returns success boolean only."""
     try:
-        return file_type.from_path(path)
+        result = file_type.from_path(path)
+        with open(output_path, "wb") as f:
+            pickle.dump(result, f, protocol=pickle.HIGHEST_PROTOCOL)
+        return True
     except Exception as ex:
         _LOGGER.error(f"Failed to load `{file_type.__name__}` instance from path '{path}'. Error: {str(ex)}")
-        return None
+        return False
 
 
-def _from_bytes_mp(file_type: type[BASE_BINARY_FILE_T], data: bytes) -> BASE_BINARY_FILE_T | None:
-    """Function for batch operator."""
+def _from_bytes_mp(file_type: type[BASE_BINARY_FILE_T], input_path: str, output_path: str) -> bool:
+    """Worker: reads raw bytes from `input_path`, parses, writes result to `output_path`. Returns success boolean."""
     try:
-        return file_type.from_bytes(data)
+        with open(input_path, "rb") as f:
+            data = f.read()
+        result = file_type.from_bytes(data)
+        with open(output_path, "wb") as f:
+            pickle.dump(result, f, protocol=pickle.HIGHEST_PROTOCOL)
+        return True
     except Exception as ex:
-        _LOGGER.error(f"Failed to load `{file_type.__name__}` instance from data. Error: {str(ex)}")
-        return None
+        _LOGGER.error(f"Failed to load `{file_type.__name__}` instance from temp data. Error: {str(ex)}")
+        return False
 
 
-def _from_binder_entry_mp(file_type: type[BASE_BINARY_FILE_T], entry: BinderEntry) -> BASE_BINARY_FILE_T | None:
-    """Function for batch operator."""
+def _from_binder_entry_mp(file_type: type[BASE_BINARY_FILE_T], input_path: str, output_path: str) -> bool:
+    """Worker: reads BinderEntry from `input_path`, parses, writes result to `output_path`. Returns success boolean."""
     try:
-        return file_type.from_binder_entry(entry)
+        with open(input_path, "rb") as f:
+            entry = pickle.load(f)
+        result = file_type.from_binder_entry(entry)
+        with open(output_path, "wb") as f:
+            pickle.dump(result, f, protocol=pickle.HIGHEST_PROTOCOL)
+        return True
     except Exception as ex:
         _LOGGER.error(
-            f"Failed to load `{file_type.__name__}` instance from BinderEntry '{entry.name}'. Error: {str(ex)}"
+            f"Failed to load `{file_type.__name__}` instance from BinderEntry temp data. Error: {str(ex)}"
         )
-        return None
+        return False
 
 
-def _to_bytes_mp(file: BASE_BINARY_FILE_T) -> bytes | None:
-    """Function for batch operator."""
+def _to_bytes_mp(input_path: str, output_path: str) -> bool:
+    """Worker: reads BaseBinaryFile from `input_path`, packs to bytes, writes to `output_path`. Returns success boolean.
+    """
     try:
-        return bytes(file)
+        with open(input_path, "rb") as f:
+            file = pickle.load(f)
+        data = bytes(file)
+        with open(output_path, "wb") as f:
+            f.write(data)
+        return True
     except Exception as ex:
-        _LOGGER.error(f"Failed to pack `{file.cls_name}` instance with path name '{file.path_name}'. Error: {str(ex)}")
-        return None
+        _LOGGER.error(f"Failed to pack file from temp input '{input_path}'. Error: {str(ex)}")
+        return False
+
+
+def _multiprocess_files(
+    output_paths: list[str],
+    output_bbfs: list[BASE_BINARY_FILE_T | None],
+    worker_func: tp.Callable,
+    mp_args: tp.Sequence[tp.Any],
+    processes: int = None,
+) -> None:
+    """Use a multiprocessing Pool's `starmap` to call `worker_func(mp_args)` in parallel and load corresponding
+    output files (which workers should write) into `output_bbfs` where successful."""
+    with multiprocessing.Pool(processes=processes) as pool:
+        successes = pool.starmap(worker_func, mp_args)
+
+    for i, success in enumerate(successes):
+        if success:
+            with open(output_paths[i], "rb") as f:
+                output_bbfs.append(pickle.load(f))
+        else:
+            output_bbfs.append(None)

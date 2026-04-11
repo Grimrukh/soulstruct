@@ -396,9 +396,11 @@ class FLVER(GameFile):
         total_face_count = 0
         vertex_index_bit_size = 16
         for mesh in self.meshes:
+            if len(mesh.vertex_arrays) != 1:
+                raise ValueError("Each FLVER0 mesh must have exactly one VertexArray.")
             if len(mesh.face_sets) != 1:
                 raise ValueError("Each FLVER0 mesh must have exactly one FaceSet.")
-            if (vertex_count := len(mesh.vertices)) >= 0xFFFF:
+            if (vertex_count := len(mesh.vertex_arrays[0])) >= 0xFFFF:
                 raise ValueError(f"`FLVER0` mesh cannot have more than 65534 vertices ({vertex_count}).")
             face_set = mesh.face_sets[0]
             if (max_index := face_set.vertex_indices.max()) > 0xFFFF:
@@ -531,7 +533,7 @@ class FLVER(GameFile):
         true_face_count = 0
         total_face_count = 0
         for mesh in self.meshes:
-            uses_0xffff_separators = len(mesh.vertices) <= 0xFFFF  # max unsigned short value
+            uses_0xffff_separators = len(mesh.vertex_arrays) == 1 and len(mesh.vertex_arrays[0]) <= 0xFFFF  # max unsigned short value
             for face_set in mesh.face_sets:
                 face_set_true_count, face_set_total_count = face_set.get_face_counts(uses_0xffff_separators)
                 true_face_count += face_set_true_count
@@ -1173,20 +1175,6 @@ class FLVER(GameFile):
                 )
             )
 
-    def check_if_all_zero_bone_weights(self) -> bool:
-        """Reliable (so far) indicator of map piece FLVER, as opposed to character/object FLVER.
-
-        Map pieces sometimes use bone indices as an offset for certain meshes (or even a subset of a mesh's
-        vertices), but never use bone weights (in DS1 at least).
-
-        This method checks every vertex and is therefore reasonably expensive to compute, so do it sparingly.
-        """
-        for m in self.meshes:
-            for v in m.vertices:
-                if any(v.bone_weights):
-                    return False
-        return True
-
     def debone_map_piece(self, default_bone_name="", refresh_bone_bounding_boxes=True):
         """Remove all bones from a Map Piece FLVER by baking the bones into the vertices that use them and setting all
         meshes and vertices to use only the default bone (index 0).
@@ -1211,6 +1199,8 @@ class FLVER(GameFile):
                 # sometimes the reduced model name that appears in MSB Map Piece models (without suffix/map). We use
                 # the full model name here, since this is going in the model file.
                 default_bone_name = self.path_minimal_stem
+                if default_bone_name is None:
+                    raise ValueError("Cannot auto-detect default bone name: `FLVER.path` is not set.")
             else:
                 default_bone_name = "FLVER"
                 _LOGGER.warning(f"Could not get default bone name from FLVER path. Using bone name 'FLVER'.")
@@ -1252,7 +1242,7 @@ class FLVER(GameFile):
                     t, r, s = bone_transforms[global_bone_indices[0]]
                     # Scale, then rotate, then translate.
                     array["position"] = (s.data * array["position"]) @ r.data.T + t.data
-                    for array_field in array.dtype.names:
+                    for array_field in vertex_array.field_names:
                         if array_field in ("normal", "bitangent") or array_field.startswith("tangent"):
                             # Just rotate unit vector. Don't bother normalizing; FLVER compression will dwarf errors.
                             array[array_field][:, :3] = array[array_field][:, :3] @ r.data.T
@@ -1262,7 +1252,7 @@ class FLVER(GameFile):
                         t, r, s = bone_transforms[global_bone_indices[i]]
                         # Scale, then rotate, then translate.
                         array["position"][i] = r.data @ (s.data * array["position"][i]) + t.data
-                        for array_field in array.dtype.names:
+                        for array_field in vertex_array.field_names:
                             if array_field in ("normal", "bitangent") or array_field.startswith("tangent"):
                                 array[array_field][i][:3] = r.data @ array[array_field][i][:3]  # rotating a single row
 
@@ -1288,41 +1278,43 @@ class FLVER(GameFile):
 
     # region Other Formats
 
-    def to_obj(self, name="FLVER", meshes=()) -> str:
-        if isinstance(meshes, int):
-            meshes = [meshes]
+    def to_obj(self, name="FLVER") -> str:
         vertex_offset = 0
         mesh_objs = []
-        for i, mesh in enumerate(self.meshes):
-            if meshes and i not in meshes:
-                continue  # skip this mesh
+        i = 0
+        for mesh in self.meshes:
             mesh_objs.append(mesh.to_obj(name=f"{name} Mesh {i}", vertex_offset=vertex_offset))
-            vertex_offset += len(mesh.vertices)
+            vertex_offset += mesh.vertex_count
+            i += 1
         return "\n\n".join(mesh_objs)
 
-    def write_obj(self, obj_path: Path | str = None, obj_name="", make_dirs=True, meshes=()):
+    def write_obj(self, obj_path: Path | str = None, obj_name="", make_dirs=True):
         if obj_path is None:
             if self.path is None:
                 raise ValueError("You must specify `file_path` because `GameFile` default path has not been set.")
-            obj_path = self.path
-            if obj_path.suffix == ".dcx":
-                obj_path = obj_path.with_name(obj_path.stem)
-            obj_path = obj_path.with_suffix(".obj")
+            path = self.path
+            if path.suffix == ".dcx":
+                path = path.with_name(path.stem)
+            path = path.with_suffix(".obj")
         else:
-            obj_path = Path(obj_path)
-            if obj_path.suffix != ".obj":
-                obj_path = obj_path.with_suffix(".obj")
+            path = Path(obj_path)
+            if path.suffix != ".obj":
+                path = path.with_suffix(".obj")
         if make_dirs:
-            obj_path.parent.mkdir(parents=True, exist_ok=True)
+            path.parent.mkdir(parents=True, exist_ok=True)
         if not obj_name:
-            obj_name = obj_path.stem
-        obj_str = self.to_obj(name=obj_name, meshes=meshes)
-        with obj_path.open("w") as f:
+            obj_name = path.stem
+        obj_str = self.to_obj(name=obj_name)
+        with path.open("w") as f:
             f.write(obj_str)
 
     # endregion
 
     # region Other
+
+    def __iter__(self) -> tp.Iterator[FLVERMesh]:
+        """Shortcut for iterating over `meshes`."""
+        return iter(self.meshes)
 
     def __setstate__(self, state: tuple[None, dict[str, tp.Any]]):
         """Dereference bone connections after restoring state."""

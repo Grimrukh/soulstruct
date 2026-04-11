@@ -28,6 +28,9 @@ from soulstruct.utilities.files import read_json, write_json, get_blake2b_hash
 from .binder_hash import BinderHashTable
 from .entry import BinderEntry, BinderEntryHeader
 
+if tp.TYPE_CHECKING:
+    from soulstruct.base.base_binary_file import BASE_BINARY_BYTES_TYPING
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -128,7 +131,6 @@ class MultipleEntriesFoundError(BinderError, ValueError):
 
 
 BinderSourceTyping = tp.Union[str, Path, bytes, bytearray, BinderEntry, io.BufferedIOBase, BinaryReader]
-T = tp.TypeVar("T", bound="BaseBinder")
 
 
 class BinderVersion(enum.Enum):
@@ -286,8 +288,8 @@ class Binder(BaseBinaryFile):
     @classmethod
     def from_bytes(
         cls,
-        data: bytes | bytearray | tp.BinaryIO | BinaryReader | BinderEntry,
-        bdt_data: bytes | bytearray | tp.BinaryIO | BinaryReader | BinderEntry | None = None,
+        data: BASE_BINARY_BYTES_TYPING,
+        bdt_data: BASE_BINARY_BYTES_TYPING | None = None,
     ) -> tp.Self:
         """Load `Binder` from just `data` (BND file) or split `data` and `bdt_data` (BXF file)."""
 
@@ -296,16 +298,7 @@ class Binder(BaseBinaryFile):
         elif bdt_data is None and cls.IS_SPLIT_BXF is True:
             raise ValueError(f"Can only load split BHD/BDT Binder for class `{cls.__name__}`.")
 
-        reader = BinaryReader(data) if not isinstance(data, BinaryReader) else data  # type: BinaryReader
-
-        if is_dcx(reader):
-            try:
-                data, dcx_type = decompress(reader)
-            finally:
-                reader.close()
-            reader = BinaryReader(data)
-        else:
-            dcx_type = DCXType.Null
+        reader, dcx_type = cls._get_reader_and_dcx_type(data)
 
         if bdt_data is None:
             # BND file.
@@ -321,16 +314,7 @@ class Binder(BaseBinaryFile):
             return instance
 
         # BHD/BDT file.
-        bdt_reader = BinaryReader(bdt_data) if not isinstance(bdt_data, BinaryReader) else bdt_data
-
-        if is_dcx(bdt_reader):
-            try:
-                bdt_data, bdt_dcx_type = decompress(bdt_reader)
-            finally:
-                bdt_reader.close()
-            bdt_reader = BinaryReader(bdt_data)
-        else:
-            bdt_dcx_type = DCXType.Null
+        bdt_reader, bdt_dcx_type = cls._get_reader_and_dcx_type(bdt_data)
 
         if dcx_type != bdt_dcx_type:
             raise ValueError(f"BHD and BDT files have different DCX compression: {dcx_type} vs. {bdt_dcx_type}")
@@ -1388,13 +1372,13 @@ class Binder(BaseBinaryFile):
     # region Binder Properties
 
     def get_entry_ids(self) -> list[int]:
-        return [entry.entry_id for entry in self.entries]
+        return [entry.entry_id for entry in self.entries if entry.entry_id is not None]
 
     def get_entry_paths(self) -> list[str]:
-        return [entry.path for entry in self.entries]
+        return [entry.path for entry in self.entries if entry.path is not None]
 
     def get_entry_names(self) -> list[str]:
-        return [entry.name for entry in self.entries]
+        return [entry.name for entry in self.entries if entry.path is not None]
 
     @property
     def entry_count(self) -> int:
@@ -1408,7 +1392,7 @@ class Binder(BaseBinaryFile):
         """
         if not self.entries:
             return None
-        return max(entry.entry_id for entry in self.entries)
+        return max(entry.entry_id for entry in self.entries if entry.entry_id is not None)
 
     @property
     def has_repeated_entry_names(self):
