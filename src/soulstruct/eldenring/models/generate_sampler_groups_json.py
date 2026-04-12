@@ -34,7 +34,15 @@ def generate_metaparam(elden_ring_path: Path):
             shaderbdlebnd.remove_entry_name(entry.name)
         shaderbdlebnd.entries.append(entry)
 
+    # Full mapping of 'group_X' to `{full_sampler_name, default_texture_stem}`.
+    # Includes ungrouped samplers.
     all_shader_sampler_groups = {}
+
+    # Summarized mapping of group 'X' to `[short_sampler_name_1, short_sampler_name_2, ...]`.
+    # The short sampler names have the shader stem prefix removed (converting '[' to '_'), then
+    # also have '_snp_Texture_2D_' removed if still present.
+    # We also include the default texture name if present and does not contain 'SYSTEX'.
+    shader_group_summaries = {}
 
     for matbin_entry in matbinbnd.entries:
         matbin = MATBIN.from_binder_entry(matbin_entry)
@@ -43,6 +51,7 @@ def generate_metaparam(elden_ring_path: Path):
             continue  # done from previous MATBIN
 
         print(f"Finding metaparam for shader {shader_stem}...")
+        # NOTE: Every shader has its own shaderbdle entry, so there's nothing to cache.
         try:
             shaderbdle_entry = shaderbdlebnd.find_entry_name(f"{shader_stem}.shaderbdle")
         except EntryNotFoundError:
@@ -54,13 +63,42 @@ def generate_metaparam(elden_ring_path: Path):
         metaparam_entry = shaderbdle.find_entry_name(f"{shader_stem}.metaparam")
 
         shader_sampler_groups = read_metaparam(metaparam_entry)
-        # Sort group keys.
+        # Sort group keys by group index (if present).
         shader_sampler_groups = {
-            group_name: shader_sampler_groups[group_name] for group_name in sorted(shader_sampler_groups)
+            group_name: shader_sampler_groups[group_name]
+            for group_name in sorted(
+                shader_sampler_groups,
+                key=lambda x: int(x.removeprefix("group_")) if x else 1E9,
+            )
         }
         all_shader_sampler_groups[shader_stem] = shader_sampler_groups
 
+        if not shader_sampler_groups:
+            continue  # no summary
+
+        # Write summary content.
+        shader_group_summaries[shader_stem] = {}
+        shader_prefix = shader_stem.replace("][", "_").replace("[", "_").replace("]", "_")
+        for group_name, samplers in shader_sampler_groups.items():
+            short_sampler_names = []
+            for sampler_name, default_texture_name in samplers:
+                short_name = sampler_name.removeprefix(shader_prefix)
+                short_name = short_name.removeprefix("_snp_Texture2D_")
+                if default_texture_name and "SYSTEX" not in default_texture_name:
+                    short_name += f" == {default_texture_name}"
+                short_sampler_names.append(short_name)
+            shader_group_summaries[shader_stem][group_name] = short_sampler_names
+
+    # Sort by shader name.
+    all_shader_sampler_groups = {
+        k: v for k, v in sorted(all_shader_sampler_groups.items())
+    }
+    shader_group_summaries = {
+        k: v for k, v in sorted(shader_group_summaries.items())
+    }
+
     write_json("resources/er_shader_sampler_groups.json", all_shader_sampler_groups, indent=4)
+    write_json("resources/er_shader_sampler_groups_summary.json", shader_group_summaries, indent=4)
 
 
 def read_metaparam(metaparam_entry: BinderEntry) -> dict[str, list[tuple[str, str]]]:

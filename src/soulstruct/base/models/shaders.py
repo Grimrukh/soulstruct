@@ -289,6 +289,15 @@ class MatDef(abc.ABC):
                 all_uv_layers.update(extra_uv_layers)
         return sorted(all_uv_layers, key=lambda x: x.value)
 
+    def get_uv_slot_tuple(self) -> tuple[IntEnum, ...]:
+        """Get the ordered UV slot tuple for this shader, where each index corresponds to a FLVER UV array index.
+
+        The default implementation returns the deduplicated UV layers from `get_used_uv_layers()`. Game-specific
+        subclasses (e.g. Elden Ring) override this with explicit per-shader UV slot dictionaries that may include
+        non-sampler UV layers and preserve the exact FLVER UV index ordering.
+        """
+        return tuple(self.get_used_uv_layers())
+
     # region Abstract Methods/Properties
 
     @abc.abstractmethod
