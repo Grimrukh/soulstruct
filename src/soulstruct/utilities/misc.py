@@ -167,6 +167,7 @@ ElementType = tp.TypeVar("ElementType")
 
 
 class IDList(tp.Generic[ElementType]):
+    """List-like container for unique elements that can be retrieved rapidly by `id()` equality."""
     
     _list: list[ElementType]  # list of objects
     _index_dict: dict[int, int]  # maps object ID to list index (NOT ordered)

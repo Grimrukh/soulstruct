@@ -35,6 +35,7 @@ class MatDef(_BaseMatDef):
         "g_Diffuse_2": "DSB 1 Diffuse",
         "g_Specular_2": "DSB 1 Specular",
         "g_Bumpmap_2": "DSB 1 Normal",
+        "g_Bumpmap_3": "DSB 2 Normal",  # only used in DSR, but placed here for class simplicity
         "g_Height": "Displacement",
         "g_Lightmap": "Lightmap",
         "g_DetailBumpmap": "Detail 0 Normal",

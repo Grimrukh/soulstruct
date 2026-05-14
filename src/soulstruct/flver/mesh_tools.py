@@ -4,19 +4,17 @@ from __future__ import annotations
 
 __all__ = [
     "SplitMeshDef",
+    "MergedMeshLoops",
     "MergedMesh",
 ]
 
 import logging
-import multiprocessing
-import pickle
-import tempfile
 import typing as tp
 from collections import defaultdict
 from dataclasses import dataclass, field
-from pathlib import Path
 
 import numpy as np
+from numpy.typing import NDArray
 
 from .material import Material
 from .face_set import FaceSet
@@ -288,47 +286,6 @@ class MergedMesh:
             faces=faces,
             flver=flver,
         )
-
-    @classmethod
-    def from_flver_batch(
-        cls,
-        flvers: list[FLVER],
-        merged_mesh_args: list[tuple[tuple[int, ...], tuple[tuple[str, ...], ...], bool]],
-        processes: int = None,
-    ) -> list[tp.Self | None]:
-        """Use multiprocessing to create `MergedMesh` instances from given `FLVER` instances and args in parallel.
-
-        Uses temp files to transfer large objects between processes, avoiding IPC pipe size limits.
-        Only small booleans are returned through the pipe; all large data is read/written via disk.
-
-        Failed conversions will put `None` into list rather than `MergedMesh`.
-        """
-        with tempfile.TemporaryDirectory(prefix="soulstruct_mesh_") as tmp_dir:
-            # Write inputs (FLVER + args) to temp files to avoid large pipe transfers.
-            mp_args = []
-            for i, (flver, args) in enumerate(zip(flvers, merged_mesh_args, strict=True)):
-                input_path = str(Path(tmp_dir) / f"input_{i}.pkl")
-                output_path = str(Path(tmp_dir) / f"output_{i}.pkl")
-                with open(input_path, "wb") as f:
-                    pickle.dump((flver, args), f, protocol=pickle.HIGHEST_PROTOCOL)
-                mp_args.append((input_path, output_path))
-
-            with multiprocessing.Pool(processes=processes) as pool:
-                successes = pool.starmap(_from_flver_mp, mp_args)
-
-            # Read outputs from temp files.
-            results = []
-            for i, success in enumerate(successes):
-                if success:
-                    output_path = str(Path(tmp_dir) / f"output_{i}.pkl")
-                    with open(output_path, "rb") as f:
-                        merged_mesh = pickle.load(f)
-                    merged_mesh.flver = flvers[i]  # restore FLVER reference (not pickled in output)
-                    results.append(merged_mesh)
-                else:
-                    results.append(None)
-
-        return results
 
     @classmethod
     def build_stacked_loops(
@@ -1251,6 +1208,54 @@ class MergedMesh:
         lut[mesh_bone_indices - lo] = np.arange(len(mesh_bone_indices))
         return lut[bone_indices - lo]
 
+    @property
+    def vertex_count(self) -> int:
+        return self.vertex_data.shape[0]
+
+    @property
+    def positions(self) -> NDArray[np.float32]:
+        return self.vertex_data["position"]
+
+    @property
+    def bone_weights(self) -> NDArray[np.float32]:
+        return self.vertex_data["bone_weights"]
+
+    @property
+    def bone_indices(self) -> NDArray[np.float32]:
+        return self.vertex_data["bone_indices"]
+
+    @property
+    def loop_normals(self) -> NDArray[np.float32] | None:
+        return self.loop_data.normals
+
+    @property
+    def loop_normals_w(self) -> NDArray[np.uint8] | None:
+        return self.loop_data.normals_w
+
+    @property
+    def loop_tangents(self) -> list[NDArray[np.float32]]:
+        return self.loop_data.tangents
+
+    @property
+    def loop_bitangents(self) -> NDArray[np.float32] | None:
+        return self.loop_data.bitangents
+
+    @property
+    def loop_vertex_colors(self) -> list[NDArray[np.float32]]:
+        return self.loop_data.vertex_colors
+
+    @property
+    def loop_uvs(self) -> dict[str, NDArray[np.float32]]:
+        return self.loop_data.uvs
+
+    @property
+    def loop_cloth_tangents(self) -> NDArray[np.float32] | None:
+        return self.loop_data.cloth_tangents
+
+    @property
+    def loop_cloth_bitangents(self) -> NDArray[np.float32] | None:
+        return self.loop_data.cloth_bitangents
+
     @staticmethod
     def unique(array: np.ndarray, max_value=None):
         """More efficient `np.unique()` (for reasonable array lengths) that uses masking and does NOT sort."""
@@ -1258,26 +1263,3 @@ class MergedMesh:
         used = np.zeros(max_value, dtype=np.uint8)
         used[array] = 1
         return np.argwhere(used == 1)[:, 0]
-
-
-def _from_flver_mp(input_path: str, output_path: str) -> bool:
-    """Worker function that reads FLVER and args from a temp file, creates `MergedMesh`, and writes result to a temp
-    file. Only a small boolean is returned through the IPC pipe; all large data is transferred via temp files on disk.
-    """
-    try:
-        with open(input_path, "rb") as f:
-            flver, (mesh_material_indices, material_uv_layer_names, merge_vertices) = pickle.load(f)
-
-        if not flver.meshes:
-            _LOGGER.info(f"FLVER '{flver.path_name}' has no meshes. No MergedMesh created.")
-            return False
-
-        merged_mesh = MergedMesh.from_flver(flver, mesh_material_indices, material_uv_layer_names, merge_vertices)
-        merged_mesh.flver = None  # don't pickle the FLVER reference back (restored by caller)
-
-        with open(output_path, "wb") as f:
-            pickle.dump(merged_mesh, f, protocol=pickle.HIGHEST_PROTOCOL)
-        return True
-    except Exception as ex:
-        _LOGGER.error(f"Failed to load FLVER as MergedMesh from temp input '{input_path}': {ex}")
-        return False

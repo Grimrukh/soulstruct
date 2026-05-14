@@ -53,14 +53,14 @@ def generate_metaparam(elden_ring_path: Path):
         print(f"Finding metaparam for shader {shader_stem}...")
         # NOTE: Every shader has its own shaderbdle entry, so there's nothing to cache.
         try:
-            shaderbdle_entry = shaderbdlebnd.find_entry_name(f"{shader_stem}.shaderbdle")
+            shaderbdle_entry = shaderbdlebnd.find_entry_by_name(f"{shader_stem}.shaderbdle")
         except EntryNotFoundError:
             print(f"  No shaderbdle entry found for {shader_stem}.")
             all_shader_sampler_groups[shader_stem] = []  # don't look again
             continue
 
         shaderbdle = Binder.from_binder_entry(shaderbdle_entry)
-        metaparam_entry = shaderbdle.find_entry_name(f"{shader_stem}.metaparam")
+        metaparam_entry = shaderbdle.find_entry_by_name(f"{shader_stem}.metaparam")
 
         shader_sampler_groups = read_metaparam(metaparam_entry)
         # Sort group keys by group index (if present).

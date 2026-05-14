@@ -105,13 +105,6 @@ class Texture:
         """Typically just removes '.tga' extension from FLVER texture path."""
         return Path(self.path).stem if self.path else ""
 
-    def __hash__(self) -> int:
-        """Used mostly by `Material` hash."""
-        return hash((
-            self.path, self.texture_type, self.scale.x, self.scale.y, self.f2_unk_x10, self.f2_unk_x11,
-            self.f2_unk_x14, self.f2_unk_x18, self.f2_unk_x1c
-        ))
-
     def __repr__(self):
         s = f"Texture(\"{self.path}\", \"{self.texture_type}\""
         if self.scale[0] != 1.0 or self.scale[1] != 1.0:

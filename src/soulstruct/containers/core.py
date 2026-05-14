@@ -21,7 +21,7 @@ from pathlib import Path
 from dataclasses import dataclass, field
 
 from soulstruct.base.base_binary_file import BaseBinaryFile
-from soulstruct.dcx import DCXType, compress, decompress, is_dcx
+from soulstruct.dcx import DCXType, compress, decompress
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.files import read_json, write_json, get_blake2b_hash
 
@@ -29,7 +29,7 @@ from .binder_hash import BinderHashTable
 from .entry import BinderEntry, BinderEntryHeader
 
 if tp.TYPE_CHECKING:
-    from soulstruct.base.base_binary_file import BASE_BINARY_BYTES_TYPING
+    BASE_BINARY_BYTES_TYPING = tp.Union[bytes, bytearray, io.BufferedIOBase, BinaryReader, BinderEntry]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -123,8 +123,7 @@ class EntryNotFoundError(BinderError, KeyError):
 
 
 class MultipleEntriesFoundError(BinderError, ValueError):
-    """Raised when multiple `BinderEntry` instances are found matching a given entry specification, usually only when
-    `assert_unique=True`.
+    """Raised when multiple `BinderEntry` instances are found matching a given entry specification.
 
     Subclass of `ValueError` for legacy compatibility.
     """
@@ -1101,17 +1100,17 @@ class Binder(BaseBinaryFile):
         self.entries.remove(entry)
 
     def remove_entry_id(self, entry_id: int) -> BinderEntry:
-        entry = self.find_entry_id(entry_id, assert_unique=True)
+        entry = self.find_entry_by_id(entry_id)
         self.entries.remove(entry)
         return entry
 
     def remove_entry_path(self, entry_path: Path | str):
-        entry = self.find_entry_path(entry_path, assert_unique=True)
+        entry = self.find_entry_by_path(entry_path)
         self.entries.remove(entry)
         return entry
 
     def remove_entry_name(self, entry_name: str):
-        entry = self.find_entry_name(entry_name, assert_unique=True)
+        entry = self.find_entry_by_name(entry_name)
         self.entries.remove(entry)
         return entry
 
@@ -1246,16 +1245,14 @@ class Binder(BaseBinaryFile):
             entries[entry.name] = entry
         return entries
 
-    def _find_entry_by_attr(self, attr: str, value: int | str, assert_unique=False):
+    def _find_entry_by_attr(self, attr: str, value: int | str):
         """Shared code for finding an entry with `getattr(entry, attr) == value`.
 
-        If `assert_unique` is True, will check all entries and raise a `BinderError` if multiple hits are found.
+        Raises a `MultipleEntriesFoundError` if multiple hits are found.
         """
         found = None
         for entry in self.entries:
             if getattr(entry, attr) == value:
-                if not assert_unique:
-                    return entry
                 if found:
                     raise MultipleEntriesFoundError(f"Multiple entries found with `{attr} == {value}`.")
                 found = entry
@@ -1263,76 +1260,87 @@ class Binder(BaseBinaryFile):
             return found
         raise EntryNotFoundError(f"No entry found in '{self.path.name}' with `{attr} == {value}`.")
 
-    def find_entry_id(self, entry_id: int, assert_unique=False):
+    def find_entry_by_id(self, entry_id: int):
         """Return the first entry with the given `entry_id`.
 
         If `assert_unique` is True, will check all entries and raise a `BinderError` if multiple have the same ID.
         """
-        return self._find_entry_by_attr("entry_id", entry_id, assert_unique)
+        return self._find_entry_by_attr("entry_id", entry_id)
 
-    def find_entry_name(self, entry_name: str, assert_unique=False):
-        """Return the first entry with the given `entry_name`."""
-        return self._find_entry_by_attr("name", entry_name, assert_unique)
+    def find_entry_by_name(self, entry_name: str):
+        """Return the unique entry with the given `entry_name`."""
+        return self._find_entry_by_attr("name", entry_name)
 
-    def find_entry_minimal_stem(self, entry_minimal_stem: str, assert_unique=False):
-        """Return the first entry with the given `entry_minimal_stem`."""
-        return self._find_entry_by_attr("minimal_stem", entry_minimal_stem, assert_unique)
+    def find_entry_by_stem(self, entry_stem: str):
+        """Return the unique entry with the given `entry_stem`."""
+        return self._find_entry_by_attr("stem", entry_stem)
 
-    def find_entry_path(self, entry_path: str | Path, assert_unique=False):
-        """Return the first entry with the given `entry_path`."""
-        return self._find_entry_by_attr("path", str(entry_path), assert_unique)
+    def find_entry_by_path(self, entry_path: str | Path):
+        """Return the unique entry with the given `entry_path`."""
+        return self._find_entry_by_attr("path", str(entry_path))
 
-    def _find_entries_matching_attr(
+    def _find_entry_by_attr_regex(
         self,
         pattern: str | re.Pattern,
         attr: str,
-        return_multiple: bool,
-        assert_unique: bool,
         flags=0,
         escape=False,
-    ) -> BinderEntry | list[BinderEntry]:
-        """Shared code to match single/multiple entry names or paths."""
+    ) -> BinderEntry:
+        """Shared code to match a single entry by attribute."""
         if escape:
             pattern = re.escape(pattern)
         if isinstance(pattern, re.Pattern) and flags:
             _LOGGER.warning("Regex flags cannot be used when `pattern` is already compiled. Ignoring.")
             flags = 0
         matches = [entry for entry in self.entries if re.match(pattern, getattr(entry, attr), flags=flags)]
-        if return_multiple:
-            return matches
         if not matches:
             raise EntryNotFoundError(f"No Binder entries found with {attr} matching '{pattern}'.")
-        if len(matches) > 1 and assert_unique:
+        if len(matches) > 1:
             raise ValueError(
                 f"Found multiple Binder entries with {attr} matching '{pattern}':\n  {[m.path for m in matches]}"
             )        
         return matches[0]
 
-    def find_entry_matching_path(
-        self, pattern: str | re.Pattern, flags=0, escape=False, assert_unique=False,
+    def _find_entries_by_attr_regex(
+        self,
+        pattern: str | re.Pattern,
+        attr: str,
+        flags=0,
+        escape=False,
+    ) -> list[BinderEntry]:
+        """Shared code to match single/multiple entry names or paths."""
+        if escape:
+            pattern = re.escape(pattern)
+        if isinstance(pattern, re.Pattern) and flags:
+            _LOGGER.warning("Regex flags cannot be used when `pattern` is already compiled. Ignoring.")
+            flags = 0
+        return [entry for entry in self.entries if re.match(pattern, getattr(entry, attr), flags=flags)]
+
+    def find_entry_by_path_regex(
+        self, pattern: str | re.Pattern, flags=0, escape=False
     ) -> BinderEntry:
         """Returns a single entry whose full path matches the given regex `pattern`.
 
         Only one match must exist. Use `find_entries_matching_path()` if you want to find multiple matches.
         """
-        return self._find_entries_matching_attr(pattern, "path", False, assert_unique, flags=flags, escape=escape)
+        return self._find_entry_by_attr_regex(pattern, "path", flags=flags, escape=escape)
 
-    def find_entries_matching_path(self, pattern: str | re.Pattern, flags=0, escape=False) -> list[BinderEntry]:
+    def find_entries_by_path_regex(self, pattern: str | re.Pattern, flags=0, escape=False) -> list[BinderEntry]:
         """Returns a list of entries whose paths match the given `regex` pattern."""
-        return self._find_entries_matching_attr(pattern, "path", True, False, flags=flags, escape=escape)
+        return self._find_entries_by_attr_regex(pattern, "path", flags=flags, escape=escape)
 
-    def find_entry_matching_name(
-        self, pattern: str | re.Pattern, flags=0, escape=False, assert_unique=False
+    def find_entry_by_name_regex(
+        self, pattern: str | re.Pattern, flags=0, escape=False,
     ) -> BinderEntry:
         """Returns a single entry whose name matches the given regex `pattern`.
 
         Only one match must exist. Use `find_entries_matching_name()` if you want to find multiple matches.
         """
-        return self._find_entries_matching_attr(pattern, "name", False, assert_unique, flags=flags, escape=escape)
+        return self._find_entry_by_attr_regex(pattern, "name", flags=flags, escape=escape)
 
-    def find_entries_matching_name(self, pattern: str | re.Pattern, flags=0, escape=False) -> list[BinderEntry]:
+    def find_entries_by_name_regex(self, pattern: str | re.Pattern, flags=0, escape=False) -> list[BinderEntry]:
         """Returns a list of entries whose names match the given `regex` pattern."""
-        return self._find_entries_matching_attr(pattern, "name", True, False, flags=flags, escape=escape)
+        return self._find_entries_by_attr_regex(pattern, "name", flags=flags, escape=escape)
 
     def __getitem__(self, entry_spec: int | Path | str | re.Pattern) -> BinderEntry:
         """Convenient shortcut for finding an entry by ID (int), full path (Path), name only (str), or by matching
@@ -1347,21 +1355,20 @@ class Binder(BaseBinaryFile):
         The only standard entry-finding method not supported here is matching the entry's full path with regex, which
         can be done with `find_entry_matching_path()`.
 
-        Finding methods are called with `assert_unique=True`, which means a `BinderError` will be raised if multiple
-        entries are found. If you want to allow multiple hits and only return the first, or return all of those multiple
-        hits, use the appropriate method directly.
+        A `BinderError` will be raised if multiple entries are found. If you want to return multiple hits, use the
+        appropriate `find_entries...` method directly.
         """
         if isinstance(entry_spec, str) and ("\\" in entry_spec or "/" in entry_spec):
             entry_spec = Path(entry_spec)
 
         if isinstance(entry_spec, int):
-            return self.find_entry_id(entry_spec, assert_unique=True)
+            return self.find_entry_by_id(entry_spec)
         if isinstance(entry_spec, Path):
-            return self.find_entry_path(entry_spec, assert_unique=True)
+            return self.find_entry_by_path(entry_spec)
         if isinstance(entry_spec, str):
-            return self.find_entry_name(entry_spec, assert_unique=True)
+            return self.find_entry_by_name(entry_spec)
         if isinstance(entry_spec, re.Pattern):
-            return self.find_entry_matching_name(entry_spec, assert_unique=True)
+            return self.find_entry_by_name_regex(entry_spec)
 
         raise TypeError(
             "Key for `binder[]` should be an entry ID (int), path (Path/str), name (str), or pattern (`re.Pattern`)."

@@ -128,8 +128,8 @@ class BaseVector(abc.ABC):
         # noinspection PyTypeChecker
         return self._data[index]
 
-    def __eq__(self, other_vector: BaseVector):
-        return np.array_equal(self._data, other_vector._data)
+    def __eq__(self, other_vector: VECTOR_LIKE):
+        return np.array_equal(self._data, other_vector)
 
     def __iter__(self) -> tp.Iterator[float]:
         return iter(self._data)
@@ -169,11 +169,11 @@ class BaseVector(abc.ABC):
             raise ZeroDivisionError("Cannot normalize a zero vector.")
         return self / n
 
-    def dot(self, other_vector: BaseVector) -> float:
-        return float(np.inner(self._data, other_vector._data))
+    def dot(self, other_vector: VECTOR_LIKE) -> float:
+        return float(np.inner(self._data, other_vector))
 
-    def allclose(self, other: BaseVector, rtol: float = 1e-05, atol: float = 1e-08) -> bool:
-        return np.allclose(self._data, other._data, rtol=rtol, atol=atol)
+    def allclose(self, other: VECTOR_LIKE, rtol: float = 1e-05, atol: float = 1e-08) -> bool:
+        return np.allclose(self._data, other, rtol=rtol, atol=atol)
 
     @classmethod
     def zero(cls) -> tp.Self:
@@ -244,11 +244,11 @@ class Vector3(BaseVector):
         """Drop the `w` component from a `Vector4` to create a `Vector3`."""
         return cls((vector4.x, vector4.y, vector4.z))
 
-    def cross(self, other_vector: Vector3) -> Vector3:
-        return Vector3(np.cross(self._data, other_vector._data))
+    def cross(self, other_vector: VECTOR_LIKE) -> Vector3:
+        return Vector3(np.cross(self._data, other_vector))
 
     # noinspection PyPackageRequirements
-    def is_same_euler_rotation(self, other_euler: Vector3, order="xzy", tolerance: float = 1e-6) -> bool:
+    def is_same_euler_rotation(self, other_euler: VECTOR_LIKE, order="xzy", tolerance: float = 1e-6) -> bool:
         """Checks if two Euler rotations are the same, within a tolerance.
 
         Typically only needed for debugging. Requires either `scipy` or Blender `mathutils` to be installed. Note that
@@ -266,13 +266,13 @@ class Vector3(BaseVector):
             else:
                 # mathutils method: compare quaternion angles
                 this_quat = Euler(self._data).to_quaternion()
-                other_quat = Euler(other_euler._data).to_quaternion()
+                other_quat = Euler(other_euler).to_quaternion()
                 angle = this_quat.rotation_difference(other_quat).angle
                 return angle < tolerance or angle < (2 * math.pi - tolerance)
         else:
             # scipy method: compare all rotation matrix elements
             this_mat = Rotation.from_euler(order, self._data).as_matrix()
-            other_mat = Rotation.from_euler(order, other_euler._data).as_matrix()
+            other_mat = Rotation.from_euler(order, other_euler).as_matrix()
             return np.allclose(this_mat, other_mat, atol=tolerance)
 
     def get_as_axes(self, axes: str) -> Vector2 | Vector3:

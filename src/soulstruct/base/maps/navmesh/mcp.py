@@ -331,7 +331,7 @@ class MCP(GameFile):
             # Find and load `NVM` model.
             model_name = navmesh.model.name + f"A{map_id[0]:02d}.nvm"
             try:
-                model_entry = nvmbnd.find_entry_matching_name(model_name)
+                model_entry = nvmbnd.find_entry_by_name_regex(model_name)
             except EntryNotFoundError:
                 raise EntryNotFoundError(f"Could not find NVM model '{model_name}' in NVM binder.")
             nvm = model_entry.to_binary_file(NVM)

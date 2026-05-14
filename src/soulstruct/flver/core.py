@@ -3,6 +3,7 @@ from __future__ import annotations
 __all__ = ["FLVER"]
 
 import logging
+import multiprocessing
 import re
 import typing as tp
 from dataclasses import field
@@ -13,10 +14,10 @@ import numpy as np
 from soulstruct.base.game_file import GameFile
 from soulstruct.containers import Binder, TPF
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.maths import EulerRad, Vector3, Vector4, Matrix3, SINGLE_MIN, SINGLE_MAX
-from soulstruct.utilities.misc import IDList
+from soulstruct.utilities.maths import AABB, EulerRad, Vector3, Vector4, Matrix3, SINGLE_MIN, SINGLE_MAX
 
 from .bone import FLVERBone
+from .bone_tools import BoneTree
 from .dummy import Dummy
 from .face_set import FaceSet
 from .gx_item import GXItem
@@ -25,6 +26,7 @@ from .material import Material
 from .mesh_tools import MergedMesh
 from .mesh import FLVERMesh
 from .texture import Texture
+from .utilities import *
 from .version import FLVERVersion
 from .vertex_array import VertexArray, VertexDataSizeError
 from .vertex_array_layout import VertexArrayLayout
@@ -129,11 +131,10 @@ class FLVER(GameFile):
     version: FLVERVersion = FLVERVersion.DarkSouls_A
     unicode: bool = True
 
-    bounding_box_min: Vector3 = field(default_factory=Vector3.single_max)
-    bounding_box_max: Vector3 = field(default_factory=Vector3.single_min)
+    bounding_box: AABB = field(default_factory=AABB.invalid)
 
     dummies: list[Dummy] = field(default_factory=list)
-    bones: IDList[FLVERBone] = field(default_factory=IDList)
+    bones: list[FLVERBone] = field(default_factory=list)
     meshes: list[FLVERMesh] = field(default_factory=list)
 
     # Written to FLVER0 versions only:
@@ -150,11 +151,8 @@ class FLVER(GameFile):
     f2_unk_x5d: int = 0
     f2_unk_x68: int = 0
 
-    @property
-    def submeshes(self):
-        # TODO: TEMPORARY LEGACY SUPPORT.
-        _LOGGER.warning(f"Use of deprecated `FLVER.submeshes`. Use `FLVER.meshes` instead.")
-        return self.meshes
+    # Cached MergedMesh generated from this FLVER. Must be cleared if FLVER is modified.
+    _cached_merged_mesh: MergedMesh | None = field(init=False, repr=False, default=None)
 
     # region Format Read
 
@@ -168,6 +166,7 @@ class FLVER(GameFile):
             raise ValueError(f"Unrecognized FLVER version: {version_int}. Cannot read it.")
         if version <= 0xFFFF:
             return cls._from_flver0_reader(reader)
+
         return cls._from_flver2_reader(reader)
 
     @classmethod
@@ -186,7 +185,7 @@ class FLVER(GameFile):
         """
         binder = Binder.from_bak(binder_path) if from_bak else Binder.from_path(binder_path)
         if entry_id_or_name is None:
-            flver_entry = binder.find_entry_matching_name(r".*\.flver(\.dcx)?$")
+            flver_entry = binder.find_entry_by_name_regex(r".*\.flver(\.dcx)?$")
             return cls.from_bytes(flver_entry)
         return cls.from_bytes(binder[entry_id_or_name])
 
@@ -198,7 +197,7 @@ class FLVER(GameFile):
         list of loaded FLVERs. Will raise an exception if no FLVER files are found."""
         binder = Binder.from_bak(binder_path) if from_bak else Binder.from_path(binder_path)
         if entry_ids_or_names is None:
-            flver_entries = binder.find_entries_matching_name(r".*\.flver(\.dcx)?$")
+            flver_entries = binder.find_entries_by_name_regex(r".*\.flver(\.dcx)?$")
             return [cls.from_bytes(entry) for entry in flver_entries]
         return [cls.from_bytes(binder[entry_id_or_name]) for entry_id_or_name in entry_ids_or_names]
 
@@ -234,12 +233,10 @@ class FLVER(GameFile):
         dummies = [Dummy.from_flver_reader(reader, header.version) for _ in range(header.dummy_count)]
         materials = [Material.from_flver0_reader(reader, encoding) for _ in range(header.material_count)]
 
-        bones = IDList()  # type: IDList[FLVERBone]
+        bones = []  # type: list[FLVERBone]
         for _ in range(header.bone_count):
             bone = FLVERBone.from_flver_reader(reader, encoding=encoding)
             bones.append(bone)
-        for bone in bones:
-            bone.set_bones(bones)
 
         meshes = [
             FLVERMesh.from_flver0_reader(
@@ -264,8 +261,7 @@ class FLVER(GameFile):
             f0_unk_x4b=header.f0_unk_x4b,
             f0_unk_x4c=header.f0_unk_x4c,
             f0_unk_x5c=header.f0_unk_x5c,
-            bounding_box_min=header.bounding_box_min,
-            bounding_box_max=header.bounding_box_max,
+            bounding_box=AABB(header.bounding_box_min, header.bounding_box_max),
             dummies=dummies,
             bones=bones,
             meshes=meshes,
@@ -296,12 +292,10 @@ class FLVER(GameFile):
             for _ in range(header.material_count)
         ]
 
-        bones = IDList()  # type: IDList[FLVERBone]
+        bones = []  # type: list[FLVERBone]
         for _ in range(header.bone_count):
             bone = FLVERBone.from_flver_reader(reader, encoding=encoding)
             bones.append(bone)
-        for bone in bones:
-            bone.set_bones(bones)
 
         meshes = [
             FLVERMesh.from_flver2_reader(
@@ -424,6 +418,8 @@ class FLVER(GameFile):
             bone_count=len(self.bones),
             mesh_count=len(self.meshes),
             vertex_array_count=len(self.meshes),  # each mesh has one vertex array
+            bounding_box_min=self.bounding_box.min,
+            bounding_box_max=self.bounding_box.max,
             true_face_count=true_face_count,
             total_face_count=total_face_count,
             vertex_index_bit_size=vertex_index_bit_size,
@@ -443,7 +439,7 @@ class FLVER(GameFile):
 
         for mesh in self.meshes:
             material = mesh.material
-            material_hash = hash(material)  # includes name!
+            material_hash = hash_material(material)  # includes name!
             if material_hash in hashed_material_indices:
                 # Identical material already used by a previous Mesh. Reuse it.
                 material_index = hashed_material_indices[material_hash]
@@ -478,8 +474,7 @@ class FLVER(GameFile):
 
         # Pack bone headers.
         for bone in self.bones:
-            bone.set_bone_indices(self.bones)
-            bone.to_flver_writer(writer, self.bones)
+            bone.to_flver_writer(writer)
 
         # Pack mesh headers.
         for mesh, material_index in zip(self.meshes, mesh_material_indices):
@@ -565,6 +560,8 @@ class FLVER(GameFile):
             bone_count=len(self.bones),
             mesh_count=len(self.meshes),
             vertex_array_count=sum(len(mesh.vertex_arrays) for mesh in self.meshes),
+            bounding_box_min=self.bounding_box.min,
+            bounding_box_max=self.bounding_box.max,
             true_face_count=true_face_count,
             total_face_count=total_face_count,
             face_set_vertex_index_bit_size=header_face_set_vertex_index_bit_size,  # 0, 16, or 32
@@ -589,7 +586,7 @@ class FLVER(GameFile):
         gx_list_material_users = []  # type: list[list[Material]]  # maps `gx_lists_to_pack` element to `Material` list
         for mesh in self.meshes:
             material = mesh.material
-            material_hash = hash(material)  # includes name!
+            material_hash = hash_material(material)  # includes name!
             if material_hash in hashed_material_indices:
                 mesh_material_index = hashed_material_indices[material_hash]
             else:
@@ -598,7 +595,7 @@ class FLVER(GameFile):
                 materials_to_pack.append(material)
                 # Check GX item list.
                 if material.gx_items:
-                    gx_items_hash = hash(tuple(material.gx_items))
+                    gx_items_hash = hash(tuple(hash_gx_item(gx_item) for gx_item in material.gx_items))
                     if gx_items_hash in hashed_gx_list_indices:
                         # GX item list with identical hash is already registered for packing.
                         material_gx_list_index = hashed_gx_list_indices[gx_items_hash]
@@ -634,8 +631,7 @@ class FLVER(GameFile):
 
         # Pack bones.
         for bone in self.bones:
-            bone.set_bone_indices(self.bones)
-            bone.to_flver_writer(writer, self.bones)
+            bone.to_flver_writer(writer)
 
         # Pack mesh headers.
         for mesh, material_index in zip(self.meshes, mesh_material_indices):
@@ -772,6 +768,72 @@ class FLVER(GameFile):
 
     # endregion
 
+    # region Merged Mesh cache/clear
+
+    def has_cached_merged_mesh(self) -> bool:
+        return self._cached_merged_mesh is not None
+
+    def get_cached_merged_mesh(self) -> MergedMesh:
+        """Get cached Merged Mesh. Must exist or throws."""
+        if self._cached_merged_mesh is None:
+            raise ValueError("Merged Mesh is not cached on FLVER yet.")
+        return self._cached_merged_mesh
+
+    def update_cached_merged_mesh(self, mesh_material_indices: tp.Sequence[int] = None, material_uv_layer_names: tp.Sequence[tp.Sequence[str]] = None, merge_vertices=True) -> MergedMesh:
+        """Build and cache a Merged Mesh. Returns the cached Merged Mesh."""
+        merged_mesh = self._cached_merged_mesh = self.build_merged_mesh(
+            mesh_material_indices, material_uv_layer_names, merge_vertices)
+        return merged_mesh
+
+    def clear_cached_merged_mesh(self) -> None:
+        """Clear cached Merged Mesh."""
+        self._cached_merged_mesh = None
+
+    @classmethod
+    def update_cached_merged_meshes_parallel(
+        cls,
+        flvers: list[FLVER],
+        mesh_material_indices: tp.Sequence[list[int]] | None = None,
+        material_uv_layer_names: tp.Sequence[list[list[str]]] | None = None,
+        merge_vertices: tp.Sequence[bool] = None,
+        max_threads: int = None,
+    ) -> list[bool]:
+        """Use multiprocessing to cache `MergedMesh` instances on given `FLVER` instances in parallel.
+
+        Failed conversions will put `None` into list rather than `MergedMesh`.
+        """
+        # Default arguments:
+        if not mesh_material_indices:
+            mesh_material_indices = [None for _ in flvers]
+        if not material_uv_layer_names:
+            material_uv_layer_names = [None for _ in flvers]
+        if not merge_vertices:
+            merge_vertices = [True for _ in flvers]
+
+        mp_args = list(zip(flvers, mesh_material_indices, material_uv_layer_names, merge_vertices, strict=True))
+
+
+        with multiprocessing.Pool(processes=max_threads) as pool:
+            successes = pool.starmap(_cache_flver_merged_mesh, mp_args)
+
+        return successes
+
+    # region Convenience Properties
+
+    @property
+    def bone_count(self) -> int:
+        return len(self.bones)
+
+    @property
+    def dummy_count(self) -> int:
+        return len(self.dummies)
+
+    @property
+    def mesh_count(self) -> int:
+        return len(self.meshes)
+
+    # endregion
+
     def to_string(self) -> str:
         if self.bones:
             bones = "[\n    " + "\n    ".join(repr(self.bones)[1:-1].split("\n")) + "\n  ]"
@@ -793,11 +855,34 @@ class FLVER(GameFile):
             ")"
         )
 
+    def get_bone_tree(self) -> BoneTree:
+        """Construct a `BoneTree` from current bones, which makes bone modification/navigation easier."""
+        return BoneTree(self)
+
+    def set_bone_tree(self, bone_tree: BoneTree):
+        """Set FLVER bone data from scratch using `bone_tree`."""
+        self.bones.clear()
+
+        for bone_node in bone_tree.bones:
+            flver_bone = FLVERBone(
+                name=bone_node.name,
+                translate=bone_node.translate,
+                rotate=bone_node.rotate,
+                scale=bone_node.scale,
+                bounding_box=bone_node.bounding_box,
+                usage_flags=bone_node.usage_flags,
+                parent_bone_index=bone_tree.get_bone_index(bone_node.parent_bone),
+                child_bone_index=bone_tree.get_bone_index(bone_node.child_bone),
+                next_sibling_bone_index=bone_tree.get_bone_index(bone_node.next_sibling_bone),
+                previous_sibling_bone_index=bone_tree.get_bone_index(bone_node.previous_sibling_bone),
+            )
+            self.bones.append(flver_bone)
+
     def refresh_mesh_indices(self):
         for i, mesh in enumerate(self.meshes):
             mesh.index = i
 
-    def to_merged_mesh(
+    def build_merged_mesh(
         self,
         mesh_material_indices: tp.Sequence[int] = None,
         material_uv_layer_names: tp.Sequence[tp.Sequence[str]] = None,
@@ -833,7 +918,8 @@ class FLVER(GameFile):
                     axes=axes,
                     **kwargs,
                 )
-        for bone in self.bones:
+        bone_tree = BoneTree(self)
+        for bone in bone_tree.bones:
             bone_position, _, _ = bone.get_armature_space_transform()
             axes.scatter(*bone_position.to_xzy(), color="blue", s=10)
         if auto_show:
@@ -872,17 +958,6 @@ class FLVER(GameFile):
                 # TODO: To be safe, probably make sure we're only replacing the file name of the path.
                 texture.path = texture.path.replace(old_name, new_name)
 
-    def get_all_texture_paths(self) -> set[Path]:
-        """Get set of all texture paths from all materials, which typically end in '.tga' or '.tif'.
-
-        Ignores textures with empty `path`.
-        """
-        return {
-            Path(texture.path)
-            for mesh in self.meshes
-            for texture in mesh.material.textures if texture.path
-        }
-
     def get_tpfbhd_directory_path(self) -> Path:
         """Looks for folder containing TPFBHD files adjacent to FLVER's directory.
 
@@ -905,7 +980,7 @@ class FLVER(GameFile):
             tpfbhd_directory = self.get_tpfbhd_directory_path()
         else:
             tpfbhd_directory = Path(tpfbhd_directory)
-        tpf_paths = [(p, re.compile(rf"{p.stem}\.tpf(\.dcx)?$")) for p in self.get_all_texture_paths()]
+        tpf_paths = [(p, re.compile(rf"{p.stem}\.tpf(\.dcx)?$")) for p in get_all_texture_paths(self)]
         tpf_sources = {}
         for bhd_path in tpfbhd_directory.glob("*.tpfbhd"):
             bxf = Binder.from_path(bhd_path)
@@ -932,12 +1007,6 @@ class FLVER(GameFile):
                 return bone
         raise KeyError(f"Bone '{name}' not found in FLVER.")
 
-    def any_dynamic(self) -> bool:
-        return any(mesh.is_dynamic for mesh in self.meshes)
-
-    def all_dynamic(self) -> bool:
-        return all(mesh.is_dynamic for mesh in self.meshes)
-
     def sort_mesh_bone_indices(self):
         """Sort local `bone_indices` of each mesh, if used."""
         for mesh in self.meshes:
@@ -953,11 +1022,13 @@ class FLVER(GameFile):
         Note that rigged FLVERs (characters, objects) seem to always use `in_local_space=True`, while map pieces do not.
         """
 
+        bone_tree = BoneTree(self)
+
         if in_local_space:
             # Get the inverse transforms required to convert each bone's vertex positions to local bone space.
             bone_arma_translate_inv_rotates = [
                 (translate, rotate.inverse())
-                for translate, rotate, _ in self.get_bone_armature_space_transforms()
+                for translate, rotate, _ in bone_tree.get_bone_armature_space_transforms()
             ]
         else:
             # Unused.
@@ -1025,11 +1096,8 @@ class FLVER(GameFile):
 
         # Update bone bounding boxes.
         for bone_index in refresh_bone_indices:
-            # print(f"BEFORE: {bone.name}: {bone.bounding_box_min} -> {bone.bounding_box_max}")
             bone = self.bones[bone_index]
-            bone.bounding_box_min = Vector3(bone_mins[bone_index])
-            bone.bounding_box_max = Vector3(bone_maxs[bone_index])
-            # print(f"    --> {bone.name}: {bone.bounding_box_min} -> {bone.bounding_box_max}")
+            bone.bounding_box = AABB(Vector3(bone_mins[bone_index]), Vector3(bone_maxs[bone_index]))
 
     def refresh_bounding_boxes(self):
         """Refresh global bounding box of FLVER from minimum and maximum positions of all mesh vertices, along with
@@ -1039,9 +1107,8 @@ class FLVER(GameFile):
         """
         if not self.meshes:
             # Empty FLVER.
-            _LOGGER.warning(f"FLVER '{self.path}' has no meshes. Setting maximal bounding box.")
-            self.bounding_box_min = Vector3((SINGLE_MAX, SINGLE_MAX, SINGLE_MAX))
-            self.bounding_box_max = Vector3((SINGLE_MIN, SINGLE_MIN, SINGLE_MIN))
+            _LOGGER.warning(f"FLVER '{self.path}' has no meshes. Setting invalid bounding box.")
+            self.bounding_box = AABB.invalid()
             return
 
         mesh_mins = np.empty((len(self.meshes), 3))
@@ -1057,123 +1124,14 @@ class FLVER(GameFile):
 
             # NOTE: Lazy check for `FLVER0` vs. `FLVER`.
             if mesh.uses_bounding_boxes:
-                mesh.bounding_box_min = Vector3(mesh_min)
-                mesh.bounding_box_max = Vector3(mesh_max)
+                mesh.bounding_box = AABB(Vector3(mesh_min), Vector3(mesh_max))
                 # TODO: Don't know how to set `bounding_box_unknown` in Sekiro+.
 
             mesh_mins[i, :] = mesh_min
             mesh_maxs[i, :] = mesh_max
 
         # Update FLVER-wide bounding box.
-        self.bounding_box_min = Vector3(mesh_mins.min(axis=0))
-        self.bounding_box_max = Vector3(mesh_maxs.max(axis=0))
-
-    def get_root_bones(self) -> list[FLVERBone]:
-        """Return all bones with no parent."""
-        return [bone for bone in self.bones if bone.parent_bone is None]
-
-    def set_bone_children_siblings(self):
-        """Iterate through the `bones` hierarchy and use set `parent_bone` (the most important reference) to set
-        `child_bone` (first bone using this bone as parent) and sibling bones (ordered bones with the same parent).
-        """
-
-        # Clear old references.
-        for bone in self.bones:
-            bone.child_bone = None
-            bone.previous_sibling_bone = None
-            bone.next_sibling_bone = None
-
-        root_bones = []
-        for bone in self.bones:
-
-            if bone.parent_bone is None:
-                # Root bone. Assign siblings.
-                if root_bones:
-                    # Next sibling.
-                    root_bones[-1].next_sibling_bone = bone
-                    bone.previous_sibling_bone = root_bones[-1]
-                root_bones.append(bone)
-
-            children = []
-            for other_bone in self.bones:
-                if other_bone.parent_bone is bone:
-                    if not children:
-                        # First child found.
-                        bone.child_bone = other_bone
-                    else:
-                        # Next sibling.
-                        children[-1].next_sibling_bone = other_bone
-                        other_bone.previous_sibling_bone = children[-1]
-                    children.append(other_bone)
-
-    def get_bone_armature_space_transforms(self) -> list[tuple[Vector3, Matrix3, Vector3]]:
-        """Compute the FLVER armature space transforms of all bones at once by moving downward through the hierarchy.
-
-        Note that bone scale is not inherited. All scale values are local.
-
-        Also note that we can't cache this because any/all parent bone transforms could change. It's inexpensive anyway.
-        """
-        root_bones = self.get_root_bones()
-        # Start with local transforms. They will be changed to armature space transforms one at a time, recursively.
-        armature_space_transforms = [bone.get_local_transform() for bone in self.bones]
-        done_indices = set()
-
-        def local_to_parent_space(bone: FLVERBone, parent_transform: tuple[Vector3, Matrix3, Vector3]):
-            index = bone.get_bone_index(self.bones)
-            if index in done_indices:
-                raise ValueError(f"Bone '{bone.name}' is a child of multiple bones.")
-            done_indices.add(index)
-            local_translate, local_rotate_matrix, local_scale = armature_space_transforms[index]
-            parent_translate, parent_rotate_matrix, _ = parent_transform
-            bone_armature_transform = (
-                parent_translate + parent_rotate_matrix @ local_translate,
-                parent_rotate_matrix @ local_rotate_matrix,
-                local_scale,  # scale not inherited
-            )
-            armature_space_transforms[index] = bone_armature_transform
-            for child_bone in bone.get_all_immediate_children():
-                local_to_parent_space(child_bone, bone_armature_transform)
-
-        for root_bone in root_bones:
-            local_to_parent_space(root_bone, (Vector3.zero(), Matrix3.identity(), Vector3.one()))
-
-        return armature_space_transforms
-
-    def set_bone_armature_space_transforms(self, armature_space_transforms: list[tuple[Vector3, Matrix3, Vector3]]):
-        """Use given `armature_space_transforms` to set the local transforms of each `FLVERBone`, by applying the
-        inverse of each parent's armature space transform (conveniently available).
-
-        NOTE: Bone scale is NOT inherited. All scale vectors in `armature_space_transforms` will be treated as local
-        bone scale vectors.
-        """
-
-        if (arma_count := len(armature_space_transforms)) != len(self.bones):
-            raise ValueError(f"Expected {len(self.bones)} armature space transforms, but got {arma_count}.")
-
-        parent_inv_rots = {}  # type: dict[int, Matrix3]
-
-        for bone_index, bone in enumerate(self.bones):
-            arma_transform = armature_space_transforms[bone_index]
-            parent_bone = bone.parent_bone
-            if parent_bone is None:
-                # Root bone: armature space transform is local transform.
-                bone.set_local_transform(arma_transform)
-                continue
-
-            parent_index = parent_bone.get_bone_index(self.bones)
-
-            # Get parent transform and apply inverse to this bone's armature space transform.
-            arma_translate, arma_rotate_matrix, arma_scale = arma_transform
-            parent_arma_translate, parent_arma_rotate_matrix, _ = armature_space_transforms[parent_index]
-            parent_arma_inv_rotate = parent_inv_rots.setdefault(parent_index, parent_arma_rotate_matrix.inverse())
-
-            bone.set_local_transform(
-                (
-                    parent_arma_inv_rotate @ (arma_translate - parent_arma_translate),
-                    parent_arma_inv_rotate @ arma_rotate_matrix,
-                    arma_scale,  # scale not inherited
-                )
-            )
+        self.bounding_box = AABB(Vector3(mesh_mins.min(axis=0)), Vector3(mesh_maxs.max(axis=0)))
 
     def debone_map_piece(self, default_bone_name="", refresh_bone_bounding_boxes=True):
         """Remove all bones from a Map Piece FLVER by baking the bones into the vertices that use them and setting all
@@ -1190,7 +1148,7 @@ class FLVER(GameFile):
         NOTE: Not intended for use with map pieces that use bones to place individual trees and shrubs whose mesh data
         is centered at the origin, which is an actual good way to use bones in a Map Piece!
         """
-        if self.any_dynamic():
+        if any(mesh.is_dynamic for mesh in self.meshes):
             raise ValueError("Cannot debone FLVER models with any `is_dynamic = True` meshes.")
 
         if not default_bone_name:
@@ -1316,14 +1274,6 @@ class FLVER(GameFile):
         """Shortcut for iterating over `meshes`."""
         return iter(self.meshes)
 
-    def __setstate__(self, state: tuple[None, dict[str, tp.Any]]):
-        """Dereference bone connections after restoring state."""
-        _, slot_dict = state
-        for field_name, field_value in slot_dict.items():
-            setattr(self, field_name, field_value)
-        for bone in self.bones:
-            bone.set_bones(self.bones)
-
     def __repr__(self) -> str:
         return (
             f"FLVER({self.version.name}, {len(self.meshes)} meshes, "
@@ -1349,3 +1299,20 @@ class FLVER(GameFile):
             print()
 
     # endregion
+
+
+def _cache_flver_merged_mesh(
+    flver: FLVER,
+    mesh_material_indices: tp.Sequence[int] = None,
+    material_uv_layer_names: tp.Sequence[tp.Sequence[str]] = None,
+    merge_vertices=True,
+) -> bool:
+    """Worker call for updating multiple FLVER cached MergedMeshes in parallel."""
+    try:
+        flver.update_cached_merged_mesh(
+            mesh_material_indices, material_uv_layer_names, merge_vertices
+        )
+        return True
+    except Exception as ex:
+        _LOGGER.error(f"Could not cache merged mesh for FLVER {flver.path_minimal_stem}: {ex}")
+        return False

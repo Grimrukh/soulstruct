@@ -1,4 +1,5 @@
-from soulstruct.config import FLVER, DSR_PATH
+from soulstruct.config import DSR_PATH
+from soulstruct.flver import FLVER
 from soulstruct.flver.mesh_tools import MergedMesh
 
 
@@ -16,7 +17,7 @@ def test_flver_rewrite():
 def test_merge_and_split():
     # flver = FLVER.from_path(DSR_PATH / "map/m10_01_00_00/m3210B1A10.flver.dcx")
     # flver = FLVER.from_path(DSR_PATH / "map/m10_02_00_00/m2000B2A10.flver.dcx")
-    flver = FLVER.from_path(DSR_PATH / "map/m10_02_00_00/m5060B2A10.flver.dcx")
+    flver = FLVER.from_path(DSR_PATH / "map/m10_02_00_00/m8101B2A10.flver.dcx")
 
     # TODO: For testing here, throwing away submesh info and just using their FLVER material.
     # Will of course need to create new indices into 'material' representations that include critical submesh fields.

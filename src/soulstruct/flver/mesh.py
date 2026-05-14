@@ -10,13 +10,13 @@ from dataclasses import dataclass, field
 import numpy as np
 
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.maths import Vector3
+from soulstruct.utilities.maths import AABB, Vector3
 from soulstruct.utilities.text import indent_lines
 from .face_set import FaceSet
 from .material import Material
+from .version import FLVERVersion
 from .vertex_array import VertexArray
 from .vertex_array_layout import VertexArrayLayout
-from .version import FLVERVersion
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -37,6 +37,7 @@ class FLVERMesh:
     While the old FLVER0 format (Demon's Souls) does not use this class and instead stores its single face set (and
     relevant properties) directly in the `FLVERMesh` class, a single-set `FaceSet` is used here to unify the formats.
     """
+    FLVER0_MAX_BONE_COUNT: tp.ClassVar[int] = 28
 
     class STRUCT0(BinaryStruct):
         is_dynamic: bool
@@ -86,14 +87,13 @@ class FLVERMesh:
     f0_unk_x46: int = 0
 
     # Written by FLVER2 versions only:
-    uses_bounding_boxes: bool = True  # TODO: perfect candidate for a game-specific subclass ClassVar
+    uses_bounding_boxes: bool = True
     # TODO: These are clearly NOT min/max in later games that use the third vector below.
     #  'min' seems to be roughly half the extent of the bounding box, but it's quite rough.
     #   - center in 'local box coordinates'?
     #  'max' is quite smaller and sometimes even negative. Not quite contained to [-1, 1] range though.
     #   - center in 'FLVER bounding box normalized coordinates'?
-    bounding_box_min: Vector3 = field(default_factory=Vector3.single_max)
-    bounding_box_max: Vector3 = field(default_factory=Vector3.single_min)
+    bounding_box: AABB = field(default_factory=AABB.invalid)
     # TODO: Seems to be VERY close to the center of the mesh bounding box in FLVER space.
     bounding_box_unknown: Vector3 | None = None  # only used in Sekiro onward  # TODO: see above
 
@@ -225,8 +225,9 @@ class FLVERMesh:
         kwargs = {}
         if _bounding_box_offset != 0:
             with reader.temp_offset(_bounding_box_offset):
-                kwargs["bounding_box_min"] = Vector3(reader.unpack("3f"))
-                kwargs["bounding_box_max"] = Vector3(reader.unpack("3f"))
+                bounding_box_min = Vector3(reader.unpack("3f"))
+                bounding_box_max = Vector3(reader.unpack("3f"))
+                kwargs["bounding_box"] = AABB(bounding_box_min, bounding_box_max)
                 kwargs["bounding_box_unknown"] = Vector3(reader.unpack("3f")) if bounding_box_has_unknown else None
         else:
             kwargs["uses_bounding_boxes"] = False
@@ -246,6 +247,8 @@ class FLVERMesh:
 
     def dereference_flver2_face_sets(self, face_sets: dict[int, FaceSet]):
         self.face_sets = []
+        if self._face_set_indices is None:
+            raise ValueError("Face sets for mesh have already been dereferenced.")
         for i in self._face_set_indices:
             if i not in face_sets:
                 raise KeyError(
@@ -257,6 +260,8 @@ class FLVERMesh:
 
     def dereference_flver2_vertex_arrays(self, vertex_arrays: dict[int, VertexArray]):
         self.vertex_arrays = []
+        if self._vertex_array_indices is None:
+            raise ValueError("Vertex arrays for mesh have already been dereferenced.")
         for i in self._vertex_array_indices:
             if i not in vertex_arrays:
                 raise KeyError(
@@ -291,8 +296,11 @@ class FLVERMesh:
             raise ValueError("`FLVER0` mesh must have exactly one FaceSet.")
         if self.bone_indices is None:
             raise ValueError("`FLVER0` mesh must have a `bone_indices` array with 1 to 28 elements, not `None`.")
-        if len(self.bone_indices) > 28:
-            raise ValueError(f"`FLVER0` mesh can only have 28 bone indices. Too many: {self.bone_indices}")
+        if len(self.bone_indices) > self.FLVER0_MAX_BONE_COUNT:
+            raise ValueError(
+                f"`FLVER0` mesh can only have {self.FLVER0_MAX_BONE_COUNT} bone indices. "
+                f"Too many: {self.bone_indices}"
+            )
         face_set = self.face_sets[0]
         if face_set.flags != 0:
             _LOGGER.warning(f"FaceSet `flags` not used in FLVER0. Non-zero flags {face_set.flags} ignored.")
@@ -307,9 +315,9 @@ class FLVERMesh:
         vertex_array_data_size = vertex_array.layout.get_total_data_size(include_ignored=False) * vertex_count
 
         bone_indices = self.bone_indices.tolist()
-        if len(bone_indices) < 28:
+        if len(bone_indices) < self.FLVER0_MAX_BONE_COUNT:
             # Pad out with -1.
-            bone_indices += [-1] * (28 - len(bone_indices))
+            bone_indices += [-1] * (self.FLVER0_MAX_BONE_COUNT - len(bone_indices))
 
         mesh_struct = self.STRUCT0(
             is_dynamic=self.is_dynamic,
@@ -367,8 +375,8 @@ class FLVERMesh:
             writer.fill("_bounding_box_offset", 0, obj=self)
         else:
             writer.fill_with_position("_bounding_box_offset", obj=self)
-            writer.pack("3f", *self.bounding_box_min)
-            writer.pack("3f", *self.bounding_box_max)
+            writer.pack("3f", *self.bounding_box.min)
+            writer.pack("3f", *self.bounding_box.max)
             if self.bounding_box_unknown is not None:
                 writer.pack("3f", *self.bounding_box_unknown)
 
@@ -396,6 +404,10 @@ class FLVERMesh:
     def vertex_count(self) -> int:
         """All vertex arrays have the same length; they just define different vertex data."""
         return self.vertex_arrays[0].array.shape[0]
+
+    @property
+    def vertex_color_count(self) -> int:
+        return len([f for f in self.unique_field_names if f.startswith("color_")])
 
     @property
     def unique_field_names(self) -> set[str]:
@@ -493,13 +505,12 @@ class FLVERMesh:
         if not self.vertex_arrays:
             _LOGGER.warning("Mesh has no vertex arrays. Cannot refresh bounding box.")
             return
-        self.bounding_box_min = Vector3.single_max()
-        self.bounding_box_max = Vector3.single_min()
+        self.bounding_box = AABB.invalid()
         for vertex_array in self.vertex_arrays:
             if not vertex_array.has_field("position"):
                 continue
-            self.bounding_box_min = Vector3(np.minimum(self.bounding_box_min.data, vertex_array.array["position"].min(axis=0)))
-            self.bounding_box_max = Vector3(np.maximum(self.bounding_box_max.data, vertex_array.array["position"].max(axis=0)))
+            self.bounding_box.min = Vector3(np.minimum(self.bounding_box.min.data, vertex_array.array["position"].min(axis=0)))
+            self.bounding_box.max = Vector3(np.maximum(self.bounding_box.max.data, vertex_array.array["position"].max(axis=0)))
         if self.bounding_box_unknown is not None:
             _LOGGER.warning("Cannot refresh `bounding_box_unknown` for Mesh (unknown values).")
 
@@ -709,8 +720,7 @@ class FLVERMesh:
         if not self.is_dynamic:
             lines.append("  is_dynamic = False")
         if self.uses_bounding_boxes:
-            lines.append(f"  bounding_box_min = {self.bounding_box_min}")
-            lines.append(f"  bounding_box_max = {self.bounding_box_max}")
+            lines.append(f"  bounding_box = {self.bounding_box}")
             if self.bounding_box_unknown is not None:
                 lines.append(f"  bounding_box_unknown = {self.bounding_box_unknown}")
         lines.append(f"  face_sets = [\n{face_sets}\n  ]")

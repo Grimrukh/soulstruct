@@ -9,6 +9,7 @@ from pathlib import Path
 
 from soulstruct.containers import Binder, BinderEntry
 from soulstruct.flver import FLVER
+from soulstruct.flver.utilities import get_all_texture_paths
 from soulstruct.config import DSR_PATH
 
 
@@ -93,7 +94,7 @@ def find_flver_textures(flver_path: str | Path) -> list[BinderEntry]:
     texture_dir = flver_path.parent.parent / flver_path.parent.name[0:3]  # e.g. "m10"
 
     flver = FLVER.from_path(flver_path)
-    tpf_paths = {f"\\{Path(texture_path).stem}.tpf.dcx" for texture_path in flver.get_all_texture_paths()}
+    tpf_paths = {f"\\{Path(texture_path).stem}.tpf.dcx" for texture_path in get_all_texture_paths(flver)}
     tpf_count = len(tpf_paths)
     tpf_entries = []
 

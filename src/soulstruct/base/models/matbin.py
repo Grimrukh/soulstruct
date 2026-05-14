@@ -473,7 +473,7 @@ class MATBINBND(Binder):
         except KeyError:
             try:
                 # Need to ignore case.
-                matbin_entry = self.find_entry_matching_name(re.escape(matbin_name), re.IGNORECASE)
+                matbin_entry = self.find_entry_by_name_regex(re.escape(matbin_name), re.IGNORECASE)
             except EntryNotFoundError:
                 raise KeyError(f"MATBIN '{matbin_name}' not found in {self.__class__.__name__}.")
             matbin = matbin_entry.to_binary_file(MATBIN)

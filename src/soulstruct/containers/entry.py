@@ -191,16 +191,20 @@ class BinderEntry:
 
     def get_packed_path(self, encoding: str) -> bytes:
         """Encodes path and null-terminates."""
+        if self.path is None:
+            raise ValueError("BinderEntry does not have a `path`. Cannot pack path to bytes.")
         terminator = b"\0\0" if encoding.replace("-", "").startswith("utf16") else b"\0"
-        return self.path.encode(encoding) + terminator
+        return self.path.encode(encoding) + terminator if self.path else b""
 
     def set_path_name(self, new_name: str):
         """Update just the basename of `path`."""
+        if self.path is None:
+            raise ValueError("BinderEntry does not have a `path`. Cannot set path name.")
         self.path = str(Path(self.path).parent.joinpath(new_name))
 
     def to_binary_file(self, binary_file_cls: type[BASE_BINARY_FILE_T]) -> BASE_BINARY_FILE_T:
         binary_file = binary_file_cls.from_bytes(self.get_uncompressed_data())
-        binary_file.path = Path(self.path)
+        binary_file.path = Path(self.path) if self.path else None
         return binary_file
 
     @property
@@ -219,31 +223,39 @@ class BinderEntry:
 
     @property
     def name(self) -> str:
+        if self.path is None:
+            raise ValueError("BinderEntry does not have a `path`.")
         return Path(self.path).name
 
     @property
     def stem(self) -> str:
-        return Path(self.path).stem
-
-    @property
-    def minimal_stem(self) -> str:
         """Returns only the part of the path name before ANY dots, rather than only removing the final extension."""
+        if self.path is None:
+            raise ValueError("BinderEntry does not have a `path`.")
         return Path(self.path).name.split(".")[0]
 
     @property
     def suffix(self) -> str:
+        if self.path is None:
+            raise ValueError("BinderEntry does not have a `path`.")
         return Path(self.path).suffix
 
     @property
     def suffixes(self) -> list[str]:
+        if self.path is None:
+            raise ValueError("BinderEntry does not have a `path`.")
         return Path(self.path).suffixes
 
     @property
     def path_with_forward_slashes(self) -> str:
+        if self.path is None:
+            raise ValueError("BinderEntry does not have a `path`.")
         return self.path.replace("\\", "/")
 
     @property
     def directory_with_forward_slashes(self) -> str:
+        if self.path is None:
+            raise ValueError("BinderEntry does not have a `path`.")
         return str(Path(self.path).parent).replace("\\", "/")
 
     def copy(self) -> BinderEntry:

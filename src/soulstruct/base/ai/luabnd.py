@@ -54,7 +54,7 @@ class LuaBND(Binder):
 
         # Load goals and unknown scripts.
         try:
-            info_entry = luabnd.find_entry_id(1000001)
+            info_entry = luabnd.find_entry_by_id(1000001)
         except KeyError:
             # TODO: 'eventCommon.luabnd' has no '.luainfo' file. Not handling this yet.
             pass
@@ -155,7 +155,7 @@ class LuaBND(Binder):
     def get_gnl_names(self):
         try:
             # TODO: Search by `.luagnl` extension? Or confirm it.
-            gnl_entry = self.find_entry_id(1000000)
+            gnl_entry = self.find_entry_by_id(1000000)
         except KeyError:
             return []
         return gnl_entry.to_binary_file(LuaGNL).names
@@ -184,7 +184,7 @@ class LuaBND(Binder):
     def add_bytecode_lua_file(self, lua_file: LuaScriptBase):
         """Add or replace compiled bytecode script in the `Binder`."""
         try:
-            existing_entry = self.find_entry_name(lua_file.script_name)
+            existing_entry = self.find_entry_by_name(lua_file.script_name)
             existing_entry.set_uncompressed_data(lua_file.bytecode)
             existing_entry.path = lua_file.script_name  # no nesting necessary
         except KeyError:
@@ -233,7 +233,7 @@ class LuaBND(Binder):
         encoded_script = lua_file.script.encode("shift_jis_2004")
 
         try:
-            existing_entry = self.find_entry_name(lua_file.script_name)
+            existing_entry = self.find_entry_by_name(lua_file.script_name)
             existing_entry.set_uncompressed_data(encoded_script)
             existing_entry.path = lua_file.script_name  # no nesting necessary
         except KeyError:

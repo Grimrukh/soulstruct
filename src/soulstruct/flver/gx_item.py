@@ -45,10 +45,6 @@ class GXItem:
         writer.pack("i", len(self.data) + self.HEADER_SIZE)
         writer.append(self.data)
 
-    def __hash__(self):
-        """For identifying unique lists of `GXItem`s."""
-        return hash((self.category, self.index, self.data))
-
     @property
     def is_terminator(self):
         return self.category in self.TERMINATOR_CATEGORIES

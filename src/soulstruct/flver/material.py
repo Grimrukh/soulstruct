@@ -368,22 +368,6 @@ class Material:
             non_term_gx_items.append(gx_item)
         return non_term_gx_items
 
-    def __hash__(self) -> int:
-        """Straightforward hashing of fields, Textures, and GXItems.
-
-        Note that `name` is included in the hash, despite only being functional in some (known!) cases, so users can
-        use material names as a way to keep them separate.
-        """
-        texture_hashes = tuple(hash(tex) for tex in self.textures)
-        gx_item_hashes = tuple(hash(item) for item in self.gx_items)
-        return hash((self.name, self.mat_def_path, self.flags, gx_item_hashes, self.f2_unk_x18, texture_hashes))
-
-    def __eq__(self, other: tp.Self):
-        """Check for equality by hash."""
-        if not isinstance(other, self.__class__):
-            return False
-        return hash(self) == hash(other)
-
     def __repr__(self):
         textures = ",\n".join(["    " + indent_lines(repr(texture)) for texture in self.textures])
         if textures:

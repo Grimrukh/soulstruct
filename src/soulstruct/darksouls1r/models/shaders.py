@@ -15,15 +15,6 @@ from soulstruct.flver.vertex_array_layout import VertexArrayLayout, VertexBitang
 class MatDef(_PTDE_MatDef):
     """Identical to PTDE except for the possibility of a third normal sampler in some snow shaders."""
 
-    # New DSR snow shader has totally different bumpmap slot usage.
-    SAMPLER_ALIASES: tp.ClassVar[dict[str, str]] = _PTDE_MatDef.SAMPLER_ALIASES | {
-        "g_Bumpmap": "Snow Height",
-        "g_Bumpmap_2": "Snow Detail Normal",
-        "g_Bumpmap_3": "DSB 0 Normal",
-    }
-
-    SAMPLER_GAME_NAMES: tp.ClassVar[dict[str, str]] = {v: k for k, v in SAMPLER_ALIASES.items()}
-
     # These DSR MTDs use a 'FRPG_Snow*' SPX shader with a 'g_SnowMetalMask' param and custom bumpmaps.
     SNOW_METAL_MASK_STEMS: tp.ClassVar[set[str]] = {
         "A10_slime[D][L]",  # FRPG_Snow_Lit (Depths slime)
@@ -55,9 +46,15 @@ class MatDef(_PTDE_MatDef):
             # The sampler UV indices in the MTD are wrong -- all three normal samplers use the first UV slot (0) and
             # the lightmap, if present, uses the second UV slot (1).
             if mtd.has_param("g_SnowMetalMask"):
-                snow_detail_normal = matdef.get_sampler_with_alias("Snow Detail Normal")  # g_Bumpmap_2
+                snow_detail_normal = matdef.get_sampler_with_alias("DSB 1 Normal")  # g_Bumpmap_2
+                dsb_normal = matdef.get_sampler_with_alias("DSB 2 Normal")  # g_Bumpmap_3
+
+                if not snow_detail_normal or not dsb_normal:
+                    raise ValueError(
+                        f"DSR Snow material with g_SnowMetalMask does not have expected Normal samplers.\n"
+                        f"All samplers: {', '.join(sampler.alias for sampler in matdef.samplers)}"
+                    )
                 snow_detail_normal.uv_layer = cls.UVLayer.UVTexture0  # *NOT* UVTexture1 as the MTD indicates
-                dsb_normal = matdef.get_sampler_with_alias("DSB 0 Normal")  # g_Bumpmap_3
                 dsb_normal.uv_layer = cls.UVLayer.UVTexture0  # explicit for clarity
                 if lightmap := matdef.get_sampler_with_alias("Lightmap"):
                     lightmap.uv_layer = cls.UVLayer.UVLightmap  # explicit for clarity
@@ -73,16 +70,14 @@ class MatDef(_PTDE_MatDef):
             # Repair guessing of DSR snow shader.
 
             snow_height = matdef.get_sampler_with_alias("DSB 0 Normal")
-            snow_height.alias = "Snow Height"
             snow_height.uv_layer = cls.UVLayer.UVTexture0
 
             snow_detail_normal = matdef.get_sampler_with_alias("DSB 1 Normal")
-            snow_detail_normal.alias = "Snow Detail Normal"
             snow_detail_normal.uv_layer = cls.UVLayer.UVTexture0
 
             # Add third normal sampler, which the standard PTDE from-name method won't guess.
-            # Alias 'DSB 0 Normal' is freed up now by the above re-alias.
-            matdef.add_sampler(alias="DSB 0 Normal", uv_layer=cls.UVLayer.UVTexture0)
+            # This sampler actually contains the standard normal map for the ground under the snow.
+            matdef.add_sampler(alias="DSB 2 Normal", uv_layer=cls.UVLayer.UVTexture0)
 
             if lightmap := matdef.get_sampler_with_alias("Lightmap"):  # for [L] MTDs
                 lightmap.uv_layer = cls.UVLayer.UVLightmap

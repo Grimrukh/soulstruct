@@ -1,12 +1,10 @@
-[build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
+# Soulstruct pyproject.toml configuration file for packaging and distribution.
 
 [project]
 name = "soulstruct"
 description = "Inspect and modify files in FromSoftware games."
 readme = "README.md"
-version = "2.3.3"
+version = "2.4.0"
 license = "GPL-3.0-or-later"
 requires-python = ">=3.11"  # maximum allowed for Blender 4.5-5.0 support
 keywords = ["modding", "FromSoftware", "Dark Souls", "Bloodborne", "Elden Ring", "Sekiro", "Demon's Souls"]
@@ -24,9 +22,6 @@ dependencies = [
     "typer",                # required for CLI
     "zstandard",            # required for ZSTD compression (Elden Ring regulation DCX)
 ]
-
-[tool.setuptools.package-data]
-"*" = ["*.dll", "*.exe", "*.json", "*.dcx"]  # include embedded DLLs and EXEs in all subpackages
 
 [project.optional-dependencies]
 runtime       = ["psutil"]

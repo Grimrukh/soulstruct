@@ -1051,7 +1051,7 @@ class FFXBND(Binder):
 
     def get_ffx_entries_by_ffx_id(self) -> dict[int, BinderEntry]:
         return {
-            int(entry.minimal_stem[1:]): entry
+            int(entry.stem[1:]): entry
             for entry in self.entries
             if entry.entry_id < 100000
         }
@@ -1061,7 +1061,7 @@ class FFXBND(Binder):
 
     def get_tpf_entries_by_tpf_id(self) -> dict[int, BinderEntry]:
         return {
-            int(entry.minimal_stem[1:]): entry
+            int(entry.stem[1:]): entry
             for entry in self.entries
             if 100000 <= entry.entry_id < 200000
         }
@@ -1071,7 +1071,7 @@ class FFXBND(Binder):
 
     def get_flver_entries_by_flver_id(self) -> dict[int, BinderEntry]:
         return {
-            int(entry.minimal_stem[1:]): entry
+            int(entry.stem[1:]): entry
             for entry in self.entries
             if entry.entry_id >= 200000
         }
@@ -1093,13 +1093,13 @@ class FFXBND(Binder):
             suffix = entry.suffix
             match suffix:
                 case ".ffx":
-                    ffx_stem = entry.minimal_stem.split("_")[0]
+                    ffx_stem = entry.stem.split("_")[0]
                     if not _FFX_STEM_MATCH.match(ffx_stem):
                         raise ValueError(f"FFX entry name '{entry.name}' does not match expected format.")
                     entry.set_path_name(f"f{int(ffx_stem[1:]):07d}.ffx")
                     ffx_entries.append(entry)
                 case ".tpf":
-                    tpf_stem = entry.minimal_stem
+                    tpf_stem = entry.stem
                     # Requires more careful suffix stripping.
                     parts = tpf_stem.split("_")
                     if len(parts) >= 2:
@@ -1118,7 +1118,7 @@ class FFXBND(Binder):
                     entry.set_path_name(f"{tpf_stem}.tpf")
                     tpf_entries.append(entry)
                 case ".flver":
-                    flver_stem = entry.minimal_stem.split("_")[0]
+                    flver_stem = entry.stem.split("_")[0]
                     if not _FLVER_STEM_MATCH.match(flver_stem):
                         raise ValueError(f"FLVER entry name '{entry.name}' does not match expected format.")
                     entry.set_path_name(f"s{int(flver_stem[1:]):05d}.flver")
@@ -1129,9 +1129,9 @@ class FFXBND(Binder):
                         f"or '.flver'."
                     )
 
-        ffx_entries = sorted(ffx_entries, key=lambda e: int(e.minimal_stem[1:]))
-        tpf_entries = sorted(tpf_entries, key=lambda e: int(e.minimal_stem[1:].split("_")[0]))
-        flver_entries = sorted(flver_entries, key=lambda e: int(e.minimal_stem[1:]))
+        ffx_entries = sorted(ffx_entries, key=lambda e: int(e.stem[1:]))
+        tpf_entries = sorted(tpf_entries, key=lambda e: int(e.stem[1:].split("_")[0]))
+        flver_entries = sorted(flver_entries, key=lambda e: int(e.stem[1:]))
 
         for i, ffx_entry in enumerate(ffx_entries):
             ffx_entry.entry_id = i

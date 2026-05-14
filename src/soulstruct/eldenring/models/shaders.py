@@ -213,7 +213,9 @@ FAMILY_GROUP_ROLES: dict[str, dict[int, SamplerGroupRole]] = {
     "AMSN": {
         # C[AMSN], C[AMSN]_Glow, M[AMSN], M[AMSN]_Alpha, etc.
         # Multi-blend ([MbN]) and overlay ([Ov_*]) variants are handled separately in `get_group_role()`.
-        1: SamplerGroupRole.PRIMARY,     # AMN: main texture
+        1: SamplerGroupRole.PRIMARY,            # AN+: main texture
+        2: SamplerGroupRole.PRIMARY,            # AN+: main texture (for foliage materials)
+        6: SamplerGroupRole.BLEND_CONTROL,      # Mask1: for foliage materials
     },
     "Face": {
         # C[Face][S2]_SSS and similar
@@ -253,6 +255,7 @@ def get_group_role(
     profile: ShaderProfile,
     group_index: int,
     group_sampler_names: list[str],
+    is_first: bool,
 ) -> SamplerGroupRole:
     """Determine the semantic role of a sampler group from the parsed shader profile and group index.
 
@@ -281,12 +284,18 @@ def get_group_role(
             return SamplerGroupRole.OVERLAY
         return SamplerGroupRole.MISC
 
-    # AMSN with overlay: group_1 = PRIMARY, groups 2/3 = OVERLAY, rest = MISC.
-    if family == "AMSN" and profile.has_overlay:
-        if group_index == 1:
+    if family == "AMSN":
+        # First group is always PRIMARY (could be group index 2, not 1).
+        if is_first:
             return SamplerGroupRole.PRIMARY
-        elif group_index in (2, 3):
-            return SamplerGroupRole.OVERLAY
+        # Overlays are groups 2/3.
+        if profile.has_overlay:
+            if group_index in (2, 3):
+                return SamplerGroupRole.OVERLAY
+            return SamplerGroupRole.MISC
+        # TODO: Not sure if this is generalizable. Seen in foliage materials.
+        if group_index == 6:
+            return SamplerGroupRole.BLEND_CONTROL
         return SamplerGroupRole.MISC
 
     # Snow shaders: group_1 = PRIMARY, group_2 = SECONDARY (snow), group_3 = OVERLAY, rest = MISC.
@@ -304,7 +313,7 @@ def get_group_role(
     if profile.is_specific_character:
         sampler_name_set = set(extract_map_type(name) for name in group_sampler_names)
         if {"Albedo", "Metallic", "Normal"}.issubset(sampler_name_set):
-            if group_index == 1:
+            if is_first:
                 return SamplerGroupRole.PRIMARY
             return SamplerGroupRole.SECONDARY
         if sampler_name_set == {"Albedo", "Normal"}:
@@ -1161,6 +1170,7 @@ class MatDef(_BaseMatDef):
         # Track how many groups of each role we've seen (for alias disambiguation).
         role_counts: dict[SamplerGroupRole, int] = {role: 0 for role in SamplerGroupRole}
 
+        is_first = True
         for group_name in sorted_names:
             group_sampler_names = grouped_sampler_names[group_name]
 
@@ -1174,8 +1184,9 @@ class MatDef(_BaseMatDef):
                 uv_scale = None
 
             # Determine role (for aliases and node tree builder).
-            role = get_group_role(profile, group_index, group_sampler_names)
+            role = get_group_role(profile, group_index, group_sampler_names, is_first=is_first)
             role_index = role_counts[role]
+            is_first = False
 
             # Determine UV layer from explicit dict, or fall back to role-based heuristic.
             if group_uv_map is not None:

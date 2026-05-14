@@ -112,7 +112,7 @@ class Dummy:
         _pad1: bytes = binary_pad(8, init=False)
 
     translate: Vector3 = field(default_factory=Vector3.zero)
-    color_rgba: ColorRGBA = field(default_factory=ColorRGBA.default)  # white
+    color: ColorRGBA = field(default_factory=ColorRGBA.default)  # white
     forward: Vector3 = field(default_factory=lambda: Vector3((0, 0, 1)))
     reference_id: short = 0
     parent_bone_index: short = -1
@@ -127,11 +127,11 @@ class Dummy:
     def from_flver_reader(cls, reader: BinaryReader, flver_version: FLVERVersion) -> Dummy:
         dummy_struct = cls.STRUCT.from_bytes(reader)
         _color = dummy_struct.pop("_color")
-        color_rgba = ColorRGBA(*reversed(_color)) if flver_version == FLVERVersion.DarkSouls2 else ColorRGBA(*_color)
-        dummy = dummy_struct.to_object(cls, color_rgba=color_rgba)
+        color = ColorRGBA(*reversed(_color)) if flver_version == FLVERVersion.DarkSouls2 else ColorRGBA(*_color)
+        dummy = dummy_struct.to_object(cls, color=color)
         return dummy
 
     def to_flver_writer(self, writer: BinaryWriter, flver_version: FLVERVersion):
-        _color = tuple(self.color_rgba if flver_version == FLVERVersion.DarkSouls2 else reversed(self.color_rgba))
+        _color = tuple(self.color if flver_version == FLVERVersion.DarkSouls2 else reversed(self.color))
         dummy_struct = self.STRUCT.from_object(self, _color=_color)
         dummy_struct.to_writer(writer)

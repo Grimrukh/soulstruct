@@ -15,7 +15,7 @@ import io
 import logging
 import typing as tp
 import zlib
-from enum import Enum
+from enum import IntEnum
 from functools import singledispatchmethod
 from pathlib import Path
 
@@ -64,7 +64,7 @@ class DCXVersionInfo(tp.NamedTuple):
         return s[:-2] + ")"
 
 
-class DCXType(Enum):
+class DCXType(IntEnum):
     Unknown = -1  # could not be detected
     Null = 0  # no compression
     Zlib = 1  # not really DCX but supported

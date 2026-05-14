@@ -611,11 +611,11 @@ class MTDBND(Binder):
         if mtd_name in self.mtds:
             return self.mtds[mtd_name]
 
-        try:
-            mtd_entry = self.find_entry_matching_name(mtd_name, flags=re.IGNORECASE, escape=True)
-        except EntryNotFoundError:
+        # Some MTDs are duplicated. We're happy with the first entry.
+        mtd_entries = self.find_entries_by_name_regex(mtd_name, flags=re.IGNORECASE, escape=True)
+        if not mtd_entries:
             raise EntryNotFoundError(f"No MTD entry found with name '{mtd_name}' in {self.path}.")
-        mtd = mtd_entry.to_binary_file(MTD)
+        mtd = mtd_entries[0].to_binary_file(MTD)
         self.mtds[mtd_name] = mtd
         return mtd
 

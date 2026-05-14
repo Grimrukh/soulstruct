@@ -1,6 +1,7 @@
 
 __all__ = [
     "FLVER",
+    "FLVERVersion",
 
     "FLVERBone",
     "FLVERBoneUsageFlags",
@@ -12,9 +13,9 @@ __all__ = [
     "Material",
     "FLVERMesh",
     "MergedMesh",
+    "MergedMeshLoops",
     "SplitMeshDef",
     "Texture",
-    "FLVERVersion",
     "VertexArray",
     "VertexArrayLayout",
 ]
@@ -27,7 +28,7 @@ from .face_set import FaceSetFlags, FaceSet
 from .gx_item import GXItem
 from .material import Material
 from .mesh import FLVERMesh
-from .mesh_tools import MergedMesh, SplitMeshDef
+from .mesh_tools import MergedMesh, MergedMeshLoops, SplitMeshDef
 from .texture import Texture
 from .version import FLVERVersion
 from .vertex_array import VertexArray

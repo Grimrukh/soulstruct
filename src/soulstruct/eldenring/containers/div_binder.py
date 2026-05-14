@@ -45,7 +45,7 @@ class DivBinder(Binder):
         core_binder = super(DivBinder, cls).from_path(path, bdt_path)  # type: tp.Self
 
         # We only need the stems of BLF entries to find those files next to `path`. No need to read BLFs.
-        blf_stems = [entry.minimal_stem for entry in core_binder.entries if entry.name.endswith(".blf")]
+        blf_stems = [entry.stem for entry in core_binder.entries if entry.name.endswith(".blf")]
         if not blf_stems:
             core_binder.write_blf_division = False
             return core_binder
@@ -85,7 +85,7 @@ class DivBinder(Binder):
                     # Clash between div Binders is permitted.
                     # TODO: Could enforce stem matches div Binder?
                     # TODO: Could enforce identical data?
-                    if div_entry.minimal_stem == blf_stem:
+                    if div_entry.stem == blf_stem:
                         _LOGGER.info(
                             f"Entry ID {div_entry.entry_id} in BLF Binder {div_path} repeats, but has expected "
                             f"div-specific name: {div_entry.path}"

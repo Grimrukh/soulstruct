@@ -147,7 +147,7 @@ class MatDef(abc.ABC):
             matdef.samplers.append(
                 MatDefSampler(
                     name=sampler.sampler_type,
-                    alias=cls.SAMPLER_ALIASES.get(sampler.sampler_type, ""),
+                    alias=matdef._get_sampler_alias(sampler.sampler_type),
                     uv_layer=cls.UVLayer(uv_index),
                 )
             )
@@ -372,6 +372,9 @@ class MatDef(abc.ABC):
             for sampler in self.samplers
             if (match := pattern.match(sampler.alias if match_alias else sampler.name))
         ]
+
+    def _get_sampler_alias(self, sampler_type: str) -> str:
+        return self.SAMPLER_ALIASES.get(sampler_type, "")
 
     @property
     def stem(self) -> str:

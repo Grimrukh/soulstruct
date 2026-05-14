@@ -27,7 +27,7 @@ class BaseNVMBND(Binder, abc.ABC):
 
         # Look for entry to load into managed NVM dictionary.
         try:
-            entry = self.find_entry_matching_name(rf"{model_stem}\.nvm(\.dcx)?")
+            entry = self.find_entry_by_name_regex(rf"{model_stem}\.nvm(\.dcx)?")
         except EntryNotFoundError:
             raise KeyError(f"NVM with model stem '{model_stem}' not loaded in `{self.cls_name}` and no entry found.")
 
@@ -41,7 +41,7 @@ class BaseNVMBND(Binder, abc.ABC):
             return True
 
         try:
-            self.find_entry_matching_name(rf"{model_stem}\.nvm(\.dcx)?")
+            self.find_entry_by_name_regex(rf"{model_stem}\.nvm(\.dcx)?")
         except EntryNotFoundError:
             return False
         return True
@@ -62,7 +62,7 @@ class BaseNVMBND(Binder, abc.ABC):
 
         # Look for entry to remove.
         try:
-            entry = self.find_entry_matching_name(rf"{model_stem}\.nvm(\.dcx)?")
+            entry = self.find_entry_by_name_regex(rf"{model_stem}\.nvm(\.dcx)?")
         except EntryNotFoundError:
             if removed_nvm:
                 return  # fine, as we removed an NVM that WOULD have been written

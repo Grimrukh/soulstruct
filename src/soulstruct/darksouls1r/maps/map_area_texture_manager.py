@@ -245,7 +245,7 @@ class MapAreaTextureManager:
         max_entry_count = self.MAX_TPF_ENTRY_COUNT
 
         # Sort TPFBHD entries by stem.
-        queued_entries = sorted(self.tpfbhd_entries.values(), key=lambda e: e.minimal_stem)
+        queued_entries = sorted(self.tpfbhd_entries.values(), key=lambda e: e.stem)
         tpfbhds = []
         while queued_entries:
             tpfbhd = Binder.empty_bxf3()
@@ -276,16 +276,16 @@ class MapAreaTextureManager:
         for binder_path in self.area_directory.glob(f"m{self.area_id:02}_*.tpfbhd"):
             binder = Binder.from_path(binder_path)
             for entry in binder.entries:
-                if entry.minimal_stem in self.tpfbhd_entries:
+                if entry.stem in self.tpfbhd_entries:
                     _LOGGER.warning(
-                        f"Duplicate texture entry found in map TPFBHD binders: {entry.minimal_stem}. Using last found."
+                        f"Duplicate texture entry found in map TPFBHD binders: {entry.stem}. Using last found."
                     )
                 if ".tpf" not in entry.suffixes:
                     _LOGGER.warning(
                         f"Ignoring non-TPF entry '{entry.name}' in TPFBHD binder {binder_path.name}."
                     )
                     continue
-                self.tpfbhd_entries[entry.minimal_stem] = entry
+                self.tpfbhd_entries[entry.stem] = entry
 
     def _load_tpf_9999(self):
         tpf_9999_path = self.area_directory / f"m{self.area_id:02}_9999.tpf.dcx"

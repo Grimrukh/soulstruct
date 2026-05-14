@@ -6,8 +6,8 @@ from soulstruct.utilities.binary import BinaryReader
 
 
 def dump_metaparam(shader_stem: str, shaderbdlebnd: Binder):
-    shaderbdle = Binder.from_binder_entry(shaderbdlebnd.find_entry_name(f"{shader_stem}.shaderbdle"))
-    metaparam_entry = shaderbdle.find_entry_name(f"{shader_stem}.metaparam")
+    shaderbdle = Binder.from_binder_entry(shaderbdlebnd.find_entry_by_name(f"{shader_stem}.shaderbdle"))
+    metaparam_entry = shaderbdle.find_entry_by_name(f"{shader_stem}.metaparam")
     data = metaparam_entry.get_uncompressed_data()
     r = BinaryReader(data)
 

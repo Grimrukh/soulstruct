@@ -12,9 +12,7 @@ import io
 import json
 import logging
 import multiprocessing
-import pickle
 import re
-import tempfile
 import traceback
 import typing as tp
 from dataclasses import asdict, field, fields
@@ -117,32 +115,15 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
         return bytes(self)
 
     @classmethod
-    def to_bytes_batch(cls, files: list[BASE_BINARY_FILE_T], processes: int = None) -> list[bytes | None]:
+    def to_bytes_parallel(cls, files: list[BASE_BINARY_FILE_T], calls_per_thread=10, processes: int = None) -> list[bytes | None]:
         """Use multiprocessing to pack all `BaseBinaryFile`s in parallel.
 
-        Uses temp files to transfer large objects between processes, avoiding IPC pipe size limits.
         Failed conversions will put `None` into list rather than `bytes`.
         """
-        with tempfile.TemporaryDirectory(prefix="soulstruct_bbf_") as tmp_dir:
-            mp_args = []
-            for i, file in enumerate(files):
-                input_path = str(Path(tmp_dir) / f"input_{i}.pkl")
-                output_path = str(Path(tmp_dir) / f"output_{i}.bin")
-                with open(input_path, "wb") as f:
-                    pickle.dump(file, f, protocol=pickle.HIGHEST_PROTOCOL)
-                mp_args.append((input_path, output_path))
-
-            with multiprocessing.Pool(processes=processes) as pool:
-                successes = pool.starmap(_to_bytes_mp, mp_args)
-
-            results = []
-            for i, success in enumerate(successes):
-                if success:
-                    with open(str(Path(tmp_dir) / f"output_{i}.bin"), "rb") as f:
-                        results.append(f.read())
-                else:
-                    results.append(None)
-        return results
+        mp_args = []
+        for i in range(0, (len(files) - 1) // calls_per_thread + 1, calls_per_thread):
+            mp_args.append([(file,) for file in files[i:i + calls_per_thread]])
+        return _process_in_parallel(_to_bytes_mp, mp_args, processes)
 
     @classmethod
     def from_path(cls, path: str | Path) -> tp.Self:
@@ -161,31 +142,15 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
         return binary_file
 
     @classmethod
-    def from_path_batch(cls, paths: list[Path | str], processes: int = None) -> list[BASE_BINARY_FILE_T | None]:
+    def from_paths_parallel(
+        cls, paths: list[Path | str], calls_per_thread=10, processes: int = None
+    ) -> list[BASE_BINARY_FILE_T | None]:
         """Use multiprocessing to read `BaseBinaryFile` of given subtype from each path in `paths` in parallel.
 
-        Uses temp files to transfer large parsed results back, avoiding IPC pipe size limits.
         Failed conversions will put `None` into list rather than a `BaseBinaryFile` instance.
         """
-        with tempfile.TemporaryDirectory(prefix="soulstruct_bbf_") as tmp_dir:
-            mp_args = []
-            output_paths = []
-            for i, path in enumerate(paths):
-                output_path = str(Path(tmp_dir) / f"output_{i}.pkl")
-                mp_args.append((cls, str(Path(path)), output_path))
-                output_paths.append(output_path)
-
-            with multiprocessing.Pool(processes=processes) as pool:
-                successes = pool.starmap(_from_path_mp, mp_args)
-
-            results = []
-            for i, success in enumerate(successes):
-                if success:
-                    with open(output_paths[i], "rb") as f:
-                        results.append(pickle.load(f))
-                else:
-                    results.append(None)
-        return results
+        mp_args = _chunk(paths, calls_per_thread, lambda x: [(cls, path) for path in x])
+        return _process_in_parallel(_from_path_mp, mp_args, processes)
 
     @classmethod
     def from_bytes(cls, data: BASE_BINARY_BYTES_TYPING) -> tp.Self:
@@ -205,27 +170,17 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
         return binary_file
 
     @classmethod
-    def from_bytes_batch(cls, data_list: list[bytes], processes: int = None) -> list[BASE_BINARY_FILE_T | None]:
+    def from_bytes_parallel(
+        cls, data_list: list[bytes], calls_per_thread=10, processes: int = None
+    ) -> list[BASE_BINARY_FILE_T | None]:
         """Use multiprocessing to read `BaseBinaryFile` of given subtype from each `bytes` in `datas` in parallel.
 
-        Uses temp files to transfer large input/output data, avoiding IPC pipe size limits.
         Failed conversions will put `None` into list rather than a `BaseBinaryFile` instance.
         """
-        with tempfile.TemporaryDirectory(prefix="soulstruct_bbf_") as tmp_dir:
-            mp_args = []
-            output_paths = []
-            for i, data in enumerate(data_list):
-                input_path = str(Path(tmp_dir) / f"input_{i}.bin")
-                output_path = str(Path(tmp_dir) / f"output_{i}.pkl")
-                with open(input_path, "wb") as f:
-                    f.write(data)
-                mp_args.append((cls, input_path, output_path))
-                output_paths.append(output_path)
-
-            results = []
-            _multiprocess_files(output_paths, results, _from_bytes_mp, mp_args, processes=processes)
-
-        return results
+        mp_args = []
+        for i in range(0, (len(data_list) - 1) // calls_per_thread + 1, calls_per_thread):
+            mp_args.append([(cls, data) for data in data_list[i:i + calls_per_thread]])
+        return _process_in_parallel(_from_bytes_mp, mp_args, processes)
 
     @classmethod
     def from_binder_entry(cls, binder_entry: BinderEntry) -> tp.Self:
@@ -233,29 +188,17 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
         return binder_entry.to_binary_file(cls)
 
     @classmethod
-    def from_binder_entry_batch(
-        cls, entry_list: list[BinderEntry], processes: int = None
+    def from_binder_entries_parallel(
+        cls, entry_list: list[BinderEntry], calls_per_thread=10, processes: int = None
     ) -> list[BASE_BINARY_FILE_T | None]:
         """Use multiprocessing to read `BaseBinaryFile` of given subtype from each `BinderEntry` in parallel.
 
-        Uses temp files to transfer large data, avoiding IPC pipe size limits.
         Failed conversions will put `None` into list rather than a `BaseBinaryFile` instance.
         """
-        with tempfile.TemporaryDirectory(prefix="soulstruct_bbf_") as tmp_dir:
-            mp_args = []
-            output_paths = []
-            for i, entry in enumerate(entry_list):
-                input_path = str(Path(tmp_dir) / f"input_{i}.pkl")
-                output_path = str(Path(tmp_dir) / f"output_{i}.pkl")
-                with open(input_path, "wb") as f:
-                    pickle.dump(entry.get_uncompressed_data(), f, protocol=pickle.HIGHEST_PROTOCOL)
-                mp_args.append((cls, input_path, output_path))
-                output_paths.append(output_path)
-
-            results = []
-            _multiprocess_files(output_paths, results, _from_bytes_mp, mp_args, processes=processes)
-
-        return results
+        mp_args = []
+        for i in range(0, (len(entry_list) - 1) // calls_per_thread + 1, calls_per_thread):
+            mp_args.append([(cls, entry) for entry in entry_list[i:i + calls_per_thread]])
+        return _process_in_parallel(_from_binder_entry_mp, mp_args, processes)
 
     @classmethod
     def from_dict(cls, data: dict) -> tp.Self:
@@ -506,78 +449,53 @@ class BaseJSONEncoder(json.JSONEncoder):
         return None
 
 
-def _from_path_mp(file_type: type[BASE_BINARY_FILE_T], path: str, output_path: str) -> bool:
-    """Worker: reads file from `path`, writes parsed result to `output_path`. Returns success boolean only."""
+def _from_path_mp(file_type: type[BASE_BINARY_FILE_T], path: Path) -> BASE_BINARY_FILE_T | None:
+    """Worker for parallelized operator."""
     try:
-        result = file_type.from_path(path)
-        with open(output_path, "wb") as f:
-            pickle.dump(result, f, protocol=pickle.HIGHEST_PROTOCOL)
-        return True
+        return file_type.from_path(path)
     except Exception as ex:
         _LOGGER.error(f"Failed to load `{file_type.__name__}` instance from path '{path}'. Error: {str(ex)}")
-        return False
+        return None
 
 
-def _from_bytes_mp(file_type: type[BASE_BINARY_FILE_T], input_path: str, output_path: str) -> bool:
-    """Worker: reads raw bytes from `input_path`, parses, writes result to `output_path`. Returns success boolean."""
+def _from_bytes_mp(file_type: type[BASE_BINARY_FILE_T], data: bytes) -> BASE_BINARY_FILE_T | None:
+    """Worker for parallelized operator."""
     try:
-        with open(input_path, "rb") as f:
-            data = f.read()
-        result = file_type.from_bytes(data)
-        with open(output_path, "wb") as f:
-            pickle.dump(result, f, protocol=pickle.HIGHEST_PROTOCOL)
-        return True
+        return file_type.from_bytes(data)
     except Exception as ex:
-        _LOGGER.error(f"Failed to load `{file_type.__name__}` instance from temp data. Error: {str(ex)}")
-        return False
+        _LOGGER.error(f"Failed to load `{file_type.__name__}` instance from data. Error: {str(ex)}")
+        return None
 
 
-def _from_binder_entry_mp(file_type: type[BASE_BINARY_FILE_T], input_path: str, output_path: str) -> bool:
-    """Worker: reads BinderEntry from `input_path`, parses, writes result to `output_path`. Returns success boolean."""
+def _from_binder_entry_mp(file_type: type[BASE_BINARY_FILE_T], entry: BinderEntry) -> BASE_BINARY_FILE_T | None:
+    """Worker for parallelized operator."""
     try:
-        with open(input_path, "rb") as f:
-            entry = pickle.load(f)
-        result = file_type.from_binder_entry(entry)
-        with open(output_path, "wb") as f:
-            pickle.dump(result, f, protocol=pickle.HIGHEST_PROTOCOL)
-        return True
+        return file_type.from_binder_entry(entry)
     except Exception as ex:
         _LOGGER.error(
-            f"Failed to load `{file_type.__name__}` instance from BinderEntry temp data. Error: {str(ex)}"
+            f"Failed to load `{file_type.__name__}` instance from BinderEntry '{entry.name}'. Error: {str(ex)}"
         )
-        return False
+        return None
 
 
-def _to_bytes_mp(input_path: str, output_path: str) -> bool:
-    """Worker: reads BaseBinaryFile from `input_path`, packs to bytes, writes to `output_path`. Returns success boolean.
-    """
+def _to_bytes_mp(file: BASE_BINARY_FILE_T) -> bytes | None:
+    """Worker for parallelized operator."""
     try:
-        with open(input_path, "rb") as f:
-            file = pickle.load(f)
-        data = bytes(file)
-        with open(output_path, "wb") as f:
-            f.write(data)
-        return True
+        return bytes(file)
     except Exception as ex:
-        _LOGGER.error(f"Failed to pack file from temp input '{input_path}'. Error: {str(ex)}")
-        return False
+        _LOGGER.error(f"Failed to pack `{file.cls_name}` instance with path name '{file.path_name}'. Error: {str(ex)}")
+        return None
 
 
-def _multiprocess_files(
-    output_paths: list[str],
-    output_bbfs: list[BASE_BINARY_FILE_T | None],
-    worker_func: tp.Callable,
-    mp_args: tp.Sequence[tp.Any],
-    processes: int = None,
-) -> None:
-    """Use a multiprocessing Pool's `starmap` to call `worker_func(mp_args)` in parallel and load corresponding
-    output files (which workers should write) into `output_bbfs` where successful."""
+def _chunk(lst: list, m: int, tuplefy: tp.Callable) -> list[list]:
+    return [tuplefy(lst[i:i + m]) for i in range(0, len(lst), m)]
+
+
+def _process_in_parallel(
+    worker: tp.Callable, all_worker_args: list[tp.Any], processes: int | None
+) -> list[BASE_BINARY_FILE_T]:
+    returned_data = []
     with multiprocessing.Pool(processes=processes) as pool:
-        successes = pool.starmap(worker_func, mp_args)
-
-    for i, success in enumerate(successes):
-        if success:
-            with open(output_paths[i], "rb") as f:
-                output_bbfs.append(pickle.load(f))
-        else:
-            output_bbfs.append(None)
+        for worker_args in all_worker_args:
+            returned_data.extend(pool.starmap(worker, worker_args))  # blocks here until all done
+    return returned_data

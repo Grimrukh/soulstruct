@@ -39,7 +39,7 @@ class FLVERBinder(Binder, abc.ABC):
 
         # Look for entry to load into managed FLVER dictionary.
         try:
-            entry = self.find_entry_matching_name(rf"{model_stem}\.flver(\.dcx)?")
+            entry = self.find_entry_by_name_regex(rf"{model_stem}\.flver(\.dcx)?")
         except EntryNotFoundError:
             raise KeyError(f"FLVER with model stem '{model_stem}' not loaded in `{self.cls_name}` and no entry found.")
 
@@ -95,7 +95,7 @@ class FLVERBinder(Binder, abc.ABC):
         if not self._tpf:
             # Load TPF.
             try:
-                tpf_entry = self.find_entry_id(self.TPF_ENTRY_ID)
+                tpf_entry = self.find_entry_by_id(self.TPF_ENTRY_ID)
             except EntryNotFoundError:
                 pass  # TPF optional
             else:
