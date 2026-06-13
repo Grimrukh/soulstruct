@@ -1,3 +1,3 @@
 """Version string for Soulstruct base package."""
 
-__version__ = "2.3.3"
+__version__ = "2.4.0"
