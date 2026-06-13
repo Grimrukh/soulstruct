@@ -1,9 +1,9 @@
 from soulstruct.darksouls1ptde.events.event_directory import EventDirectory
-from soulstruct.config import PTDE_PATH
+from soulstruct.config import Config
 
 
 def main():
-    ed = EventDirectory(PTDE_PATH / "event")
+    ed = EventDirectory(Config.PTDE_PATH / "event")
     ed.write_evs("vanilla")
 
     # For fun.

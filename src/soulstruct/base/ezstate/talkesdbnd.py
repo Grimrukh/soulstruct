@@ -19,10 +19,7 @@ _TALK_ESD_RE = re.compile(r"t(\d+)\.esd$")
 _TALK_ESP_RE = re.compile(r"t(\d+)\.esp(\.py)$")
 
 
-TALK_ESD_T = tp.TypeVar("TALK_ESD_T", bound=ESD)
-
-
-class TalkESDBND(Binder, tp.Generic[TALK_ESD_T], abc.ABC):
+class TalkESDBND[TALK_ESD_T: ESD](Binder, abc.ABC):
     """Automatically loads all talk ESDs contained inside given path, or constructs BND from scratch using dictionary
     mapping talk IDs to valid ESD instance sources.
 
@@ -32,7 +29,7 @@ class TalkESDBND(Binder, tp.Generic[TALK_ESD_T], abc.ABC):
     EXT: tp.ClassVar[str] = ".talkesdbnd"
     IS_SPLIT_BXF: tp.ClassVar[bool] = False
 
-    TALK_ESD_CLASS: tp.ClassVar[type[ESD]] = None
+    TALK_ESD_CLASS: tp.ClassVar[type[ESD]]
 
     talk: dict[int, TALK_ESD_T] = field(default_factory=dict)
 
@@ -42,7 +39,8 @@ class TalkESDBND(Binder, tp.Generic[TALK_ESD_T], abc.ABC):
 
         # Load from binary Binder source.
         for entry in self.entries:
-            if not (match := _TALK_ESD_RE.match(entry.name)):
+            match = _TALK_ESD_RE.match(entry.name)
+            if not match:
                 _LOGGER.warning(f"Ignoring unknown entry '{entry.name}' in TalkESDBND Binder.")
                 continue
             talk_id = int(match.group(1))
@@ -81,7 +79,7 @@ class TalkESDBND(Binder, tp.Generic[TALK_ESD_T], abc.ABC):
         return cls(path=esp_directory.with_suffix(cls.EXT), talk=talk)
 
     @classmethod
-    def from_talk_dict(cls, talk_dict: dict[int, ESD]) -> tp.Self:
+    def from_talk_dict(cls, talk_dict: dict[int, TALK_ESD_T]) -> tp.Self:
         return cls(talk=talk_dict.copy())
 
     def write_esp_directory(self, esp_directory: Path | str):
@@ -123,8 +121,8 @@ class TalkESDBND(Binder, tp.Generic[TALK_ESD_T], abc.ABC):
         return f"TalkESDBND({repr(self.path)}): {list(self.talk)}"
 
     @classmethod
-    def write_from_dict(cls, talk_dict, talkesdbnd_path, make_dirs=True):
+    def write_from_dict(cls, talk_dict: dict[int, TALK_ESD_T], talkesdbnd_path: Path | str, make_dirs: bool = True):
         """Shortcut to immediately load given dictionary and write to given `.talkesdbnd` path."""
-        talkesdbnd = cls.from_talk_dict(talk_dict)  # type: tp.Self
+        talkesdbnd = cls.from_talk_dict(talk_dict)
         # Skip `entry_autogen()` call in this class.
         Binder.write(talkesdbnd, talkesdbnd_path, make_dirs=make_dirs)

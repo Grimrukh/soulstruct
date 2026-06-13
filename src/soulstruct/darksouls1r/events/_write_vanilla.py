@@ -1,13 +1,15 @@
+from pathlib import Path
+
 from soulstruct.darksouls1r.events.event_directory import EventDirectory
-from soulstruct.config import DSR_PATH
+from soulstruct.config import Config
 
 
 def main():
-    ed = EventDirectory(DSR_PATH / "event")
-    ed.write_evs("vanilla")
+    ed = EventDirectory(Config.DSR_PATH / "event")
+    ed.write_evs(Path("vanilla"))
 
     # Test EVS read.
-    EventDirectory("vanilla")
+    EventDirectory(Path("vanilla"))
     print("DSR `vanilla` events successfully written and re-read.")
 
 

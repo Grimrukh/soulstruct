@@ -20,16 +20,14 @@ if tp.TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
-BIT_SET_T = tp.TypeVar("BIT_SET_T", bound=BitSet)
-
 
 @dataclass(slots=True, eq=False, repr=False)
-class BaseMSBPart(MSBEntry, abc.ABC, tp.Generic[BIT_SET_T]):
+class BaseMSBPart[BIT_SET_T: BitSet](MSBEntry, abc.ABC):
     """Base class for all MSB Parts entries in all games. Includes a generic parameter for `BitSet` type."""
 
     SUPERTYPE_ENUM: tp.ClassVar[MSBSupertype] = MSBSupertype.PARTS
     SUBTYPE_ENUM: tp.ClassVar[BaseMSBPartSubtype]
-    SIB_PATH_TEMPLATE: tp.ClassVar[str] = None
+    SIB_PATH_TEMPLATE: tp.ClassVar[str | None] = None
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model"]
 
     BIT_SET_TYPE: tp.ClassVar[type[BitSet]]  # matches `BIT_SET_T`
@@ -65,4 +63,4 @@ class BaseMSBPart(MSBEntry, abc.ABC, tp.Generic[BIT_SET_T]):
         self.sib_path = self.SIB_PATH_TEMPLATE.format(map_stem=map_stem)
 
     def has_identity_transform(self) -> bool:
-        return self.translate == Vector3.zero() and self.rotate == Vector3.zero() and self.scale == Vector3.one()
+        return self.translate == Vector3.zero() and self.rotate == EulerDeg.zero() and self.scale == Vector3.one()

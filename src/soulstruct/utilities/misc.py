@@ -163,13 +163,10 @@ class Flags8(abc.ABC):
         return cls(0)
 
 
-ElementType = tp.TypeVar("ElementType")
-
-
-class IDList(tp.Generic[ElementType]):
+class IDList[ELEMENT_T]:
     """List-like container for unique elements that can be retrieved rapidly by `id()` equality."""
     
-    _list: list[ElementType]  # list of objects
+    _list: list[ELEMENT_T]  # list of objects
     _index_dict: dict[int, int]  # maps object ID to list index (NOT ordered)
     _size: int  # number of objects in list
     
@@ -181,7 +178,7 @@ class IDList(tp.Generic[ElementType]):
             # Need to watch for duplicates in `seq`.
             self.append(item)
 
-    def append(self, item: ElementType) -> None:
+    def append(self, item: ELEMENT_T) -> None:
         item_id = id(item)
         if item_id not in self._index_dict:
             self._index_dict[item_id] = self._size
@@ -190,11 +187,11 @@ class IDList(tp.Generic[ElementType]):
         else:
             raise ValueError(f"Item `{item}` is already in `IDList`.")
 
-    def extend(self, items: tp.Iterable[ElementType]) -> None:
+    def extend(self, items: tp.Iterable[ELEMENT_T]) -> None:
         for item in items:
             self.append(item)
 
-    def insert(self, index: int, item: ElementType) -> None:
+    def insert(self, index: int, item: ELEMENT_T) -> None:
         item_id = id(item)
         if item_id in self._index_dict:
             raise ValueError(f"Item `{item}` is already in `IDList`.")
@@ -206,13 +203,13 @@ class IDList(tp.Generic[ElementType]):
                 self._index_dict[id_key] = list_index + 1
         self._size += 1
 
-    def pop(self, index: int = -1) -> ElementType:
+    def pop(self, index: int = -1) -> ELEMENT_T:
         item = self._list.pop(index)
         self._index_dict.pop(id(item))
         self._size -= 1
         return item
 
-    def remove(self, item: ElementType) -> None:
+    def remove(self, item: ELEMENT_T) -> None:
         item_id = id(item)
         if item_id in self._index_dict:
             index = self._index_dict.pop(item_id)
@@ -230,7 +227,7 @@ class IDList(tp.Generic[ElementType]):
         self._index_dict.clear()
         self._size = 0
 
-    def index(self, item: ElementType) -> int:
+    def index(self, item: ELEMENT_T) -> int:
         item_id = id(item)
         if item_id in self._index_dict:
             return self._index_dict[item_id]
@@ -239,7 +236,7 @@ class IDList(tp.Generic[ElementType]):
             print("   ", o.name, id(o), id(o) in self._index_dict)
         raise ValueError(f"Item `{item.name}` (ID {item_id}) is not in `IDList`.")
 
-    def copy(self) -> IDList[ElementType]:
+    def copy(self) -> IDList[ELEMENT_T]:
         new_list = IDList()
         new_list._list = self._list.copy()
         new_list._index_dict = self._index_dict.copy()
@@ -251,10 +248,10 @@ class IDList(tp.Generic[ElementType]):
         # Regenerate dictionary completely.
         self._index_dict = {id(item): i for i, item in enumerate(self._list)}
 
-    def __getitem__(self, index: int) -> ElementType:
+    def __getitem__(self, index: int) -> ELEMENT_T:
         return self._list[index]
 
-    def __setitem__(self, index: int, item: ElementType) -> None:
+    def __setitem__(self, index: int, item: ELEMENT_T) -> None:
         item_id = id(item)
         if item_id in self._index_dict:
             raise ValueError(f"Item `{item}` is already in `IDList`.")
@@ -269,10 +266,10 @@ class IDList(tp.Generic[ElementType]):
     def __bool__(self) -> bool:
         return self._size > 0
 
-    def __iter__(self) -> tp.Iterator[ElementType]:
+    def __iter__(self) -> tp.Iterator[ELEMENT_T]:
         return iter(self._list)
 
-    def __contains__(self, item: ElementType) -> bool:
+    def __contains__(self, item: ELEMENT_T) -> bool:
         return id(item) in self._index_dict
 
     def __eq__(self, other: IDList) -> bool:

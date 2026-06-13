@@ -2,6 +2,7 @@
 import logging
 import struct
 
+from soulstruct.config import Config
 from .core import get_ds1_executable_and_version
 
 _LOGGER = logging.getLogger(__name__)
@@ -82,7 +83,7 @@ MODDED_EXE_DATA = [
 def restore_bonfire_warp_data(executable_path, dsr=None, debug=False):
     executable_path, dsr, debug = get_ds1_executable_and_version(executable_path, dsr, debug)
     bonfire_warp_data = DSR_VANILLA_EXE_DATA if dsr else PTDE_VANILLA_EXE_DATA
-    return edit_executable_bonfire_warp_data(executable_path, bonfire_warp_data, dsr=dsr, debug=debug)
+    edit_executable_bonfire_warp_data(executable_path, bonfire_warp_data, dsr=dsr, debug=debug)
 
 
 def get_executable_bonfire_warp_data(executable_path, dsr=None, debug=False):
@@ -129,7 +130,5 @@ def edit_executable_bonfire_warp_data(executable_path, bonfire_warp_data, dsr=No
 
 
 if __name__ == "__main__":
-    from soulstruct.config import PTDE_PATH
-
-    bd = get_executable_bonfire_warp_data(PTDE_PATH)
+    bd = get_executable_bonfire_warp_data(Config.PTDE_PATH)
     print(bd)

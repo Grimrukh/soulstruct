@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 
 from soulstruct.base.models.matbin import MATBIN, MATBINBND
-from soulstruct.config import ELDEN_RING_PATH
+from soulstruct.config import Config
 from soulstruct.containers import Binder, BinderEntry, EntryNotFoundError
 from soulstruct.utilities.binary import BinaryReader
 from soulstruct.utilities.files import write_json
@@ -129,4 +129,4 @@ def read_metaparam(metaparam_entry: BinderEntry) -> dict[str, list[tuple[str, st
 
 
 if __name__ == '__main__':
-    generate_metaparam(ELDEN_RING_PATH)
+    generate_metaparam(Config.ER_PATH)

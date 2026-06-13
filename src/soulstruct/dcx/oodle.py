@@ -23,7 +23,7 @@ from enum import IntEnum
 from functools import wraps
 from pathlib import Path
 
-from soulstruct.config import SEKIRO_PATH, ELDEN_RING_PATH
+from soulstruct.config import Config
 from soulstruct.utilities.files import SOULSTRUCT_PATH
 
 
@@ -260,8 +260,8 @@ def find_oodle_dll() -> str:
     _auto_oodle_locations = (
         SOULSTRUCT_PATH(__DLL_NAME),
         SOULSTRUCT_PATH("..", __DLL_NAME),
-        SEKIRO_PATH / __DLL_NAME,
-        ELDEN_RING_PATH / __DLL_NAME,
+        Config.SEK_PATH / __DLL_NAME,
+        Config.ER_PATH / __DLL_NAME,
     )
     for _location in _auto_oodle_locations:
         if _location.exists():

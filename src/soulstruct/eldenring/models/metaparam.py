@@ -1,6 +1,5 @@
 """Dump raw metaparam bytes for analysis."""
-from pathlib import Path
-from soulstruct.config import ELDEN_RING_PATH
+from soulstruct.config import Config
 from soulstruct.containers import Binder
 from soulstruct.utilities.binary import BinaryReader
 
@@ -104,6 +103,6 @@ def dump_metaparam(shader_stem: str, shaderbdlebnd: Binder):
 
 
 if __name__ == '__main__':
-    _shaderbdlebnd = Binder.from_path(ELDEN_RING_PATH / "shader/shaderbdle.shaderbdlebnd.dcx")
+    _shaderbdlebnd = Binder.from_path(Config.ER_PATH / "shader/shaderbdle.shaderbdlebnd.dcx")
     for stem in ["C[DetailBlend]", "C[Fur]", "C[AMSN]", "C[DetailBlend][S2]"]:
         dump_metaparam(stem, _shaderbdlebnd)

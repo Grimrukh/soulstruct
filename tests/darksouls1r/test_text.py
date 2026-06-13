@@ -1,7 +1,7 @@
 import shutil
 import unittest
 
-from soulstruct.config import DSR_PATH
+from soulstruct.config import Config
 from soulstruct.darksouls1r.text import MSGDirectory
 from soulstruct.utilities.inspection import Timer
 
@@ -17,7 +17,7 @@ class TextTest(unittest.TestCase):
     def test_text(self):
 
         with Timer("Read MSG Directory"):
-            dsr_text = MSGDirectory.from_path(DSR_PATH / "msg/ENGLISH")
+            dsr_text = MSGDirectory.from_path(Config.DSR_PATH / "msg/ENGLISH")
 
         # NOTE: DSR Patch/Base FMGs already seem to be in sync? I don't recall that being the case
         # but I guess it's true. Must be thinking of PTDE.

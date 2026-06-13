@@ -21,10 +21,7 @@ from .flags import ParamFlags1, ParamFlags2
 _LOGGER = logging.getLogger(__name__)
 
 
-PARAM_ROW_DATA_T = tp.TypeVar("PARAM_ROW_DATA_T", bound=ParamRow)
-
-
-class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
+class Param[PARAM_ROW_DATA_T: ParamRow](GameFile, abc.ABC):
     """Table of `ParamRows` (spreadsheet entries full of numbers used all over the place).
 
     This class supports all (known) games, but should be retrieved dynamically with `TypedParam(row_type)` to specify
@@ -37,8 +34,8 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
     the game engine ITSELF basically treats it as such -- that I am using the dictionary structure and not even
     bothering loading duplicate IDs.
     """
-    ROW_TYPE: tp.ClassVar[type[ParamRow]] = None
-    PARAMDEF_MODULE: tp.ClassVar[ModuleType] = None
+    ROW_TYPE: tp.ClassVar[type[ParamRow]]
+    PARAMDEF_MODULE: tp.ClassVar[ModuleType]
 
     EXT: tp.ClassVar[str] = ".param"
 

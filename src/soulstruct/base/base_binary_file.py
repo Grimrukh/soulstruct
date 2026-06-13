@@ -34,7 +34,7 @@ _LOGGER = logging.getLogger(__name__)
 
 _GAME_MODULE_RE = re.compile(r"^soulstruct\.(\w+)\..*$")
 
-
+# This genuinely needs to be a `TypeVar` as it is used in the metaclass below.
 BASE_BINARY_FILE_T = tp.TypeVar("BASE_BINARY_FILE_T", bound="BaseBinaryFile")
 
 # Valid types for `BaseBinaryFile.from_bytes()` and similar methods:

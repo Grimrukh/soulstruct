@@ -13,10 +13,10 @@ class EMEVDTest(unittest.TestCase):
     #             os.remove(str(test_file))
 
     def test_event_directory(self):
-        from soulstruct.config import DSR_PATH
+        from soulstruct.config import Config
 
         with Timer("Event Directory Read"):
-            ed = EventDirectory.from_path(DSR_PATH / "event")
+            ed = EventDirectory.from_path(Config.DSR_PATH / "event")
 
         with Timer("Event Directory Write"):
             ed.write("_test_event_directory")

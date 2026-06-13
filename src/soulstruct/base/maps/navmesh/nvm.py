@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from soulstruct.base.game_file import GameFile
 from soulstruct.base.events.enums import NavmeshFlag
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.maths import Vector3, Matrix3
+from soulstruct.utilities.maths import Vector3, Matrix3, EulerDeg
 
 import numpy as np
 
@@ -248,7 +248,7 @@ class NVM(GameFile):
                 _LOGGER.warning("`NVM` file appears to have 64-bit vertices. Will truncate to 32-bit vertices.")
                 dtype = np.dtype("<f8") if reader.byte_order == ByteOrder.LittleEndian else np.dtype(">f8")
                 vertices = np.frombuffer(reader.read(8 * 3 * header.vertices_count), dtype=dtype)
-                vertices = vertices.astype(np.float32)
+                vertices = vertices.astype(np.dtype("<f4"))  # always store as little-endian f32
             else:
                 raise ValueError(
                     f"Expected an NVM triangles offset of {hex(expected_triangles_offset)}, not header value "
@@ -256,8 +256,9 @@ class NVM(GameFile):
                 )
         else:
             # Read flat array of [x0, y0, z0, x1, y1, z1, ...] single-precision vertices.
+            # Always store internally as little-endian; endianness is handled at read/write time only.
             dtype = np.dtype("<f4") if reader.byte_order == ByteOrder.LittleEndian else np.dtype(">f4")
-            vertices = np.frombuffer(reader.read(4 * 3 * header.vertices_count), dtype=dtype)
+            vertices = np.frombuffer(reader.read(4 * 3 * header.vertices_count), dtype=dtype).astype(np.dtype("<f4"))
 
         vertices.shape = (header.vertices_count, 3)
         triangles = [NVMTriangle.from_nvm_reader(reader) for _ in range(header.triangles_count)]
@@ -302,7 +303,9 @@ class NVM(GameFile):
             entities_offset=RESERVED,
         ).to_writer(writer, reserve_obj=self)
 
-        writer.append(self.vertices.tobytes())
+        # Cast to the correct endian dtype before serializing; vertices are always stored as little-endian internally.
+        vertex_dtype = np.dtype(">f4") if self.big_endian else np.dtype("<f4")
+        writer.append(self.vertices.astype(vertex_dtype).tobytes())
 
         writer.fill_with_position("triangles_offset", obj=self)
         for triangle in self.triangles:
@@ -311,8 +314,8 @@ class NVM(GameFile):
         box_triangle_index_offsets = deque()
 
         def write_box_triangle_indices(box: NVMBox):
-            """Recursive depth-first indices. Note that the root box's indices are written LAST, and its deepest zero-
-            indexed child's indices are written FIRST."""
+            """Recursive depth-first indices. Note that the root box's indices are written LAST, and its deepest
+            zero-indexed child's indices are written FIRST."""
             # Recur on children (if any).
             for child_box in box.child_boxes:
                 write_box_triangle_indices(child_box)
@@ -370,9 +373,9 @@ class NVM(GameFile):
 
     def get_vertex_bounds(
         self,
-        rotation: Vector3 = None,
-        translation: Vector3 = None,
-        padding: tp.Sequence[float] | float | int = None,
+        rotation: EulerDeg | None = None,
+        translation: Vector3 | None = None,
+        padding: tp.Sequence[float] | float | int | None = None,
     ) -> tuple[Vector3, Vector3]:
         """Get min/max bounds of all vertices.
 
@@ -381,7 +384,7 @@ class NVM(GameFile):
         """
         if rotation is not None:
             # Euler angles in radians given (e.g. from MSB). Use to rotate all vertices before computing AABB.
-            rot_mat = Matrix3.from_euler_angles_rad(rotation)
+            rot_mat = Matrix3.from_euler_angles_deg(rotation)
             aabb_vertices = self.vertices @ rot_mat.data  # rotate each vertex (row)
         else:
             aabb_vertices = self.vertices  # won't be modified

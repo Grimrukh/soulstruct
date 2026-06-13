@@ -1,19 +1,17 @@
 from pathlib import Path
 
 from soulstruct.eldenring.events import EventDirectory
-from soulstruct.config import ELDEN_RING_PATH
-
-VANILLA_EVENT_PATH = ELDEN_RING_PATH / "event"
-ENTITIES_DIR = Path(__file__).parent / "vanilla/enums"
+from soulstruct.config import Config
 
 
 def main():
     print("Loading vanilla events...")
-    ed = EventDirectory.from_path(VANILLA_EVENT_PATH)
+    ed = EventDirectory.from_path(Config.ER_PATH / "event")
     print("Writing vanilla EVS scripts...")
+    entitites_dir = Path(__file__).parent / "vanilla/enums"
     ed.write_evs(
         evs_directory="vanilla",
-        enums_directory=ENTITIES_DIR if ENTITIES_DIR.is_dir() else None,
+        enums_directory=entitites_dir if entitites_dir.is_dir() else None,
         warn_missing_enums=False,
         enums_module_prefix=".enums.",
     )

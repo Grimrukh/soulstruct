@@ -10,7 +10,7 @@ from pathlib import Path
 from soulstruct.containers import Binder, BinderEntry
 from soulstruct.flver import FLVER
 from soulstruct.flver.utilities import get_all_texture_paths
-from soulstruct.config import DSR_PATH
+from soulstruct.config import Config
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -56,6 +56,8 @@ def import_map_piece_flver(
     two digits for the source area and block (AB) and the last four for the source ID. So `m2000B2A10` from Firelink,
     moved to another map, would become `m022000`. Piece `m1234B1A15` from Anor Londo would become `m511234`.
     """
+    source_flver_path = Path(source_flver_path)
+    dest_flver_path = Path(dest_flver_path)
     if not source_flver_path.is_file():
         raise FileNotFoundError(f"Could not find source FLVER: '{source_flver_path}'")
     if dest_flver_path.exists() and not overwrite:
@@ -75,7 +77,7 @@ def import_map_piece_flver(
             existing_tpf_paths.add(entry.path)
     if bhd is None:
         raise FileNotFoundError(f"No texture TPFBHD archives found in destination map area: {dest_texture_dir}")
-    next_entry_id = max(entry.entry_id for entry in bhd.entries) + 1
+    next_entry_id = max(entry.entry_id for entry in bhd.entries if entry.entry_id is not None) + 1
     do_write = False
     for tpf_entry in [entry for entry in tpf_entries if entry.path not in existing_tpf_paths]:
         tpf_entry.entry_id = next_entry_id  # this entry instance can be modified safely
@@ -102,7 +104,7 @@ def find_flver_textures(flver_path: str | Path) -> list[BinderEntry]:
         bhd = Binder.from_path(bhd_path)
         print(f"Searching BHD: {bhd_path}")
         for entry in bhd.entries:
-            if entry.path in tpf_paths:
+            if entry.path and entry.path in tpf_paths:
                 tpf_entries.append(entry)
                 tpf_paths.remove(entry.path)
             if not tpf_paths:
@@ -115,7 +117,7 @@ def find_flver_textures(flver_path: str | Path) -> list[BinderEntry]:
     return tpf_entries
 
 
-def dump_all_map_textures(dump_directory: str | Path, map_directory: str | Path = None):
+def dump_all_map_textures(dump_directory: str | Path, map_directory: str | Path | None = None):
     """Unpacks all `TPFBHD` binders in all map area folders (e.g. `MapStudio/m10`) and dumps the textures into the given
     folder. For vanilla installations, this amounts to 5912 files taking up a total of 1.7 GB.
 
@@ -136,7 +138,7 @@ def dump_all_map_textures(dump_directory: str | Path, map_directory: str | Path 
     """
     dump_directory = Path(dump_directory)
     dump_directory.mkdir(parents=True, exist_ok=True)
-    map_directory = Path(map_directory) if map_directory is not None else DSR_PATH / "map"
+    map_directory = Path(map_directory) if map_directory is not None else Config.DSR_PATH / "map"
 
     for area in range(10, 18 + 1):
         area_dir = map_directory / f"m{area}"

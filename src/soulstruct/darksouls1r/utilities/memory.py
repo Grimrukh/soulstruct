@@ -366,10 +366,7 @@ class DSRMemoryHook(MemoryHook):
     # endregion
 
 
-PARAM_ROW_DATA_T = tp.TypeVar("PARAM_ROW_DATA_T", bound=ParamRow)
-
-
-class MemoryDrawParam(tp.Generic[PARAM_ROW_DATA_T]):
+class MemoryDrawParam[PARAM_ROW_DATA_T: ParamRow]:
     """Interface to reading/writing a single DrawParam table in memory."""
 
     # Base address of DrawParam manager struct (in DSR 1.03).

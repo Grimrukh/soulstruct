@@ -236,11 +236,11 @@ class MCP(GameFile):
         cls,
         msb_class: type[MSB_TYPING],
         mcp_path: Path | str,
-        msb_path: Path | str = None,
-        mcg_path: Path | str = None,
-        nvmbnd_path: Path | str = None,
-        aabb_padding: tp.Sequence[float] = None,
-        custom_connected_navmeshes: tp.Sequence[tuple[MSB_NAVMESH_TYPING, MSB_NAVMESH_TYPING]] = None,
+        msb_path: Path | str | None = None,
+        mcg_path: Path | str | None = None,
+        nvmbnd_path: Path | str | None = None,
+        aabb_padding: tp.Sequence[float] | None = None,
+        custom_connected_navmeshes: tp.Sequence[tuple[MSB_NAVMESH_TYPING, MSB_NAVMESH_TYPING]] | None = None,
     ) -> tp.Self:
         """Automatically generate MCP file from other map navmesh component files.
 
@@ -376,54 +376,47 @@ class MCP(GameFile):
         self,
         first_group: set[int | NavmeshAABB],
         second_group: set[int | NavmeshAABB],
-    ):
+    ) -> None:
         """Disconnects all AABBBs in `first_group` from all AABBs in `second_group`."""
-        if isinstance(first_group, int):
-            first_group_indices = {first_group}
-        elif isinstance(first_group, NavmeshAABB):
-            try:
-                first_group_indices = {self.aabbs.index(first_group)}
-            except ValueError:
-                raise IndexError(f"Given `first_group` AABB index {first_group} is out of bounds for this `MCP`.")
-        else:
-            first_group_indices = {i if isinstance(i, int) else self.aabbs.index(i) for i in first_group}
+        group_indices = []  # type: list[set[int]]
+        for i, group in enumerate((first_group, second_group)):
+            if isinstance(group, int):
+                indices = {group}
+            elif isinstance(group, NavmeshAABB):
+                try:
+                    indices = {self.aabbs.index(group)}
+                except ValueError:
+                    raise IndexError(f"Given AABB index {group} is out of bounds for this `MCP`.")
+            else:
+                indices = {i if isinstance(i, int) else self.aabbs.index(i) for i in group}
+            group_indices.append(indices)
 
-        if isinstance(second_group, int):
-            second_group_indices = {second_group}
-        elif isinstance(second_group, NavmeshAABB):
-            try:
-                second_group_indices = {self.aabbs.index(second_group)}
-            except ValueError:
-                raise IndexError(f"Given `second_group` AABB index {second_group} is out of bounds for this `MCP`.")
-        else:
-            second_group_indices = {i if isinstance(i, int) else self.aabbs.index(i) for i in second_group}
-
-        intersection = first_group_indices.intersection(second_group_indices)
+        intersection = group_indices[0].intersection(group_indices[1])
         if intersection:
             raise ValueError(f"AABB indices cannot be in both groups to be disconnected: {intersection}")
 
         for i, aabb in enumerate(self.aabbs):
             aabb: NavmeshAABB
-            if i in first_group_indices:
+            if i in group_indices[0]:
                 # Remove all second group indices.
                 aabb.connected_navmesh_part_indices = [
-                    j for j in aabb.connected_navmesh_part_indices if j not in second_group_indices
+                    j for j in aabb.connected_navmesh_part_indices if j not in group_indices[1]
                 ]
-            elif i in second_group_indices:
+            elif i in group_indices[1]:
                 # Remove all first group indices.
                 aabb.connected_navmesh_part_indices = [
-                    j for j in aabb.connected_navmesh_part_indices if j not in first_group_indices
+                    j for j in aabb.connected_navmesh_part_indices if j not in group_indices[0]
                 ]
 
     def move_in_world(
         self,
-        start_translate: Vector3 = None,
-        end_translate: Vector3 = None,
+        start_translate: Vector3 | None = None,
+        end_translate: Vector3 | None = None,
         start_rotate: ROTATION_TYPING | None = None,
         end_rotate: ROTATION_TYPING | None = None,
         enclose_original=True,
-        selected_aabbs: tp.Collection[int | NavmeshAABB] = None,
-    ):
+        selected_aabbs: tp.Collection[int | NavmeshAABB] | None = None,
+    ) -> None:
         """Rotate and then translate all `NavmeshAABB`s in MCP in world coordinates, so that an entity with a translate
         of `start_translate` and rotate of `start_rotate` ends up with a translate of `end_translate` and a rotate of
         `end_rotate`. Use `selected_aabbs` (indices or `NavmeshAABB` instances) to specify only a subset of AABBs to
@@ -459,11 +452,11 @@ class MCP(GameFile):
     def rotate_all_aabbs_in_world(
         self,
         rotation: ROTATION_TYPING,
-        pivot_point=(0, 0, 0),
-        radians=False,
-        enclose_original=True,
-        selected_aabbs: tp.Iterable[int | NavmeshAABB] = None,
-    ):
+        pivot_point: Vector3 | None = None,
+        radians: bool = False,
+        enclose_original: bool = True,
+        selected_aabbs: tp.Iterable[int | NavmeshAABB] | None = None,
+    ) -> None:
         """Rotate every `NavmeshAABB` in the map around the given pivot by the given Euler angles coordinate system.
 
         The pivot defaults to the world origin.
@@ -471,7 +464,7 @@ class MCP(GameFile):
         Use `selected_aabbs` (indices or `NavmeshAABB` instances) to specify only a subset of AABBs to move.
         """
         m_rotation = get_rotmat3(rotation)
-        pivot_point = Vector3(pivot_point)
+        pivot_point = Vector3(pivot_point) if pivot_point else Vector3.zero()
         for i, aabb in enumerate(self.aabbs):
             if selected_aabbs is None or i in selected_aabbs or aabb in selected_aabbs:
                 aabb.rotate_in_world(m_rotation, pivot_point, radians=radians, enclose_original=enclose_original)
@@ -479,17 +472,18 @@ class MCP(GameFile):
     def translate_all(
         self,
         translate: Vector3 | list | tuple,
-        selected_aabbs: tp.Iterable[int | NavmeshAABB] = None,
+        selected_aabbs: tp.Iterable[int | NavmeshAABB] | None = None,
     ):
         """Translate every `NavmeshAABB` in the map by the given `translate` vector.
 
         Use `selected_aabbs` (indices or `NavmeshAABB` instances) to specify only a subset of AABBs to move.
         """
+        translate = Vector3(translate)
         for i, aabb in enumerate(self.aabbs):
             if selected_aabbs is None or i in selected_aabbs or aabb in selected_aabbs:
                 aabb.add_translate(translate)
 
-    def draw(self, aabb_color="cyan", aabb_labels: str | list[str] = None, axes=None, auto_show=True):
+    def draw(self, aabb_color="cyan", aabb_labels: str | list[str] | None = None, axes=None, auto_show=True):
         """Draw all AABBs in `MCP` and their connections in 3D."""
         if aabb_labels == "auto":
             aabb_labels = list(range(len(self.aabbs)))

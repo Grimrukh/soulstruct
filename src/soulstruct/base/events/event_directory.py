@@ -6,7 +6,6 @@ import abc
 import logging
 import re
 import typing as tp
-from dataclasses import dataclass
 from pathlib import Path
 
 from soulstruct.base.game_types.map_types import Map
@@ -20,18 +19,18 @@ class EventDirectory(GameFileMapDirectory[EMEVD], abc.ABC):
     """Load a directory full of any valid `EMEVD` sources, one per map."""
 
     FILE_NAME_PATTERN: tp.ClassVar[str] = r".*\.(evs\.py|evs|py|emevd|txt)"
-    FILE_CLASS: tp.ClassVar[type[EMEVD]] = None
+    FILE_CLASS: tp.ClassVar[type[EMEVD]]
     FILE_EXTENSION = ".emevd"
     MAP_STEM_ATTRIBUTE = "emevd_file_stem"
 
     # Specify `COMMON_FUNC` game map so that it can be detected in `files` and written first (as other EMEVD files may
     # need to reference it).
-    COMMON_FUNC: tp.ClassVar[Map] = None
+    COMMON_FUNC: tp.ClassVar[Map | None] = None
 
     @classmethod
     def from_path(cls, directory_path: Path | str):
         """Loads files as appropriate type (EMEVD/EVS/numeric)."""
-        if cls.FILE_NAME_PATTERN is None or cls.FILE_CLASS is None:
+        if cls.FILE_NAME_PATTERN is None or not hasattr(cls, "FILE_CLASS"):
             raise TypeError(
                 f"`GameFileDirectory` subclass `{cls.__name__}` must define `FILE_NAME_PATTERN` and `FILE_CLASS` class "
                 f"variables, or override `from_path()` with its own different logic."
@@ -80,8 +79,8 @@ class EventDirectory(GameFileMapDirectory[EMEVD], abc.ABC):
 
     def write_evs(
         self,
-        evs_directory=None,
-        enums_directory: Path | str = None,
+        evs_directory: Path | str | None = None,
+        enums_directory: Path | str | None = None,
         warn_missing_enums=True,
         enums_module_prefix=".",
     ):
@@ -96,6 +95,8 @@ class EventDirectory(GameFileMapDirectory[EMEVD], abc.ABC):
         """
         if evs_directory is None:
             evs_directory = self.directory
+        if evs_directory is None:
+            raise ValueError("`evs_directory` not given and `EventDirectory.directory` is None.")
         evs_directory = Path(evs_directory)
         if enums_directory is not None:
             enums_directory = Path(enums_directory)

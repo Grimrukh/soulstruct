@@ -42,13 +42,12 @@ MAP_NAME_RE = re.compile(r"m(\d\d)_(\d\d)_(\d\d)_(\d\d)")
 MSB_HEADER_BYTES = struct.pack("4sII??BB", b"MSB ", 1, 16, False, False, 1, 255)
 
 
-MSB_MODEL_T = tp.TypeVar("MSB_MODEL_T", bound=BaseMSBModel)
-MSB_EVENT_T = tp.TypeVar("MSB_EVENT_T", bound=BaseMSBEvent)
-MSB_REGION_T = tp.TypeVar("MSB_REGION_T", bound=BaseMSBRegion)
-MSB_PART_T = tp.TypeVar("MSB_PART_T", bound=BaseMSBPart)
-
-
-class MSB(GameFile, tp.Generic[MSB_MODEL_T, MSB_EVENT_T, MSB_REGION_T, MSB_PART_T], abc.ABC):
+class MSB[
+    MSB_MODEL_T: BaseMSBModel,
+    MSB_EVENT_T: BaseMSBEvent,
+    MSB_REGION_T: BaseMSBRegion,
+    MSB_PART_T: BaseMSBPart,
+](GameFile, abc.ABC):
     """Handles MSB ('MapStudio') data. Subclassed by each game.
 
     TODO: Update docstring.
@@ -115,7 +114,7 @@ class MSB(GameFile, tp.Generic[MSB_MODEL_T, MSB_EVENT_T, MSB_REGION_T, MSB_PART_
     ENTITY_GAME_TYPES: tp.ClassVar[dict[str, type[MapEntity]]]
 
     # Cached when first accessed. Maps subtype list names, e.g. 'map_pieces', to the list. Immutable.
-    _SUBTYPE_LIST_NAMES: tp.ClassVar[tuple[str, ...]] = None
+    _SUBTYPE_LIST_NAMES: tp.ClassVar[tuple[str, ...]] = ()
 
     # Per-type callables that map a `map_base_id` entity ID to a dictionary of `first_value` and `last_value` kwargs.
     ID_RANGES = {}  # type: dict[GAME_INT_TYPE, tp.Callable[[int], dict[str, int]]]
@@ -438,7 +437,7 @@ class MSB(GameFile, tp.Generic[MSB_MODEL_T, MSB_EVENT_T, MSB_REGION_T, MSB_PART_
 
     def auto_model(self, msb_part: BaseMSBPart, model_name: str, map_stem="") -> MSB_MODEL_T | None:
         """Not implemented/available by default. Games must implement (WIP)."""
-        raise NotImplemented(
+        raise NotImplementedError(
             f"Auto model creation is not implemented for this game's MSB class ({self.get_game().name})."
         )
 
@@ -524,7 +523,7 @@ class MSB(GameFile, tp.Generic[MSB_MODEL_T, MSB_EVENT_T, MSB_REGION_T, MSB_PART_
         # noinspection PyTypeChecker
         return self.find_entry_name(name, supertypes=["PARTS_PARAM_ST"], subtypes=subtypes)
 
-    def reattach_all_entry_references(self, warn_reattachments=False, backup_converter: tp.Callable[[str], str] = None):
+    def reattach_all_entry_references(self, warn_reattachments=False, backup_converter: tp.Callable[[str], str] | None = None):
         """Iterate over all Parts and Events, and reattach same-named references to other entries in this MSB.
 
         Must be called manually so you know what you're doing.
@@ -536,7 +535,7 @@ class MSB(GameFile, tp.Generic[MSB_MODEL_T, MSB_EVENT_T, MSB_REGION_T, MSB_PART_
     def reattach_entry_references(
         self, entry: MSB_PART_T | MSB_EVENT_T,
         warn_reattachments=False,
-        backup_converter: tp.Callable[[str], str] = None,
+        backup_converter: tp.Callable[[str], str] | None = None,
     ):
         """Reattach same-named references to other entries in this MSB.
 
@@ -732,6 +731,8 @@ class MSB(GameFile, tp.Generic[MSB_MODEL_T, MSB_EVENT_T, MSB_REGION_T, MSB_PART_
             ref_supertype, ref_subtype = field_ref["subtype"]
         except KeyError:
             ref_list_name = field_ref["subtype_list_name"]
+            if not isinstance(ref_list_name, str):
+                raise ValueError(f"`subtype_list_name` must be str, not {ref_list_name}")
         else:
             # Get ref list name from supertype and subtype enum values.
             subtype_enum = cls.MSB_SUPERTYPE_SUBTYPE_ENUMS[ref_supertype][ref_subtype]
@@ -746,6 +747,8 @@ class MSB(GameFile, tp.Generic[MSB_MODEL_T, MSB_EVENT_T, MSB_REGION_T, MSB_PART_
             )
         if "entry_name" in field_ref:
             ref_name = field_ref["entry_name"]
+            if not isinstance(ref_name, str):
+                raise ValueError(f"`entry_name` must be str, not {ref_name}")
             if ref_list_name not in subtype_cache:
                 subtype_cache[ref_list_name] = subtype_list.get_entries_by_unique_name()
             entries_by_name, ambiguous_names = subtype_cache[ref_list_name]
@@ -782,7 +785,7 @@ class MSB(GameFile, tp.Generic[MSB_MODEL_T, MSB_EVENT_T, MSB_REGION_T, MSB_PART_
 
     @classmethod
     def get_subtype_list_names(cls) -> tuple[str, ...]:
-        if cls._SUBTYPE_LIST_NAMES is not None:
+        if cls._SUBTYPE_LIST_NAMES:
             return cls._SUBTYPE_LIST_NAMES
         cls._SUBTYPE_LIST_NAMES = tuple(
             f.name for f in fields(cls)
@@ -794,7 +797,7 @@ class MSB(GameFile, tp.Generic[MSB_MODEL_T, MSB_EVENT_T, MSB_REGION_T, MSB_PART_
         return [getattr(self, list_name) for list_name in self.get_subtype_list_names()]
 
     @classmethod
-    def resolve_subtype_name(cls, subtype_name: str, assert_supertype_name: str = None) -> str:
+    def resolve_subtype_name(cls, subtype_name: str, assert_supertype_name: str | None = None) -> str:
         """Parse `subtype_name` (which could be an enum name or class name) to its subtype list name."""
         for supertype_name, subtype_info_list in cls.MSB_ENTRY_SUBTYPES.items():
             if assert_supertype_name is not None and supertype_name != assert_supertype_name:
@@ -941,7 +944,9 @@ class MSB(GameFile, tp.Generic[MSB_MODEL_T, MSB_EVENT_T, MSB_REGION_T, MSB_PART_
                 break
         else:
             subtype_list_name = self.resolve_subtype_name(model_subtype_name, "MODEL_PARAM_ST")
-        model_list = self[subtype_list_name]
+
+        model_list: MSBEntryList[MSB_MODEL_T] = self[subtype_list_name]
+
         try:
             model = model_list.find_entry_name(name)  # model with this name already exists
             if not replace_existing:

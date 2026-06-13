@@ -1,4 +1,8 @@
 __all__ = [
+    "SoulstructConfig",
+    "Config",
+
+    # Backward-compat module-level aliases (read once at import; use `Config.<FIELD>` for live values).
     "DES_PATH",
     "DESR_PATH",
     "PTDE_PATH",
@@ -7,155 +11,218 @@ __all__ = [
     "DS2_SOTFS_PATH",
     "BB_PATH",
     "DS3_PATH",
-    "SEKIRO_PATH",
-    "ELDEN_RING_PATH",
-
+    "SEK_PATH",
+    "ER_PATH",
     "PARAMDEX_PATH",
     "LOG_PATH",
     "CONSOLE_LOG_LEVEL",
     "FILE_LOG_LEVEL",
-
-    "GET_CONFIG",
-    "SET_CONFIG",
 ]
 
+import dataclasses
 import json
 import logging
 import sys
 import typing as tp
+from dataclasses import dataclass, field
 from pathlib import Path
 
 _LOGGER = logging.getLogger(__name__)
 
 _DEFAULT_STEAM_PATH = Path(r"C:/Program Files (x86)/Steam/steamapps/common")
 _SOULSTRUCT_APPDATA = Path("~/AppData/Roaming/soulstruct").expanduser()
-_CONFIG_DEFAULTS = {
-    "DES_PATH": Path(r"C:/Demon's Souls/PS3_GAME/USRDIR"),
-    "DESR_PATH": Path(r"C:/Demon's Souls Remake/dvdroot_ps5"),
-    "PTDE_PATH": _DEFAULT_STEAM_PATH / "Dark Souls Prepare to Die Edition/DATA",
-    "DSR_PATH": _DEFAULT_STEAM_PATH / "DARK SOULS REMASTERED",
-    "DS2_PATH": _DEFAULT_STEAM_PATH / "Dark Souls II/Game",
-    "DS2_SOTFS_PATH": _DEFAULT_STEAM_PATH / "Dark Souls II Scholar of the First Sin/Game",
-    "BB_PATH": Path("C:/Bloodborne/dvdroot_ps4"),
-    "DS3_PATH": _DEFAULT_STEAM_PATH / "DARK SOULS III/Game",
-    "SEKIRO_PATH": _DEFAULT_STEAM_PATH / "Sekiro",  # TODO: 'Game'?
-    "ELDEN_RING_PATH": _DEFAULT_STEAM_PATH / "ELDEN RING/Game",
-    "PARAMDEX_PATH": "",  # will default to SOULSTRUCT_PATH
-    "AUTO_SETUP_LOG": True,
-    "LOG_PATH": _SOULSTRUCT_APPDATA / "soulstruct.log",
-    "CONSOLE_LOG_LEVEL": "INFO",
-    "FILE_LOG_LEVEL": "DEBUG",
-}
 
 
-def GET_CONFIG() -> dict[str, tp.Any]:
+def _get_json_path() -> Path:
+    """Return the canonical path to `soulstruct_config.json`."""
     if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
-        # Look for `soulstruct_config.json` next to PyInstaller executable.
-        config_path = Path(sys.executable).parent / "soulstruct_config.json"
-        if not config_path.exists():
-            raise FileNotFoundError(f"Could not find 'soulstruct_config.json' next to Soulstruct executable.")
-    else:
-        # Look for `soulstruct_config.json` in user data.
-        config_path = _SOULSTRUCT_APPDATA / "soulstruct_config.json"
-        if not config_path.exists():
-            raise FileNotFoundError(f"Could not find 'soulstruct_config.json' in user data: {config_path}.")
-    with config_path.open("r") as f:
-        try:
-            config = json.load(f)
-        except json.JSONDecodeError as ex:
-            raise json.JSONDecodeError(
-                f"Error while loading 'soulstruct_config.json': {ex.msg}", "soulstruct_config.json", ex.lineno
-            )
-    # For keys ending in '_PATH', convert to Path objects.
-    for k, v in config.items():
-        if k.endswith("_PATH"):
-            config[k] = Path(v)
-
-    return config
+        return Path(sys.executable).parent / "soulstruct_config.json"
+    return _SOULSTRUCT_APPDATA / "soulstruct_config.json"
 
 
-def SET_CONFIG(**kwargs):
-    """Update `soulstruct_config.json` with the given keyword arguments.
+@dataclass
+class SoulstructConfig:
+    """Mirrors `soulstruct_config.json`.  The module-level singleton is ``Config``."""
 
-    Omitted arguments default to their current values, or their given default values (above) if no current value exists.
-    """
-    try:
-        config = GET_CONFIG()
-    except json.JSONDecodeError:
-        _LOGGER.error("Error encountered while loading 'soulstruct_config.json'. Try fixing or deleting it.")
-        raise
-    except FileNotFoundError:
-        config = {}
-    for k, default_value in _CONFIG_DEFAULTS.items():
-        if k in kwargs:
-            config[k] = kwargs.pop(k)
-        else:
-            config.setdefault(k, default_value)
-    if kwargs:
-        raise KeyError(f"Invalid config key(s): {list(kwargs)}")
+    # --- Game roots ---
+    DES_PATH: Path = field(default_factory=lambda: Path(r"C:/Demon's Souls/PS3_GAME/USRDIR"))
+    DESR_PATH: Path = field(default_factory=lambda: Path(r"C:/Demon's Souls Remake/dvdroot_ps5"))
+    PTDE_PATH: Path = field(default_factory=lambda: _DEFAULT_STEAM_PATH / "Dark Souls Prepare to Die Edition/DATA")
+    DSR_PATH: Path = field(default_factory=lambda: _DEFAULT_STEAM_PATH / "DARK SOULS REMASTERED")
+    DS2_PATH: Path = field(default_factory=lambda: _DEFAULT_STEAM_PATH / "Dark Souls II/Game")
+    DS2_SOTFS_PATH: Path = field(
+        default_factory=lambda: _DEFAULT_STEAM_PATH / "Dark Souls II Scholar of the First Sin/Game"
+    )
+    BB_PATH: Path = field(default_factory=lambda: Path("C:/Bloodborne/dvdroot_ps4"))
+    DS3_PATH: Path = field(default_factory=lambda: _DEFAULT_STEAM_PATH / "DARK SOULS III/Game")
+    SEK_PATH: Path = field(default_factory=lambda: _DEFAULT_STEAM_PATH / "Sekiro")  # TODO: 'Game'?
+    ER_PATH: Path = field(default_factory=lambda: _DEFAULT_STEAM_PATH / "ELDEN RING/Game")
 
-    if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
-        config_path = Path(sys.executable).parent / "soulstruct_config.json"
-    else:
-        config_path = _SOULSTRUCT_APPDATA / "soulstruct_config.json"
+    # --- Misc paths ---
+    PARAMDEX_PATH: Path | str = ""  # empty str → default to soulstruct package path
 
-    # Convert all Path objects to strings for JSON serialization.
-    config_json = {
-        k: str(v) if isinstance(v, Path) else v for k, v in config.items()
-    }
-    config_path.parent.mkdir(parents=True, exist_ok=True)
-    with config_path.open("w") as f:
-        json.dump(config_json, f, indent=4)
+    # --- Logging ---
+    AUTO_SETUP_LOG: bool = True
+    LOG_PATH: Path = field(default_factory=lambda: _SOULSTRUCT_APPDATA / "soulstruct.log")
+    CONSOLE_LOG_LEVEL: str = "INFO"
+    FILE_LOG_LEVEL: str = "DEBUG"
+
+    # ------------------------------------------------------------------
+    # Serialisation helpers
+    # ------------------------------------------------------------------
+
+    def to_dict(self) -> dict[str, tp.Any]:
+        """Return a JSON-serialisable dict (Path → str)."""
+        result = {}
+        for f in dataclasses.fields(self):
+            v = getattr(self, f.name)
+            result[f.name] = str(v) if isinstance(v, Path) else v
+        return result
+
+    @classmethod
+    def from_dict(cls, data: dict[str, tp.Any]) -> "SoulstructConfig":
+        """Construct from a raw dict, converting *_PATH keys to :class:`Path`."""
+        kwargs: dict[str, tp.Any] = {}
+        field_names = {f.name for f in dataclasses.fields(cls)}
+        for k, v in data.items():
+            if k not in field_names:
+                continue  # ignore unknown / legacy keys
+            if k.endswith("_PATH") and v:
+                kwargs[k] = Path(v)
+            else:
+                kwargs[k] = v
+        return cls(**kwargs)
+
+    # ------------------------------------------------------------------
+    # Load / save
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def json_path() -> Path:
+        """Return the canonical path to ``soulstruct_config.json``."""
+        return _get_json_path()
+
+    def load(self) -> None:
+        """Load values from ``soulstruct_config.json``, updating this instance in-place.
+
+        Missing keys fall back to the existing (default) field values.  A
+        ``FileNotFoundError`` is raised only when running as a frozen executable
+        and the file is absent; otherwise the defaults are silently kept.
+        """
+        _json_path = _get_json_path()
+        if not _json_path.exists():
+            if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
+                raise FileNotFoundError(
+                    f"Could not find 'soulstruct_config.json' next to Soulstruct executable."
+                )
+            return  # use defaults
+
+        with _json_path.open("r") as fp:
+            try:
+                data = json.load(fp)
+            except json.JSONDecodeError as ex:
+                raise json.JSONDecodeError(
+                    f"Error while loading 'soulstruct_config.json': {ex.msg}",
+                    "soulstruct_config.json",
+                    ex.lineno,
+                )
+
+        # Handle legacy key rename.
+        if "ELDEN_RING_PATH" in data and "ER_PATH" not in data:
+            data["ER_PATH"] = data.pop("ELDEN_RING_PATH")
+
+        field_names = {f.name for f in dataclasses.fields(self)}
+        for k, v in data.items():
+            if k not in field_names:
+                continue
+            if k.endswith("_PATH") and v:
+                object.__setattr__(self, k, Path(v))
+            else:
+                object.__setattr__(self, k, v)
+
+    def save(self) -> None:
+        """Write this instance to ``soulstruct_config.json``."""
+        _json_path = _get_json_path()
+        _json_path.parent.mkdir(parents=True, exist_ok=True)
+        with _json_path.open("w") as fp:
+            json.dump(self.to_dict(), fp, indent=4)
+
+    def update(self, **kwargs: tp.Any) -> None:
+        """Update one or more fields by name and save."""
+        field_names = {f.name for f in dataclasses.fields(self)}
+        invalid = [k for k in kwargs if k not in field_names]
+        if invalid:
+            raise KeyError(f"Invalid config key(s): {invalid}")
+        for k, v in kwargs.items():
+            object.__setattr__(self, k, v)
+        self.save()
+
+    # ------------------------------------------------------------------
+    # Auto-logging
+    # ------------------------------------------------------------------
+
+    def setup_log(self) -> None:
+        """Configure the ``soulstruct`` logger from the current settings."""
+        from soulstruct.logging_utils import setup
+
+        setup(
+            console_level=self.CONSOLE_LOG_LEVEL,
+            file_level=self.FILE_LOG_LEVEL,
+            log_path=self.LOG_PATH,
+            rich_tracebacks=True,
+            clear_old_handlers=True,
+        )
+
+
+# ---------------------------------------------------------------------------
+# Module-level singleton
+# ---------------------------------------------------------------------------
+
+Config = SoulstructConfig()
 
 try:
-    __config = GET_CONFIG()
+    Config.load()
 except FileNotFoundError:
-    if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
-        _LOGGER.info(
-            "Creating default `soulstruct_config.json` file next to Soulstruct executable.\n"
-            f"Set your game directories and other Soulstruct settings in here."
-        )
-    else:
-        _LOGGER.info(
-            f"Creating default `soulstruct_config.json` file in `soulstruct` package: {str(Path(__file__).parent)}.\n"
-            f"Set your game directories and other Soulstruct settings in here."
-        )
-    SET_CONFIG()
-    __config = GET_CONFIG()
-else:
-    if len(__config) != len(_CONFIG_DEFAULTS):
-        # Make sure we write and reload to get (and save) default values.
-        SET_CONFIG()
-        __config = GET_CONFIG()
-
-DES_PATH = __config.get("DES_PATH")  # type: Path
-DESR_PATH = __config.get("DESR_PATH")  # type: Path
-PTDE_PATH = __config.get("PTDE_PATH")  # type: Path
-DSR_PATH = __config.get("DSR_PATH")  # type: Path
-DS2_PATH = __config.get("DS2_PATH")  # type: Path
-DS2_SOTFS_PATH = __config.get("DS2_SOTFS_PATH")  # type: Path
-BB_PATH = __config.get("BB_PATH")  # type: Path
-DS3_PATH = __config.get("DS3_PATH")  # type: Path
-SEKIRO_PATH = __config.get("SEKIRO_PATH")  # type: Path
-ELDEN_RING_PATH = __config.get("ELDEN_RING_PATH")  # type: Path
-PARAMDEX_PATH = __config.get("PARAMDEX_PATH")  # type: Path
-
-LOG_PATH = __config.get("LOG_PATH")  # type: Path
-CONSOLE_LOG_LEVEL = __config.get("CONSOLE_LOG_LEVEL")  # type: str
-FILE_LOG_LEVEL = __config.get("FILE_LOG_LEVEL")  # type: str
-
-def _auto_setup_log():
-    # Automatically set up logging if this is enabled in the config.
-    from soulstruct.logging_utils import setup
-
-    setup(
-        console_level=CONSOLE_LOG_LEVEL,
-        file_level=FILE_LOG_LEVEL,
-        log_path=LOG_PATH,
-        rich_tracebacks=True,  # always use Rich tracebacks
-        clear_old_handlers=True,
+    _LOGGER.info(
+        "Creating default `soulstruct_config.json` file next to Soulstruct executable.\n"
+        "Set your game directories and other Soulstruct settings in here."
     )
+    Config.save()
+    Config.load()
+else:
+    # If the on-disk file is missing any keys, rewrite it with full defaults.
+    json_path = _get_json_path()
+    if json_path.exists():
+        with json_path.open("r") as _fp:
+            _on_disk = json.load(_fp)
+        if len(_on_disk) != len(dataclasses.fields(SoulstructConfig)):
+            Config.save()
 
 
-if __config.get("AUTO_SETUP_LOG"):
-    _auto_setup_log()
+# ---------------------------------------------------------------------------
+# Backward-compatible module-level aliases  (values fixed at import time)
+# Use ``Config.<FIELD>`` for live, mutable access.
+# ---------------------------------------------------------------------------
+
+DES_PATH: Path = Config.DES_PATH
+DESR_PATH: Path = Config.DESR_PATH
+PTDE_PATH: Path = Config.PTDE_PATH
+DSR_PATH: Path = Config.DSR_PATH
+DS2_PATH: Path = Config.DS2_PATH
+DS2_SOTFS_PATH: Path = Config.DS2_SOTFS_PATH
+BB_PATH: Path = Config.BB_PATH
+DS3_PATH: Path = Config.DS3_PATH
+SEK_PATH: Path = Config.SEK_PATH
+ER_PATH: Path = Config.ER_PATH
+PARAMDEX_PATH: Path | str = Config.PARAMDEX_PATH
+LOG_PATH: Path = Config.LOG_PATH
+CONSOLE_LOG_LEVEL: str = Config.CONSOLE_LOG_LEVEL
+FILE_LOG_LEVEL: str = Config.FILE_LOG_LEVEL
+
+
+# ---------------------------------------------------------------------------
+# Auto-log setup
+# ---------------------------------------------------------------------------
+
+if Config.AUTO_SETUP_LOG:
+    Config.setup_log()

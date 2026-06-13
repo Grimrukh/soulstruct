@@ -15,11 +15,12 @@ from .dataclass_meta import DataclassMeta
 
 if tp.TYPE_CHECKING:
     from .game_types.map_types import Map
-    from .maps.utilities import GET_MAP_TYPING
+    from .maps.utilities import GET_MAP_TYPING, MAP_SOURCE_TYPING
 
 _LOGGER = logging.getLogger(__name__)
 
 
+# This genuinely needs to be a `TypeVar` as it is used in the metaclass below.
 GAME_FILE_DIRECTORY_T = tp.TypeVar("GAME_FILE_DIRECTORY_T", bound="GameFileDirectory")
 
 
@@ -146,7 +147,7 @@ class GameFileDirectory(tp.Generic[BASE_BINARY_FILE_T], abc.ABC, metaclass=GameF
         return self.files.items()
 
 
-class GameFileMapDirectory(GameFileDirectory[BASE_BINARY_FILE_T], abc.ABC):
+class GameFileMapDirectory[BASE_BINARY_FILE_T](GameFileDirectory[BASE_BINARY_FILE_T], abc.ABC):
     """Game file directory that expects to find a file for each game map in `ALL_MAPS`, which should be defined by the
     game-specific subclass.
 
@@ -155,9 +156,9 @@ class GameFileMapDirectory(GameFileDirectory[BASE_BINARY_FILE_T], abc.ABC):
     """
 
     # Game-specific list of `map` instances. May or may not include a 'common' file.
-    ALL_MAPS: tp.ClassVar[tuple[Map]] = ()
+    ALL_MAPS: tp.ClassVar[tuple[Map, ...]] = ()
     # Function that takes various flexible ways of specifying a map and returns a game-specific `Map` instance.
-    GET_MAP: tp.ClassVar[GET_MAP_TYPING] = None
+    GET_MAP: tp.ClassVar[GET_MAP_TYPING]
     # Name of `Map` attribute to use when determining which stems to look for. (Should also work for 'common' files.)
     # `emevd_file_stem` is the default because it contains the least irregularities so far, in my experience.
     MAP_STEM_ATTRIBUTE: tp.ClassVar[str] = "emevd_file_stem"
@@ -170,7 +171,7 @@ class GameFileMapDirectory(GameFileDirectory[BASE_BINARY_FILE_T], abc.ABC):
     @classmethod
     def from_path(cls, directory_path: Path | str):
         # NOTE: Pattern is still used in combination with `Map` stems.
-        if cls.FILE_NAME_PATTERN is None or cls.FILE_CLASS is None:
+        if cls.FILE_NAME_PATTERN is None or not hasattr(cls, "FILE_CLASS"):
             raise TypeError(
                 f"`GameFileDirectory` subclass `{cls.__name__}` must define `FILE_NAME_PATTERN` and `FILE_CLASS` class "
                 f"variables, or override `from_path()` with its own different logic."
@@ -237,7 +238,7 @@ class GameFileMapDirectory(GameFileDirectory[BASE_BINARY_FILE_T], abc.ABC):
             _LOGGER.info(f"No files written for `{self.__class__.__name__}`.")
         return written_paths
 
-    def __getitem__(self, map_source: str | tuple) -> BASE_BINARY_FILE_T:
+    def __getitem__(self, map_source: MAP_SOURCE_TYPING) -> BASE_BINARY_FILE_T:
         game_map = self.GET_MAP(map_source)
         map_stem = getattr(game_map, self.MAP_STEM_ATTRIBUTE)
         for file_name, file_instance in self.files.items():

@@ -19,10 +19,10 @@ class MSBTest(unittest.TestCase):
 
     @profile_function(20)
     def test_dir_rewrite(self):
-        from soulstruct.config import DSR_PATH  # TODO: not a clean test
+        from soulstruct.config import Config  # TODO: not a clean test
 
         with Timer("Map Studio Directory Read"):
-            msd = MapStudioDirectory.from_path(DSR_PATH / "map/MapStudio")
+            msd = MapStudioDirectory.from_path(Config.DSR_PATH / "map/MapStudio")
 
         with Timer("Map Studio Directory Write"):
             msd.write("_test_MapStudio")

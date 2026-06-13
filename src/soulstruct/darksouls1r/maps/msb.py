@@ -42,8 +42,8 @@ class MSB(_PTDE_MSB):  # generic entry types are the same as PTDE parent
         source_map: MAP_SOURCE_TYPING,
         source_model_id: int | str,
         dest_map: MAP_SOURCE_TYPING,
-        dest_model_id: int | str = None,
-        map_directory: Path | str = None,
+        dest_model_id: int | str | None = None,
+        map_directory: Path | str | None = None,
         overwrite=False,
     ):
         """Import a Map Piece model from `source_map` to `dest_map` (should be this `MSB`).
@@ -56,8 +56,8 @@ class MSB(_PTDE_MSB):  # generic entry types are the same as PTDE parent
         dest_map = get_map(dest_map)
 
         if map_directory is None:
-            from soulstruct.config import DSR_PATH
-            map_directory = DSR_PATH / "map"
+            from soulstruct.config import Config
+            map_directory = Config.DSR_PATH / "map"
         else:
             map_directory = Path(map_directory)
 

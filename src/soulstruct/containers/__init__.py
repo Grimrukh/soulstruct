@@ -1,3 +1,8 @@
+"""Common FromSoft container types: Binder, TPF, and their contents.
+
+NOTE: The C++ library ``Firelink``, with Python bindings ``pyrelink``, should largely replace this submodule.
+``pyrelink`` is significantly faster and offers the same methods.
+"""
 from __future__ import annotations
 
 __all__ = [

@@ -16,21 +16,18 @@ if tp.TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
-# Generic type to use when type-hinting list attributes on `MSB` subclasses.
-MSBEntryType = tp.TypeVar("MSBEntryType", bound=MSBEntry)
-
 
 # NOT a dataclass.
-class MSBEntryList(IDList[MSBEntryType]):
+class MSBEntryList[MSB_ENTRY_T: MSBEntry](IDList[MSB_ENTRY_T]):
 
     supertype: str
-    entry_class: type[MSBEntryType]  # may be an abstract base class for transient supertype lists
+    entry_class: type[MSB_ENTRY_T]  # may be an abstract base class for transient supertype lists
 
     def __init__(
         self,
-        entries: tp.Iterable[MSBEntryType],
+        entries: tp.Iterable[MSB_ENTRY_T],
         supertype: str,
-        entry_class: type[MSBEntryType],
+        entry_class: type[MSB_ENTRY_T],
     ):
         self.supertype = supertype
         self.entry_class = entry_class
@@ -39,10 +36,10 @@ class MSBEntryList(IDList[MSBEntryType]):
     def copy(self) -> tp.Self:
         return copy.deepcopy(self)
 
-    def find_entry_intenum(self, entry_intenum: IntEnum) -> MSBEntryType:
+    def find_entry_intenum(self, entry_intenum: IntEnum) -> MSB_ENTRY_T:
         return self.find_entry_name(entry_intenum.name)
 
-    def find_entry_name(self, entry_name: str | IntEnum) -> MSBEntryType:
+    def find_entry_name(self, entry_name: str | IntEnum) -> MSB_ENTRY_T:
         """Try to retrieve entry with given name."""
         if isinstance(entry_name, IntEnum):
             entry_name = entry_name.name
@@ -57,10 +54,10 @@ class MSBEntryList(IDList[MSBEntryType]):
             )
         return entries[0]
 
-    def find_entry_names(self, entry_names: tp.Container[str]) -> list[MSBEntryType]:
+    def find_entry_names(self, entry_names: tp.Container[str]) -> list[MSB_ENTRY_T]:
         return [entry for entry in self if entry.name in entry_names]
 
-    def __getitem__(self, index_or_name: int | IntEnum | str) -> MSBEntryType:
+    def __getitem__(self, index_or_name: int | IntEnum | str) -> MSB_ENTRY_T:
         if isinstance(index_or_name, IntEnum):
             # Search by enum name.
             return self.find_entry_name(index_or_name.name)
@@ -121,7 +118,7 @@ class MSBEntryList(IDList[MSBEntryType]):
             entries_by_id = {k: entries_by_id[k] for k in sorted(entries_by_id.keys())}
         return entries_by_id
 
-    def get_filtered_list(self, filter_func: tp.Callable[[MSBEntry], bool]) -> MSBEntryList[MSBEntryType]:
+    def get_filtered_list(self, filter_func: tp.Callable[[MSBEntry], bool]) -> MSBEntryList[MSB_ENTRY_T]:
         """Returns a filtered deep copy of this subtype list by applying `filter_func` to each entry."""
         if filter_func is None:
             return self.copy()
@@ -131,7 +128,7 @@ class MSBEntryList(IDList[MSBEntryType]):
             entry_class=self.entry_class,
         )
 
-    def default_entry(self) -> MSBEntryType:
+    def default_entry(self) -> MSB_ENTRY_T:
         """Create a new `MSBEntry` of this list's subtype, with all default field values, and return it.
 
         Does NOT add the new entry to this list, unlike `new()`.
@@ -139,7 +136,7 @@ class MSBEntryList(IDList[MSBEntryType]):
         # noinspection PyArgumentList
         return self.entry_class(name=f"Default{self.entry_class.__name__}")
 
-    def new(self, new_index=-1, /, **kwargs) -> MSBEntryType:
+    def new(self, new_index=-1, /, **kwargs) -> MSB_ENTRY_T:
         """Create a new `MSBEntry` of this list's subtype and append it to list (or insert it at `new_index`)."""
         if "entity_enum" in kwargs:
             if "name" in kwargs or "entity_id" in kwargs:
@@ -160,8 +157,8 @@ class MSBEntryList(IDList[MSBEntryType]):
         return entry
 
     def duplicate(
-        self, entry_or_index_or_name: MSBEntryType | int | str | IntEnum, index_offset: int = None, **kwargs
-    ) -> MSBEntryType:
+        self, entry_or_index_or_name: MSB_ENTRY_T | int | str | IntEnum, index_offset: int | None = None, **kwargs
+    ) -> MSB_ENTRY_T:
         """Duplicate the specified `entry`.
 
         If `index_offset = 0` (default), the duplicated entry will be inserted right after the source entry. Higher

@@ -16,11 +16,12 @@ from .vector import Vector3
 
 
 # Valid rotation types for `resolve_rotation()` (`None` also allowed, which returns identity matrix).
+# NOTE: `Vector3` angles are assumed to be degrees.
 ROTATION_TYPING = tp.Union[Matrix3 | Vector3 | EulerDeg | EulerRad | list | tuple | int | float]
 
 
 def local_translate(
-    pos: Vector3, rot: ROTATION_TYPING, distance: float, local_axis: Vector3 = None, radians=False
+    pos: Vector3, rot: ROTATION_TYPING, distance: float, local_axis: Vector3 | None = None, radians=False
 ) -> Vector3:
     """Slide given world-sapce `pos` vector by `distance` along `local_axis` vector, which defaults to -Z axis.
 
@@ -29,6 +30,7 @@ def local_translate(
     rot_matrix = get_rotmat3(rot, radians=radians)
     if local_axis is None:
         local_axis = Vector3((0.0, 0.0, -1.0))  # standard 'forward-facing' direction of MSB entities
+    local_axis: Vector3
     if not isinstance(local_axis, Vector3):
         local_axis = Vector3(local_axis)
     local_axis = local_axis.normalize()
@@ -40,7 +42,7 @@ def local_translate(
     return pos + distance * (rot_matrix @ local_axis)
 
 
-def get_rotmat3(rotation: ROTATION_TYPING | None, radians=False) -> Matrix3:
+def get_rotmat3(rotation: ROTATION_TYPING | None, radians: bool = False) -> Matrix3:
     """Return a rotation `Matrix3` from various shortcut input types (e.g. single value or Euler angle vector).
 
     `None` is returned as the identity matrix.
