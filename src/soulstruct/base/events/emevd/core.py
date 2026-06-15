@@ -10,7 +10,6 @@ from dataclasses import field
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.base.game_types import Flag
 from soulstruct.dcx import DCXType
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.conversion import floatify
@@ -111,7 +110,7 @@ class EMEVD(GameFile, abc.ABC):
 
     @classmethod
     def from_numeric_path(cls, numeric_path: Path | str, map_name: str = "") -> tp.Self:
-        return cls.from_numeric_string(numeric_path.read_text(), map_name)
+        return cls.from_numeric_string(Path(numeric_path).read_text(), map_name)
 
     @classmethod
     def from_evs_parser(cls, evs_parser: EVSParser) -> tp.Self:
@@ -121,8 +120,8 @@ class EMEVD(GameFile, abc.ABC):
     def from_evs_string(
         cls,
         evs_string: str,
-        map_name: str = None,
-        script_directory: Path | str = None,
+        map_name: str | None = None,
+        script_directory: Path | str | None = None,
         common_func_evs: EVSParser | None = None,
     ) -> tp.Self:
         try:
@@ -139,8 +138,8 @@ class EMEVD(GameFile, abc.ABC):
     def from_evs_path(
         cls,
         evs_path: Path | str,
-        map_name: str = None,
-        script_directory: Path | str = None,
+        map_name: str | None = None,
+        script_directory: Path | str | None = None,
         common_func_evs: EVSParser | None = None,
     ) -> tp.Self:
         evs_path = Path(evs_path)
@@ -170,7 +169,8 @@ class EMEVD(GameFile, abc.ABC):
     def from_path(cls, path: str | Path) -> tp.Self:
         """Adds `map_name` attribute to the unpacked binary EMEVD."""
         # noinspection PyTypeChecker
-        emevd = super(EMEVD, cls).from_path(path)  # type: tp.Self
+        emevd = tp.cast(tp.Self, super(EMEVD, cls).from_path(path))
+        assert isinstance(emevd.path, Path)  # set by `from_path`
         emevd.map_name = emevd.path.name.split(".")[0]
         return emevd
 
@@ -312,14 +312,14 @@ class EMEVD(GameFile, abc.ABC):
 
     def to_evs(
         self,
-        enums_module_paths: list[str | Path] = (),
-        star_import_module_names: list[str] = (),
-        warn_missing_enums=True,
-        enums_module_prefix=".",
-        event_function_prefix="Event",
-        docstring="",
-        common_func_emevd: EMEVD = None,
-        enums_manager: GameEnumsManager = None,
+        enums_module_paths: tp.Sequence[str | Path] = (),
+        star_import_module_names: tp.Sequence[str] = (),
+        warn_missing_enums: bool = True,
+        enums_module_prefix: str = ".",
+        event_function_prefix: str = "Event",
+        docstring: str = "",
+        common_func_emevd: EMEVD | None = None,
+        enums_manager: GameEnumsManager | None = None,
     ) -> str:
         """Convert EMEVD to a Python-style EVS string.
 
@@ -342,8 +342,8 @@ class EMEVD(GameFile, abc.ABC):
         ```
 
         If `warn_missing_enums=True` (default) and any `entity_module_paths` are given, entity IDs that are not found in
-        any of the given enums modules will cause a warning to be logged and a TO-DO comment to be written at the end
-        of that line. Entity IDs that appear multiple times in the given modules will always raise a `ValueError`.
+        any of the given enums modules will cause a warning to be logged. A TO-DO comment will also be written at the
+        end of that line. Entity IDs that appear multiple times in the given modules will always raise a `ValueError`.
         """
         if common_func_emevd:
             self.apply_common_func(common_func_emevd)
@@ -352,12 +352,12 @@ class EMEVD(GameFile, abc.ABC):
 
         if enums_manager:
             # Update `star_import_module_names` of existing `GameEnumsManager`.
-            enums_manager.star_import_module_names = star_import_module_names
+            enums_manager.star_import_module_names = list(star_import_module_names)
         else:
             # Create a new `GameEnumsManager` from the given module paths and events in this EMEVD.
             # User may want to supply an existing one if decompiling multiple EMEVDs that reference the same modules.
             enums_manager = self.ENTITY_ENUMS_MANAGER(list(enums_module_paths))
-            enums_manager.star_import_module_names = star_import_module_names
+            enums_manager.star_import_module_names = list(star_import_module_names)
 
         for event_id in self.events:
             enums_manager.add_event_id(event_id)
@@ -409,7 +409,7 @@ class EMEVD(GameFile, abc.ABC):
         return docstring + "\n" + "\n\n\n".join([imports] + evs_events) + "\n"
 
     def add_event_call_keywords(
-        self, event_string: str, enums_manager: GameEnumsManager, common_func_emevd: EMEVD = None
+        self, event_string: str, enums_manager: GameEnumsManager, common_func_emevd: EMEVD | None = None
     ):
         """Add keyword argument names to `Event_{ID}(_, x, y, z)` calls.
 
@@ -594,15 +594,15 @@ class EMEVD(GameFile, abc.ABC):
 
     def write_evs(
         self,
-        evs_path: str | Path = None,
-        enums_module_paths: list[str | Path] = (),
-        star_import_module_names: list[str] = (),
-        warn_missing_enums=True,
-        enums_module_prefix=".",
-        event_function_prefix="Event",
-        docstring="",
-        common_func_emevd: EMEVD = None,
-        enums_manager: GameEnumsManager = None,
+        evs_path: str | Path | None = None,
+        enums_module_paths: tp.Sequence[str | Path] = (),
+        star_import_module_names: tp.Sequence[str] = (),
+        warn_missing_enums: bool = True,
+        enums_module_prefix: str = ".",
+        event_function_prefix: str = "Event",
+        docstring: str = "",
+        common_func_emevd: EMEVD | None = None,
+        enums_manager: GameEnumsManager | None = None,
     ):
         if not evs_path:
             evs_path = self.map_name

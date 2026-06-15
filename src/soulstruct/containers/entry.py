@@ -15,7 +15,7 @@ from pathlib import Path
 from soulstruct.utilities.binary import *
 
 if tp.TYPE_CHECKING:
-    from soulstruct.base.base_binary_file import BASE_BINARY_FILE_T
+    from soulstruct.base.base_binary_file import BaseBinaryFile
     from .core import BinderFlags
 
 
@@ -186,7 +186,7 @@ class BinderEntry:
         """Compress data (with `zlib` level 7) before setting it to `.data` attribute, if appropriate."""
         self.data = zlib.compress(data, level=7) if BinderEntryFlags.is_compressed(self.flags) else data
 
-    def set_from_binary_file(self, binary_file: BASE_BINARY_FILE_T):
+    def set_from_binary_file(self, binary_file: BaseBinaryFile):
         self.set_uncompressed_data(bytes(binary_file))
 
     def get_packed_path(self, encoding: str) -> bytes:
@@ -202,20 +202,10 @@ class BinderEntry:
             raise ValueError("BinderEntry does not have a `path`. Cannot set path name.")
         self.path = str(Path(self.path).parent.joinpath(new_name))
 
-    def to_binary_file(self, binary_file_cls: type[BASE_BINARY_FILE_T]) -> BASE_BINARY_FILE_T:
+    def to_binary_file[T: BaseBinaryFile](self, binary_file_cls: type[T]) -> T:
         binary_file = binary_file_cls.from_bytes(self.get_uncompressed_data())
         binary_file.path = Path(self.path) if self.path else None
         return binary_file
-
-    @property
-    def id(self):
-        """Legacy alias for `entry_id`."""
-        return self.entry_id
-
-    @id.setter
-    def id(self, value):
-        """Legacy alias for `entry_id`."""
-        self.entry_id = value
 
     @property
     def data_size(self) -> int:

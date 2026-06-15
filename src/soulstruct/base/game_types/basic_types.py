@@ -61,9 +61,9 @@ class GameObjectIntMeta(EnumMeta):
         metacls,
         cls,
         bases,
-        first_value: int = None,
-        last_value: int = None,
-        max_count: int = None,
+        first_value: int | None = None,
+        last_value: int | None = None,
+        max_count: int | None = None,
         **kwds,  # NOTE: None are actually acceptable.
     ):
         if kwds:

@@ -84,14 +84,14 @@ class MatDef(_BaseMatDef):
     @classmethod
     def from_mtd(cls, mtd: MTD):
         """Check if this is a Cloth material and set `is_cloth` attribute accordingly."""
-        matdef = super(MatDef, cls).from_mtd(mtd)
+        matdef = tp.cast(tp.Self, super(MatDef, cls).from_mtd(mtd))
         if mtd.get_param("g_GX_MaterialType", default=0) == 2:
             matdef.is_cloth = True
         return matdef
 
     @classmethod
     def from_mtd_name(cls, mtd_name: str):
-        matdef = super(MatDef, cls).from_mtd_name(mtd_name)
+        matdef = tp.cast(tp.Self, super(MatDef, cls).from_mtd_name(mtd_name))
         if "_Cloth" in mtd_name:
             matdef.is_cloth = True
         return matdef
@@ -115,7 +115,7 @@ class MatDef(_BaseMatDef):
         bone indices or weights.
         """
 
-        data_types = [  # always present
+        data_types: list[VERTEX_DATA_TYPING] = [  # always present
             VertexPosition(VertexDataFormatEnum.Float3, 0),
             VertexNormal(VertexDataFormatEnum.FourBytesB, 0),  # `normal_w` component used as bone index
             # Tangent fields will be inserted here if needed.
@@ -168,7 +168,7 @@ class MatDef(_BaseMatDef):
             layout.set_unk_x00(self.type_unk_x00)
             return layout
 
-        data_types = [
+        data_types: list[VERTEX_DATA_TYPING] = [
             VertexPosition(VertexDataFormatEnum.Float3, 0),
             VertexNormal(VertexDataFormatEnum.FourBytesB, 0),
             VertexTangent(VertexDataFormatEnum.FourBytesB, 0),

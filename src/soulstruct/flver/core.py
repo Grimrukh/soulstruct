@@ -172,14 +172,14 @@ class FLVER(GameFile):
     @classmethod
     def from_path(cls, path: str | Path) -> tp.Self:
         """Reports invalid array layouts."""
-        flver = super(FLVER, cls).from_path(path)
+        flver = tp.cast(tp.Self, super(FLVER, cls).from_path(path))
         assert isinstance(flver, FLVER)
         if any(mesh.invalid_layout for mesh in flver.meshes):
             _LOGGER.warning(f"FLVER '{Path(path).name}' has one or more meshes with invalid vertex array sizes.")
         return flver
 
     @classmethod
-    def from_binder_path(cls, binder_path: str | Path, entry_id_or_name: int | str = None, from_bak=False) -> tp.Self:
+    def from_binder_path(cls, binder_path: str | Path, entry_id_or_name: int | str | None = None, from_bak=False) -> tp.Self:
         """If not `entry_id_or_name` is given, will search for a lone '.flver{.dcx}' entry in the binder. In this case,
         will raise an exception if no FLVER files or multiple FLVER files exist in the BND.
         """
@@ -191,7 +191,7 @@ class FLVER(GameFile):
 
     @classmethod
     def multiple_from_binder_path(
-        cls, binder_path: Path | str, entry_ids_or_names: tp.Sequence[int | str] = None, from_bak=False
+        cls, binder_path: Path | str, entry_ids_or_names: tp.Sequence[int | str] | None = None, from_bak=False
     ) -> list[tp.Self]:
         """If not `entry_ids_or_names` is given, will search for ALL '.flver{.dcx}' entries in the binder and return a
         list of loaded FLVERs. Will raise an exception if no FLVER files are found."""
@@ -779,7 +779,12 @@ class FLVER(GameFile):
             raise ValueError("Merged Mesh is not cached on FLVER yet.")
         return self._cached_merged_mesh
 
-    def update_cached_merged_mesh(self, mesh_material_indices: tp.Sequence[int] = None, material_uv_layer_names: tp.Sequence[tp.Sequence[str]] = None, merge_vertices=True) -> MergedMesh:
+    def update_cached_merged_mesh(
+        self,
+        mesh_material_indices: tp.Sequence[int] | None = None,
+        material_uv_layer_names: tp.Sequence[tp.Sequence[str]] | None = None,
+        merge_vertices: bool = True,
+    ) -> MergedMesh:
         """Build and cache a Merged Mesh. Returns the cached Merged Mesh."""
         merged_mesh = self._cached_merged_mesh = self.build_merged_mesh(
             mesh_material_indices, material_uv_layer_names, merge_vertices)
@@ -795,8 +800,8 @@ class FLVER(GameFile):
         flvers: list[FLVER],
         mesh_material_indices: tp.Sequence[list[int]] | None = None,
         material_uv_layer_names: tp.Sequence[list[list[str]]] | None = None,
-        merge_vertices: tp.Sequence[bool] = None,
-        max_threads: int = None,
+        merge_vertices: tp.Sequence[bool] | None = None,
+        max_threads: int | None = None,
     ) -> list[bool]:
         """Use multiprocessing to cache `MergedMesh` instances on given `FLVER` instances in parallel.
 
@@ -884,8 +889,8 @@ class FLVER(GameFile):
 
     def build_merged_mesh(
         self,
-        mesh_material_indices: tp.Sequence[int] = None,
-        material_uv_layer_names: tp.Sequence[tp.Sequence[str]] = None,
+        mesh_material_indices: tp.Sequence[int] | None = None,
+        material_uv_layer_names: tp.Sequence[tp.Sequence[str]] | None = None,
         merge_vertices=True,
     ) -> MergedMesh:
         """Return a `MergedMesh` object that combines all meshes of this FLVER into a single mesh."""
@@ -1169,7 +1174,7 @@ class FLVER(GameFile):
                 and self.bones[0].rotate == EulerRad.zero()
                 and self.bones[0].scale == Vector3.one()
             ):
-                print(f"FLVER {self.path.name} is already deboned (only has one bone at the origin).")
+                print(f"FLVER {self.path_name} is already deboned (only has one bone at the origin).")
                 return
 
         bone_transforms = {}
@@ -1246,7 +1251,7 @@ class FLVER(GameFile):
             i += 1
         return "\n\n".join(mesh_objs)
 
-    def write_obj(self, obj_path: Path | str = None, obj_name="", make_dirs=True):
+    def write_obj(self, obj_path: Path | str | None = None, obj_name="", make_dirs=True):
         if obj_path is None:
             if self.path is None:
                 raise ValueError("You must specify `file_path` because `GameFile` default path has not been set.")
@@ -1303,8 +1308,8 @@ class FLVER(GameFile):
 
 def _cache_flver_merged_mesh(
     flver: FLVER,
-    mesh_material_indices: tp.Sequence[int] = None,
-    material_uv_layer_names: tp.Sequence[tp.Sequence[str]] = None,
+    mesh_material_indices: tp.Sequence[int] | None = None,
+    material_uv_layer_names: tp.Sequence[tp.Sequence[str]] | None = None,
     merge_vertices=True,
 ) -> bool:
     """Worker call for updating multiple FLVER cached MergedMeshes in parallel."""

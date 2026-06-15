@@ -12,21 +12,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added this Changelog (with rough collected history).
 
 ### Changed
+- Minimum Python version raised to 3.13.
+- Python 3.13 generic syntax used instead of `typing.TypeVar` and `typing.Generic`.
 - FLVER: support for multiple vertex arrays per mesh; improved batch operations.
 - `str`/`Path` hybrid methods now use single dispatch.
 - DCX resources included in package data.
 - `ELDEN_RING_PATH` constant changed to `ER_PATH` for game consistency.
 - `SEKIRO_PATH` constant changed to `SEK_PATH` for game consistency.
 - `Config` dataclass added to `soulstruct.config` (legacy global constants still supported but deprecated).
+- Core dataclass metaclasses cleaned up.
 
 ### Fixed
 - `FLVERMesh.uv_count` validation.
 - PTDE EMEVD import bug.
 - `MatDef` improvements.
 - NVM big-endian vertex write bug.
+- `typing.cast(typing.Self, ...)` used for ambiguous type coercian with `super()`, `cls.new()`.
 
 ### Removed
 - Removed placeholder DeSR (Demon's Souls Remastered) support stub.
+- Removed support for Python < 3.13.
 
 ---
 

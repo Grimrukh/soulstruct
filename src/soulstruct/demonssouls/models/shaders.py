@@ -122,7 +122,7 @@ class MatDef(_BaseMatDef):
 
     @classmethod
     def from_mtd(cls, mtd: MTD):
-        matdef = super(MatDef, cls).from_mtd(mtd)
+        matdef = tp.cast(tp.Self, super(MatDef, cls).from_mtd(mtd))
 
         # Special known cases of a reused diffuse UV layer, which we redirect to the first diffuse UV.
         if matdef.stem in cls.HAS_DUPLICATE_ALBEDO_STEMS:
@@ -139,7 +139,7 @@ class MatDef(_BaseMatDef):
 
     @classmethod
     def from_mtd_name(cls, mtd_name: str):
-        matdef = super(MatDef, cls).from_mtd_name(mtd_name)
+        matdef = tp.cast(tp.Self, super(MatDef, cls).from_mtd_name(mtd_name))
 
         if matdef.get_sampler_with_alias("DSB 0 Normal"):
             # Add useless "Detail 0 Normal" sampler for completion.
@@ -152,7 +152,7 @@ class MatDef(_BaseMatDef):
     def get_map_piece_layout(self) -> VertexArrayLayout:
         """Get a standard DeS map piece layout with the given number of UV layers."""
 
-        data_types = [  # always present
+        data_types: list[VERTEX_DATA_TYPING] = [  # always present
             VertexPosition(VertexDataFormatEnum.Float3, 0),
             VertexBoneIndices(VertexDataFormatEnum.FourBytesD, 0),
             VertexNormal(VertexDataFormatEnum.FourBytesA, 0),
@@ -192,7 +192,7 @@ class MatDef(_BaseMatDef):
 
     def get_non_map_piece_layout(self, is_dynamic_mesh: bool = True) -> VertexArrayLayout:
         """Get a standard vertex array layout for character (and probably object) materials in DeS."""
-        data_types = [
+        data_types: list[VERTEX_DATA_TYPING] = [
             VertexPosition(VertexDataFormatEnum.Float3, 0),
             VertexBoneIndices(VertexDataFormatEnum.FourBytesD, 0),
             VertexNormal(VertexDataFormatEnum.FourBytesA, 0),

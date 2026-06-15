@@ -35,7 +35,7 @@ class GameParamBND(Binder, abc.ABC):
 
     # Maps internal param names (some game-specific) to more friendly Soulstruct names. Two-way dictionary.
     # Values should match the names of getter properties on game subclass.
-    PARAM_NICKNAMES: tp.ClassVar[BiDict[str, str]] = {}
+    PARAM_NICKNAMES: tp.ClassVar[BiDict[str, str]] = BiDict()
     # Maps param nicknames to their Soulstruct game types. Also defines order (and presence) of params in GUI.
     GAME_TYPES: tp.ClassVar[dict[str, BaseGameParam]] = {}
 
@@ -85,7 +85,7 @@ class GameParamBND(Binder, abc.ABC):
             )
         return TypedParam(row_type)
 
-    def unpack_all_param_rows(self, paramdefbnd: ParamDefBND = None):
+    def unpack_all_param_rows(self, paramdefbnd: ParamDefBND | None = None):
         """Unpack all row data of all `ParamDict` entries using `paramdefbnd` (defaults to bundled file).
 
         Ignores true `Param` entries that are already using the generated `ParamRow` subclasses.
@@ -153,7 +153,7 @@ class GameParamBND(Binder, abc.ABC):
             binder_kwargs["params"][param_stem] = param
 
         # noinspection PyTypeChecker
-        gameparambnd = super(GameParamBND, cls).from_dict(binder_kwargs)  # type: tp.Self
+        gameparambnd = tp.cast(tp.Self, super(GameParamBND, cls).from_dict(binder_kwargs))
 
         # gameparambnd.regenerate_binder_entries()  # TODO: no need to create entries until needed, right?
 
@@ -187,6 +187,8 @@ class GameParamBND(Binder, abc.ABC):
             raise FileNotFoundError(f"Could not find GameParamBND manifest file '{manifest_path}'.")
 
         manifest = read_json(manifest_path)
+        if not isinstance(manifest, dict):
+            raise TypeError(f"Invalid type for GameParamBND manifest: {type(manifest).__name__}. Must be a dict.")
         if "entries" not in manifest:
             raise ValueError(f"`entries` key not in `GameParamBND` JSON manifest: {manifest_path}")
 

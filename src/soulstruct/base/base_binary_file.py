@@ -2,7 +2,6 @@ from __future__ import annotations
 
 __all__ = [
     "BaseBinaryFile",
-    "BASE_BINARY_FILE_T",
     "BaseJSONEncoder",
 ]
 
@@ -22,38 +21,20 @@ from soulstruct.games import Game, get_game
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.files import create_bak, read_json, write_json, get_blake2b_hash
 from soulstruct.dcx import DCXType, compress, decompress, is_dcx
-
-from .dataclass_meta import DataclassMeta
+from .metaclasses import PathDataclassMeta
 
 if tp.TYPE_CHECKING:
     from soulstruct.containers.entry import BinderEntry
+    # Valid types for `BaseBinaryFile.from_bytes()` and similar methods:
     BASE_BINARY_BYTES_TYPING = tp.Union[bytes, bytearray, io.BufferedIOBase, BinaryReader, BinderEntry]
 
 
 _LOGGER = logging.getLogger(__name__)
 
-_GAME_MODULE_RE = re.compile(r"^soulstruct\.(\w+)\..*$")
-
-# This genuinely needs to be a `TypeVar` as it is used in the metaclass below.
-BASE_BINARY_FILE_T = tp.TypeVar("BASE_BINARY_FILE_T", bound="BaseBinaryFile")
-
-# Valid types for `BaseBinaryFile.from_bytes()` and similar methods:
+_GAME_MODULE_RE = re.compile(r"^soulstruct(\.\w+)\..*?$")
 
 
-@tp.dataclass_transform(kw_only_default=False)
-class BaseBinaryFileMeta(DataclassMeta):
-    """Metaclass for `BaseBinaryFileMeta` that adds dataclass wrapping."""
-
-    def __call__(cls: type[BASE_BINARY_FILE_T], *args, **kwargs) -> BASE_BINARY_FILE_T:
-        """Intercept instance creation to handle the single-argument path case, which calls `cls.from_path(path)`."""
-        if len(args) == 1 and isinstance(args[0], (Path, str)) and not kwargs:
-            # Call `from_path` if a single `path` argument is provided
-            return cls.from_path(args[0])
-        # Otherwise, proceed with the normal dataclass constructor.
-        return super(BaseBinaryFileMeta, cls).__call__(*args, **kwargs)
-
-
-class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
+class BaseBinaryFile(abc.ABC, metaclass=PathDataclassMeta):
     """Base class for anything that is represented in binary at some point.
 
     Its two notable direct children are `GameFile` (which cannot be a Binder) and `Binder`.
@@ -115,7 +96,7 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
         return bytes(self)
 
     @classmethod
-    def to_bytes_parallel(cls, files: list[BASE_BINARY_FILE_T], calls_per_thread=10, processes: int = None) -> list[bytes | None]:
+    def to_bytes_parallel(cls, files: list[BASE_BINARY_FILE_T], calls_per_thread=10, processes: int | None = None) -> list[bytes | None]:
         """Use multiprocessing to pack all `BaseBinaryFile`s in parallel.
 
         Failed conversions will put `None` into list rather than `bytes`.
@@ -129,7 +110,7 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
     def from_path(cls, path: str | Path) -> tp.Self:
         _path = Path(path)
         try:
-            binary_file = cls.from_bytes(BinaryReader(_path))
+            binary_file = tp.cast(tp.Self, cls.from_bytes(BinaryReader(_path)))
         except Exception:
             traceback.print_exc()
             _LOGGER.error(f"Error occurred while reading `{cls.__name__}` with path '{_path}'. See traceback.")
@@ -143,7 +124,7 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
 
     @classmethod
     def from_paths_parallel(
-        cls, paths: list[Path | str], calls_per_thread=10, processes: int = None
+        cls, paths: list[Path | str], calls_per_thread=10, processes: int | None = None
     ) -> list[BASE_BINARY_FILE_T | None]:
         """Use multiprocessing to read `BaseBinaryFile` of given subtype from each path in `paths` in parallel.
 
@@ -159,7 +140,7 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
         reader, dcx_type = cls._get_reader_and_dcx_type(data)
 
         try:
-            binary_file = cls.from_reader(reader)
+            binary_file = tp.cast(tp.Self, cls.from_reader(reader))
             binary_file.dcx_type = dcx_type
         except Exception:
             traceback.print_exc()
@@ -171,7 +152,7 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
 
     @classmethod
     def from_bytes_parallel(
-        cls, data_list: list[bytes], calls_per_thread=10, processes: int = None
+        cls, data_list: list[bytes], calls_per_thread=10, processes: int | None = None
     ) -> list[BASE_BINARY_FILE_T | None]:
         """Use multiprocessing to read `BaseBinaryFile` of given subtype from each `bytes` in `datas` in parallel.
 
@@ -189,7 +170,7 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
 
     @classmethod
     def from_binder_entries_parallel(
-        cls, entry_list: list[BinderEntry], calls_per_thread=10, processes: int = None
+        cls, entry_list: list[BinderEntry], calls_per_thread=10, processes: int | None = None
     ) -> list[BASE_BINARY_FILE_T | None]:
         """Use multiprocessing to read `BaseBinaryFile` of given subtype from each `BinderEntry` in parallel.
 
@@ -211,11 +192,11 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
         json_dict = read_json(json_path)
         if not isinstance(json_dict, dict):
             raise TypeError(
-                f"Expected root-level dict in JSON {json_path} for class {cls.__name__}, not: {type(json_dict)}"
+                f"Expected root-level dict in JSON {json_path} for class {cls.__name__}, not {type(json_dict).__name__}"
             )
         # TODO: Some kind of fancy recursive JSON reader that checks field types and converts dictionaries to
         #  `BaseBinaryFile` subclasses.
-        file = cls.from_dict(json_dict)
+        file = tp.cast(tp.Self, cls.from_dict(json_dict))
         file.path = Path(json_path)
         return file
 
@@ -354,8 +335,8 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
                 return self.get_game().default_dcx_type
             except ValueError:
                 _LOGGER.warning(
-                    f"Could not detect default DCX type for game-independent file class {self.cls_name}. "
-                    f"Not using any compression."
+                    f"Could not detect default DCX type for game-independent file class {self.cls_name} in "
+                    f"module {self.__module__}. Assuming no DCX compression."
                 )
                 return DCXType.Null
         return self.dcx_type
@@ -366,11 +347,12 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
         _file_path = Path(file_path)
         bak_path = _file_path.with_name(_file_path.name + ".bak")
         if bak_path.is_file():
-            binary_file = cls.from_path(bak_path)
-            binary_file.path = binary_file.path.with_suffix("")  # remove ".bak" extension
+            binary_file = tp.cast(tp.Self, cls.from_path(bak_path))
+            if binary_file.path:  # assertion
+                binary_file.path = binary_file.path.with_suffix("")  # remove ".bak" extension
             return binary_file
         else:
-            binary_file = cls.from_path(_file_path)
+            binary_file = tp.cast(tp.Self, cls.from_path(_file_path))
             if create_bak_if_missing:
                 create_bak(_file_path)
             return binary_file
@@ -378,8 +360,10 @@ class BaseBinaryFile(abc.ABC, metaclass=BaseBinaryFileMeta):
     @classmethod
     def get_game(cls) -> Game:
         """Use `__module__` of this class to detect the `Game` it belongs to."""
-        if match := re.match(_GAME_MODULE_RE, cls.__module__):
-            return get_game(match.group(1))
+        from soulstruct.games import GAMES
+        for game in GAMES:
+            if game.submodule_name in cls.__module__:
+                return game
         raise ValueError(f"Could not detect game name from module of class `{cls.__name__}`: {cls.__module__}")
 
     @property
@@ -449,6 +433,10 @@ class BaseJSONEncoder(json.JSONEncoder):
         return None
 
 
+# Type variable for generics below.
+BASE_BINARY_FILE_T = tp.TypeVar("BASE_BINARY_FILE_T", bound=BaseBinaryFile)
+
+
 def _from_path_mp(file_type: type[BASE_BINARY_FILE_T], path: Path) -> BASE_BINARY_FILE_T | None:
     """Worker for parallelized operator."""
     try:
@@ -478,7 +466,7 @@ def _from_binder_entry_mp(file_type: type[BASE_BINARY_FILE_T], entry: BinderEntr
         return None
 
 
-def _to_bytes_mp(file: BASE_BINARY_FILE_T) -> bytes | None:
+def _to_bytes_mp(file: BaseBinaryFile) -> bytes | None:
     """Worker for parallelized operator."""
     try:
         return bytes(file)

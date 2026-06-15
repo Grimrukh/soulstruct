@@ -40,9 +40,7 @@ class DivBinder(Binder):
             raise ValueError("DivBinder does not support `bdt_path` (i.e. does not support split Binder).")
         path = Path(path)
 
-        # Read base Binder (as `DivBinder` instance).
-        # noinspection PyTypeChecker
-        core_binder = super(DivBinder, cls).from_path(path, bdt_path)  # type: tp.Self
+        core_binder = tp.cast(tp.Self, super(DivBinder, cls).from_path(path, bdt_path))
 
         # We only need the stems of BLF entries to find those files next to `path`. No need to read BLFs.
         blf_stems = [entry.stem for entry in core_binder.entries if entry.name.endswith(".blf")]
@@ -183,6 +181,8 @@ class BLFCommmand:
         path_regex = self.get_path_regex()
         matching_entries = []
         for entry in entries:
+            if not entry.path:
+                continue
             entry_relative_path = entry.path.removeprefix(entry_root)
             print(entry_relative_path)
             if path_regex.match(entry_relative_path):

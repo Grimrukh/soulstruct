@@ -1137,7 +1137,7 @@ class MatDef(_BaseMatDef):
             metaparam=metaparam,
             matbin=matbin,
             matbin_params=matbin_params,
-        )  # type: MatDef
+        )
 
         # Detect blend mode (same param as MTD-based games).
         blend_mode = matbin.get_param("g_BlendMode", default=0)
@@ -1364,12 +1364,12 @@ class MatDef(_BaseMatDef):
 
     def get_map_piece_layout(self) -> VertexArrayLayout:
         """Get a standard ER map piece layout."""
-        data_types = [
+        data_types: list[VERTEX_DATA_TYPING] = [
             VertexPosition(VertexDataFormatEnum.Float3, 0),
             VertexBoneIndices(VertexDataFormatEnum.FourBytesB, 0),
             VertexNormal(VertexDataFormatEnum.FourBytesC, 0),
             VertexColor(VertexDataFormatEnum.FourBytesC, 0),
-        ]  # type: list[VERTEX_DATA_TYPING]
+        ]
 
         primary_samplers = self.get_samplers_by_role(SamplerGroupRole.PRIMARY)
         has_primary_normal = any("Normal" in s.alias for s in primary_samplers)
@@ -1406,11 +1406,11 @@ class MatDef(_BaseMatDef):
 
     def get_non_map_piece_layout(self, is_dynamic_mesh: bool = True) -> VertexArrayLayout:
         """Get a standard vertex array layout for character (and probably object) materials in ER."""
-        data_types = [
+        data_types: list[VERTEX_DATA_TYPING] = [
             VertexPosition(VertexDataFormatEnum.Float3, 0),
             VertexNormal(VertexDataFormatEnum.FourBytesB, 0),
             VertexTangent(VertexDataFormatEnum.FourBytesB, 0),
-        ]  # type: list[VERTEX_DATA_TYPING]
+        ]
 
         uv_slot_tuple = self.get_uv_slot_tuple()
         if not uv_slot_tuple:

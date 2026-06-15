@@ -452,19 +452,6 @@ class VertexIgnore(VertexDataType):
         return self.ignore_size
 
 
-# Data type subclass lookup.
-VERTEX_DATA_TYPES = {
-    VertexPosition.type_int: VertexPosition,
-    VertexBoneWeights.type_int: VertexBoneWeights,
-    VertexBoneIndices.type_int: VertexBoneIndices,
-    VertexNormal.type_int: VertexNormal,
-    VertexUV.type_int: VertexUV,
-    VertexTangent.type_int: VertexTangent,
-    VertexBitangent.type_int: VertexBitangent,
-    VertexColor.type_int: VertexColor,
-}  # type: dict[int, type[VertexDataType]]
-
-
 VERTEX_DATA_TYPING = tp.Union[
     VertexPosition,
     VertexBoneWeights,
@@ -476,6 +463,21 @@ VERTEX_DATA_TYPING = tp.Union[
     VertexColor,
     VertexIgnore,
 ]
+
+
+# Data type subclass lookup.
+VERTEX_DATA_TYPES = {
+    VertexPosition.type_int: VertexPosition,
+    VertexBoneWeights.type_int: VertexBoneWeights,
+    VertexBoneIndices.type_int: VertexBoneIndices,
+    VertexNormal.type_int: VertexNormal,
+    VertexUV.type_int: VertexUV,
+    VertexTangent.type_int: VertexTangent,
+    VertexBitangent.type_int: VertexBitangent,
+    VertexColor.type_int: VertexColor,
+}  # type: dict[int, type[VERTEX_DATA_TYPING]]
+
+
 
 
 class VertexArrayLayout:
@@ -533,7 +535,7 @@ class VertexArrayLayout:
         layout_struct = cls.STRUCT0.from_bytes(reader)
 
         tight_data_offset = 0
-        data_types = []
+        data_types: list[VERTEX_DATA_TYPING] = []
         for _ in range(layout_struct.layout_types_count):
             data_type_struct = VertexDataType.STRUCT.from_bytes(reader)
 
@@ -567,7 +569,7 @@ class VertexArrayLayout:
 
         with reader.temp_offset(array_layout_struct.layout_types_offset):
             tight_data_offset = 0
-            data_types = []
+            data_types: list[VERTEX_DATA_TYPING] = []
             for _ in range(array_layout_struct.layout_types_count):
                 data_type_struct = VertexDataType.STRUCT.from_bytes(reader)
 

@@ -49,8 +49,7 @@ class LuaBND(Binder):
         if bdt_reader is not None:
             raise TypeError("Cannot read `LuaBND` from a split `BXF` file.")
 
-        # TODO: This seems dodgy, type-wise. Will `luabnd` be a `Binder` object?
-        luabnd = super(LuaBND, cls).from_reader(reader)  # type: tp.Self
+        luabnd = tp.cast(tp.Self, super(LuaBND, cls).from_reader(reader))
 
         # Load goals and unknown scripts.
         try:
@@ -88,7 +87,7 @@ class LuaBND(Binder):
         # self.sort_goals()
         return luabnd
 
-    def sort_goals(self, key: tp.Callable[[LuaGoalScript], tp.Any] = None):
+    def sort_goals(self, key: tp.Callable[[LuaGoalScript], tp.Any] | None = None):
         if key is None:
             self.goals = sorted(self.goals, key=lambda g: (g.goal_id, g.goal_type))
         else:

@@ -236,7 +236,7 @@ class MSGDirectory(_BaseMSGDirectory):
                     patch_entry = binder.find_entry_by_id(dlc_entry_id)
                 except KeyError:
                     patch_entry = base_entry.copy()
-                    patch_entry.id = dlc_entry_id
+                    patch_entry.entry_id = dlc_entry_id
                     binder.add_entry(patch_entry)
                 else:
                     # Make sure patch entry has same data as base entry and same stem.

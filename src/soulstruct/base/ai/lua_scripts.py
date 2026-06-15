@@ -4,10 +4,10 @@ __all__ = ["LuaScriptBase", "GoalType", "LuaGoalScript", "LuaUnknownScript"]
 
 import abc
 import copy
-import enum
 import logging
 import re
 from dataclasses import dataclass
+from enum import StrEnum
 from pathlib import Path
 
 from soulstruct.utilities.binary import *
@@ -19,7 +19,7 @@ _LOGGER = logging.getLogger(__name__)
 _SNAKE_CASE_RE = re.compile(r"(?<!^)(?=[A-Z])")
 
 
-class GoalType(enum.Enum):
+class GoalType(StrEnum):
     Battle = "battle"
     Logic = "logic"
     Unknown = "unknown"
@@ -195,6 +195,7 @@ class LuaGoalScript(LuaScriptBase):
             return {"has_battle_interrupt": False, "has_logic_interrupt": True, "logic_interrupt_name": name}
         elif self.goal_type == GoalType.Unknown:
             return {"has_battle_interrupt": False, "has_logic_interrupt": False, "logic_interrupt_name": ""}
+        raise ValueError(f"Invalid `LuaGoal.type`: {self.goal_type}")
 
     def __repr__(self):
         return f"LuaGoal({self.goal_id:06d}, {repr(self.goal_name)}, {repr(self.goal_type)})"

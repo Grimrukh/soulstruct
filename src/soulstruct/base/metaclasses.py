@@ -1,15 +1,16 @@
 from __future__ import annotations
 
-__all__ = ["DataclassMeta"]
+__all__ = ["DataclassMeta", "PathDataclassMeta"]
 
 import abc
 import typing as tp
 from dataclasses import dataclass
+from pathlib import Path
 
 
 @tp.dataclass_transform(kw_only_default=False)
 class DataclassMeta(abc.ABCMeta):
-    """Base metaclass for Soulstruct dataclasses that automatically applies `slots=True` and `kw_only=True`.
+    """Base metaclass for Soulstruct dataclasses that automatically applies `slots=True`.
 
     May be subclassed to hijack certain constructor overloads.
     """
@@ -55,3 +56,24 @@ class DataclassMeta(abc.ABCMeta):
             del cls.__classcell__
 
         return datacls
+
+
+@tp.dataclass_transform(kw_only_default=False)
+class PathDataclassMeta(DataclassMeta):
+    """Extension of `DataclassMeta` that supports a special single `Path` argument.
+
+    Either a single positional `Path` argument or a `path: Path | str` keyword argument will be intercepted. A
+    positional `str` argument cannot be safely intercepted as the first dataclass field could be a `str` (but `Path`
+    is extremely unlikely as a first field).
+    """
+
+    def __call__[T](cls: type[T], *args, **kwargs) -> T:
+        """Intercept instance creation to handle the single-argument path case, which calls `cls.from_path(path)`."""
+        if len(args) == 1 and isinstance(args[0], Path) and not kwargs:
+            # Call `from_path` if a single `Path` positional argument is provided.
+            return cls.from_path(args[0])
+        if len(args) == 0 and len(kwargs) == 1 and isinstance(kwargs.get("path"), (Path, str)):
+            # Call `from_path` if a single `path: Path` keyword argument is provided.
+            return cls.from_path(kwargs["path"])
+        # Otherwise, proceed with the normal dataclass constructor.
+        return super(PathDataclassMeta, cls).__call__(*args, **kwargs)

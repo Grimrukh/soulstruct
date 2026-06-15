@@ -10,8 +10,8 @@ from dataclasses import field
 from pathlib import Path
 
 from soulstruct.utilities.files import create_bak, get_blake2b_hash
-from .base_binary_file import BaseBinaryFile, BASE_BINARY_FILE_T
-from .dataclass_meta import DataclassMeta
+from .base_binary_file import BaseBinaryFile
+from .metaclasses import PathDataclassMeta
 
 if tp.TYPE_CHECKING:
     from .game_types.map_types import Map
@@ -20,24 +20,7 @@ if tp.TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-# This genuinely needs to be a `TypeVar` as it is used in the metaclass below.
-GAME_FILE_DIRECTORY_T = tp.TypeVar("GAME_FILE_DIRECTORY_T", bound="GameFileDirectory")
-
-
-@tp.dataclass_transform(kw_only_default=False)
-class GameFileDirectoryMeta(DataclassMeta):
-    """Metaclass for `GameFileDirectoryMeta` that adds dataclass wrapping."""
-
-    def __call__(cls: type[GAME_FILE_DIRECTORY_T], *args, **kwargs) -> GAME_FILE_DIRECTORY_T:
-        """Intercept instance creation to handle the single-argument path case, which calls `cls.from_path(path)`."""
-        if len(args) == 1 and isinstance(args[0], (Path, str)) and not kwargs:
-            # Call `from_path` if a single `path` argument is provided
-            return cls.from_path(args[0])
-        # Otherwise, proceed with the normal dataclass constructor.
-        return super(GameFileDirectoryMeta, cls).__call__(*args, **kwargs)
-
-
-class GameFileDirectory(tp.Generic[BASE_BINARY_FILE_T], abc.ABC, metaclass=GameFileDirectoryMeta):
+class GameFileDirectory[BASE_BINARY_FILE_T: BaseBinaryFile](abc.ABC, metaclass=PathDataclassMeta):
     """Python structure for a folder of files in a FromSoftware installation. Implementation is much more flexible.
 
     Typical usage is to specify subclass `FILE_NAME_PATTERN`, `FILE_CLASS`, and `FILE_EXTENSION` to indicate which file
@@ -118,7 +101,7 @@ class GameFileDirectory(tp.Generic[BASE_BINARY_FILE_T], abc.ABC, metaclass=GameF
         self,
         directory_path: Path | str | None = None,
         check_file_hashes: bool = False,
-        no_partial_write=True,
+        no_partial_write: bool = True,
     ) -> list[Path]:
         if directory_path is None:
             if self.directory is None:

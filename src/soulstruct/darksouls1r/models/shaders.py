@@ -35,7 +35,7 @@ class MatDef(_PTDE_MatDef):
 
         In DSR, we have to handle the possibility of a tertiary normal map in snow shaders that use "g_SnowMetalMask".
         """
-        matdef = super(MatDef, cls).from_mtd(mtd)
+        matdef = tp.cast(tp.Self, super(MatDef, cls).from_mtd(mtd))
 
         if "Snow" in matdef.shader_stem:
             # In DS1R, some snow shaders (those with "Snow Metal Mask" MTD param) have a very unusual setup using
@@ -64,7 +64,7 @@ class MatDef(_PTDE_MatDef):
     @classmethod
     def from_mtd_name(cls, mtd_name: str) -> tp.Self:
         mtd_stem = Path(mtd_name).stem
-        matdef = super(MatDef, cls).from_mtd_name(mtd_name)
+        matdef = tp.cast(tp.Self, super(MatDef, cls).from_mtd_name(mtd_name))
 
         if "Snow" in matdef.shader_stem and mtd_stem in cls.SNOW_METAL_MASK_STEMS:
             # Repair guessing of DSR snow shader.
