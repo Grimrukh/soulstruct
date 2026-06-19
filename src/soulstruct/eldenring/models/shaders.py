@@ -1344,7 +1344,7 @@ class MatDef(_BaseMatDef):
         return [s for s in self.samplers if s.alias.startswith(prefix)]
 
     def get_uv_group_sampler_paths(
-        self, matbin: MATBIN = None, ignore_empty_paths=True
+        self, matbin: MATBIN | None = None, ignore_empty_paths=True
     ) -> dict[int, dict[str, tuple[str, UVLayer]]]:
         """Build a dictionary mapping metaparam UV group indices to dictionaries mapping sampler names to paths."""
         matbin = matbin or self.matbin
@@ -1362,50 +1362,60 @@ class MatDef(_BaseMatDef):
 
     # region Vertex Array Layout Generation
 
-    def get_map_piece_layout(self) -> VertexArrayLayout:
-        """Get a standard ER map piece layout."""
-        data_types: list[VERTEX_DATA_TYPING] = [
-            VertexPosition(VertexDataFormatEnum.Float3, 0),
-            VertexBoneIndices(VertexDataFormatEnum.FourBytesB, 0),
-            VertexNormal(VertexDataFormatEnum.FourBytesC, 0),
-            VertexColor(VertexDataFormatEnum.FourBytesC, 0),
-        ]
+    def get_vertex_array_layout(self, is_dynamic: bool) -> VertexArrayLayout:
+        """Unified method for determining the correct vertex array layout for FLVER meshes using this material.
 
-        primary_samplers = self.get_samplers_by_role(SamplerGroupRole.PRIMARY)
-        has_primary_normal = any("Normal" in s.alias for s in primary_samplers)
-        has_detail_or_secondary_normal = any(
-            "Normal" in s.alias
-            for s in self.get_samplers_by_role(SamplerGroupRole.DETAIL)
-            + self.get_samplers_by_role(SamplerGroupRole.SECONDARY)
-        )
+        `is_dynamic` distinguishes map pieces (False) from character/object meshes (True). The two paths differ in:
+          - Normal/Tangent format: `FourBytesC` for map pieces, `FourBytesB` for characters.
+          - Bone data: map pieces have `BoneIndices` only; characters have both `BoneIndices` and `BoneWeights`.
+          - Color instance index: `0` for map pieces, `1` for characters (plus an extra `0` when UV count >= 3).
+          - Tangent logic: map pieces add tangent(s) only when sampler normals are present; characters always have at
+            least one tangent, with a second (instance_index=4) added for fur-alpha shaders.
+          - UV packing order: map pieces use odd-first (single before pair); characters use even-first (pair before
+            single), matching observed FLVER data.
+        """
 
-        if has_primary_normal:
-            data_types.insert(3, VertexTangent(VertexDataFormatEnum.FourBytesC, 0))
-            if has_detail_or_secondary_normal:
-                data_types.insert(4, VertexTangent(VertexDataFormatEnum.FourBytesC, 0))
+        if not is_dynamic:
+            # Map piece layout.
+            data_types: list[VERTEX_DATA_TYPING] = [
+                VertexPosition(VertexDataFormatEnum.Float3, 0),
+                VertexBoneIndices(VertexDataFormatEnum.FourBytesB, 0),
+                VertexNormal(VertexDataFormatEnum.FourBytesC, 0),
+                VertexColor(VertexDataFormatEnum.FourBytesC, 0),
+            ]
 
-        uv_count = len(self.get_uv_slot_tuple())
-        if uv_count > 4:
-            raise ValueError(f"Cannot have more than 4 UV maps in a vertex array (got {uv_count}).")
+            primary_samplers = self.get_samplers_by_role(SamplerGroupRole.PRIMARY)
+            has_primary_normal = any("Normal" in s.alias for s in primary_samplers)
+            has_detail_or_secondary_normal = any(
+                "Normal" in s.alias
+                for s in self.get_samplers_by_role(SamplerGroupRole.DETAIL)
+                + self.get_samplers_by_role(SamplerGroupRole.SECONDARY)
+            )
 
-        uv_member_index = 0
-        while uv_count > 0:
-            if uv_count % 2:
-                data_types.append(VertexUV(VertexDataFormatEnum.UV, uv_member_index))
-                uv_count -= 1
-                uv_member_index += 1
-            else:
-                data_types.append(VertexUV(VertexDataFormatEnum.UVPair, uv_member_index))
-                uv_count -= 2
-                uv_member_index += 1
+            if has_primary_normal:
+                data_types.insert(3, VertexTangent(VertexDataFormatEnum.FourBytesC, 0))
+                if has_detail_or_secondary_normal:
+                    data_types.insert(4, VertexTangent(VertexDataFormatEnum.FourBytesC, 0))
 
-        for data_type in data_types:
-            data_type.unk_x00 = self.type_unk_x00
+            uv_count = len(self.get_uv_slot_tuple())
+            if uv_count > 4:
+                raise ValueError(f"Cannot have more than 4 UV maps in a vertex array (got {uv_count}).")
 
-        return VertexArrayLayout(data_types)
+            uv_member_index = 0
+            while uv_count > 0:
+                # Odd-first: single UV before pair.
+                if uv_count % 2:
+                    data_types.append(VertexUV(VertexDataFormatEnum.UV, uv_member_index))
+                    uv_count -= 1
+                    uv_member_index += 1
+                else:
+                    data_types.append(VertexUV(VertexDataFormatEnum.UVPair, uv_member_index))
+                    uv_count -= 2
+                    uv_member_index += 1
 
-    def get_non_map_piece_layout(self, is_dynamic_mesh: bool = True) -> VertexArrayLayout:
-        """Get a standard vertex array layout for character (and probably object) materials in ER."""
+            return VertexArrayLayout(data_types)
+
+        # Dynamic (character/object) mesh:
         data_types: list[VERTEX_DATA_TYPING] = [
             VertexPosition(VertexDataFormatEnum.Float3, 0),
             VertexNormal(VertexDataFormatEnum.FourBytesB, 0),
@@ -1414,12 +1424,11 @@ class MatDef(_BaseMatDef):
 
         uv_slot_tuple = self.get_uv_slot_tuple()
         if not uv_slot_tuple:
-            # No bone indices, weights, color, or UVs!
-            # Only seen for shader "C[Fur]_cloth" so far.
-            layout = VertexArrayLayout(data_types)
-            layout.set_unk_x00(self.type_unk_x00)
-            return layout
-        elif self.UVLayer.UVFurAlpha in uv_slot_tuple:
+            # No bone indices, weights, color, or UVs. Only seen for "C[Fur]_cloth" so far.
+            return VertexArrayLayout(data_types)
+
+        if self.UVLayer.UVFurAlpha in uv_slot_tuple:
+            # Fur-alpha shaders carry a second tangent at instance_index 4.
             data_types.insert(3, VertexTangent(VertexDataFormatEnum.FourBytesB, instance_index=4))
 
         data_types += [
@@ -1428,6 +1437,7 @@ class MatDef(_BaseMatDef):
         ]
 
         if self.shader_stem == "P[ChrCustomize][Eye]":
+            # Special 4D eye UV layout.
             data_types.append(VertexColor(VertexDataFormatEnum.FourBytesC, instance_index=1))
             data_types.append(VertexUV(VertexDataFormatEnum.UVPair, 0))
             data_types.append(VertexUV(VertexDataFormatEnum.FourShortsToFloatsB, 1))
@@ -1436,14 +1446,14 @@ class MatDef(_BaseMatDef):
             if uv_count > 4:
                 raise ValueError(f"Cannot have more than 4 UV maps in a vertex array (got {uv_count}).")
 
+            # 3+ UVs carry an extra Color(0) before the standard Color(1).
             if uv_count >= 3:
                 data_types.append(VertexColor(VertexDataFormatEnum.FourBytesC, instance_index=0))
-                data_types.append(VertexColor(VertexDataFormatEnum.FourBytesC, instance_index=1))
-            else:
-                data_types.append(VertexColor(VertexDataFormatEnum.FourBytesC, instance_index=1))
+            data_types.append(VertexColor(VertexDataFormatEnum.FourBytesC, instance_index=1))
 
             uv_instance_index = 0
             while uv_count > 0:
+                # Even-first: pair before single.
                 if uv_count >= 2:
                     data_types.append(VertexUV(VertexDataFormatEnum.UVPair, uv_instance_index))
                     uv_count -= 2
@@ -1453,9 +1463,7 @@ class MatDef(_BaseMatDef):
                     uv_count -= 1
                     uv_instance_index += 1
 
-        layout = VertexArrayLayout(data_types)
-        layout.set_unk_x00(self.type_unk_x00)
-        return layout
+        return VertexArrayLayout(data_types)
 
     # endregion
 

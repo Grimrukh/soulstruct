@@ -301,11 +301,7 @@ class MatDef(abc.ABC):
     # region Abstract Methods/Properties
 
     @abc.abstractmethod
-    def get_map_piece_layout(self) -> VertexArrayLayout:
-        ...
-
-    @abc.abstractmethod
-    def get_non_map_piece_layout(self, is_dynamic_mesh: bool = True) -> VertexArrayLayout:
+    def get_vertex_array_layout(self, is_dynamic: bool) -> VertexArrayLayout:
         ...
 
     # endregion

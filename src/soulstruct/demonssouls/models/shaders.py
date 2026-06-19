@@ -149,71 +149,55 @@ class MatDef(_BaseMatDef):
 
         return matdef
 
-    def get_map_piece_layout(self) -> VertexArrayLayout:
-        """Get a standard DeS map piece layout with the given number of UV layers."""
+    def get_vertex_array_layout(self, is_dynamic: bool) -> VertexArrayLayout:
+        """Unified method for determining the correct vertex array layout for FLVER meshes using this material.
 
-        data_types: list[VERTEX_DATA_TYPING] = [  # always present
+        The only external input required is `is_dynamic` from the FLVER mesh, which simply indicates whether vertex
+        bone weights are present (bone indices are always present in DeS -- later games switch to using `NormalW`).
+        """
+
+        # Guaranteed start:
+        data_types: list[VERTEX_DATA_TYPING] = [
             VertexPosition(VertexDataFormatEnum.Float3, 0),
             VertexBoneIndices(VertexDataFormatEnum.FourBytesD, 0),
-            VertexNormal(VertexDataFormatEnum.FourBytesA, 0),
-            # Tangent/Bitangent will be inserted here if needed.
-            VertexColor(VertexDataFormatEnum.FourBytesA, 0),
-            # UV/UVPair will be inserted here if needed.
-        ]  # type: list[VertexDataType]
+        ]
+
+        # Bone weights for dynamic meshes:
+        if is_dynamic:
+            data_types.append(VertexBoneWeights(VertexDataFormatEnum.FourShortsToFloats, 0))
+
+        # Guaranteed:
+        data_types.append(VertexNormal(VertexDataFormatEnum.FourBytesA, 0))
 
         if self.get_sampler_with_alias("DSB 0 Normal"):
             # Uses tangent vertex data.
-            data_types.insert(3, VertexTangent(VertexDataFormatEnum.FourBytesA, 0))
-            if self.get_sampler_with_alias("DSB 1 Normal"):
-                # Uses bitangent vertex data for second texture group normal.
-                data_types.insert(4, VertexBitangent(VertexDataFormatEnum.FourBytesA, 0))
-        elif self.get_sampler_with_alias("DSB 1 Normal"):
-            # Uses bitangent only. NOTE: I highly doubt any game shaders do this.
-            data_types.insert(3, VertexBitangent(VertexDataFormatEnum.FourBytesA, 0))
+            data_types.append(VertexTangent(VertexDataFormatEnum.FourBytesA, 0))
+        if self.get_sampler_with_alias("DSB 1 Normal"):
+            # Uses bitangent vertex data for second texture group normal.
+            data_types.append(VertexBitangent(VertexDataFormatEnum.FourBytesA, 0))
+            if not self.get_sampler_with_alias("DSB 0 Normal"):
+                # No known cases of this, so I want to hear about it.
+                _LOGGER.warning(
+                    f"Material MTD '{self.name}' has 'DSB 1 Normal' but no 'DSB 0 Normal'. This is "
+                    f"unusual and may lead to incorrect exported FLVER data."
+                )
 
+        # Guaranteed:
+        data_types.append(VertexColor(VertexDataFormatEnum.FourBytesA, 0))
+
+        # UVs:
         uv_member_index = 0
         uv_count = len(self.get_used_uv_layers())
-        while uv_count > 0:  # extra UVs
+        while uv_count > 0:
             # For odd counts, single UV member is added first.
             if uv_count % 2:
                 data_types.append(VertexUV(VertexDataFormatEnum.UV, uv_member_index))
                 uv_count -= 1
                 uv_member_index += 1
             else:  # must be a non-zero even number remaining
-                # Use a UVPair member.
                 data_types.append(VertexUV(VertexDataFormatEnum.UVPair, uv_member_index))
                 uv_count -= 2
                 uv_member_index += 1
 
-        for data_type in data_types:
-            data_type.unk_x00 = self.type_unk_x00
-
-        return VertexArrayLayout(data_types, byte_order=ByteOrder.BigEndian)
-
-    def get_non_map_piece_layout(self, is_dynamic_mesh: bool = True) -> VertexArrayLayout:
-        """Get a standard vertex array layout for character (and probably object) materials in DeS."""
-        data_types: list[VERTEX_DATA_TYPING] = [
-            VertexPosition(VertexDataFormatEnum.Float3, 0),
-            VertexBoneIndices(VertexDataFormatEnum.FourBytesD, 0),
-            VertexNormal(VertexDataFormatEnum.FourBytesA, 0),
-            VertexTangent(VertexDataFormatEnum.FourBytesA, 0),
-            VertexColor(VertexDataFormatEnum.FourBytesA, 0),
-        ]  # type: list[VertexDataType]
-
-        uv_count = len(self.get_used_uv_layers())
-        if uv_count == 2:  # has Bitangent and UVPair
-            # NOTE: Haven't actually seen this in DeS yet.
-            data_types.insert(4, VertexBitangent(VertexDataFormatEnum.FourBytesA, 0))
-            data_types.append(VertexUV(VertexDataFormatEnum.UVPair, 0))
-        elif uv_count == 1:  # one UV
-            data_types.append(VertexUV(VertexDataFormatEnum.UV, 0))
-        else:
-            raise ValueError(f"Invalid UV count for DeS character layout: {uv_count}. Must be 1 or 2.")
-        if is_dynamic_mesh:
-            # If the non-map piece is completely static, it might have Is Bind Pose off. In that case, bone weights
-            # need to be ignored.
-            data_types.insert(2, VertexBoneWeights(VertexDataFormatEnum.FourShortsToFloats, 0))
-        for data_type in data_types:
-            data_type.unk_x00 = 0  # DeS
 
         return VertexArrayLayout(data_types, byte_order=ByteOrder.BigEndian)

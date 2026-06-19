@@ -24,7 +24,7 @@ class MatDef(_BaseMatDef):
     class UVLayer(IntEnum):
         UVTexture0 = 0
         UVTexture1 = 1
-        UVBloodMaskOrLightmap = 2  # lightmap ('DOLTexture') for Map Pieces, blood mask for characters
+        UVBloodMaskOrLightmap = 2  # lightmap ('DOLTexture') for maps, blood mask for characters
         UVBlendMask = 3
         UVData_WindA = 4
         # TODO: other data UVs?
@@ -108,101 +108,88 @@ class MatDef(_BaseMatDef):
         # Standard call:
         return super(MatDef, self).get_used_uv_layers()
 
-    def get_map_piece_layout(self) -> VertexArrayLayout:
-        """Get a standard DS2 map piece layout with the given number of UV layers.
+    def get_vertex_array_layout(self, is_dynamic: bool) -> VertexArrayLayout:
+        """Unified method for determining the correct vertex array layout for FLVER meshes using this material.
 
-        DS2 Map Pieces use `normal_w` component as a single bone index and do not have standard four-element bone
-        indices or weights.
-
-        NOTE: Every material seems to use two colors.
+        `is_dynamic` distinguishes static meshes (False) from dynamic (rigged) meshes (True). Static meshes
+        encode the single bone index in `normal_w` and have no explicit bone index/weight arrays, while dynamic
+        meshes carry full `BoneIndices` and `BoneWeights` arrays (except the cloth and diffuse-only special cases
+        below).
         """
 
-        data_types: list[VERTEX_DATA_TYPING] = [  # always present
-            VertexPosition(VertexDataFormatEnum.Float3, 0),
-            VertexNormal(VertexDataFormatEnum.FourBytesB, 0),  # `normal_w` component used as bone index
-            # Tangent fields will be inserted here if needed.
-            VertexColor(VertexDataFormatEnum.FourBytesC, 0),
-            VertexColor(VertexDataFormatEnum.FourBytesC, 1),
-            # UV/UVPair fields will be appended here if needed.
-        ]  # type: list[VertexDataType]
+        if not is_dynamic:
+            # Static: `normal_w` used as bone index; no explicit bone index/weight arrays.
+            data_types: list[VERTEX_DATA_TYPING] = [
+                VertexPosition(VertexDataFormatEnum.Float3, 0),
+                VertexNormal(VertexDataFormatEnum.FourBytesB, 0),  # `normal_w` component used as bone index
+            ]
 
-        if self.get_sampler_with_alias("DSB 0 Normal"):
-            # Uses tangent vertex data.
-            data_types.insert(2, VertexTangent(VertexDataFormatEnum.FourBytesB, 0))
-            if self.get_sampler_with_alias("DSB 1 Normal"):
-                # Uses second tangent vertex data for second texture group normal.
-                data_types.insert(3, VertexTangent(VertexDataFormatEnum.FourBytesB, 1))
-        elif self.get_sampler_with_alias("DSB 1 Normal"):
-            # Still uses one tangent field. NOTE: I highly doubt any game shaders do this.
-            data_types.insert(2, VertexTangent(VertexDataFormatEnum.FourBytesB, 0))
+            if self.get_sampler_with_alias("DSB 0 Normal"):
+                # Uses tangent vertex data.
+                data_types.append(VertexTangent(VertexDataFormatEnum.FourBytesB, 0))
+                if self.get_sampler_with_alias("DSB 1 Normal"):
+                    # Uses second tangent for second texture group normal.
+                    data_types.append(VertexTangent(VertexDataFormatEnum.FourBytesB, 1))
+            elif self.get_sampler_with_alias("DSB 1 Normal"):
+                # Still uses one tangent field. NOTE: I highly doubt any game shaders do this.
+                data_types.append(VertexTangent(VertexDataFormatEnum.FourBytesB, 0))
 
-        uv_member_index = 0
-        uv_count = len(self.get_used_uv_layers())
-        while uv_count > 0:
-            # For odd counts, single UV member is added first.
-            if uv_count % 2:
-                data_types.append(VertexUV(VertexDataFormatEnum.UV, uv_member_index))
-                uv_count -= 1
-                uv_member_index += 1
-            else:  # must be a non-zero even number remaining
-                # Use a UVPair member.
-                data_types.append(VertexUV(VertexDataFormatEnum.UVPair, uv_member_index))
-                uv_count -= 2
-                uv_member_index += 1
+            data_types.append(VertexColor(VertexDataFormatEnum.FourBytesC, 0))
 
-        for data_type in data_types:
-            data_type.unk_x00 = self.type_unk_x00
+            uv_member_index = 0
+            uv_count = len(self.get_used_uv_layers())
+            while uv_count > 0:
+                # For odd counts, single UV member is added first.
+                if uv_count % 2:
+                    data_types.append(VertexUV(VertexDataFormatEnum.UV, uv_member_index))
+                    uv_count -= 1
+                    uv_member_index += 1
+                else:  # must be a non-zero even number remaining
+                    data_types.append(VertexUV(VertexDataFormatEnum.UVPair, uv_member_index))
+                    uv_count -= 2
+                    uv_member_index += 1
 
-        return VertexArrayLayout(data_types)
+            return VertexArrayLayout(data_types)
 
-    def get_non_map_piece_layout(self, is_dynamic_mesh: bool = True) -> VertexArrayLayout:
-        """Get a standard vertex array layout for character (and probably object) materials in DS2.
+        # Dynamic (character/object) mesh:
 
-        NOTE: Every material seems to use two colors.
-        """
+        if self.is_cloth:
+            # Single tangent only; no bones, no color, no UVs.
+            return VertexArrayLayout([
+                VertexPosition(VertexDataFormatEnum.Float3, 0),
+                VertexNormal(VertexDataFormatEnum.FourBytesB, 0),
+                VertexTangent(VertexDataFormatEnum.FourBytesB, 0),
+            ])
 
         if len(self.samplers) == 1 and self.samplers[0].alias == "DSB 0 Diffuse":
-            # Diffuse-only, with no normals.
-            layout = VertexArrayLayout([
+            # Diffuse-only, no normals (e.g. 'C_1040_Phantom', 'C[A]_NoLight').
+            return VertexArrayLayout([
                 VertexPosition(VertexDataFormatEnum.Float3, 0),
                 VertexNormal(VertexDataFormatEnum.FourBytesB, 0),
                 VertexBoneIndices(VertexDataFormatEnum.FourBytesB, 0),
                 VertexBoneWeights(VertexDataFormatEnum.FourBytesC, 0),
-                VertexColor(VertexDataFormatEnum.FourBytesC, 0),
-                VertexColor(VertexDataFormatEnum.FourBytesC, 1),
+                VertexColor(VertexDataFormatEnum.FourBytesC, 1),  # note index 1
                 VertexUV(VertexDataFormatEnum.UV, 1),
             ])
-            layout.set_unk_x00(self.type_unk_x00)
-            return layout
 
+        # Standard character layout: number of tangent arrays matches number of UV layers.
+        uv_count = len(self.get_used_uv_layers())
         data_types: list[VERTEX_DATA_TYPING] = [
             VertexPosition(VertexDataFormatEnum.Float3, 0),
             VertexNormal(VertexDataFormatEnum.FourBytesB, 0),
             VertexTangent(VertexDataFormatEnum.FourBytesB, 0),
-        ]  # type: list[VertexDataType]
-
-        if self.is_cloth:
-            # Single tangent, but with no bones, color, or UVs.
-            layout = VertexArrayLayout(data_types)
-            layout.set_unk_x00(self.type_unk_x00)
-            return layout
-
-        # Number of tangent arrays always matches number of UV layers for characters.
-        # First tangent already added above.
-        uv_count = len(self.get_used_uv_layers())
+        ]
         if uv_count >= 2:
             data_types.append(VertexTangent(VertexDataFormatEnum.FourBytesB, 1))
         if uv_count >= 3:
             data_types.append(VertexTangent(VertexDataFormatEnum.FourBytesB, 2))
 
-        # Bone indices, bone weights, and color (1) are always present.
         data_types += [
             VertexBoneIndices(VertexDataFormatEnum.FourBytesB, 0),
             VertexBoneWeights(VertexDataFormatEnum.FourBytesC, 0),
             VertexColor(VertexDataFormatEnum.FourBytesC, 1),  # note index 1
         ]
 
-        # Add appropriate number of UV fields.
         if uv_count == 3:
             data_types.append(VertexUV(VertexDataFormatEnum.UVPair, 0))
             data_types.append(VertexUV(VertexDataFormatEnum.UV, 1))
@@ -212,9 +199,6 @@ class MatDef(_BaseMatDef):
             # No blood mask. Pretty rare (e.g. 'C_Phantom.mtd').
             data_types.append(VertexUV(VertexDataFormatEnum.UV, 0))
         else:
-            raise ValueError(f"Invalid UV count for DS2 character layout: {uv_count}. Must be 1, 2, or 3.")
-
-        for data_type in data_types:
-            data_type.unk_x00 = self.type_unk_x00
+            raise ValueError(f"Invalid UV count for Bloodborne character layout: {uv_count}. Must be 1, 2, or 3.")
 
         return VertexArrayLayout(data_types)

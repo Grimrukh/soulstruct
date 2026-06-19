@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `SEKIRO_PATH` constant changed to `SEK_PATH` for game consistency.
 - `Config` dataclass added to `soulstruct.config` (legacy global constants still supported but deprecated).
 - Core dataclass metaclasses cleaned up.
+- Unified `MatDef` vertex array layout creation into one method per game.
 
 ### Fixed
 - `FLVERMesh.uv_count` validation.

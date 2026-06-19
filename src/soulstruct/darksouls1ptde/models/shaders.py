@@ -137,78 +137,12 @@ class MatDef(_BaseMatDef):
             )
         return matdef
 
-    def get_map_piece_layout(self) -> VertexArrayLayout:
-        """Get a standard DS1 map piece layout with the given number of UV layers."""
-
-        data_types: list[VERTEX_DATA_TYPING] = [  # always present
-            VertexPosition(VertexDataFormatEnum.Float3, 0),
-            VertexBoneIndices(VertexDataFormatEnum.FourBytesB, 0),
-            VertexNormal(VertexDataFormatEnum.FourBytesC, 0),
-            # Tangent/Bitangent will be inserted here if needed.
-            VertexColor(VertexDataFormatEnum.FourBytesC, 0),
-            # UV/UVPair will be inserted here if needed.
-        ]  # type: list[VertexDataType]
-
-        if self.get_sampler_with_alias("DSB 0 Normal"):
-            # Uses tangent vertex data.
-            data_types.insert(3, VertexTangent(VertexDataFormatEnum.FourBytesC, 0))
-            if self.get_sampler_with_alias("DSB 1 Normal"):
-                # Uses bitangent vertex data for second texture group normal.
-                data_types.insert(4, VertexBitangent(VertexDataFormatEnum.FourBytesC, 0))
-        elif self.get_sampler_with_alias("DSB 1 Normal"):
-            # Uses bitangent only. NOTE: I highly doubt any game shaders do this.
-            data_types.insert(3, VertexBitangent(VertexDataFormatEnum.FourBytesC, 0))
-
-        uv_member_index = 0
-        uv_count = len(self.get_used_uv_layers())
-        while uv_count > 0:  # extra UVs
-            # For odd counts, single UV member is added first.
-            if uv_count % 2:
-                data_types.append(VertexUV(VertexDataFormatEnum.UV, uv_member_index))
-                uv_count -= 1
-                uv_member_index += 1
-            else:  # must be a non-zero even number remaining
-                # Use a UVPair member.
-                data_types.append(VertexUV(VertexDataFormatEnum.UVPair, uv_member_index))
-                uv_count -= 2
-                uv_member_index += 1
-
-        for data_type in data_types:
-            data_type.unk_x00 = self.type_unk_x00
-
-        return VertexArrayLayout(data_types)
-
-    def get_non_map_piece_layout(self, is_dynamic_mesh: bool = True) -> VertexArrayLayout:
-        """Get a standard vertex array layout for character (and probably object) materials in DS1."""
-        data_types: list[VERTEX_DATA_TYPING] = [
-            VertexPosition(VertexDataFormatEnum.Float3, 0),
-            VertexBoneIndices(VertexDataFormatEnum.FourBytesB, 0),
-            VertexNormal(VertexDataFormatEnum.FourBytesC, 0),
-            VertexTangent(VertexDataFormatEnum.FourBytesC, 0),
-            VertexColor(VertexDataFormatEnum.FourBytesC, 0),
-        ]  # type: list[VertexDataType]
-        uv_count = len(self.get_used_uv_layers())
-        if uv_count == 2:  # has Bitangent and UVPair
-            data_types.insert(4, VertexBitangent(VertexDataFormatEnum.FourBytesC, 0))
-            data_types.append(VertexUV(VertexDataFormatEnum.UVPair, 0))
-        elif uv_count == 1:  # one UV
-            data_types.append(VertexUV(VertexDataFormatEnum.UV, 0))
-        else:
-            raise ValueError(f"Invalid UV count for DS1 character layout: {uv_count}. Must be 1 or 2.")
-        if is_dynamic_mesh:
-            # If the non-map piece is completely static, it might have Is Bind Pose off. In that case, bone weights
-            # need to be ignored.
-            data_types.insert(2, VertexBoneWeights(VertexDataFormatEnum.FourShortsToFloats, 0))
-        for data_type in data_types:
-            data_type.unk_x00 = 0  # DS1
-
-        return VertexArrayLayout(data_types)
-
     def get_vertex_array_layout(self, is_dynamic: bool) -> VertexArrayLayout:
         """Unified method for determining the correct vertex array layout for FLVER meshes using this material.
 
         The only external input required is `is_dynamic` from the FLVER mesh, which simply indicates whether vertex
-        bone weights are present (bone indices are always present in DS1 -- later games switch to using `NormalW`).
+        bone weights are present (bone indices are always present in DS1 -- later games switch to using `NormalW`
+        for static meshes).
         """
 
         # Guaranteed start:
