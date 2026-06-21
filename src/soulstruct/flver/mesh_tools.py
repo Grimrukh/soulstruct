@@ -1,4 +1,43 @@
-"""Tools for manipulating FLVER models, e.g. for Blender import/export."""
+"""Tools for converting between FLVER mesh data and a single, Blender-friendly "merged mesh".
+
+A FLVER model stores geometry as a list of submeshes, each with its own material, vertex
+buffer layout, and bone index list. That layout is convenient for the game but awkward for
+editing in a DCC tool like Blender, where it is far more natural to work with one continuous
+mesh carrying per-face-corner ("loop") data. This module bridges the two representations.
+(The name "loop" is used to match Blender's internals; note that even Blender refers to them
+in the UI as "face corners" now.)
+
+Core classes
+------------
+- `SplitMeshDef`: per-output-submesh definition (material, vertex layout, dynamic flag,
+  Mesh/FaceSet kwargs, and the UV layer names that submesh consumes). One is supplied for
+  each distinct value of `faces[:, 3]` when splitting.
+- `MergedMeshLoops`: the per-loop attribute arrays (normals, tangents, bitangents, vertex
+  colors, UVs, cloth tangents) that are not part of the deduplicated vertex data.
+- `MergedMesh`: the merged representation itself -- structured per-vertex data (position,
+  bone weights, bone indices), the loop data, the loop-to-vertex map, and the face array.
+  `MergedMesh.from_flver()` builds one by merging a FLVER's submeshes; `split_mesh()`
+  reverses the process.
+
+Key concepts
+------------
+- Loops vs vertices: incoming data is treated as true loops (every three rows form one
+  triangle), with vertex attributes repeated per corner. Splitting deduplicates these loops
+  back into unique FLVER vertices -- exactly (`np.unique`) by default, or approximately by a
+  normal/tangent dot-product threshold to curb vertex inflation from minor vector
+  differences.
+- Global vs local bone indices: a merged mesh references bones by global skeleton index.
+  Each split submesh instead carries its own compact bone list and (for earlier games)
+  remaps its vertices to local indices into that list, sub-splitting a material's faces
+  when a submesh would exceed the per-mesh bone limit.
+- Dynamic vs non-dynamic meshes: dynamic (skinned) meshes use an explicit `bone_indices`
+  field with up to four weighted bones per vertex; non-dynamic (rigid) meshes instead use
+  four duplicate indices in `bone_indices` (older games) or encode their single bone index
+  in `normal_w` (newer games). Bone handling differs accordingly.
+- UV naming: while merged, UV layers keep their global names (e.g. `UVTexture0`,
+  `UVLightmap`); each split submesh renames only the layers it uses to tightly packed
+  `uv_0`, `uv_1`, ... fields.
+"""
 
 from __future__ import annotations
 
@@ -206,8 +245,8 @@ class MergedMesh:
     def from_flver(
         cls,
         flver: FLVER,
-        mesh_material_indices: tp.Sequence[int] = None,
-        material_uv_layer_names: tp.Sequence[tp.Sequence[str]] = None,
+        mesh_material_indices: tp.Sequence[int] | None = None,
+        material_uv_layer_names: tp.Sequence[tp.Sequence[str]] | None = None,
         merge_vertices=True,
     ) -> tp.Self:
         """Construct merged mesh data from all `flver` meshes.
@@ -673,7 +712,7 @@ class MergedMesh:
         triangle_vertex_indices: tuple[int, int, int],
         discard_degenerate_faces=False,
         discard_duplicate_faces=False,
-        existing_face_set: set[tuple[int, ...]] = None,
+        existing_face_set: set[tuple[int, ...]] | None = None,
     ):
         """Returns True if triangle has two or more identical vertex indices or already exists in some vertex order."""
         if discard_degenerate_faces:
@@ -1029,7 +1068,8 @@ class MergedMesh:
         mesh_vertices_by_position = defaultdict(lambda: [])  # type: defaultdict[tuple, list[tuple[tp.Any, int]]]
         face_vertex_indices = []
 
-        vector_fields = [f for f in mesh_loops.dtype.names if f.startswith(("normal", "tangent_", "bitangent"))]
+        # vector_fields = [f for f in mesh_loops.dtype.names if f.startswith(("normal", "tangent_", "bitangent"))]
+        vector_fields = [f for f in mesh_loops.dtype.names if f == "normal" or f.startswith(("tangent_", "bitangent"))]
         non_vector_fields = [f for f in mesh_loops.dtype.names if f not in vector_fields and f != "position"]
 
         for loop in mesh_loops:
@@ -1047,12 +1087,12 @@ class MergedMesh:
                 for existing_vertex, existing_vertex_i in mesh_vertices_by_position[pos]:
                     if non_vector_fields and not np.all(loop[non_vector_fields] == existing_vertex[non_vector_fields]):
                         # Not an exact match.
-                        break
+                        continue
                     if vector_fields and not all(
                         np.dot(loop[f], existing_vertex[f]) > max_dot_product for f in vector_fields
                     ):
                         # Not an approximate match.
-                        break
+                        continue
                     # All vectors are similar enough and other fields match. Re-use this vertex.
                     mesh_vertices_dict[vertex_hash] = existing_vertex_i
                     face_vertex_indices.append(existing_vertex_i)
@@ -1084,6 +1124,10 @@ class MergedMesh:
         """Takes arrays of split faces, loops, and bone indices and returns a tuple of arrays of subsplit faces, loops,
         and bone indices, which can be appended to the appropriate lists for each material rather than a single
         mesh."""
+
+        if max_bones_per_mesh < 12:
+            raise ValueError("MergedMesh: max_bones_per_mesh must be >= 12")
+
         subsplit_face_indices = [0]
         subsplit_bone_indices = []
 
@@ -1172,11 +1216,25 @@ class MergedMesh:
                 )
             combined_array["normal"] = self.loop_data.normals
         if "normal_w" in names:
-            if self.loop_data.normals_w is None:
+            if self.loop_data.normals_w is not None:
+                combined_array["normal_w"] = self.loop_data.normals_w
+            elif "bone_indices" in self.vertex_data.dtype.names:
+                # Derive normal_w from the first bone index per vertex. Used when non-dynamic mesh layouts on modern
+                # games (BB onwards) encode the single static-mesh bone index in `normal_w` rather than a dedicated
+                # bone_indices field. The export path always stores bone_indices, so this derivation is available.
+                bone_indices_for_loops = self.vertex_data["bone_indices"][self.loop_vertex_indices][:, 0:1]
+                max_val = int(bone_indices_for_loops.max())
+                if max_val > 255:
+                    raise ValueError(
+                        f"`normal_w` bone indices must fit in uint8 (0–255), but max index is {max_val}. "
+                        f"Non-dynamic meshes cannot reference more than 256 distinct bones via `normal_w`."
+                    )
+                combined_array["normal_w"] = bone_indices_for_loops.astype(np.uint8)
+            else:
                 raise ValueError(
-                    "`MergedMesh.loop_data.normals_w` is None, but 'normal_w' appears in full FLVER dtype."
+                    "`MergedMesh.loop_data.normals_w` is None and vertex data has no 'bone_indices', but "
+                    "'normal_w' appears in the combined FLVER dtype."
                 )
-            combined_array["normal_w"] = self.loop_data.normals_w
         if "bitangent" in names:
             if self.loop_data.bitangents is None:
                 raise ValueError(

@@ -6,14 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
-- `BoneTree` class; Binder `pyrelink` compatibility.
+- `BoneTree` class for manipulating bones outside index-based `FLVER`.
+- `soulstruct.containers.Binder` methods refactored to match signatures of new `pyrelink.core.Binder`.
 - UV utilities for FLVER meshes.
 - Elden Ring shader sampler group improvements.
 - Added this Changelog (with rough collected history).
 
 ### Changed
 - Minimum Python version raised to 3.13.
-- Python 3.13 generic syntax used instead of `typing.TypeVar` and `typing.Generic`.
+- Python 3.13 generic syntax `class Container[T: Element]: ...` used instead of `TypeVar/Generic`.
 - FLVER: support for multiple vertex arrays per mesh; improved batch operations.
 - `str`/`Path` hybrid methods now use single dispatch.
 - DCX resources included in package data.
@@ -22,13 +23,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `Config` dataclass added to `soulstruct.config` (legacy global constants still supported but deprecated).
 - Core dataclass metaclasses cleaned up.
 - Unified `MatDef` vertex array layout creation into one method per game.
+- `frozendict` package used for genuine frozen dictionaries (not yet applied everywhere).
+- Bones per mesh for `MergedMesh` split must be >= 12 (minimum that a single face could weight to).
+- Streamlined `bone_indices` vs. `normal_w` bone indices for static meshes in `MergedMesh` split.
 
 ### Fixed
-- `FLVERMesh.uv_count` validation.
-- PTDE EMEVD import bug.
-- `MatDef` improvements.
-- NVM big-endian vertex write bug.
-- `typing.cast(typing.Self, ...)` used for ambiguous type coercian with `super()`, `cls.new()`.
+- Fixed `FLVERMesh.uv_count` validation.
+- Fixed PTDE EMEVD import bug.
+- Improved `MatDef` material prasing.
+- Fixed NVM big-endian vertex write bug.
+- `typing.cast(typing.Self, ...)` used for ambiguous type coercion with `super()`, `cls.new()`.
+- Fixed dupe-vertex searching bug in `MergedMesh`.
 
 ### Removed
 - Removed placeholder DeSR (Demon's Souls Remastered) support stub.
