@@ -15,7 +15,7 @@ __all__ = [
 
 from frozendict import frozendict
 
-CHARACTER_MODELS = frozenset({
+CHARACTER_MODELS = frozendict({
     0: "Player Character",
     1000: "Empty Character",  # e.g. bonfires
     1200: "Large Rat",
