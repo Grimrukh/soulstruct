@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-from .euler import EulerBase, EulerDeg, EulerRad, EULER_DEG_LIKE, EULER_RAD_LIKE
+from .euler import BaseEuler, EulerDeg, EulerRad, EULER_DEG_LIKE, EULER_RAD_LIKE
 from .vector import Vector3, Vector4
 
 
@@ -62,7 +62,7 @@ class Matrix3:
         """Return the inverse of this matrix."""
         return Matrix3(np.linalg.inv(self._data))
 
-    def __matmul__(self, other: Matrix3 | Vector3 | EulerBase | np.ndarray):
+    def __matmul__(self, other: Matrix3 | Vector3 | BaseEuler | np.ndarray):
         """Multiply a matrix, vector, or Euler angles by this matrix, returning the appropriate type."""
         if isinstance(other, Matrix3):
             return Matrix3(np.matmul(self._data, other._data))
@@ -77,7 +77,7 @@ class Matrix3:
             return Vector3(np.matmul(self._data, other))
         return Matrix3(np.matmul(self._data, other))
 
-    def __rmatmul__(self, other: Matrix3 | Vector3 | EulerBase | np.ndarray):
+    def __rmatmul__(self, other: Matrix3 | Vector3 | BaseEuler | np.ndarray):
         """Multiply a matrix, vector, or Euler angles by this matrix, returning the appropriate type."""
         if isinstance(other, Matrix3):
             return Matrix3(np.matmul(other._data, self._data))

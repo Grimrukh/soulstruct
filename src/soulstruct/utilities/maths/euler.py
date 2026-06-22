@@ -5,7 +5,7 @@ primitive; use the methods of those other classes instead.
 """
 from __future__ import annotations
 
-__all__ = ["EulerBase", "EulerDeg", "EulerRad", "EULER_DEG_LIKE", "EULER_RAD_LIKE"]
+__all__ = ["BaseEuler", "EulerDeg", "EulerRad", "EULER_DEG_LIKE", "EULER_RAD_LIKE"]
 
 import abc
 import ast
@@ -23,8 +23,8 @@ EULER_DEG_LIKE = tp.Union["EulerDeg", np.ndarray, list[float | int], tuple[float
 EULER_RAD_LIKE = tp.Union["EulerRad", np.ndarray, list[float | int], tuple[float | int, ...]]
 
 
-class EulerBase(abc.ABC):
-    """Simple immutable [pitch, yaw, roll] container.
+class BaseEuler(abc.ABC):
+    """Simple immutable [pitch, yaw, roll] container. Abstract base class for degree/radian types.
 
     Applied in XZY (pitch, roll, yaw) order.
 
@@ -86,9 +86,9 @@ class EulerBase(abc.ABC):
         # noinspection PyTypeChecker
         return self._data[index]
 
-    @abc.abstractmethod
-    def __eq__(self, other_euler: EulerBase):
-        ...
+    def __eq__(self, other_euler: BaseEuler):
+        """Type AND data must match."""
+        return isinstance(other_euler, self.__class__) and np.array_equal(self._data, other_euler._data)
 
     def __iter__(self) -> tp.Iterator[float]:
         return iter(self._data)
@@ -108,18 +108,18 @@ class EulerBase(abc.ABC):
         """Hashed by tuple of (immutable) data."""
         return hash(tuple(self._data))
 
-    def allclose(self, other: EulerBase, rtol: float = 1e-05, atol: float = 1e-08) -> bool:
+    def allclose(self, other: BaseEuler, rtol: float = 1e-05, atol: float = 1e-08) -> bool:
         return np.allclose(self._data, other._data, rtol=rtol, atol=atol)
 
     # Only basic arithmetic is supported; no vector-specific operations.
-    def __add__(self, other: EulerBase) -> tp.Self:
+    def __add__(self, other: BaseEuler) -> tp.Self:
         if not isinstance(other, self.__class__):
-            return NotImplemented
+            raise TypeError("Only Eulers can be added to Eulers of same type.")
         return self.__class__(self._data + other._data)
 
-    def __sub__(self, other: EulerBase) -> tp.Self:
+    def __sub__(self, other: BaseEuler) -> tp.Self:
         if not isinstance(other, self.__class__):
-            return NotImplemented
+            raise TypeError("Only Eulers can be subtracted from Eulers of same type.")
         return self.__class__(self._data - other._data)
 
     def __neg__(self) -> tp.Self:
@@ -127,7 +127,7 @@ class EulerBase(abc.ABC):
 
     def __mul__(self, scalar: float) -> tp.Self:
         if not isinstance(scalar, (int, float)):
-            return NotImplemented
+            raise TypeError("Only scalar Euler multiplication is supported.")
         return self.__class__(self._data * scalar)
 
     def __rmul__(self, scalar: float) -> tp.Self:
@@ -135,12 +135,12 @@ class EulerBase(abc.ABC):
 
     def __truediv__(self, scalar: float) -> tp.Self:
         if not isinstance(scalar, (int, float)):
-            return NotImplemented
+            raise TypeError("Only scalar Euler division is supported.")
         return self.__class__(self._data / scalar)
 
     def __rtruediv__(self, scalar: float) -> tp.Self:
         if not isinstance(scalar, (int, float)):
-            return NotImplemented
+            raise TypeError("Only scalar Euler division is supported.")
         return self.__class__(scalar / self._data)
 
     @classmethod
@@ -195,28 +195,22 @@ class EulerBase(abc.ABC):
         return cls(values)
 
 
-class EulerDeg(EulerBase):
+class EulerDeg(BaseEuler):
     """Euler angles in degrees.
 
     NOTE: Units are not enforced; it is up to the user to use the correct container.
     """
-
-    def __eq__(self, other_euler: EulerDeg):
-        return isinstance(other_euler, EulerDeg) and np.array_equal(self._data, other_euler._data)
 
     def to_rad(self) -> EulerRad:
         """Convert to radians."""
         return EulerRad((math.radians(self.x), math.radians(self.y), math.radians(self.z)))
 
 
-class EulerRad(EulerBase):
+class EulerRad(BaseEuler):
     """Euler angles in radians.
 
     NOTE: Units are not enforced; it is up to the user to use the correct container.
     """
-
-    def __eq__(self, other_euler: EulerRad):
-        return isinstance(other_euler, EulerRad) and np.array_equal(self._data, other_euler._data)
 
     def to_deg(self) -> EulerDeg:
         """Convert to degrees."""
