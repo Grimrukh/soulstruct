@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `frozendict` package used for genuine frozen dictionaries (not yet applied everywhere).
 - Bones per mesh for `MergedMesh` split must be >= 12 (minimum that a single face could weight to).
 - Streamlined `bone_indices` vs. `normal_w` bone indices for static meshes in `MergedMesh` split.
+- Euler base class name changed to `EulerBase` for consistency.
 
 ### Fixed
 - Fixed `FLVERMesh.uv_count` validation.
@@ -34,6 +35,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fixed NVM big-endian vertex write bug.
 - `typing.cast(typing.Self, ...)` used for ambiguous type coercion with `super()`, `cls.new()`.
 - Fixed dupe-vertex searching bug in `MergedMesh`.
+- Fixed hashing of `EulerDeg/EulerRad` types.
+- Fixed SIBCAM rotation fields from `Vector3` to `EulerRad`.
 
 ### Removed
 - Removed placeholder DeSR (Demon's Souls Remastered) support stub.
