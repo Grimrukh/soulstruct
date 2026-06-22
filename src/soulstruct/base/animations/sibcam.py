@@ -16,7 +16,7 @@ from dataclasses import dataclass, field
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.maths import Vector3
+from soulstruct.utilities.maths import EulerRad, Vector3
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -41,8 +41,8 @@ class CameraFrameTransform:
     t: int
     position: Vector3
     position_diff_prev: Vector3
-    rotation: Vector3
-    rotation_diff_prev: Vector3
+    rotation: EulerRad
+    rotation_diff_prev: EulerRad
     scale: Vector3
 
     def __repr__(self) -> str:
@@ -78,7 +78,7 @@ class SIBCAMHeaderStruct(BinaryStruct):
     _unk_vec_x8C: short = binary(asserted=0)
     _unk_vec_x8E: bytes = binary_pad(10, char=b"\xFF")
     initial_position: Vector3
-    initial_rotation: Vector3
+    initial_rotation: EulerRad
     initial_scale: Vector3
     frame_data_header_offset: int  # after camera name and align(4)
     _unk_vec_xC0: int = binary(asserted=0)
@@ -92,8 +92,8 @@ class SIBCAMFrameDataHeaderStruct(BinaryStruct):
     frame_refs_offset: int  # after this struct
     frame_count: int
     _unk_frame_x08: int = binary(asserted=3)
-    initial_rotation_1: Vector3
-    initial_rotation_2: Vector3
+    initial_rotation_1: EulerRad
+    initial_rotation_2: EulerRad
     _unk_frame_x20: int = binary(asserted=0)
     # `FrameRef` list here (indices into packed vectors).
 
@@ -182,8 +182,8 @@ class SIBCAM(GameFile):
                 t=frame_ref.t,  # NOTE: does NOT need to start at 0
                 position=vectors[frame_ref.position_index],
                 position_diff_prev=vectors[frame_ref.position_diff_prev_index_1],
-                rotation=vectors[frame_ref.rotation_index],
-                rotation_diff_prev=vectors[frame_ref.rotation_diff_prev_index_1],
+                rotation=EulerRad(vectors[frame_ref.rotation_index].data),
+                rotation_diff_prev=EulerRad(vectors[frame_ref.rotation_diff_prev_index_1].data),
                 scale=vectors[frame_ref.scale_index],
             )
             for frame_ref in frame_refs
