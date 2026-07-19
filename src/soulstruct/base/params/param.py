@@ -34,7 +34,7 @@ class Param[PARAM_ROW_DATA_T: ParamRow](GameFile, abc.ABC):
     the game engine ITSELF basically treats it as such -- that I am using the dictionary structure and not even
     bothering loading duplicate IDs.
     """
-    ROW_TYPE: tp.ClassVar[type[ParamRow]]
+    ROW_TYPE: tp.ClassVar[type[ParamRow] | None] = None
     PARAMDEF_MODULE: tp.ClassVar[ModuleType]
 
     EXT: tp.ClassVar[str] = ".param"
@@ -416,8 +416,8 @@ class Param[PARAM_ROW_DATA_T: ParamRow](GameFile, abc.ABC):
 def TypedParam(row_type: type[ParamRow]):
     """Generate a `Param` subclass dynamically with the given row type (or retrieve correct existing subclass)."""
     for param_subclass in Param.__subclasses__():
-        if param_subclass.__name__ == "ParamDict":
-            continue
+        if param_subclass.__name__ in {"ParamDict", "DrawParam"}:
+            continue  # not concrete types
         if param_subclass.ROW_TYPE is row_type:
             return param_subclass
     new_param_subclass = type(f"Param_{row_type.__name__}", (Param,), {"ROW_TYPE": row_type})

@@ -208,7 +208,6 @@ class FMG(GameFile):
             writer,
             big_endian=self.version == 0,
             file_size=RESERVED,
-            unknown1=-1 if self.version == 0 else 0,
             range_count=RESERVED,
             string_count=len(self.entries),
             string_offsets_offset=RESERVED,

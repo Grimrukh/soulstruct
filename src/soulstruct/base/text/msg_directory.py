@@ -39,12 +39,12 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
 
     # Maps "item/menu" string and entry IDs to default entry names (without paths) to use when generating new FMG binder
     # entries from scratch.
-    DEFAULT_ENTRY_STEMS: tp.ClassVar[dict[(str, int), str]]
+    DEFAULT_ENTRY_STEMS: tp.ClassVar[dict[tuple[str, int], str]]
 
     # Maps any non-patch ('base') FMG entry sources/IDs to patch FMG entry sources/IDs.
     # When `merge_base_and_patch()` is called, all base and patch FMGs will be merged (with 'patch' taking precedence in
     # case of conflicts) and the results written to BOTH base and patch.
-    BASE_PATCH_FMGS: tp.ClassVar[dict[(str, int), (str, int)]] = {}
+    BASE_PATCH_FMGS: tp.ClassVar[dict[tuple[str, int], tuple[str, int]]] = {}
 
     # DCX compression type to use for `FMG` entries (as `FMG` does not have game-specific subclasses). Typically Null.
     FMG_DCX_TYPE: tp.ClassVar[DCXType] = DCXType.Null
@@ -53,7 +53,7 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
     files: dict[str, Binder] = field(default_factory=dict)  # maps 'true stems' to `FILE_CLASS` instances
 
     # Maps "item/menu" string and entry IDs to FMGs (unusual for IDs to matter, but they do in MSGBNDs).
-    fmgs: dict[(str, int), FMG] = field(default_factory=dict)
+    fmgs: dict[tuple[str, int], FMG] = field(default_factory=dict)
 
     @classmethod
     def GET_ALL_CATEGORIES(cls):
@@ -148,7 +148,7 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
         return cls(directory=directory, files=files, fmgs=fmgs)
 
     @classmethod
-    def create_fmgs(cls, item_msgbnd: Binder, menu_msgbnd: Binder) -> dict[(str, int), FMG]:
+    def create_fmgs(cls, item_msgbnd: Binder, menu_msgbnd: Binder) -> dict[tuple[str, int], FMG]:
         """Loads FMGs from given `msgbnd` into `categories` dictionary."""
         fmgs = {}
         for entry in item_msgbnd.entries:

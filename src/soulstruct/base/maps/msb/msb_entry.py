@@ -395,11 +395,11 @@ class MSBEntry(abc.ABC):
                     decoders[f.name] = [BitSet1024.from_repr]
                 elif f.type in (EulerDeg, EulerDeg.__name__):
                     # LEGACY: 'Vector3' JSON strings can be read as EulerDeg.
-                    decoders[f.name] = [EulerDeg.from_repr, Vector3.from_repr]
+                    decoders[f.name] = [EulerDeg, Vector3]
                 else:
                     for check_type in (Vector2, Vector3, Vector4):
                         if f.type in (check_type, check_type.__name__):
-                            decoders[f.name] = check_type
+                            decoders[f.name] = [check_type]
                             break
             cls._CUSTOM_JSON_DECODERS = MappingProxyType(decoders)
 
@@ -436,20 +436,23 @@ class MSBEntry(abc.ABC):
         decoders = cls.get_custom_json_decoders()
         for field_name, field_value in data.items():
             if field_name in decoders:
+                field_decoders = decoders[field_name]
                 # Try each custom string decoder for this field, in order (only first is non-deprecated).
-                for i in range(len(decoders[field_name])):
+                for i, field_decoder in enumerate(field_decoders):
                     try:
-                        kwargs[field_name] = decoders[field_name][i](field_value)
+                        kwargs[field_name] = field_decoder(field_value)
                     except Exception as ex:
-                        if i == 0:
+                        if i == len(field_decoders) - 1:
+                            raise ValueError(
+                                f"All custom JSON decoders for field '{field_name}' in `{cls.__name__}` failed. "
+                                f"Decoders: {field_decoders}"
+                            ) from ex
+                        elif i == 0:
+                            # First decoder failed, but others remain to try.
                             _LOGGER.warning(
                                 f"Custom JSON decoder for field '{field_name}' in `{cls.__name__}` failed: {ex}. "
                                 f"Trying deprecated alternatives."
                             )
-                        elif i == len(decoders[field_name]) - 1:
-                            raise ValueError(
-                                f"All custom JSON decoders for field '{field_name}' in `{cls.__name__}` failed."
-                            ) from ex
                     else:
                         if i > 0:
                             _LOGGER.warning(
@@ -902,6 +905,10 @@ class MSBEntry(abc.ABC):
                             display_type = Vector3
                         case "Vector4":
                             display_type = Vector4
+                        case "EulerDeg":
+                            display_type = EulerDeg
+                        case "EulerRad":
+                            display_type = EulerRad
                         case "MSBPart":
                             display_type = getattr(game_types_module, "MapPart")
                         case "MSBRegion":
