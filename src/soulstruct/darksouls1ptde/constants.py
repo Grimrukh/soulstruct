@@ -212,6 +212,95 @@ UNUSED_CHARACTERS = frozenset({
 })
 
 
+ARMOR_SETS = frozendict({
+    0: "Naked",
+    # Hair is in IDS 1-12 and varies by gender.
+    1000: "Catarina Set",
+    2520: "Hollow Thief Set",  # no AM
+    2540: "Hollow Warrior Set",  # no AM
+    2550: "Hollow Soldier Set",  # no AM
+    2560: "Balder Set",
+    2570: "Steel Set",
+    2660: "Sack",  # HD only
+    2780: "Symbol of Avarice",  # HD only
+    2870: "Giant Set",
+    2920: "Royal Helm",  # HD only
+    3320: "Mask of the Father",  # HD only
+    3321: "Mask of the Mother",  # HD only
+    3322: "Mask of the Child",  # HD only
+    3460: "Fang Boar Helm",  # HD only
+    4150: "Bloated Head",  # HD only
+    4160: "Bloated Sorcerer Head",  # HD only
+    5320: "Moonlight Set",
+    5350: "Gargoyle Helm",  # HD only
+    5370: "Crown of the Great Lord Set",
+    6200: "Bear Set",
+    8200: "Paladin Set",
+    8990: "Roaming Phantom Set",
+    9000: "Roaming Phantom Face & Hair",
+    9101: "Dragon God Head",  # HD only
+    9120: "Egg (Incubating)",  # HD only
+    9121: "Egg (Hatched)",  # HD only
+    9130: "Sunlight Maggot",  # HD only
+    9200: "Smough's Set",
+    9210: "Robe of the Channelers Set",
+    9220: "Helm of Favor Set",
+    9230: "Witch Set",
+    9240: "Stone Set",
+    9250: "Crystalline Set",
+    9260: "Mask of the Sealer Set",
+    9270: "Mask of Velka Set",
+    9280: "Armor of the Sun Set",
+    9289: "Armor of the Sun Set (Textures)",
+    9290: "Black Iron Set",
+    9300: "Chain Set",
+    9309: "Chain Set (Textures)",
+    9310: "Dark Set",
+    9320: "Brigand Set",
+    9340: "Cleric Set",
+    9341: "Elite Cleric Set",
+    9349: "Cleric Set (Textures)",
+    9350: "Shadow Set",
+    9360: "Hard Leather Set",
+    9370: "Sorcerer Set",
+    9371: "Mage Smith Set",
+    9372: "Black Sorcerer Set",
+    9379: "Sorcerer Set (Textures)",
+    9380: "Tattered Cloth Set",
+    9389: "Tattered Cloth Set (Textures)",
+    9390: "Armor of Thorns Set",
+    9400: "Xanthous Set",
+    9420: "Pharis's Set",
+    9430: "Painting Guardian Set",
+    9440: "Eastern Set",
+    9450: "Thief Set",
+    9460: "Holy Set",
+    9470: "Ornstein's Set",
+    9480: "Antiquated Set",
+    9490: "Black Knight Set",
+    9500: "Elite Knight Set",
+    9509: "Elite Knight Set (Unused)",
+    9510: "Wise/Glorious/Vanquisher Set",
+    9520: "Dingy Set",
+    9521: "Maiden Set",
+    9529: "Maiden Set (Unused)",
+    9530: "Wanderer Set",
+    9540: "Sage Set",
+    9550: "Knight Set",
+    9560: "Silver Knight Set",
+    9570: "Havel's Set",
+    9600: "Dragon Set",
+    9610: "Brass Set",
+    9620: "Gold-Hemmed Black Set",
+    9630: "Golem Set",
+    9700: "Armor of Artorias Set",
+    9710: "Lord's Blade Set",
+    9720: "Gough's Set",
+    9730: "Guardian Set",
+    9740: "Chester's Set",
+})
+
+
 WEAPON_MODELS = frozendict({
     # Daggers (9)
     100: "Dagger",

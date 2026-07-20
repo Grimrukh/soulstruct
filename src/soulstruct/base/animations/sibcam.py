@@ -7,6 +7,7 @@ from __future__ import annotations
 __all__ = [
     "CameraFrameTransform",
     "FoVKeyframe",
+    "TimescaledFoVKeyframe",
     "SIBCAM",
 ]
 
@@ -55,6 +56,26 @@ class FoVKeyframe(BinaryStruct):
     fov: float
     tan_in: float
     tan_out: float
+
+
+@dataclass(slots=True)
+class TimescaledFoVKeyframe:
+    """`FoVKeyframe` with `fov_t` scaled to cut transform timeline."""
+    fov_t: float
+    fov: float
+    tan_in: float
+    tan_out: float
+
+    @classmethod
+    def from_fov_keyframe(cls, fov_keyframe: FoVKeyframe, t_interval: float) -> tp.Self:
+        return cls(fov_keyframe.fov_t * t_interval, fov_keyframe.fov, fov_keyframe.tan_in, fov_keyframe.tan_out)
+
+    @classmethod
+    def from_fov_keyframes(cls, fov_keyframes: list[FoVKeyframe], t_interval: float) -> list[tp.Self]:
+        return [
+            cls(fov_keyframe.fov_t * t_interval, fov_keyframe.fov, fov_keyframe.tan_in, fov_keyframe.tan_out)
+            for fov_keyframe in fov_keyframes
+        ]
 
 
 class SIBCAMHeaderStruct(BinaryStruct):
@@ -239,11 +260,7 @@ class SIBCAM(GameFile):
         )
 
     def to_writer(self) -> BinaryWriter:
-        """Pack SIBCAM to binary format.
-
-        TODO: Implement. Only slightly tough part is vector compression (by caching and re-using).
-         Should probably use a hash map for this.
-        """
+        """Pack SIBCAM to binary format."""
 
         if not self.full_camera_animation:
             raise ValueError("Cannot write SIBCAM with no camera animation data.")
@@ -333,8 +350,8 @@ class SIBCAM(GameFile):
             if self.clip_start_t <= frame.t <= self.clip_end_t  # note inclusive
         ]
 
-    def get_fov_keyframes_scaled_to_clip(self) -> list[tuple[float, float]]:
-        """Get a list of `(t, fov)` tuples where `t` is scaled to the clip transform frame count.
+    def get_clip_timescaled_fov_keyframes(self) -> list[TimescaledFoVKeyframe]:
+        """Get a list of `TimescaledFoVKeyframe`s where `t` is scaled to the clip transform frame count.
 
         NOTE: The returned `t` values match the scale of the transform frame counts, but do NOT match any offset from
         zero the first frame may have.
@@ -342,15 +359,18 @@ class SIBCAM(GameFile):
         Useful for Blender animation. Returned `t` values are floats to limit loss of precision from integer rounding.
         If only one keyframe is present, its `t` value will be zero. If two are present, their `t` values will be
         zero and `clip_frame_count`. And so on.
+
+        Returns an empty list if there are no FoV keyframes.
         """
+        if not self.fov_keyframes:
+            return []
+
         if len(self.fov_keyframes) == 1:
-            return [(0.0, self.fov_keyframes[0].fov)]
-        # TODO: Wondering if numerator here is off by 1?
+            return TimescaledFoVKeyframe.from_fov_keyframes(self.fov_keyframes, t_interval=0.0)
+
+        # TODO: Wondering if numerator here is off by 1? (But don't think so.)
         t_interval = self.clip_frame_count / len(self.fov_keyframes)
-        return [
-            (i * t_interval, frame.fov)
-            for i, frame in enumerate(self.fov_keyframes)
-        ]
+        return TimescaledFoVKeyframe.from_fov_keyframes(self.fov_keyframes, t_interval)
 
     @property
     def full_frame_count(self):

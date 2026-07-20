@@ -21,7 +21,7 @@ __all__ = [
 ]
 
 import typing as tp
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.exceptions import SoulstructError
@@ -43,8 +43,8 @@ class TAEEvent:
     @classmethod
     def from_tae_reader(cls, reader: BinaryReader) -> tp.Self:
         start_time_offset, end_time_offset, event_data_offset = reader.unpack("qqq")
-        start_time = reader.unpack_value("f", offset=start_time_offset)
-        end_time = reader.unpack_value("f", offset=end_time_offset)
+        start_time = tp.cast(float, reader.unpack_value("f", offset=start_time_offset))
+        end_time = tp.cast(float, reader.unpack_value("f", offset=end_time_offset))
 
         with reader.temp_offset(event_data_offset):
             event_type_value = reader.unpack_value("q")  # 64-bit enum value
@@ -137,9 +137,9 @@ class TAEAnimation:
                     event_groups.append(TAEEventGroup.from_tae_reader(reader, event_offsets_to_indices))
 
             with reader.temp_offset(animation_struct.animation_file_offset):
-                animation_file_reference = reader.unpack_value("?")
+                animation_file_reference = tp.cast(bool, reader.unpack_value("?"))
                 reader.unpack_value("q", asserted=reader.position + 8)  # file name offset (immediately after this)
-                animation_file_name_offset = reader.unpack_value("q")
+                animation_file_name_offset = tp.cast(int, reader.unpack_value("q"))
                 animation_file_unk_x18, animation_file_unk_x1c = reader.unpack("ii")
                 reader.unpack("qq", asserted=(0, 0))
 
@@ -182,12 +182,12 @@ class TAEHeaderStruct(BinaryStruct):
     animations_offset: int64
     animation_groups_offset: int64
     _xa0: int64 = binary(asserted=0xa0, init=False)
-    animation_count_1: int32
+    animation_count_1: int32  # duplicate
     first_animation_offset: int64
     _one_2: int64 = binary(asserted=1, init=False)
     _x90: int64 = binary(asserted=0x90, init=False)
-    tae_id_1: int32
-    tae_id_2: int32
+    tae_id_1: int32  # duplicate
+    tae_id_2: int32  # duplicate
     _x50: int64 = binary(asserted=0x50, init=False)
     _zero_2: int64 = binary(asserted=0, init=False)
     _xb0: int64 = binary(asserted=0xb0, init=False)
@@ -199,12 +199,12 @@ class TAEHeaderStruct(BinaryStruct):
 class TAE(GameFile):
     """TODO: Write methods."""
 
-    tae_id: int
-    flags: list[int]  # unknown flags
-    skeleton_name: str
-    sib_name: str
-    animations: list[TAEAnimation]
-    unk_x30: int
+    tae_id: int = 0
+    flags: list[int] = field(default_factory=list)  # unknown flags
+    skeleton_name: str = ""
+    sib_name: str = ""
+    animations: list[TAEAnimation] = field(default_factory=list)
+    unk_x30: int = 0
 
     @classmethod
     def from_reader(cls, reader: BinaryReader) -> tp.Self:
@@ -213,7 +213,7 @@ class TAE(GameFile):
         TODO: TAE is always little-endian? Not touching existing endianness for now.
         """
         header = TAEHeaderStruct.from_bytes(reader)
-        encoding = reader.get_utf_16_encoding()
+        encoding = reader.get_utf_16_encoding()  # always UTF-16
 
         # These strings sit right after the header, with a 0x10 pad afterward.
         skeleton_name = reader.unpack_string(offset=header.skeleton_name_offset, encoding=encoding)
@@ -233,4 +233,35 @@ class TAE(GameFile):
         )
 
     def to_writer(self) -> BinaryWriter:
-        pass
+        """Write TAE to byte writer."""
+        raise NotImplementedError("TAE.to_writer() not implemented yet.")
+
+        writer = BinaryWriter(ByteOrder.LittleEndian)
+        encoding = writer.get_utf_16_encoding()
+
+        TAEHeaderStruct(
+            file_size=RESERVED,
+            unk_x30=self.unk_x30,
+            flags=self.flags,
+            tae_id_0=self.tae_id,
+            animation_count_0=len(self.animations),
+            animations_offset=RESERVED,
+            animation_groups_offset=RESERVED,
+            animation_count_1=len(self.animations),
+            first_animation_offset=RESERVED,
+            tae_id_1=self.tae_id,
+            tae_id_2=self.tae_id,
+            skeleton_name_offset=RESERVED,
+            sib_name_offset=RESERVED,
+        ).to_writer(writer, reserve_obj=self)
+
+        # Write strings immediately after header, with 0x10 pad afterward.
+        writer.fill_with_position("skeleton_name_offset", obj=self)
+        writer.pack_z_string(self.skeleton_name, encoding=encoding)
+        writer.fill_with_position("sib_name_offset", obj=self)
+        writer.pack_z_string(self.sib_name, encoding=encoding)
+        writer.pad(0x10)
+
+        # TODO: Where are animations and animation_groups? Immediately after strings?
+
+        return writer

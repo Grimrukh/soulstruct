@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - UV utilities for FLVER meshes.
 - Elden Ring shader sampler group improvements.
 - Added this Changelog (with rough collected history).
+- `ARMOR_SETS` constants for DS1.
 
 ### Changed
 - Minimum Python version raised to 3.13.
@@ -27,6 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Bones per mesh for `MergedMesh` split must be >= 12 (minimum that a single face could weight to).
 - Streamlined `bone_indices` vs. `normal_w` bone indices for static meshes in `MergedMesh` split.
 - Euler base class name changed to `EulerBase` for consistency.
+- `TimescaledFoVKeyframe` struct for SIBCAM to make it clear what the time value means.
 
 ### Fixed
 - Fixed `FLVERMesh.uv_count` validation.
