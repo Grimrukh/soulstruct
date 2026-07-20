@@ -17,9 +17,9 @@ import typing as tp
 from dataclasses import asdict, field, fields
 from pathlib import Path
 
-from soulstruct.games import Game, get_game
+from soulstruct.games import Game
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.files import create_bak, read_json, write_json, get_blake2b_hash
+from soulstruct.utilities.files import create_bak, read_json, write_json, write_data_to_path
 from soulstruct.dcx import DCXType, compress, decompress, is_dcx
 from .metaclasses import PathDataclassMeta
 
@@ -110,7 +110,7 @@ class BaseBinaryFile(abc.ABC, metaclass=PathDataclassMeta):
     def from_path(cls, path: str | Path) -> tp.Self:
         _path = Path(path)
         try:
-            binary_file = tp.cast(tp.Self, cls.from_bytes(BinaryReader(_path)))
+            binary_file = cls.from_bytes(BinaryReader(_path))
         except Exception:
             traceback.print_exc()
             _LOGGER.error(f"Error occurred while reading `{cls.__name__}` with path '{_path}'. See traceback.")
@@ -140,7 +140,7 @@ class BaseBinaryFile(abc.ABC, metaclass=PathDataclassMeta):
         reader, dcx_type = cls._get_reader_and_dcx_type(data)
 
         try:
-            binary_file = tp.cast(tp.Self, cls.from_reader(reader))
+            binary_file = cls.from_reader(reader)
             binary_file.dcx_type = dcx_type
         except Exception:
             traceback.print_exc()
@@ -196,7 +196,7 @@ class BaseBinaryFile(abc.ABC, metaclass=PathDataclassMeta):
             )
         # TODO: Some kind of fancy recursive JSON reader that checks field types and converts dictionaries to
         #  `BaseBinaryFile` subclasses.
-        file = tp.cast(tp.Self, cls.from_dict(json_dict))
+        file = cls.from_dict(json_dict)
         file.path = Path(json_path)
         return file
 
@@ -229,7 +229,7 @@ class BaseBinaryFile(abc.ABC, metaclass=PathDataclassMeta):
 
     # endregion
 
-    def write(self, file_path: None | str | Path = None, make_dirs=True, check_hash=False) -> list[Path]:
+    def write(self, file_path: None | str | Path = None, make_dirs=True, force=False) -> list[Path]:
         """Pack game file into `bytes`, then write to given `file_path` (or `self.path` if not given).
 
         Missing directories in given path will be created automatically if `make_dirs` is True. Otherwise, they must
@@ -242,30 +242,27 @@ class BaseBinaryFile(abc.ABC, metaclass=PathDataclassMeta):
             file_path (None, str, Path): file path to write to. Defaults to `self.path`, which is automatically set at
                 instance creation if a file path is used as a source.
             make_dirs (bool): if True, any directories in `file_path` that are missing will be created. (Default: True)
-            check_hash (bool): if True, file will not be written if file with same hash already exists. (Default: False)
+            force (bool): if True, file will be written even if an identical file already exists. (Default: False)
 
         Returns:
             list[Path]: paths that were written to (extensions may be adjusted, e.g. for DCX). Empty if nothing new is
             written. (Child classes may write multiple files.)
         """
         _file_path = self.get_file_path(file_path)
-        if make_dirs:
-            _file_path.parent.mkdir(parents=True, exist_ok=True)
         packed_dcx = bytes(self)
-        if check_hash and _file_path.is_file():
-            if get_blake2b_hash(_file_path) == get_blake2b_hash(packed_dcx):
-                return []  # don't write file
-        create_bak(_file_path)
-        with _file_path.open("wb") as f:
-            f.write(packed_dcx)
-        return [_file_path]
+        if write_data_to_path(packed_dcx, _file_path, force=force, make_dirs=make_dirs):
+            return [_file_path]
+        return []  # not written
 
     def to_dict(self) -> dict[str, tp.Any]:
         """Create a dictionary from file instance. Uses `dataclasses.asdict()` by default and ignores internals."""
         # noinspection PyDataclass,PyTypeChecker
         return asdict(
             self,
-            dict_factory=lambda d: {k: v for (k, v) in d if k != "_path" and k != "_dcx_type"},
+            dict_factory=lambda d: {
+                k: v for (k, v) in d
+                if k not in {"path", "dcx_type", "_path", "_dcx_type"}
+            } | {"dcx_type": "Null" if self.dcx_type is None else self.dcx_type.name},
         )
 
     def write_json(self, file_path: None | str | Path, encoding="utf-8", indent=4):
@@ -283,12 +280,6 @@ class BaseBinaryFile(abc.ABC, metaclass=PathDataclassMeta):
         if _file_path.suffix != ".json":
             _file_path = _file_path.with_suffix(_file_path.suffix + ".json")
         write_json(_file_path, json_dict, indent=indent, encoding=encoding, encoder=BaseJSONEncoder)
-
-    def create_bak(self, file_path: None | str | Path = None, make_dirs=True):
-        _file_path = self.get_file_path(file_path)
-        if make_dirs:
-            _file_path.parent.mkdir(parents=True, exist_ok=True)
-        create_bak(_file_path)
 
     def copy(self):
         return copy.deepcopy(self)
@@ -347,12 +338,12 @@ class BaseBinaryFile(abc.ABC, metaclass=PathDataclassMeta):
         _file_path = Path(file_path)
         bak_path = _file_path.with_name(_file_path.name + ".bak")
         if bak_path.is_file():
-            binary_file = tp.cast(tp.Self, cls.from_path(bak_path))
+            binary_file = cls.from_path(bak_path)
             if binary_file.path:  # assertion
                 binary_file.path = binary_file.path.with_suffix("")  # remove ".bak" extension
             return binary_file
         else:
-            binary_file = tp.cast(tp.Self, cls.from_path(_file_path))
+            binary_file = cls.from_path(_file_path)
             if create_bak_if_missing:
                 create_bak(_file_path)
             return binary_file

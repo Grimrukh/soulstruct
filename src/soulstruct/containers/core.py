@@ -23,7 +23,7 @@ from dataclasses import dataclass, field
 from soulstruct.base.base_binary_file import BaseBinaryFile
 from soulstruct.dcx import DCXType, compress, decompress
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.files import read_json, write_json, get_blake2b_hash
+from soulstruct.utilities.files import read_json, write_json, write_data_to_path
 
 from .binder_hash import BinderHashTable
 from .entry import BinderEntry, BinderEntryHeader
@@ -628,7 +628,7 @@ class Binder(BaseBinaryFile):
         file_path: None | str | Path = None,
         bdt_file_path: None | str | Path = None,
         make_dirs=True,
-        check_hash=False,
+        force=False,
     ) -> list[Path]:
         """Writes the `BND` file, or writes both the `BHD` and `BDT` files at once for split binders.
 
@@ -644,8 +644,7 @@ class Binder(BaseBinaryFile):
             bdt_file_path (None, str, Path): file path to write `BDT` to. Defaults to `file_path` with "bdt"
                 replacing "bhd" in any and all file suffixes.
             make_dirs (bool): if True, any absent directories in both `file_path` and `bdt_file_path` will be created.
-            check_hash (bool): if True, files will not be written if both BHD and BDT files with same hashes already
-                exist. (Default: False)
+            force (bool): if True, files will be written even if identical to existing. (Default: False)
 
         Returns:
             list[Path]: path of written BND file or BHD and BDT files. Empty if nothing new is written.
@@ -667,26 +666,20 @@ class Binder(BaseBinaryFile):
                 if make_dirs:  # only needed if not next to BHD file (as will be the case above)
                     bdt_file_path.parent.mkdir(parents=True, exist_ok=True)
             packed_bhd, packed_bdt = self.get_split_bytes()
-            if check_hash and file_path.is_file() and bdt_file_path.is_file():
-                bhd_match = get_blake2b_hash(file_path) == get_blake2b_hash(packed_bhd)
-                bdt_match = get_blake2b_hash(bdt_file_path) == get_blake2b_hash(packed_bdt)
-                if bhd_match and bdt_match:
-                    return []  # don't write files (both match)
-            self.create_bak(file_path, make_dirs=make_dirs)
-            self.create_bak(bdt_file_path, make_dirs=make_dirs)
-            with file_path.open("wb") as f:
-                f.write(packed_bhd)
-            with bdt_file_path.open("wb") as f:
-                f.write(packed_bdt)
-            return [file_path, bdt_file_path]
+            written_paths = []
+            if write_data_to_path(packed_bhd, file_path, force=force):
+                written_paths.append(file_path)
+            if write_data_to_path(packed_bdt, bdt_file_path, force=force):
+                written_paths.append(bdt_file_path)
+            return written_paths
 
         if bdt_file_path is not None:
             raise ValueError("Cannot pass in `bdt_file_path` when `Binder.is_split_bxf == False`.")
 
-        if self.IS_SPLIT_BXF is True:
+        if self.IS_SPLIT_BXF:
             raise ValueError(f"Can only write split BHD/BDT Binder for class `{self.__name__}`.")
 
-        super(Binder, self).write(file_path, make_dirs=make_dirs, check_hash=check_hash)
+        super(Binder, self).write(file_path, make_dirs=make_dirs, force=force)
 
         return [file_path]
 
@@ -695,7 +688,7 @@ class Binder(BaseBinaryFile):
         bhd_path_or_entry: None | str | Path | BinderEntry,
         bdt_path_or_entry: None | str | Path | BinderEntry,
         make_dirs=True,
-        check_hash=False,
+        force=False,
     ) -> None:
         """Writes both the `BHD` and `BDT` files at once, but also supports writing their data into an existing
         `BinderEntry`. Most useful for split 'CHRTPFBHD/BDT' files in `chr` folders, where the BHD header file is
@@ -713,25 +706,14 @@ class Binder(BaseBinaryFile):
             bhd_path_or_entry (None, str, Path, BinderEntry): file path or `BinderEntry` to write `BHD` to.
             bdt_path_or_entry (None, str, Path, BinderEntry): file path or `BinderEntry` to write `BDT` to.
             make_dirs (bool): if True, any absent directories in either path will be created.
-            check_hash (bool): if True, files will not be written if both BHD and BDT files with same hashes already
-                exist. (Default: False)
+            force (bool): if True, files will be written even existing files are identical. (Default: False)
         """
 
         packed_bhd, packed_bdt = self.get_split_bytes()
 
         for path_or_entry, packed in zip((bhd_path_or_entry, bdt_path_or_entry), (packed_bhd, packed_bdt)):
             if isinstance(path_or_entry, (str, Path)):
-                path_or_entry = Path(path_or_entry)
-                if make_dirs:
-                    path_or_entry.parent.mkdir(parents=True, exist_ok=True)
-                if check_hash and path_or_entry.is_file():
-                    bhd_match = get_blake2b_hash(path_or_entry) == get_blake2b_hash(packed)
-                    if not bhd_match:
-                        self.create_bak(path_or_entry, make_dirs=make_dirs)
-                        path_or_entry.write_bytes(packed)
-                else:
-                    self.create_bak(path_or_entry, make_dirs=make_dirs)
-                    path_or_entry.write_bytes(packed)
+                write_data_to_path(packed, path_or_entry, force=force, make_dirs=make_dirs)
             elif isinstance(path_or_entry, BinderEntry):
                 path_or_entry.set_uncompressed_data(packed)
 

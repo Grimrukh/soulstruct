@@ -32,7 +32,7 @@ def convert_events(
     maps: tp.Iterable[Map],
     emevd_class: type[EMEVD],
     input_type: str | None = None,
-    check_hash=False,
+    force=False,
     merge_emevd_paths: tp.Sequence[str | Path] = (),
 ):
     """Convert all events from one format to another.
@@ -45,7 +45,7 @@ def convert_events(
     A subset of EMEVD map constants to convert can be passed to `maps`, or it can be left to default to looking for all
     EMEVD files used in this game (in which case an error will be raised if any are not found).
 
-    If `check_hash=True`, the file will not be written if a file with the same hash already exists.
+    If `force=True`, the file will be written even if an identical file already exists.
 
     If any `merge_emevd_paths` are given, sources with a shortest stem (i.e. ignoring ALL file extensions) that
     matches one of the map's EMEVD file stems will be merged into that `EMEVD` before conversion.
@@ -58,8 +58,6 @@ def convert_events(
             break
     if output_type is None:
         raise ValueError(f"Invalid EMEVD output extension: {repr(output_ext)}.")
-    if output_type in {"evs", "numeric"} and check_hash:
-        raise ValueError(f"Cannot use `check_hash=True` for EMEVD output type '{output_type}'.")
 
     output_directory = Path(output_directory)
     input_ext = "." + input_type.lower().lstrip(".") if input_type is not None else None
@@ -113,9 +111,9 @@ def convert_events(
             if output_type == "evs":
                 emevd.write_evs(output_path)
             elif output_type == "emevd":
-                emevd.write(output_path, check_hash=check_hash)
+                emevd.write(output_path, force=force)
             elif output_type == "emevd.dcx":
-                emevd.write(output_path, check_hash=check_hash)
+                emevd.write(output_path, force=force)
             elif output_type == "numeric":
                 emevd.write_numeric(output_path)
         except Exception as ex:

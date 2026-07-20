@@ -255,7 +255,7 @@ class GameParamBND(_BaseGameParamBND):
             file_path.parent.mkdir(parents=True, exist_ok=True)
 
         temp_decrypted = SOULSTRUCT_PATH("__ParamCrypt__.parambnd.dcx")
-        self.write(temp_decrypted, make_dirs=False, check_hash=False)
+        self.write(temp_decrypted, make_dirs=False, force=False)
         ParamCrypt(temp_decrypted, "encrypt", "er", file_path)
         # temp_decrypted.unlink()
 

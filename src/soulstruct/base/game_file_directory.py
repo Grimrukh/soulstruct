@@ -9,7 +9,7 @@ import typing as tp
 from dataclasses import field
 from pathlib import Path
 
-from soulstruct.utilities.files import create_bak, get_blake2b_hash
+from soulstruct.utilities.files import create_bak, write_data_to_path
 from .base_binary_file import BaseBinaryFile
 from .metaclasses import PathDataclassMeta
 
@@ -58,7 +58,7 @@ class GameFileDirectory[BASE_BINARY_FILE_T: BaseBinaryFile](abc.ABC, metaclass=P
 
     @staticmethod
     def _write(
-        paths_instances: dict[Path, BaseBinaryFile], check_file_hashes=False, no_partial_write=True
+        paths_instances: dict[Path, BaseBinaryFile], force=False, no_partial_write=True
     ) -> list[Path]:
         """Internal write method. Subclasses may determine file paths differently, then call this."""
         packed_files = {}  # type: dict[Path, bytes]
@@ -72,19 +72,14 @@ class GameFileDirectory[BASE_BINARY_FILE_T: BaseBinaryFile](abc.ABC, metaclass=P
                     raise
                 _LOGGER.error(f"Failed to pack {file_path.name}: {ex}. Continuing with other files...")
                 continue
-            if check_file_hashes and file_path.is_file():
-                if get_blake2b_hash(file_path) == get_blake2b_hash(packed_dcx):
-                    continue  # don't write file
             packed_files[file_path] = packed_dcx
 
         # All files packed successfully (or partial write permitted).
         written_paths = []
         for file_path, packed_dcx in packed_files.items():
-            file_path.parent.mkdir(parents=True, exist_ok=True)
             create_bak(file_path)
-            with file_path.open("wb") as f:
-                f.write(packed_dcx)
-            written_paths.append(file_path)
+            if write_data_to_path(packed_dcx, file_path, force=force):
+                written_paths.append(file_path)
 
         return written_paths
 
@@ -100,7 +95,7 @@ class GameFileDirectory[BASE_BINARY_FILE_T: BaseBinaryFile](abc.ABC, metaclass=P
     def write(
         self,
         directory_path: Path | str | None = None,
-        check_file_hashes: bool = False,
+        force: bool = False,
         no_partial_write: bool = True,
     ) -> list[Path]:
         if directory_path is None:
@@ -114,7 +109,7 @@ class GameFileDirectory[BASE_BINARY_FILE_T: BaseBinaryFile](abc.ABC, metaclass=P
             for file_stem, instance in self.files.items()
         }
 
-        written_paths = self._write(file_paths, check_file_hashes, no_partial_write)
+        written_paths = self._write(file_paths, force=force, no_partial_write=no_partial_write)
         self._log_directory_write(directory_path, len(written_paths))
         return written_paths
 

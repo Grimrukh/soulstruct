@@ -13,6 +13,7 @@ from soulstruct.base.game_file import GameFile
 from soulstruct.dcx import DCXType
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.conversion import floatify
+from soulstruct.utilities.files import write_data_to_path
 
 from .event import Event as _BaseEvent, EventSignature
 from .event_layers import EventLayers
@@ -294,14 +295,14 @@ class EMEVD(GameFile, abc.ABC):
             **self.events,
         }
 
-    def to_numeric(self):
+    def to_numeric(self) -> str:
         self.regenerate_signatures()
         numeric_output = "\n\n".join([event.to_numeric() for event in self.events.values()])
         numeric_output += "\n\nlinked:\n" + "\n".join(str(offset) for offset in self.linked_file_offsets)
         numeric_output += "\n\nstrings:\n" + "\n".join(s[0] + ": " + s[1] for s in self.unpack_strings())
         return numeric_output
 
-    def get_evs_docstring(self, actual_docstring=""):
+    def get_evs_docstring(self, actual_docstring="") -> str:
         docstring = '"""'
         if actual_docstring:
             docstring += "\n" + actual_docstring.rstrip("\n") + "\n"
@@ -581,16 +582,12 @@ class EMEVD(GameFile, abc.ABC):
 
         return writer
 
-    def write_numeric(self, numeric_path=None):
+    def write_numeric(self, numeric_path=None, force=False):
         if not numeric_path:
             numeric_path = self.map_name
             if not numeric_path.endswith(".numeric.txt"):
                 numeric_path += ".numeric.txt"
-        numeric_path = Path(numeric_path)
-        if numeric_path.parent:
-            numeric_path.parent.mkdir(exist_ok=True, parents=True)
-        with numeric_path.open("w", encoding="utf-8") as f:
-            f.write(self.to_numeric())
+        write_data_to_path(self.to_numeric().encode("utf-8"), numeric_path, force=force)
 
     def write_evs(
         self,
@@ -603,6 +600,7 @@ class EMEVD(GameFile, abc.ABC):
         docstring: str = "",
         common_func_emevd: EMEVD | None = None,
         enums_manager: GameEnumsManager | None = None,
+        force=False,
     ):
         if not evs_path:
             evs_path = self.map_name
@@ -621,8 +619,7 @@ class EMEVD(GameFile, abc.ABC):
             common_func_emevd=common_func_emevd,
             enums_manager=enums_manager,
         )
-        with evs_path.open("w", encoding="utf-8") as f:
-            f.write(evs_string)
+        write_data_to_path(evs_string.encode("utf-8"), evs_path, force=force)
 
     @classmethod
     def from_auto_detect_source_type(cls, emevd_source: Path | str | bytes | BinaryReader) -> str:

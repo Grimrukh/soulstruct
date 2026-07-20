@@ -37,7 +37,7 @@ __all__ = [
 
 import ast
 import importlib
-import importlib.util  # TODO: needed? IDE doesn't think so...
+import importlib.util
 import logging
 import re
 import typing as tp
@@ -241,12 +241,18 @@ def import_from(
     """Import names into given namespace dictionary."""
     if node.module in ignore_names:
         return {}
-    try:
-        # Try to import and reload module normally.
-        module = importlib.import_module(node.module)
-        importlib.reload(module)
-    except ImportError:
-        # Try to import module on path.
+
+    module = None
+
+    # Only attempt an absolute import if this isn't an explicit relative import.
+    if node.level == 0:
+        try:
+            module = importlib.import_module(node.module)
+            importlib.reload(module)
+        except ImportError:
+            module = None
+
+    if module is None:
         if script_directory is None:
             raise EVSImportError(
                 evs_name,
@@ -254,10 +260,51 @@ def import_from(
                 node.module,
                 "`script_directory` needed for relative import, but was not given to `EVSParser` or auto-detected.",
             )
-        level = 0 if node.level == 0 else node.level - 1  # single dot (level 1) is the same as no dot (level 0)
-        module_path = (script_directory / ("../" * level + node.module.replace(".", "/") + ".py")).resolve()
-        if not module_path.is_file():
-            raise EVSImportError(evs_name, node, node.module, f"Cannot import missing module file: {module_path}")
+
+        level = 0 if node.level == 0 else node.level - 1
+        base_path = (script_directory / ("../" * level)).resolve()
+
+        if node.module is None:
+            # `from . import foo, bar` — each alias IS a module, not an attribute of one.
+            module_dict = {}
+            for alias in node.names:
+                name = alias.name
+                if name in ignore_names:
+                    continue
+                as_name = alias.asname if alias.asname is not None else name
+                sub_path = base_path / name
+                sub_path_file = sub_path.with_name(sub_path.name + ".py")
+                if sub_path_file.is_file():
+                    sub_path = sub_path_file
+                elif not sub_path.is_dir():
+                    raise EVSImportError(
+                        evs_name, node, name, f"Cannot import missing module file/package: {sub_path}"
+                    )
+                try:
+                    module_dict[as_name] = import_arbitrary_module(sub_path)
+                except ImportError as ex:
+                    raise EVSImportError(evs_name, node, name, str(ex))
+            return module_dict
+
+        # `from .foo import X` / `from ..foo.bar import X`
+        module_path = (base_path / node.module.replace(".", "/")).resolve()
+
+        module_path_file = module_path.with_name(module_path.name + ".py")
+        if module_path_file.is_file():
+            module_path = module_path_file
+        elif module_path.is_dir():
+            init_path = module_path / "__init__.py"
+            if not init_path.is_file():
+                raise EVSImportError(
+                    evs_name, node, node.module,
+                    f"Package directory has no `__init__.py`: {module_path}"
+                )
+            module_path = init_path
+        else:
+            raise EVSImportError(
+                evs_name, node, node.module, f"Cannot import missing module file/package: {module_path}"
+            )
+
         try:
             module = import_arbitrary_module(module_path)
         except ImportError as ex:
@@ -272,11 +319,12 @@ def import_from(
                 )
             raise
 
+    # --- unchanged from here down (attribute-lookup path for `from A import B`) ---
     module_dict = {}
     for alias in node.names:
         name = alias.name
         if name in ignore_names:
-            continue  # already imported
+            continue
         if name == "*":
             if "__all__" in vars(module):
                 all_names = vars(module)["__all__"]

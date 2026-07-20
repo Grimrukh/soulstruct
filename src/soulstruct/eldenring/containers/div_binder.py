@@ -112,7 +112,7 @@ class DivBinder(Binder):
         file_path: None | str | Path = None,
         bdt_file_path: None | str | Path = None,
         make_dirs=True,
-        check_hash=False,
+        force=False,
     ) -> list[Path]:
         """If enabled, write the core Binder and all div Binders to the given `file_path` and div paths from BLF
         entries.
@@ -122,7 +122,7 @@ class DivBinder(Binder):
         TODO: Warn if BLF division is enabled but no BLF entries present. (Error if any IDs repeat?)
         """
         if not self.write_blf_division:
-            return super().write(file_path, bdt_file_path, make_dirs, check_hash)
+            return super().write(file_path, bdt_file_path, make_dirs, force)
 
         raise NotImplementedError("`DivBinder` does not support BLF division writing yet. (Need BLF parsing!)")
 

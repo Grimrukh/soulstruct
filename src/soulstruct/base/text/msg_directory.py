@@ -310,23 +310,24 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
 
     # region Utility Methods: Items
 
-    def get_item_fmgs(self, item_type: str) -> dict[str, FMG]:
+    def get_item_fmgs(self, item_type: str, patch: bool = False) -> dict[str, FMG]:
         """Return a dictionary with keys 'Names', 'Summaries', and 'Descriptions' mapping to the FMGs of `item_type`
         and that key text type (e.g. 'WeaponDescriptions').
 
         Will raise a `KeyError` if any of the three text categories are missing.
         """
         item_type = self.resolve_item_type(item_type)
-        item_fmgs = self.get_matching_fmgs(re.compile(rf"{item_type}(Names|Summaries|Descriptions)"))
+        suffix = "Patch" if patch else ""
+        item_fmgs = self.get_matching_fmgs(re.compile(rf"{item_type}(Names|Summaries|Descriptions){suffix}"))
         if len(item_fmgs) != 3:
             raise KeyError(
-                f"Could not find all of '{item_type}Names', '{item_type}Summaries', and '{item_type}Descriptions' "
-                f"in `MSGDirectory`."
+                f"Could not find all of '{item_type}Names{suffix}', '{item_type}Summaries{suffix}', and "
+                f"'{item_type}Descriptions{suffix}' in `MSGDirectory`."
             )
         return {
-            "Names": item_fmgs[f"{item_type}Names"],
-            "Summaries": item_fmgs[f"{item_type}Summaries"],
-            "Descriptions": item_fmgs[f"{item_type}Descriptions"],
+            f"Names{suffix}": item_fmgs[f"{item_type}Names{suffix}"],
+            f"Summaries{suffix}": item_fmgs[f"{item_type}Summaries{suffix}"],
+            f"Descriptions{suffix}": item_fmgs[f"{item_type}Descriptions{suffix}"],
         }
 
     def get_all_item_text(self, item_id: int, item_type: str) -> dict[str, str]:
