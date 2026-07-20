@@ -156,7 +156,10 @@ class DrawParamDirectory(GameFileDirectory[DrawParamBND], abc.ABC):
             files[bnd_stem] = drawparambnd
 
         if all_bnd_stems:
-            _LOGGER.warning(f"Could not find some files in `{cls.__name__}` directory: {', '.join(all_bnd_stems)}")
+            _LOGGER.warning(
+                f"Could not find some DrawParam files/subdirectories in `{cls.__name__}` directory: "
+                f"{', '.join(all_bnd_stems)}"
+            )
 
         return cls(directory=directory, files=files)
 

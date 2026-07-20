@@ -265,7 +265,7 @@ def get_md5_hash_hex(data: bytes | str | Path) -> str:
     raise TypeError(f"Can only get MD5 hash of `bytes` or `str`/`Path` of file, not {type(data)}.")
 
 
-def sync_file(src: Path | str, dst: Path | str, force_write=False) -> bool:
+def sync_file(src: Path | str, dst: Path | str, force_write=False, make_dirs=True) -> bool:
     """Copy `src` to `dst` only if needed.
 
     If `force_write` is True, always writes. This makes dynamic usage easier.
@@ -273,6 +273,9 @@ def sync_file(src: Path | str, dst: Path | str, force_write=False) -> bool:
     src, dst = Path(src), Path(dst)
     if dst.is_file() and not force_write and not _needs_copy(src, dst):
         return False
+
+    if make_dirs and dst.parent:
+        dst.parent.mkdir(parents=True, exist_ok=True)
 
     shutil.copy2(src, dst)
     return True
@@ -329,7 +332,7 @@ def write_data_to_path(
 
     Also makes a backup by default (if write occurs) and makes parent directories.
 
-    Treats `data` as bytes. String data should be encoded first.
+    Treats `data` as bytes. String data should be encoded first (and handle your own line endings).
 
     Returns True if written, False if skipped (unchanged).
     """

@@ -73,7 +73,7 @@ class ParamDefBND(Binder, abc.ABC):
         cls._BUNDLED[game] = paramdefbnd
         return paramdefbnd
 
-    def __getitem__(self, param_type) -> ParamDef:
+    def get_paramdef(self, param_type: str) -> ParamDef:
         try:
             return self.paramdefs[param_type]
         except KeyError:

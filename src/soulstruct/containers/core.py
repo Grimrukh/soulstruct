@@ -1035,7 +1035,7 @@ class Binder(BaseBinaryFile):
     def add_entry(self, entry: BinderEntry, ignore_id_conflict=False):
         if id(entry) in {id(e) for e in self.entries}:
             raise BinderError(f"Given `BinderEntry` instance with object ID {entry.entry_id} is already in Binder.")
-        if not ignore_id_conflict and entry.entry_id in {e.id for e in self.entries}:
+        if not ignore_id_conflict and entry.entry_id in {e.entry_id for e in self.entries}:
             _LOGGER.warning(
                 f"Entry ID {entry.entry_id} appears more than once in this Binder. Entry still added, but you should "
                 f"fix this."
@@ -1103,10 +1103,10 @@ class Binder(BaseBinaryFile):
     def create_default_entry(
         self,
         entry_data: bytes | BaseBinaryFile,
-        entry_id: int = None,
-        entry_name: str = None,
-        entry_path: str | Path = None,
-        entry_flags: int = None,
+        entry_id: int | None = None,
+        entry_name: str | None = None,
+        entry_path: str | Path | None = None,
+        entry_flags: int | None = None,
     ) -> BinderEntry:
         """Create a new `BinderEntry`, attempting to replace whichever fields are NOT given with defaults provided by
         this `Binder` subclass.
@@ -1142,10 +1142,10 @@ class Binder(BaseBinaryFile):
     def set_default_entry(
         self,
         entry_spec: ENTRY_SPEC,
-        new_id: int = None,
-        new_name: str = None,
-        new_path: str | Path = None,
-        new_flags: int = None,
+        new_id: int | None = None,
+        new_name: str | None = None,
+        new_path: str | Path | None = None,
+        new_flags: int | None = None,
     ) -> BinderEntry:
         """Retrieve or create `BinderEntry` specified by `entry_spec`, a la `dict.setdefault()`.
 
@@ -1161,7 +1161,9 @@ class Binder(BaseBinaryFile):
         """
         try:
             # NOTE: Will raise an unhandled `MultipleEntriesFoundError` if multiple entries are found.
-            return self[entry_spec]
+            # We make sure to use the base Binder `__getitem__` since subclasses may override it
+            # (though this isn't recommended due to semantic confusion).
+            return Binder.__getitem__(self, entry_spec)
         except EntryNotFoundError:
             # Create new entry. Value of `entry_spec` is redirected to the appropriate creation argument.
 

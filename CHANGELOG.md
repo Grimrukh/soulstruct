@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Elden Ring shader sampler group improvements.
 - Added this Changelog (with rough collected history).
 - `ARMOR_SETS` constants for DS1.
+- `write_data_to_file`, `sync_file`, `sync_directory` functions with smart diffing.
 
 ### Changed
 - Minimum Python version raised to 3.13.
@@ -29,6 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Streamlined `bone_indices` vs. `normal_w` bone indices for static meshes in `MergedMesh` split.
 - Euler base class name changed to `EulerBase` for consistency.
 - `TimescaledFoVKeyframe` struct for SIBCAM to make it clear what the time value means.
+- Removed and discouraged `__getitem__` overrides in `Binder` subclasses.
 
 ### Fixed
 - Fixed `FLVERMesh.uv_count` validation.

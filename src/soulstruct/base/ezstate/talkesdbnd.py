@@ -31,6 +31,7 @@ class TalkESDBND[TALK_ESD_T: ESD](Binder, abc.ABC):
 
     TALK_ESD_CLASS: tp.ClassVar[type[ESD]]
 
+    # Maps talk IDs (e.g. 102000 for 't102000.esd') to their loaded `ESD` instances.
     talk: dict[int, TALK_ESD_T] = field(default_factory=dict)
 
     def __post_init__(self):
@@ -110,9 +111,6 @@ class TalkESDBND[TALK_ESD_T: ESD](Binder, abc.ABC):
 
         # Sort entries by name.
         self.entries.sort(key=lambda entry: entry.name)
-
-    def __getitem__(self, talk_id) -> TALK_ESD_T:
-        return self.talk[talk_id]
 
     def __iter__(self):
         return iter(self.talk)
