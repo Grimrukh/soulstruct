@@ -8,10 +8,10 @@ def main():
     print("Loading vanilla events...")
     ed = EventDirectory.from_path(Config.ER_PATH / "event")
     print("Writing vanilla EVS scripts...")
-    entitites_dir = Path(__file__).parent / "vanilla/enums"
+    entities_dir = Path(__file__).parent / "vanilla/enums"
     ed.write_evs(
         evs_directory="vanilla",
-        enums_directory=entitites_dir if entitites_dir.is_dir() else None,
+        enums_directory=entities_dir if entities_dir.is_dir() else None,
         warn_missing_enums=False,
         enums_module_prefix=".enums.",
     )

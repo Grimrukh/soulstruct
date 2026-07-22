@@ -46,6 +46,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 - Removed placeholder DeSR (Demon's Souls Remastered) support stub.
 - Removed support for Python < 3.13.
+- Removed vanilla EVS scripts/enums (moved to `soulstruct-vanilla` repo).
 
 ---
 
