@@ -13,8 +13,8 @@ from soulstruct.base.maps.msb.utils import MSBSubtypeInfo, BitSet256, BitSet1024
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.misc import IDList
 
-from .constants import get_map
-from .enums import *
+from soulstruct.eldenring.maps.constants import get_map
+from soulstruct.eldenring.maps.enums import *
 from .models import *
 from .events import *
 from .regions import *

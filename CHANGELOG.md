@@ -32,6 +32,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Euler base class name changed to `EulerBase` for consistency.
 - `TimescaledFoVKeyframe` struct for SIBCAM to make it clear what the time value means.
 - Removed and discouraged `__getitem__` overrides in `Binder` subclasses.
+- `eldenring.maps.msb` changed from module to package (largely replaced by Firelink C++).
 
 ### Fixed
 - Fixed `FLVERMesh.uv_count` validation.

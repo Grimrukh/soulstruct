@@ -14,7 +14,7 @@ import typing as tp
 from soulstruct.base.maps.msb.msb_entry import *
 from soulstruct.utilities.binary import *
 
-from .enums import MSBSupertype, MSBRouteSubtype
+from soulstruct.eldenring.maps.enums import MSBSupertype, MSBRouteSubtype
 
 
 class RouteHeaderStruct(MSBHeaderStruct):

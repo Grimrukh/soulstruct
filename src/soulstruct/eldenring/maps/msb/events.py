@@ -25,7 +25,7 @@ from soulstruct.base.maps.msb.field_info import MapFieldInfo
 from soulstruct.base.maps.msb.msb_entry import *
 from soulstruct.utilities.binary import *
 
-from .enums import MSBEventSubtype
+from soulstruct.eldenring.maps.enums import MSBEventSubtype
 from .regions import MSBRegion
 from .parts import MSBPart
 

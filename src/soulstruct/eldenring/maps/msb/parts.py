@@ -24,7 +24,7 @@ from soulstruct.eldenring.game_types import *
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import EulerDeg, Vector3
 
-from .enums import *
+from soulstruct.eldenring.maps.enums import *
 from .models import *
 
 if tp.TYPE_CHECKING:

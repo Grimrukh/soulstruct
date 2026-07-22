@@ -18,7 +18,7 @@ from soulstruct.base.maps.msb.msb_entry import *
 from soulstruct.base.maps.msb.models import BaseMSBModel
 from soulstruct.utilities.binary import *
 
-from .enums import MSBModelSubtype
+from soulstruct.eldenring.maps.enums import MSBModelSubtype
 
 if tp.TYPE_CHECKING:
     from soulstruct.base.maps.msb import MSBEntry
