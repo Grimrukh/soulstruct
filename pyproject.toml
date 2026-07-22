@@ -16,7 +16,7 @@ authors = [
 ]
 
 dependencies = [
-    "constrata>=1.3.1",     # required for binary read/write (my package)
+    "constrata>=1.3.3",     # required for binary read/write (my package)
     "frozendict",           # required for frozen dictionaries
     "numpy",                # required for math classes/operations
     "rich>=13",             # required for nice printing/logging
@@ -31,6 +31,19 @@ sound         = ["pydub"]
 
 [project.scripts]
 soulstruct = "soulstruct.__main__:app"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+# `importmode=importlib` + `consider_namespace_packages` keep collection working with the
+# `soulstruct` namespace package and allow same-named test modules in different game folders.
+addopts = "-ra --import-mode=importlib"
+consider_namespace_packages = true
+markers = [
+    "game_data: test requires an unpacked vanilla game directory",
+    "slow: test reads a whole game directory and is slow",
+]
+filterwarnings = ["default"]
 
 [project.urls]
 homepage      = "https://github.com/Grimrukh/soulstruct"
