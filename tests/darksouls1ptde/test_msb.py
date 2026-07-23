@@ -227,15 +227,6 @@ def test_depths_msb_auto_model_rejects_bad_part(depths_msb):
     assert model is map_piece.model
 
 
-@pytest.mark.xfail(
-    reason=(
-        "MSB JSON encoding writes `EulerDeg` fields as `repr()` strings (e.g. "
-        "'EulerDeg((-0.0, 100.29, 0.0))') but `get_custom_json_decoders` registers the *constructors* "
-        "`[EulerDeg, Vector3]` rather than `EulerDeg.from_repr`, so any entry with a non-default "
-        "`rotate` fails to load back."
-    ),
-    strict=False,
-)
 def test_depths_msb_json_round_trip(depths_msb, tmp_path):
     json_path = tmp_path / "m10_00_00_00.json"
     depths_msb.write_json(json_path)
@@ -303,10 +294,6 @@ def test_vanilla_msb_binary_round_trip(map_studio_dir, map_stem, tmp_path, caplo
 
 
 @pytest.mark.slow
-@pytest.mark.xfail(
-    reason="MSB JSON `EulerDeg` decoding is broken; see `test_depths_msb_json_round_trip`.",
-    strict=False,
-)
 @pytest.mark.parametrize("map_stem", [m.msb_file_stem for m in ALL_MAPS if m.msb_file_stem])
 def test_vanilla_msb_json_round_trip(map_studio_dir, map_stem, tmp_path, caplog):
     path = map_studio_dir / f"{map_stem}.msb"

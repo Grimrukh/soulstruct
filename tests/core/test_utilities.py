@@ -108,12 +108,6 @@ def test_bit_set_roundtrip_128(bits):
     assert int_group_to_bit_set(bit_set_to_int_group(bits, 4), assert_size=4) == bits
 
 
-@pytest.mark.xfail(
-    reason="BUG: `int_group_to_bit_set` hard-codes `range(4)`, so it silently drops every bit >= 128 for the "
-           "256-bit and 1024-bit `BitSet`s used by DS3/Sekiro/Elden Ring MSBs (draw/display/navmesh groups). "
-           "Unpack->pack of such an MSB is lossy.",
-    strict=False,
-)
 @pytest.mark.parametrize("group_size,bits", [(8, {0, 130, 200}), (32, {0, 500, 1023})])
 def test_bit_set_roundtrip_large_groups(group_size: int, bits: set[int]):
     assert int_group_to_bit_set(bit_set_to_int_group(bits, group_size), assert_size=group_size) == bits
@@ -411,11 +405,6 @@ def test_idlist_setitem():
         lst[0] = c  # already present
 
 
-@pytest.mark.xfail(
-    reason="BUG: `IDList.insert` writes the new item's index into `_index_dict` BEFORE incrementing all "
-           "indices >= that index, so the new item's own recorded index is off by one.",
-    strict=False,
-)
 def test_idlist_insert_keeps_indices_correct():
     class Item:
         def __init__(self, name):

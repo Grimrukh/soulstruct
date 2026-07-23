@@ -20,9 +20,6 @@ from soulstruct.dcx import DCXType
 # `adv_decompiler` for an empty `if` block), which `as_event_statement_node` rejects. See report.
 EVS_REPARSE_FAILURES = {
     "m10_01_00_00",
-    "m10_02_00_00",
-    "m14_01_00_00",
-    "m15_00_00_00",
 }
 
 # EMEVDs where the EVS round-trip legitimately *optimises* the instruction stream, e.g. collapsing

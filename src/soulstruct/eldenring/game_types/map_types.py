@@ -113,7 +113,7 @@ class MapTile(Map):
         area_id=60,
         name=None,
         emevd_file_stem=None,
-        msb_file_stem=None,
+        msb_file_stem="",
         ai_file_stem=None,
         esd_file_stem=None,
         variable_name=None,

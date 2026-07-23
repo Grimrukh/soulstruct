@@ -90,9 +90,9 @@ class MATBIN(GameFile):
             sampler.fill_matbin_data(writer)
         
         writer.fill_with_position("_shader_path_offset", self)
-        writer.append(self.shader_path.encode("utf-16-le"))
+        writer.append(self.shader_path.encode("utf-16-le") + b"\0\0")
         writer.fill_with_position("_source_path_offset", self)
-        writer.append(self.source_path.encode("utf-16-le"))
+        writer.append(self.source_path.encode("utf-16-le") + b"\0\0")
         
         return writer
 
@@ -299,7 +299,7 @@ class MATBINParam:
         Type of `self.value` is ensured by `value.setter` property.
         """
         writer.fill_with_position("_name_offset", self)
-        writer.append(self.name.encode("utf-16-le"))
+        writer.append(self.name.encode("utf-16-le") + b"\0\0")
 
         writer.fill_with_position("_value_offset", self)
         match self.param_type:
@@ -446,10 +446,10 @@ class MATBINSampler:
     def fill_matbin_data(self, writer: BinaryWriter):
         """Fill sampler type and path."""
         writer.fill_with_position("_sampler_type_offset", self)
-        writer.append(self.sampler_type.encode("utf-16-le"))
+        writer.append(self.sampler_type.encode("utf-16-le") + b"\0\0")
 
         writer.fill_with_position("_path_offset", self)
-        writer.append(self.path.encode("utf-16-le"))
+        writer.append(self.path.encode("utf-16-le") + b"\0\0")
 
 
 class MATBINBND(Binder):

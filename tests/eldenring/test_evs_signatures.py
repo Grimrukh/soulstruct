@@ -245,12 +245,6 @@ def test_compiler_base_compile_targets_exist_in_emedf():
     assert not missing, f"`_base_compile` calls unknown instructions (compiler.py line, name): {missing}"
 
 
-@pytest.mark.xfail(
-    reason="ER EMEDF renamed the `obj` argument of (2005, 6)/(2005, 14) to `asset`, but "
-           "`Enable/DisableAssetActivation` in compiler.py still pass `obj=`. Any EVS script using them "
-           "fails to compile -- including Soulstruct's own decompiled vanilla output.",
-    strict=False,
-)
 def test_compiler_base_compile_kwargs_exist_in_emedf():
     problems = []
     for lineno, name, kwargs in _base_compile_calls():

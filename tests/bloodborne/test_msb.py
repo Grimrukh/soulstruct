@@ -107,12 +107,6 @@ def test_all_exported_entry_classes_are_registered():
     assert not unregistered, f"Exported MSB entry classes not registered: {unregistered}"
 
 
-@pytest.mark.xfail(
-    reason="`MSBEvent.STRUCTS` in bloodborne/maps/events.py uses the key 'supertype_data_struct' instead of "
-           "'supertype_data', so `MSBEntry.reader_to_entry_kwargs` can never find the header offset field "
-           "'supertype_data_offset'. This alone makes every Bloodborne MSB unreadable.",
-    strict=False,
-)
 def test_event_structs_use_supertype_data_key():
     """`MSBEntry.STRUCTS` keys must match the `*_offset` fields declared in the header struct."""
     header_fields = {f.name for f in bb_events.EventHeaderStruct.get_binary_fields()}

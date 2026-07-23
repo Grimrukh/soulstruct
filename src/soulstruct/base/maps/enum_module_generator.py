@@ -144,7 +144,12 @@ class EnumModuleGenerator:
 
             else:
                 # Standard: just one enum per subtype.
-                class_name = subtype_game_type.get_msb_entry_supertype_subtype(pluralized_subtype=True)[1]
+                supertype_name, subtype_class_name = subtype_game_type.get_msb_entry_supertype_subtype(
+                    pluralized_subtype=True
+                )
+                # `subtype_class_name` is `None` for supertypes that have no distinct subtype (e.g. base `Region`).
+                # Fall back to the pluralized supertype name (e.g. "Regions") so we always emit a valid identifier.
+                class_name = subtype_class_name or supertype_name
                 subtype_list = getattr(self.msb, subtype_name)  # type: MSBEntryList
                 if subtype_list:
                     class_contents = self._get_enum_class_contents(subtype_list, sort_by_id, subtype_comment_func)

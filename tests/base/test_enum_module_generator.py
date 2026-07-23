@@ -114,15 +114,6 @@ def test_output_directory_is_created(msb, tmp_path):
     assert out_path.is_file()
 
 
-@pytest.mark.xfail(
-    reason=(
-        "With the DEFAULT `separate_region_points_volumes=False`, the Region enum class name comes "
-        "from `Region.get_msb_entry_supertype_subtype()`, which returns `('Regions', None)`. The "
-        "generator therefore emits `class None(Region, ...)`, i.e. a `SyntaxError`. This is the "
-        "code path used by `soulstruct-gui`."
-    ),
-    strict=False,
-)
 def test_default_options_produce_valid_python(msb, tmp_path):
     text = generate(msb, tmp_path).read_text(encoding="utf-8")
     ast.parse(text)

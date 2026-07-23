@@ -101,7 +101,8 @@ class BaseEuler(abc.ABC):
             elif x == SINGLE_MAX:
                 elements.append("<SINGLE_MAX>")
             else:
-                elements.append(f"{x:.{self.REPR_PRECISION}}")
+                # `repr()` of a Python float always round-trips exactly.
+                elements.append(repr(float(x)))
         return f"{self.__class__.__name__}(({', '.join(elements)}))"
 
     def __hash__(self) -> int:

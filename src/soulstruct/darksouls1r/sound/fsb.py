@@ -257,9 +257,13 @@ class FSB(GameFile):
             if header.mode_flags & FSBHeaderMode.BASICHEADERS and i > 0:
                 # Clone of first sample, with new length/compressed length information.
                 sample = copy.deepcopy(samples[0])
-                length, uncompressed_length = reader.unpack("2I")
+                # BASICHEADERS still gives each sample its own lengths and data slice.
+                length, compressed_length = reader.unpack("2I")
                 sample.header.length = length
-                sample.header.compressed_length = length
+                sample.header.compressed_length = compressed_length
+                with reader.temp_offset(data_offset):
+                    sample.data = reader.read(compressed_length)
+                data_offset += compressed_length
             else:
                 # New sample.
                 sample = FSBSample.from_fsb_reader(reader, data_offset=data_offset)
@@ -268,7 +272,7 @@ class FSB(GameFile):
         if data_offset != file_size:
             raise ValueError(f"Sample data end offset ({data_offset}) does not equal expected file size ({file_size}).")
 
-        return header.to_object(cls, bank_hase=bank_hash, guid=guid, samples=samples)
+        return header.to_object(cls, bank_hash=bank_hash, guid=guid, samples=samples)
 
     def to_writer(self) -> BinaryWriter:
         raise TypeError("FSB cannot be written in Python. Use FMOD Designer to build FEV/FSB from the generated FDP.")

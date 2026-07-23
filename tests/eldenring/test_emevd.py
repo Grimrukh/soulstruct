@@ -167,13 +167,6 @@ def test_evs_docstring_preserves_linked_files_and_strings(m10_emevd, tmp_path):
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(
-    reason="Decompiled ER EVS cannot be recompiled: `Enable/DisableAssetActivation` in "
-           "`eldenring/events/emevd/compiler.py` pass `obj=` but ER EMEDF (2005, 6)/(2005, 14) renamed that "
-           "argument to `asset`, so `_base_compile` raises "
-           "\"Invalid keyword argument(s) ... ['obj']\".",
-    strict=False,
-)
 def test_evs_roundtrip(m10_emevd, tmp_path):
     """EMEVD -> EVS -> EMEVD must preserve every event and its instruction count."""
     evs_path = tmp_path / "m10_00_00_00.evs.py"

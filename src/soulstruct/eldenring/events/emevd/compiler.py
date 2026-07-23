@@ -76,10 +76,10 @@ class EVSInstructionCompiler(_BaseCompiler):
         """
         if relative_index is None:
             return self._base_compile(
-                "SetAssetActivation", obj=obj, obj_act_id=obj_act_id, state=True
+                "SetAssetActivation", asset=obj, obj_act_id=obj_act_id, state=True
             )
         return self._base_compile(
-            "SetAssetActivationWithIdx", obj=obj, obj_act_id=obj_act_id, relative_index=relative_index, state=True
+            "SetAssetActivationWithIdx", asset=obj, obj_act_id=obj_act_id, relative_index=relative_index, state=True
         )
 
     def DisableAssetActivation(self, obj: AssetTyping, obj_act_id, relative_index=None):
@@ -89,9 +89,9 @@ class EVSInstructionCompiler(_BaseCompiler):
         Used for doors that you can only open once, for example. Again, I've combined the relative index version here.
         """
         if relative_index is None:
-            return self._base_compile("SetAssetActivation", obj=obj, obj_act_id=obj_act_id, state=False)
+            return self._base_compile("SetAssetActivation", asset=obj, obj_act_id=obj_act_id, state=False)
         return self._base_compile(
-            "SetAssetActivationWithIdx", obj=obj, obj_act_id=obj_act_id, relative_index=relative_index, state=False
+            "SetAssetActivationWithIdx", asset=obj, obj_act_id=obj_act_id, relative_index=relative_index, state=False
         )
 
     def AwardItemLot(self, item_lot: int, host_only=True):
@@ -237,6 +237,14 @@ class EVSInstructionCompiler(_BaseCompiler):
                 dummy_id=dummy_id,
                 destination_type=destination_type,
             )
+        if copy_draw_parent is None and set_draw_parent is None:
+            # NOTE: ER removed the "MoveToEntity" instruction (2004, 3) present in earlier games (DS3-port
+            # artifact). There is no direct ER equivalent, so you must specify `short_move=True`,
+            # `copy_draw_parent`, or `set_draw_parent` explicitly in ER.
+            raise NotImplementedError(
+                "Elden Ring has no 'MoveToEntity' instruction (removed vs. DS3). You must use `short_move=True`, "
+                "`copy_draw_parent`, or `set_draw_parent` with `Move()` in Elden Ring."
+            )
         return self._base_compile(
             "MoveToEntity",
             character=character,
@@ -315,38 +323,10 @@ class EVSInstructionCompiler(_BaseCompiler):
         boss_version: bool = False,
         line_intersects: CoordEntityTyping = None,
     ):
-        if anchor_type is None:
-            # Anchor type will never be PLAYER here.
-            try:
-                anchor_type = get_coord_entity_type(CoordEntityType, anchor_entity)
-            except AttributeError:
-                raise ValueError(
-                    "The `anchor_type` keyword is needed if `anchor_entity` is "
-                    "not an `Asset`, `Region`, or `Character`."
-                )
-
-        kwargs = dict(
-            condition=condition,
-            anchor_type=anchor_type,
-            anchor_entity=anchor_entity,
-            facing_angle=facing_angle,
-            dummy_id=dummy_id,
-            max_distance=max_distance,
-            prompt_text=prompt_text,
-            trigger_attribute=trigger_attribute,
-            button=button,
-        )
-
-        if boss_version:
-            if line_intersects is None:
-                return self._base_compile("IfActionButtonBoss", **kwargs)
-            return self._base_compile(
-                "IfActionButtonBossLineIntersect", **kwargs, line_intersects=line_intersects
-            )
-        if line_intersects is None:
-            return self._base_compile("IfActionButtonBasic", **kwargs)
-        return self._base_compile(
-            "IfActionButtonBasicLineIntersect", **kwargs, line_intersects=line_intersects
+        raise NotImplementedError(
+            "Elden Ring has no equivalent of the DS3 'IfActionButtonBasic'/'IfActionButtonBoss' instructions used "
+            "by this wrapper. Use the raw 'IfActionButtonParamActivated' instruction (condition, action_button_id, "
+            "entity), configured via an `ActionButtonParam` row, instead."
         )
 
     def DefineLabel(self, label: Label | int):

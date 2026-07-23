@@ -99,17 +99,12 @@ def make_flver(meshes=None, bones=None, version=FLVERVersion.DarkSouls_A) -> FLV
     return flver
 
 
-def make_split_defs(flver: FLVER, inject_is_dynamic=True) -> list[SplitMeshDef]:
-    """`SplitMeshDef.get_defs_from_flver()` plus the `is_dynamic` kwarg that `split_mesh()` requires."""
-    defs = SplitMeshDef.get_defs_from_flver(flver)
-    if not inject_is_dynamic:
-        return defs
-    return [
-        SplitMeshDef(
-            d.material, d.layout, d.is_dynamic, {**d.kwargs, "is_dynamic": d.is_dynamic}, d.uv_layer_names
-        )
-        for d in defs
-    ]
+def make_split_defs(flver: FLVER) -> list[SplitMeshDef]:
+    """`SplitMeshDef.get_defs_from_flver()`. `split_mesh()` now correctly sources `is_dynamic` from the
+
+    `SplitMeshDef.is_dynamic` field itself (see finding #17), so no `kwargs` workaround is needed anymore.
+    """
+    return SplitMeshDef.get_defs_from_flver(flver)
 
 
 # ---------------------------------------------------------------------------
@@ -191,16 +186,6 @@ def test_merged_mesh_remaps_local_bone_indices_to_global():
     np.testing.assert_array_equal(mesh.vertices["bone_indices"][:, 0], [0, 1, 0, 1])
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: `MergedMesh.build_stacked_loops` allocates `all_vertices` with `np.empty` and only "
-        "writes fields that appear in `merged_field_sources`. A FLVER whose meshes have no "
-        "`bone_weights` (e.g. every DS1 map piece) leaves that column UNINITIALIZED. Verified with "
-        "vanilla DS1R m2200B0A10.flver.dcx, where the merged `bone_weights` come out as NaN. This "
-        "also silently defeats vertex merging, because the raw bytes are used as the vertex hash."
-    ),
-    strict=False,
-)
 def test_merged_mesh_bone_weights_are_initialized_when_absent_from_layout():
     flver = make_flver(meshes=[make_mesh(), make_mesh()])
     merged = MergedMesh.from_flver(flver, merge_vertices=False)
@@ -516,15 +501,6 @@ def test_split_mesh_def_uv_layer_name_validation():
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: `MergedMesh.split_mesh` constructs `FLVERMesh(..., **kwargs)` but never passes "
-        "`is_dynamic`, and `SplitMeshDef.get_defs_from_flver()` puts `is_dynamic` in the NamedTuple "
-        "field rather than in `kwargs`. The documented merge->split round-trip therefore dies with "
-        "`TypeError: FLVERMesh.__init__() missing 1 required positional argument: 'is_dynamic'`."
-    ),
-    strict=False,
-)
 def test_split_mesh_with_canonical_defs():
     flver = make_flver()
     merged = MergedMesh.from_flver(flver)
@@ -532,15 +508,6 @@ def test_split_mesh_with_canonical_defs():
     assert len(split_meshes) == 1
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: `MergedMesh.get_combined_loop_data` indexes `vertex_data[...][loop_vertex_indices]` "
-        "without masking the 2**32-1 sentinel that `get_merged_vertices` writes for FLVER vertices "
-        "not used by any face. Any merged mesh built from a FLVER with unused vertices (extremely "
-        "common in vanilla models) raises `IndexError` on split."
-    ),
-    strict=False,
-)
 def test_split_mesh_with_unused_vertices():
     mesh = make_mesh(positions=QUAD_POSITIONS + [[9.0, 9.0, 9.0]])
     flver = make_flver(meshes=[mesh])

@@ -121,13 +121,14 @@ class State:
 
     def pack_commands(self, writer: BinaryWriter, conditions_to_pack: list[Condition]) -> int:
         """Returns the total number of `Command`s found in this `State`."""
-        # Condition pass commands are first.
+        # Condition pass commands are first. `conditions_to_pack` is already flattened (from `pack_conditions()`)
+        # to include every subcondition at every depth, so a single pass over it packs every condition's own
+        # pass commands exactly once. (Previously also called `pack_subconditions_pass_commands()` on each
+        # condition here, which re-visited and double-packed every subcondition already present in the list.)
         count = 0
         # TODO: Check order that Commands appear. By State, or all Conditions first, etc...?
         for condition in conditions_to_pack:
             count += condition.pack_pass_commands(writer)
-        for condition in conditions_to_pack:
-            count += condition.pack_subconditions_pass_commands(writer)
 
         # Then State commands.
 
@@ -157,12 +158,10 @@ class State:
 
     def pack_command_args(self, writer: BinaryWriter, conditions_to_pack: list[Condition]) -> int:
         """Returns the total number of `Command` arguments found in this `State`."""
-        # Condition pass commands are first.
+        # `conditions_to_pack` is already flattened to include every subcondition (see `pack_commands()`).
         count = 0
         for condition in conditions_to_pack:
             count += condition.pack_pass_command_args(writer)
-        for condition in conditions_to_pack:
-            count += condition.pack_subconditions_pass_command_args(writer)
         # Then State commands.
         for command in self.enter_commands:
             count += command.pack_args_offsets(writer)
@@ -173,17 +172,14 @@ class State:
         return count
 
     def pack_condition_test_data(self, writer: BinaryWriter, conditions_to_pack: list[Condition]):
+        # `conditions_to_pack` is already flattened to include every subcondition (see `pack_commands()`).
         for condition in conditions_to_pack:
             condition.pack_test_data(writer)
-        for condition in conditions_to_pack:
-            condition.pack_subconditions_test_data(writer)
 
     def pack_command_arg_data(self, writer: BinaryWriter, conditions_to_pack: list[Condition]):
-        # Condition pass commands are first.
+        # `conditions_to_pack` is already flattened to include every subcondition (see `pack_commands()`).
         for condition in conditions_to_pack:
             condition.pack_pass_command_arg_data(writer)
-        for condition in conditions_to_pack:
-            condition.pack_subconditions_pass_command_arg_data(writer)
         # Then State commands.
         for command in self.enter_commands:
             command.pack_args_data(writer)

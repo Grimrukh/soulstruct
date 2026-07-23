@@ -315,14 +315,6 @@ def test_numeric_blank_chunk_does_not_truncate_script():
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(
-    reason="BUG (critical): `Instruction.pack_event_layers` writes "
-           "`event_layers_start_offset - writer.position` (always <= 0) instead of "
-           "`writer.position - event_layers_start_offset`, and `from_emevd_reader` only accepts a "
-           "local offset `> 0` (so even a correct offset of 0 is read as 'no layers'). "
-           "Event layers are silently lost on every write.",
-    strict=False,
-)
 def test_event_layers_survive_binary_roundtrip(ds1r_emevd: EMEVD, tmp_path: Path):
     events = list(ds1r_emevd.events.values())
     events[0].instructions[0].event_layers = EventLayers(0b101)
@@ -333,28 +325,6 @@ def test_event_layers_survive_binary_roundtrip(ds1r_emevd: EMEVD, tmp_path: Path
     reloaded_events = list(reloaded.events.values())
     assert reloaded_events[0].instructions[0].event_layers == EventLayers(0b101)
     assert reloaded_events[1].instructions[0].event_layers == EventLayers(0b1010)
-
-
-def test_event_layers_local_offsets_written_are_non_positive(ds1r_emevd: EMEVD):
-    """Regression evidence for the sign bug above (remove this test once it is fixed)."""
-    events = list(ds1r_emevd.events.values())
-    events[0].instructions[0].event_layers = EventLayers(0b101)
-    events[1].instructions[0].event_layers = EventLayers(0b1010)
-    data = bytes(ds1r_emevd.to_writer())
-    reader = BinaryReader(data)
-    reader.byte_order = ByteOrder.LittleEndian
-    reader.long_varints = EMEVD.LONG_VARINTS
-    header = EMEVDHeaderStruct.from_bytes(reader)
-    assert header.event_layers_count == 2
-    reader.seek(header.instructions_offset)
-    offsets = []
-    for _ in range(header.instructions_count):
-        instr = InstructionStruct.from_bytes(reader)
-        reader.assert_pad(4)
-        if instr.event_layers_local_offset != -1:
-            offsets.append(instr.event_layers_local_offset)
-    assert len(offsets) == 2
-    assert all(offset <= 0 for offset in offsets), "sign bug: offsets should be >= 0"
 
 
 # ---------------------------------------------------------------------------

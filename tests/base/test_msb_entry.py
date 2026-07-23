@@ -667,18 +667,11 @@ def test_custom_json_decoders_cover_bitsets_and_vectors():
     decoders = MSBFakePart.get_custom_json_decoders()
     assert decoders["draw_groups"] == [BitSet128.from_repr]
     assert decoders["translate"] == [Vector3]
-    # `rotate` uses the raw `EulerDeg` constructor with a legacy `Vector3` fallback.
-    assert decoders["rotate"][0] is EulerDeg
+    # `rotate` tries `EulerDeg.from_repr` first (correct reconstruction of the `repr()`-serialized string),
+    # falling back to the legacy `Vector3` constructor for old JSON written before this fix.
+    assert decoders["rotate"] == [EulerDeg.from_repr, Vector3]
 
 
-@pytest.mark.xfail(
-    reason=(
-        "`EulerDeg` is not a `BaseVector`, so `to_json_dict` leaves it for `MSB.JSONEncoder`, which "
-        "writes `repr()`. The registered decoder is the `EulerDeg` constructor (not `from_repr`), "
-        "so the string cannot be read back."
-    ),
-    strict=False,
-)
 def test_euler_deg_json_string_round_trips():
     euler = EulerDeg((1.0, 2.0, 3.0))
     decoder = MSBFakePart.get_custom_json_decoders()["rotate"][0]

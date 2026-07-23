@@ -370,11 +370,6 @@ def test_esd_name_survives_roundtrip(talk_esd_cls):
     assert esd2.esd_name == "t100613"
 
 
-@pytest.mark.xfail(
-    reason="C2: subcondition pass-commands are packed twice (`pack_conditions` returns a flattened "
-           "list *and* `pack_subconditions_*` recurses), and the reader does `len(int)`.",
-    strict=False,
-)
 def test_esd_with_subconditions_roundtrip(talk_esd_cls):
     sub = Condition(-1, b"\x41\xa1")
     cond = Condition(1, b"\x41\xa1", [], [sub])

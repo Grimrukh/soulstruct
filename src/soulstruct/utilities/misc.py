@@ -196,11 +196,10 @@ class IDList[ELEMENT_T]:
         if item_id in self._index_dict:
             raise ValueError(f"Item `{item}` is already in `IDList`.")
         self._list.insert(index, item)
-        self._index_dict[item_id] = index
-        # Increment all later or equal indices in dict.
         for id_key, list_index in self._index_dict.items():
             if list_index >= index:
                 self._index_dict[id_key] = list_index + 1
+        self._index_dict[item_id] = index
         self._size += 1
 
     def pop(self, index: int = -1) -> ELEMENT_T:

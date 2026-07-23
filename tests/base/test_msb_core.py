@@ -180,14 +180,6 @@ def test_entry_list_duplicate_foreign_entry_appends():
     assert entry_list[-1] is dup
 
 
-@pytest.mark.xfail(
-    reason=(
-        "`IDList.insert` increments the index it just recorded for the inserted item, corrupting "
-        "`_index_dict`: the new entry reports the wrong index and `remove()` can delete the wrong "
-        "element. Affects `MSBEntryList.new(index)` and `duplicate()`."
-    ),
-    strict=False,
-)
 def test_entry_list_new_at_index_keeps_indices_consistent():
     entry_list = make_widget_list("a", "b", "c")
     new = entry_list.new(0, name="z")
@@ -196,10 +188,6 @@ def test_entry_list_new_at_index_keeps_indices_consistent():
     assert entry_list.index(entry_list[1]) == 1
 
 
-@pytest.mark.xfail(
-    reason="`IDList.insert` index corruption (see above) makes `remove()` delete the wrong entry.",
-    strict=False,
-)
 def test_entry_list_remove_after_insert_removes_correct_entry():
     entry_list = make_widget_list("a", "b")
     new = entry_list.new(0, name="z")

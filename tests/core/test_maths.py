@@ -218,11 +218,6 @@ def test_vector_from_repr_errors():
         Vector3.from_repr("Vector3((a, b, c))")  # bad payload
 
 
-@pytest.mark.xfail(
-    reason="BUG: `BaseVector.__repr__` formats with 5 SIGNIFICANT digits, so `from_repr` cannot round-trip "
-           "large/precise values (silent precision loss for any repr-based serialization).",
-    strict=False,
-)
 def test_vector_repr_roundtrip_is_lossless():
     v = Vector3((1234567.0, 0.000123456789, -98765.4321))
     assert Vector3.from_repr(repr(v)).allclose(v, rtol=1e-9)

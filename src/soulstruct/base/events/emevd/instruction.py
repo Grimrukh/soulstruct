@@ -158,7 +158,7 @@ class Instruction(abc.ABC):
             raise
 
         # Process event layers.
-        if header.event_layers_local_offset > 0:
+        if header.event_layers_local_offset >= 0:
             with reader.temp_offset(event_layers_offset + header.event_layers_local_offset):
                 event_layers = EventLayers.from_emevd_reader(reader)
         else:
@@ -358,7 +358,7 @@ class Instruction(abc.ABC):
             writer.fill("event_layers_local_offset", existing_event_layers[self.event_layers], obj=self)
         else:
             # Write new `EventLayers`.
-            relative_offset = event_layers_start_offset - writer.position
+            relative_offset = writer.position - event_layers_start_offset
             writer.fill("event_layers_local_offset", relative_offset, obj=self)
             existing_event_layers[self.event_layers] = relative_offset
             self.event_layers.to_emevd_writer(writer)

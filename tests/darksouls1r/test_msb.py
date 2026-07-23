@@ -247,13 +247,6 @@ def test_enum_module_generator_writes_file(msb, tmp_path):
     assert "class Characters(Character" in text
 
 
-@pytest.mark.xfail(
-    reason="BUG: with the default `separate_region_points_volumes=False`, `EnumModuleGenerator` emits "
-           "`class None(Region, ...)` because `Region.get_msb_entry_supertype_subtype()` has no subtype "
-           "name, producing a syntactically invalid module "
-           "(base/maps/enum_module_generator.py:147).",
-    strict=False,
-)
 def test_generated_enums_module_is_importable(msb, tmp_path):
     import importlib.util
 
@@ -287,13 +280,6 @@ def test_generated_enums_module_is_importable_with_split_regions(msb, tmp_path):
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(
-    reason="BUG: `EulerDeg` fields (e.g. `MSBRegion.rotate`) are serialised to JSON as their `repr` "
-           "string, but `MSBEntry.get_custom_json_decoders()` registers the `EulerDeg` *constructor* "
-           "rather than `EulerDeg.from_repr`, so `MSB.from_json()` raises `ValueError: Vector must have "
-           "length 3 (got 27)` (base/maps/msb/msb_entry.py:396-398 and :568-573).",
-    strict=False,
-)
 def test_msb_json_roundtrip(msb, tmp_path):
     msb.write_json(tmp_path / "msb.json")
     reload = MSB.from_json(tmp_path / "msb.json")

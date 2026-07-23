@@ -16,7 +16,7 @@ def int_group_to_bit_set(flag_group, assert_size=None):
     """
     if not isinstance(flag_group, (list, tuple)) or (assert_size and len(flag_group) != assert_size):
         raise ValueError(f"Flag group must be a sequence of {assert_size} integers.")
-    return set([32 * i + j for i in range(4) for j in range(32) if (2 ** j) & flag_group[i]])
+    return set([32 * i + j for i in range(len(flag_group)) for j in range(32) if (2 ** j) & flag_group[i]])
 
 
 def bit_set_to_int_group(enabled_flags, group_size):

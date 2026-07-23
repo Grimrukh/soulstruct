@@ -243,14 +243,6 @@ def test_minimal_evs_compiles():
     assert sorted(parsed.events) == [0]
 
 
-@pytest.mark.xfail(
-    reason="BUG: the EMEVD decompiler emits `if <test>: pass` / `else: <instruction>` (a skip with an "
-           "empty forward branch), but `EVSParser._compile_if()` runs every `if`-body child through "
-           "`as_event_statement_node()`, which rejects `ast.Pass`. As a result 5 of 32 vanilla DSR EMEVD "
-           "files (m10_01, m10_02, m12_01, m14_01, m15_00) cannot be re-read after `write_evs()` "
-           "(base/events/evs/core.py:717-719 and base/events/evs/utils.py:411).",
-    strict=False,
-)
 def test_evs_pass_in_if_body_with_else_compiles():
     source = EVS_TEMPLATE.format(
         body="    if FlagDisabled(11500200):\n        pass\n    else:\n        DisableCharacter(6280)"
@@ -283,13 +275,6 @@ def test_event_directory_roundtrip(dsr_root, tmp_path):
         assert sorted(reload.files[stem].events) == sorted(source.events)
 
 
-@pytest.mark.xfail(
-    reason="BUG: 5 of 32 vanilla DSR EMEVD files decompile to EVS that the EVS parser rejects "
-           "(`if ...: pass / else: ...`). See `test_evs_pass_in_if_body_with_else_compiles`.",
-    strict=False,
-)
-@pytest.mark.slow
-@pytest.mark.game_data
 def test_event_directory_evs_roundtrip(dsr_root, tmp_path):
     event_dir = EventDirectory.from_path(dsr_root / "event")
     event_dir.write_evs(tmp_path / "evs")

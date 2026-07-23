@@ -22,7 +22,7 @@ if tp.TYPE_CHECKING:
 
 class GameParamBND(_BaseGameParamBND):
 
-    DEFAULT_ENTRY_ROOT: tp.ClassVar[str] = "N:\\FRPG\\data\\Param\\GameParam"
+    DEFAULT_ENTRY_ROOT: tp.ClassVar[str] = f"{DARK_SOULS_PTDE.interroot_prefix}\\param\\GameParam"
 
     PARAMDEF_MODULE: tp.ClassVar = paramdef
 

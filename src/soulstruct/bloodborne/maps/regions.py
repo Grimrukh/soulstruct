@@ -29,6 +29,7 @@ class RegionHeaderStruct(MSBHeaderStruct):
     shape_type_int: int
     translate: Vector3
     rotate: EulerDeg
+    _pad1: bytes = binary_pad(4)  # aligns for `long`
     null_struct_0_offset: long
     null_struct_1_offset: long
     shape_data_offset: long

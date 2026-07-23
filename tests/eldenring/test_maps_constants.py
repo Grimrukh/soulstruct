@@ -242,22 +242,11 @@ def test_map_studio_directory_uses_msb_stem_attribute():
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(
-    reason="BUG: `MapTile.__init__` defaults *_file_stem to None instead of '', so all 781 overworld "
-           "tiles report `msb_file_stem is None` and are invisible to `MapStudioDirectory`.",
-    strict=False,
-)
 def test_all_overworld_tiles_have_msb_file_stems():
     missing = [m.variable_name for m in _tiles() if not m.msb_file_stem]
     assert not missing, f"{len(missing)} overworld tiles have no `msb_file_stem` (e.g. {missing[:5]})"
 
 
-@pytest.mark.xfail(
-    reason="BUG: same `MapTile` stem defaulting - `MapStudioDirectory.ALL_MAPS` filters on "
-           "`msb_file_stem`, so only ~95 of 876 maps survive and every overworld `map_property` "
-           "would raise `KeyError(None)`.",
-    strict=False,
-)
 def test_map_studio_directory_covers_all_maps_with_properties():
     props = {k for k, v in vars(MapStudioDirectory).items() if isinstance(v, property)}
     covered = {m.name for m in MapStudioDirectory.ALL_MAPS}
@@ -272,10 +261,10 @@ def test_repr_of_map_tile():
     assert isinstance(repr(C.SOUTHWEST_LIURNIA), str)
 
 
-@pytest.mark.xfail(
-    reason="BUG: `Map.__eq__` compares only (area_id, block_id) while `__hash__` uses `msb_file_stem`, "
-           "so `set(ALL_MAPS)` collapses 876 maps down to ~165.",
-    strict=False,
-)
 def test_maps_are_set_safe():
+    """Passes now that `msb_file_stem` (used by `__hash__`) is unique per map (see finding #18); the
+
+    underlying `Map.__eq__`/`__hash__` inconsistency (eq on area/block only) is a separate, non-critical
+    issue that no longer manifests here because hashes are no longer colliding.
+    """
     assert len(set(ALL_MAPS)) == len(ALL_MAPS)

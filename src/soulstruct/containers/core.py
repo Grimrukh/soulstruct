@@ -784,8 +784,9 @@ class Binder(BaseBinaryFile):
         else:
             raise ValueError(f"Cannot pack BND version: {self.version}")
 
-        # File size is zero for BXF.
-        header_writer.fill("file_size", 0, obj=self)
+        # File size is zero for BXF (V3 only).
+        if self.version == BinderVersion.V3:
+            header_writer.fill("file_size", 0, obj=self)
 
         return header_writer, entry_writer
 

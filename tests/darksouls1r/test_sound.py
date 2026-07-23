@@ -479,28 +479,10 @@ def test_event_to_xml_lines_is_well_formed():
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(
-    reason="BUG (fev/core.py:604): `Point` declares its struct as `PointStruct`, not `STRUCT`, so the "
-           "inherited `XMLObject.from_fev_reader` raises `AttributeError` and no `Envelope` with points "
-           "can ever be read.",
-    strict=False,
-    raises=AttributeError,
-)
 def test_point_has_struct_class_var():
     assert Point.STRUCT is not None
 
 
-def test_point_struct_is_actually_named_point_struct():
-    """Documents the current (broken) naming so a future rename is caught."""
-    assert hasattr(Point, "PointStruct")
-
-
-@pytest.mark.xfail(
-    reason="BUG (fev/core.py:1236 vs 1253): `SoundDefProperty.STRUCT` field is `recalc_pitch_rand_value` "
-           "but the dataclass field is `recalc_pitch_rand`, so the default `from_fev_reader` cannot "
-           "construct the object.",
-    strict=False,
-)
 def test_sounddef_property_struct_fields_match_dataclass_fields():
     struct_names = {f.name for f in dataclasses.fields(SoundDefProperty.STRUCT) if not f.name.startswith("_")}
     dataclass_names = {f.name for f in dataclasses.fields(SoundDefProperty)}
@@ -679,12 +661,6 @@ def _dsr_sound_dir(dsr_root: Path) -> Path:
 
 
 @pytest.mark.game_data
-@pytest.mark.xfail(
-    reason="BUG (fsb.py:271): `header.to_object(cls, bank_hase=bank_hash, ...)` misspells `bank_hash`, so "
-           "*every* FSB read raises `TypeError`. FSB support is completely non-functional.",
-    strict=False,
-    raises=TypeError,
-)
 def test_fsb_from_path(dsr_root):
     sound_dir = _dsr_sound_dir(dsr_root)
     fsb_paths = sorted(sound_dir.glob("*.fsb"))
@@ -696,13 +672,6 @@ def test_fsb_from_path(dsr_root):
 
 
 @pytest.mark.game_data
-@pytest.mark.xfail(
-    reason="BUG (fev/core.py:229-233): `WavebankInfo.from_fev_reader` builds the object via "
-           "`STRUCT.reader_to_object` *before* reading the required `bank_name` field, so every FEV with "
-           "at least one wavebank raises `TypeError`. FEV support is completely non-functional.",
-    strict=False,
-    raises=TypeError,
-)
 def test_fev_from_path(dsr_root):
     sound_dir = _dsr_sound_dir(dsr_root)
     fev_paths = sorted(sound_dir.glob("*.fev"))
@@ -710,34 +679,6 @@ def test_fev_from_path(dsr_root):
         pytest.skip("No FEV files in DSR sound directory.")
     fev = FEV.from_path(fev_paths[0])
     assert fev.project_name
-
-
-@pytest.mark.game_data
-def test_all_dsr_fev_files_currently_fail_to_read(dsr_root):
-    """Regression sentinel: records that FEV reading is 100% broken today.
-
-    If this ever starts failing because FEVs parse, delete this test and un-`xfail`
-    `test_fev_from_path`.
-    """
-    import logging
-
-    sound_dir = _dsr_sound_dir(dsr_root)
-    fev_paths = sorted(sound_dir.glob("*.fev"))[:10]
-    if not fev_paths:
-        pytest.skip("No FEV files in DSR sound directory.")
-    logging.disable(logging.CRITICAL)
-    try:
-        succeeded = []
-        for path in fev_paths:
-            try:
-                FEV.from_path(path)
-            except Exception:  # noqa
-                pass
-            else:
-                succeeded.append(path.name)
-    finally:
-        logging.disable(logging.NOTSET)
-    assert not succeeded, f"FEV reading now works for {succeeded}; update the xfail markers in this module."
 
 
 @pytest.mark.game_data

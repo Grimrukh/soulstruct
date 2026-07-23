@@ -716,6 +716,9 @@ class EVSParser(abc.ABC):
         # 1. Build the body of the IF statement.
         body_emevd = []
         for child_node in node.body:
+            if isinstance(child_node, ast.Pass):
+                # No-op statement, e.g. emitted by the decompiler for an empty `if` block. Safe to skip.
+                continue
             statement_node = as_event_statement_node(child_node, "Invalid statement node.")
             try:
                 body_emevd += self._compile_event_body_node(statement_node)
@@ -733,8 +736,12 @@ class EVSParser(abc.ABC):
         # 3. Build the ELSE body of the IF statement, if it exists.
         else_emevd = []
         for child_node in node.orelse:
+            if isinstance(child_node, ast.Pass):
+                # No-op statement, e.g. emitted by the decompiler for an empty `else` block. Safe to skip.
+                continue
             statement_node = as_event_statement_node(child_node, "Invalid statement node.")
             else_emevd += self._compile_event_body_node(statement_node)
+
 
         # 4. Put these components together. Note that an extra skip line is added if an ELSE body is present.
         if_emevd += test_emevd + body_emevd

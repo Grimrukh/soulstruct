@@ -172,15 +172,6 @@ def test_merged_mesh_from_ds2_character(ds2_chr):
     assert merged.loop_normals_w is not None
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: `MergedMesh.build_stacked_loops` allocates `all_vertices` with `np.empty` and only "
-        "initializes the fields that some mesh actually provides. DS2 map pieces have neither "
-        "`bone_indices` nor `bone_weights` (they use `normal_w`), so BOTH merged columns are "
-        "uninitialized garbage instead of the documented defaults."
-    ),
-    strict=False,
-)
 def test_merged_mesh_from_ds2_map_piece(ds2_map_piece):
     """Map pieces have no `bone_indices` field; the merged mesh must fall back to the default 0."""
     merged = MergedMesh.from_flver(ds2_map_piece, merge_vertices=False)

@@ -228,9 +228,10 @@ class WavebankInfo(XMLObject):
 
     @classmethod
     def from_fev_reader(cls, reader: BinaryReader):
-        instance = cls.STRUCT.reader_to_object(reader, cls)
-        instance.bank_name = read_lp_string(reader)
-        return instance
+        header = cls.STRUCT.from_bytes(reader)
+        # `bank_name` is stored after the fixed struct.
+        bank_name = read_lp_string(reader)
+        return header.to_object(cls, bank_name=bank_name)
 
     FROM_XML = {
         "name": ("bank_name", lambda e: e.text),
@@ -601,7 +602,7 @@ class Point(XMLObject):
         LOGARITHMIC = 4
         FLAT_MIDDLE = 8
 
-    class PointStruct(BinaryStruct):
+    class STRUCT(BinaryStruct):
         xy: Vector2
         curve_shape: Point.CurveShape = binary(uint)
 
@@ -678,8 +679,8 @@ class Envelope(XMLObject):
         kwargs["is_muted"] = bool(combined_flags & 0x01)
         kwargs["flags"] = combined_flags & ~0xFFFF
         kwargs["points"] = [Point.from_fev_reader(reader) for _ in range(header.pop("_point_count"))]
-        kwargs["control_parameter_index"], kwargs["mapping_method"] = reader["II"]
-        return cls(**kwargs)
+        kwargs["control_parameter_index"], kwargs["mapping_method"] = reader.unpack("II")
+        return header.to_object(cls, **kwargs)
 
     def to_xml_lines(self, envelope_name: str, envelopes: list[Envelope], parameters: list[Parameter]) -> list[str]:
         """Get XML representation of Envelope.
@@ -1019,7 +1020,7 @@ class Event(XMLObject):
     @classmethod
     def from_fev_reader(cls, reader: BinaryReader) -> Event:
         event_type = cls.EventType(reader["I"])
-        kwargs = {"event_type": event_type, "name": read_lp_string(reader)}
+        kwargs = {"name": read_lp_string(reader)}
         header = cls.STRUCT.from_bytes(reader)
         raw_guid = header.pop("_guid")
         kwargs["guid"] = "-".join((
@@ -1233,7 +1234,7 @@ class SoundDefProperty(XMLObject):
         pitch_randmin: float
         pitch_randmax: float
         pitch_rand: float
-        recalc_pitch_rand_value: SoundDefProperty.RecalculateRand = binary(uint)
+        recalc_pitch_rand: SoundDefProperty.RecalculateRand = binary(uint)
         three_dim_position_rand: float
 
     play_mode: SoundDefProperty.PlayMode

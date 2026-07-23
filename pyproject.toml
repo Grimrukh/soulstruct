@@ -1,5 +1,9 @@
 # Soulstruct pyproject.toml configuration file for packaging and distribution.
 
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "soulstruct"
 description = "Inspect and modify files in FromSoftware games."
@@ -31,6 +35,23 @@ sound         = ["pydub"]
 
 [project.scripts]
 soulstruct = "soulstruct.__main__:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+namespaces = true
+
+[tool.setuptools.package-data]
+soulstruct = [
+    "**/*.json",
+    "**/*.txt",
+    "**/*.xml",
+    "**/*.dcx",
+    "**/*.mtdbnd",
+    "**/*.paramdefbnd",
+    "**/*.dll",
+    "**/*.exe",
+    "**/*.pdb",
+]
 
 [tool.pytest.ini_options]
 minversion = "7.0"

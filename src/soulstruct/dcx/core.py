@@ -386,11 +386,9 @@ def _compress_dcx_zstd(raw_data: bytes, compression_level=15) -> bytes:
     cparams = zstd.ZstdCompressionParameters.from_level(
         compression_level,
         window_log=16,
-    )
-    cctx = zstd.ZstdCompressor(
-        compression_params=cparams,
         write_content_size=False,
     )
+    cctx = zstd.ZstdCompressor(compression_params=cparams)
     return cctx.compress(raw_data)
 
 

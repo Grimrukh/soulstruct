@@ -246,8 +246,9 @@ class Param[PARAM_ROW_DATA_T: ParamRow](GameFile, abc.ABC):
                 self.param_type, encoding="ASCII", null_terminate=True, alignment=32, pad=b"\x20")
             )
 
+        # `flags1`/`flags2` are normalized to unsigned 0-255 by `Flags8.pack()`, so they need 'B'.
         writer.pack(
-            "4b", -1 if self.big_endian else 0, self.flags1.pack(), self.flags2.pack(), self.paramdef_format_version
+            "bBBb", -1 if self.big_endian else 0, self.flags1.pack(), self.flags2.pack(), self.paramdef_format_version
         )
 
         if self.flags1[0] and self.flags1.IntDataOffset:

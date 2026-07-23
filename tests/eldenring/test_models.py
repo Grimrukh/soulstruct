@@ -298,13 +298,6 @@ def test_matbin_binary_read_is_stable(base_matbinbnd):
         assert [(p.name, p.value) for p in a.params] == [(p.name, p.value) for p in b.params]
 
 
-@pytest.mark.xfail(
-    reason="CRITICAL BUG: `MATBIN.to_writer()` and `MATBINParam/MATBINSampler.fill_matbin_data()` append "
-           "UTF-16 strings WITHOUT null terminators (`writer.append(name.encode('utf-16-le'))`), so all "
-           "strings run together. 0/300 vanilla ER MATBINs survive a pack->unpack round-trip; most raise "
-           "`UnicodeDecodeError`. MATBIN writing is unusable.",
-    strict=False,
-)
 def test_matbin_binary_roundtrip(base_matbinbnd):
     """unpack -> pack -> unpack must be stable for MATBIN files."""
     for entry in base_matbinbnd.entries[:50]:

@@ -394,8 +394,7 @@ class MSBEntry(abc.ABC):
                 elif f.type in (BitSet1024, BitSet1024.__name__):
                     decoders[f.name] = [BitSet1024.from_repr]
                 elif f.type in (EulerDeg, EulerDeg.__name__):
-                    # LEGACY: 'Vector3' JSON strings can be read as EulerDeg.
-                    decoders[f.name] = [EulerDeg, Vector3]
+                    decoders[f.name] = [EulerDeg.from_repr]
                 else:
                     for check_type in (Vector2, Vector3, Vector4):
                         if f.type in (check_type, check_type.__name__):

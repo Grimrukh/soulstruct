@@ -63,7 +63,7 @@ class MSBEvent(BaseMSBEvent, abc.ABC):
 
     HEADER_STRUCT = EventHeaderStruct
     STRUCTS = {
-        "supertype_data_struct": EventDataStruct,
+        "supertype_data": EventDataStruct,
     }
 
     NAME_ENCODING: tp.ClassVar[str] = "utf-16-le"

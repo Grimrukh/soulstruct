@@ -50,7 +50,12 @@ class EVSInstructionCompiler(_BaseCompiler):
         available, as the unsigned integer version of the float will be repacked to the same bytes, but if you add the
         `common_func` EMEVD *afterward* and give the float argument an unsigned integer, you will instead end up calling it
         with a (probably high magnitude) float!
+
+        NOTE: Unlike Elden Ring, DS3's `RunCommonEvent` instruction has no `slot` argument. `slot` is accepted here
+        only for cross-game API compatibility and must be left at its default (0).
         """
+        if slot != 0:
+            raise ValueError("DS3 `RunCommonEvent` instruction has no `slot` argument; it must be left as 0.")
         if not arg_types:
             # Assume all signed integers, unless the only argument is zero.
             arg_types = "I" if args == (0,) else "i" * len(args)
@@ -61,11 +66,11 @@ class EVSInstructionCompiler(_BaseCompiler):
                 f"   Args: {args}\n"
                 f"   Arg types: {arg_types}"
             )
-        full_arg_types = "iI" + str(arg_types[0])
+        full_arg_types = "I" + str(arg_types[0])
         if len(arg_types) > 1:
             full_arg_types += f"|{arg_types[1:]}"
         return self._base_compile(
-            "RunCommonEvent", slot=slot, event_id=event_id, args=args, arg_types=full_arg_types
+            "RunCommonEvent", event_id=event_id, args=args, arg_types=full_arg_types
         )
 
     def EnableObjectActivation(self, obj: ObjectTyping, obj_act_id: int, relative_index=None):

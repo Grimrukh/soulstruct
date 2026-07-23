@@ -163,15 +163,6 @@ def test_gameparam_json_directory_round_trip(gameparam_path, tmp_path, caplog):
 
 
 @pytest.mark.slow
-@pytest.mark.xfail(
-    reason=(
-        "PTDE `GameParamBND.DEFAULT_ENTRY_ROOT` is 'N:\\FRPG\\data\\Param\\GameParam' but real PTDE "
-        "entries live at 'N:\\FRPG\\data\\INTERROOT_win32\\param\\GameParam'. `entry_autogen()` matches "
-        "existing entries by PATH, so packing appends a second copy of every Param: 38 entries "
-        "become 76 and the written file doubles in size."
-    ),
-    strict=False,
-)
 def test_gameparam_pack_does_not_duplicate_entries(gameparam_path, caplog):
     with caplog.at_level(logging.CRITICAL):
         gameparam = GameParamBND.from_path(gameparam_path)
@@ -183,13 +174,6 @@ def test_gameparam_pack_does_not_duplicate_entries(gameparam_path, caplog):
     assert len(packed) < gameparam_path.stat().st_size * 1.1
 
 
-@pytest.mark.xfail(
-    reason=(
-        "PTDE `GameParamBND.DEFAULT_ENTRY_ROOT` does not match the vanilla entry root; see "
-        "`test_gameparam_pack_does_not_duplicate_entries`."
-    ),
-    strict=False,
-)
 def test_gameparam_default_entry_root_matches_vanilla(gameparam):
     """The Binder entry root must match vanilla, or `entry_autogen()` creates duplicate entries."""
     vanilla_roots = {entry.path.rsplit("\\", 1)[0] for entry in gameparam.entries}

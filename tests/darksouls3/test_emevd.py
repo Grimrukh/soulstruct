@@ -159,36 +159,17 @@ def test_base_compile_rejects_unknown_keyword(compiler):
         compiler.compile("EnableFlag", flag=11000000, nonsense=1)
 
 
-@pytest.mark.xfail(
-    reason="BUG: DS3 EMEDF `RunCommonEvent` (2000, 6) has no `slot` argument (correctly -- the DS3 "
-           "instruction takes only `event_id` + args), but `EVSInstructionCompiler.RunCommonEvent` "
-           "was copy-pasted from Elden Ring and unconditionally forwards `slot=slot` to "
-           "`_base_compile`, which raises `ValueError`. This breaks EVS compilation of ANY DS3 "
-           "script that calls a `common_func` event (darksouls3/events/emevd/compiler.py:67-69).",
-    strict=False,
-)
 def test_run_common_event_compiles(compiler):
     line = compiler.compile("RunCommonEvent", 20005110, args=(1000, 2000), arg_types="ii")[0]
     assert "2000[06]" in line
 
 
-@pytest.mark.xfail(
-    reason="Same root cause as `test_run_common_event_compiles`: the `slot` kwarg is rejected by "
-           "`_base_compile` because DS3 EMEDF (2000, 6) has no `slot` arg.",
-    strict=False,
-)
 def test_run_common_event_no_args_compiles(compiler):
     """This is the exact call the EVS parser makes for a bare `CommonFunc_XXX()` call."""
     line = compiler.compile("RunCommonEvent", 20005110, args=(0,), arg_types=None)[0]
     assert "2000[06]" in line
 
 
-@pytest.mark.xfail(
-    reason="Even if `slot` were accepted, `RunCommonEvent` builds `full_arg_types = 'iI' + ...`, "
-           "which is the (slot, event_id) prefix of `RunEvent`. DS3's instruction packs only "
-           "`event_id`, so the prefix should be 'I' (darksouls3/events/emevd/compiler.py:64).",
-    strict=False,
-)
 def test_run_common_event_arg_types_prefix(compiler):
     line = compiler.compile("RunCommonEvent", 20005110, args=(1000,), arg_types="i")[0]
     assert "(Ii)" in line or "Ii" in line.split("(")[1].split(")")[0]

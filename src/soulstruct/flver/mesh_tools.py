@@ -411,6 +411,12 @@ class MergedMesh:
 
             mesh_vertices = all_vertices[i:j]
 
+            # `bone_weights`/`bone_indices` are always present in `dtype`, but will never be visited by the
+            # `merged_field_sources` loop below if NO mesh in the entire FLVER supplies them (e.g. static map
+            # pieces). Initialize them here so they are never left as uninitialized `np.empty` memory.
+            mesh_vertices["bone_weights"] = MergedMeshLoops.DEFAULTS["bone_weights"]
+            mesh_vertices["bone_indices"] = MergedMeshLoops.DEFAULTS["bone_indices"]
+
             def _mesh_source_or_default(_name: str, _default: tp.Any):
                 """Get mesh source array/field or return default (for uninitialized arrays)."""
                 try:
@@ -1002,7 +1008,8 @@ class MergedMesh:
                 material=material,
                 vertex_arrays=[vertex_array],
                 bone_indices=mesh_bone_indices,
-                **kwargs,  # e.g. 'default_bone_index', 'uses_bounding_boxes', 'is_dynamic'
+                is_dynamic=mesh_is_dynamic[material_index],
+                **kwargs,  # e.g. 'default_bone_index', 'uses_bounding_boxes'
             )
             if not is_flver0:
                 # No point refreshing bounding boxes for FLVER0 versions.
@@ -1200,14 +1207,25 @@ class MergedMesh:
 
         names = set(combined_dtype.names)  # order is unimportant for initialization
 
+        # `loop_vertex_indices` marks FLVER vertices never used by any face with the sentinel `2 ** 32 - 1`
+        # (see `loops_to_flver_vertices_exact`/`_approx`). Such loops are never referenced by `self.faces`, so their
+        # actual vertex/bone data is irrelevant here, but indexing `vertex_data` with the raw sentinel value would
+        # raise `IndexError`. Remap sentinel entries to a safe (unused) index of 0 before indexing.
+        unused_loop_mask = self.loop_vertex_indices == 2 ** 32 - 1
+        if np.any(unused_loop_mask):
+            safe_loop_vertex_indices = self.loop_vertex_indices.copy()
+            safe_loop_vertex_indices[unused_loop_mask] = 0
+        else:
+            safe_loop_vertex_indices = self.loop_vertex_indices
+
         if "position" in names:
-            positions = self.vertex_data["position"][self.loop_vertex_indices]  # (loop_count, 3)
+            positions = self.vertex_data["position"][safe_loop_vertex_indices]  # (loop_count, 3)
             combined_array["position"] = positions
         if "bone_weights" in names:
-            bone_weights = self.vertex_data["bone_weights"][self.loop_vertex_indices]  # (loop_count, 4)
+            bone_weights = self.vertex_data["bone_weights"][safe_loop_vertex_indices]  # (loop_count, 4)
             combined_array["bone_weights"] = bone_weights
         if "bone_indices" in names:
-            bone_indices = self.vertex_data["bone_indices"][self.loop_vertex_indices]  # (loop_count, 4)
+            bone_indices = self.vertex_data["bone_indices"][safe_loop_vertex_indices]  # (loop_count, 4)
             combined_array["bone_indices"] = bone_indices
         if "normal" in names:
             if self.loop_data.normals is None:

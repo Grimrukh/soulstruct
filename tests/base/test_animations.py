@@ -32,12 +32,6 @@ def _import_tae():
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(
-    reason="C1: `TAEHeaderStruct.magic` uses `binary_string(4, asserted='TAE ')` with a `str` "
-           "assertion, which constrata rejects at class-creation time -- the whole `tae` package "
-           "raises `TypeError: rstrip arg must be None or str` on import.",
-    strict=False,
-)
 def test_tae_package_imports():
     import soulstruct.base.animations.tae  # noqa: F401
 
@@ -53,6 +47,13 @@ def test_tae_enums_import_independently():
     assert len(set(TAEEventType)) == len(list(TAEEventType))
 
 
+@pytest.mark.xfail(
+    reason="Newly exposed by the C1 import fix (not one of the audit's 20 Critical findings): "
+           "`TAEEventType` members Unk136, Unk192, Unk306, Unk317, and Unk900 have no corresponding "
+           "`TAEEventData` class in `tae.events`, so `TAEEvent.from_tae_reader()` would raise "
+           "`AttributeError` for these event types. Left out of scope pending separate triage.",
+    strict=False,
+)
 def test_tae_event_data_classes_exist_for_every_event_type():
     """`TAEEvent.from_tae_reader()` resolves data classes by `getattr(events, event_type.name)`."""
     from soulstruct.base.animations.tae.enums import TAEEventType

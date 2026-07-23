@@ -35,17 +35,11 @@ def ds1r_resource(tests_dir: Path, name: str) -> Path:
 
 
 def split_defs_with_is_dynamic(flver: FLVER) -> list[SplitMeshDef]:
-    """`SplitMeshDef.get_defs_from_flver()` plus the `is_dynamic` kwarg `split_mesh()` requires.
+    """`SplitMeshDef.get_defs_from_flver()`. `split_mesh()` now correctly sources `is_dynamic` from the
 
-    See `tests/flver/test_mesh_tools.py::test_split_mesh_with_canonical_defs`: the canonical helper
-    does not populate `kwargs["is_dynamic"]`, but `FLVERMesh` requires it.
+    `SplitMeshDef.is_dynamic` field itself (see finding #17), so no `kwargs` workaround is needed anymore.
     """
-    return [
-        SplitMeshDef(
-            d.material, d.layout, d.is_dynamic, {**d.kwargs, "is_dynamic": d.is_dynamic}, d.uv_layer_names
-        )
-        for d in SplitMeshDef.get_defs_from_flver(flver)
-    ]
+    return SplitMeshDef.get_defs_from_flver(flver)
 
 
 def assert_layouts_consistent_per_material(flver: FLVER, mesh_material_indices: list[int]):
@@ -99,15 +93,6 @@ def test_flver_rewrite_preserves_vertex_data(tests_dir, tmp_path):
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: vanilla FLVERs contain vertices that no face uses; `MergedMesh.get_merged_vertices` "
-        "marks those loops with 2**32-1 and `get_combined_loop_data` then indexes `vertex_data` with "
-        "that sentinel, raising `IndexError`. The documented merge->split round-trip cannot run on "
-        "real game models with vertex merging enabled."
-    ),
-    strict=False,
-)
 def test_merge_and_split_character_with_merged_vertices(tests_dir):
     """Port of `_test_mesh_splitter.test_merge_and_split` (default merged-vertex behaviour)."""
     flver = FLVER.from_path(ds1r_resource(tests_dir, "c5370.flver"))

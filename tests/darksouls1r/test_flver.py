@@ -204,16 +204,6 @@ def test_merged_mesh_from_character(chr_flver):
     assert np.all(np.isfinite(merged.positions))
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: `MergedMesh.build_stacked_loops` allocates the merged vertex array with `np.empty` and "
-        "never initializes fields absent from every mesh layout. DS1 map pieces have no "
-        "`bone_weights`, so the merged `bone_weights` column is uninitialized memory (observed as "
-        "NaN here). It is also part of the vertex hash used for merging, so vertex merging becomes "
-        "non-deterministic."
-    ),
-    strict=False,
-)
 def test_merged_map_piece_bone_weights_are_zeroed(map_piece_flver):
     merged = MergedMesh.from_flver(map_piece_flver, merge_vertices=False)
     assert np.all(np.isfinite(merged.bone_weights))

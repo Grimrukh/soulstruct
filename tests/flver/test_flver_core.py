@@ -1174,15 +1174,6 @@ def test_matbin_sampler_default_unk_x14():
     assert bytes(matbin.to_writer().array)
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: `MATBIN.to_writer()` and `MATBIN{Param,Sampler}.fill_matbin_data()` write UTF-16 "
-        "strings with `writer.append(s.encode('utf-16-le'))` and never emit the null terminator, "
-        "so the resulting file cannot be read back ('Ran out of bytes to read before null "
-        "termination was found')."
-    ),
-    strict=False,
-)
 def test_matbin_binary_roundtrip():
     from soulstruct.base.models.matbin import MATBIN, MATBINParam, MATBINParamType, MATBINSampler
     from soulstruct.utilities.maths import Vector2

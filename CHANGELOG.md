@@ -43,6 +43,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fixed dupe-vertex searching bug in `MergedMesh`.
 - Fixed hashing of `EulerDeg/EulerRad` types.
 - Fixed SIBCAM rotation fields from `Vector3` to `EulerRad`.
+- Fixed `IDList.insert` index corruption.
+- Fixed `int_group_to_bit_set` for 256-bit groups.
+- Fixed EMEVD event layers offset write.
+- Fixed PTDE `GameParamBND` entry autogen.
+- Fixed `MergedMesh` arrays for unused bone weights/indices.
+- Fixed Bloodborne MSB structs.
+- Fixed TAE header struct.
+- Fixed DS1R FEV/FSB file parsing.
+- Fixed DCX_ZSTD compression.
+- Fixed Elden Ring `Param` write.
+- Fixed ESD subcondition writing.
+- Fixed BXF4 writing.
+- Fixed MSB JSON `EulerDeg` read/write.
+- Fixed Elden Ring EMEDF bugs from DS3 port.
+- Fixed DS3 `RunCommonEvent`.
+- Fixed `MATBIN` write.
+- Fixed `is_dynamic` arg to `MergedMesh.split_mesh()`.
+- Fixed Elden Ring `MapStudioDirectory` tiles.
+- Fixed EVS `pass` statement handling.
+- Fixed `EnumModuleGenerator` for Regions with no subtyping.
+- Fixed missing data files in built Python wheel.
 
 ### Removed
 - Removed placeholder DeSR (Demon's Souls Remastered) support stub.

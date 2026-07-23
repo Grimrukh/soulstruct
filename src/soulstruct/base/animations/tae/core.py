@@ -168,7 +168,7 @@ class TAEAnimation:
 
 
 class TAEHeaderStruct(BinaryStruct):
-    magic: str = binary_string(4, asserted="TAE ", init=False)
+    magic: bytes = binary_string(4, asserted=[b"TAE "], init=False)
     _fixed_0: list[sbyte] = binary_array(4, asserted=[0x0, 0x0, 0x0, 0xff], init=False)
     version: int = binary(asserted=0x1000C, init=False)
     file_size: int
