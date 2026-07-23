@@ -116,7 +116,8 @@ class GameFileDirectory[BASE_BINARY_FILE_T: BaseBinaryFile](abc.ABC, metaclass=P
     def keys(self):
         return self.files.keys()
 
-    __iter__ = keys
+    def __iter__(self):
+        return iter(self.files)
 
     def values(self):
         return self.files.values()
@@ -183,7 +184,7 @@ class GameFileMapDirectory[BASE_BINARY_FILE_T](GameFileDirectory[BASE_BINARY_FIL
         return cls(directory=directory_path, files=files)
 
     def write(
-        self, directory_path: Path | str | None = None, check_file_hashes=False, no_partial_write=True
+        self, directory_path: Path | str | None = None, force=False, no_partial_write=True
     ) -> list[Path]:
         """Same as `GameFileDirectory`, but reports unknown files and if any maps are missing."""
         if directory_path is None:
@@ -206,7 +207,7 @@ class GameFileMapDirectory[BASE_BINARY_FILE_T](GameFileDirectory[BASE_BINARY_FIL
                 f"{', '.join(all_map_stems)}"
             )
 
-        written_paths = self._write(file_paths, check_file_hashes, no_partial_write)
+        written_paths = self._write(file_paths, force, no_partial_write)
         if written_paths:
             _LOGGER.info(
                 f"`{self.__class__.__name__}` written to `{directory_path}` successfully "

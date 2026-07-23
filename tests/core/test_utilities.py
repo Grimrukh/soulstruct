@@ -51,7 +51,6 @@ from soulstruct.utilities.misc import (
     traverse_path_tree,
 )
 from soulstruct.utilities.text import (
-    PY_NAME_RE,
     atoi,
     camel_case_to_spaces,
     indent_lines,
@@ -208,23 +207,6 @@ def test_atoi_and_natural_keys():
     assert sorted(names) == ["m10_01", "m10_02", "m10_10"]
     assert sorted(["x9", "x10"], key=natural_keys) == ["x9", "x10"]
     assert sorted(["x9", "x10"]) == ["x10", "x9"]
-
-
-def test_py_name_re_accepts_valid_names():
-    for name in ("foo", "_foo", "Foo1", "a_b_c"):
-        assert PY_NAME_RE.match(name), name
-    for name in ("1foo", "foo bar", "foo-bar", ""):
-        assert not PY_NAME_RE.match(name), name
-
-
-@pytest.mark.xfail(
-    reason="BUG: `PY_NAME_RE` uses the character range `[A-z]`, which also matches `[ \\ ] ^ _ ` `. "
-           "Should be `[A-Za-z_]`.",
-    strict=False,
-)
-@pytest.mark.parametrize("bad_name", ["^foo", "`foo", "[foo", "\\foo"])
-def test_py_name_re_rejects_non_letters(bad_name: str):
-    assert not PY_NAME_RE.match(bad_name)
 
 
 # ===========================================================================
@@ -482,12 +464,6 @@ def test_restore_bak_suffixless_file(tmp_path: Path):
     assert f.read_bytes() == b"original"
 
 
-@pytest.mark.xfail(
-    reason="BUG: `create_bak` APPENDS the suffix (`foo.msb` -> `foo.msb.bak`) but `restore_bak` REPLACES it "
-           "(`Path('foo.msb').with_suffix('.bak')` -> `foo.bak`), so restoring by the original filename fails "
-           "for any file that has an extension.",
-    strict=False,
-)
 def test_restore_bak_by_original_name(tmp_path: Path):
     f = tmp_path / "foo.msb"
     f.write_bytes(b"original")

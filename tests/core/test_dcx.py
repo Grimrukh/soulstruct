@@ -133,13 +133,9 @@ def test_zstd_roundtrip():
     assert detected_type == DCXType.DCX_ZSTD
 
 
-@pytest.mark.xfail(
-    reason="BUG: `DCXType.detect()` compares the second magic of a DCP file to b'DCP\\0' instead of b'DFLT', "
-           "so DCP_DFLT data written by `compress()` is detected as `Unknown`.",
-    strict=False,
-)
 def test_dcp_dflt_roundtrip():
     packed = compress(SMALL, DCXType.DCP_DFLT)
+    print(packed[:16].hex(sep=' '))
     unpacked, detected_type = decompress(packed)
     assert unpacked == SMALL
     assert detected_type == DCXType.DCP_DFLT

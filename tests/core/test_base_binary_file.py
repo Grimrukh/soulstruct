@@ -260,13 +260,6 @@ def test_from_bak_creates_backup_if_missing(tmp_path: Path):
     assert loaded.path == original
 
 
-@pytest.mark.xfail(
-    reason="BUG: `BaseBinaryFile.from_bak()` calls `from_path(bak_path)`, which ALREADY strips the '.bak' "
-           "suffix, then strips a suffix again with `path.with_suffix('')`. The resulting `path` loses the "
-           "real extension too ('a.dummy.bak' -> 'a'), so a later argument-free `write()` writes to the "
-           "wrong file.",
-    strict=False,
-)
 def test_from_bak_path_keeps_real_extension(tmp_path: Path):
     original = tmp_path / "a.dummy"
     original.write_bytes(bytes(_dummy()))
@@ -547,12 +540,6 @@ def test_directory_write_without_directory_raises():
         DummyDirectory().write()
 
 
-@pytest.mark.xfail(
-    reason="BUG: `GameFileDirectory.__iter__ = keys` makes `__iter__` return a `dict_keys` VIEW, not an "
-           "iterator, so `iter(game_dir)` / `for x in game_dir` raises "
-           "'TypeError: iter() returned non-iterator'.",
-    strict=False,
-)
 def test_directory_is_iterable(tmp_path: Path):
     game_dir = DummyDirectory.from_path(_make_directory(tmp_path))
     assert sorted(iter(game_dir)) == ["one", "two"]

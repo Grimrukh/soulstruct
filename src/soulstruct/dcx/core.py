@@ -123,7 +123,7 @@ class DCXType(IntEnum):
             if magic == b"DCP\0":  # rare, only for older games and DeS test maps
                 # Possible file pattern for DFLT or EDGE compression.
                 dcx_fmt = reader.peek(4, 4)
-                if dcx_fmt == b"DCP\0":
+                if dcx_fmt == b"DFLT":
                     return cls.DCP_DFLT
                 elif dcx_fmt == b"EDGE":
                     return cls.DCP_EDGE
@@ -295,9 +295,9 @@ def decompress(dcx_source: bytes | bytearray | BinaryReader | io.BufferedIOBase 
         header = DCXHeaderStruct.from_bytes(reader, byte_order=ByteOrder.BigEndian)
         if dcx_type == DCXType.DCX_EDGE:
             return _decompress_dcx_edge(reader, header)
+        reader.unpack_bytes(length=4, asserted=b"DCA")
+        reader.unpack_value("i", asserted=8)  # compressed header size
 
-    reader.unpack_bytes(length=4, asserted=b"DCA")
-    reader.unpack_value("i", asserted=8)  # compressed header size
     compressed = reader.read(header.compressed_size)
 
     if dcx_type == DCXType.DCX_ZSTD:
@@ -409,10 +409,11 @@ def compress(raw_data: bytes, dcx_type: DCXType) -> bytes:
         compressed = zlib.compress(raw_data, level=7)
 
     if dcx_type == DCXType.DCP_DFLT:
-        header = bytes(DCPHeaderStruct(
+        # Always big-endian.
+        header = DCPHeaderStruct(
             decompressed_size=len(raw_data),
             compressed_size=len(compressed),
-        ))
+        ).to_bytes(ByteOrder.BigEndian)
     else:
         version_info = dcx_type.get_version_info()
         header = bytes(DCXHeaderStruct(

@@ -227,12 +227,6 @@ def test_bxf3_split_roundtrip():
     ]
 
 
-@pytest.mark.xfail(
-    reason="BUG: `Binder._to_split_writers()` unconditionally calls "
-           "`header_writer.fill('file_size', 0, obj=self)`, but the BND4/BHF4 header has no `file_size` "
-           "field (it is V3-only). Writing ANY split BXF4 binder raises ValueError.",
-    strict=False,
-)
 def test_bxf4_split_roundtrip():
     binder = _populated(Binder.empty_bxf4())
     packed_bhd, packed_bdt = binder.get_split_bytes()
@@ -364,12 +358,6 @@ def test_find_entry_not_found_raises_entry_not_found_error(tmp_path: Path):
         binder["nope.txt"]
 
 
-@pytest.mark.xfail(
-    reason="BUG: `Binder._find_entry_by_attr()` formats its `EntryNotFoundError` message with "
-           "`self.path.name`, which raises `AttributeError` instead for any in-memory Binder "
-           "(`path is None`).",
-    strict=False,
-)
 def test_entry_not_found_without_path():
     binder = _populated(Binder.empty_bnd4())
     assert binder.path is None
@@ -450,12 +438,6 @@ def test_add_or_replace_entry_with_name():
     assert binder["alpha.txt"].data == b"NEW"
 
 
-@pytest.mark.xfail(
-    reason="BUG: `Binder.add_or_replace_entry_with_id()` calls `get_entries_by_name()` (a name->entry dict) "
-           "and then tests `entry.entry_id in entries_by_id` / indexes it with `entry.name`. The ID is never "
-           "found, so the old entry is never removed and duplicate IDs accumulate.",
-    strict=False,
-)
 def test_add_or_replace_entry_with_id():
     binder = Binder.empty_bnd4()
     binder.add_entry(_entry(5, "a.txt", b"OLD"))
@@ -510,12 +492,6 @@ def test_set_default_entry_creates_new(tmp_path: Path):
     assert binder[7].data == b"filled in"
 
 
-@pytest.mark.xfail(
-    reason="BUG: `Binder.get_default_new_entry_id()` returns `self.highest_entry_id + 1`, but "
-           "`highest_entry_id` is `None` for an empty Binder -> TypeError. Creating the first entry of a "
-           "new Binder via `set_default_entry(name)` therefore always fails.",
-    strict=False,
-)
 def test_set_default_entry_on_empty_binder():
     class RootedBinder(Binder):
         DEFAULT_ENTRY_ROOT = "N:\\ROOT"
@@ -535,11 +511,6 @@ def test_binder_repr_with_entries():
     assert "BinderEntry(0" in repr(binder)
 
 
-@pytest.mark.xfail(
-    reason="BUG: `Binder.__repr__()` does a bare `return` (i.e. returns `None`) when there are no entries, "
-           "which makes `repr(empty_binder)` raise `TypeError: __repr__ returned non-string`.",
-    strict=False,
-)
 def test_binder_repr_when_empty():
     assert isinstance(repr(Binder.empty_bnd4()), str)
 
@@ -576,12 +547,6 @@ def test_process_manifest_header_bad_binder_type():
         Binder.process_manifest_header(manifest)
 
 
-@pytest.mark.xfail(
-    reason="BUG: `Binder.get_manifest_header()` uses `self.dcx_type.name`, but `dcx_type` defaults to `None` "
-           "(meaning 'use the game default'). Unpacking a freshly-constructed Binder raises AttributeError. "
-           "Should use `self._get_dcx_type()`.",
-    strict=False,
-)
 def test_manifest_header_with_default_dcx_type():
     binder = Binder.empty_bnd4()
     binder.add_entry(_entry(0, "a.txt", b"x"))
@@ -683,12 +648,6 @@ def test_ptde_uncompressed_bnd3(tests_dir: Path, tmp_path: Path):
     assert bytes(reloaded) == bytes(binder)
 
 
-@pytest.mark.xfail(
-    reason="BUG: BND3's 0x14 header field is `fileHeadersEnd` (end of entry headers + path strings), not the "
-           "total file size. `Binder.to_writer()` fills it with the final writer position, so no vanilla BND3 "
-           "ever round-trips byte-perfectly (vanilla PTDE GameParam.parambnd: 3444 vs Soulstruct's 3181668).",
-    strict=False,
-)
 def test_ptde_bnd3_byte_perfect(tests_dir: Path):
     path = tests_dir / "darksouls1ptde" / "resources" / "GameParam.parambnd"
     if not path.is_file():
@@ -867,12 +826,6 @@ def test_tpf_unpacked_directory_roundtrip(tests_dir: Path, tmp_path: Path):
     assert [t.data for t in reloaded.textures] == [t.data for t in tpf.textures]
 
 
-@pytest.mark.xfail(
-    reason="BUG: `TPF.write_unpacked_directory()` writes the console metadata under the key 'console_info' "
-           "with a 'mipmaps' sub-key, but `TPF.from_unpacked_path()` reads it from key 'header' and passes it "
-           "to `ConsoleInfo(**...)`, which expects 'texture_count'. Console TPF metadata is silently lost.",
-    strict=False,
-)
 def test_tpf_unpacked_directory_preserves_console_info(tmp_path: Path):
     texture = TPFTexture(
         stem="console_tex",
@@ -891,9 +844,5 @@ def test_tpf_unpacked_directory_preserves_console_info(tmp_path: Path):
     assert reloaded.textures[0].console_info.width == 64
 
 
-@pytest.mark.xfail(
-    reason="BUG: `TPF.get_json_header()` uses `self.dcx_type.name`, but `dcx_type` defaults to `None`.",
-    strict=False,
-)
 def test_tpf_json_header_with_default_dcx_type():
     TPF().get_json_header()

@@ -77,19 +77,6 @@ class Matrix3:
             return Vector3(np.matmul(self._data, other))
         return Matrix3(np.matmul(self._data, other))
 
-    def __rmatmul__(self, other: Matrix3 | Vector3 | BaseEuler | np.ndarray):
-        """Multiply a matrix, vector, or Euler angles by this matrix, returning the appropriate type."""
-        if isinstance(other, Matrix3):
-            return Matrix3(np.matmul(other._data, self._data))
-        elif isinstance(other, EulerDeg):
-            return (Matrix3.from_euler_angles_deg(other) @ self).to_euler_angles_deg()
-        elif isinstance(other, EulerRad):
-            return (Matrix3.from_euler_angles_rad(other) @ self).to_euler_angles_rad()
-        elif isinstance(other, Vector3):
-            return Vector3(np.inner(other._data, self._data))
-        # Assume array-like.
-        return Matrix3(np.matmul(other, self._data))
-
     def __neg__(self):
         return self.__class__(-self._data)
 
@@ -133,7 +120,7 @@ class Matrix3:
     @classmethod
     def from_euler_angles_deg(cls, euler_xyz: EULER_DEG_LIKE, order="xzy") -> Matrix3:
         """Order defaults to XZY as per FromSoft usage (i.e. will be applied to point `p` as `Ry @ Rz @ Rx @ p`)."""
-        return cls.from_euler_angles_rad(euler_xyz.to_rad(), order=order)
+        return cls.from_euler_angles_rad(EulerDeg(euler_xyz).to_rad(), order=order)
 
     def to_euler_angles_rad(self, order="xzy") -> EulerRad:
         """Only supports order XZY for now (standard FromSoft usage)."""
@@ -258,16 +245,6 @@ class Matrix4:
             return Vector4(np.inner(self._data, other._data))
         # Assume array-like.
         return Matrix4(np.matmul(self._data, other))
-
-    def __rmatmul__(self, other: Matrix4 | Vector4 | Vector3 | np.ndarray):
-        if isinstance(other, Matrix4):
-            return Matrix4(np.matmul(other._data, self._data))
-        elif isinstance(other, Vector3):
-            return Vector3(np.inner((other.x, other.y, other.z, 1.0), self._data)[:3])
-        elif isinstance(other, Vector4):
-            return Vector4(np.inner(other._data, self._data))
-        # Assume array-like.
-        return Matrix4(np.matmul(other, self._data))
 
     def __neg__(self):
         return self.__class__(-self._data)

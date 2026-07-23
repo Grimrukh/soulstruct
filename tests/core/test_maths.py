@@ -456,26 +456,6 @@ def test_matrix3_matmul_euler_returns_euler():
     assert combined_rad.allclose(EulerRad((0.0, 3 * math.pi / 4, 0.0)), atol=1e-9)
 
 
-@pytest.mark.xfail(
-    reason="BUG: `Matrix3.__rmatmul__` uses `np.inner(v, M)`, which computes `M @ v`, not the row-vector "
-           "product `v @ M` (== `M.T @ v`). `Vector3 @ Matrix3` therefore returns the wrong vector.",
-    strict=False,
-)
-def test_vector3_rmatmul_matrix3_is_row_vector_product():
-    m = Matrix3.from_euler_angles_deg(EulerDeg((10.0, 20.0, 30.0)))
-    v = Vector3((1.0, 2.0, 3.0))
-    assert_allclose((v @ m).data, v.data @ m.data)
-
-
-def test_matrix3_rmatmul_matrix3():
-    a = Matrix3.from_euler_angles_deg(EulerDeg((10.0, 0.0, 0.0)))
-    b = Matrix3.from_flat_row_order([float(i) for i in range(9)])
-    assert_allclose((b @ a).data, b.data @ a.data)
-    # A nested list on the left also reaches `Matrix3.__rmatmul__`.
-    nested = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    assert_allclose((nested @ a).data, a.data)
-
-
 def test_ndarray_matmul_matrix3_is_unsupported():
     """DOCUMENTS a trap: `Matrix3`/`Matrix4` do not set `__array_priority__`/`__array_ufunc__`, so NumPy
     handles `ndarray @ Matrix3` itself (and fails) instead of deferring to `Matrix3.__rmatmul__`."""
@@ -689,17 +669,6 @@ def test_matrix4_matmul_vector3_is_homogeneous_point():
     assert isinstance(m @ Vector3((0.0, 0.0, 0.0)), Vector3)
 
 
-@pytest.mark.xfail(
-    reason="BUG: `Matrix4.__rmatmul__` uses `np.inner(v, M)`, which is `M @ v`, not the row-vector product "
-           "`v @ M`. `Vector4 @ Matrix4` and `Vector3 @ Matrix4` silently return the wrong result.",
-    strict=False,
-)
-def test_vector4_rmatmul_matrix4_is_row_vector_product():
-    m = Matrix4.from_rotation_matrix3(Matrix3.from_euler_angles_deg(EulerDeg((10.0, 20.0, 30.0))))
-    v = Vector4((1.0, 2.0, 3.0, 1.0))
-    assert_allclose((v @ m).data, v.data @ m.data)
-
-
 def test_matrix4_repr_contains_rows():
     r = repr(Matrix4.identity())
     assert r.startswith("Matrix4([")
@@ -733,12 +702,6 @@ def test_get_rotmat3_rejects_bad_type():
         get_rotmat3("nope")
 
 
-@pytest.mark.xfail(
-    reason="BUG: `get_rotmat3` passes non-`EulerDeg` input (float / list / tuple / Vector3) to "
-           "`Matrix3.from_euler_angles_deg`, which unconditionally calls `.to_rad()` -> AttributeError. "
-           "Only `None`, `EulerDeg`, `EulerRad` and `Matrix3` inputs work at all.",
-    strict=False,
-)
 @pytest.mark.parametrize("rotation", [45.0, 45, [0.0, 45.0, 0.0], (0.0, 45.0, 0.0), Vector3((0.0, 45.0, 0.0))])
 def test_get_rotmat3_degree_shortcuts(rotation):
     expected = Matrix3.from_euler_angles_rad(EulerRad((0.0, math.radians(45.0), 0.0)))
@@ -779,11 +742,6 @@ def test_local_translate_custom_axis_is_normalized():
     assert_allclose(result.data, [1.0, 4.0, 1.0], atol=1e-12)
 
 
-@pytest.mark.xfail(
-    reason="BUG (consequence of `get_rotmat3`): `local_translate` with a raw float/list/tuple rotation raises "
-           "AttributeError inside `Matrix3.from_euler_angles_deg`.",
-    strict=False,
-)
 def test_local_translate_with_float_rotation():
     result = local_translate(Vector3((0.0, 0.0, 0.0)), 90.0, 2.0)
     assert_allclose(result.data, [-2.0, 0.0, 0.0], atol=1e-12)

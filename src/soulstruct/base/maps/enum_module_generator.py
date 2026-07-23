@@ -12,7 +12,6 @@ from pathlib import Path
 
 from soulstruct.base.game_types.map_types import MapEntity
 from soulstruct.games import Game
-from soulstruct.utilities.text import PY_NAME_RE
 from soulstruct.utilities.misc import IDList
 
 from .msb import MSB, MSBEntry, MSBEntryList
@@ -196,7 +195,7 @@ class EnumModuleGenerator:
                 name = entry.name
             else:
                 last_is_non_ascii = False
-                if not PY_NAME_RE.match(name):
+                if not name.isidentifier():
                     class_lines.append(f"# TODO: Invalid Python variable name.")
                     class_lines.append(f"# {entry.name} = {entity_id}")  # invalid name commented out
                 else:

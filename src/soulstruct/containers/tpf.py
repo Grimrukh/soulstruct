@@ -187,7 +187,7 @@ class TPFTexture:
         if texture_struct.texture_flags in {2, 3}:
             # Data is DCX-compressed.
             # TODO: should enforce DCX type as 'DCP_EDGE'?
-            data = decompress(data)
+            data, _ = decompress(data)
 
         stem = reader.unpack_string(offset=stem_offset, encoding=encoding)
 
@@ -338,7 +338,6 @@ class TPFTexture:
             temp_dds_path = Path(png_dir, "temp.dds")
             dds_data = self.get_headerized_data(deswizzle_platform)
             temp_dds_path.write_bytes(dds_data)
-            Path("~/Documents/temp.dds").expanduser().write_bytes(dds_data)
             texconv_result = texconv("-o", png_dir, "-ft", "png", "-f", fmt, "-nologo", temp_dds_path)
             try:
                 return Path(png_dir, "temp.png").read_bytes()
@@ -361,7 +360,6 @@ class TPFTexture:
             temp_dds_path = Path(tga_dir, "temp.dds")
             dds_data = self.get_headerized_data(deswizzle_platform)
             temp_dds_path.write_bytes(dds_data)
-            Path("~/Documents/temp.dds").expanduser().write_bytes(dds_data)
             texconv_result = texconv("-o", tga_dir, "-ft", "tga", "-f", "RGBA", "-nologo", temp_dds_path)
             try:
                 return Path(tga_dir, "temp.tga").read_bytes()
@@ -628,7 +626,10 @@ class TPF(GameFile):
             dds_path = directory / f"{entry['stem']}.dds"
             if not dds_path.is_file():
                 raise FileNotFoundError(f"Could not find DDS file for TPF texture {entry['stem']}: {dds_path}")
-            console_info = TPFTexture.ConsoleInfo(**entry["header"]) if entry.get("header", None) is not None else None
+            if (console_info_dict := entry.get("console_info", None)) is not None:
+                console_info = TPFTexture.ConsoleInfo(**console_info_dict)
+            else:
+                console_info = None
             textures.append(TPFTexture(
                 stem=entry["stem"],
                 format=entry["format"],
@@ -716,7 +717,7 @@ class TPF(GameFile):
                 console_info_dict = {
                     "width": texture.console_info.width,
                     "height": texture.console_info.height,
-                    "mipmaps": texture.console_info.texture_count,
+                    "texture_count": texture.console_info.texture_count,
                     "unk1": texture.console_info.unk1,
                     "unk2": texture.console_info.unk2,
                     "dxgi_format": texture.console_info.dxgi_format.name,
@@ -743,7 +744,7 @@ class TPF(GameFile):
 
     def get_json_header(self):
         return {
-            "dcx_type": self.dcx_type.name,
+            "dcx_type": self._get_dcx_type().name,
             "platform": self.platform.name,
             "encoding_type": self.encoding_type,
             "tpf_flags": self.tpf_flags,

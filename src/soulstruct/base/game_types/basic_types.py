@@ -41,6 +41,8 @@ class GameObject:
 
     Almost all game objects inherit from `GameObjectInt` below as they have integer IDs, but a few do not, e.g.:
         `Map`, `MapEntry`, `FlagRange`.
+
+    Not a dataclass, as some subclasses require other metaclasses.
     """
 
     @classmethod

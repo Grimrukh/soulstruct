@@ -402,12 +402,6 @@ def test_map_explicit_base_flag_is_respected():
     assert m.base_flag == 11020000
 
 
-@pytest.mark.xfail(
-    reason="BUG: `Map.__post_init__` recomputes `self.base_entity_id` UNCONDITIONALLY in its final block "
-           "(line ~153), silently discarding any explicitly-supplied value (and contradicting the guarded "
-           "assignment 20 lines earlier).",
-    strict=False,
-)
 def test_map_explicit_base_entity_id_is_respected():
     m = Map(10, 2, base_entity_id=5000000)
     assert m.base_entity_id == 5000000
@@ -425,17 +419,6 @@ def test_map_hash_eq_consistency():
     assert a == b
     assert hash(a) == hash(b)
     assert len({a, b}) == 1
-
-
-def test_map_sets_undeclared_flag_prefix_attribute():
-    """DOCUMENTS a defect: `Map` is `@dataclass(slots=True)` but sets a non-field `flag_prefix` attribute.
-
-    This only works because `GameObject` (the base class) has no `__slots__`, so `Map` instances still get a
-    `__dict__` -- which also means `slots=True` provides none of its intended memory benefit.
-    """
-    m = Map(10, 2)
-    assert m.flag_prefix == 1102
-    assert hasattr(m, "__dict__")
 
 
 # ===========================================================================

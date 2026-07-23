@@ -149,10 +149,6 @@ class Map(GameObject):
             if getattr(self, f"{stem}_file_stem") == "":
                 setattr(self, f"{stem}_file_stem", self.map_stem)
 
-        if self.area_id is not None:
-            self.base_entity_id = 100000 * self.area_id + 10000 * self.block_id
-            self.flag_prefix = 1000 + 10 * self.area_id + self.block_id
-
     def stem_set(self):
         return {
             stem

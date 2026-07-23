@@ -108,6 +108,10 @@ class BaseBinaryFile(abc.ABC, metaclass=PathDataclassMeta):
 
     @classmethod
     def from_path(cls, path: str | Path) -> tp.Self:
+        """Construct an instance from a file path.
+
+        The `.path` property is set automatically from the path, with ".bak" stripped automatically.
+        """
         _path = Path(path)
         try:
             binary_file = cls.from_bytes(BinaryReader(_path))
@@ -338,10 +342,7 @@ class BaseBinaryFile(abc.ABC, metaclass=PathDataclassMeta):
         _file_path = Path(file_path)
         bak_path = _file_path.with_name(_file_path.name + ".bak")
         if bak_path.is_file():
-            binary_file = cls.from_path(bak_path)
-            if binary_file.path:  # assertion
-                binary_file.path = binary_file.path.with_suffix("")  # remove ".bak" extension
-            return binary_file
+            return cls.from_path(bak_path)  # strips ".bak" automatically from `.path`
         else:
             binary_file = cls.from_path(_file_path)
             if create_bak_if_missing:

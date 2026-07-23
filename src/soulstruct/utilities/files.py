@@ -91,7 +91,7 @@ def restore_bak(target: Path | str, delete_baks=False, bak_suffix=".bak") -> int
             non_bak_file = target.with_suffix("")
         else:
             non_bak_file = target
-            bak_file = target.with_suffix(bak_suffix)
+            bak_file = target.with_suffix(target.suffix + bak_suffix)
 
         if not bak_file.is_file():
             raise RestoreBackupError(
