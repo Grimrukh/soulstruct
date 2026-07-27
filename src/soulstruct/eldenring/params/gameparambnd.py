@@ -265,22 +265,15 @@ class GameParamBND(_BaseGameParamBND):
 def examine_er_params():
 
     from soulstruct.base.params.param import Param, TypedParam
-    from soulstruct.base.params.param_dict import ParamDict
     from soulstruct.config import Config
     from soulstruct.eldenring.params import paramdef
 
     reg = GameParamBND.from_encrypted_path(Config.ER_PATH / "regulation.bin")
     for entry in reg.entries:
         param_type = Param.detect_param_type(entry.data)
-        try:
-            data_type = getattr(paramdef, param_type)
-        except AttributeError:
-            # Fall back to `ParamDict` (with no `ParamDef`).
-            entry.to_binary_file(ParamDict)
-            print(f"{entry.name} read as a ParamDict.")
-        else:
-            entry.to_binary_file(TypedParam(data_type))
-            print(f"{entry.name} read successfully.")
+        data_type = getattr(paramdef, param_type)
+        entry.to_binary_file(TypedParam(data_type))
+        print(f"{entry.name} read successfully.")
 
 
 if __name__ == '__main__':

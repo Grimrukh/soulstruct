@@ -514,7 +514,7 @@ class FLVERMesh:
         if self.bounding_box_unknown is not None:
             _LOGGER.warning("Cannot refresh `bounding_box_unknown` for Mesh (unknown values).")
 
-    def to_obj(self, name: str = None, vertex_offset=0, vertex_array=0) -> str:
+    def to_obj(self, name: str | None = None, vertex_offset=0, vertex_array=0) -> str:
         """Convert mesh vertices, normals, UVs, and faces to an OBJ string.
 
         Use `vertex_offset` to offset all vertex indices in face definitions (e.g. if other meshes' vertices have
@@ -527,7 +527,7 @@ class FLVERMesh:
             raise NotImplementedError("Cannot convert mesh to OBJ because one or more vertices has multiple UVs.")
 
         if name is None:
-            name = f"{name}{self.index}"
+            name = f"Mesh{self.index}"
         lines = [f"o {name}"]
         vertex_array = self.vertex_arrays[0]
 
@@ -549,9 +549,9 @@ class FLVERMesh:
         for i, face_set in enumerate(self.face_sets):
             lines.append(f"# Face Set {i}")
             triangles = face_set.triangulate(self.can_use_0xffff_separators)
-            for j in range(0, len(triangles), 3):
+            for triangle in triangles:
                 # TODO: Are these UV/normal assignments correct, given that each vertex has one?
-                face = " ".join("/".join([str(v + vertex_offset + 1)] * 3) for v in triangles[j:j + 3])
+                face = " ".join("/".join([str(v + vertex_offset + 1)] * 3) for v in triangle)
                 lines.append(f"f {face}")
         return "\n".join(lines)
 
@@ -646,7 +646,14 @@ class FLVERMesh:
 
         self._draw(
             triangulate,
-            vertex_color, show_normals, show_face_sets, show_origin, auto_show, axes, random_face_colors, **kwargs,
+            vertex_color=vertex_color,
+            show_normals=show_normals,
+            show_origin=show_origin,
+            show_face_sets=show_face_sets,
+            auto_show=auto_show,
+            axes=axes,
+            random_face_colors=random_face_colors,
+            **kwargs,
         )
 
     def _draw(

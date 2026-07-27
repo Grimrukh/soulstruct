@@ -56,7 +56,9 @@ FIELD_INFO = {
         "Entity ID",
         "Entity ID for region, for referring to it in EMEVD event scripts.",
     ),
+    # endregion
 
+    # region PARTS
     "Object[break_term]": (
         "Break Term",
         "Unknown. Related to object breakage.",
@@ -69,8 +71,7 @@ FIELD_INFO = {
         "Collision Hit Filter",
         "Unclear what this does when enabled.",
     ),
-
-    # DS1
+    # endregion
     "Object[default_animation]": (
         "Default Animation ID",
         "Default animation for object to play (or just pose in)."
@@ -211,6 +212,19 @@ FIELD_INFO = {
     "Object[model_vfx_param_id_offsets]": (
         "Model VFX Param ID Offsets",
         "Offsets for model VFX param IDs. Only the first is used, according to Pav.",
+    ),
+
+    "DummyObject[break_term]": (
+        "Break Term",
+        "Unknown. Related to object breakage.",
+    ),
+    "DummyObject[net_sync_type]": (
+        "Net Sync Type",
+        "Unknown. Related to online object synchronization.",
+    ),
+    "DummyObject[default_animation]": (
+        "Collision Hit Filter",
+        "Unclear what this does when enabled.",
     ),
 
     "Character[model]": (
@@ -459,16 +473,16 @@ FIELD_INFO = {
         "Wind Vector Min",
         "Wind vector minimum.",
     ),
-    "Wind[unk_x04_x08]": (
-        "Unknown [04-08]",
+    "Wind[unk_x0c_x10]": (
+        "Unknown [0c-10]",
         "Unknown Wind parameter (floating-point number).",
     ),
     "Wind[wind_vector_max]": (
         "Wind Vector Max",
         "Wind vector maximum.",
     ),
-    "Wind[unk_x0c_x10]": (
-        "Unknown [0c-10]",
+    "Wind[unk_x1c_x20]": (
+        "Unknown [1c-20]",
         "Unknown Wind parameter (floating-point number).",
     ),
     "Wind[wind_swing_cycles]": (
@@ -674,6 +688,11 @@ FIELD_INFO = {
     "NPCInvasion[spawn_point_region_name]": (
         "Spawn Point Region",
         "Region where player will spawn during invasion event.",
+    ),
+    "NPCInvasion[activate_good_id]": (
+        "Activate Good ID",
+        "Good ID that player must use inside attached region to begin NPC invasion (e.g. Black Eye Orb). Any "
+        "message like 'the orb is quivering' must be handled manually by EMEVD.",
     ),
 
     # Bloodborne

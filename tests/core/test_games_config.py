@@ -58,12 +58,6 @@ def test_game_hash_and_eq():
     assert repr(DARK_SOULS_PTDE) == 'Game("DARK_SOULS_PTDE")'
 
 
-@pytest.mark.xfail(
-    reason="BUG: `Game.__eq__` unconditionally reads `other.variable_name`, so comparing a `Game` to any "
-           "non-Game object (e.g. `game == 'ptde'` or `game in some_mixed_list`) raises `AttributeError` "
-           "instead of returning `False`.",
-    strict=False,
-)
 def test_game_eq_with_non_game():
     assert (DARK_SOULS_PTDE == "DARK_SOULS_PTDE") is False
     assert (DARK_SOULS_PTDE is None) is False
@@ -133,12 +127,6 @@ def test_get_game_invalid():
         ("dark souls 3", DARK_SOULS_3),
         ("dark souls prepare to die edition", DARK_SOULS_PTDE),
     ],
-)
-@pytest.mark.xfail(
-    reason="BUG (games.py:339): `get_game()` calls `game_name.replace(old, new)` inside its normalisation "
-           "loop but DISCARDS the result (`str` is immutable). Spaces/apostrophes/colons/roman numerals are "
-           "therefore never stripped, contradicting the docstring, and these spellings all fail.",
-    strict=False,
 )
 def test_get_game_normalises_spacing_and_punctuation(name: str, expected: Game):
     assert get_game(name) is expected

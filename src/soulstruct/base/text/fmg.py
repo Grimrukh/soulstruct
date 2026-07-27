@@ -35,7 +35,7 @@ class FMGHeaderV0(BinaryStruct):
     _pad2: bytes = binary_pad(1)
     file_size: int
     _one: byte = binary(asserted=1)
-    _minus_one: byte = binary(asserted=-1)
+    _minus_one: sbyte = binary(asserted=-1)
     _pad3: bytes = binary_pad(2)
     range_count: int
     string_count: int
@@ -322,7 +322,7 @@ class FMG(GameFile):
         """
         new_entries = {
             string_id: string.replace(old_substring, new_substring)
-            for string_id, string in self.entries
+            for string_id, string in self.entries.items()
         }
         return FMG(entries=new_entries, version=self.version)
 

@@ -53,7 +53,7 @@ class BaseMSBRegion(MSBEntry, abc.ABC):
         return self.shape.SHAPE_TYPE.value
 
     def has_identity_transform(self) -> bool:
-        return self.translate == Vector3.zero() and self.rotate == Vector3.zero()
+        return self.translate == Vector3.zero() and self.rotate == EulerDeg.zero()
 
     def change_shape_type(self, shape_type: RegionShapeType):
         """Change the shape type of this region, attempting to copy over dimensions as able."""

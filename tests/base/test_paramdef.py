@@ -1,5 +1,5 @@
 """Tests for `soulstruct.base.params.paramdef`: `ParamDef`, `ParamDefField`, `ParamDefBND`,
-`field_types`, Paramdex XML loading, and the deprecated `ParamDict` path.
+`field_types`, and Paramdex XML loading.
 """
 from __future__ import annotations
 
@@ -63,12 +63,6 @@ def test_string_field_types():
 def test_dummy8_is_a_u8_subclass():
     assert issubclass(ft.dummy8, ft.u8)
     assert issubclass(ft.dummy8, ft.unsigned)
-
-
-def test_angle32_missing_from_all():
-    """L1: `angle32` is defined but not exported via `__all__`."""
-    assert hasattr(ft, "angle32")
-    assert "angle32" not in ft.__all__, "angle32 was added to __all__ - update finding L1"
 
 
 # ---------------------------------------------------------------------------
@@ -294,14 +288,6 @@ def test_paramdef_is_write_only_read_only(paramdex_xml_path):
         pd.to_writer()
 
 
-def test_paramdef_getitem_missing_prints_and_raises(paramdex_xml_path, capsys):
-    """M7: `ParamDef.__getitem__` dumps the entire ParamDef to stdout before re-raising."""
-    pd = ParamDef.from_paramdex_xml(paramdex_xml_path)
-    with pytest.raises(KeyError):
-        _ = pd["nope"]
-    assert "ParamDef TEST_PARAM_ST" in capsys.readouterr().out
-
-
 def test_paramdef_repr_and_verbose(paramdex_xml_path):
     pd = ParamDef.from_paramdex_xml(paramdex_xml_path)
     assert "TEST_PARAM_ST" in repr(pd)
@@ -400,11 +386,6 @@ def test_paramdef_nonzero_integer_default_is_int(ptde_paramdefbnd):
         assert isinstance(f.py_default, (int, bool)), f.name
 
 
-# ---------------------------------------------------------------------------
-# `ParamDict` (deprecated `ParamDef`-driven row unpacking)
-# ---------------------------------------------------------------------------
-
-
 @pytest.fixture(scope="module")
 def ptde_parambnd_path(request) -> Path:
     path = Path(request.config.rootpath) / "tests" / "darksouls1ptde" / "resources" / "GameParam.parambnd"
@@ -419,138 +400,3 @@ def npc_param_entry_data(ptde_parambnd_path) -> bytes:
 
     binder = Binder.from_path(ptde_parambnd_path)
     return bytes(next(e for e in binder.entries if e.stem == "NpcParam"))
-
-
-def test_param_dict_reads_raw_rows(npc_param_entry_data):
-    from soulstruct.base.params.param_dict import ParamDict
-
-    logging.disable(logging.WARNING)
-    try:
-        pd = ParamDict.from_bytes(npc_param_entry_data)
-    finally:
-        logging.disable(logging.NOTSET)
-    assert pd.param_type == "NPC_PARAM_ST"
-    assert pd.row_bytes and len(pd.row_bytes) > 100
-    assert pd.row_dicts == {}
-
-
-@pytest.mark.xfail(
-    reason="H13: `ParamDict.to_writer()` calls `fill_with_position(f'row_name_offset{id}')` without "
-           "`obj=self`, but reserved it *with* `obj=self` -- so no `ParamDict` can ever be written.",
-    strict=False,
-)
-def test_param_dict_repacks_raw_rows_unchanged(npc_param_entry_data):
-    """With rows left as raw bytes, `ParamDict` should be able to repack them."""
-    from soulstruct.base.params.param_dict import ParamDict
-
-    logging.disable(logging.WARNING)
-    try:
-        pd = ParamDict.from_bytes(npc_param_entry_data)
-        data = bytes(pd)
-        pd2 = ParamDict.from_bytes(data)
-    finally:
-        logging.disable(logging.NOTSET)
-    assert set(pd2.row_bytes) == set(pd.row_bytes)
-    assert all(pd2.row_bytes[i][2] == pd.row_bytes[i][2] for i in pd.row_bytes)
-
-
-def test_param_dict_unpack_rows_with_paramdef(npc_param_entry_data, ptde_paramdefbnd):
-    from soulstruct.base.params.param_dict import ParamDict
-
-    logging.disable(logging.WARNING)
-    try:
-        pd = ParamDict.from_bytes(npc_param_entry_data)
-        pd.unpack_rows(ptde_paramdefbnd.get_paramdef("NPC_PARAM_ST"))
-    finally:
-        logging.disable(logging.NOTSET)
-    assert pd.row_bytes is None
-    assert len(pd.row_dicts) > 100
-    row = next(iter(pd.row_dicts.values()))
-    assert "behaviorVariationId" in row.fields
-    assert row["behaviorVariationId"] == row.fields["behaviorVariationId"]
-    with pytest.raises(KeyError):
-        _ = row["nope"]
-    with pytest.raises(KeyError):
-        row["nope"] = 1
-
-
-def test_param_dict_row_values_match_generated_row_class(npc_param_entry_data, ptde_paramdefbnd):
-    """`ParamDict` (paramdef-driven) and `Param` (generated class) must decode identically."""
-    from soulstruct.base.params.param_dict import ParamDict
-    from soulstruct.base.params.param import TypedParam
-    from soulstruct.darksouls1ptde.params.paramdef import NPC_PARAM_ST
-
-    logging.disable(logging.WARNING)
-    try:
-        pdict = ParamDict.from_bytes(npc_param_entry_data)
-        pdict.unpack_rows(ptde_paramdefbnd.get_paramdef("NPC_PARAM_ST"))
-        param = TypedParam(NPC_PARAM_ST).from_bytes(npc_param_entry_data)
-    finally:
-        logging.disable(logging.NOTSET)
-
-    assert set(pdict.row_dicts) == set(param.rows)
-    internal_to_nickname = dict(zip(NPC_PARAM_ST.get_internal_names(), NPC_PARAM_ST.get_binary_field_names()))
-    row_id = sorted(param.rows)[0]
-    dict_row, typed_row = pdict.row_dicts[row_id], param.rows[row_id]
-    compared = 0
-    for internal_name, value in dict_row.fields.items():
-        nickname = internal_to_nickname[internal_name]
-        if nickname.startswith("_Pad"):
-            continue  # `ParamDict` keeps raw pad bytes; `ParamRow` too, but bit pads differ
-        typed_value = getattr(typed_row, nickname)
-        assert int(value) == int(typed_value), internal_name
-        compared += 1
-    assert compared > 100
-
-
-@pytest.mark.xfail(
-    reason="H4: `ParamDict.unpack_rows()` indexes the `ParamDefBND` with `[param_type]`, which hits "
-           "`Binder.__getitem__` (entry-name lookup) instead of `get_paramdef()`.",
-    strict=False,
-)
-def test_param_dict_unpack_rows_with_paramdefbnd(npc_param_entry_data, ptde_paramdefbnd):
-    from soulstruct.base.params.param_dict import ParamDict
-
-    pd = ParamDict.from_bytes(npc_param_entry_data)
-    pd.unpack_rows(ptde_paramdefbnd)
-    assert len(pd.row_dicts) > 100
-
-
-@pytest.mark.xfail(
-    reason="H3: `ParamDefField.check_python_type()` rejects every valid value, so an unpacked "
-           "`ParamDict` can never be repacked.",
-    strict=False,
-)
-def test_param_dict_repack_after_unpack(npc_param_entry_data, ptde_paramdefbnd):
-    from soulstruct.base.params.param_dict import ParamDict
-
-    logging.disable(logging.WARNING)
-    try:
-        pd = ParamDict.from_bytes(npc_param_entry_data)
-        pd.unpack_rows(ptde_paramdefbnd.get_paramdef("NPC_PARAM_ST"))
-        bytes(pd)
-    finally:
-        logging.disable(logging.NOTSET)
-
-
-def test_param_dict_from_dict_is_rejected():
-    from soulstruct.base.params.param_dict import ParamDict
-
-    with pytest.raises(TypeError):
-        ParamDict.from_dict({})
-
-
-@pytest.mark.xfail(
-    reason="H5: `unpack_all_param_rows()` unpacks `.values()` as pairs and uses the base "
-           "`ParamDefBND` (whose `PARAMDEF_CLASS` is None).",
-    strict=False,
-)
-def test_gameparambnd_unpack_all_param_rows(ptde_parambnd_path):
-    from soulstruct.darksouls1ptde.params import GameParamBND
-
-    logging.disable(logging.WARNING)
-    try:
-        gp = GameParamBND.from_path(ptde_parambnd_path)
-        gp.unpack_all_param_rows()
-    finally:
-        logging.disable(logging.NOTSET)

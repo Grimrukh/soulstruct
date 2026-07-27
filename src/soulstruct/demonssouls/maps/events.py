@@ -110,9 +110,9 @@ class MSBVFXEvent(MSBEvent):
 
 class WindEventDataStruct(MSBBinaryStruct):
     wind_vector_min: Vector3
-    unk_x0c: float
+    unk_x0c_x10: float
     wind_vector_max: Vector3
-    unk_x1c: float
+    unk_x1c_x20: float
     wind_swing_cycles: list[float] = binary_array(4)
     wind_swing_powers: list[float] = binary_array(4)
 
@@ -124,9 +124,9 @@ class MSBWindEvent(MSBEvent):
     STRUCTS = MSBEvent.STRUCTS | {"subtype_data": WindEventDataStruct}
 
     wind_vector_min: Vector3 = field(default_factory=Vector3.zero)
-    unk_x0c: float = 0.0
+    unk_x0c_x10: float = 0.0
     wind_vector_max: Vector3 = field(default_factory=Vector3.zero)
-    unk_x1c: float = 0.0
+    unk_x1c_x20: float = 0.0
     wind_swing_cycles: list[float] = field(default_factory=lambda: [0.0] * 4, **BinaryArray(4))
     wind_swing_powers: list[float] = field(default_factory=lambda: [0.0] * 4, **BinaryArray(4))
 
@@ -161,7 +161,7 @@ class MSBTreasureEvent(MSBEvent):
     item_lot_4: int = field(default=-1, **MapFieldInfo(game_type=ItemLotParam))
     item_lot_5: int = field(default=-1, **MapFieldInfo(game_type=ItemLotParam))
 
-    _treasure_part_index: int = None
+    _treasure_part_index: int | None = None
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBEvent, self).indices_to_objects(entry_lists)

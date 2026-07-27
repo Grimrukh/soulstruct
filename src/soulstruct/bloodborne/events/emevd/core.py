@@ -15,7 +15,7 @@ from soulstruct.bloodborne.game_types.game_enums_manager import GameEnumsManager
 from .evs import EVSParser
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, repr=False)
 class Instruction(_BaseInstruction):
     EMEDF: tp.ClassVar = EMEDF
     DECOMPILER: tp.ClassVar = DECOMPILER

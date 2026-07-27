@@ -25,6 +25,7 @@ def get_all_texture_paths(flver: FLVER) -> set[Path]:
         Path(texture.path)
         for mesh in flver.meshes
         for texture in mesh.material.textures
+        if texture.path
     }
 
 

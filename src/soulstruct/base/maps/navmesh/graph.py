@@ -487,12 +487,12 @@ class NavmeshGraph:
             plt.show()
         return axes
 
-    def write(self, map_path: Path | str = None):
+    def write(self, map_path: Path | str | None = None):
         if map_path is None:
             mcp_path = mcg_path = None  # use original paths
         else:
-            mcp_path = Path(map_path / f"{self.map_stem}.mcp")
-            mcg_path = Path(map_path / f"{self.map_stem}.mcg")
+            mcp_path = Path(map_path) / f"{self.map_stem}.mcp"
+            mcg_path = Path(map_path) / f"{self.map_stem}.mcg"
         self.mcp.write(mcp_path)
         self.mcg.set_navmesh_indices(self.navmeshes)
         self.mcg.write(mcg_path)

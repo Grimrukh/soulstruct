@@ -162,13 +162,6 @@ def test_get_draw_param_slot_rejects_bad_slot_and_name():
         bnd.get_draw_param_slot("NotAParam", 0)
 
 
-@pytest.mark.xfail(
-    reason=(
-        "`DrawParam.get_nonzero_entries(ignore_polyg=True)` returns the branch that does NOT filter "
-        "'PolyG' names; the two branches are swapped (draw_param/core.py:22-30)."
-    ),
-    strict=False,
-)
 def test_get_nonzero_entries_ignore_polyg_flag():
     param = TypedDrawParam(paramdef.LIGHT_BANK)()
     param.rows = {
@@ -222,12 +215,6 @@ def test_vanilla_drawparambnd_loads_and_round_trips(draw_param_dir, stem, tmp_pa
     assert slot_0, f"{stem}: no slot-0 DrawParams loaded."
     assert (len(slot_1) > 0) == (stem in SLOT_1_AREAS), f"{stem}: unexpected slot-1 state."
 
-    # Every loaded DrawParam must be a typed subclass (not a fallback generic `ParamDict`).
-    for draw_param in list(bnd.draw_params_0.values()) + list(bnd.draw_params_1.values()):
-        if draw_param is None:
-            continue
-        assert isinstance(draw_param, DrawParam), f"{stem}: fell back to generic ParamDict."
-
     # unpack -> pack -> unpack must be stable.
     packed = bytes(bnd)
     out_path = tmp_path / f"{stem}_DrawParam.parambnd"
@@ -254,14 +241,10 @@ def test_vanilla_drawparam_stems_present(draw_param_dir, caplog):
             assert present == all_stems - DEFAULT_ONLY_STEMS
 
 
-def test_slot_0_property_raises_for_absent_param(draw_param_dir, caplog):
-    """`draw_param_property(stem, 0)` indexes `draw_params_0` directly, so an absent param raises
-    `KeyError` while the slot-1 property returns `None`. Documented asymmetry, not an assertion of
-    desired behaviour."""
-    with caplog.at_level(logging.CRITICAL):
-        bnd = DrawParamBND.from_path(draw_param_dir / "a15_DrawParam.parambnd")
-    with pytest.raises(KeyError):
-        _ = bnd.Lods_0  # `LodBank` only exists in `default_DrawParam`
+def test_absent_param_slots_are_none(draw_param_dir):
+    bnd = DrawParamBND.from_path(draw_param_dir / "a15_DrawParam.parambnd")
+    # `LodBank` only exists in `default_DrawParam`
+    assert bnd.Lods_0 is None
     assert bnd.Lods_1 is None
 
 
@@ -347,13 +330,6 @@ def test_drawparam_directory_round_trip(draw_param_dir, tmp_path, caplog):
         assert bytes(bnd) == packed[stem], f"{stem} not stable through directory round-trip."
 
 
-@pytest.mark.xfail(
-    reason=(
-        "`DrawParamDirectory.get_drawparambnd` docstring promises it accepts a name 'with or without "
-        "the _DrawParam suffix', but it only strips the file extension."
-    ),
-    strict=False,
-)
 def test_get_drawparambnd_accepts_full_stem(draw_param_dir, caplog):
     with caplog.at_level(logging.CRITICAL):
         directory = DrawParamDirectory.from_path(draw_param_dir)

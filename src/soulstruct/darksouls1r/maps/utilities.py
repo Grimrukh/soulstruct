@@ -102,7 +102,6 @@ def find_flver_textures(flver_path: str | Path) -> list[BinderEntry]:
 
     for bhd_path in texture_dir.glob("m*tpfbhd"):  # does not search `GI_EnvM_mXX.tpfbhd`
         bhd = Binder.from_path(bhd_path)
-        print(f"Searching BHD: {bhd_path}")
         for entry in bhd.entries:
             if entry.path and entry.path in tpf_paths:
                 tpf_entries.append(entry)

@@ -316,12 +316,15 @@ class ESD(GameFile, abc.ABC):
         """Packs tables and computes new byte offsets for them."""
         # TODO: is 'existing commands' a thing for enemyCommon.esd? Probably, but only for efficiency.
 
+        # Encoded name length is number of UTF-16 characters, including terminator, IF name exists.
+        esd_name_length = len(self.esd_name) + 1 if self.esd_name else 0
+
         # External header is constructed last, as all offsets are relative to the end of it.
         external_header_writer = ESDExternalHeaderStruct.object_to_writer(
             self,
             byte_order=ByteOrder.LittleEndian,  # big-endian versions not handled
             long_varints=self.LONG_VARINTS,
-            esd_name_length=len(self.esd_name) // 2,  # number of UTF-16 characters, NOT size of encoded bytes
+            esd_name_length=esd_name_length,  # number of UTF-16 characters, NOT size of encoded bytes
             state_machine_count=len(self.state_machines),  # also appears in internal header
             game_version=[self.VERSION, self.VERSION],
             **EXTERNAL_HEADER_VARINT_ASSERTED[self.LONG_VARINTS],
@@ -336,7 +339,7 @@ class ESD(GameFile, abc.ABC):
             long_varints=self.LONG_VARINTS,
             state_machine_count=len(self.state_machines),  # also appears in external header
             esd_name_offset=RESERVED,  # only reserved field in internal header
-            esd_name_length=len(self.esd_name) // 2,  # number of UTF-16 characters, NOT size of encoded bytes
+            esd_name_length=esd_name_length,  # number of UTF-16 characters, NOT size of encoded bytes
             footer=[0, 0] if self.VERSION == 1 else [-1, -1],
         )
 
@@ -521,7 +524,7 @@ class ESD(GameFile, abc.ABC):
 
         header = (
             f"ESD_NAME = {repr(self.esd_name)}\n"
-            f"ESD_TYPE = {repr(self.ESD_TYPE.name)}\n"
+            f"ESD_TYPE = {repr(self.ESD_TYPE.value)}\n"
             f"MAGIC = {repr(self.magic)}\n"
         )
         with (directory / "ESD_Header.esp.py").open(mode="w", encoding="utf-8") as header_file:

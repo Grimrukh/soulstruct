@@ -362,14 +362,6 @@ def test_swizzlers_reject_tiny_buffers(fn, error):
             fn(b"\0" * 4, DXGI_FORMAT.BC1_UNORM, 16, 16)
 
 
-def test_deswizzle_ps3_prints_debug_output():
-    """M7: `deswizzle_dds_bytes_ps3` still contains two debug `print()` calls."""
-    buf = io.StringIO()
-    with contextlib.redirect_stdout(buf):
-        deswizzle_dds_bytes_ps3(_bc1_buffer(16, 16), DXGI_FORMAT.BC1_UNORM, 16, 16)
-    assert "Deswizzle PS3" in buf.getvalue(), "the debug print() calls were removed"
-
-
 # ---------------------------------------------------------------------------
 # `texconv` argument validation (no subprocess run)
 # ---------------------------------------------------------------------------
@@ -389,16 +381,6 @@ def test_texconv_config_is_a_named_tuple(tmp_path):
     assert config.dds_format == "BC1_UNORM"
     assert config.mipmap_count == 3
     assert len(config) == 5
-
-
-def test_batch_texconv_uses_starmap_incorrectly():
-    """H10: `batch_texconv_to_dds` calls `pool.starmap` on 5-field `TexconvConfig` tuples."""
-    import importlib
-    import inspect
-
-    texconv_module = importlib.import_module("soulstruct.base.textures.texconv")
-    source = inspect.getsource(texconv_module.batch_texconv_to_dds)
-    assert "starmap" in source, "batch_texconv_to_dds no longer uses starmap - finding H10 is fixed"
 
 
 # ---------------------------------------------------------------------------

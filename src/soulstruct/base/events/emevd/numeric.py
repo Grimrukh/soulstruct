@@ -7,6 +7,7 @@ import re
 import typing as tp
 
 from .emedf import ArgType
+from .event_layers import EventLayers
 from .exceptions import NumericEmevdError
 from .instruction import EventArgRepl
 
@@ -31,6 +32,8 @@ def build_numeric(numeric_string: str, event_class: type[Event]):
     """Parses the text data from the given numeric-style string into a dictionary of events suitable for use as an
     `EMEVD` source, which can then be packed to binary.
 
+    UTF-8 encoding is used, as EMEVD strings may contain Unicode characters (Japanese).
+
     Raises a ValueError if the numeric input cannot be parsed for any reason.
     """
     # TODO: Allow whitespace on blank lines between events.
@@ -52,15 +55,15 @@ def build_numeric(numeric_string: str, event_class: type[Event]):
             for offset_with_string in text_event[9:].split("\n"):
                 if not offset_with_string:
                     continue
-                z_string = offset_with_string.split(":", 1)[-1].strip().encode("utf-16le") + b"\0\0"
+                z_string = offset_with_string.split(":", 1)[-1].strip().encode("utf-8") + b"\0\0"
                 strings += z_string
             continue
 
         event_lines = text_event.splitlines()
 
         if not event_lines:
-            # No events (e.g., some overworld tiles in Elden Ring).
-            return events, linked_offsets, strings
+            # No instructions.
+            continue
 
         header_line = event_lines[0]
         m = EVENT_HEADER_RE.match(header_line)
@@ -83,7 +86,7 @@ def build_numeric(numeric_string: str, event_class: type[Event]):
                 display_arg_types = m_instruction.group(3)
                 args_list_string = m_instruction.group(4)
                 if m_instruction.group(5) is not None:
-                    event_layers = [int(e) for e in m_instruction.group(5)[1:-1].split(", ")]
+                    event_layers = EventLayers(sum(2 ** int(e) for e in m_instruction.group(5)[1:-1].split(", ")))
                 else:
                     event_layers = None
 

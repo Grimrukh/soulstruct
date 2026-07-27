@@ -13,7 +13,6 @@ from soulstruct.base.game_file import GameFile
 from soulstruct.dcx import DCXType
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.conversion import floatify
-from soulstruct.utilities.files import write_data_to_path
 
 from .event import Event as _BaseEvent, EventSignature
 from .event_layers import EventLayers
@@ -132,7 +131,7 @@ class EMEVD(GameFile, abc.ABC):
         except Exception as ex:
             import traceback
             traceback.print_exc()
-            raise EMEVDError(f"Error occurred while parsing EVS string: {ex}")
+            raise EMEVDError(f"Error occurred while parsing EVS string: {ex}") from ex
         return cls.from_evs_parser(parser)
 
     @classmethod
@@ -285,15 +284,19 @@ class EMEVD(GameFile, abc.ABC):
             event.update_signature()
         self.event_signatures = {event_id: event.signature for event_id, event in self.events.items()}
 
-    def to_dict(self) -> dict[str, tp.Any]:
-        self.regenerate_signatures()
+    def to_dict(self):
+        raise NotImplementedError("Cannot convert EMEVD to dict. Convert to numeric text instead.")
 
-        return {
-            "map_name": self.map_name,
-            "linked": self.linked_file_offsets,
-            "strings": self.packed_strings,
-            **self.events,
-        }
+    def write_json(self, file_path: None | str | Path, encoding="utf-8", indent=4):
+        raise NotImplementedError("Cannot write EMEVD to JSON. Convert to numeric text instead.")
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        raise NotImplementedError("Cannot read EMEVD from JSON. Use numeric text instead.")
+
+    @classmethod
+    def from_json(cls, json_path: str | Path) -> tp.Self:
+        raise NotImplementedError("Cannot read EMEVD from JSON. Use numeric text instead.")
 
     def to_numeric(self) -> str:
         self.regenerate_signatures()
@@ -582,12 +585,19 @@ class EMEVD(GameFile, abc.ABC):
 
         return writer
 
-    def write_numeric(self, numeric_path=None, force=False):
+    def write_numeric(self, numeric_path=None) -> list[Path]:
+        """Convert EMEVD to numeric format and write to `numeric_path`.
+
+        Always writes, as we would otherwise have to wrangle line endings when comparing content."""
         if not numeric_path:
             numeric_path = self.map_name
             if not numeric_path.endswith(".numeric.txt"):
                 numeric_path += ".numeric.txt"
+        numeric_path = Path(numeric_path)
+        # Create directory.
+        numeric_path.parent.mkdir(parents=True, exist_ok=True)
         Path(numeric_path).write_text(self.to_numeric(), encoding="utf-8")
+        return [numeric_path]
 
     def write_evs(
         self,
@@ -600,7 +610,7 @@ class EMEVD(GameFile, abc.ABC):
         docstring: str = "",
         common_func_emevd: EMEVD | None = None,
         enums_manager: GameEnumsManager | None = None,
-    ):
+    ) -> list[Path]:
         if not evs_path:
             evs_path = self.map_name
             if not evs_path.endswith(".evs.py"):
@@ -619,6 +629,7 @@ class EMEVD(GameFile, abc.ABC):
             enums_manager=enums_manager,
         )
         Path(evs_path).write_text(evs_string, encoding="utf-8")
+        return [evs_path]
 
     @classmethod
     def from_auto_detect_source_type(cls, emevd_source: Path | str | bytes | BinaryReader) -> str:

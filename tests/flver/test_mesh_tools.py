@@ -100,10 +100,7 @@ def make_flver(meshes=None, bones=None, version=FLVERVersion.DarkSouls_A) -> FLV
 
 
 def make_split_defs(flver: FLVER) -> list[SplitMeshDef]:
-    """`SplitMeshDef.get_defs_from_flver()`. `split_mesh()` now correctly sources `is_dynamic` from the
-
-    `SplitMeshDef.is_dynamic` field itself (see finding #17), so no `kwargs` workaround is needed anymore.
-    """
+    """Slight abbreviation for a common function."""
     return SplitMeshDef.get_defs_from_flver(flver)
 
 
@@ -295,15 +292,6 @@ def test_normalize_normals():
     np.testing.assert_allclose(merged.loop_normals[1], [0.6, 0.8, 0.0])
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: `MergedMesh.normalize_tangents` divides all FOUR tangent columns by the 4D norm. The "
-        "W component is a bitangent-sign flag (+/-1), not part of the vector, so a unit tangent "
-        "[1, 0, 0, 1] is scaled to [0.707, 0, 0, 0.707] instead of being left alone. Compare "
-        "`normalize_normals`, which correctly operates on a 3-column array."
-    ),
-    strict=False,
-)
 def test_normalize_tangents_only_normalizes_xyz():
     merged = MergedMesh.from_flver(make_flver())
     merged.loop_data.tangents = [np.array([[2.0, 0.0, 0.0, 1.0], [0.0, 3.0, 0.0, -1.0]], dtype=np.float32)]
@@ -620,15 +608,6 @@ def test_get_combined_loop_data_derives_normal_w_from_bone_indices():
     assert np.all(combined["normal_w"] == 3)
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: `MergedMesh.get_combined_loop_data` writes EVERY key of `loop_data.uvs` into the "
-        "combined array without checking whether the field exists in the requested dtype, so a "
-        "merged mesh that carries a UV layer no split material uses raises "
-        "`ValueError: no field of name ...` instead of ignoring it."
-    ),
-    strict=False,
-)
 def test_get_combined_loop_data_ignores_unused_uv_layers():
     flver = make_flver()
     merged = MergedMesh.from_flver(flver)
@@ -637,13 +616,6 @@ def test_get_combined_loop_data_ignores_unused_uv_layers():
     assert combined.dtype.names == ("UVMap0",)
 
 
-@pytest.mark.xfail(
-    reason=(
-        "Same root cause as `test_get_combined_loop_data_ignores_unused_uv_layers`: an extra UV "
-        "layer in the merged mesh that no `SplitMeshDef` layout consumes breaks `split_mesh()`."
-    ),
-    strict=False,
-)
 def test_split_mesh_with_extra_unused_uv_layer():
     flver = make_flver()
     merged = MergedMesh.from_flver(flver)
@@ -671,9 +643,3 @@ def test_is_triangle_degenerate():
     )
     with pytest.raises(ValueError, match="existing_face_set"):
         MergedMesh.is_triangle_degenerate((0, 1, 2), discard_duplicate_faces=True)
-
-
-def test_merged_mesh_unique_helper_does_not_sort_output_values():
-    array = np.array([5, 1, 5, 3, 1])
-    result = MergedMesh.unique(array)
-    np.testing.assert_array_equal(np.sort(result), [1, 3, 5])

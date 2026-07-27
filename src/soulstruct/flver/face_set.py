@@ -141,19 +141,33 @@ class FaceSet:
         face set has the `MotionBlur` flag set and otherwise excludes degenerate (point/line) faces.
         """
         if not self.is_triangle_strip:
+            if self.has_flag(FaceSetFlags.MotionBlur):
+                # We don't include motion blur face sets towards the true face count.
+                return 0, len(self.vertex_indices)
             # True and total face counts are the same.
             return len(self.vertex_indices), len(self.vertex_indices)
 
-        true_face_count = 0
-        total_face_count = 0
-        for i in range(len(self.vertex_indices) - 2):
-            triplet = self.vertex_indices[i:i + 3]
-            if uses_0xffff_separators and 0xFFFF in triplet:
-                continue  # ignore triplet
-            total_face_count += 1
-            if not self.has_flag(FaceSetFlags.MotionBlur) and len(set(triplet)) == 3:
-                # Vertices are not MotionBlur and not degenerate.
-                true_face_count += 1
+        indices = np.asarray(self.vertex_indices)
+        if len(indices) < 3:
+            return 0, 0
+
+        triplets = np.lib.stride_tricks.sliding_window_view(indices, 3)
+
+        if uses_0xffff_separators:
+            valid_mask = ~np.any(triplets == 0xFFFF, axis=1)
+        else:
+            valid_mask = np.ones(len(triplets), dtype=bool)
+
+        total_face_count = int(np.count_nonzero(valid_mask))
+
+        is_motion_blur = self.has_flag(FaceSetFlags.MotionBlur)  # hoisted out of the loop
+        if is_motion_blur:
+            true_face_count = 0
+        else:
+            a, b, c = triplets[:, 0], triplets[:, 1], triplets[:, 2]
+            non_degenerate = (a != b) & (b != c) & (a != c)
+            true_face_count = int(np.count_nonzero(valid_mask & non_degenerate))
+
         return true_face_count, total_face_count
 
     def needs_32bit_indices(self) -> bool:
@@ -199,45 +213,83 @@ class FaceSet:
             # Sub-call with modified (slower) method including TK's manual normal inspection.
             return self._triangulate_flver0(flver0_vertices)
 
-        triangle_list = []  # can't predict array length due to primitive restarts
-        flip = False
-        for i in range(len(self.vertex_indices) - 2):
-            triplet = self.vertex_indices[i:i + 3]
-            if uses_0xffff_separators and 0xFFFF in triplet:
-                flip = False  # restart the strip and ignore this triplet
-                continue
-            if include_degenerate_faces or len(set(triplet)) == 3:
-                triangle_list.append([triplet[2], triplet[1], triplet[0]] if flip else triplet)
-            flip = not flip
-        return np.array(triangle_list)
+        indices = self.vertex_indices
+        n = len(indices) - 2
+        if n <= 0:
+            return np.empty((0, 3), dtype=indices.dtype)
+
+        triplets = np.lib.stride_tricks.sliding_window_view(indices, 3)  # (n, 3)
+        a, b, c = triplets[:, 0], triplets[:, 1], triplets[:, 2]
+
+        if uses_0xffff_separators:
+            poisoned = np.any(triplets == 0xFFFF, axis=1)
+        else:
+            poisoned = np.zeros(n, dtype=bool)
+
+        # `flip` toggles every window, but resets to False whenever a window is poisoned (matches
+        # the sequential loop's `flip = False; continue` on separator hit). This is a "distance
+        # since last reset, mod 2" recurrence, so we can resolve it with searchsorted instead of
+        # a Python loop.
+        reset_positions = np.nonzero(poisoned)[0]
+        idx = np.arange(n)
+        if reset_positions.size == 0:
+            # No separators: `flip` simply toggles every window.
+            last_reset = np.full(n, -1)
+        else:
+            insert_pos = np.searchsorted(reset_positions, idx, side="left")
+            safe_idx = np.clip(insert_pos - 1, 0, None)
+            last_reset = np.where(insert_pos > 0, reset_positions[safe_idx], -1)
+        flip = (idx - last_reset - 1) % 2 == 1
+
+        non_degenerate = (a != b) & (b != c) & (a != c)
+        keep = ~poisoned & (include_degenerate_faces | non_degenerate)
+
+        triangles = np.where(flip[:, None], triplets[:, ::-1], triplets)
+        return triangles[keep].copy()
 
     def _triangulate_flver0(self, vertices: np.ndarray) -> np.ndarray:
         """Triangulate a triangle strip with manual normal inspection for `FLVER0`."""
+        indices = self.vertex_indices
+        n = len(indices) - 2
+        if n <= 0:
+            return np.empty((0, 3), dtype=indices.dtype)
+
+        triplets = np.lib.stride_tricks.sliding_window_view(indices, 3)  # (n, 3)
+        a, b, c = triplets[:, 0], triplets[:, 1], triplets[:, 2]
+
+        poisoned = np.any(triplets == 0xFFFF, axis=1)
+        non_degenerate = (a != b) & (b != c) & (a != c)
+
+        # Vectorised normal/angle computation for *every* window up. We compute it once for all
+        # windows, regardless of whether it ends up being used.
+        v0, v1, v2 = vertices[a], vertices[b], vertices[c]
+        vertex_normal = (v0["normal"] + v1["normal"] + v2["normal"]) / 3
+        face_normal = np.cross(v1["position"] - v0["position"], v2["position"] - v0["position"])
+        norm_product = np.linalg.norm(face_normal, axis=1) * np.linalg.norm(vertex_normal, axis=1)
+        with np.errstate(invalid="ignore", divide="ignore"):
+            angle = np.einsum("ij,ij->i", face_normal, vertex_normal) / norm_product
+        angle_flip = angle >= 0
+
+        # `flip` here does NOT reset on a poison (unlike `triangulate`) -- a poison only arms
+        # `check_normals`, and the *next* non-degenerate window then overrides `flip` from the
+        # precomputed angle before resuming normal toggling. This is at least just bookkeeping
+        # and not math/vertex access.
         triangle_list = []
         flip = False
         check_normals = False
-        for i in range(len(self.vertex_indices) - 2):
-            triplet = self.vertex_indices[i:i + 3]
-            if 0xFFFF in triplet:
+        for i in range(n):
+            if poisoned[i]:
                 check_normals = True
                 continue
-            if len(set(triplet)) == 3:
+            if non_degenerate[i]:
                 if check_normals:
-                    # TODO: Numpify.
-                    v0 = vertices[triplet[0]]
-                    v1 = vertices[triplet[1]]
-                    v2 = vertices[triplet[2]]
-                    n0 = v0["normal"]
-                    n1 = v1["normal"]
-                    n2 = v2["normal"]
-                    vertex_normal = (n0 + n1 + n2) / 3
-                    face_normal = np.cross(v1["position"] - v0["position"], v2["position"] - v0["position"])
-                    norm_product = np.linalg.norm(face_normal) * np.linalg.norm(vertex_normal)
-                    angle = np.dot(face_normal, vertex_normal) / norm_product
-                    flip = angle >= 0
+                    flip = bool(angle_flip[i])
                     check_normals = False
-                triangle_list.append([triplet[2], triplet[1], triplet[0]] if flip else triplet)
+                triangle_list.append(triplets[i, ::-1] if flip else triplets[i])
             flip = not flip
+
+        if not triangle_list:
+            return np.empty((0, 3), dtype=indices.dtype)
         return np.array(triangle_list)
 
     def get_connected_vertex_indices(self, vertex_index: int) -> set[int]:
@@ -249,9 +301,9 @@ class FaceSet:
         # Keeps repeating this until the number of connected vertices stops increasing.
         previous_connection_count = len(connected_vertices)
         while True:
-            for i in range(0, len(triangles), 3):
-                if any(v in connected_vertices for v in triangles[i:i + 3]):
-                    connected_vertices.update(triangles[i:i + 3])
+            for triangle in triangles:
+                if any(v in connected_vertices for v in triangle):
+                    connected_vertices.update(triangle)
             new_connection_count = len(connected_vertices)
             if new_connection_count == previous_connection_count:
                 break
@@ -276,8 +328,8 @@ class FaceSet:
             else:
                 raise ValueError("Triangle array must be 1D or 2D.")
         else:
-            # Flatten and combine into 1D `uint32` array.
-            vertex_indices = np.array([i for tri in triangles for i in tri], dtype=np.uint32)
+            # Flatten and combine into 1D `uint32` array, then reshape to 2D.
+            vertex_indices = np.array([i for tri in triangles for i in tri], dtype=np.uint32).reshape((-1, 3))
 
         return cls(
             flags=0,

@@ -127,11 +127,18 @@ class Dummy:
     def from_flver_reader(cls, reader: BinaryReader, flver_version: FLVERVersion) -> Dummy:
         dummy_struct = cls.STRUCT.from_bytes(reader)
         _color = dummy_struct.pop("_color")
-        color = ColorRGBA(*reversed(_color)) if flver_version == FLVERVersion.DarkSouls2 else ColorRGBA(*_color)
+        if flver_version == FLVERVersion.DarkSouls2:
+            a, r, g, b = _color
+        else:
+            r, g, b, a = _color
+        color = ColorRGBA(r, g, b, a)
         dummy = dummy_struct.to_object(cls, color=color)
         return dummy
 
     def to_flver_writer(self, writer: BinaryWriter, flver_version: FLVERVersion):
-        _color = tuple(self.color if flver_version == FLVERVersion.DarkSouls2 else reversed(self.color))
+        if flver_version == FLVERVersion.DarkSouls2:
+            _color = (self.color.a, self.color.r, self.color.g, self.color.b)
+        else:
+            _color = (self.color.r, self.color.g, self.color.b, self.color.a)
         dummy_struct = self.STRUCT.from_object(self, _color=_color)
         dummy_struct.to_writer(writer)

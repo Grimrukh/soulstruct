@@ -21,8 +21,12 @@ if tp.TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
+def _undefined_bitset_error():
+    raise TypeError("`draw_groups` BitSet type not defined for this MSBPart subclass.")
+
+
 @dataclass(slots=True, eq=False, repr=False)
-class BaseMSBPart[BIT_SET_T: BitSet](MSBEntry, abc.ABC):
+class BaseMSBPart(MSBEntry, abc.ABC):
     """Base class for all MSB Parts entries in all games. Includes a generic parameter for `BitSet` type."""
 
     SUPERTYPE_ENUM: tp.ClassVar[MSBSupertype] = MSBSupertype.PARTS
@@ -40,10 +44,10 @@ class BaseMSBPart[BIT_SET_T: BitSet](MSBEntry, abc.ABC):
     scale: Vector3 = field(default_factory=lambda: Vector3.one())
 
     # Sized `BitSet` subclass is overridden per concrete game-specific subclass.
-    draw_groups: BIT_SET_T = field(default_factory=set)
-    display_groups: BIT_SET_T = field(default_factory=set)
+    draw_groups: BitSet = field(default_factory=_undefined_bitset_error)
+    display_groups: BitSet = field(default_factory=_undefined_bitset_error)
 
-    _model_index: int = None
+    _model_index: int | None = None
 
     # Game structures diverge too much for useful read/write base methods here.
 

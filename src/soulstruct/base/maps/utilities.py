@@ -67,7 +67,7 @@ def get_map(source: MAP_SOURCE_TYPING, game_maps: tp.Sequence[Map]) -> Map:
         stem = f"m{area_id:02d}_{block_id:02}_{cc_id:02d}_{dd_id:02}"
         matches = [g for g in game_maps if stem in g.stem_set()]
     elif isinstance(source, int):
-        source = str(int)
+        source = str(source)
         if len(source) == 8:
             area_id, block_id, cc_id, dd_id = int(source[0:2]), int(source[2:4]), int(source[4:6]), int(source[6:8])
         elif len(source) == 6:

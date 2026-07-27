@@ -205,7 +205,8 @@ class Material:
         for texture in self.textures:
             texture.to_flver0_writer(flver_writer)
         for texture in self.textures:
-            texture.pack_strings(flver_writer, encoding=encoding)
+            # `texture.texture_type` can be `None` in FLVER0.
+            texture.pack_strings(flver_writer, encoding=encoding, texture_type_optional=True)
 
         # We always write the layout header, even if it was absent on import.
         flver_writer.fill_with_position("_layout_header_offset", obj=self)

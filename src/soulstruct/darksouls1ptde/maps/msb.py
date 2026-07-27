@@ -311,7 +311,7 @@ class MSB(_BaseMSB[MSBModel, MSBEvent, MSBRegion, MSBPart]):
     # region Utility Methods
 
     def duplicate_collision_with_environment_event(
-        self, collision: MSBCollision | str, at_next_index=True, **kwargs,
+        self, collision: MSBCollision | str, index_offset=None, **kwargs,
     ) -> MSBCollision:
         """Duplicate a Collision and any attached `MSBEnvironment` instance and its region."""
         if "name" not in kwargs:
@@ -319,7 +319,7 @@ class MSB(_BaseMSB[MSBModel, MSBEvent, MSBRegion, MSBPart]):
         if not isinstance(collision, MSBCollision):
             collision = self.collisions.find_entry_name(collision)
         name = kwargs["name"]
-        new_collision = self.collisions.duplicate(collision, at_next_index=at_next_index, **kwargs)
+        new_collision = self.collisions.duplicate(collision, index_offset=index_offset, **kwargs)
         if not new_collision.environment_event:
             return new_collision
 
@@ -380,8 +380,8 @@ class MSB(_BaseMSB[MSBModel, MSBEvent, MSBRegion, MSBPart]):
         rotate: EulerDeg | tuple[float, float, float] | list[float],
         **light_event_kwargs,
     ) -> MSBLightEvent:
-        if "base_region_name" in light_event_kwargs:
-            raise KeyError("`base_region_name` will be created and assigned automatically.")
+        if "attached_region" in light_event_kwargs:
+            raise KeyError("`attached_region` will be created and assigned automatically.")
         light = self.lights.new(**light_event_kwargs)
         light.attached_region = self.regions.new(
             name=f"_LightEvent_{light.name}",

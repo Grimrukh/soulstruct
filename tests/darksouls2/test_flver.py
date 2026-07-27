@@ -154,16 +154,6 @@ def test_map_piece_normal_w_holds_bone_index(ds2_map_piece):
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: `MergedMesh.build_stacked_loops` fallback for unrecognized multi-array meshes records "
-        "vertex-array index 0 for fields that actually live in a LATER array: "
-        "`merged_field_sources.setdefault(field_name, {}).update({i: (0, field_name)})`. DS2 c3090 "
-        "mesh 5 has two vertex arrays, so merging raises "
-        "`ValueError: no field of name bone_indices`."
-    ),
-    strict=False,
-)
 def test_merged_mesh_from_ds2_character(ds2_chr):
     merged = MergedMesh.from_flver(ds2_chr, merge_vertices=False)
     total = sum(mesh.vertex_count for mesh in ds2_chr.meshes)

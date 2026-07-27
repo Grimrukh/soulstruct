@@ -93,7 +93,7 @@ def test_dsr_compiler_inherits_ptde():
 def test_evs_parser_slots():
     from soulstruct.darksouls1r.events.emevd.evs import EVSParser
 
-    assert EVSParser.AND_SLOTS == [1, 2, 3, 4, 5, 6, 7]
+    assert EVSParser.AND_SLOTS == [1, 2, 3, 4, 5, 6, 7, 8]
     assert EVSParser.OR_SLOTS == [-1, -2, -3, -4, -5, -6, -7]
     assert EVSParser.SPECIAL_EVENT_NAMES == {0: "Constructor", 50: "Preconstructor"}
 
@@ -148,13 +148,6 @@ def test_emevd_repack_is_idempotent(emevd):
     assert_bytes_equal(twice, once, "EMEVD second repack")
 
 
-@pytest.mark.xfail(
-    reason="BUG: `Instruction.pack_base_args()` only writes `base_args_local_offset = -1` for category "
-           "1014 ('DefineLabel'). Vanilla DS1 also writes -1 for any instruction with NO base args, so "
-           "repacking m10_00_00_00 differs from vanilla in exactly 4 bytes (instruction 2003[47] in "
-           "event 11005843) (base/events/emevd/instruction.py:343-349).",
-    strict=False,
-)
 def test_emevd_repack_is_byte_identical_to_vanilla(emevd, emevd_path):
     original, _ = decompress(BinaryReader(emevd_path.read_bytes()))
     repacked, _ = decompress(BinaryReader(bytes(emevd)))
@@ -286,25 +279,14 @@ def test_event_directory_evs_roundtrip(dsr_root, tmp_path):
 
 @pytest.mark.slow
 @pytest.mark.game_data
-def test_most_vanilla_emevd_evs_roundtrip(dsr_root, tmp_path):
-    """Per-file EVS round-trip, tolerating the 5 known-broken vanilla maps (see xfail above)."""
-    known_broken = {"m10_01_00_00", "m10_02_00_00", "m12_01_00_00", "m14_01_00_00", "m15_00_00_00"}
-    ok, unexpected_failures = [], []
+def test_vanilla_emevd_evs_roundtrip(dsr_root, tmp_path):
     for path in sorted((dsr_root / "event").glob("*.emevd.dcx")):
         stem = path.name.split(".")[0]
         game_emevd = EMEVD.from_path(path)
         evs_path = tmp_path / f"{stem}.evs.py"
-        try:
-            game_emevd.write_evs(evs_path)
-            from_evs = EMEVD.from_evs_path(evs_path)
-            assert sorted(from_evs.events) == sorted(game_emevd.events)
-        except Exception as ex:  # noqa: BLE001
-            if stem not in known_broken:
-                unexpected_failures.append((stem, str(ex).splitlines()[-1][:120]))
-        else:
-            ok.append(stem)
-    assert not unexpected_failures, f"New EVS round-trip failures: {unexpected_failures}"
-    assert len(ok) >= 25
+        game_emevd.write_evs(evs_path)
+        from_evs = EMEVD.from_evs_path(evs_path)
+        assert sorted(from_evs.events) == sorted(game_emevd.events)
 
 
 @pytest.mark.slow

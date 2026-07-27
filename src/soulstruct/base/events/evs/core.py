@@ -96,7 +96,7 @@ class EVSParser(abc.ABC):
         self.strings_with_offsets = []
 
         # Global namespace with game-specific enums and constants. May be updated with user imports and definitions.
-        self.globals = vars(self.EVENTS_MODULE.enums)
+        self.globals = dict(vars(self.EVENTS_MODULE.enums))  # copy the built-in enums
         self.globals.update(vars(self.EVENTS_MODULE.constants))
         self.globals.update(vars(self.GAME_TYPES))
         # Event-specific namespaces:
@@ -320,7 +320,11 @@ class EVSParser(abc.ABC):
             f"soulstruct.{game.submodule_name}.events.tests",
         ]
 
-        for node in self.tree.body[1:]:
+        for node in self.tree.body:
+            # Skip unassigned string expressions (e.g. docstring).
+            if self._is_node_free_string(node):
+                continue
+
             # Parse root-level module nodes.
             if isinstance(node, ast.Import):
                 self.globals |= import_module(self.name, node, ignore_names=ignore_import_names)
@@ -447,7 +451,6 @@ class EVSParser(abc.ABC):
         """Shortcut for `RunEvent(...)` instruction."""
         name, args, kwargs = self._parse_function_call(node)
         event_info = self.common_func_events[name] if is_common_func else self.events[name]
-        kwargs = self._parse_keyword_nodes(node.keywords)
         event_layer_string = format_event_layers(kwargs.pop("event_layers", None))
 
         if not args and not kwargs and not event_info.args:
@@ -541,7 +544,10 @@ class EVSParser(abc.ABC):
                 return self.cond_manager.MAIN
 
             i = (-1 if match.group(2) == "OR" else 1) * int(match.group(3))
-            return self.cond_manager[i]
+            try:
+                return self.cond_manager[i]
+            except IndexError:
+                raise self._syntax_error(node, f"Condition index {i} ('{node.func.value.id}') is out of range.")
         elif (
             isinstance(node.func, ast.Attribute)
             and node.func.attr == "Await"
@@ -642,7 +648,7 @@ class EVSParser(abc.ABC):
                 raise self._syntax_error(
                     node, f"Variable {repr(for_var.id)} is already a 'for' loop variable in this scope."
                 )
-            if for_var in self.current_event.args:
+            if for_var.id in self.current_event.args:
                 raise self._syntax_error(
                     node, f"Loop variable {repr(for_var.id)} is already the name of an event argument."
                 )
@@ -661,7 +667,7 @@ class EVSParser(abc.ABC):
                     raise self._syntax_error(
                         node, f"Variable {repr(sub_var.id)} is already a 'for' loop variable in this scope."
                     )
-                if sub_var in self.current_event.args:
+                if sub_var.id in self.current_event.args:
                     raise self._syntax_error(
                         node, f"Loop variable {repr(sub_var.id)} is already the name of an event argument."
                     )
@@ -682,7 +688,18 @@ class EVSParser(abc.ABC):
 
         if_emevd = []
 
-        # 0. Check if body is just one end/restart function.
+        # 0. Check if body is just a `pass` statement with no `else` block.
+        # NOTE: If an `else` block exists, we handle the block normally below, with the `if` condition behaving
+        # essentially as a negated check for the `else` block (leading to an EMEVD block starting with a 'skip
+        # rest of block' skip corresponding to the empty `if` block).
+        if len(node.body) == 1 and isinstance(node.body[0], ast.Pass) and not node.orelse:
+            # Complete no-op.
+            _LOGGER.warning(
+                f"`if` block containing nothing but a `pass` statement on line {node.lineno} is ignored."
+            )
+            return []
+
+        # 1. Check if body is just one end/restart function.
         if len(node.body) == 1 and isinstance(node.body[0], ast.Return) and not node.orelse:
             return_node = node.body[0]
             assert isinstance(return_node, ast.Return)
@@ -713,7 +730,7 @@ class EVSParser(abc.ABC):
                     f"event, or the constant RESTART to restart it.",
                 )
 
-        # 1. Build the body of the IF statement.
+        # 2. Build the body of the IF statement.
         body_emevd = []
         for child_node in node.body:
             if isinstance(child_node, ast.Pass):
@@ -725,7 +742,7 @@ class EVSParser(abc.ABC):
             except TypeError as ex:
                 raise self._syntax_error(node, f"Error in IF block:\n  {ast.dump(node)}\nError: {ex}")
 
-        # 2. Build the test line. This could be a simple skip, a multi-line chain skip, or a skip that uses a fully-
+        # 3. Build the test line. This could be a simple skip, a multi-line chain skip, or a skip that uses a fully-
         #    fledged Condition, depending on the test. Note that the body length has 1 added (an extra skip line) if
         #    there is an ELSE body in the statement, and does not include arg replacement lines.
         body_length = len([line for line in body_emevd if not line.startswith("    ^")])
@@ -733,7 +750,7 @@ class EVSParser(abc.ABC):
             body_length += 1
         test_emevd = self._compile_test(node.test, body_length=body_length)
 
-        # 3. Build the ELSE body of the IF statement, if it exists.
+        # 4. Build the ELSE body of the IF statement, if it exists.
         else_emevd = []
         for child_node in node.orelse:
             if isinstance(child_node, ast.Pass):
@@ -743,7 +760,7 @@ class EVSParser(abc.ABC):
             else_emevd += self._compile_event_body_node(statement_node)
 
 
-        # 4. Put these components together. Note that an extra skip line is added if an ELSE body is present.
+        # 5. Put these components together. Note that an extra skip line is added if an ELSE body is present.
         if_emevd += test_emevd + body_emevd
         if else_emevd:
             skip_line_count = len([line for line in else_emevd if not line.startswith("    ^")])
@@ -1262,10 +1279,7 @@ class EVSParser(abc.ABC):
 
         for v in node.values:
             # Call root condition compiler function again. Nested boolean operations may come back here.
-            try:
-                cond_node = as_condition_node(v)
-            except EVSSyntaxError:
-                continue  # continue below
+            cond_node = as_condition_node(v)  # will raise `EVSSyntaxError` on invalid boolean terms
             condition_emevd += self._compile_condition(cond_node, condition_group=temp_condition)
 
         if skip_lines > 0:
@@ -1493,7 +1507,7 @@ class EVSParser(abc.ABC):
                 raise self._syntax_error(
                     node, f"'hold' can be True or False (default), " f"not {node.value.keywords[0].value}."
                 )
-            elif hold_keyword.value.value == "True":
+            elif hold_keyword.value.value is True:
                 hold = True
 
         if isinstance(condition_argument, ast.BoolOp):
@@ -1545,8 +1559,18 @@ class EVSParser(abc.ABC):
     def _parse_name(self, node: ast.Name, test=False):
         """Get named object from parser namespace.
 
-        Looks in current event arguments first, then global namespace. Raises an `EvsNameError` if name not found or
-        an `EvsSyntaxError` if the name is a reserved event argument (currently "slot" and "event_layers").
+        Looks in this order:
+            - event arguments (function scope variable)
+            - condition group name (global)
+            - `for` loop variables
+            - local variables
+            - global variables
+
+        Condition group names are protected global names, and event arguments are protected local names.
+        Local variables cannot shadow these protected names by design.
+
+        Raises an `EvsNameError` if name not found or an `EvsSyntaxError` if the name is a reserved event
+        argument (currently "slot" and "event_layers").
         """
         name = node.id
         if self.current_event and name in self.current_event.args:
@@ -1575,12 +1599,16 @@ class EVSParser(abc.ABC):
             return condition
 
         # Look in 'for' loop variables, then locals, then globals.
+        # Note that 'for' loop variables and locals cannot collide with event arguments or reserved
+        # condition names, which is enforced upon assignment.
         if name in self.for_vars:
             return self.for_vars[name]
         if name in self.locals:
             return self.locals[name]
         if name in self.globals:
             return self.globals[name]
+
+        # Name not found.
         raise self._name_error(node, name)
 
     def _parse_bin_op(self, node: ast.BinOp):
@@ -1742,7 +1770,7 @@ class EVSParser(abc.ABC):
         except KeyError:
             raise self._syntax_error(
                 event_node,
-                f"Event function decorator name is not a valid event restart type: {dec_node.id}\n"
+                f"Event function decorator name is not a valid event restart type: {name}\n"
                 f"Must be one of: {', '.join(RESTART_TYPES)}",
             )
 
@@ -1775,6 +1803,11 @@ class EVSParser(abc.ABC):
             )
 
         return node.left, node.ops[0].__class__, comparator
+
+    @staticmethod
+    def _is_node_free_string(node: ast.stmt) -> bool:
+        """Checks if this is a free string node, e.g. a docstring (or just a triple-quoted comment)."""
+        return isinstance(node, ast.Expr) and isinstance(node.value, ast.Constant) and isinstance(node.value.value, str)
 
     # EVS exception wrappers that pass in `self.name` automatically.
 

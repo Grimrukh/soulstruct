@@ -129,14 +129,6 @@ def test_field_info_has_no_new_stale_keys():
     )
 
 
-# DS1 fields with no `FIELD_INFO` entry and no `MapFieldInfo` metadata (fall back to 'TODO-TOOLTIP').
-DS1_KNOWN_MISSING_DISPLAY_INFO = {
-    "MSBWindEvent.unk_x0c",
-    "MSBWindEvent.unk_x1c",
-    "MSBNPCInvasionEvent.activate_good_id",
-}
-
-
 def test_ds1_ptde_display_info_is_in_sync():
     import soulstruct.darksouls1ptde.game_types as game_types
 
@@ -150,10 +142,7 @@ def test_ds1_ptde_display_info_is_in_sync():
             assert display_info.display_type is not None
             if display_info.tooltip == "TODO-TOOLTIP":
                 missing.add(f"{entry_class.__name__}.{field_name}")
-    assert missing == DS1_KNOWN_MISSING_DISPLAY_INFO, (
-        f"`FIELD_INFO` drift for DS1 PTDE. Newly missing: {sorted(missing - DS1_KNOWN_MISSING_DISPLAY_INFO)}; "
-        f"newly documented: {sorted(DS1_KNOWN_MISSING_DISPLAY_INFO - missing)}"
-    )
+    assert len(missing) == 0, f"DS1 PTDE missing field display info: {sorted(missing)}"
 
 
 def test_display_info_resolves_reference_field_game_types():
@@ -198,16 +187,6 @@ def test_elden_ring_display_info_is_in_sync():
     assert not missing, f"{len(missing)} Elden Ring fields lack display metadata."
 
 
-@pytest.mark.xfail(
-    reason=(
-        "`BaseMSBPart` annotates `draw_groups`/`display_groups` with the generic parameter "
-        "`BIT_SET_T`. `MSBEntry.get_field_types()` only understands literal annotation strings, so "
-        "any game class that does not re-annotate them (all 10 Bloodborne Part classes) raises "
-        "`TypeError: Invalid field type annotation 'BIT_SET_T'` -- which also breaks "
-        "`__setattr__` validation entirely for those classes."
-    ),
-    strict=False,
-)
 def test_all_registered_part_classes_resolve_field_types():
     broken = []
     for submodule in _CANDIDATE_GAMES:
@@ -265,15 +244,6 @@ def test_entry_metadata_overrides_field_info_defaults():
     pytest.skip("No DS1 MSB field defines an explicit `MapFieldInfo` nickname.")
 
 
-@pytest.mark.xfail(
-    reason=(
-        "`_FIELD_DISPLAY_INFO` is cached via ordinary attribute lookup, so a subclass "
-        "(e.g. `MSBDummyCharacter(MSBCharacter)`) inherits its parent's cached display info -- "
-        "including the parent's subtype-specific nicknames -- if the parent is queried first. "
-        "This makes display info order-dependent."
-    ),
-    strict=False,
-)
 def test_subclass_does_not_inherit_parent_display_info_cache():
     import soulstruct.darksouls1ptde.game_types as game_types
     from soulstruct.darksouls1ptde.maps.parts import MSBCharacter, MSBDummyCharacter

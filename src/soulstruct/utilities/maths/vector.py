@@ -40,7 +40,7 @@ class BaseVector(abc.ABC):
         if isinstance(data, BaseVector):
             arr = data._data.copy()
         else:
-            arr = np.asarray(data, dtype=float)
+            arr = np.array(data, dtype=float)  # copy
         arr.flags.writeable = False
         object.__setattr__(self, "_data", arr)
 

@@ -270,7 +270,7 @@ def test_msg_directory_regex_filter(ptde_msg_directory):
     assert names
     assert all("Descriptions" in n for n in names)
     # Prefix matching also pulls in the DLC "Patch" variants.
-    assert any(n.endswith("DescriptionsPatch") for n in names)
+    assert not any(n.endswith("DescriptionsPatch") for n in names)
 
 
 def test_msg_directory_merge_base_and_patch(ptde_msg_directory):

@@ -74,7 +74,7 @@ def get_byte_offset_from_struct(format_string: str) -> dict[int, tuple[int, str]
     The byte offsets indicate where the associated element in the struct format string begins. Note that native byte
     alignment "@" is critical here, as EMEVD uses byte-aligned packed binary data.
     """
-    format_string = format_string.replace("|", "")
+    format_string = format_string.replace("|", "").replace("s", "I")
     byte_offset_array = {}
     for i in range(len(format_string)):
         offset = struct.calcsize("@" + format_string[:i + 1]) - struct.calcsize("@" + format_string[i])
@@ -145,10 +145,11 @@ def get_instruction_args(
     return args_format[1:] + "|" + "I" * (extra_size // 4), list(args) + opt_args
 
 
-def get_write_offset(event_format: str, arg_index: int) -> int:
+def get_write_offset(format_string: str, arg_index: int) -> int:
     """Iterate over event format string to determine write offset of given argument index."""
+    format_string = format_string.replace("|", "").replace("s", "I")
     offset = 0
-    for i, c in enumerate(event_format):
+    for i, c in enumerate(format_string):
         if c in "Hh":
             if (offset % 2) != 0:
                 # Fill in remainder of 2-byte chunk.
@@ -165,6 +166,8 @@ def get_write_offset(event_format: str, arg_index: int) -> int:
             offset += 2
         elif c in "Iif":
             offset += 4
+    # This should be logically prevented.
+    raise ValueError("Could not compute write offset from format string.")
 
 
 def boolify(integer):

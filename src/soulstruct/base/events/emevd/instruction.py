@@ -342,7 +342,8 @@ class Instruction(abc.ABC):
             writer.pad(4)
 
     def pack_base_args(self, writer: BinaryWriter, base_args_start_offset: int):
-        if self.category == 1014:  # 'DefineLabel' category has NO arg data offset, not even to empty bytes
+        if self.category == 1014 or not self.args_list:
+            # 'DefineLabel' category (1014) has NO arg data offset, not even to empty bytes
             writer.fill("base_args_local_offset", -1, obj=self)
             return
         writer.fill("base_args_local_offset", writer.position - base_args_start_offset, obj=self)

@@ -551,7 +551,7 @@ def get_called_state_machine(node: ast.Call) -> int | None:
         and isinstance(node.func.value, ast.Name)
         and node.func.value.id == "CALL_STATE_MACHINE"
         and isinstance(node.func.slice, ast.Constant)
-        and is_number_literal(node.func.slice.value)
+        and is_number_literal(node.func.slice)
     ):
-        return node.func.slice.value.value
+        return node.func.slice.value
     return None

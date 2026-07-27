@@ -63,7 +63,7 @@ def setdefault_lambda(dictionary: dict, key, default: tp.Callable[[], tp.Any]):
     return dictionary[key]
 
 
-class BiDict(dict):
+class BiDict[K: str, V: str](dict[K, V]):
     def __init__(self, *args):
         """Initialized with pairs of values to be connected."""
         super().__init__()
@@ -105,8 +105,9 @@ class BiDict(dict):
         self.__values.append(value_2)
 
     def __delitem__(self, key):
+        partner = self[key]
         super().__delitem__(key)
-        super().__delitem__(self[key])
+        super().__delitem__(partner)
 
     def __len__(self):
         return super().__len__() // 2
@@ -230,9 +231,6 @@ class IDList[ELEMENT_T]:
         item_id = id(item)
         if item_id in self._index_dict:
             return self._index_dict[item_id]
-        print("ITEMS:")
-        for o in self._list:
-            print("   ", o.name, id(o), id(o) in self._index_dict)
         raise ValueError(f"Item `{item.name}` (ID {item_id}) is not in `IDList`.")
 
     def copy(self) -> IDList[ELEMENT_T]:
@@ -271,11 +269,13 @@ class IDList[ELEMENT_T]:
     def __contains__(self, item: ELEMENT_T) -> bool:
         return id(item) in self._index_dict
 
-    def __eq__(self, other: IDList) -> bool:
+    def __eq__(self, other: object) -> bool:
         """Equal if dictionaries are exactly equal, ignoring dictionary order."""
+        if not isinstance(other, IDList):
+            return NotImplemented
         return self._index_dict == other._index_dict
 
-    def __ne__(self, other: IDList) -> bool:
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
     def __hash__(self) -> int:

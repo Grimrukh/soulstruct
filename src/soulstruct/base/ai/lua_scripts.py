@@ -157,15 +157,19 @@ class LuaGoalScript(LuaScriptBase):
 
         (LuaGoal64 if long_varints else LuaGoal32).object_to_writer(self, writer, **goal_kwargs)
 
+    def pack_name(self, writer: BinaryWriter, encoding: str):
+        writer.fill_with_position("name_offset", obj=self)
+        writer.pack_z_string(self.goal_name, encoding=encoding)
+
     def pack_logic_interrupt_name(self, writer: BinaryWriter, encoding: str):
         if self.goal_type == GoalType.Logic:
             if not self.goal_name.endswith("_Logic"):
                 raise LuaError(f"Lua logic goal name must end in '_Logic'. Invalid: {repr(self.goal_name)}")
-            logic_interrupt_name = self.goal_name[:-6] + "_Interupt"
-            writer.fill_with_position("logic_interrupt_name", obj=self)
+            logic_interrupt_name = self.goal_name[:-6] + "_Interupt"  # (sic)
+            writer.fill_with_position("logic_interrupt_name_offset", obj=self)
             writer.pack_z_string(logic_interrupt_name, encoding=encoding)
         else:
-            writer.fill("logic_interrupt_name", 0, obj=self)
+            writer.fill("logic_interrupt_name_offset", 0, obj=self)
 
     def validate_goal_name(self):
         if self.goal_type == GoalType.Logic and not self.goal_name.endswith("_Logic"):

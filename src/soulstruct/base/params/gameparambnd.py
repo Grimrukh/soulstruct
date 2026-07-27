@@ -16,8 +16,6 @@ from soulstruct.utilities.files import read_json, write_json
 from soulstruct.utilities.misc import BiDict
 
 from .param import Param, TypedParam
-from .param_dict import ParamDict
-from .paramdef.paramdefbnd import ParamDefBND
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -35,12 +33,12 @@ class GameParamBND(Binder, abc.ABC):
 
     # Maps internal param names (some game-specific) to more friendly Soulstruct names. Two-way dictionary.
     # Values should match the names of getter properties on game subclass.
-    PARAM_NICKNAMES: tp.ClassVar[BiDict[str, str]] = BiDict()
+    PARAM_NICKNAMES: tp.ClassVar[BiDict] = BiDict()
     # Maps param nicknames to their Soulstruct game types. Also defines order (and presence) of params in GUI.
     GAME_TYPES: tp.ClassVar[dict[str, BaseGameParam]] = {}
 
-    # Maps internal param stems, e.g. `NpcParam`, to `Param` or generic `ParamDict` instance.
-    params: dict[str, Param | ParamDict] = field(default_factory=dict)
+    # Maps internal param stems, e.g. "NpcParam", to `Param` instances.
+    params: dict[str, Param] = field(default_factory=dict)
 
     def __post_init__(self):
         if self.params:  # passed to constructor; do not unpack from entries
@@ -51,23 +49,13 @@ class GameParamBND(Binder, abc.ABC):
             if not entry.name.endswith(".param"):
                 _LOGGER.warning(f"Ignoring unknown entry '{entry.name}' in `GameParamBND` binder.")
                 continue
+            typed_param_class = self.get_typed_param_class(entry)
             try:
-                typed_param_class = self.get_typed_param_class(entry)
-            except TypedParamError:
-                _LOGGER.warning(
-                    f"Loaded `GameParamBND` entry '{entry.name}' as a generic `ParamDict`. You must call "
-                    f"`unpack_all_param_rows(paramdefbnd)` to manually interpret the row data using a `ParamDefBND`. "
-                    f"(You can omit the `paramdefbnd` argument to use Soulstruct's bundled `.paramdefbnd` file for "
-                    f"this game, but if you're seeing this warning, it's possible the bundled file is outdated.)"
-                )
-                self.params[entry.stem] = entry.to_binary_file(ParamDict)
-            else:
-                try:
-                    self.params[entry.stem] = entry.to_binary_file(typed_param_class)
-                    _LOGGER.debug(f"Loaded Param: {entry.name}")
-                except Exception as ex:
-                    _LOGGER.error(f"Could not load `Param` from `GameParamBND` entry '{entry.name}'.\n  Error: {ex}")
-                    raise
+                self.params[entry.stem] = entry.to_binary_file(typed_param_class)
+                _LOGGER.debug(f"Loaded Param: {entry.name}")
+            except Exception as ex:
+                _LOGGER.error(f"Could not load `Param` from `GameParamBND` entry '{entry.name}'.\n  Error: {ex}")
+                raise
 
     def get_typed_param_class(self, entry: BinderEntry):
         try:
@@ -84,23 +72,6 @@ class GameParamBND(Binder, abc.ABC):
                 f"Soulstruct does not yet know how to unpack Param type `{param_type}` of entry: {entry.name}."
             )
         return TypedParam(row_type)
-
-    def unpack_all_param_rows(self, paramdefbnd: ParamDefBND | None = None):
-        """Unpack all row data of all `ParamDict` entries using `paramdefbnd` (defaults to bundled file).
-
-        Ignores true `Param` entries that are already using the generated `ParamRow` subclasses.
-        """
-        if paramdefbnd is None:
-            paramdefbnd = ParamDefBND.from_bundled(self.get_game())
-        unpacked = []
-        for param_stem, param in self.params.values():
-            if isinstance(param, ParamDict):
-                param.unpack_rows(paramdefbnd)
-                unpacked.append(param_stem)
-        if not unpacked:
-            _LOGGER.info("No `ParamDict`s in this `GameParamBND` whose row data needs unpacking.")
-        else:
-            _LOGGER.info(f"Unpacked data for `ParamDict`s: {', '.join(unpacked)}")
 
     def entry_autogen(self):
         """Regenerate Binder entries from `params` dictionary."""
@@ -135,12 +106,9 @@ class GameParamBND(Binder, abc.ABC):
                 try:
                     data_type = getattr(cls.PARAMDEF_MODULE, param_type)
                 except AttributeError:
-                    _LOGGER.warning(
-                        f"Soulstruct does not yet know how to unpack Param type `{param_type}` of '{param_stem}'. "
-                        f"Using generic `ParamDict`."
+                    raise TypeError(
+                        f"Soulstruct does not yet know how to unpack Param type `{param_type}` of '{param_stem}'."
                     )
-                    param = ParamDict.from_dict(param)
-                    param.path = Path(f"{param_stem}{ParamDict.EXT}")
                 else:
                     param_class = TypedParam(data_type)
                     param = param_class.from_dict(param)

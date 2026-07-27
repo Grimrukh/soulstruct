@@ -211,8 +211,6 @@ class Condition:
         else:
             s = f"{ind}if {cond_expr}:\n"
 
-        print(s)
-
         if self.pass_commands:
             for command in self.pass_commands:
                 s += command.to_esp(esd_type, indent=indent + 1, comment=comment)

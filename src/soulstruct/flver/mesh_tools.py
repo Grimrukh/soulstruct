@@ -391,9 +391,9 @@ class MergedMesh:
 
                 if basic_merge:
                     # Fallback: iterate over fields and add them, using the last VA source found.
-                    for extra_vertex_array in mesh.vertex_arrays[1:]:
+                    for extra_index, extra_vertex_array in enumerate(mesh.vertex_arrays[1:], start=1):
                         for field_name in extra_vertex_array.field_names:
-                            merged_field_sources.setdefault(field_name, {}).update({i: (0, field_name)})
+                            merged_field_sources.setdefault(field_name, {}).update({i: (extra_index, field_name)})
 
         # Structured array for mixed dtypes.
         all_vertices = np.empty(total_vertex_count, dtype=dtype)  # will be fully initialized
@@ -420,7 +420,7 @@ class MergedMesh:
             def _mesh_source_or_default(_name: str, _default: tp.Any):
                 """Get mesh source array/field or return default (for uninitialized arrays)."""
                 try:
-                    _va_index, _va_field_name = merged_field_sources[name][mesh_index]
+                    _va_index, _va_field_name = merged_field_sources[_name][mesh_index]
                 except KeyError:
                     return _default
                 return mesh.vertex_arrays[_va_index][_va_field_name]
@@ -461,6 +461,7 @@ class MergedMesh:
                         mesh_vertices["bone_indices"] = bone_indices
                     continue
 
+                found_name_match = False
                 for loop_array, name_option in (
                     (loops.normals, "normal"),
                     (loops.normals_w, "normal_w"),
@@ -471,7 +472,10 @@ class MergedMesh:
                     if name == name_option:
                         assert loop_array is not None
                         loop_array[i:j] = _mesh_source_or_default(name_option, MergedMeshLoops.DEFAULTS[name_option])
-                        continue
+                        found_name_match = True
+                        break
+                if found_name_match:
+                    continue
 
                 if name.startswith("tangent_"):
                     t_i = int(name.removeprefix("tangent_"))
@@ -594,9 +598,9 @@ class MergedMesh:
             likely an artifact of From's FLVER export process.
 
             3. Two faces with the same material share all three vertices and have vertex normals with DIFFERENT
-            ORIENTATION (separated by 90 degrees or more). These are NOT 'duplicate' faces because they are likely to be
-            rendered from different sides. We should NOT merge these vertices, as Blender does not support two faces
-            (which we do want here) sharing the exact same vertices. TODO: This was true when using BMesh, at least.
+            ORIENTATION (separated by at least ~154 degrees). These are NOT 'duplicate' faces because they are likely
+            to be rendered from different sides. We should NOT merge these vertices, as Blender does not support two
+            faces (which we do want here) sharing the exact same vertices.
 
             4. Two faces with different materials share all three vertices. If the materials have mask prefixes (in
             particular, DIFFERENT mask prefixes) like '#00#' and '#01#', then this is likely a genuine case of two faces
@@ -778,9 +782,12 @@ class MergedMesh:
         self.loop_data.normals /= np.linalg.norm(self.loop_data.normals, axis=1, keepdims=True)
 
     def normalize_tangents(self):
-        """Ditto for tangents. See above."""
-        for i in range(len(self.loop_data.tangents)):
-            self.loop_data.tangents[i] /= np.linalg.norm(self.loop_data.tangents[i], axis=1, keepdims=True)
+        """Ditto for tangents. See above.
+
+        We avoid touching the fourth element (bitangent sign).
+        """
+        for tangents in self.loop_data.tangents:
+            tangents[:, :3] /= np.linalg.norm(tangents[:, :3], axis=1, keepdims=True)
 
     def round_normals(self, decimals=3):
         """Round loop normal data in place to a given number of decimal places.
@@ -862,8 +869,11 @@ class MergedMesh:
 
         TODO: Handle multiple-VA meshes with cloth_tangent and cloth_bitangent.
         """
-        if use_mesh_bone_indices and max_bones_per_mesh < 3:
-            raise ValueError("`max_bones_per_mesh` must be >= 3 (and realistically should be much higher).")
+        if use_mesh_bone_indices and max_bones_per_mesh < 12:
+            raise ValueError(
+                "`max_bones_per_mesh` must be at least 12 (max number of bones that could be weighted by "
+                "a single triangle)."
+            )
 
         # Split each `SplitMeshDef` into its component information for efficiency.
         mesh_materials = [mesh_def.material for mesh_def in split_mesh_defs]
@@ -1262,16 +1272,17 @@ class MergedMesh:
 
         tangent_names = [n for n in names if n.startswith("tangent_")]
         for tangent_name in tangent_names:
-            t_i = int(tangent_name[-1])
+            t_i = int(tangent_name.removeprefix("tangent_"))
             combined_array[f"tangent_{t_i}"] = self.loop_data.tangents[t_i]  # (loop_count, 4)
 
         # Combined array still uses global UV layer names.
-        for uv_layer_name in self.loop_data.uvs:
+        uv_layer_names = [n for n in names if n.startswith("uv_")]
+        for uv_layer_name in uv_layer_names:
             combined_array[uv_layer_name] = self.loop_data.uvs[uv_layer_name]
 
         color_names = [n for n in names if n.startswith("color_")]
         for color_name in color_names:
-            c_i = int(color_name[-1])
+            c_i = int(color_name.removeprefix("color_"))
             combined_array[f"color_{c_i}"] = self.loop_data.vertex_colors[c_i]  # (loop_count, 4)
 
         return combined_array
@@ -1331,11 +1342,3 @@ class MergedMesh:
     @property
     def loop_cloth_bitangents(self) -> NDArray[np.float32] | None:
         return self.loop_data.cloth_bitangents
-
-    @staticmethod
-    def unique(array: np.ndarray, max_value=None):
-        """More efficient `np.unique()` (for reasonable array lengths) that uses masking and does NOT sort."""
-        max_value = max_value or np.max(array) + 1
-        used = np.zeros(max_value, dtype=np.uint8)
-        used[array] = 1
-        return np.argwhere(used == 1)[:, 0]

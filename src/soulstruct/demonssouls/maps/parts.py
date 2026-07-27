@@ -122,7 +122,7 @@ class PartSupertypeData(MSBBinaryStruct):
 
 
 @dataclass(slots=True, eq=False, repr=False)
-class MSBPart(BaseMSBPart[BitSet128], abc.ABC):
+class MSBPart(BaseMSBPart, abc.ABC):
 
     HEADER_STRUCT = PartHeaderStruct
     STRUCTS = {
@@ -169,7 +169,7 @@ class MSBMapPiece(MSBPart):
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\DemonsSoul\\data\\Model\\map\\{map_stem}\\sib\\{name}.sib"
     STRUCTS = MSBPart.STRUCTS | {"subtype_data": MapPieceDataStruct}
 
-    model: MSBMapPieceModel = None
+    model: MSBMapPieceModel | None = None
 
     HIDE_FIELDS = (
         "scale",
@@ -231,7 +231,7 @@ class MSBObject(MSBPart):
     )
 
     # Replace types/defaults.
-    model: MSBObjectModel = None
+    model: MSBObjectModel | None = None
     is_shadow_source: bool = True
     is_shadow_destination: bool = True
     draw_by_reflect_cam: bool = True
@@ -296,7 +296,7 @@ class MSBCharacter(MSBPart):
     default_animation: int = -1
     damage_animation: int = -1
 
-    _draw_parent_index: int = None
+    _draw_parent_index: int | None = None
     _patrol_regions_indices: list[int] = binary_array(8, default=None)
 
     HIDE_FIELDS = (
@@ -426,7 +426,7 @@ class MSBCollision(MSBPart):
     _force_place_name_banner: bool = field(default=True, repr=False)
 
     # Field type/default overrides.
-    model: MSBCollisionModel = None
+    model: MSBCollisionModel | None = None
     display_groups: BitSet128 = field(default_factory=BitSet128.all_on)  # all ON by default
     is_shadow_source: bool = True
     is_shadow_destination: bool = True
@@ -509,7 +509,7 @@ class MSBProtoboss(MSBPart):
     STRUCTS = MSBPart.STRUCTS | {"subtype_data": ProtobossDataStruct}
 
     # Type/default overrides.
-    model: MSBCharacterModel = None  # TODO: Character model? Surely.
+    model: MSBCharacterModel | None = None  # TODO: Character model? Surely.
 
     # TODO: Defaults?
     unk_x00: float = 0.0
@@ -540,7 +540,7 @@ class MSBNavmesh(MSBPart):
     STRUCTS = MSBPart.STRUCTS | {"subtype_data": NavmeshDataStruct}
 
     # Type/default overrides.
-    model: MSBNavmeshModel = None
+    model: MSBNavmeshModel | None = None
 
     navmesh_groups: BitSet128 = field(default_factory=BitSet128.all_off)  # all OFF by default
 
@@ -580,7 +580,7 @@ class MSBDummyObject(MSBObject):
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = ""  # no SIB path, unlike real objects
 
     # Type override:
-    model: MSBDummyObjectModel = None
+    model: MSBDummyObjectModel | None = None
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -594,7 +594,7 @@ class MSBDummyCharacter(MSBCharacter):
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = ""
 
     # Type override:
-    model: MSBDummyCharacterModel = None
+    model: MSBDummyCharacterModel | None = None
 
 
 class ConnectCollisionDataStruct(MSBBinaryStruct):
@@ -618,11 +618,11 @@ class MSBConnectCollision(MSBPart):
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model", "collision"]
     STRUCTS = MSBPart.STRUCTS | {"subtype_data": ConnectCollisionDataStruct}
 
-    model: MSBCollisionModel = None
+    model: MSBCollisionModel | None = None
     collision: MSBCollision = None
     connected_map_id: list[int] = field(default_factory=lambda: [1, 0, 0, 0], **BinaryArray(4))
 
-    _collision_index: int = None
+    _collision_index: int | None = None
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBConnectCollision, self).indices_to_objects(entry_lists)

@@ -17,7 +17,7 @@ from .evs import EVSParser
 from .decompiler import DECOMPILER, OPT_ARGS_DECOMPILER, decompile_instruction
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, repr=False)
 class Instruction(_BaseInstruction):
     EMEDF: tp.ClassVar = EMEDF
     DECOMPILER: tp.ClassVar = DECOMPILER

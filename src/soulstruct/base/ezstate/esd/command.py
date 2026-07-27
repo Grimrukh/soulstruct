@@ -29,7 +29,7 @@ class Command:
 
     bank: int
     index: int
-    args: list[bytes] = field(default_factory=list)
+    args: list[bytearray] = field(default_factory=list)
     _indent: int = 0
 
     @classmethod
@@ -42,7 +42,8 @@ class Command:
             with reader.temp_offset(header.args_offset):
                 for _ in range(header.args_count):
                     arg_struct = CommandArgsStruct.from_bytes(reader)
-                    args.append(reader.unpack_bytes(length=arg_struct.arg_ezl_size, offset=arg_struct.arg_ezl_offset))
+                    args_bytes = reader.unpack_bytes(length=arg_struct.arg_ezl_size, offset=arg_struct.arg_ezl_offset)
+                    args.append(bytearray(args_bytes))
 
         return cls(header.bank, header.index, args)
 
@@ -56,28 +57,30 @@ class Command:
             return 0
 
         writer.fill_with_position("args_offset", obj=self)
-        for arg_bytes in self.args:
+        for arg_bytearray in self.args:
             # Offsets are reserved using the bytes object IDs, so we don't use `CommandArgsStruct`.
-            writer.reserve("arg_ezl_offset", "v", obj=arg_bytes)
-            writer.pack("v", len(arg_bytes))
+            writer.reserve("arg_ezl_offset", "v", obj=arg_bytearray)
+            writer.pack("v", len(arg_bytearray))
         return len(self.args)
 
     def pack_args_data(self, writer: BinaryWriter):
         """Pack EZL bytes."""
         # TODO: Conditions and commands are currently intermingled (ordered by state), which is not true for the
         #  original resources (where all condition data comes before all command data), but it shouldn't matter at all.
-        for arg_bytes in self.args:
-            writer.fill_with_position("arg_ezl_offset", obj=arg_bytes)
-            writer.append(arg_bytes)
+        for arg_bytearray in self.args:
+            writer.fill_with_position("arg_ezl_offset", obj=arg_bytearray)
+            writer.append(arg_bytearray)
 
     def __hash__(self):
-        return hash((self.bank, self.index, tuple(self.args)))
+        return hash((self.bank, self.index, tuple(bytes(a) for a in self.args)))
 
-    def __eq__(self, other_command: Command):
+    def __eq__(self, other_command: object):
+        if not isinstance(other_command, Command):
+            return NotImplemented
         return (
             self.bank == other_command.bank
             and self.index == other_command.index
-            and self.args == other_command.args
+            and all(bytes(a) == bytes(b) for a, b in zip(self.args, other_command.args))
         )
 
     def to_esp(self, esd_type: ESDType, indent=2, comment=False):

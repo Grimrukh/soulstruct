@@ -268,14 +268,6 @@ def test_flver0_preserves_bounding_box():
     np.testing.assert_allclose(reloaded.bounding_box.max, expected.max)
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: `FLVER._from_flver2_reader` returns `header.to_object(cls, ...)` without mapping "
-        "`bounding_box_min`/`bounding_box_max` to the `bounding_box` field, so the FLVER-wide "
-        "bounding box is dropped on read and an invalid (inverted-infinite) AABB is written back."
-    ),
-    strict=False,
-)
 def test_flver2_preserves_bounding_box():
     flver = make_flver(version=FLVERVersion.DarkSouls_A)
     expected = flver.bounding_box
@@ -402,14 +394,6 @@ def test_refresh_bone_bounding_boxes_local_space_subtracts_bone_translate():
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: `FLVER.scale_all_translations` indexes `position[0]`, `position[1]`, `position[2]` "
-        "which are the first three VERTEX ROWS, not the X/Y/Z columns. Only the first three "
-        "vertices are scaled, each by a single (wrong) axis factor."
-    ),
-    strict=False,
-)
 def test_scale_all_translations_scales_every_vertex():
     flver = make_flver(dummies=[Dummy(translate=Vector3((1.0, 2.0, 3.0)))])
     flver.bones[0].translate = Vector3((1.0, 1.0, 1.0))
@@ -541,16 +525,6 @@ def test_set_bone_tree_writes_indices_back():
     assert flver.bones[0].parent_bone_index == -1
 
 
-@pytest.mark.xfail(
-    reason=(
-        "TRAP: `BoneTree.get_bone_armature_space_transforms()` walks DOWN the hierarchy using "
-        "`child_bone`/`next_sibling_bone` references, while `BoneNode.get_armature_space_transform()` "
-        "walks UP using `parent_bone`. If only parent references are set (a natural way to build a "
-        "tree by hand), the batch method silently returns LOCAL transforms for every non-root bone "
-        "instead of raising. Call `set_bone_children_siblings()` first."
-    ),
-    strict=False,
-)
 def test_batch_and_single_armature_transforms_agree_with_only_parent_refs():
     parent = FLVERBone(name="parent", rotate=EulerRad((0.0, math.pi / 2, 0.0)))
     child = FLVERBone(name="child", translate=Vector3((1.0, 0.0, 0.0)), parent_bone_index=0)
@@ -598,14 +572,6 @@ def test_bone_binary_roundtrip():
     np.testing.assert_allclose(reloaded.translate, [1.0, 2.0, 3.0])
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: `FLVERBone.__eq__` reads `self.parent_bone` / `self._parent_bone_index`, which do not "
-        "exist on the slots dataclass (fields are named `parent_bone_index`). Comparing two otherwise "
-        "equal bones raises `AttributeError`."
-    ),
-    strict=False,
-)
 def test_flver_bone_equality():
     a = FLVERBone(name="x", translate=Vector3((1.0, 0.0, 0.0)))
     b = FLVERBone(name="x", translate=Vector3((1.0, 0.0, 0.0)))
@@ -645,14 +611,6 @@ def test_dummy_binary_roundtrip_fields():
 
 
 @pytest.mark.parametrize("version", [FLVERVersion.DarkSouls_A, FLVERVersion.DarkSouls2])
-@pytest.mark.xfail(
-    reason=(
-        "BUG: `Dummy.from_flver_reader` reverses the packed colour bytes for DS2 only, but "
-        "`Dummy.to_flver_writer` reverses them for every version EXCEPT DS2. Both branches are "
-        "inverted, so a non-symmetric dummy colour is byte-reversed on every write."
-    ),
-    strict=False,
-)
 def test_dummy_color_roundtrip(version):
     dummy = Dummy(color=ColorRGBA(1, 2, 3, 4))
     writer = BinaryWriter(byte_order=ByteOrder.LittleEndian)
@@ -694,14 +652,6 @@ def test_face_set_from_triangles_1d_array_is_reshaped():
     assert face_set.vertex_indices.shape == (2, 3)
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: `FaceSet.from_triangles` builds a flat 1D array when given a list/sequence of triplets "
-        "instead of an ndarray, but leaves `is_triangle_strip=False`. The resulting FaceSet cannot be "
-        "triangulated or written (both require 2D indices)."
-    ),
-    strict=False,
-)
 def test_face_set_from_triangles_list_of_triplets():
     face_set = FaceSet.from_triangles([(0, 1, 2), (1, 3, 2)])
     assert face_set.vertex_indices.shape == (2, 3)
@@ -782,16 +732,6 @@ def test_face_set_get_face_counts_non_strip():
     assert face_set.get_face_counts(uses_0xffff_separators=True) == (2, 2)
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: `FaceSet.get_face_counts` only excludes MotionBlur face sets in the triangle-strip "
-        "branch. For non-strip face sets (all modern games) it returns `(len, len)` unconditionally, "
-        "so the FLVER header's `true_face_count` is inflated. Verified against vanilla Bloodborne "
-        "c2800.flver: Soulstruct writes 65420 where the vanilla header holds 30630 (= all faces in "
-        "face sets without the MotionBlur flag)."
-    ),
-    strict=False,
-)
 def test_face_set_get_face_counts_excludes_motion_blur_when_not_a_strip():
     face_set = FaceSet.from_triangles(QUAD_TRIANGLES)
     face_set.flags = int(FaceSetFlags.MotionBlur)
@@ -811,14 +751,6 @@ def test_face_set_binary_roundtrip():
     assert reloaded.vertex_indices.dtype == np.uint32
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: `FaceSet.get_connected_vertex_indices` iterates `range(0, len(triangles), 3)` over the "
-        "already-2D `(n, 3)` output of `triangulate()`, so it treats three ROWS as one triangle and "
-        "returns the wrong connected set."
-    ),
-    strict=False,
-)
 def test_face_set_get_connected_vertex_indices():
     # Two disjoint triangles: {0,1,2} and {3,4,5}.
     face_set = FaceSet.from_triangles(np.array([[0, 1, 2], [3, 4, 5]], dtype=np.uint32))
@@ -927,13 +859,6 @@ def test_hash_helpers_are_stable_and_discriminating():
     assert hash_gx_item(GXItem(b"GX00", 1, b"a")) == hash_gx_item(GXItem(b"GX00", 1, b"a"))
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG/doc mismatch: `get_all_texture_paths` docstring says it ignores textures with an empty "
-        "`path`, but it has no such filter, so `Path('')` (i.e. `Path('.')`) is returned."
-    ),
-    strict=False,
-)
 def test_get_all_texture_paths_ignores_empty_paths():
     material = make_material()
     material.textures.append(Texture(path="", texture_type="g_Bumpmap"))
@@ -962,14 +887,6 @@ def test_texture_type_none_written_when_optional():
     assert reloaded.texture_type is None
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: `Material.pack_flver0_data` calls `texture.pack_strings()` without "
-        "`texture_type_optional=True`, so a FLVER0 texture that legitimately has no texture type "
-        "(offset 0 in the file) cannot be written back out."
-    ),
-    strict=False,
-)
 def test_flver0_roundtrip_with_null_texture_type():
     material = Material(name="m", mat_def_path="m.mtd", textures=[Texture(path="a.tga", texture_type=None)])
     flver = make_flver(
@@ -1037,14 +954,6 @@ def test_to_obj_contains_vertices_normals_and_uvs():
     assert obj.count("\nvt ") == 4
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: `FLVERMesh.to_obj` iterates `range(0, len(triangles), 3)` and slices `triangles[j:j+3]`, "
-        "but `FaceSet.triangulate()` returns an `(n, 3)` 2D array. Each 'vertex index' is therefore a "
-        "whole row, and the emitted OBJ face lines look like `f [1 2 3]/[1 2 3]/[1 2 3] ...`."
-    ),
-    strict=False,
-)
 def test_to_obj_face_lines_are_valid():
     flver = make_flver()
     obj = flver.to_obj(name="TestModel")
@@ -1063,13 +972,6 @@ def test_write_obj(tmp_path):
     assert path.read_text().startswith("o model")
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: `FLVERMesh.to_obj` does `if name is None: name = f'{name}{self.index}'`, which "
-        "formats the literal `None`, producing an object name like 'None0'."
-    ),
-    strict=False,
-)
 def test_mesh_to_obj_default_name():
     mesh = make_mesh()
     mesh.index = 3
@@ -1159,14 +1061,6 @@ def test_matbin_param_api():
         matbin.get_sampler_path("Nope")
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: `MATBINSampler.unk_x14` uses `field(default_factory=lambda: Vector2.zero)` -- note the "
-        "MISSING call parentheses -- so the default value is the bound classmethod itself and "
-        "`MATBIN.to_writer()` dies with `TypeError: 'method' object is not iterable`."
-    ),
-    strict=False,
-)
 def test_matbin_sampler_default_unk_x14():
     from soulstruct.base.models.matbin import MATBIN, MATBINSampler
 

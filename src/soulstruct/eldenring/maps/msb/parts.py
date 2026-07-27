@@ -229,7 +229,7 @@ class UnkStruct11(MSBBinaryStruct):
 
 
 @dataclass(slots=True, eq=False, repr=False)
-class MSBPart(BaseMSBPart[BitSet256], abc.ABC):
+class MSBPart(BaseMSBPart, abc.ABC):
 
     HEADER_STRUCT = PartHeaderStruct
     # All disabled by default, except supertype.
@@ -308,7 +308,7 @@ class MSBMapPiece(MSBPart):
         "unk11_data": UnkStruct11,
     }
 
-    model: MSBMapPieceModel = None
+    model: MSBMapPieceModel | None = None
 
     # UNK STRUCT 1
     display_groups: BitSet256 = field(default_factory=BitSet256.all_off)
@@ -502,7 +502,7 @@ class MSBAsset(MSBPart):
     HAS_UNK10_STRUCT: tp.ClassVar[bool] = True
     HAS_UNK11_STRUCT: tp.ClassVar[bool] = True
 
-    model: MSBAssetModel = None
+    model: MSBAssetModel | None = None
 
     # ASSET DATA
     asset_unk_02: int = 0
@@ -515,7 +515,7 @@ class MSBAsset(MSBPart):
     asset_unk_28: int = 0
     asset_unk_30: int = -1
     asset_unk_34: int = -1
-    unk_parts: list[MSBPart] = field(
+    unk_parts: list[MSBPart | None] = field(
         default_factory=lambda: [None] * 6, **MapFieldInfo(game_type=GameObjectIntSequence((MapPart, 6)))
     )
     asset_unk_50: bool = False
@@ -690,8 +690,8 @@ class MSBCharacter(MSBPart):
     special_effect_set_param_id: list[int] = field(default_factory=lambda: [0] * 4)  # TODO: SpEffectParam?
     char_unk_84: float = 1.0
 
-    _draw_parent_index: int = None
-    _patrol_route_event_index: int = None  # NOTE: local event subtype index!
+    _draw_parent_index: int | None = None
+    _patrol_route_event_index: int | None = None  # NOTE: local event subtype index!
 
     # UNK STRUCT 1
     display_groups: BitSet256 = field(default_factory=BitSet256.all_off)
@@ -832,7 +832,7 @@ class MSBCollision(MSBPart):
     }
 
     # Field type/default overrides.
-    model: MSBCollisionModel = None
+    model: MSBCollisionModel | None = None
 
     # COLLISION DATA
     hit_filter_id: int = field(default=CollisionHitFilter.Normal.value, **MapFieldInfo(game_type=CollisionHitFilter))
@@ -937,7 +937,7 @@ class MSBConnectCollision(MSBPart):
         "unk11_data": UnkStruct11,
     }
 
-    model: MSBCollisionModel = None
+    model: MSBCollisionModel | None = None
 
     # CONNECT COLLISION DATA
     collision: MSBCollision = None
@@ -947,7 +947,7 @@ class MSBConnectCollision(MSBPart):
     con_unk_x0a: int = 0
     con_unk_x0b: bool = False
 
-    _collision_index: int = None
+    _collision_index: int | None = None
 
     # UNK STRUCT 1
     display_groups: BitSet256 = field(default_factory=BitSet256.all_off)
@@ -1012,7 +1012,7 @@ class MSBDummyAsset(MSBPart):
         "tile_load_config_data": TileLoadConfig,
     }
 
-    model: MSBAssetModel = None
+    model: MSBAssetModel | None = None
 
     # UNK STRUCT 1
     display_groups: BitSet256 = field(default_factory=BitSet256.all_off)

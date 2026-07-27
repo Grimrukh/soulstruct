@@ -33,6 +33,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `TimescaledFoVKeyframe` struct for SIBCAM to make it clear what the time value means.
 - Removed and discouraged `__getitem__` overrides in `Binder` subclasses.
 - `eldenring.maps.msb` changed from module to package (largely replaced by Firelink C++).
+- DrawParam slot 0 (DS1) is now permitted to be missing (`None`, e.g. "default" map lighting).
+- DrawParam DS1R default/m99 handling (PTDE layout) now LBYL rather than EAFP.
 
 ### Fixed
 - Fixed `FLVERMesh.uv_count` validation.
@@ -64,6 +66,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fixed EVS `pass` statement handling.
 - Fixed `EnumModuleGenerator` for Regions with no subtyping.
 - Fixed missing data files in built Python wheel.
+- Fixed MANY assorted bugs across EMEVD, ESD, Param.
 
 ### Removed
 - Removed placeholder DeSR (Demon's Souls Remastered) support stub.

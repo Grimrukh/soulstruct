@@ -4,7 +4,7 @@ __all__ = [
     "base_type",
     "unsigned", "u8", "u16", "u32", "dummy8",
     "signed", "s8", "s16", "s32",
-    "f32", "f64",
+    "f32", "f64", "angle32",
     "basestring", "fixstr", "fixstrW",
 ]
 

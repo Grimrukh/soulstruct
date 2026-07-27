@@ -3,7 +3,7 @@ __all__ = ["get_ds1_executable_and_version"]
 from pathlib import Path
 
 
-def get_ds1_executable_and_version(executable_path, dsr, debug=False):
+def get_ds1_executable_and_version(executable_path: Path | str, dsr: bool | None = None, debug=False):
     executable_path = Path(executable_path)
     if executable_path.is_dir():
         executables = [exe.name for exe in executable_path.glob("*.exe")]
@@ -22,7 +22,7 @@ def get_ds1_executable_and_version(executable_path, dsr, debug=False):
         if executable_path.name == "DARKSOULS.exe":
             if dsr is None:
                 dsr = False
-        elif executable_path == "DarkSoulsRemastered.exe":
+        elif executable_path.name == "DarkSoulsRemastered.exe":
             if dsr is None:
                 dsr = True
         else:

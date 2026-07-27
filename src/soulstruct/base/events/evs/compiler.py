@@ -56,7 +56,7 @@ class EVSInstructionCompiler(abc.ABC):
 
             output_condition_index, input_condition_index = self._CUSTOM_FUNC_CONDITION_ARGS[instr_name]
             if output_condition_index is not None:
-                condition = kwargs.get("condition", args[output_condition_index])
+                condition = kwargs["condition"] if "condition" in kwargs else args[output_condition_index]
                 if input_condition_index is not None:
                     input_condition = kwargs.get("input_condition", args[input_condition_index])
                     self.cond_manager[condition].activate_with_child(input_condition)
@@ -87,7 +87,15 @@ class EVSInstructionCompiler(abc.ABC):
         evs_args_info = instr_info.get("evs_args", emedf_args_info)
 
         is_partial = "partials" in instr_info and instr_name in instr_info["partials"]
-        partial_kwargs = instr_info["partials"][instr_name] if is_partial else {}
+        if is_partial:
+            # Get kwargs baked into this partial.
+            partial_kwargs = {
+                k: v for k, v in instr_info["partials"][instr_name].items()
+                if not k.startswith("__")  # ignore e.g. "__docstring"
+            }
+        else:
+            partial_kwargs = {}
+
         signature = [arg_name for arg_name in evs_args_info if arg_name not in partial_kwargs]
 
         # Build real `evs_kwargs` from `args` and `kwargs`. Default values for missing arguments will be found below.
@@ -106,6 +114,12 @@ class EVSInstructionCompiler(abc.ABC):
                     )
                 evs_kwargs[evs_arg_name] = kwargs.pop(evs_arg_name)
                 signature.remove(evs_arg_name)
+
+        if args:
+            raise ValueError(
+                f"Invalid positional argument(s) for instruction ({category}, {index}): {args}\n"
+                f"    Constructed kwargs: {evs_kwargs}"
+            )
 
         if kwargs:
             raise ValueError(

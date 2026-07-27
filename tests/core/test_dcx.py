@@ -100,11 +100,6 @@ def test_edge_incompressible_data_roundtrip():
     assert bytes(unpacked) == payload
 
 
-@pytest.mark.xfail(
-    reason="API INCONSISTENCY: `_decompress_dcx_edge()` returns a `bytearray`, while every other branch of "
-           "`decompress()` returns `bytes`. Callers doing `isinstance(data, bytes)` will misbehave.",
-    strict=False,
-)
 def test_decompress_always_returns_bytes():
     for dcx_type in WORKING_DCX_TYPES:
         data, _ = decompress(compress(SAMPLE, dcx_type))
@@ -249,11 +244,6 @@ def test_process_path_adds_extension():
     assert DCXType.Null.process_path("a/b.flver.dcx").endswith("b.flver")
 
 
-@pytest.mark.xfail(
-    reason="BUG: `DCXType.process_path` builds `new_path` from the DCX-stripped name but then re-derives from "
-           "the ORIGINAL `path`, so an input already ending in '.dcx' gets a second '.dcx'.",
-    strict=False,
-)
 def test_process_path_is_idempotent():
     once = DCXType.DCX_KRAK.process_path(Path("a/b.flver"))
     twice = DCXType.DCX_KRAK.process_path(once)

@@ -198,7 +198,7 @@ class DSRMemoryHook(MemoryHook):
     def write_gameparambnd_to_memory(self, gameparambnd: GameParamBND):
         """Write all `GameParam` params with `param_info` defined to game memory."""
         for game_param in gameparambnd.params.values():
-            if isinstance(game_param, Param):  # NOT `ParamDict`
+            if isinstance(game_param, Param):
                 self.write_game_param_to_memory(game_param)
 
     @memory_hook_validate
@@ -462,19 +462,15 @@ class MemoryDrawParam[PARAM_ROW_DATA_T: ParamRow]:
     def __getitem__(self, row_id: int) -> PARAM_ROW_DATA_T:
         return self.row_dict[row_id]
 
-    def copy(self) -> MemoryDrawParam:
-        """Return a deep copy of this `MemoryDrawParam`."""
-        return copy.deepcopy(self)
-
     def set_from_draw_param(self, draw_param: DrawParam):
         if draw_param.ROW_TYPE != self.draw_param_row_type:
             raise ValueError(
-                f"DrawParam of type `{draw_param.ROW_TYPE}` is not the correct type for "
+                f"DrawParam of type `{draw_param.ROW_TYPE.cls_name}` is not the correct type for "
                 f"this MemoryDrawParam (`{self.draw_param_row_type}`)."
             )
         if len(draw_param.rows) != len(self.row_dict):
             raise ValueError(
-                f"DrawParam of type `{draw_param.ROW_TYPE}` does not have the correct number of rows "
+                f"DrawParam of type `{draw_param.ROW_TYPE.cls_name}` does not have the correct number of rows "
                 f"({len(draw_param.rows)}) for this MemoryDrawParam ({len(self.row_dict)})."
             )
         # Copy all row data.
@@ -533,7 +529,7 @@ class MemoryDrawParam[PARAM_ROW_DATA_T: ParamRow]:
         area_id_bytes = self.hook.read(area_start, 4)
         area_id = struct.unpack('>i', area_id_bytes)[0]  # area ID is big-endian for some reason
         if area_id == -1:
-            _LOGGER.warning(f"Area {self.area_id} has not been loaded yet.", True)
+            _LOGGER.warning(f"Area {self.area_id} has not been loaded yet.")
             return 0
         if area_id != self.area_id:
             raise Exception(f"Area ID mismatch in memory: {area_id} != {self.area_id}")

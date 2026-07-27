@@ -17,7 +17,6 @@ class TalkDirectory(_BaseTalkDirectory):
     GET_MAP: tp.ClassVar = staticmethod(get_map)
     FILE_CLASS: tp.ClassVar = TalkESDBND
 
-    Common = map_property(COMMON)  # type: TalkESDBND
     HuntersDream = map_property(HUNTERS_DREAM)  # type: TalkESDBND
     AbandonedOldWorkshop = map_property(ABANDONED_OLD_WORKSHOP)  # type: TalkESDBND
     HemwickCharnelLane = map_property(HEMWICK_CHARNEL_LANE)  # type: TalkESDBND

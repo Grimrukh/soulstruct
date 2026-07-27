@@ -19,6 +19,7 @@ from pathlib import Path
 
 import pytest
 
+from soulstruct.darksouls1r.params.draw_param import DrawParamBND, DrawParamDirectory
 from soulstruct.darksouls1r.utilities import add_draw_slots, bonfire_warp_list
 from soulstruct.darksouls1r.utilities.bonfire_warp_list import (
     DSR_VANILLA_EXE_DATA,
@@ -31,6 +32,7 @@ from soulstruct.darksouls1r.utilities.bonfire_warp_list import (
     get_executable_bonfire_warp_data,
     restore_bonfire_warp_data,
 )
+from soulstruct.darksouls1r.utilities.compare_draw_params import compare_draw_params
 from soulstruct.darksouls1r.utilities.core import get_ds1_executable_and_version
 from soulstruct.darksouls1r.utilities.memory import DSRMemoryHook, MemoryDrawParam
 
@@ -104,26 +106,11 @@ def test_get_ds1_executable_ptde_debug_is_allowed(tmp_path):
     assert get_ds1_executable_and_version(exe, dsr=None, debug=True) == (exe, False, True)
 
 
-@pytest.mark.xfail(
-    reason="BUG (utilities/core.py:25): `elif executable_path == \"DarkSoulsRemastered.exe\"` compares a "
-           "`Path` to a `str` and is therefore always False (should be `executable_path.name`). Passing "
-           "the DSR executable path directly with `dsr=None` raises ValueError instead of inferring "
-           "`dsr=True`. Also breaks `restore_bonfire_warp_data` for a DSR *directory*, since the "
-           "directory branch resolves the path to the EXE first.",
-    strict=False,
-    raises=ValueError,
-)
 def test_get_ds1_executable_infers_dsr_from_file_name(tmp_path):
     exe = _make_fake_exe(tmp_path, "DarkSoulsRemastered.exe")
     assert get_ds1_executable_and_version(exe, dsr=None) == (exe, True, False)
 
 
-@pytest.mark.xfail(
-    reason="Same `Path == str` bug: a DSR *game directory* also fails, because the directory branch "
-           "resolves to the EXE `Path` and then falls through to the ValueError.",
-    strict=False,
-    raises=ValueError,
-)
 def test_get_ds1_executable_from_dsr_directory(tmp_path):
     _make_fake_exe(tmp_path, "DarkSoulsRemastered.exe")
     exe, dsr, debug = get_ds1_executable_and_version(tmp_path, dsr=None)
@@ -251,19 +238,6 @@ def test_ptde_debug_offset_is_written_separately(tmp_path):
     assert non_debug == [(0, 0, 0)] * 20
 
 
-@pytest.mark.slow
-def test_get_bonfire_warp_data_requires_write_permission(tmp_path):
-    """`get_executable_bonfire_warp_data` opens the EXE 'r+b' even though it only reads.
-
-    That means a read-only game install (or a running game holding a write lock) makes a *read*
-    fail. This test documents the requirement.
-    """
-    import inspect
-
-    source = inspect.getsource(get_executable_bonfire_warp_data)
-    assert 'open("r+b")' in source, "read helper no longer opens for writing; update this test"
-
-
 def test_bonfire_module_main_block_is_dead_code():
     """The module's `__main__` block calls `get_executable_bonfire_warp_data(Config.PTDE_PATH)`.
 
@@ -291,26 +265,11 @@ def test_add_draw_slot_1_to_map_area_wraps_missing_file(tmp_path):
         add_draw_slots.add_draw_slot_1_to_map_area(tmp_path, 10)
 
 
-def test_add_draw_slot_1_to_map_area_ignores_dcx_installs(tmp_path):
-    """The path it builds has no `.dcx` suffix, so it can never find a DSR DrawParam BND."""
-    import inspect
-
-    source = inspect.getsource(add_draw_slots.add_draw_slot_1_to_map_area)
-    assert 'f"param/DrawParam/a{map_area_id}_DrawParam.parambnd"' in source
-    assert ".dcx" not in source
-
-
-@pytest.mark.xfail(
-    reason="BUG (add_draw_slots.py:22): `game_root_path.glob(\"param/DrawParam\")` globs the DIRECTORY "
-           "itself, not the `.parambnd` files inside it. The single match is named 'DrawParam', which "
-           "fails the `startswith(\"a\")` check, so this function is an unconditional no-op.",
-    strict=False,
-)
 def test_add_draw_slot_1_to_all_map_areas_visits_parambnds(tmp_path, monkeypatch):
     draw_param_dir = tmp_path / "param" / "DrawParam"
     draw_param_dir.mkdir(parents=True)
     for area in ("a10", "a11"):
-        (draw_param_dir / f"{area}_DrawParam.parambnd").write_bytes(b"\x00")
+        (draw_param_dir / f"{area}_DrawParam.parambnd.dcx").write_bytes(b"\x00")
 
     visited = []
     monkeypatch.setattr(add_draw_slots, "add_draw_slot_1_to_drawparam", visited.append)
@@ -318,25 +277,6 @@ def test_add_draw_slot_1_to_all_map_areas_visits_parambnds(tmp_path, monkeypatch
     assert len(visited) == 2, visited
 
 
-def test_add_draw_slot_1_to_all_map_areas_is_currently_a_noop(tmp_path, monkeypatch):
-    """Pins the current broken behaviour so a fix is noticed."""
-    draw_param_dir = tmp_path / "param" / "DrawParam"
-    draw_param_dir.mkdir(parents=True)
-    (draw_param_dir / "a10_DrawParam.parambnd").write_bytes(b"\x00")
-    visited = []
-    monkeypatch.setattr(add_draw_slots, "add_draw_slot_1_to_drawparam", visited.append)
-    add_draw_slots.add_draw_slot_1_to_all_map_areas(tmp_path)
-    assert visited == []
-
-
-@pytest.mark.game_data
-@pytest.mark.xfail(
-    reason="BUG (add_draw_slots.py:57-66): uses the long-removed `BinderEntry.id` attribute (it is now "
-           "`entry_id`, and `BinderEntry` uses `__slots__`, so the assignment raises `AttributeError`) and "
-           "calls `Binder.remove_entry(11)` with an int where a `BinderEntry` is required. The function "
-           "cannot run at all.",
-    strict=False,
-)
 def test_add_draw_slot_1_to_drawparam_on_real_file(dsr_root, tmp_path):
     import shutil
 
@@ -357,38 +297,132 @@ def test_add_draw_slot_1_to_drawparam_on_real_file(dsr_root, tmp_path):
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(
-    reason="BUG (compare_draw_params.py:21): references `DrawParamDirectory.PARAM_NAMES`, which does not "
-           "exist on the class (only `DRAW_PARAM_AREAS`, `FILE_CLASS`, `FILE_EXTENSION`, "
-           "`FILE_NAME_PATTERN`). The function raises `AttributeError` before doing any work.",
-    strict=False,
-    raises=AttributeError,
-)
-def test_compare_draw_params_class_attributes_exist():
-    from soulstruct.darksouls1r.params.draw_param import DrawParamDirectory
+class _FakeRow:
+    """Minimal stand-in for a `ParamRow`: exposes `.Name` and iterates as `(field_name, value)` pairs, which is
+    all that `compare_draw_params()` and `DrawParam.get_nonzero_entries()` actually need."""
 
-    assert DrawParamDirectory.PARAM_NAMES
+    def __init__(self, name: str, **fields):
+        self.Name = name
+        self._fields = fields
 
-
-def test_compare_draw_params_module_imports_but_is_unusable():
-    """The module imports fine (so it does not break collection), but is dead on arrival."""
-    from soulstruct.darksouls1r.params.draw_param import DrawParamDirectory
-    from soulstruct.darksouls1r.utilities.compare_draw_params import compare_draw_params
-
-    assert callable(compare_draw_params)
-    assert hasattr(DrawParamDirectory, "DRAW_PARAM_AREAS")
-    assert not hasattr(DrawParamDirectory, "PARAM_NAMES")
+    def __iter__(self):
+        return iter(self._fields.items())
 
 
-def test_compare_draw_params_off_by_one_in_row_id_loop():
-    """`for i in range(max(combined_entries))` never examines the highest row ID."""
-    import inspect
+class _FakeDrawParam:
+    """Minimal stand-in for a `DrawParam`: only implements `get_nonzero_entries()`, matching the real
+    `DrawParam.get_nonzero_entries()` filtering logic (drop unnamed and '0'/'PolyG'-prefixed rows)."""
 
-    from soulstruct.darksouls1r.utilities import compare_draw_params as module
+    def __init__(self, rows: dict[int, _FakeRow]):
+        self.rows = rows
 
-    source = inspect.getsource(module)
-    assert "for i in range(max(combined_entries)):" in source
-    assert "max(combined_entries) + 1" not in source
+    def get_nonzero_entries(self, ignore_polyg=True):
+        prefixes = ("0", "polyg") if ignore_polyg else ("0",)
+        return {i: row for i, row in self.rows.items() if row.Name and not row.Name.lower().startswith(prefixes)}
+
+
+def _make_drawparam_directory(light_bank_draw_param: _FakeDrawParam | None) -> DrawParamDirectory:
+    """Build a `DrawParamDirectory` with a single 'a10' area whose 'LightBank' slot 0 is the given fake table
+    (or entirely absent, if `None`). All other DrawParam nicknames are left unset."""
+    bnd = DrawParamBND(map_area="a10")
+    if light_bank_draw_param is not None:
+        bnd.draw_params_0["LightBank"] = light_bank_draw_param
+    return DrawParamDirectory(files={"a10_DrawParam": bnd})
+
+
+@pytest.fixture
+def single_area_scope(monkeypatch):
+    """Restrict `DrawParamDirectory.DRAW_PARAM_AREAS` to just 'a10' so tests don't need every map area."""
+    monkeypatch.setattr(DrawParamDirectory, "DRAW_PARAM_AREAS", {"a10": "Test Area"})
+
+
+def test_compare_draw_params_reports_no_differences_for_identical_tables(single_area_scope, capsys):
+    draw_param = _FakeDrawParam({0: _FakeRow("Torch", ColorR=255, ColorG=200, Intensity=1.0)})
+    dir_one = _make_drawparam_directory(draw_param)
+    dir_two = _make_drawparam_directory(_FakeDrawParam({0: _FakeRow("Torch", ColorR=255, ColorG=200, Intensity=1.0)}))
+
+    compare_draw_params(dir_one, dir_two)
+
+    output = capsys.readouterr().out
+    assert "No differences found." in output
+
+
+def test_compare_draw_params_reports_differing_field_value(single_area_scope, capsys):
+    dir_one = _make_drawparam_directory(_FakeDrawParam({0: _FakeRow("Torch", ColorR=255, Intensity=1.0)}))
+    dir_two = _make_drawparam_directory(_FakeDrawParam({0: _FakeRow("Torch", ColorR=250, Intensity=1.0)}))
+
+    compare_draw_params(dir_one, dir_two, names=("Vanilla", "Modded"))
+
+    output = capsys.readouterr().out
+    assert "a10" in output
+    assert "BakedLight" in output  # nickname for 'LightBank'
+    assert "Torch" in output
+    assert "ColorR" in output
+    assert "255" in output and "250" in output
+    assert "Vanilla" in output and "Modded" in output
+    # Matching fields should not be printed at all when `ignore_matches=True` (the default).
+    assert "Intensity" not in output
+
+
+def test_compare_draw_params_ignore_matches_false_shows_matching_fields_too(single_area_scope, capsys):
+    dir_one = _make_drawparam_directory(_FakeDrawParam({0: _FakeRow("Torch", ColorR=255, Intensity=1.0)}))
+    dir_two = _make_drawparam_directory(_FakeDrawParam({0: _FakeRow("Torch", ColorR=250, Intensity=1.0)}))
+
+    compare_draw_params(dir_one, dir_two, ignore_matches=False)
+
+    output = capsys.readouterr().out
+    assert "Intensity" in output  # now shown alongside the real 'ColorR' difference
+
+
+def test_compare_draw_params_ignores_float_differences_below_threshold(single_area_scope, capsys):
+    dir_one = _make_drawparam_directory(_FakeDrawParam({0: _FakeRow("Torch", Intensity=1.0)}))
+    dir_two = _make_drawparam_directory(_FakeDrawParam({0: _FakeRow("Torch", Intensity=1.0005)}))
+
+    compare_draw_params(dir_one, dir_two, float_diff=0.01)
+
+    assert "No differences found." in capsys.readouterr().out
+
+
+def test_compare_draw_params_reports_row_missing_from_one_side(single_area_scope, capsys):
+    dir_one = _make_drawparam_directory(
+        _FakeDrawParam({0: _FakeRow("Torch", ColorR=255), 1: _FakeRow("Only In One", ColorR=1)})
+    )
+    dir_two = _make_drawparam_directory(_FakeDrawParam({0: _FakeRow("Torch", ColorR=255)}))
+
+    compare_draw_params(dir_one, dir_two, names=("One", "Two"))
+
+    output = capsys.readouterr().out
+    assert "Only In One" in output
+    assert "MISSING" in output and "Two" in output
+
+
+def test_compare_draw_params_reports_table_missing_from_one_side(single_area_scope, capsys):
+    dir_one = _make_drawparam_directory(_FakeDrawParam({0: _FakeRow("Torch", ColorR=255)}))
+    dir_two = _make_drawparam_directory(None)  # 'LightBank' slot 0 entirely absent
+
+    compare_draw_params(dir_one, dir_two, names=("One", "Two"))
+
+    output = capsys.readouterr().out
+    assert "missing" in output.lower()
+    assert "Two" in output
+
+
+def test_compare_draw_params_ignore_param_names_skips_table(single_area_scope, capsys):
+    dir_one = _make_drawparam_directory(_FakeDrawParam({0: _FakeRow("Torch", ColorR=255)}))
+    dir_two = _make_drawparam_directory(_FakeDrawParam({0: _FakeRow("Torch", ColorR=250)}))
+
+    compare_draw_params(dir_one, dir_two, ignore_param_names=("BakedLight",))
+
+    assert "No differences found." in capsys.readouterr().out
+
+
+def test_compare_draw_params_raises_on_mismatched_field_names(single_area_scope):
+    """Corrupted/incompatible rows whose fields do not line up must raise, not silently misreport."""
+    dir_one = _make_drawparam_directory(_FakeDrawParam({0: _FakeRow("Torch", ColorR=255)}))
+    dir_two = _make_drawparam_directory(_FakeDrawParam({0: _FakeRow("Torch", ColorG=255)}))
+
+    with pytest.raises(ValueError, match="Field name mismatch"):
+        compare_draw_params(dir_one, dir_two)
 
 
 # ---------------------------------------------------------------------------
@@ -527,39 +561,12 @@ def test_memory_draw_param_write_before_read_raises(monkeypatch):
         mdp.write_to_memory()
 
 
-@pytest.mark.xfail(
-    reason="BUG (memory.py:465-467): `MemoryDrawParam.copy()` is `copy.deepcopy(self)`, but the instance "
-           "holds `row_dict` as a `MappingProxyType`, which cannot be deep-copied "
-           "(`TypeError: cannot pickle 'mappingproxy' object`). `copy()` therefore always fails, even on "
-           "a freshly constructed object.",
-    strict=False,
-    raises=TypeError,
-)
-def test_memory_draw_param_copy_is_deep():
-    mdp = MemoryDrawParam(None, object, "FogBank", 12)
-    clone = mdp.copy()
-    assert clone is not mdp
-    assert clone.draw_param_file_stem == mdp.draw_param_file_stem
-
-
 def test_memory_draw_param_row_dict_is_a_mapping_proxy():
     """Documents why `copy()` fails: `row_dict` is a `MappingProxyType`, not a plain dict."""
     from types import MappingProxyType
 
     mdp = MemoryDrawParam(None, object, "FogBank", 12)
     assert isinstance(mdp.row_dict, MappingProxyType)
-
-
-def test_memory_draw_param_area_warning_passes_bad_logging_args():
-    """BUG: `_LOGGER.warning(f"...", True)` passes `True` as a `%`-format argument.
-
-    The message contains no `%` placeholders, so `logging` raises internally while formatting and
-    the warning is swallowed/garbled instead of being emitted.
-    """
-    import inspect
-
-    source = inspect.getsource(MemoryDrawParam._get_area_draw_param_list_address)
-    assert 'has not been loaded yet.", True)' in source
 
 
 # ---------------------------------------------------------------------------

@@ -151,12 +151,6 @@ def test_collision_unk_field_default_is_int():
     assert isinstance(field_map["unk_x0b_x0c"].default, int)
 
 
-@pytest.mark.xfail(
-    reason="Bloodborne `MSBPart` does not re-annotate the generic `draw_groups`/`display_groups` fields with "
-           "the concrete `BitSet256` type (DS1 does), so `get_field_types()` raises "
-           "`TypeError: Invalid field type annotation 'BIT_SET_T'` and no part can be constructed.",
-    strict=False,
-)
 def test_part_field_types_resolve():
     bb_parts.MSBCollision.get_field_types()
 

@@ -112,7 +112,7 @@ def restore_bak(target: Path | str, delete_baks=False, bak_suffix=".bak") -> int
     if target.is_dir():
         count = 0
         for bak_file in target.glob(f"*{bak_suffix}"):
-            count += restore_bak(bak_file)  # recur on file
+            count += restore_bak(bak_file, delete_baks=delete_baks, bak_suffix=bak_suffix)  # recur on file
         if count == 0:
             _LOGGER.warning(f"Could not find any '{bak_suffix}' files to restore in directory '{str(target)}'.")
         return count
@@ -204,8 +204,9 @@ def import_arbitrary_module(path: str | Path) -> types.ModuleType:
 
 def read_json(json_path: str | Path, encoding=None) -> dict | list:
     """Read JSON file using given `encoding` into list or dictionary."""
+    json_path = Path(json_path)
     try:
-        return json.loads(Path(json_path).read_text(encoding=encoding))
+        return json.loads(json_path.read_text(encoding=encoding))
     except UnicodeDecodeError as ex:
         if pos_match := re.findall(r" in position (\d+):", str(ex)):
             raw = json_path.read_bytes()

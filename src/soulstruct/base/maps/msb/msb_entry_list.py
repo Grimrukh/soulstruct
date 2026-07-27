@@ -33,9 +33,6 @@ class MSBEntryList[MSB_ENTRY_T: MSBEntry](IDList[MSB_ENTRY_T]):
         self.entry_class = entry_class
         super().__init__(entries)
 
-    def copy(self) -> tp.Self:
-        return copy.deepcopy(self)
-
     def find_entry_intenum(self, entry_intenum: IntEnum) -> MSB_ENTRY_T:
         return self.find_entry_name(entry_intenum.name)
 
@@ -47,7 +44,6 @@ class MSBEntryList[MSB_ENTRY_T: MSBEntry](IDList[MSB_ENTRY_T]):
         if not entries:
             raise KeyError(f"Entry name '{entry_name}' does not appear in MSB `{self.subtype_name}` list.")
         elif len(entries) > 1:
-            print(entries)
             raise ValueError(
                 f"Entry name '{entry_name}' appears more than once in MSB `{self.subtype_name}` list. You must access "
                 f"it by global index or local subtype-specific index."
@@ -118,12 +114,16 @@ class MSBEntryList[MSB_ENTRY_T: MSBEntry](IDList[MSB_ENTRY_T]):
             entries_by_id = {k: entries_by_id[k] for k in sorted(entries_by_id.keys())}
         return entries_by_id
 
-    def get_filtered_list(self, filter_func: tp.Callable[[MSBEntry], bool]) -> MSBEntryList[MSB_ENTRY_T]:
-        """Returns a filtered deep copy of this subtype list by applying `filter_func` to each entry."""
-        if filter_func is None:
-            return self.copy()
+    def get_filtered_list(self, filter_func: tp.Callable[[MSBEntry], bool] | None) -> MSBEntryList[MSB_ENTRY_T]:
+        """Returns a filtered deep copy of this subtype list by applying `filter_func` to each entry.
+
+        TODO: Copying will not work properly here with references. New shallow-copied references will not be
+         in the owning MSB. Proper copy will require putting copies of references into the MSB, or redirecting them.
+
+        Supports `filter_func=None` for dynamic usage.
+        """
         return MSBEntryList(
-            [entry.copy() for entry in self if filter_func(entry)],
+            [entry.copy() for entry in self if not filter_func or filter_func(entry)],
             supertype=self.supertype,
             entry_class=self.entry_class,
         )
@@ -157,18 +157,25 @@ class MSBEntryList[MSB_ENTRY_T: MSBEntry](IDList[MSB_ENTRY_T]):
         return entry
 
     def duplicate(
-        self, entry_or_index_or_name: MSB_ENTRY_T | int | str | IntEnum, index_offset: int | None = None, **kwargs
+        self,
+        entry_or_index_or_name: MSB_ENTRY_T | int | str | IntEnum,
+        index_offset: int | None = None,
+        **kwargs,
     ) -> MSB_ENTRY_T:
         """Duplicate the specified `entry`.
 
-        If `index_offset = 0` (default), the duplicated entry will be inserted right after the source entry. Higher
-        values will insert it further ahead in the list. A value of -1 will insert it at the end of the list. If the
-        source entry is not in this list, the new entry will always be added at the end.
+        If `index_offset = None` (default) or `0`, the duplicated entry will be inserted right after the source entry.
+        Higher values will insert it further ahead in the list. A value of -1 will insert it at the end of the list. If
+        the source entry is not in this list, the new entry will always be added at the end.
+
+        Setting `index_offset` to something other than `None` or `-1` when the source is not in this list will log a
+        warning and always append to the end of the list anyway.
 
         Any `kwargs` given will be passed to the `set()` method of the duplicated entry (which is then also returned for
         further modification if desired). Unless otherwise specified, the `name` of the new entry will also be given a
         '<COPY>' duplicate tag suffix, which must be edited/removed by the user.
         """
+        index = -1  # append to end of entry list if source not found in it
         if isinstance(entry_or_index_or_name, IntEnum):
             entry_or_index_or_name = entry_or_index_or_name.name
         if isinstance(entry_or_index_or_name, int):
@@ -176,14 +183,11 @@ class MSBEntryList[MSB_ENTRY_T: MSBEntry](IDList[MSB_ENTRY_T]):
             index = entry_or_index_or_name + 1
         elif isinstance(entry_or_index_or_name, str):
             entry = self.find_entry_name(entry_or_index_or_name)
-            index = self.index(entry)  # -1 if not found
-            if index >= 0:
-                index += 1
+            index = self.index(entry) + 1  # must be found if entry was just found by name
         elif isinstance(entry_or_index_or_name, MSBEntry):
             entry = entry_or_index_or_name
-            index = self.index(entry)  # -1 if not found
-            if index >= 0:
-                index += 1
+            if entry in self:
+                index = self.index(entry) + 1
         else:
             raise TypeError("`entry_or_index_or_name` must be an `MSBEntry` or index of one in this list.")
         

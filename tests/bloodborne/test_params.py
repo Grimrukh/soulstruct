@@ -120,14 +120,6 @@ def test_gameparambnd_dcx_type(vanilla_params):
     assert vanilla_params.dcx_type == DCXType.DCX_DFLT_10000_44_9
 
 
-def test_all_params_are_typed(vanilla_params):
-    """No entry should fall back to the untyped `ParamDict`, which means a missing `paramdef` module."""
-    from soulstruct.base.params.param_dict import ParamDict
-
-    untyped = [stem for stem, param in vanilla_params.params.items() if isinstance(param, ParamDict)]
-    assert not untyped, f"Params with no Soulstruct `paramdef` row class: {untyped}"
-
-
 @pytest.mark.xfail(
     reason="Several vanilla Bloodborne param entries have no `PARAM_NICKNAMES` mapping "
            "(NewMenuColorTableParam, MenuValueTableParam, ResidentFxParam, Wind, QwcChange, QwcJudge, "

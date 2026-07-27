@@ -15,7 +15,7 @@ class EVSParser(_BaseEVSParser):
     GAME_TYPES = game_types
     # TODO: I think DSR may actually support more slots (16?), as m12_01 Battle of Stoicism events use slot 8.
     OR_SLOTS = [-1, -2, -3, -4, -5, -6, -7]
-    AND_SLOTS = [1, 2, 3, 4, 5, 6, 7]
+    AND_SLOTS = [1, 2, 3, 4, 5, 6, 7, 8]
     COMPILER_CLASS = EVSInstructionCompiler
     SPECIAL_EVENT_NAMES = {
         0: "Constructor",

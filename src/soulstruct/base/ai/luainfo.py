@@ -65,6 +65,8 @@ class LuaInfo(GameFile):
         for goal in self.goals:
             goal.to_luainfo_writer(writer, self.long_varints)
         for goal in self.goals:
+            goal.pack_name(writer, encoding)
+        for goal in self.goals:
             goal.pack_logic_interrupt_name(writer, encoding)
 
         return writer

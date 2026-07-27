@@ -12,6 +12,7 @@ __all__ = [
     "profile_function",
     "Timer",
     "find_errant_prints",
+    "capture_logs",
 ]
 
 import contextlib
@@ -92,6 +93,8 @@ def compare_dataclasses(
 
     if repr_funcs is None:
         repr_funcs = {}
+    if is_close_funcs is None:
+        is_close_funcs = {}
 
     obj_type = type(obj1)
 
@@ -406,3 +409,24 @@ def find_errant_prints():
 
     # Exit
     builtins.print = original_print
+
+
+@contextlib.contextmanager
+def capture_logs(logger_name: str):
+    """Buffer log records instead of emitting them; caller decides whether to replay."""
+    logger = logging.getLogger(logger_name)
+    records = []
+
+    class BufferHandler(logging.Handler):
+        def emit(self, record):
+            records.append(record)
+
+    handler = BufferHandler()
+    old_propagate = logger.propagate
+    logger.propagate = False  # stop it reaching parent handlers (console, etc.)
+    logger.addHandler(handler)
+    try:
+        yield records
+    finally:
+        logger.removeHandler(handler)
+        logger.propagate = old_propagate

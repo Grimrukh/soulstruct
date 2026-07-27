@@ -49,7 +49,7 @@ class BaseEuler(abc.ABC):
         if isinstance(data, self.__class__):
             arr = data._data.copy()
         else:
-            arr = np.asarray(data, dtype=float)
+            arr = np.array(data, dtype=float)  # copy
         object.__setattr__(self, "_data", arr)
 
     def __array__(self, dtype=None):

@@ -68,11 +68,6 @@ def test_get_game_resolves_all_aliases_and_names(game: Game):
         assert get_game(alias) is game
 
 
-@pytest.mark.xfail(
-    reason="`get_game()` discards the result of `game_name.replace(old, new)`, so its normalisation "
-           "of spaces/apostrophes/colons/roman numerals is a no-op (games.py:339).",
-    strict=False,
-)
 @pytest.mark.parametrize(
     "raw_name, expected",
     [

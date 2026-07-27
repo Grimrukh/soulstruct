@@ -93,7 +93,7 @@ class ParamDef(GameFile):
         return cls(
             param_type=param_type,
             fields=fields,
-            big_endian=ByteOrder == ByteOrder.BigEndian,
+            big_endian=byte_order == ByteOrder.BigEndian,
             unicode=unicode,
             data_version=data_version,
             format_version=format_version,
@@ -123,9 +123,9 @@ class ParamDef(GameFile):
             if child.tag == "DataVersion":
                 kwargs["data_version"] = int(child.text)
             elif child.tag == "BigEndian":
-                kwargs["big_endian"] = bool(child.text)
+                kwargs["big_endian"] = child.text.strip().lower() == "true"
             elif child.tag == "Unicode":
-                kwargs["unicode"] = bool(child.text)
+                kwargs["unicode"] = child.text.strip().lower() == "true"
             elif child.tag == "FormatVersion":
                 kwargs["format_version"] = int(child.text)
             elif child.tag == "Fields":
@@ -181,7 +181,6 @@ class ParamDef(GameFile):
         try:
             return self.fields[field_name]
         except KeyError:
-            print(self)
             raise
 
     def __repr__(self):

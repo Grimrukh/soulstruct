@@ -121,15 +121,6 @@ def test_chr_roundtrip_preserves_dummies(bb_chr, tmp_path):
         np.testing.assert_allclose(new.translate, original.translate)
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: `Dummy` colour bytes are reversed on write for every version except DS2 but reversed "
-        "on read only FOR DS2, so dummy colours are byte-flipped by any read->write cycle. (All 68 "
-        "c2800 dummies happen to be pure white, so this file cannot detect it; kept as an explicit "
-        "check in case a future test binary has coloured dummies.)"
-    ),
-    strict=False,
-)
 def test_chr_roundtrip_preserves_dummy_colors(bb_chr, tmp_path):
     bb_chr.dummies[0].color[0] = 1
     bb_chr.dummies[0].color[3] = 4
@@ -138,15 +129,6 @@ def test_chr_roundtrip_preserves_dummy_colors(bb_chr, tmp_path):
     assert tuple(reloaded.dummies[0].color) == expected
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: `FaceSet.get_face_counts` never excludes MotionBlur face sets when the indices are "
-        "plain triangles (not a strip), so the FLVER header's `true_face_count` is written as the "
-        "TOTAL face count. Vanilla c2800 stores 30630 (all faces in non-MotionBlur face sets); "
-        "Soulstruct writes 65420."
-    ),
-    strict=False,
-)
 def test_chr_roundtrip_preserves_header_true_face_count(bb_chr, resource, tmp_path):
     original_bytes = resource(CHR_NAME).read_bytes()
     vanilla_true, vanilla_total = struct.unpack_from("<2i", original_bytes, 0x40)

@@ -16,6 +16,4 @@ class TalkESDBND(_BaseTalkESDBND[TalkESD]):
     DEFAULT_ENTRY_ROOT: tp.ClassVar[str] = f"{DARK_SOULS_PTDE.interroot_prefix}\\script\\talk"
     TALK_ESD_CLASS: tp.ClassVar = TalkESD
 
-    dcx_type: DCXType = DARK_SOULS_PTDE.default_dcx_type
     version: BinderVersion = BinderVersion.V3
-    v4_info: BinderVersion4Info = None

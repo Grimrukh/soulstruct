@@ -145,7 +145,10 @@ class EVSConditionManager:
             return name_or_index
 
         if isinstance(name_or_index, int):
-            return self.conditions[name_or_index]
+            for condition in self.conditions:
+                if condition.index == name_or_index:
+                    return condition
+            raise KeyError(f"No condition with index {name_or_index}.")
 
         if isinstance(name_or_index, str):
             for condition in self.conditions:
@@ -197,7 +200,7 @@ class EVSConditionManager:
 
         for cond in conditions:
             if cond.name == "":
-                # This OR slot is free.
+                # This slot is free.
                 cond.name = name
                 cond.held = hold
                 if EVSConditionManager.DEBUG_ENABLED:
@@ -230,17 +233,29 @@ class EVSConditionManager:
         This serves no purpose other than a convention (started by FromSoft themselves) to distinguish temporary
         one-test conditions from meaningful conditions containing multiple tests.
         """
-        highest_mag_condition = max(abs(cond.index) for cond in self.conditions)
-        if highest_mag_condition == 0:
-            raise ConditionLimitError(
-                evs_name,
-                lineno,
-                f"No conditions available in event {event_id} to check out a temporary condition.",
-            )
+        # Find highest-magnitude available condition, preferring negative (OR) as tiebreaker.
+        preference = sorted(self.conditions, key=lambda c: (-abs(c.index), c.index >= 0))
+        for cond in preference:
+            if cond.name == "":
+                # Free condition.
+                cond.name = "_"
+                if EVSConditionManager.DEBUG_ENABLED:
+                    _LOGGER.debug(f"Checked out TEMP condition {cond.index}.")
+                return cond
 
-        cond = self.conditions[highest_mag_condition]
-        cond.name = "_"
-        return cond
+        # Look for a stale condition.
+        for cond in preference:
+            if cond.stale and not cond.held:
+                cond.name = "_"
+                if EVSConditionManager.DEBUG_ENABLED:
+                    _LOGGER.debug(f"Checked out STALE TEMP condition {cond.index}.")
+                return cond
+
+        raise ConditionLimitError(
+            evs_name,
+            lineno,
+            f"No conditions available in event {event_id} to check out a temporary condition.",
+        )
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(event_id={self.event_id}, conditions={self.conditions})"

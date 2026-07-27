@@ -159,7 +159,7 @@ class MSBTreasureEvent(MSBEvent):
     unknown_x44_x48: int = -1
     unknown_x48_x4c: int = -1
 
-    _treasure_part_index: int = None
+    _treasure_part_index: int | None = None
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBTreasureEvent, self).indices_to_objects(entry_lists)
@@ -259,7 +259,7 @@ class MSBObjActEvent(MSBEvent):
     obj_act_state: int = 0
     obj_act_flag: int = field(default=0, **MapFieldInfo(game_type=Flag))
 
-    _obj_act_part_index: int = None
+    _obj_act_part_index: int | None = None
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBObjActEvent, self).indices_to_objects(entry_lists)
@@ -286,7 +286,7 @@ class MSBWindVFXEvent(MSBEvent):
     wind_region: MSBRegion = None
     unk_x08_x0c: float = 1.0
 
-    _wind_region_index: int = None
+    _wind_region_index: int | None = None
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBWindVFXEvent, self).indices_to_objects(entry_lists)
@@ -413,7 +413,7 @@ class MSBSpawnPointEvent(MSBEvent):
 
     spawn_point_region: MSBRegion = None
 
-    _spawn_point_region_index: int = None
+    _spawn_point_region_index: int | None = None
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBSpawnPointEvent, self).indices_to_objects(entry_lists)
@@ -453,7 +453,7 @@ class MSBNavigationEvent(MSBEvent):
 
     navigation_region: MSBRegion = None
 
-    _navigation_region_index: int = None
+    _navigation_region_index: int | None = None
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBNavigationEvent, self).indices_to_objects(entry_lists)

@@ -8,9 +8,10 @@ __all__ = [
 import logging
 import re
 import typing as tp
+from dataclasses import field
 from pathlib import Path
 
-from soulstruct.containers import Binder, BinderEntry
+from soulstruct.containers import Binder, BinderEntry, BinderVersion
 
 if tp.TYPE_CHECKING:
     from soulstruct.darksouls1r.maps import MSB
@@ -1046,10 +1047,13 @@ class FFXBND(Binder):
     EXT: tp.ClassVar[str] = ".ffxbnd"
     NAME_PREFIX: tp.ClassVar[str] = "FRPG_SfxBnd_"
 
+    version: BinderVersion = field(default=BinderVersion.V3)
+
     def get_ffx_entries(self) -> list[BinderEntry]:
         return [entry for entry in self.entries if entry.entry_id < 100000]
 
     def get_ffx_entries_by_ffx_id(self) -> dict[int, BinderEntry]:
+        """FFX entry names do not have any suffix, just ID."""
         return {
             int(entry.stem[1:]): entry
             for entry in self.entries
@@ -1059,12 +1063,16 @@ class FFXBND(Binder):
     def get_tpf_entries(self) -> list[BinderEntry]:
         return [entry for entry in self.entries if 100000 <= entry.entry_id < 200000]
 
-    def get_tpf_entries_by_tpf_id(self) -> dict[int, BinderEntry]:
-        return {
-            int(entry.stem[1:]): entry
-            for entry in self.entries
-            if 100000 <= entry.entry_id < 200000
-        }
+    def get_tpf_entries_by_tpf_id_and_suffix(self) -> dict[tuple[int, str], BinderEntry]:
+        """TPF entry names could have a texture type suffix like '_s' or '_n'."""
+        by_id_and_suffix = {}
+        for entry in self.entries:
+            if 100000 <= entry.entry_id < 200000:
+                split = entry.stem.split("_")  # e.g. ["s12345"] or ["s12345", "n"]
+                tpf_id = int(split[0][1:])
+                suffix = split[1] if len(split) == 2 else ""
+                by_id_and_suffix[(tpf_id, suffix)] = entry
+        return by_id_and_suffix
 
     def get_flver_entries(self) -> list[BinderEntry]:
         return [entry for entry in self.entries if entry.entry_id >= 200000]
@@ -1083,6 +1091,9 @@ class FFXBND(Binder):
         Any extra '_*' suffixes in the stems of FFX and FLVER entry names will be stripped. For TPF files, the suffices
         '_n', '_s', and '_h' are permitted. Any other '_*' suffices, or suffices that come after an allowed suffix (e.g.
         's12345_n_MyInfo.tpf'), will be stripped.
+
+        NOTE: Vanilla FFXBND entries are not always sorted by ID (within their FFX/TPF/FLVER ID ranges), so this will
+        not necessarily produce byte-perfect round trips on vanilla FFXBND files.
         """
 
         ffx_entries = []
@@ -1150,6 +1161,7 @@ class FFXBND(Binder):
         remapped_character_ffx_sources: dict[int, int | None] = None,
         ignore_if_in_ffxbnds: tp.Sequence[FFXBND] | FFXBND = None,
         prefer_ffxbnd_bak=True,
+        sort_entries=True,
     ):
         """Iterate over all character models and VFX events in given `msb` and ensure all their FFX files (including
         FLVER and TPF files) are present in this `FFXBND`, as understood by the `DEFAULT_REQUIRED_FFX_IDS` dictionary
@@ -1190,6 +1202,7 @@ class FFXBND(Binder):
                 checking the 'mAA' FFXBND before adding an FFX to 'mAA_BB'.
             prefer_ffxbnd_bak (bool): if True (default), look for '.bak' backup versions of FFXBND files (NOT loose
                 files) first, in case the FFXBNDs have been modded and some vanilla FFX entries removed.
+            sort_entries: Call `entry_autogen()` to sort entries afterward.
         """
         if isinstance(ffx_search_directories, (str, Path)):
             ffx_search_directories = [ffx_search_directories]
@@ -1205,7 +1218,7 @@ class FFXBND(Binder):
             ignore_if_in_ffxbnds = []
 
         # NOTE: Entries found in other FFXBNDs will have their IDs changed in this FFXBND, but as we are only opening
-        # other FFXBNDs temporarily in this method, we don't both copying the entries.
+        # other FFXBNDs temporarily in this method, we don't bother copying the entries.
         opened_ffxbnd_paths = set()
         opened_ffx_entries = {}
         opened_tpf_entries = {}
@@ -1214,11 +1227,11 @@ class FFXBND(Binder):
         # First, find any IDs that already exist in this FFXBND or another given one.
         # We will also add to this list as we find required IDs and add their entries.
         existing_ffx_ids = set(self.get_ffx_entries_by_ffx_id())
-        existing_tpf_ids = set(self.get_tpf_entries_by_tpf_id())
+        existing_tpf_ids_suffices = set(self.get_tpf_entries_by_tpf_id_and_suffix())
         existing_flver_ids = set(self.get_flver_entries_by_flver_id())
         for ffxbnd in ignore_if_in_ffxbnds:
             existing_ffx_ids |= set(ffxbnd.get_ffx_entries_by_ffx_id())
-            existing_tpf_ids |= set(ffxbnd.get_tpf_entries_by_tpf_id())
+            existing_tpf_ids_suffices |= set(ffxbnd.get_tpf_entries_by_tpf_id_and_suffix())
             existing_flver_ids |= set(ffxbnd.get_flver_entries_by_flver_id())
 
         def find_ffx_id(_ffx_id: int, _chr_id: int) -> BinderEntry | Path | None:
@@ -1297,7 +1310,7 @@ class FFXBND(Binder):
                 required_ffx_ids = required_ffx_id_overrides[character_id]
             else:
                 try:
-                    required_ffx_ids = DEFAULT_REQUIRED_FFX_IDS
+                    required_ffx_ids = DEFAULT_REQUIRED_FFX_IDS[character_id]
                 except KeyError:
                     raise KeyError(
                         f"Character ID {character_id} not found in DEFAULT_REQUIRED_FFX_IDS and no override "
@@ -1328,3 +1341,6 @@ class FFXBND(Binder):
                     self.add_entry(ffx_source)
 
             # TODO: Haven't mapped out required FLVERs and TPFs.
+
+        if sort_entries:
+            self.entry_autogen()

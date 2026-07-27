@@ -6,10 +6,10 @@ from ..maps.constants import COMMON_FUNC, ALL_MAPS
 
 
 def convert_events(
-    output_type,
-    output_directory,
-    input_type=None,
-    input_directory=None,
+    output_directory: str | Path,
+    output_type: str,
+    input_directory: str | Path,
+    input_type: str | None = None,
     maps=None,
     force=False,
     merge_emevd_paths=(),
@@ -17,17 +17,17 @@ def convert_events(
     """Convert all Dark Souls 1 event files of any format (binary EMEVD, EVS script, numeric text) to any other format.
 
     Args:
+        output_directory: Path to write event files to. Backups of existing files will be made if no backup exists.
         output_type (str): Output type (extension) of file. Should be one of:
             'emevd', 'emevd.dcx', 'evs' (or 'py' or 'evs.py' or 'emevd.py'), or 'numeric' (or 'txt' or 'numeric.txt')
-        output_directory: Path to write event files to. Backups of existing files will be made if no backup exists.
+        input_directory: Path to read event files from.
         input_type (str): Input type (extension) of file, from same options as `output_type`. By default, any input
             type will be accepted for each map, with an error being raised if the same map has multiple file types.
-        input_directory: Path to read event files from. Defaults to vanilla EVS scripts that come with Soulstruct.
         maps: Sequence of maps to look for. These should be `Map` constants. By default, all maps will be converted.
         force (bool): If True, will write file even if identical. (Default: False)
         merge_emevd_paths: Paths of files with valid EMEVD file stems to merge into matching input sources.
     """
-    input_directory = Path(input_directory) if input_directory is not None else Path(__file__).parent / "vanilla"
+    input_directory = Path(input_directory)
     if maps is None:
         maps = [COMMON_FUNC] + ALL_MAPS
     return convert_events_base(

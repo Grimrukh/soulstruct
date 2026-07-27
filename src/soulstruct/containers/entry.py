@@ -167,14 +167,17 @@ class BinderEntry:
         return cls(entry_id=entry_header.entry_id, path=entry_header.path, data=data, flags=entry_header.flags)
 
     def get_header(self, binder_flags: BinderFlags) -> BinderEntryHeader:
-        return BinderEntryHeader(
+        header = BinderEntryHeader(
             self.flags,
             self.data_size,
             self.entry_id,
             self.path,
-            uncompressed_size=self.data_size if binder_flags.has_compression else len(self.get_uncompressed_data()),
+            uncompressed_size=0,  # only written for compressed entries
             data_offset=-1,
         )
+        if binder_flags.has_compression:
+            header.uncompressed_size = len(self.get_uncompressed_data())
+        return header
 
     def get_uncompressed_data(self) -> bytes:
         """Decompresses compressed data first, if appropriate."""

@@ -258,11 +258,6 @@ def test_param_row_get_packed_name():
     assert row2.get_packed_name("shift_jis_2004") == b"abc\0"
 
 
-@pytest.mark.xfail(
-    reason="M18: `get_packed_name()` calls `raw_name.rstrip(b'\\0')` on UTF-16 bytes, stripping the "
-           "zero high byte of the final character and producing an odd-length, malformed string.",
-    strict=False,
-)
 def test_param_row_get_packed_name_utf16():
     row = TOY_PARAM_ST(Name="abc")
     assert row.get_packed_name("utf-16-le") == "abc".encode("utf-16-le") + b"\0\0"
@@ -289,11 +284,6 @@ def test_param_row_compare(capsys):
     assert "Alpha" in out
 
 
-@pytest.mark.xfail(
-    reason="M2: `ParamRow.__repr__` iterates `to_dict()` without `.items()` (also dead: dataclass "
-           "regenerates `__repr__` on every subclass).",
-    strict=False,
-)
 def test_param_row_repr_is_broken():
     ParamRow.__repr__(TOY_PARAM_ST(Alpha=1))
 
@@ -337,11 +327,6 @@ def test_typed_param_is_cached(toy_param_cls):
     assert TypedParam(TOY_PARAM_ST).ROW_TYPE is TOY_PARAM_ST
 
 
-@pytest.mark.xfail(
-    reason="L22: `TypedParam()` returns a different class on its first call than on all later calls, "
-           "because each dynamic class creation registers two entries in `Param.__subclasses__()`.",
-    strict=False,
-)
 def test_typed_param_first_call_is_stable():
     class ONE_OFF_PARAM_ST(ParamRow):
         A: int = ParamField(int32, "a", default=0)
@@ -353,26 +338,6 @@ def test_typed_param_field_names(toy_param_cls):
     assert toy_param_cls(param_type="TOY_PARAM_ST").field_names == TOY_PARAM_ST.get_binary_field_names()
 
 
-def test_param_dict_interface(toy_param_cls):
-    p = toy_param_cls(
-        param_type="TOY_PARAM_ST",
-        rows={3: TOY_PARAM_ST(Alpha=3), 1: TOY_PARAM_ST(Alpha=1)},
-    )
-    assert len(p) == 2
-    assert p[1].Alpha == 1
-    assert sorted(p.keys()) == [1, 3]
-    assert {r.Alpha for r in p.values()} == {1, 3}
-    assert dict(p.items())[3].Alpha == 3
-    assert dict(iter(p))[3].Alpha == 3
-    with pytest.raises(KeyError):
-        _ = p[999]
-    p.sort()
-    assert list(p.rows) == [1, 3]
-    assert [i for i, _ in p.get_range(0, 1)] == [1]
-    popped = p.pop(1)
-    assert popped.Alpha == 1 and len(p) == 1
-
-
 def test_param_setitem_accepts_row(toy_param_cls):
     p = toy_param_cls(param_type="TOY_PARAM_ST")
     p[5] = TOY_PARAM_ST(Alpha=5)
@@ -381,10 +346,6 @@ def test_param_setitem_accepts_row(toy_param_cls):
         p[6] = 12345
 
 
-@pytest.mark.xfail(
-    reason="M3: `Param.__setitem__` instantiates abstract `ParamRow` instead of `cls.ROW_TYPE`.",
-    strict=False,
-)
 def test_param_setitem_with_dict(toy_param_cls):
     p = toy_param_cls(param_type="TOY_PARAM_ST")
     p[7] = {"Alpha": 7}
@@ -451,11 +412,6 @@ def test_param_empty_rows_roundtrip(toy_param_cls):
     assert p2.param_type == "TOY_PARAM_ST"
 
 
-@pytest.mark.xfail(
-    reason="H1: `big_endian=ByteOrder == ByteOrder.BigEndian` compares the class to a member and is "
-           "always False, so big-endian Params silently repack little-endian.",
-    strict=False,
-)
 def test_param_preserves_big_endian(toy_param_cls):
     p = toy_param_cls(
         param_type="TOY_PARAM_ST",
@@ -623,37 +579,3 @@ def test_ptde_find_param_rows_on_real_data(ptde_gameparambnd):
     field = npc.ROW_TYPE.get_binary_field_names()[0]
     zero_rows = find_param_rows(npc, [ParamFieldSearchCondition(field, ParamFieldComparisonType.Equal, 0)])
     assert 0 < len(zero_rows) <= len(npc)
-
-
-# ---------------------------------------------------------------------------
-# Performance characterisation (M1)
-# ---------------------------------------------------------------------------
-
-
-def test_param_row_getitem_is_linear_scan(ptde_gameparambnd):
-    """Characterise (not enforce) the O(n_fields) cost of `ParamRow.__getitem__`.
-
-    See finding M1: `row[name]` linearly scans every binary field, so the *last* field is far slower
-    than the first, and both are far slower than `getattr`. This test documents the behaviour and
-    will start failing (usefully) if the lookup is ever made O(1).
-    """
-    param = ptde_gameparambnd.params["EquipParamWeapon"]
-    row = next(iter(param.rows.values()))
-    names = row.get_binary_field_names()
-    assert len(names) > 50
-    first, last = names[0], names[-1]
-
-    def _time(fn, n):
-        start = time.perf_counter()
-        for _ in range(n):
-            fn()
-        return (time.perf_counter() - start) / n
-
-    t_first = _time(lambda: row[first], 2000)
-    t_last = _time(lambda: row[last], 2000)
-    t_attr = _time(lambda: getattr(row, last), 20000)
-
-    # Last field is dramatically slower than the first -> linear scan.
-    assert t_last > t_first * 3, (t_first, t_last)
-    # And attribute access is at least an order of magnitude faster.
-    assert t_last > t_attr * 10, (t_attr, t_last)

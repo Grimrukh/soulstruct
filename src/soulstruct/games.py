@@ -99,7 +99,9 @@ class Game:
     def __hash__(self):
         return hash(self.variable_name)
 
-    def __eq__(self, other: Game):
+    def __eq__(self, other: object):
+        if not isinstance(other, Game):
+            return NotImplemented
         return self.variable_name == other.variable_name
 
     def __repr__(self):
@@ -227,7 +229,10 @@ DARK_SOULS_2_SOTFS = Game(
     name="Dark Souls II: Scholar of the First Sin",
     abbreviated_name="ds2sotfs",
     submodule_name="darksouls2",  # TODO: Currently identical to DS2.
-    aliases=("darksouls2sotfs", "ds2sotfs", "dks2sotfs", "sotfs"),
+    aliases=(  # lots of options here
+        "darksouls2scholarofthefirstsin", "darksouls2sotfs", "ds2sotfs", "dks2sotfs",
+        "sotfs", "scholarofthefirstsin", "scholar",
+    ),
     default_dcx_type=DCXType.DCX_DFLT_10000_24_9,
     default_game_path=Config.DS2_SOTFS_PATH,
 )
@@ -336,7 +341,7 @@ def get_game(game_name: str | Game):
         return game_name
     game_name = game_name.lower()
     for old, new in ((" ", ""), ("'", ""), (":", ""), ("iii", "3"), ("ii", "2")):
-        game_name.replace(old, new)
+        game_name = game_name.replace(old, new)
     if game_name in {"darksouls", "darksouls1", "dks", "ds1", "ds"}:
         raise ValueError(f"Ambiguous game name: {game_name}. For Dark Souls 1, try 'ptde' or 'dsr' instead.")
     hits = []

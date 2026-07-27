@@ -133,13 +133,13 @@ def test_define_label_instructions_have_no_base_arg_offset(ds1r_emevd: EMEVD):
     for _ in range(header.instructions_count):
         instr = InstructionStruct.from_bytes(reader)
         reader.assert_pad(4)
-        if instr.category == 1014:
+        if instr.base_args_size == 0:
             found_any = True
             assert instr.base_args_local_offset == -1
         else:
             assert instr.base_args_local_offset >= 0
     if not found_any:
-        pytest.skip("No `DefineLabel` instructions in this EMEVD.")
+        pytest.skip("No zero-arg instructions in this EMEVD.")
 
 
 def test_emevd_evs_roundtrip_is_byte_identical(ds1r_emevd: EMEVD, tmp_path: Path):
@@ -244,7 +244,7 @@ def test_numeric_converts_uint_max_for_signed():
 def test_numeric_linked_offsets_and_strings_parsed():
     emevd = EMEVD.from_numeric_string("0, 0\n 2003[02] (iB)[1, 1]\n\nlinked:\n0\n\nstrings:\n0: abc\n")
     assert emevd.linked_file_offsets == [0]
-    assert emevd.packed_strings == "abc".encode("utf-16le") + b"\0\0"
+    assert emevd.packed_strings == "abc".encode("utf-8") + b"\0\0"
 
 
 @pytest.mark.xfail(
@@ -280,12 +280,6 @@ def test_numeric_roundtrip_of_small_float_arg(ds1r_emevd: EMEVD):
     EMEVD.from_numeric_string(ds1r_emevd.to_numeric())
 
 
-@pytest.mark.xfail(
-    reason="BUG: `build_numeric` creates a plain `list[int]` for `event_layers` instead of an "
-           "`EventLayers` instance, so any numeric/EVS source using event layers cannot be packed "
-           "(`TypeError: unhashable type: 'list'`).",
-    strict=False,
-)
 def test_numeric_event_layers_produce_event_layers_object():
     emevd = EMEVD.from_numeric_string("0, 0\n 2003[02] (iB)[1, 1] <0, 2>\n\nlinked:\n\nstrings:\n")
     instr = emevd.events[0].instructions[0]
@@ -293,11 +287,6 @@ def test_numeric_event_layers_produce_event_layers_object():
     bytes(emevd.to_writer())
 
 
-@pytest.mark.xfail(
-    reason="BUG: `build_numeric` uses `return` (not `continue`) when a text chunk has no lines, "
-           "silently discarding all remaining events.",
-    strict=False,
-)
 def test_numeric_blank_chunk_does_not_truncate_script():
     numeric = (
         "\n\n"  # leading blank lines produce an empty leading chunk
@@ -429,32 +418,6 @@ def test_merge_does_not_share_event_objects():
     assert merged.events[100].instructions[0] is not b.events[100].instructions[0]
 
 
-@pytest.mark.xfail(
-    reason="BUG: `EMEVD.to_dict()` returns `Event` objects keyed by int, which the base "
-           "`write_json` encoder serialises as `null` (total data loss) and which "
-           "`from_dict`/`from_json` (`cls(**data)`) cannot consume at all.",
-    strict=False,
-)
-def test_emevd_json_roundtrip(ds1r_emevd: EMEVD, tmp_path: Path):
-    json_path = tmp_path / "m10_00_00_00.json"
-    ds1r_emevd.write_json(json_path)
-    reloaded = EMEVD.from_json(json_path)
-    assert bytes(reloaded.to_writer()) == bytes(ds1r_emevd.to_writer())
-
-
-@pytest.mark.xfail(
-    reason="BUG: `EMEVD.load_dict` never pops 'map_name' when `clear_old_data=True`, so the "
-           "string key ends up in the `events` dict (and `map_name` is never restored).",
-    strict=False,
-)
-def test_load_dict_roundtrip(ds1r_emevd: EMEVD):
-    data = ds1r_emevd.to_dict()
-    new = EMEVD()
-    new.load_dict(data)
-    assert all(isinstance(key, int) for key in new.events)
-    assert new.map_name == ds1r_emevd.map_name
-
-
 # ---------------------------------------------------------------------------
 # `Event` / `Instruction` numeric text emission
 # ---------------------------------------------------------------------------
@@ -480,12 +443,6 @@ def test_event_to_numeric_header():
     assert event.to_numeric().splitlines()[0] == "11000100, 2"
 
 
-@pytest.mark.xfail(
-    reason="ISSUE: `Instruction`/`Event` game subclasses re-apply `@dataclass(slots=True)` without "
-           "`repr=False`, which silently discards the hand-written `__repr__` in "
-           "`base.events.emevd.instruction.Instruction`. The base `__repr__` is dead code.",
-    strict=False,
-)
 def test_instruction_uses_custom_base_repr():
     instr = Instruction(2003, 2, "iB", args_list=[1, 1], event_layers=EventLayers(3))
     text = repr(instr)

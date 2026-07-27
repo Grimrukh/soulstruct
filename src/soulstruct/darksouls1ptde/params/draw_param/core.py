@@ -2,15 +2,15 @@ from __future__ import annotations
 
 __all__ = ["DrawParam", "TypedDrawParam"]
 
-import types
-from dataclasses import field
+import typing as tp
+from functools import lru_cache
 
 from soulstruct.base.params.param import Param
 from soulstruct.base.params.param_row import ParamRow
 from soulstruct.dcx import DCXType
 
 
-class DrawParam(Param):
+class DrawParam[PARAM_ROW_DATA_T: ParamRow](Param[PARAM_ROW_DATA_T]):
     """`Param` with some extra methods that are specific to DrawParam tables."""
 
     # No DCX.
@@ -21,31 +21,25 @@ class DrawParam(Param):
         by default, 'PolyG', which I assume is cutscene-specific lighting). """
         if ignore_polyg:
             return {
-                index: row for index, row in self.rows.items() if row.Name and not row.Name.startswith("0")
+                index: row
+                for index, row in self.rows.items()
+                if row.Name and not row.Name.lower().startswith(("0", "polyg"))
             }
         return {
-            index: row
-            for index, row in self.rows.items()
-            if row.Name and not row.Name.startswith("0") and not row.Name.lower().startswith("polyg")
+            index: row for index, row
+            in self.rows.items()
+            if row.Name and not row.Name.startswith("0")
         }
 
+DRAW_PARAM_ROW_T = tp.TypeVar("DRAW_PARAM_ROW_T", bound=ParamRow)
 
-def TypedDrawParam(data_type: type[ParamRow]):
-    """Generate a `Param` subclass dynamically with the given row type (or retrieve correct existing subclass).
+@lru_cache(maxsize=None)
+def _typed_param(row_type: type[DRAW_PARAM_ROW_T]) -> type:
+    new_cls = type(f"DrawParam_{row_type.__name__}", (DrawParam,), {"ROW_TYPE": row_type})
+    new_cls.__module__ = row_type.__module__
+    new_cls.__qualname__ = new_cls.__name__
+    return new_cls
 
-    TODO: Add game-appropriate DCX (probably `Null`).
-    TODO: Cache classes so they aren't generated more than once.
-    """
-    for draw_param_subclass in DrawParam.__subclasses__():
-        if draw_param_subclass.__name__ == "ParamDict":
-            continue
-        if draw_param_subclass.ROW_TYPE is data_type:
-            return draw_param_subclass
-    # noinspection PyTypeChecker
-    new_draw_param_subclass = types.new_class(
-        name=f"DrawParam_{data_type.__name__}",
-        bases=(DrawParam,),
-    )  # type: type[DrawParam]
-    new_draw_param_subclass.ROW_TYPE = data_type
-    new_draw_param_subclass.__module__ = DrawParam.__module__
-    return new_draw_param_subclass
+
+def TypedDrawParam(row_type: type[DRAW_PARAM_ROW_T]) -> type[DrawParam[DRAW_PARAM_ROW_T]]:
+    return tp.cast(type[DrawParam[DRAW_PARAM_ROW_T]], _typed_param(row_type))

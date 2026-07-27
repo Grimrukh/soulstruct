@@ -122,7 +122,7 @@ def format_binary_operator(sequence: list, operator_key: bytes) -> str:
     return f"{left} {operator} {right}"
 
 
-def decompile(byte_sequence, esd_type: ESDType | str, func_prefix="") -> str:
+def decompile(byte_sequence: bytes | bytearray, esd_type: ESDType | str, func_prefix="") -> str:
     """Decompile `byte_sequence` EzState byte code to the contents of an `if` Python statement.
 
     Does not try to format line breaks. This is just a single line of code, and can get very long.

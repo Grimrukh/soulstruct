@@ -147,7 +147,7 @@ class MapAreaTextureManager:
 
         msb_directory = self.map_directory / "MapStudio"
 
-        for msb_path in msb_directory.glob(f"m{self.area_id:02}_??_??_??.msb.dcx"):
+        for msb_path in msb_directory.glob(f"m{self.area_id:02}_??_??_??.msb"):
             map_piece_directory = self.map_directory / msb_path.name.split(".")[0]
             if not map_piece_directory.is_dir():
                 _LOGGER.warning(f"Map Piece directory not found for MSB {msb_path.name}. Ignoring this MSB.")

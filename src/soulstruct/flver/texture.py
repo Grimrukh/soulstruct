@@ -78,7 +78,7 @@ class Texture:
             writer.fill_with_position("_texture_type_offset", obj=self)
             writer.pack_z_string(self.texture_type, encoding=encoding)
         elif not texture_type_optional:
-            raise ValueError(f"Texture {self} has `texture_type == None`, which is not invalid for this FLVER version.")
+            raise ValueError(f"Texture {self} has `texture_type == None`, which is not valid for this FLVER version.")
         else:
             # Only possible in FLVER0 versions.
             writer.fill("_texture_type_offset", 0, obj=self)

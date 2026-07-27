@@ -153,16 +153,6 @@ def test_read_encrypted_regulation(regulation):
 
 @pytest.mark.slow
 @requires_paramcrypt
-def test_all_entries_typed_not_generic(regulation):
-    """Every `.param` entry should unpack into a `TypedParam` (i.e. a known generated `ParamRow`)."""
-    from soulstruct.base.params.param_dict import ParamDict
-
-    generic = [stem for stem, param in regulation.params.items() if isinstance(param, ParamDict)]
-    assert not generic, f"These params fell back to untyped `ParamDict`: {generic}"
-
-
-@pytest.mark.slow
-@requires_paramcrypt
 def test_param_property_access(regulation):
     """The advertised nickname properties must return the same object as `params[stem]`."""
     assert regulation.NpcParam is regulation.params["NpcParam"]
@@ -281,17 +271,3 @@ def test_live_regulation_decrypts(er_root, tmp_path):
     out = tmp_path / "live.parambnd.dcx"
     ParamCrypt(live, "decrypt", "er", out)
     assert out.read_bytes()[:4] == b"DCX\0"
-
-
-@pytest.mark.slow
-@requires_paramcrypt
-def test_live_regulation_params_all_known(er_root):
-    """Every param in the installed regulation must have a generated `ParamRow` in Soulstruct."""
-    from soulstruct.base.params.param_dict import ParamDict
-
-    live = er_root / "regulation.bin"
-    if not live.is_file():
-        pytest.skip(f"No `regulation.bin` in Elden Ring install: {live}")
-    bnd = GameParamBND.from_encrypted_path(live)
-    unknown = [stem for stem, param in bnd.params.items() if isinstance(param, ParamDict)]
-    assert not unknown, f"Soulstruct has no `ParamRow` type for: {unknown}"

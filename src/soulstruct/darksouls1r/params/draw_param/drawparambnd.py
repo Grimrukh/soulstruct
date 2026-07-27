@@ -3,11 +3,13 @@ from __future__ import annotations
 __all__ = ["DrawParamBND"]
 
 import logging
+import struct
 import typing as tp
 from types import ModuleType
 
 from soulstruct.containers import BinderEntry
 from soulstruct.games import DARK_SOULS_DSR
+from soulstruct.utilities.binary import BinaryReader
 
 from soulstruct.darksouls1ptde.params.draw_param import DrawParam, DrawParamBND as DrawParamBND_PTDE, TypedDrawParam
 from soulstruct.darksouls1ptde.params.paramdef import (
@@ -23,7 +25,7 @@ _LOGGER = logging.getLogger(__name__)
 class DrawParamBND(DrawParamBND_PTDE):
     """Structure that manages double-slots and DrawParam nicknames for one `DrawParamBND` file (i.e. one map "area").
 
-    This DS1R override handles two known cases of vanilla Param corruption in `DrawParamBND` files.
+    This DS1R override handles two known cases of PTDE layouts in vanilla DS1R Params.
     """
 
     DEFAULT_ENTRY_ROOT: tp.ClassVar[str] = f"{DARK_SOULS_DSR.interroot_prefix}\\param\\DrawParam"
@@ -38,36 +40,42 @@ class DrawParamBND(DrawParamBND_PTDE):
         if slot not in {0, 1}:
             raise ValueError(f"DrawParamBND slot must be 0 or 1, not {slot}.")
         draw_params = self.draw_params_0 if slot == 0 else self.draw_params_1
-        try:
-            draw_params[param_stem] = entry.to_binary_file(typed_draw_param_class)
-            return
-        except Exception as ex:
-            if param_stem not in {"ToneMapBank", "ToneCorrectBank"}:
+
+        # Special case: ToneMapBank and ToneCorrectBank in "default/m99" maps in vanilla DS1R are still PTDE layout.
+        # We check for that exact param/row size combination.
+        entry_stem = entry.stem
+        if entry_stem in {"default_ToneMapBank", "m99_ToneMapBank"} and self._peek_row_size(entry) == 44:  # vs. 48
+            # PTDE layout.
+            dsr_draw_param_row_type = TONE_MAP_BANK
+            ptde_draw_param_type = TypedDrawParam(PTDE_TONE_MAP_BANK)
+        elif entry_stem in {"default_ToneCorrectBank", "m99_ToneCorrectBank"} and self._peek_row_size(entry) == 32:  # vs. 36
+            # PTDE layout.
+            dsr_draw_param_row_type = TONE_CORRECT_BANK
+            ptde_draw_param_type = TypedDrawParam(PTDE_TONE_CORRECT_BANK)
+        else:
+            try:
+                draw_params[param_stem] = entry.to_binary_file(typed_draw_param_class)
+                return
+            except Exception as ex:
                 _LOGGER.error(
                     f"Could not load `DrawParam` from `DrawParamBND` entry '{entry.name}'.\n  Error: {ex}"
                 )
                 raise
-            # Otherwise, handle known vanilla DS1R corruption by loading bundled PTDE versions.
 
         _LOGGER.info(
-            f"Could not load `{param_stem}` Param from `DrawParamBND` entry '{entry.name}'. "
-            f"This is expected for vanilla DS1R `DrawParamBND`, which is corrupt. Trying PTDE version...\n"
+            f"Detected PTDE layout for DS1R `DrawParamBND` entry '{entry.name}'. "
+            f"This is expected for vanilla DS1R (default/m99). Using defaults for missing fields."
         )
-        if param_stem == "ToneMapBank":
-            dsr_draw_param_row_type = TONE_MAP_BANK
-            ptde_draw_param_type = TypedDrawParam(PTDE_TONE_MAP_BANK)
-        else:
-            dsr_draw_param_row_type = TONE_CORRECT_BANK
-            ptde_draw_param_type = TypedDrawParam(PTDE_TONE_CORRECT_BANK)
         try:
             ptde_draw_param = entry.to_binary_file(ptde_draw_param_type)  # type: DrawParam
-        except Exception as ex:
+        except struct.error as ex:
             _LOGGER.error(
                 f"Could not load PTDE `{param_stem}` Param from `DrawParamBND` entry '{entry.name}' while trying to "
                 f"replace corrupted vanilla DS1R Param.\n  Error: {ex}"
             )
             raise
         else:
+            _LOGGER.info(f"Loaded DS1R {param_stem} with PTDE version.")
             # Convert PTDE Param to DSR Param for future writes/re-reads.
             # noinspection PyArgumentList
             dsr_draw_param = typed_draw_param_class(
@@ -88,3 +96,16 @@ class DrawParamBND(DrawParamBND_PTDE):
                 }
             )
             draw_params[param_stem] = dsr_draw_param
+
+    @staticmethod
+    def _peek_row_size(entry: BinderEntry) -> int:
+        """This should work for all DS1R Params."""
+        reader = BinaryReader(entry.get_uncompressed_data())
+        reader.read(48)  # full header
+        reader.read(4)  # first ID
+        first_data_offset = reader["I"]
+        reader.read(4)  # first name offset
+        reader.read(4)  # second ID
+        second_data_offset = reader["I"]
+        reader.read(4)  # second name offset
+        return second_data_offset - first_data_offset

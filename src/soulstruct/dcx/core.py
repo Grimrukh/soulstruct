@@ -43,14 +43,20 @@ class DCXVersionInfo(tp.NamedTuple):
     version6: int
     version7: int
 
-    def __eq__(self, other: DCXVersionInfo):
+    def __eq__(self, other: object):
         """Fields must be equal unless one or both is `None`."""
+        if not isinstance(other, DCXVersionInfo):
+            return NotImplemented
         for field_name in self._fields:
             if getattr(self, field_name) is None or getattr(other, field_name) is None:
                 continue
             if getattr(self, field_name) != getattr(other, field_name):
                 return False
         return True
+
+    def __hash__(self) -> int:
+        """Hash must be manually defined because we have explicit `__eq__`."""
+        return hash(self._fields)
 
     def __repr__(self) -> str:
         """Convert `int` fields to hex strings."""
@@ -100,10 +106,8 @@ class DCXType(IntEnum):
     @process_path.register
     def _(self, path: Path) -> Path:
         """Add or remove '.dcx' extension to/from `path` as appropriate."""
-        new_path = path.with_name(path.name.removesuffix(".dcx"))
-        if self.has_dcx_extension():
-            new_path = path.with_name(path.name + ".dcx")
-        return new_path
+        path_name = path.name.removesuffix(".dcx")
+        return path.with_name(path_name + (".dcx" if self.has_dcx_extension() else ""))
 
     @process_path.register
     def _(self, path: str) -> str:
@@ -275,7 +279,7 @@ def _decompress_dcx_edge(reader: BinaryReader, header: DCXHeaderStruct) -> tuple
             decompressed += decompressed_chunk
         else:
             decompressed += chunk
-    return decompressed, DCXType.DCX_EDGE
+    return bytes(decompressed), DCXType.DCX_EDGE
 
 
 def decompress(dcx_source: bytes | bytearray | BinaryReader | io.BufferedIOBase | Path | str) -> tuple[bytes, DCXType]:

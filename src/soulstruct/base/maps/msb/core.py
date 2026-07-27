@@ -451,7 +451,7 @@ class MSB[
         Raises a `KeyError` if the name cannot be found, and a `ValueError` if multiple entries are found.
         """
         if subtypes:  # lower case
-            entry_lists = [getattr(self, f.lower()) for f in subtypes]  # type: list[MSBEntryList]
+            entry_lists = [getattr(self, self.resolve_subtype_name(f)) for f in subtypes]  # type: list[MSBEntryList]
         else:
             entry_lists = self.get_all_subtype_lists()
 
@@ -818,6 +818,8 @@ class MSB[
             return IDList()
         resolved = IDList()
         for entry in entries:
+            if entry in resolved:
+                continue  # deduplicate
             if isinstance(entry, str):
                 resolved.append(self.find_entry_name(entry, supertypes, subtypes))
             elif isinstance(entry, MSBEntry):
@@ -909,10 +911,13 @@ class MSB[
                 raise ValueError(f"Found multiple entries with entity ID {entity_id} in MSB. This must be fixed.")
         return results[0]
 
-    def remove_entry(self, entry: MSBEntry):
+    def remove_entry(self, entry: MSBEntry, clear_referrers=True):
         """Find list containing entry and remove it."""
         subtype_list = self.get_list_of_entry(entry)
         subtype_list.remove(entry)
+        if clear_referrers:
+            for entry_reference in entry.referring_entry_fields:
+                entry_reference.set_value(None)
 
     def clear_all(self):
         """Clear all entry subtype lists."""
@@ -937,10 +942,10 @@ class MSB[
 
         TODO: Would be great to be able to infer the return type from the subtype name (or another arg).
         """
-        for subtype_name, part_info in self.MSB_ENTRY_SUBTYPES["PARTS_PARAM_ST"].items():
+        for subtype_enum, part_info in self.MSB_ENTRY_SUBTYPES["PARTS_PARAM_ST"].items():
             # Redirect part subtype names to their corresponding model subtype names.
             if part_info.matches_name(model_subtype_name):
-                subtype_list_name = f"{subtype_name}Model"
+                subtype_list_name = f"{subtype_enum.name}Model"
                 break
         else:
             subtype_list_name = self.resolve_subtype_name(model_subtype_name, "MODEL_PARAM_ST")

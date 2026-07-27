@@ -284,7 +284,7 @@ def _simple_esd(talk_esd_cls, name="test.esd"):
                 1: State(
                     1,
                     [Condition(0, bytes([0x41, 0xa1]))],
-                    enter_commands=[Command(1, 1, [bytes([0x41, 0xa1])])],
+                    enter_commands=[Command(1, 1, [bytearray([0x41, 0xa1])])],
                 ),
             }
         },
@@ -359,11 +359,6 @@ def test_esd_reader_must_start_at_zero(talk_esd_cls):
         talk_esd_cls.from_reader(reader)
 
 
-@pytest.mark.xfail(
-    reason="H2: `esd_name_length=len(self.esd_name) // 2` halves the stored character count, so the "
-           "internal ESD name is truncated on every write.",
-    strict=False,
-)
 def test_esd_name_survives_roundtrip(talk_esd_cls):
     esd = _simple_esd(talk_esd_cls, name="t100613")
     esd2 = talk_esd_cls.from_bytes(bytes(esd))
@@ -431,11 +426,6 @@ def test_real_talk_esd_structural_roundtrip(t100613_esd, talk_esd_cls):
             assert len(other.ongoing_commands) == len(state.ongoing_commands)
 
 
-@pytest.mark.xfail(
-    reason="H2: the internal ESD name shrinks on every write, so pack -> unpack -> pack is not "
-           "idempotent (the file gets 2 bytes shorter).",
-    strict=False,
-)
 def test_real_talk_esd_repack_is_stable(t100613_esd, talk_esd_cls):
     once = bytes(t100613_esd)
     twice = bytes(talk_esd_cls.from_bytes(once))
@@ -519,12 +509,6 @@ def test_esp_write_directory_creates_files(t100613_esd, tmp_path):
     assert "ESD_NAME = " in header and "MAGIC = " in header
 
 
-@pytest.mark.xfail(
-    reason="H14: `write_esp_directory()` writes `ESD_TYPE = 'TALK'` (the enum *name*) but "
-           "`read_esp_header()` does `ESDType(...)`, which needs the value 'talk' -- so no "
-           "Soulstruct-written ESP directory can be read back.",
-    strict=False,
-)
 def test_esp_write_and_read_directory(t100613_esd, talk_esd_cls, tmp_path):
     with _quiet():
         t100613_esd.write_esp_directory(tmp_path / "esp")
@@ -594,11 +578,6 @@ def test_esp_compiler_handles_else_block(tmp_path, talk_esd_cls):
     assert len(esd.state_machines[1][0].conditions) == 2
 
 
-@pytest.mark.xfail(
-    reason="H12: `get_called_state_machine()` checks `is_number_literal(node.func.slice.value)`, "
-           "which is an `int`, so `CALL_STATE_MACHINE[...]` (emitted by `Command.to_esp()`) never compiles.",
-    strict=False,
-)
 def test_esp_compiler_call_state_machine(tmp_path, talk_esd_cls):
     src = (
         '"""TALK ESD STATE MACHINE 1"""\n\n'
@@ -639,14 +618,6 @@ def test_esp_compiler_uses_registers_for_repeated_calls(tmp_path, talk_esd_cls):
     ezl = esd.state_machines[1][0].conditions[0].test_ezl
     # A register save (0xa7-0xae) should appear when a call is used twice.
     assert any(0xa7 <= b <= 0xae for b in ezl), ezl.hex()
-
-
-def test_condition_to_esp_prints_to_stdout(t100613_esd):
-    """M7: `Condition.to_esp()` contains a stray `print(s)`."""
-    buf = io.StringIO()
-    with contextlib.redirect_stdout(buf):
-        t100613_esd.to_esp(1)
-    assert len(buf.getvalue()) > 100, "the stray `print()` in Condition.to_esp() was removed"
 
 
 def test_esp_compiler_number_encoding():

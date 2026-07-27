@@ -326,9 +326,11 @@ class ParamDefField:
         if self.display_type is field_types.dummy8 and self.bit_count == -1:
             if not isinstance(value, bytes):  # `dummy8` fields that are not bit fields are not unpacked
                 raise ParamError(f"Value {value} of `dummy8` field {self.name} should be `bytes`, not {type(value)}.")
-        elif not isinstance(value, self.display_type):
+        elif not isinstance(value, self.py_type):
+            if self.bit_count == 1 and (isinstance(value, bool) or (isinstance(value, int) and value in {0, 1})):
+                return  # allow bool/1/0 for 1-bit fields
             raise ParamError(
-                f"Value {value} of field {self.name} should have type {self.display_type}, not {type(value)}."
+                f"Value {value} of field {self.name} should have type {self.py_type.__name__}, not {type(value).__name__}."
             )
 
     def check_range(self, value):
@@ -368,8 +370,6 @@ class ParamDefField:
         Base class version here just parses the existing ParamDef default.
         """
         # TODO: Use a 'get_game()' module lookup (from `ParamDef`) and fall back to this.
-        if not self.default:
-            return self.default
         if self.bit_count == 1 and self.internal_type_name != "dummy8":
             return bool(self.default)
         elif self.internal_type_name not in {"f32", "f64"}:

@@ -203,7 +203,7 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
         fmg_keys = self.fmgs.keys()
         for msgbnd_name in ("item", "menu"):
             msgbnd = self.files[msgbnd_name]
-            for entry in msgbnd.entries:
+            for entry in tuple(msgbnd.entries):
                 if (msgbnd_name, entry.entry_id) not in fmg_keys:
                     msgbnd.remove_entry(entry)
 
@@ -247,7 +247,7 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
         for attr_name in dir(self.__class__):
             if (
                 isinstance(getattr(self.__class__, attr_name), property)
-                and (not category_name_regex or re.match(category_name_regex, attr_name))
+                and (not category_name_regex or re.fullmatch(category_name_regex, attr_name))
             ):
                 fmgs[attr_name] = getattr(self, attr_name)
         return fmgs
@@ -288,7 +288,7 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
             }
 
     def write(
-        self, directory_path: Path | str | None = None, check_file_hashes=False, no_partial_write=True
+        self, directory_path: Path | str | None = None, force=False, no_partial_write=True
     ) -> list[Path]:
         """Regenerate and write `item` and `menu` MSGBNDs."""
         if directory_path is None:
@@ -304,7 +304,7 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
             directory_path / f"menu{self.FILE_EXTENSION}": self.files["menu"],
         }
 
-        written_paths = self._write(file_paths, check_file_hashes, no_partial_write)
+        written_paths = self._write(file_paths, force, no_partial_write)
         self._log_directory_write(directory_path, len(written_paths))
         return written_paths
 

@@ -145,7 +145,7 @@ class SceneGParamDataStruct(MSBBinaryStruct):
 
 
 @dataclass(slots=True, eq=False, repr=False)
-class MSBPart(BaseMSBPart[BitSet256], abc.ABC):
+class MSBPart(BaseMSBPart, abc.ABC):
 
     HEADER_STRUCT = PartHeaderStruct
     STRUCTS = {
@@ -155,6 +155,10 @@ class MSBPart(BaseMSBPart[BitSet256], abc.ABC):
     NAME_ENCODING: tp.ClassVar[str] = "utf-16-le"
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\SPRJ\\data\\Model\\map\\{map_stem}\\sib\\layout.SIB"
     BIT_SET_TYPE: tp.ClassVar = BitSet256
+
+    # Bitset type overrides.
+    draw_groups: BitSet256 = field(default_factory=BitSet256.all_on)
+    display_groups: BitSet256 = field(default_factory=BitSet256.all_off)
 
     # NOTE: `model` defined by subclasses.
     backread_groups: BitSet256 = field(default_factory=BitSet256.all_off)
@@ -188,7 +192,7 @@ class MSBMapPiece(MSBPart):
         "scene_gparam_data": None,
     }
 
-    model: MSBMapPieceModel = None
+    model: MSBMapPieceModel | None = None
 
     # GPARAM
     light_set_id: int = field(default=0, **MapFieldInfo("Light Set ID", "Light set GParam ID."))
@@ -225,7 +229,7 @@ class MSBObject(MSBPart):
         "backread_groups",
     )
 
-    model: MSBObjectModel = None
+    model: MSBObjectModel | None = None
 
     draw_parent: MSBPart = None
     break_term: int = -1
@@ -241,7 +245,7 @@ class MSBObject(MSBPart):
     light_scattering_id: int = field(default=0, **MapFieldInfo("Light Scattering ID", "Light scattering GParam ID."))
     environment_map_id: int = field(default=0, **MapFieldInfo("Environment Map ID", "Environment map GParam ID."))
 
-    _draw_parent_index: int = None
+    _draw_parent_index: int | None = None
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBObject, self).indices_to_objects(entry_lists)
@@ -274,7 +278,7 @@ class MSBCharacter(MSBPart):
         "scene_gparam_data": None,
     }
 
-    model: MSBCharacterModel = None
+    model: MSBCharacterModel | None = None
 
     ai_id: int = field(default=-1, **MapFieldInfo(game_type=AIParam))
     character_id: int = field(default=-1, **MapFieldInfo(game_type=CharacterParam))
@@ -297,7 +301,7 @@ class MSBCharacter(MSBPart):
     light_scattering_id: int = field(default=0, **MapFieldInfo("Light Scattering ID", "Light scattering GParam ID."))
     environment_map_id: int = field(default=0, **MapFieldInfo("Environment Map ID", "Environment map GParam ID."))
 
-    _draw_parent_index: int = None
+    _draw_parent_index: int | None = None
     _patrol_regions_indices: list[int] = binary_array(8, default=None)
 
     HIDE_FIELDS: tp.ClassVar = (
@@ -415,7 +419,7 @@ class MSBCollision(MSBPart):
     _stable_footing_flag: int = field(default=0, repr=False)
 
     # Field type/default overrides.
-    model: MSBCollisionModel = None
+    model: MSBCollisionModel | None = None
     display_groups: BitSet256 = field(default_factory=BitSet256.all_on)
 
     hit_filter_id: int = field(default=CollisionHitFilter.Normal.value, **MapFieldInfo(game_type=CollisionHitFilter))
@@ -449,7 +453,7 @@ class MSBCollision(MSBPart):
     event_ids: list[int] = field(default_factory=lambda: [-1] * 4, **MapFieldInfo("Event IDs", "Gparam Event IDs."))
     sg_unk_x40_x44: float = field(default=0.0, **MapFieldInfo("Unk SceneG [x40-x44]", "Unknown SceneGparam float."))
 
-    _environment_event_index: int = None
+    _environment_event_index: int | None = None
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBCollision, self).indices_to_objects(entry_lists)
@@ -526,7 +530,7 @@ class MSBNavmesh(MSBPart):
         "scene_gparam_data": None,
     }
 
-    model: MSBNavmeshModel = None
+    model: MSBNavmeshModel | None = None
 
 
 class MSBDummyObject(MSBObject):
@@ -565,11 +569,11 @@ class MSBConnectCollision(MSBPart):
         "scene_gparam_data": None,
     }
 
-    model: MSBCollisionModel = None
+    model: MSBCollisionModel | None = None
     collision: MSBCollision = None
     connected_map_id: list[int] = field(default_factory=lambda: [21, 0, 0, 0], **BinaryArray(4))
 
-    _collision_index: int = None
+    _collision_index: int | None = None
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBConnectCollision, self).indices_to_objects(entry_lists)
@@ -601,4 +605,4 @@ class MSBOtherPart(MSBPart):
         "scene_gparam_data": None,
     }
 
-    model: MSBOtherModel = None
+    model: MSBOtherModel | None = None

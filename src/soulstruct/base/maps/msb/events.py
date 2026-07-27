@@ -30,8 +30,8 @@ class BaseMSBEvent(MSBEntry, abc.ABC):
     
     # Temporary indices used during unpacking, before `MSBEntry` instances above can be assigned.
     # Set to `None` once consumed.
-    _attached_part_index: int = None
-    _attached_region_index: int = None
+    _attached_part_index: int | None = None
+    _attached_region_index: int | None = None
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         self._consume_index(entry_lists, "PARTS_PARAM_ST", "attached_part")

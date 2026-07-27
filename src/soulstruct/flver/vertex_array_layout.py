@@ -111,7 +111,7 @@ VERTEX_FORMAT_ENUM_SIZES = {
     VertexDataFormatEnum.Float4: 16,
     VertexDataFormatEnum.FourBytesA: 4,
     VertexDataFormatEnum.FourBytesB: 4,
-    VertexDataFormatEnum.NormalWFirst: 8,
+    VertexDataFormatEnum.NormalWFirst: 4,
     VertexDataFormatEnum.FourBytesC: 4,
     VertexDataFormatEnum.UV: 4,
     VertexDataFormatEnum.UVPair: 8,
@@ -198,10 +198,10 @@ class VertexDataType(abc.ABC):
         self.unk_x00 = unk_x00
         self.data_offset = data_offset
 
-    def __eq__(self, other: VertexDataType):
+    def __eq__(self, other: object):
         """Ignores `data_offset`."""
         if not isinstance(other, VertexDataType):
-            return False
+            return NotImplemented
         return (
             self.type_int == other.type_int
             and self.format_enum == other.format_enum
@@ -311,10 +311,10 @@ class VertexNormal(VertexDataType):
     """
     type_int = 3
     formats = {
-        (0x03,): VertexDataFormat(
-            compressed_dtype=[("normal", "f", (3,))],  # only format with no `normal_w` field
+        (0x02,): VertexDataFormat(
+            compressed_dtype=[("normal", "f", (3,))],  # no `normal_w` field
         ),
-        (0x04,): VertexDataFormat(
+        (0x03,): VertexDataFormat(
             compressed_dtype=[("normal", "f", (3,)), ("normal_w", "i", (1,))],
         ),
         (0x10, 0x11, 0x13, 0x2F): VertexDataFormat(
@@ -388,13 +388,21 @@ class VertexTangent(VertexDataType):
 
     type_int = 6
     formats = {
-        (0x03,): VertexDataFormat(
+        (0x02,): VertexDataFormat(
             compressed_dtype=[("tangent_{i}", "f", (3,))],
         ),
-        (0x10, 0x11, 0x13, 0x1A, 0x2F): VertexDataFormat(
+        (0x03,): VertexDataFormat(
+            compressed_dtype=[("tangent_{i}", "f", (4,))],
+        ),
+        (0x10, 0x11, 0x13, 0x2F): VertexDataFormat(
             compressed_dtype=[("tangent_{i}", "B", (4,))],
             decompressed_dtype=[("tangent_{i}", "f", (4,))],
             codec=INT_TO_FLOAT_127_SIGNED,
+        ),
+        (0x1A,): VertexDataFormat(
+            compressed_dtype=[("tangent_{i}", "h", (4,))],
+            decompressed_dtype=[("tangent_{i}", "f", (4,))],
+            codec=INT_TO_FLOAT_32767_SIGNED,
         ),
     }
 
@@ -634,20 +642,20 @@ class VertexArrayLayout:
         TODO: Probably would be better to have a `compressed_dtype` that supported the `asserted` data type, so
          we can slice out the data more efficiently.
         """
-        vertex_count = len(data) // self.get_total_data_size(include_ignored=True)
-        kept_data = bytearray()
-        data_offset = 0
-        for _ in range(vertex_count):
-            for data_type in self.read_types:
-                data_type_bytes = data[data_offset:data_offset + data_type.size]
-                if not isinstance(data_type, VertexIgnore):
-                    kept_data.extend(data_type_bytes)
-                    data_offset += data_type.size
-                    continue
-                # Otherwise, ignore data.
-                data_offset += data_type.size
+        stride = self.get_total_data_size(include_ignored=True)
+        vertex_count = len(data) // stride
 
-        return bytes(kept_data)
+        # Build a per-byte keep-mask for a single vertex (depends only on `self.read_types`, not on
+        # `vertex_count`), then tile it across all vertices and apply as one vectorised column select.
+        keep_mask = np.empty(stride, dtype=bool)
+        offset = 0
+        for data_type in self.read_types:
+            keep_mask[offset:offset + data_type.size] = not isinstance(data_type, VertexIgnore)
+            offset += data_type.size
+
+        vertex_bytes = np.frombuffer(data, dtype=np.uint8).reshape(vertex_count, stride)
+        kept = vertex_bytes[:, keep_mask]
+        return kept.tobytes()
 
     def unpack_vertex_array(self, data: bytes, uv_factor: int) -> np.ndarray:
         """Use this layout to read a structured array of vertex data from the given raw FLVER array data."""
@@ -797,9 +805,9 @@ class VertexArrayLayout:
 
     # endregion
 
-    def __eq__(self, other: tp.Self):
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, self.__class__) or len(self._types) != len(other._types):
-            return False
+            return NotImplemented
         for self_data_type, other_data_type in zip(self._types, other._types):
             if self_data_type != other_data_type:
                 return False

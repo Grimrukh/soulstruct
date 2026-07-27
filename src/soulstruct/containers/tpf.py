@@ -381,26 +381,27 @@ class TPFTexture:
                 f"TPF texture DDS format {current_format} does not match "
                 f"`assert_input_format` {assert_input_format} ({current_format}"
             )
-        temp_dds_path = Path(__file__).parent / "__temp__.dds"
-        temp_dds_path.write_bytes(self.data)
-        result = convert_dds_file(temp_dds_path, Path(__file__).parent, output_format)  # overwrite temp file
-        if result.returncode == 0:
-            self.data = temp_dds_path.read_bytes()
-            if current_dxgi_format:
-                _LOGGER.info(
-                    f"Converted TPF texture {self.stem} from format {current_format} "
-                    f"(DXGI {current_dxgi_format}) to {output_format}."
-                )
+        with tempfile.TemporaryDirectory() as temp_dds_dir:
+            temp_dds_path = Path(temp_dds_dir) / "__temp__.dds"
+            temp_dds_path.write_bytes(self.data)
+            result = convert_dds_file(temp_dds_path, Path(temp_dds_dir), output_format)  # overwrite temp file
+            if result.returncode == 0:
+                self.data = temp_dds_path.read_bytes()
+                if current_dxgi_format:
+                    _LOGGER.info(
+                        f"Converted TPF texture {self.stem} from format {current_format} "
+                        f"(DXGI {current_dxgi_format}) to {output_format}."
+                    )
+                else:
+                    _LOGGER.info(f"Converted TPF texture {self.stem} from format {current_format} to {output_format}.")
+                return True
             else:
-                _LOGGER.info(f"Converted TPF texture {self.stem} from format {current_format} to {output_format}.")
-            return True
-        else:
-            _LOGGER.error(
-                f"Could not convert TPF texture {self.stem} from format {current_format} to {output_format}.\n"
-                f"   stdout: {result.stdout}\n"
-                f"   stderr: {result.stderr}"
-            )
-            return False
+                _LOGGER.error(
+                    f"Could not convert TPF texture {self.stem} from format {current_format} to {output_format}.\n"
+                    f"   stdout: {result.stdout}\n"
+                    f"   stderr: {result.stderr}"
+                )
+                return False
 
     @staticmethod
     def get_texture_format_info(texture_format: int) -> tuple[bytes, int, bool]:

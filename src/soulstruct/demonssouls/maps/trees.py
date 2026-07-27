@@ -52,9 +52,8 @@ class MSBTree(MSBEntry):
         header = TreeHeaderStruct.from_bytes(reader)
         shorts = [reader.unpack_value('h') for _ in range(header.pop("_short_count"))]
         # Dummy name 'Tree' is used for compulsory field, but it is not used in the actual MSB.
-        cls.SETATTR_CHECKS_DISABLED = True
-        tree = header.to_object(cls, name="Tree", unk_shorts_x38=shorts)
-        cls.SETATTR_CHECKS_DISABLED = False
+        with cls.setattr_checks_disabled():
+            tree = header.to_object(cls, name="Tree", unk_shorts_x38=shorts)
         return tree
 
     @classmethod

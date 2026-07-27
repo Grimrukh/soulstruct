@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.maths import Vector3, Matrix3, get_rotmat3, ROTATION_TYPING
+from soulstruct.utilities.maths import Vector3, get_rotmat3, ROTATION_TYPING
 from soulstruct.utilities.misc import MISSING_REF, IDList
 
 from .utilities import ExistingConnectionError, import_matplotlib_plt
@@ -387,7 +387,7 @@ class MCG(GameFile):
 
     def to_writer(self) -> BinaryWriter:
 
-        if self.nodes and not self.nodes[0].dead_end_navmesh is not None:
+        if self.nodes and self.nodes[0].dead_end_navmesh is not MISSING_REF:
             raise ValueError("MCG.set_navmesh_indices(navmeshes)` must be called before writing it.")
 
         writer = BinaryWriter(byte_order=ByteOrder.LittleEndian)

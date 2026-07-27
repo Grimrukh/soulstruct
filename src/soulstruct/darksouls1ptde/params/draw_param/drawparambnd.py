@@ -17,7 +17,6 @@ from soulstruct.utilities.files import read_json, write_json
 from soulstruct.utilities.misc import BiDict
 
 from soulstruct.base.params.paramdef import ParamDefBND
-from soulstruct.base.params.param_dict import ParamDict
 
 from .core import DrawParam, TypedDrawParam
 from .. import paramdef
@@ -29,9 +28,9 @@ _DRAW_PARAM_FILE_NAME_RE = re.compile(r"([ms]\d\d|default)(_\d)?(_\w+)\.param") 
 
 
 def draw_param_property(draw_param_stem: str, slot: int):
-    if slot == 0:  # always exists
-        return property(lambda self: self.draw_params_0[draw_param_stem])
-    elif slot == 1:  # may not exist
+    if slot == 0:  # usually exists
+        return property(lambda self: self.draw_params_0.get(draw_param_stem, None))
+    elif slot == 1:  # usually does not exist
         return property(lambda self: self.draw_params_1.get(draw_param_stem, None))
     raise ValueError(f"Invalid `DrawParam` slot for `DrawParamBND` property: {slot}. Must be 0 or 1.")
 
@@ -63,7 +62,7 @@ class DrawParamBND(Binder):
         ("LodBank", "Lods"),
         ("s_LightBank", "s_BakedLight"),  # unused (debug)
     )
-    PARAM_TYPES: tp.ClassVar[dict[str, BaseGameParam]] = {
+    PARAM_TYPES: tp.ClassVar[dict[str, BaseGameParam | None]] = {
         "DofBank": DepthOfFieldParam,
         "EnvLightTexBank": None,  # unused
         "FogBank": FogParam,
@@ -85,33 +84,31 @@ class DrawParamBND(Binder):
         "s_LightBank": (b"\x80\x1e", b"\xfe\x1e"),  # invalid single-character used in both versions of DS1
     }
 
-    dcx_type = DARK_SOULS_PTDE.default_dcx_type
     version: BinderVersion = BinderVersion.V3
-    v4_info: BinderVersion4Info = None
 
     # Map area whose lighting is defined by this `DrawParamBND` (e.g. `m15` for Sen's Fortress and Anor Londo). Used to
     # generate correct file names when writing; will raise a `ValueError` if it is still empty at that time. Note that
     # the `DrawParamBND` file stems use `aXX` instead of the `mXX` stored here (as used in the `DrawParam` names). `sXX`
-    # prefixed `DrawParam` names are handled automatically.
+    # prefixed `DrawParam` names are handled automatically. Could also be "default".
     map_area: str = ""
     # Maps DrawParam game stems, e.g. 'LightBank', to a `DrawParam` for first slot.
-    draw_params_0: dict[str, DrawParam | ParamDict | None] = field(default_factory=dict)
+    draw_params_0: dict[str, DrawParam | None] = field(default_factory=dict)
     # Maps DrawParam game stems, e.g. 'LightBank', to a `DrawParam` for second slot.
-    draw_params_1: dict[str, DrawParam | ParamDict | None] = field(default_factory=dict)
+    draw_params_1: dict[str, DrawParam | None] = field(default_factory=dict)
 
-    DepthOfField_0 = draw_param_property("DofBank", 0)  # type: DrawParam[DOF_BANK]
-    EnvLightTex_0 = draw_param_property("EnvLightTexBank", 0)  # type: DrawParam[ENV_LIGHT_TEX_BANK]
-    Fog_0 = draw_param_property("FogBank", 0)  # type: DrawParam[FOG_BANK]
-    LensFlares_0 = draw_param_property("LensFlareBank", 0)  # type: DrawParam[LENS_FLARE_BANK]
-    LensFlareSources_0 = draw_param_property("LensFlareExBank", 0)  # type: DrawParam[LENS_FLARE_EX_BANK]
-    BakedLight_0 = draw_param_property("LightBank", 0)  # type: DrawParam[LIGHT_BANK]
-    ScatteredLight_0 = draw_param_property("LightScatteringBank", 0)  # type: DrawParam[LIGHT_SCATTERING_BANK]
-    PointLights_0 = draw_param_property("PointLightBank", 0)  # type: DrawParam[POINT_LIGHT_BANK]
-    Shadows_0 = draw_param_property("ShadowBank", 0)  # type: DrawParam[SHADOW_BANK]
-    ToneCorrection_0 = draw_param_property("ToneCorrectBank", 0)  # type: DrawParam[TONE_CORRECT_BANK]
-    ToneMapping_0 = draw_param_property("ToneMapBank", 0)  # type: DrawParam[TONE_MAP_BANK]
-    DebugBakedLight_0 = draw_param_property("s_LightBank", 0)  # type: DrawParam[LIGHT_BANK]
-    Lods_0 = draw_param_property("LodBank", 0)  # type: DrawParam[LOD_BANK]
+    DepthOfField_0 = draw_param_property("DofBank", 0)  # type: DrawParam[DOF_BANK] | None
+    EnvLightTex_0 = draw_param_property("EnvLightTexBank", 0)  # type: DrawParam[ENV_LIGHT_TEX_BANK] | None
+    Fog_0 = draw_param_property("FogBank", 0)  # type: DrawParam[FOG_BANK] | None
+    LensFlares_0 = draw_param_property("LensFlareBank", 0)  # type: DrawParam[LENS_FLARE_BANK] | None
+    LensFlareSources_0 = draw_param_property("LensFlareExBank", 0)  # type: DrawParam[LENS_FLARE_EX_BANK] | None
+    BakedLight_0 = draw_param_property("LightBank", 0)  # type: DrawParam[LIGHT_BANK] | None
+    ScatteredLight_0 = draw_param_property("LightScatteringBank", 0)  # type: DrawParam[LIGHT_SCATTERING_BANK] | None
+    PointLights_0 = draw_param_property("PointLightBank", 0)  # type: DrawParam[POINT_LIGHT_BANK] | None
+    Shadows_0 = draw_param_property("ShadowBank", 0)  # type: DrawParam[SHADOW_BANK] | None
+    ToneCorrection_0 = draw_param_property("ToneCorrectBank", 0)  # type: DrawParam[TONE_CORRECT_BANK] | None
+    ToneMapping_0 = draw_param_property("ToneMapBank", 0)  # type: DrawParam[TONE_MAP_BANK] | None
+    DebugBakedLight_0 = draw_param_property("s_LightBank", 0)  # type: DrawParam[LIGHT_BANK] | None
+    Lods_0 = draw_param_property("LodBank", 0)  # type: DrawParam[LOD_BANK] | None
 
     DepthOfField_1 = draw_param_property("DofBank", 1)  # type: DrawParam[DOF_BANK] | None
     EnvLightTex_1 = draw_param_property("EnvLightTexBank", 1)  # type: DrawParam[ENV_LIGHT_TEX_BANK] | None
@@ -162,21 +159,8 @@ class DrawParamBND(Binder):
         self.draw_params_0.setdefault(param_stem, None)
         self.draw_params_1.setdefault(param_stem, None)
 
-        try:
-            typed_draw_param_class = self.get_typed_draw_param_class(entry)
-        except TypedDrawParamError:
-            _LOGGER.warning(
-                f"Loaded `DrawParamBND` entry '{entry.name}' as a generic `ParamDict`. You must call "
-                f"`unpack_all_param_rows(paramdefbnd)` to manually interpret the row data using a `ParamDefBND`. "
-                f"(You can omit the `paramdefbnd` argument to use Soulstruct's bundled `.paramdefbnd` file for "
-                f"this game, but if you're seeing this warning, it's possible the bundled file is outdated.)"
-            )
-            if slot == 0:
-                self.draw_params_0[param_stem] = entry.to_binary_file(ParamDict)
-            else:
-                self.draw_params_1[param_stem] = entry.to_binary_file(ParamDict)
-        else:
-            self.assign_param_from_entry(entry, param_stem, slot, typed_draw_param_class)
+        typed_draw_param_class = self.get_typed_draw_param_class(entry)
+        self.assign_param_from_entry(entry, param_stem, slot, typed_draw_param_class)
 
     def assign_param_from_entry(
         self, entry: BinderEntry, param_stem: str, slot: int, typed_draw_param_class: type[DrawParam]
@@ -210,17 +194,6 @@ class DrawParamBND(Binder):
             )
         return TypedDrawParam(data_type)
 
-    def unpack_all_param_rows(self, paramdefbnd: ParamDefBND = None):
-        """Unpack all row data of all `Param` entries with `paramdefbnd` (defaults to bundled file)."""
-        if paramdefbnd is None:
-            paramdefbnd = ParamDefBND.from_bundled(self.get_game())
-        for draw_param in self.draw_params_0.values():
-            if draw_param:
-                draw_param.unpack_rows(paramdefbnd)
-        for draw_param in self.draw_params_1.values():
-            if draw_param:
-                draw_param.unpack_rows(paramdefbnd)
-
     def get_draw_param_slot(self, draw_param_stem: str, slot: int) -> DrawParam | None:
         """Get `DrawParam` of given name and slot. Name can be internal or Soulstruct nickname.
 
@@ -244,7 +217,10 @@ class DrawParamBND(Binder):
         if not self.map_area:
             raise ValueError("Cannot generated `DrawParamBND` binder entries without `map_area` set (e.g. 'm12').")
         if draw_param_stem.startswith("s_"):
-            map_area = f"s{self.map_area[1:]}"
+            if self.map_area == "default":
+                map_area = "default"
+            else:
+                map_area = f"s{self.map_area[1:]}"
             draw_param_stem = draw_param_stem[2:]
         else:
             map_area = self.map_area
@@ -265,7 +241,9 @@ class DrawParamBND(Binder):
         for slot, draw_params in enumerate((self.draw_params_0, self.draw_params_1)):
             for draw_param_stem, draw_param in draw_params.items():
                 if draw_param is None:
-                    print(f"Missing DrawParam stem/slot: {draw_param_stem} {slot}")
+                    if slot == 0:
+                        # We only warn for slot 0 (slot 1 is usually omitted).
+                        _LOGGER.warning(f"Missing Slot 0 of DrawParam {draw_param_stem}")
                     continue  # slot missing
                 entry_path = self.get_draw_param_entry_path(draw_param_stem, slot)
                 regenerated_entry_paths.add(entry_path)
@@ -341,7 +319,7 @@ class DrawParamBND(Binder):
 
         The resulting folder can be loaded with `load_json_directory(directory)`.
         """
-        if self.map_area is None:
+        if not self.map_area:
             raise ValueError(
                 "Must set `DrawParamBND.map_area` (e.g. 'm15') before it can be written to JSON directory."
             )

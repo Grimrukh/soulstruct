@@ -171,8 +171,11 @@ class Map(GameObject):
         """Map is uniquely defined by its MSB stem."""
         return hash(self.msb_file_stem)
 
-    def __eq__(self, other_map: Map):
-        return self.area_id == other_map.area_id and self.block_id == other_map.block_id
+    def __eq__(self, other_map: object):
+        """Map is uniquely defined by its MSB stem."""
+        if not isinstance(other_map, Map):
+            return NotImplemented
+        return self.msb_file_stem == other_map.msb_file_stem
 
     def __iter__(self):
         return iter((self.area_id, self.block_id, self.cc_id, self.dd_id))

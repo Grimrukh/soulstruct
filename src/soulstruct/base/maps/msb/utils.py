@@ -205,7 +205,12 @@ class BitSet1024(BitSet):
     _REPR_RE: tp.ClassVar[re.Pattern] = re.compile(r"^BitSet1024(\([\d, ]*\))$")
 
 
-def merge(msb_1: MSB, msb_2: MSB, filter_func: tp.Callable = None, allow_repeated_names=False) -> MSB:
+def merge(
+    msb_1: MSB,
+    msb_2: MSB,
+    filter_func: tp.Callable[[MSBEntry], bool] | None = None,
+    allow_repeated_names=False,
+) -> MSB:
     """Created a new merged MSB containing all entries from `msb_1` and `msb_2` by simply combining their subtype lists.
     Returns a new MSB; does not modify this one. Both MSBs must have the same field names.
 
@@ -218,17 +223,17 @@ def merge(msb_1: MSB, msb_2: MSB, filter_func: tp.Callable = None, allow_repeate
     if filter_func is not None and not callable(filter_func):
         raise ValueError("`filter_func` must be callable, take an `MSBEntry` as its argument, and return a bool.")
 
-    msb_1_field_names = [f.name for f in fields(msb_1)]
-    msb_2_field_names = [f.name for f in fields(msb_2)]
-    if msb_1_field_names != msb_2_field_names:
+    msb_1_subtype_list_names = msb_1.get_subtype_list_names()
+    msb_2_subtype_list_names = msb_2.get_subtype_list_names()
+    if msb_1_subtype_list_names != msb_2_subtype_list_names:
         raise TypeError(
             f"Cannot merge MSBs with different field names:\n"
-            f"    msb_1: {msb_1_field_names}\n"
-            f"    msb_2: {msb_2_field_names}"
+            f"    msb_1: {msb_1_subtype_list_names}\n"
+            f"    msb_2: {msb_2_subtype_list_names}"
         )
 
     merged_entry_lists = {}
-    for subtype_name in msb_1_field_names:
+    for subtype_name in msb_1_subtype_list_names:
         msb_1_entries = getattr(msb_1, subtype_name)  # type: MSBEntryList
         msb_1_entries = msb_1_entries.get_filtered_list(filter_func)
         msb_2_entries = getattr(msb_2, subtype_name)  # type: MSBEntryList
@@ -242,7 +247,6 @@ def merge(msb_1: MSB, msb_2: MSB, filter_func: tp.Callable = None, allow_repeate
         merged_entry_lists[subtype_name] = msb_1_entries  # deep-copied
         merged_entry_lists[subtype_name].extend(msb_2_entries)
 
-    # noinspection PyArgumentList
     return msb_1.__class__(**merged_entry_lists)
 
 

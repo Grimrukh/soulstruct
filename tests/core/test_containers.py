@@ -133,12 +133,6 @@ def test_binder_entry_flags_bit_reversal():
     assert BinderEntryFlags.to_byte(0b0000_0001, bit_big_endian=False) == 0b1000_0000
 
 
-@pytest.mark.xfail(
-    reason="BUG: `BinderEntry.get_header()` sets `uncompressed_size=self.data_size` (the COMPRESSED size) "
-           "when the binder has the compression flag, and computes the true uncompressed size only in the "
-           "`else` branch, where the value is never written. The ternary is inverted.",
-    strict=False,
-)
 def test_binder_entry_header_uncompressed_size():
     payload = b"compress me" * 100
     entry = BinderEntry(data=b"", entry_id=0, path=f"{ROOT}\\c.txt", flags=0x3)

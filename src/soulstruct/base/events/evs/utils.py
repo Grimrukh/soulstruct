@@ -231,7 +231,6 @@ def import_module(evs_name: str, node: ast.Import, ignore_names: list[str] = ())
             module_dict[as_name] = getattr(module, name)
         except AttributeError as e:
             raise EVSImportError(evs_name, node, name, str(e))
-    del module
     return module_dict
 
 
@@ -352,7 +351,6 @@ def import_from(
                 module_dict[as_name] = getattr(module, name)
             except AttributeError as e:
                 raise EVSImportFromError(evs_name, node, node.module, name, str(e))
-    del module
     return module_dict
 
 
@@ -385,7 +383,6 @@ def import_from_common_func(
             namespace[name] = getattr(module, name)
         except AttributeError as ex:
             raise EVSCommonFuncImportError(evs_name, module_name, name, str(ex))
-    del module
 
 
 def define_args(arg_types: str) -> list[tuple[int, int]]:
@@ -407,7 +404,7 @@ def define_args(arg_types: str) -> list[tuple[int, int]]:
 
 def as_event_statement_node(node: ast.stmt, msg="") -> EventStatementTyping:
     """Intellisense hack to check and validate node type."""
-    if not isinstance(node, (ast.Expr, ast.For, ast.If, ast.Assign, ast.Return)):
+    if not isinstance(node, (ast.Expr, ast.For, ast.If, ast.Assign, ast.Return, ast.Pass)):
         raise EVSSyntaxError("", node, msg or f"Invalid Event Statement node: {ast.dump(node)}")
     return node
 

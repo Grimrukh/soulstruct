@@ -223,9 +223,7 @@ class FLVER(GameFile):
         if header.version < FLVERVersion.DemonsSouls_0x10:
             # TODO: Support. Currently can't unpack vertex buffer. See o9993.
             raise NotImplementedError(f"FLVER0 version {repr(header.version)} not currently supported.")
-
-        if header.version < 0 or header.version >= 0x20000:
-            raise ValueError(f"`FLVER0` version {header.version} is not supported. Must be < 0x20000.")
+        # Logically, header.version is guaranteed to be valid at this point.
 
         big_endian = header.endian == b"B\0"
         encoding = reader.byte_order.get_utf_16_encoding() if header.unicode else "shift_jis_2004"
@@ -368,6 +366,7 @@ class FLVER(GameFile):
             dummies=dummies,
             bones=bones,
             meshes=meshes,
+            bounding_box=AABB(header.bounding_box_min, header.bounding_box_max),
         )
 
     # endregion
@@ -505,7 +504,7 @@ class FLVER(GameFile):
             mesh.vertex_arrays[0].pack_array(
                 writer,
                 array_offset=array_offset,
-                uv_factor=1024 if self.big_endian else 2048,
+                uv_factor=1024 if self.big_endian else 2048,  # TODO: actually the condition?
             )
             # Single vertex array offset (relative to FLVER vertex data start) is also written to Mesh header.
             writer.fill("vertex_array_data_offset", array_offset, obj=mesh)
@@ -817,9 +816,15 @@ class FLVER(GameFile):
 
         mp_args = list(zip(flvers, mesh_material_indices, material_uv_layer_names, merge_vertices, strict=True))
 
-
         with multiprocessing.Pool(processes=max_threads) as pool:
-            successes = pool.starmap(_cache_flver_merged_mesh, mp_args)
+            merged_meshes = pool.starmap(_cache_flver_merged_mesh, mp_args)
+        successes = []  # type: list[bool]
+        for flver, merged_mesh in zip(flvers, merged_meshes):
+            if merged_mesh:
+                flver._cached_merged_mesh = merged_mesh
+                successes.append(True)
+            else:
+                successes.append(False)
 
         return successes
 
@@ -949,10 +954,7 @@ class FLVER(GameFile):
             for vertex_array in mesh.vertex_arrays:
                 # Scale all three position columns.
                 position = vertex_array["position"]
-                # TODO: Should be able to broadcast this in one line.
-                position[0] *= scale_factor.x
-                position[1] *= scale_factor.y
-                position[2] *= scale_factor.z
+                position *= scale_factor.data
 
     # region Materials/Textures
 
@@ -1311,13 +1313,12 @@ def _cache_flver_merged_mesh(
     mesh_material_indices: tp.Sequence[int] | None = None,
     material_uv_layer_names: tp.Sequence[tp.Sequence[str]] | None = None,
     merge_vertices=True,
-) -> bool:
+) -> MergedMesh | None:
     """Worker call for updating multiple FLVER cached MergedMeshes in parallel."""
     try:
-        flver.update_cached_merged_mesh(
+        return flver.build_merged_mesh(
             mesh_material_indices, material_uv_layer_names, merge_vertices
         )
-        return True
     except Exception as ex:
         _LOGGER.error(f"Could not cache merged mesh for FLVER {flver.path_minimal_stem}: {ex}")
-        return False
+        return None

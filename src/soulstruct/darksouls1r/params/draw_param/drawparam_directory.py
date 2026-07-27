@@ -58,7 +58,7 @@ class DrawParamDirectory(GameFileDirectory[DrawParamBND], abc.ABC):
 
     def get_drawparambnd(self, draw_param_stem: str) -> DrawParamBND:
         """Get `DrawParamBND` by 'mXX' name, 'aXX' name, or 'default', with or without '_DrawParam' suffix."""
-        draw_param_stem = draw_param_stem.split(".")[0]
+        draw_param_stem = draw_param_stem.split(".")[0].removesuffix("_DrawParam")
         if draw_param_stem == "default":
             return self.files["default_DrawParam"]
         if draw_param_stem.startswith("m"):
@@ -110,7 +110,7 @@ class DrawParamDirectory(GameFileDirectory[DrawParamBND], abc.ABC):
         return cls(directory=directory_path, files=files)
 
     def write(
-        self, directory_path: Path | str | None = None, check_file_hashes=False, no_partial_write=True
+        self, directory_path: Path | str | None = None, force=False, no_partial_write=True
     ) -> list[Path]:
         """Same as `GameFileDirectory`, but reports unknown files and if any DrawParamBNDs are missing."""
         if directory_path is None:
@@ -133,7 +133,7 @@ class DrawParamDirectory(GameFileDirectory[DrawParamBND], abc.ABC):
                 f"{', '.join(all_bnd_stems)}"
             )
 
-        written_paths = self._write(file_paths, check_file_hashes, no_partial_write)
+        written_paths = self._write(file_paths, force, no_partial_write)
         self._log_directory_write(directory_path, len(written_paths))
         return written_paths
 

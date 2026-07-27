@@ -72,4 +72,4 @@ def batch_texconv_to_dds(configs: list[TexconvConfig]) -> list[bytes]:
             )
 
     with multiprocessing.Pool() as pool:
-        return list(pool.starmap(texconv_to_dds, configs))
+        return list(pool.map(texconv_to_dds, configs))

@@ -41,13 +41,13 @@ class LuaGNL(GameFile):
             long_varints=self.long_varints,
         )
 
-        for i, name in self.names:
-            writer.reserve(f"name_{i}", "v")
+        for i, name in enumerate(self.names):
+            writer.reserve(f"name_{i}", "v", obj=self)
         writer.pad(8 if self.long_varints else 4)
 
         encoding = self.get_encoding(self.byte_order, self.long_varints)
-        for i, name in self.names:
-            writer.fill_with_position(f"name_{i}")
+        for i, name in enumerate(self.names):
+            writer.fill_with_position(f"name_{i}", obj=self)
             writer.pack_z_string(name, encoding=encoding)
         writer.pad_align(16)
         return writer

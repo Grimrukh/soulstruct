@@ -67,9 +67,7 @@ class GameParamBND(_BaseGameParamBND):
         ("ThrowParam", "Throws"),
     )
 
-    dcx_type = DARK_SOULS_PTDE.default_dcx_type
     version: BinderVersion = BinderVersion.V3
-    v4_info = None
 
     AI = param_property("NpcThinkParam")  # type: Param[NPC_THINK_PARAM_ST]
     Armor = param_property("EquipParamProtector")  # type: Param[EQUIP_PARAM_PROTECTOR_ST]

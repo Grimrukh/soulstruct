@@ -11,7 +11,7 @@ from .emedf import EMEDF, EMEDF_TESTS, EMEDF_COMPARISON_TESTS
 from .evs import EVSParser
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, repr=False)
 class Instruction(_BaseInstruction):
     EMEDF: tp.ClassVar = EMEDF
     DECOMPILER: tp.ClassVar = DECOMPILER

@@ -134,10 +134,9 @@ def add_common_emedf_info(emedf: EMEDF_TYPING, common_emedf_path: Path | str):
                 continue  # permitted to be missing from real EMEDF
             raise KeyError(f"Invalid instruction ID for common EMEDF '{common_emedf_path.name}': ({category}, {index})")
         if len(info["args"]) != len(instr["args"]):
-            print(category, index, info["alias"], instr["name"])
             raise ValueError(
                 f"Instruction ID ({category}, {index}) has {len(instr['args'])} args in common EMEDF but has "
-                f"{len(info['args'])} args in Soulstruct."
+                f"{len(info['args'])} args in Soulstruct. Alias: {info['alias']}, Name: {info['name']}"
             )
         for i, arg_name in enumerate(info["args"]):
             if "internal_type" in instr["args"][i]:

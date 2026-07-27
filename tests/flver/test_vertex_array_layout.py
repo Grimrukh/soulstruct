@@ -60,9 +60,7 @@ def test_every_format_key_is_a_real_format_enum():
             VertexDataFormatEnum(enum_int)
         except ValueError:
             unknown.append((data_type_cls.__name__, hex(enum_int)))
-    assert unknown == [("VertexNormal", "0x4")], (
-        f"Unexpected set of unknown format enum keys: {unknown}"
-    )
+    assert unknown == [], f"Unexpected set of unknown format enum keys: {unknown}"
 
 
 def test_every_format_enum_has_a_declared_size():
@@ -72,35 +70,10 @@ def test_every_format_enum_has_a_declared_size():
         assert member in VERTEX_FORMAT_ENUM_SIZES, f"No declared size for {member.name}."
 
 
-# Pairs known to be internally inconsistent (declared enum size != NumPy dtype itemsize).
-_KNOWN_SIZE_MISMATCHES = {
-    (VertexNormal, 0x03),   # Float4 declared 16 bytes, dtype only has 3 floats (12)
-    (VertexNormal, 0x12),   # NormalWFirst declared 8 bytes, dtype is 4
-    (VertexUV, 0x12),       # NormalWFirst declared 8 bytes, dtype is 4
-    (VertexTangent, 0x03),  # Float4 declared 16 bytes, dtype only has 3 floats (12)
-    (VertexTangent, 0x1A),  # FourShortsToFloats declared 8 bytes, dtype is 4
-}
-
-
-def _size_param(data_type_cls, enum_int):
-    marks = []
-    if (data_type_cls, enum_int) in _KNOWN_SIZE_MISMATCHES:
-        marks.append(
-            pytest.mark.xfail(
-                reason=(
-                    "Declared `VERTEX_FORMAT_ENUM_SIZES` entry does not match the NumPy dtype built "
-                    "from the type's `formats` table; such a layout would mis-slice vertex data."
-                ),
-                strict=False,
-            )
-        )
-    return pytest.param(data_type_cls, enum_int, marks=marks, id=f"{data_type_cls.__name__}-{enum_int:#04x}")
-
-
 @pytest.mark.parametrize(
     "data_type_cls, enum_int",
     [
-        _size_param(cls, e)
+        (cls, e)
         for cls, e in _all_type_format_pairs()
         if e in set(int(m) for m in VertexDataFormatEnum)
     ],

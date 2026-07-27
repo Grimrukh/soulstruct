@@ -380,8 +380,8 @@ class MSB(_BaseMSB[MSBModel, MSBEvent, MSBRegion, MSBPart]):
         rotate: EulerDeg | tuple[float, float, float] | list[float],
         **light_event_kwargs,
     ) -> MSBLightEvent:
-        if "base_region_name" in light_event_kwargs:
-            raise KeyError("`base_region_name` will be created and assigned automatically.")
+        if "attached_region" in light_event_kwargs:
+            raise KeyError("`attached_region` will be created and assigned automatically.")
         light = self.lights.new(**light_event_kwargs)
         light.attached_region = self.regions.new(
             name=f"_LightEvent_{light.name}",

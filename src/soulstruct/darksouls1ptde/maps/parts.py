@@ -123,7 +123,7 @@ class PartSupertypeData(MSBBinaryStruct):
 
 
 @dataclass(slots=True, eq=False, repr=False)
-class MSBPart(BaseMSBPart[BitSet128], abc.ABC):
+class MSBPart(BaseMSBPart, abc.ABC):
 
     HEADER_STRUCT = PartHeaderStruct
     STRUCTS = {
@@ -169,7 +169,7 @@ class MSBMapPiece(MSBPart):
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\FRPG\\data\\Model\\map\\{map_stem}\\sib\\layout.SIB"
     STRUCTS = MSBPart.STRUCTS | {"subtype_data": MapPieceDataStruct}
 
-    model: MSBMapPieceModel = None
+    model: MSBMapPieceModel | None = None
 
     HIDE_FIELDS = (
         "scale",
@@ -230,7 +230,7 @@ class MSBObject(MSBPart):
     )
 
     # Replace types/defaults.
-    model: MSBObjectModel = None
+    model: MSBObjectModel | None = None
     draw_parent: MSBPart = None
     is_shadow_source: bool = True
     is_shadow_destination: bool = True
@@ -242,7 +242,7 @@ class MSBObject(MSBPart):
     unk_x0e: int = 0
     unk_x10: int = 0
 
-    _draw_parent_index: int = None
+    _draw_parent_index: int | None = None
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBObject, self).indices_to_objects(entry_lists)
@@ -299,7 +299,7 @@ class MSBCharacter(MSBPart):
     default_animation: int = -1
     damage_animation: int = -1
 
-    _draw_parent_index: int = None
+    _draw_parent_index: int | None = None
     _patrol_regions_indices: list[int] = binary_array(8, default=None)
 
     HIDE_FIELDS = (
@@ -449,7 +449,7 @@ class MSBCollision(MSBPart):
     _stable_footing_flag: int = field(default=0, repr=False)
 
     # Field type/default overrides.
-    model: MSBCollisionModel = None
+    model: MSBCollisionModel | None = None
     display_groups: BitSet128 = field(default_factory=BitSet128.all_on)  # all ON by default
     is_shadow_source: bool = True
     is_shadow_destination: bool = True
@@ -473,7 +473,7 @@ class MSBCollision(MSBPart):
     unk_x27_x28: int = field(default=0, **MapFieldInfo("Unknown [x27-x28]", "Unknown Collision byte."))
     attached_bonfire: int = 0
 
-    _environment_event_index: int = None
+    _environment_event_index: int | None = None
 
     HIDE_FIELDS = (
         "scale",
@@ -572,7 +572,7 @@ class MSBNavmesh(MSBPart):
     STRUCTS = MSBPart.STRUCTS | {"subtype_data": NavmeshDataStruct}
 
     # Type/default overrides.
-    model: MSBNavmeshModel = None
+    model: MSBNavmeshModel | None = None
 
     navmesh_groups: BitSet128 = field(default_factory=BitSet128.all_off)  # all OFF by default
 
@@ -644,11 +644,11 @@ class MSBConnectCollision(MSBPart):
     MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["model", "collision"]
     STRUCTS = MSBPart.STRUCTS | {"subtype_data": ConnectCollisionDataStruct}
 
-    model: MSBCollisionModel = None
+    model: MSBCollisionModel | None = None
     collision: MSBCollision = None
     connected_map_id: list[int] = field(default_factory=lambda: [10, 0, 0, 0], **BinaryArray(4))
 
-    _collision_index: int = None
+    _collision_index: int | None = None
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBConnectCollision, self).indices_to_objects(entry_lists)

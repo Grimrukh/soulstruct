@@ -215,7 +215,7 @@ class MSBRegion(BaseMSBRegion, abc.ABC):
     region_unkx_04: int = 0
     region_unkx_0c: int = 0
 
-    _attached_part_index: int = None
+    _attached_part_index: int | None = None
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         self._consume_index(entry_lists, "PARTS_PARAM_ST", "attached_part")
@@ -383,7 +383,7 @@ class MSBWindVFXRegion(MSBRegion):
     wind_area: MSBRegion = field(default=None, **MapFieldInfo(game_type=Region))
     unk_t08: float = 0.0
 
-    _wind_area_index: int = None
+    _wind_area_index: int | None = None
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBWindVFXRegion, self).indices_to_objects(entry_lists)

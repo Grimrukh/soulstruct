@@ -67,7 +67,7 @@ class RegionShape(abc.ABC):
     @classmethod
     def from_json_dict(cls, json_dict: dict[str, str | float]):
         if "shape_type" in json_dict:
-            if json_dict["shape_type"] != cls.SHAPE_TYPE.name.capitalize():
+            if json_dict["shape_type"] != cls.SHAPE_TYPE.name:
                 raise ValueError(
                     f"JSON object shape type '{json_dict['shape_type']}' does not match this "
                     f"`RegionShape` class '{cls.__name__}' ({cls.SHAPE_TYPE.name})."

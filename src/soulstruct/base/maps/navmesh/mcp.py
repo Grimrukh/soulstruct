@@ -264,6 +264,7 @@ class MCP(GameFile):
         if aabb_padding is None:
             aabb_padding = cls.AABB_PADDING
 
+        mcp_path = Path(mcp_path)
         if not (match := MAP_STEM_RE.match(mcp_path.stem)):
             raise ValueError(f"Could not infer map ID from stem of MCP path: {mcp_path}")
         map_id = (int(match.group(1)), int(match.group(2)), int(match.group(3)), int(match.group(4)))

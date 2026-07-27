@@ -504,11 +504,6 @@ def test_connect_nodes_adds_edge_to_mcg(graph, tmp_path):
     assert len(reload.edges) == edge_count + 1
 
 
-@pytest.mark.xfail(
-    reason="BUG: `NavmeshGraph.write()` does `Path(map_path / ...)` instead of `Path(map_path) / ...`, "
-           "so a `str` path raises TypeError (base/maps/navmesh/graph.py:494-495).",
-    strict=False,
-)
 def test_navmesh_graph_write_accepts_str_path(graph, tmp_path):
     out_dir = tmp_path / "out"
     out_dir.mkdir()

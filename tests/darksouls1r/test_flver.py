@@ -140,15 +140,6 @@ def test_flver_roundtrip_preserves_materials_and_bones(resource, tmp_path, name)
         np.testing.assert_allclose(new_bone.translate, original_bone.translate)
 
 
-@pytest.mark.xfail(
-    reason=(
-        "BUG: the FLVER-wide bounding box in the FLVER2 header is dropped by "
-        "`FLVER._from_flver2_reader` (it never maps `bounding_box_min`/`bounding_box_max` onto the "
-        "`bounding_box` field), so a plain read->write cycle replaces the real box with the "
-        "'invalid' inverted-infinite AABB."
-    ),
-    strict=False,
-)
 @pytest.mark.parametrize("name", [CHR_NAME, MAP_PIECE_NAME])
 def test_flver_roundtrip_preserves_header_bounding_box(resource, tmp_path, name):
     flver = FLVER.from_path(resource(name))

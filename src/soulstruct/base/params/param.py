@@ -6,6 +6,7 @@ import abc
 import logging
 import typing as tp
 from dataclasses import field
+from functools import lru_cache
 from pathlib import Path
 from types import ModuleType
 
@@ -67,7 +68,7 @@ class Param[PARAM_ROW_DATA_T: ParamRow](GameFile, abc.ABC):
 
     def __setitem__(self, row_id: int, row: dict | PARAM_ROW_DATA_T):
         if isinstance(row, dict):
-            row = ParamRow(**row)
+            row = self.ROW_TYPE(**row)
         if isinstance(row, ParamRow):
             self.rows[row_id] = row
         else:
@@ -150,7 +151,7 @@ class Param[PARAM_ROW_DATA_T: ParamRow](GameFile, abc.ABC):
         if len(row_pointer_structs) == 0:
             return cls(
                 param_type=param_type,
-                big_endian=ByteOrder == ByteOrder.BigEndian,
+                big_endian=byte_order == ByteOrder.BigEndian,
                 unknown=unknown,
                 flags1=flags1,
                 flags2=flags2,
@@ -203,7 +204,7 @@ class Param[PARAM_ROW_DATA_T: ParamRow](GameFile, abc.ABC):
 
         return cls(
             param_type=param_type,
-            big_endian=ByteOrder == ByteOrder.BigEndian,
+            big_endian=byte_order == ByteOrder.BigEndian,
             unknown=unknown,
             flags1=flags1,
             flags2=flags2,
@@ -413,14 +414,15 @@ class Param[PARAM_ROW_DATA_T: ParamRow](GameFile, abc.ABC):
         return "shift_jis_2004"
 
 
-# noinspection PyPep8Naming
-def TypedParam(row_type: type[ParamRow]):
-    """Generate a `Param` subclass dynamically with the given row type (or retrieve correct existing subclass)."""
-    for param_subclass in Param.__subclasses__():
-        if param_subclass.__name__ in {"ParamDict", "DrawParam"}:
-            continue  # not concrete types
-        if param_subclass.ROW_TYPE is row_type:
-            return param_subclass
-    new_param_subclass = type(f"Param_{row_type.__name__}", (Param,), {"ROW_TYPE": row_type})
-    new_param_subclass.__module__ = row_type.__module__
-    return new_param_subclass
+PARAM_ROW_T = tp.TypeVar("PARAM_ROW_T", bound=ParamRow)
+
+@lru_cache(maxsize=None)
+def _typed_param(row_type: type[PARAM_ROW_T]) -> type:
+    new_cls = type(f"Param_{row_type.__name__}", (Param,), {"ROW_TYPE": row_type})
+    new_cls.__module__ = row_type.__module__
+    new_cls.__qualname__ = new_cls.__name__
+    return new_cls
+
+
+def TypedParam(row_type: type[PARAM_ROW_T]) -> type[Param[PARAM_ROW_T]]:
+    return tp.cast(type[Param[PARAM_ROW_T]], _typed_param(row_type))

@@ -181,6 +181,9 @@ class BoneTree:
 
         Also note that we can't cache this because any/all parent bone transforms could change. It's inexpensive anyway.
         """
+        # We use children and siblings to navigate the tree efficiently here.
+        self.set_bone_children_siblings()
+
         root_bones = self.get_root_bones()
         # Start with local transforms. They will be changed to armature space transforms one at a time, recursively.
         armature_space_transforms = [bone.get_local_transform() for bone in self.bones]

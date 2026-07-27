@@ -23,7 +23,7 @@ from types import MappingProxyType, ModuleType
 
 from constrata.metadata import *
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.maths import BaseVector, Vector2, Vector3, Vector4, EulerDeg
+from soulstruct.utilities.maths import BaseVector, Vector2, Vector3, Vector4, EulerDeg, EulerRad
 from soulstruct.utilities.misc import IDList
 from soulstruct.utilities.text import pad_chars
 
@@ -68,12 +68,23 @@ class MSBFieldDisplayInfo(tp.NamedTuple):
 
 
 class MSBEntryReference(tp.NamedTuple):
+    """Stored in reference targets, so they know which `MSBEntry` fields are currently referencing them.
+
+    Required for safe reference handling when entries are removed.
+    """
     referrer: MSBEntry
     field_name: str
     array_index: int | None = None
 
+    def set_value(self, new_value: MSBEntry | None):
+        """Set the value of the field in the referrer to `new_value`, which may be `None`."""
+        if self.array_index is None:
+            setattr(self.referrer, self.field_name, new_value)
+        else:
+            getattr(self.referrer, self.field_name)[self.array_index] = new_value
 
-def EntryRef(list_name: str, field_name="", array_size: int = None) -> dict[str, tp.Any]:
+
+def EntryRef(list_name: str, field_name="", array_size: int | None = None) -> dict[str, tp.Any]:
     """Dataclass field metadata generator indicating a reference that should be resolved with `MSBEntry.try_index`.
 
     If `field_name` is empty, it will be detected by just removing '_index' suffix from the field name.
@@ -125,7 +136,7 @@ class MSBBinaryStruct(BinaryStruct, abc.ABC):
 
     @classmethod
     def _resolve_msb_ref_fields(cls):
-        if cls._MSB_REF_FIELDS is None:
+        if cls.__dict__.get("_MSB_REF_FIELDS") is None:
             cls._MSB_REF_FIELDS = {}
             for fld in cls.get_binary_fields():
                 if "msb_ref" in fld.metadata:
@@ -226,6 +237,7 @@ class MSBEntry(abc.ABC):
 
     _FIELD_REGEX = {
         "msb_ref": re.compile(r"^(MSB[A-Za-z0-9]+)$"),
+        "msb_ref_index": re.compile(r"^_.+_index$"),
         "list": re.compile(r"list\[([\w |]+)\]"),
     }
 
@@ -310,7 +322,7 @@ class MSBEntry(abc.ABC):
             value = value.value
         try:
             setattr(self, field_name, value)  # will go through validation
-        except AttributeError:
+        except ValueError:  # not `AttributeError`
             raise KeyError(f"Field {repr(field_name)} does not exist in MSB entry type {self.__class__.__name__}.")
 
     def set(self, **kwargs):
@@ -352,7 +364,11 @@ class MSBEntry(abc.ABC):
         setattr(self, "entity_id", value.value)  # attribute validated (`object.__setattr__` not used)
 
     def copy(self):
-        """Copy entry with only shallow copies of fields referencing other `MSBEntry`s."""
+        """Copy entry with only shallow copies of fields referencing other `MSBEntry`s.
+
+        TODO: It's unclear what a shallow copy of a referenced entry gets us. That entry may still reference
+         other entries (not copied). Copying MSB entries requires top-down careful handling from the MSB.
+        """
         copied_dict = {}
         for f in self.get_entry_fields():
             value = getattr(self, f.name)
@@ -553,13 +569,12 @@ class MSBEntry(abc.ABC):
             elif isinstance(value, list) and any(isinstance(element, MSBEntry) for element in value):
                 # Construct a reference dictionary. (There are no real dictionary fields in `MSBEntry` subclasses.)
                 ref_list = []
-                ref_subtype_list = None
                 for element in value:
                     if element is None:
                         ref_list.append(None)
                     else:
-                        if ref_subtype_list is None:
-                            ref_subtype_list = msb.get_list_of_entry(element)
+                        # NOTE: It's unlikely but not impossible that array elements have different subtypes.
+                        ref_subtype_list = msb.get_list_of_entry(element)
                         ref_list.append({
                             "subtype": (ref_subtype_list.supertype, ref_subtype_list.subtype_name),
                             "subtype_index": ref_subtype_list.index(element)
@@ -601,7 +616,7 @@ class MSBEntry(abc.ABC):
 
         This is slow and is deactivated when reading binary MSBs.
         """
-        if self.__class__.SETATTR_CHECKS_DISABLED or "__" in key:
+        if MSBEntry.SETATTR_CHECKS_DISABLED or "__" in key:
             # Bypass validation.
             super(MSBEntry, self).__setattr__(key, value)
             return
@@ -770,15 +785,15 @@ class MSBEntry(abc.ABC):
 
         raise ValueError(f"Invalid `MSBEntry` subclass field: `{self.cls_name}.{key}`")
 
-    @classmethod
+    @staticmethod
     @contextlib.contextmanager
-    def setattr_checks_disabled(cls):
+    def setattr_checks_disabled():
         """Disable `__setattr__` type checks temporarily."""
-        cls.SETATTR_CHECKS_DISABLED = True
+        MSBEntry.SETATTR_CHECKS_DISABLED = True
         try:
             yield
         finally:
-            cls.SETATTR_CHECKS_DISABLED = False
+            MSBEntry.SETATTR_CHECKS_DISABLED = False
 
     @classmethod
     def _is_subtype(cls, value: MSBEntry, parent_type_name: str) -> bool:
@@ -792,13 +807,13 @@ class MSBEntry(abc.ABC):
     def _is_permitted_wrong_msb_entry_type(self, value: MSBEntry) -> bool:
         """Checks for a handful of permitted exceptions for incorrect `MSBEntry` field references."""
 
-        # Special exceptions (with warnings) for unused character/object models, which have been known
+        # Special exceptions (with warnings) for dummy character/object models, which have been known
         # to reference the wrong model type in Undead Burg in DSR (thanks QLOC?).
         if self.cls_name == "MSBDummyCharacter" and value.__class__.__name__ == "MSBObjectModel":
             # TODO: Could do a hash check for vanilla DSR file to skip m10_01 warning. But that seems REALLY try-hard.
             # _LOGGER.warning(
             #     f"`MSBDummyCharacter` '{self.name}' uses an `MSBObjectModel`: '{value.name}'.\n"
-            #     f"    This happens, e.g., in m10_01_00_00 in vanilla DSR (unused bonfire 'o0200_0004')."
+            #     f"    This happens, e.g., in m10_01_00_00 in vanilla DSR (dummy bonfire 'o0200_0004')."
             # )
             return True
         if self.cls_name == "MSBDummyCharacter" and value.__class__.__name__ == "MSBAssetModel":
@@ -818,7 +833,7 @@ class MSBEntry(abc.ABC):
         """Retrieve display info for field `field_name` in this `MSBEntry` subclass."""
 
         # TODO: Add info about nested structs (e.g. GPARAM).
-        if cls._FIELD_DISPLAY_INFO is not None:
+        if cls.__dict__.get("_FIELD_DISPLAY_INFO") is not None:
             try:
                 return cls._FIELD_DISPLAY_INFO[field_name]
             except KeyError:
@@ -838,7 +853,7 @@ class MSBEntry(abc.ABC):
             if f.name.startswith("_"):
                 continue  # ignore (not a displayed field)
 
-            metadata = f.metadata.get("msb", None)  # type: MapFieldMetadata
+            metadata = f.metadata.get("msb", None)  # type: MapFieldMetadata | None
             if metadata is not None:
                 # Some or all of these may be empty, and still need to be generated automatically below
                 nickname = metadata.nickname
@@ -852,7 +867,7 @@ class MSBEntry(abc.ABC):
 
             if not nickname or not tooltip:
                 # Try to get default name and/or tooltip.
-                subtype_name = cls.SUBTYPE_ENUM.name.replace("Unused", "")  # redirect 'Unused' subtypes
+                subtype_name = cls.SUBTYPE_ENUM.name.replace("Dummy", "")  # redirect 'Dummy' subtypes
                 keys = (f"{subtype_name}[{f.name}]", f"{cls.SUPERTYPE_ENUM.name}[{f.name}]")
                 for key in keys:
                     if key in FIELD_INFO:
@@ -938,7 +953,7 @@ class MSBEntry(abc.ABC):
     @classmethod
     def get_field_types(cls):
         """NOTE: Using string types from dataclass field annotations due to circular entry type references."""
-        if cls._FIELD_TYPES is not None:
+        if cls.__dict__.get("_FIELD_TYPES") is not None:
             return cls._FIELD_TYPES
 
         f_annotations = cls.all_annotations()
@@ -986,6 +1001,10 @@ class MSBEntry(abc.ABC):
                 field_types[f.name] = f"{element_ann}[{length}]"
             elif ann in _BASIC_ENTRY_TYPES:
                 field_types[f.name] = ann
+            elif cls._FIELD_REGEX["msb_ref_index"].match(f.name):
+                if ann != "int | None":
+                    _LOGGER.warning(f"Expected annotation 'int | None' for MSB entry index '{f.name}', not: '{ann}'")
+                field_types[f.name] = "int | None"
             else:
                 # Try to parse as a type union of `MSBEntry` subclasses.
                 entry_types = [e.strip() for e in ann.split("|")]
@@ -1034,17 +1053,15 @@ class MSBEntry(abc.ABC):
                 field_strings.append(f"    {field_name}={repr(value)},")
         return f"{self.cls_name}(\n" + "\n".join(field_strings) + "\n)"
 
-    def __eq__(self, entry: MSBEntry):
+    def __eq__(self, entry: object) -> bool:
         """Checks field equality, but only matches `MSBEntry` references by name."""
-        if entry is None:
-            return False
         if not isinstance(entry, self.__class__):
-            return False
+            return NotImplemented
         for f in self.get_entry_fields():
             value = getattr(self, f.name)
             other = getattr(entry, f.name)
             if isinstance(value, MSBEntry):
-                if value.name != other.name:
+                if other is None or value.name != other.name:
                     return False
             elif isinstance(value, (list, tuple, set)):
                 if any(isinstance(element, MSBEntry) for element in value):

@@ -88,7 +88,7 @@ def restore_bonfire_warp_data(executable_path, dsr=None, debug=False):
 
 def get_executable_bonfire_warp_data(executable_path, dsr=None, debug=False):
     executable_path, dsr, debug = get_ds1_executable_and_version(executable_path, dsr, debug)
-    with executable_path.open("r+b") as f:
+    with executable_path.open("rb") as f:
         if dsr:
             f.seek(DSR_WARP_LIST_OFFSET)
             bonfire_count = len(DSR_VANILLA_EXE_DATA)

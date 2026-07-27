@@ -71,12 +71,6 @@ def test_talk_directory_class_config():
     assert TalkDirectory.ALL_MAPS == ALL_MAPS[1:]
 
 
-@pytest.mark.xfail(
-    reason="API INCONSISTENCY: `TalkDirectory` excludes `COMMON` from `ALL_MAPS` (correctly -- there is "
-           "no `common.talkesdbnd`) but still declares a `Common = map_property(COMMON)` attribute, "
-           "which can never resolve (darksouls1r/ezstate/talk_directory.py:15 vs :19).",
-    strict=False,
-)
 def test_talk_directory_common_property_is_not_declared():
     assert not hasattr(TalkDirectory, "Common")
 
@@ -104,13 +98,6 @@ def test_talk_esd_binary_roundtrip_preserves_state_machines(esd_path, tmp_path):
     assert reload.magic == esd.magic
 
 
-@pytest.mark.xfail(
-    reason="BUG: `ESD.to_writer()` writes `esd_name_length=len(self.esd_name) // 2`, but `esd_name` is a "
-           "`str` (not encoded bytes), so 't100613' (7 chars) is written as 3 instead of the vanilla 8 "
-           "(= character count + null terminator). Re-reading truncates the name to 't10061' "
-           "(base/ezstate/esd/core.py:324 and :339).",
-    strict=False,
-)
 def test_talk_esd_name_survives_roundtrip(esd_path):
     esd = TalkESD.from_path(esd_path)
     reload = TalkESD.from_bytes(bytes(esd))

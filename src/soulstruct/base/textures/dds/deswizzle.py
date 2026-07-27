@@ -22,8 +22,6 @@ class DDSDeswizzleError(SoulstructError):
 
 def deswizzle_dds_bytes_ps3(swizzled: bytes, dxgi_format: DXGI_FORMAT, width: int, height: int) -> bytes:
     bits_per_pixel, pixel_block_size, dds_bytes_per_pixel_set = dxgi_format.get_format_info()
-    print(f"Deswizzle PS3: {dxgi_format}, {width}, {height}")
-    print(f"  bpp: {bits_per_pixel}, block size: {pixel_block_size}, bytes per pixel set: {dds_bytes_per_pixel_set}")
     if dds_bytes_per_pixel_set >= len(swizzled):
         raise DDSDeswizzleError(
             f"DDS texture is too small to contain a single pixel set (expected {dds_bytes_per_pixel_set} bytes)."

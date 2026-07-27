@@ -165,14 +165,6 @@ def test_entry_list_duplicate_at_end_with_negative_offset():
     assert entry_list[-1] is dup
 
 
-@pytest.mark.xfail(
-    reason=(
-        "`MSBEntryList.duplicate` docstring says a source entry not in this list is appended at "
-        "the end, but `IDList.index` raises `ValueError` instead of returning -1 (and dumps the "
-        "whole list to stdout on the way)."
-    ),
-    strict=False,
-)
 def test_entry_list_duplicate_foreign_entry_appends():
     entry_list = make_widget_list("a")
     foreign = MSBWidget(name="foreign")
@@ -406,18 +398,18 @@ def test_event_region_references_survive_region_reordering(msb):
         assert (event.attached_region.name if event.attached_region else None) == expected[(event.name, i)]
 
 
-def test_removing_a_referenced_entry_leaves_a_dangling_reference(msb):
-    """Deletion does not use the tracked `referring_entry_fields`, so packing fails afterwards.
-
-    This test documents (and pins) the current behaviour: the corruption is only detected at pack
-    time, with no way to find the offending referrers except by catching the error.
-    """
+def test_removing_a_referenced_entry_clears_referrer(msb):
     collision = msb.characters[0].draw_parent
     assert collision is not None
-    msb.remove_entry(collision)
-    assert msb.characters[0].draw_parent is collision  # still dangling
-    with pytest.raises(ValueError, match=re.escape(collision.name)):
-        bytes(msb.to_writer())
+    msb.remove_entry(collision, clear_referrers=True)
+    assert msb.characters[0].draw_parent is None  # referrer cleared
+
+
+def test_removing_a_referenced_entry_without_clearing_referrer(msb):
+    collision = msb.characters[0].draw_parent
+    assert collision is not None
+    msb.remove_entry(collision, clear_referrers=False)
+    assert msb.characters[0].draw_parent is collision  # referrer not cleared
 
 
 def test_remove_entry_rejects_foreign_entry(msb, ptde_msb_path):
@@ -468,14 +460,6 @@ def test_find_entry_name_subtypes_filter_uses_list_names(msb):
     assert msb.find_entry_name(char.name, subtypes=["characters"]) is char
 
 
-@pytest.mark.xfail(
-    reason=(
-        "`MSB.find_entry_name` lower-cases `subtypes` and calls `getattr` directly instead of "
-        "using `resolve_subtype_name`, so enum/class-name spellings that work everywhere else "
-        "(e.g. `MSB['Character']`) raise `AttributeError` here."
-    ),
-    strict=False,
-)
 def test_find_entry_name_subtypes_filter_accepts_subtype_enum_names(msb):
     char = msb.characters[0]
     assert msb.find_entry_name(char.name, subtypes=["Character"]) is char
@@ -514,14 +498,6 @@ def test_resolve_entries_list_accepts_names_and_entries(msb):
         msb.resolve_entries_list([1234])
 
 
-@pytest.mark.xfail(
-    reason=(
-        "`MSB.resolve_entries_list` builds an `IDList`, whose `append` raises `ValueError` on a "
-        "repeated instance, so naming the same entry twice (or by both name and instance) "
-        "crashes instead of de-duplicating."
-    ),
-    strict=False,
-)
 def test_resolve_entries_list_tolerates_repeated_entry(msb):
     char = msb.characters[0]
     resolved = msb.resolve_entries_list([char.name, char])
@@ -568,14 +544,6 @@ def test_get_models_of_part_subtype(msb):
     assert msb.get_models_of_part_subtype("Character") is msb.character_models
 
 
-@pytest.mark.xfail(
-    reason=(
-        "`MSB.get_or_create_model` builds the model list name with `f\"{subtype_name}Model\"` "
-        "where `subtype_name` is an `IntEnum` member; since Python 3.11 that formats as the "
-        "integer value, producing e.g. '0Model' and a `KeyError`."
-    ),
-    strict=False,
-)
 def test_get_or_create_model_by_part_subtype_name(msb):
     model = msb.get_or_create_model("MapPiece", "mZZZZB0", map_stem="m10_00_00_00")
     assert model.name == "mZZZZB0"
@@ -678,14 +646,6 @@ def test_full_msb_json_roundtrip(msb, tmp_path):
     assert bytes(restored.to_writer()) == bytes(msb.to_writer())
 
 
-@pytest.mark.xfail(
-    reason=(
-        "`MSBEntry.to_json_dict` computes the referenced subtype list from the FIRST non-None "
-        "element only, then indexes every other element in that same list -- so an entry-array "
-        "field holding parts of two different subtypes cannot be serialised."
-    ),
-    strict=False,
-)
 def test_entry_array_with_mixed_subtypes_serialises():
     msb = _build_small_msb()
     obj_model = msb.object_models.new(name="o0000")
@@ -723,14 +683,6 @@ def test_merge_rejects_non_callable_filter():
         merge(msb_1, msb_2, filter_func="not callable")
 
 
-@pytest.mark.xfail(
-    reason=(
-        "`msb.utils.merge` iterates `fields(msb)` (which includes `_path`, `_dcx_type`, "
-        "`byte_order`, ...) instead of `MSB.get_subtype_list_names()`, so it always dies with "
-        "`AttributeError: 'NoneType' object has no attribute 'get_filtered_list'`."
-    ),
-    strict=False,
-)
 def test_merge_two_msbs():
     msb_1 = _build_small_msb()
     msb_2 = _build_small_msb()
@@ -741,7 +693,6 @@ def test_merge_two_msbs():
     assert merged.characters[0] is not msb_1.characters[0]  # deep-copied
 
 
-@pytest.mark.xfail(reason="See `test_merge_two_msbs`: `merge` iterates all dataclass fields.", strict=False)
 def test_merge_with_filter_func():
     msb_1 = _build_small_msb()
     msb_2 = _build_small_msb()

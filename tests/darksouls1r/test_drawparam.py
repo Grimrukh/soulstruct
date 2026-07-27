@@ -95,13 +95,6 @@ def test_area_lookup_helpers(drawparam_dir):
         drawparam_dir.get_drawparambnd("a77")
 
 
-@pytest.mark.xfail(
-    reason="API INCONSISTENCY: `get_drawparambnd()` docstring promises names 'with or without the "
-           "'_DrawParam' suffix', but it only strips at '.' and then looks the stem up in "
-           "`DRAW_PARAM_AREAS` (whose keys are bare 'a10'), so 'a10_DrawParam' raises KeyError "
-           "(darksouls1r/params/draw_param/drawparam_directory.py:59-68). `__getitem__` handles it.",
-    strict=False,
-)
 @pytest.mark.game_data
 def test_get_drawparambnd_accepts_full_stem(drawparam_dir):
     assert drawparam_dir.get_drawparambnd("a10_DrawParam") is drawparam_dir.a10

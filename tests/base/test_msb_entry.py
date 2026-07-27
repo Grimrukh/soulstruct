@@ -80,7 +80,7 @@ class MSBFakePart(MSBEntry):
     STRUCTS = {}
     MSB_ENTRY_REFERENCES = ["model", "draw_parent"]
 
-    model: MSBFakeModel = None
+    model: MSBFakeModel | None = None
     draw_parent: MSBFakePart | None = None
     entity_id: int = -1
     health: float = 1.0
@@ -164,13 +164,6 @@ def test_get_default_values():
     assert "description" not in defaults
 
 
-@pytest.mark.xfail(
-    reason=(
-        "`_FIELD_TYPES`/`_FIELD_DEFAULTS`/... are read via normal attribute lookup, so whichever "
-        "class in a hierarchy computes the cache first hands it to every subclass."
-    ),
-    strict=False,
-)
 def test_field_type_cache_is_not_inherited_by_subclasses():
     """Uses throwaway classes so that no real game class is poisoned for other tests."""
 
@@ -294,27 +287,6 @@ def test_setattr_checks_disabled_context_manager():
         part.entity_id = "not an int"
 
 
-@pytest.mark.xfail(
-    reason=(
-        "`setattr_checks_disabled()` writes `SETATTR_CHECKS_DISABLED` onto the class it is called "
-        "on. After any `from_dict`/`from_msb_reader`/`copy` call, the concrete subclass owns a "
-        "`False` attribute that shadows the base flag, so `MSBEntry.setattr_checks_disabled()` "
-        "(the documented global idiom) silently stops working."
-    ),
-    strict=False,
-)
-def test_setattr_checks_disabled_on_base_class_applies_to_subclasses():
-    MSBFakePart.copy(_new_part())  # leaves `MSBFakePart.SETATTR_CHECKS_DISABLED = False`
-    assert "SETATTR_CHECKS_DISABLED" in MSBFakePart.__dict__
-    part = _new_part()
-    try:
-        with MSBEntry.setattr_checks_disabled():
-            part.entity_id = "not an int"
-    finally:
-        MSBEntry.SETATTR_CHECKS_DISABLED = False
-    assert part.entity_id == "not an int"
-
-
 def test_setitem_and_get_item_and_set():
     part = _new_part()
     part["entity_id"] = 100
@@ -325,13 +297,6 @@ def test_setitem_and_get_item_and_set():
         _ = part["nope"]
 
 
-@pytest.mark.xfail(
-    reason=(
-        "`MSBEntry.__setitem__` only converts `AttributeError` to `KeyError`, but `__setattr__` "
-        "raises `ValueError` for unknown fields, so the documented `KeyError` never happens."
-    ),
-    strict=False,
-)
 def test_setitem_unknown_field_raises_key_error():
     part = _new_part()
     with pytest.raises(KeyError):
@@ -413,10 +378,6 @@ def test_eq_returns_false_for_none_and_other_types():
     assert (a == MSBFakeRegion(name="r")) is False
 
 
-@pytest.mark.xfail(
-    reason="MSBEntry.__eq__ does `value.name != other.name` without checking `other is None`.",
-    strict=False,
-)
 def test_eq_with_one_none_reference_should_be_false_not_raise():
     a = _new_part(model=MSBFakeModel(name="m0"))
     b = _new_part(model=None)
@@ -667,9 +628,7 @@ def test_custom_json_decoders_cover_bitsets_and_vectors():
     decoders = MSBFakePart.get_custom_json_decoders()
     assert decoders["draw_groups"] == [BitSet128.from_repr]
     assert decoders["translate"] == [Vector3]
-    # `rotate` tries `EulerDeg.from_repr` first (correct reconstruction of the `repr()`-serialized string),
-    # falling back to the legacy `Vector3` constructor for old JSON written before this fix.
-    assert decoders["rotate"] == [EulerDeg.from_repr, Vector3]
+    assert decoders["rotate"] == [EulerDeg.from_repr]
 
 
 def test_euler_deg_json_string_round_trips():

@@ -115,7 +115,7 @@ class MSBTreasureEvent(MSBEvent):
     is_in_chest: bool = False
     starts_disabled: bool = False
     
-    _treasure_part_index: int = None
+    _treasure_part_index: int | None = None
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBTreasureEvent, self).indices_to_objects(entry_lists)
@@ -203,7 +203,7 @@ class MSBObjActEvent(MSBEvent):
     obj_act_state: int = 0
     obj_act_flag: int = field(default=0, **MapFieldInfo(game_type=Flag))
 
-    _obj_act_part_index: int = None
+    _obj_act_part_index: int | None = None
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBObjActEvent, self).indices_to_objects(entry_lists)
@@ -226,7 +226,7 @@ class MSBNavigationEvent(MSBEvent):
 
     navigation_region: MSBRegion = None
 
-    _navigation_region_index: int = None
+    _navigation_region_index: int | None = None
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBNavigationEvent, self).indices_to_objects(entry_lists)
@@ -343,8 +343,8 @@ class MSBMountEvent(MSBEvent):
     rider_part: MSBPart = None
     mount_part: MSBPart = None
 
-    _rider_part_index: int = None
-    _mount_part_index: int = None
+    _rider_part_index: int | None = None
+    _mount_part_index: int | None = None
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBMountEvent, self).indices_to_objects(entry_lists)
@@ -369,7 +369,7 @@ class MSBSignPoolEvent(MSBEvent):
     sign_part: MSBPart = None
     sign_pool_unk_04: int = 0
 
-    _sign_part_index: int = None
+    _sign_part_index: int | None = None
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBSignPoolEvent, self).indices_to_objects(entry_lists)
@@ -398,8 +398,8 @@ class MSBRetryPointEvent(MSBEvent):
     retry_point_unk_08: float = 0.0
     retry_region: MSBRegion = None
 
-    _retry_part_index: int = None
-    _retry_region_index: int = None
+    _retry_part_index: int | None = None
+    _retry_region_index: int | None = None
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBRetryPointEvent, self).indices_to_objects(entry_lists)

@@ -16,6 +16,4 @@ class OBJBND(FLVERBinder):
     DEFAULT_ENTRY_ROOT = f"{DARK_SOULS_PTDE.interroot_prefix}\\obj"
     MAX_FLVER_COUNT = 99
 
-    dcx_type: DCXType = DARK_SOULS_PTDE.default_dcx_type
     version: BinderVersion = BinderVersion.V3
-    v4_info = None
