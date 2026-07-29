@@ -112,21 +112,9 @@ def _all_lookup_keys() -> set[str]:
     return keys
 
 
-# Keys present in `FIELD_INFO` that no registered entry class can ever look up.
-KNOWN_STALE_FIELD_INFO_KEYS = {
-    "NPCInvasion[base_region_name]",
-    "NPCInvasion[spawn_point_region_name]",
-    "Wind[unk_x04_x08]",
-    "Wind[unk_x0c_x10]",
-}
-
-
 def test_field_info_has_no_new_stale_keys():
     unused = set(FIELD_INFO) - _all_lookup_keys()
-    assert unused <= KNOWN_STALE_FIELD_INFO_KEYS, (
-        f"New stale `FIELD_INFO` keys (no entry field uses them): "
-        f"{sorted(unused - KNOWN_STALE_FIELD_INFO_KEYS)}"
-    )
+    assert not unused, f"Stale `FIELD_INFO` keys (no entry field uses them): {sorted(unused)}"
 
 
 def test_ds1_ptde_display_info_is_in_sync():

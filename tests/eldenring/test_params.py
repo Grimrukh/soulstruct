@@ -194,11 +194,6 @@ def test_bit_pads_are_ignored_by_to_dict():
     assert not [k for k in data if "BitPad" in k]
 
 
-@pytest.mark.xfail(
-    reason="BUG: `ParamRow.__repr__` does `for key, value in self.to_dict(...)`, which iterates dict KEYS. "
-           "It is shadowed by the dataclass-generated `__repr__` on concrete subclasses, so it is dead code.",
-    strict=False,
-)
 def test_param_row_base_repr():
     row = paramdef_module.ACTIONBUTTON_PARAM_ST()
     assert isinstance(ParamRow.__repr__(row), str)

@@ -26,19 +26,24 @@ TRAILING_DIGIT_RE = re.compile(r"(.*?)(\d+)")
 class EnumModuleGenerator:
 
     msb: MSB
-    path: Path
+    path: Path | None
     map_stem: str
     game: Game
 
-    def __init__(self, msb: MSB, map_stem: str = None):
+    def __init__(self, msb: MSB, map_stem=""):
         self.msb = msb
         self.path = msb.path
-        self.map_stem = map_stem or self.path.name.split(".")[0]
+        if map_stem:
+            self.map_stem = map_stem
+        elif not self.path:
+            raise ValueError("Must pass a `map_stem` to `EnumModuleGenerator` if `msb.path` is not set.")
+        else:
+            self.map_stem = self.path.name.split(".")[0]
         self.game = self.msb.get_game()
 
     def write_enums_module(
         self,
-        output_module_path: str | Path = None,
+        output_module_path: str | Path | None = None,
         append_to_module: str = "",
         separate_region_points_volumes: bool = False,
         sort_by_id=False,

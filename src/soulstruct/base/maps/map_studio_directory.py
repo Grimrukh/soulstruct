@@ -12,6 +12,7 @@ from pathlib import Path
 
 from soulstruct.base.game_file_directory import GameFileMapDirectory
 from soulstruct.utilities.files import write_json
+from soulstruct.utilities.progress import ProgressCallback, report_progress
 from .msb import MSB
 
 _LOGGER = logging.getLogger(__name__)
@@ -34,7 +35,7 @@ class MapStudioDirectory[MSB_T: MSB](GameFileMapDirectory[MSB_T], abc.ABC):
     files: dict[str, MSB] = field(default_factory=dict)  # maps 'true stems' to `FILE_CLASS` instances
 
     @classmethod
-    def from_json_directory(cls, directory_path: Path | str):
+    def from_json_directory(cls, directory_path: Path | str, progress: ProgressCallback | None = None):
         """Open directory of JSON files containing MSB data instead of standard `.msb` files."""
         directory_path = Path(directory_path)
         if not directory_path.is_dir():
@@ -43,23 +44,25 @@ class MapStudioDirectory[MSB_T: MSB](GameFileMapDirectory[MSB_T], abc.ABC):
         all_map_stems = [getattr(game_map, cls.MAP_STEM_ATTRIBUTE) for game_map in cls.ALL_MAPS]
         files = {}
         file_name_re = re.compile(r".*\.json")
-        for file_path in directory_path.glob("*"):
-            if file_name_re.match(file_path.name):
-                file_stem = file_path.name.split(".")[0]  # `.stem` not good enough with possible double DCX extension
-                if file_stem in all_map_stems:
-                    msb = files[file_stem] = cls.FILE_CLASS.from_json(file_path)
-                    msb.path = directory_path / f"{file_stem}{cls.FILE_EXTENSION}"
-                    all_map_stems.remove(file_stem)
-                else:
-                    if file_stem not in cls.QUIETLY_IGNORED_FILE_STEMS:
-                        _LOGGER.warning(
-                            f"Ignoring unexpected JSON file in `{cls.__name__}` directory: {file_path.name}"
-                        )
-                    continue
+        json_paths = [p for p in directory_path.glob("*") if file_name_re.match(p.name)]
+        for i, file_path in enumerate(json_paths):
+            file_stem = file_path.name.split(".")[0]  # `.stem` not good enough with possible double DCX extension
+            if file_stem in all_map_stems:
+                report_progress(progress, i, len(json_paths), file_stem)
+                msb = files[file_stem] = cls.FILE_CLASS.from_json(file_path)
+                msb.path = directory_path / f"{file_stem}{cls.FILE_EXTENSION}"
+                all_map_stems.remove(file_stem)
+            else:
+                if file_stem not in cls.QUIETLY_IGNORED_FILE_STEMS:
+                    _LOGGER.warning(
+                        f"Ignoring unexpected JSON file in `{cls.__name__}` directory: {file_path.name}"
+                    )
+                continue
 
         if all_map_stems:
             _LOGGER.warning(f"Could not find some JSON files in `{cls.__name__}` directory: {', '.join(all_map_stems)}")
 
+        report_progress(progress, len(json_paths), len(json_paths), "")
         return cls(directory=directory_path, files=files)
 
     def write_combined_json(self, json_path: str | Path, ignore_defaults=True):
@@ -80,6 +83,7 @@ class MapStudioDirectory[MSB_T: MSB](GameFileMapDirectory[MSB_T], abc.ABC):
         directory_path: str | Path = None,
         ignore_defaults=True,
         no_partial_write=True,
+        progress: ProgressCallback | None = None,
     ) -> list[Path]:
         """Write each MSB to a separate JSON file, named by MSB stem, inside `dir_path`.
 
@@ -92,7 +96,11 @@ class MapStudioDirectory[MSB_T: MSB](GameFileMapDirectory[MSB_T], abc.ABC):
         directory_path.mkdir(exist_ok=True, parents=True)
         written_paths = []
         json_dicts = {}
-        for msb_file_stem, msb in self.files.items():
+        # With `no_partial_write`, serializing is the slow half and writing is the fast half, so both halves report
+        # against the same total rather than the bar appearing to finish twice.
+        total = len(self.files) * (2 if no_partial_write else 1)
+        for i, (msb_file_stem, msb) in enumerate(self.files.items()):
+            report_progress(progress, i, total, msb_file_stem)
             json_path = directory_path / f"{msb_file_stem}.json"
             if not no_partial_write:
                 msb.write_json(json_path, ignore_defaults=ignore_defaults)
@@ -103,8 +111,10 @@ class MapStudioDirectory[MSB_T: MSB](GameFileMapDirectory[MSB_T], abc.ABC):
 
         if no_partial_write:
             # All MSBs converted to dictionaries without error. Now write them all.
-            for json_path, json_dict in json_dicts.items():
+            for i, (json_path, json_dict) in enumerate(json_dicts.items()):
+                report_progress(progress, len(self.files) + i, total, json_path.stem)
                 write_json(json_path, json_dict, indent=4, encoding="utf-8", encoder=MSB.JSONEncoder)
                 written_paths.append(json_path)
 
+        report_progress(progress, total, total, "")
         return written_paths

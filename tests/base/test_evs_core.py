@@ -214,12 +214,6 @@ def test_condition_manager_deactivate_all_marks_stale():
     assert cond.stale and not cond.active
 
 
-@pytest.mark.xfail(
-    reason="BUG: `EVSConditionManager.__getitem__` indexes the `conditions` LIST with the condition "
-           "INDEX, so an out-of-range NEGATIVE group (e.g. `OR_15` in DS1, which only has OR_1-7) "
-           "silently wraps around to `conditions[0]` == MAIN instead of raising.",
-    strict=False,
-)
 def test_condition_manager_rejects_out_of_range_or_group():
     manager = _manager()
     out_of_range = min(EVSParser.OR_SLOTS) - 1
@@ -227,11 +221,6 @@ def test_condition_manager_rejects_out_of_range_or_group():
         manager[out_of_range]
 
 
-@pytest.mark.xfail(
-    reason="ISSUE: `check_out_TEMP` steals the highest-magnitude condition group unconditionally, "
-           "overwriting the `name` of a group the user may have explicitly named and be relying on.",
-    strict=False,
-)
 def test_check_out_temp_does_not_clobber_named_condition():
     manager = _manager()
     manager.reset(0)
@@ -587,12 +576,6 @@ def test_decompile_recompile_decompile_is_stable(ds1r_emevd_path: Path, tmp_path
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(
-    reason="BUG (high): `EVSParser._compile_evs` iterates `self.tree.body[1:]`, unconditionally "
-           "assuming the first top-level node is the module docstring. A script without a "
-           "docstring silently loses its first statement (here, an entire event function).",
-    strict=False,
-)
 def test_script_without_module_docstring_keeps_first_statement():
     parser = parse(
         CONSTRUCTOR + "    EnableFlag(1)\n\n"
@@ -602,34 +585,16 @@ def test_script_without_module_docstring_keeps_first_statement():
     assert set(parser.events) == {"Constructor", "Event_11000100"}
 
 
-@pytest.mark.xfail(
-    reason="BUG: `evs/utils.import_module` unconditionally executes `del module` after its loop, "
-           "raising `UnboundLocalError` when every imported name is in `ignore_names` "
-           "(e.g. the explicitly-ignored `import typing`).",
-    strict=False,
-)
 def test_import_typing_is_ignored_cleanly():
     parse("import typing\n\n" + CONSTRUCTOR + "    EnableFlag(11000001)\n")
 
 
-@pytest.mark.xfail(
-    reason="BUG: `EVSParser._assign_condition` compares the parsed `hold` keyword value against the "
-           "STRING 'True' (`hold_keyword.value.value == \"True\"`), so `Condition(..., hold=True)` "
-           "is silently ignored and the group can be recycled while still needed.",
-    strict=False,
-)
 def test_condition_hold_keyword_is_respected():
     parser = parse(CONSTRUCTOR + "    c = Condition(FlagEnabled(11000001), hold=True)\n    MAIN.Await(c)\n")
     held = [cond for cond in parser.cond_manager.conditions if cond.name == "c"]
     assert held and held[0].held is True
 
 
-@pytest.mark.xfail(
-    reason="BUG (high): `EVSParser.globals` is assigned `vars(EVENTS_MODULE.enums)` (the live module "
-           "`__dict__`), not a copy. Every parse permanently injects game types and user globals "
-           "into `soulstruct.<game>.events.enums`, leaking names between unrelated EVS scripts.",
-    strict=False,
-)
 def test_parser_globals_do_not_leak_between_scripts():
     parse("LEAKED_NAME = 999\n\n" + CONSTRUCTOR + "    EnableFlag(11000001)\n")
     with pytest.raises(EVSNameError):
@@ -657,23 +622,11 @@ def test_out_of_range_and_group_raises_evs_error():
         parse(CONSTRUCTOR + "    AND_15.Add(FlagEnabled(11000001))\n")
 
 
-@pytest.mark.xfail(
-    reason="BUG: `_parse_decorator`'s 'invalid restart type' error message references `dec_node.id`, "
-           "which does not exist on an `ast.Call` node -> raw `AttributeError` instead of a helpful "
-           "`EVSSyntaxError`.",
-    strict=False,
-)
 def test_unknown_decorator_raises_evs_syntax_error():
     with pytest.raises(EVSSyntaxError):
         parse('@NotARestType(0)\ndef Constructor():\n    """Event 0"""\n    EnableFlag(1)\n')
 
 
-@pytest.mark.xfail(
-    reason="BUG: `_compile_for` checks `if for_var in self.current_event.args`, comparing an "
-           "`ast.Name` NODE against a dict of `str` keys, so it never fires. The event argument "
-           "silently wins over the loop variable in `_parse_name`, unrolling identical instructions.",
-    strict=False,
-)
 def test_for_loop_variable_shadowing_event_arg_is_rejected():
     body = (
         '@ContinueOnRest(11000100)\ndef Event_11000100(_, flag: Flag | int):\n'
@@ -683,23 +636,11 @@ def test_for_loop_variable_shadowing_event_arg_is_rejected():
         parse(body)
 
 
-@pytest.mark.xfail(
-    reason="BUG: `_compile_boolean_condition` swallows `EVSSyntaxError` from `as_condition_node` "
-           "with a bare `continue`, silently DROPPING invalid operands of an `and`/`or` expression "
-           "instead of reporting them.",
-    strict=False,
-)
 def test_invalid_boolean_operand_is_reported():
     with pytest.raises(EVSSyntaxError):
         parse(CONSTRUCTOR + "    MAIN.Await(FlagEnabled(11000001) and 5)\n")
 
 
-@pytest.mark.xfail(
-    reason="BUG (critical for DS3/Sekiro/ER): an EVS `event_layers=[...]` keyword compiles to a "
-           "numeric `<...>` suffix that `build_numeric` turns into a plain `list`, so packing the "
-           "resulting EMEVD raises `TypeError: unhashable type: 'list'`.",
-    strict=False,
-)
 def test_event_layers_keyword_can_be_packed():
     emevd = EMEVD.from_evs_string(
         DOCSTRING + CONSTRUCTOR + "    EnableFlag(11000001, event_layers=[0, 2])\n",

@@ -265,12 +265,6 @@ def test_define_label_wrapper_covers_full_label_range():
     assert "DefineLabel_21" not in EMEDF_ALIASES
 
 
-@pytest.mark.xfail(
-    reason="`EVSInstructionCompiler.compile` uses `kwargs.get('condition', args[index])`; the default is "
-           "evaluated eagerly, so passing `condition` as a KEYWORD to any custom instruction raises "
-           "IndexError instead of compiling.",
-    strict=False,
-)
 def test_custom_instruction_accepts_condition_as_keyword():
     from soulstruct.eldenring.events.emevd import EMEVD
 

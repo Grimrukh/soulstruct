@@ -375,7 +375,7 @@ class MSBNPCInvasionEvent(MSBEvent):
     here by the boundaries of the attached trigger region."""
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.NPCInvasion
-    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region", "spawn_point_region"]
+    MSB_ENTRY_REFERENCES: tp.ClassVar[list[str]] = ["attached_part", "attached_region"]
     STRUCTS = MSBEvent.STRUCTS | {"subtype_data": SUBTYPE_DATA_STRUCT}
 
     host_entity_id: int = -1

@@ -9,6 +9,7 @@ from dataclasses import field
 from pathlib import Path
 
 from soulstruct.base.game_file_directory import GameFileMapDirectory
+from soulstruct.utilities.progress import ProgressCallback, report_progress
 from .luabnd import LuaBND
 
 _LOGGER = logging.getLogger(__name__)
@@ -48,7 +49,7 @@ class AIScriptDirectory(GameFileMapDirectory[LuaBND], abc.ABC):
     files: dict[str, LuaBND] = field(default_factory=dict)
 
     @classmethod
-    def from_unpacked_luabnds(cls, directory_path: Path | str):
+    def from_unpacked_luabnds(cls, directory_path: Path | str, progress: ProgressCallback | None = None):
         """Open a collection of unpacked `LuaBND` binders instead of the binders themselves."""
 
         directory_path = Path(directory_path)
@@ -57,19 +58,20 @@ class AIScriptDirectory(GameFileMapDirectory[LuaBND], abc.ABC):
         all_map_stems = [getattr(game_map, cls.MAP_STEM_ATTRIBUTE) for game_map in cls.ALL_MAPS]
         all_map_stems = [stem for stem in all_map_stems if stem is not None]
         files = {}
-        for file_path in directory_path.glob("*"):
-            if file_path.is_dir() and file_path.stem in all_map_stems:
-                # Try to load `LuaBND` from unpacked binder.
-                files[file_path.stem] = cls.FILE_CLASS.from_unpacked_path(file_path)
-                all_map_stems.remove(file_path.stem)
-                continue
+        unpacked_paths = [p for p in directory_path.glob("*") if p.is_dir() and p.stem in all_map_stems]
+        for i, file_path in enumerate(unpacked_paths):
+            report_progress(progress, i, len(unpacked_paths), file_path.stem)
+            # Try to load `LuaBND` from unpacked binder.
+            files[file_path.stem] = cls.FILE_CLASS.from_unpacked_path(file_path)
+            all_map_stems.remove(file_path.stem)
 
         if all_map_stems:
             _LOGGER.warning(f"Could not find some files in `{cls.__name__}` directory: {', '.join(all_map_stems)}")
 
+        report_progress(progress, len(unpacked_paths), len(unpacked_paths), "")
         return cls(directory=directory_path, files=files)
 
-    def write_unpacked_luabnds(self, directory_path: Path | str = None):
+    def write_unpacked_luabnds(self, directory_path: Path | str = None, progress: ProgressCallback | None = None):
         if directory_path is None:
             if self.directory is None:
                 raise ValueError("Cannot autodetect directory name (`directory` not set).")
@@ -77,12 +79,14 @@ class AIScriptDirectory(GameFileMapDirectory[LuaBND], abc.ABC):
         directory_path = Path(directory_path)
         all_map_stems = [getattr(game_map, self.MAP_STEM_ATTRIBUTE) for game_map in self.ALL_MAPS]
         directory_path.mkdir(parents=True, exist_ok=True)
-        for file_stem, luabnd in self.files.items():
+        for i, (file_stem, luabnd) in enumerate(self.files.items()):
+            report_progress(progress, i, len(self.files), file_stem)
             if file_stem in all_map_stems:
                 all_map_stems.remove(file_stem)
             else:
                 _LOGGER.warning(f"Writing unknown LuaBND file found in `{self.__class__.__name__}`: {file_stem}")
             luabnd.write_unpacked_directory(directory_path / f"{file_stem}")
+        report_progress(progress, len(self.files), len(self.files), "")
         if all_map_stems:
             _LOGGER.warning(
                 f"Could not find some file keys while writing `{self.__class__.__name__}` directory: "

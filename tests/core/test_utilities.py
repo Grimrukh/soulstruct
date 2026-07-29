@@ -50,6 +50,7 @@ from soulstruct.utilities.misc import (
     setdefault_lambda,
     traverse_path_tree,
 )
+from soulstruct.utilities.progress import report_progress
 from soulstruct.utilities.text import (
     atoi,
     camel_case_to_spaces,
@@ -59,6 +60,33 @@ from soulstruct.utilities.text import (
     string_to_identifier,
     word_wrap,
 )
+
+
+# ===========================================================================
+# utilities.progress
+# ===========================================================================
+
+
+def test_report_progress_is_a_no_op_without_a_callback():
+    """Call sites pass `progress` straight through, so `None` must be handled here, not there."""
+    assert report_progress(None, 0, 10, "anything") is None
+
+
+def test_report_progress_forwards_all_arguments():
+    calls = []
+    report_progress(lambda *args: calls.append(args), 3, 10, "MapPiece")
+    report_progress(lambda *args: calls.append(args), 4, 10)
+    assert calls == [(3, 10, "MapPiece"), (4, 10, "")]
+
+
+def test_report_progress_does_not_swallow_callback_exceptions():
+    """A callback raising is the documented way for a GUI to cancel a long operation."""
+
+    def cancel(current, total, label):
+        raise KeyboardInterrupt("user cancelled")
+
+    with pytest.raises(KeyboardInterrupt):
+        report_progress(cancel, 0, 10, "x")
 
 
 # ===========================================================================
@@ -181,11 +209,6 @@ def test_pad_chars_negative_alignment_raises():
         pad_chars("abc", alignment=-1)
 
 
-@pytest.mark.xfail(
-    reason="BUG: `pad_chars` validates `alignment < 0` but its error message says 'greater than zero'; "
-           "`alignment=0` slips through and raises `ZeroDivisionError` from `len(encoded) % alignment`.",
-    strict=False,
-)
 def test_pad_chars_zero_alignment_raises_value_error():
     with pytest.raises(ValueError):
         pad_chars("abc", alignment=0)
@@ -268,11 +291,6 @@ def test_bidict_bad_init():
         BiDict((1, 2, 3))
 
 
-@pytest.mark.xfail(
-    reason="BUG: `BiDict.__delitem__` deletes `key` first and then looks up `self[key]` to find its partner, "
-           "raising `KeyError`. This makes `del bidict[k]` and any re-assignment of an existing value fail.",
-    strict=False,
-)
 def test_bidict_delete_and_reassign():
     d = BiDict((1, "one"), (2, "two"))
     del d[1]
@@ -484,11 +502,6 @@ def test_restore_bak_directory(tmp_path: Path):
     assert (tmp_path / "b.msb").read_bytes() == b"original"
 
 
-@pytest.mark.xfail(
-    reason="BUG: the directory branch of `restore_bak` recurses with `restore_bak(bak_file)` and drops the "
-           "`delete_baks` and `bak_suffix` arguments, so `delete_baks=True` is silently ignored for directories.",
-    strict=False,
-)
 def test_restore_bak_directory_delete_baks(tmp_path: Path):
     p = tmp_path / "a.msb"
     p.write_bytes(b"original")
@@ -539,12 +552,6 @@ def test_read_json_unicode_error_path(tmp_path: Path):
         read_json(path, encoding="utf-8")
 
 
-@pytest.mark.xfail(
-    reason="BUG: the `UnicodeDecodeError` branch of `read_json` calls `json_path.read_bytes()` without "
-           "converting `json_path` to a `Path` first, so passing a `str` raises AttributeError instead of the "
-           "intended informative `ValueError`.",
-    strict=False,
-)
 def test_read_json_unicode_error_str_path(tmp_path: Path):
     path = tmp_path / "bad_unicode.json"
     path.write_bytes(b"\xff\xfe" + b'{"a": 1}')
@@ -625,11 +632,6 @@ def test_write_data_to_path_makes_backup(tmp_path: Path):
     assert (tmp_path / "out.bin.bak").read_bytes() == b"original"
 
 
-@pytest.mark.xfail(
-    reason="BUG/API inconsistency: `write_data_to_path(force=True)` skips the `make_dirs` branch entirely, so "
-           "forcing a write into a non-existent directory raises FileNotFoundError.",
-    strict=False,
-)
 def test_write_data_to_path_force_makes_dirs(tmp_path: Path):
     dst = tmp_path / "new_sub" / "out.bin"
     assert write_data_to_path(b"data", dst, force=True, make_backup=False) is True
@@ -727,12 +729,6 @@ def test_compare_dataclasses_rejects_non_dataclass():
         compare_dataclasses(_Simple(), object())
 
 
-@pytest.mark.xfail(
-    reason="BUG: `compare_dataclasses` defaults `is_close_funcs` to `None` but then evaluates "
-           "`if field_type in is_close_funcs`, raising TypeError as soon as any field differs. The default "
-           "invocation of this debugging helper is therefore unusable.",
-    strict=False,
-)
 def test_compare_dataclasses_unequal_default_args(capsys):
     compare_dataclasses(_Simple(1, "x"), _Simple(2, "y"))
     assert "!=" in capsys.readouterr().out
@@ -780,10 +776,9 @@ def test_timer_logs_failure(caplog):
     assert any("MyTask FAILED" in r.message for r in caplog.records)
 
 
-def test_timer_enter_returns_none():
-    """DOCUMENTS an API quirk: `Timer.__enter__` returns `None`, so `with Timer(...) as t` binds `None`."""
+def test_timer_enter_returns_timer():
     with Timer("MyTask") as t:
-        assert t is None
+        assert isinstance(t, Timer)
 
 
 def test_profile_function_returns_value_and_preserves_metadata(capsys):
@@ -822,11 +817,6 @@ def test_find_errant_prints(capsys):
     assert "FN:" in out and "hello" in out
 
 
-@pytest.mark.xfail(
-    reason="BUG: `find_errant_prints` yields without a `try/finally`, so an exception raised inside the "
-           "`with` block permanently leaves the monkey-patched `print` installed in `builtins`.",
-    strict=False,
-)
 def test_find_errant_prints_restores_on_exception():
     import builtins
 

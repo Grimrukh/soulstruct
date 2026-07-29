@@ -10,6 +10,7 @@ Plus pure-unit checks on the MSB subtype tables and entity-ID range guidelines.
 from __future__ import annotations
 
 import logging
+import shutil
 
 import pytest
 
@@ -232,6 +233,48 @@ def test_depths_msb_json_round_trip(depths_msb, tmp_path):
     depths_msb.write_json(json_path)
     reloaded = MSB.from_json(json_path)
     _assert_msbs_equal(depths_msb, reloaded)
+
+
+def test_depths_msb_deep_copy_repacks_identically(depths_msb):
+    """`copy.deepcopy` must rebuild every entry's referrer tracker so the copy is still packable."""
+    import copy as copy_module
+
+    duplicate = copy_module.deepcopy(depths_msb)
+    assert duplicate is not depths_msb
+    _assert_msbs_equal(depths_msb, duplicate)
+    assert bytes(duplicate) == bytes(depths_msb)
+    # Entries were genuinely copied, and the copies' references point within the copy.
+    part = duplicate.map_pieces[0]
+    assert part is not depths_msb.map_pieces[0]
+    assert any(model is part.model for model in duplicate.map_piece_models)
+    assert part.model is not depths_msb.map_pieces[0].model
+
+
+def test_map_studio_directory_json_reports_progress(depths_msb_path, tmp_path):
+    """`MapStudioDirectory` JSON reads/writes accept an optional `progress` callback."""
+    msb_dir = tmp_path / "MapStudio"
+    msb_dir.mkdir()
+    stems = ["m10_00_00_00", "m10_01_00_00", "m10_02_00_00"]
+    for stem in stems:
+        shutil.copy(depths_msb_path, msb_dir / f"{stem}.msb")
+    msd = MapStudioDirectory.from_path(msb_dir)
+
+    write_calls = []
+    msd.write_json_directory(tmp_path / "json", progress=lambda *call: write_calls.append(call))
+    read_calls = []
+    MapStudioDirectory.from_json_directory(
+        tmp_path / "json", progress=lambda *call: read_calls.append(call)
+    )
+
+    for calls in (write_calls, read_calls):
+        assert calls, "no progress reported"
+        totals = {total for _, total, _ in calls}
+        assert len(totals) == 1, f"`total` changed mid-operation: {totals}"
+        currents = [current for current, _, _ in calls]
+        assert currents == sorted(currents), "`current` must not go backwards"
+        assert currents[0] == 0
+        assert currents[-1] == totals.copy().pop()
+    assert {label for _, _, label in read_calls if label} >= set(stems)
 
 
 # ---------------------------------------------------------------------------

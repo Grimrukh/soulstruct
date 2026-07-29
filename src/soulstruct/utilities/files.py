@@ -38,6 +38,10 @@ def SOULSTRUCT_PATH(*relative_parts) -> Path:
 
     parent = Path(__file__).parent
     while parent.name != "soulstruct":
+        if not parent.name or parent.parent == parent:
+            raise NotADirectoryError(
+                f"Could not find `soulstruct` directory in module path tree: {Path(__file__).resolve()}"
+            )
         parent = parent.parent
 
     if not relative_parts:
@@ -339,6 +343,10 @@ def write_data_to_path(
     """
     dst = Path(dst)
 
+    # We can make directories immediately, as this call will always end up with the file existing.
+    if make_dirs:
+        dst.parent.mkdir(exist_ok=True, parents=True)
+
     if force:
         if make_backup:
             create_bak(dst)
@@ -352,8 +360,6 @@ def write_data_to_path(
         if d_stat.st_size == len(data):
             if _bytes_equal_to_file(data, dst):
                 return False  # unchanged, skip write
-    elif make_dirs:
-        dst.parent.mkdir(exist_ok=True, parents=True)
 
     if make_backup:
         create_bak(dst)

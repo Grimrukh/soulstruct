@@ -182,15 +182,6 @@ def test_msgbnd_entry_paths_survive_regeneration(msg_directory, caplog):
     assert before == after
 
 
-@pytest.mark.xfail(
-    reason=(
-        "`MSGBND.DEFAULT_ENTRY_ROOT` is "
-        "'N:\\FRPG\\data\\INTERROOT_win32\\Msb\\Data_ENGLISH\\win32', but vanilla PTDE FMG entries "
-        "live at 'N:\\FRPG\\data\\Msg\\Data_ENGLISH\\win32' ('Msg', and no INTERROOT component). "
-        "Only newly-added FMG entries are affected, but they would be written to a bogus path."
-    ),
-    strict=False,
-)
 def test_msgbnd_default_entry_root_matches_vanilla(msg_directory):
     roots = {
         entry.path.rsplit("\\", 1)[0]
@@ -220,39 +211,11 @@ def test_fmg_binary_round_trip(msg_directory, tmp_path):
     assert bytes(reloaded) == bytes(fmg)
 
 
-def test_get_matching_fmgs_is_unanchored(msg_directory):
-    """Documents the root cause of the `get_item_fmgs` bug below: `re.match` is not anchored at the
-    end, so 'Weapon(Names|Summaries|Descriptions)' also matches the three `...Patch` properties."""
-    import re
-
-    matches = msg_directory.get_matching_fmgs(re.compile(r"Weapon(Names|Summaries|Descriptions)"))
-    assert set(matches) == {
-        "WeaponNames", "WeaponSummaries", "WeaponDescriptions",
-        "WeaponNamesPatch", "WeaponSummariesPatch", "WeaponDescriptionsPatch",
-    }
-
-
-@pytest.mark.xfail(
-    reason=(
-        "`MSGDirectory.get_item_fmgs()` builds an unanchored regex "
-        "'{type}(Names|Summaries|Descriptions)' and requires exactly 3 matches, but the '...Patch' "
-        "properties also match, giving 6 -> `KeyError`. This breaks `get_all_item_text`, "
-        "`set_item_text` and `delete_item_text` for every item type."
-    ),
-    strict=False,
-)
 def test_get_all_item_text(msg_directory):
     text = msg_directory.get_all_item_text(100000, item_type="weapon")
-    assert set(text) >= {"Name", "Summary", "Description"}
-    assert text["Name"]
+    assert set(text) >= {"name", "summary", "description"}
+    assert text["name"]
 
 
-@pytest.mark.xfail(
-    reason=(
-        "`MSGDirectory.replace_substring_in_all()` iterates `for string_id, string in fmg.entries`, "
-        "unpacking dict KEYS (ints) -> `TypeError: cannot unpack non-iterable int object`."
-    ),
-    strict=False,
-)
 def test_replace_substring_in_all(msg_directory):
     msg_directory.replace_substring_in_all("WeaponNames", "Sword", "Blade")

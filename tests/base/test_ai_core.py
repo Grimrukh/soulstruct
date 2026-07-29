@@ -191,21 +191,12 @@ def test_luainfo_get_long_varints_zero_goals(caplog):
     assert result is True
 
 
-@pytest.mark.xfail(
-    reason="H6: `LuaGNL.to_writer()` does `for i, name in self.names`, unpacking each `str`.",
-    strict=False,
-)
 def test_luagnl_binary_roundtrip():
     gnl = LuaGNL(names=["Foo_Activate", "Foo_Update"])
     reloaded = LuaGNL.from_bytes(bytes(gnl))
     assert reloaded.names == gnl.names
 
 
-@pytest.mark.xfail(
-    reason="H7: `LuaGoalScript.pack_logic_interrupt_name()` fills 'logic_interrupt_name' but the "
-           "struct field is 'logic_interrupt_name_offset'; goal name strings are never packed either.",
-    strict=False,
-)
 def test_luainfo_binary_roundtrip():
     goals = [
         LuaGoalScript(goal_id=1, goal_name="AlphaBattle", goal_type=GoalType.Battle),

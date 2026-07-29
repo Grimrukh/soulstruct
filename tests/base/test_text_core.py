@@ -110,10 +110,6 @@ def test_fmg_apply_line_limits_space_string_untouched():
     assert fmg.apply_line_limits(max_chars_per_line=5, max_lines=99)[1] == " "
 
 
-@pytest.mark.xfail(
-    reason="M8: `FMG.replace_substring_in_all()` iterates `self.entries` (keys) and unpacks pairs.",
-    strict=False,
-)
 def test_fmg_replace_substring_in_all():
     fmg = FMG(entries={1: "abc", 2: "aaa"}, version=1)
     result = fmg.replace_substring_in_all("a", "z")
@@ -195,11 +191,6 @@ def test_fmg_sorts_on_write():
     assert list(reloaded.entries) == [1, 5]
 
 
-@pytest.mark.xfail(
-    reason="H11: `FMGHeaderV0._minus_one` is declared as an unsigned `byte` with `asserted=-1`, so "
-           "packing any Demon's Souls (V0) FMG raises `struct.error`.",
-    strict=False,
-)
 def test_fmg_v0_binary_roundtrip():
     fmg = FMG(entries=dict(SAMPLE_ENTRIES), version=0)
     reloaded = FMG.from_bytes(bytes(fmg))
@@ -293,11 +284,6 @@ def test_msg_directory_all_fmgs_roundtrip(ptde_msg_directory):
         assert bytes(reloaded) == data, key
 
 
-@pytest.mark.xfail(
-    reason="H16: `get_item_fmgs()` filters categories with `re.match` (a prefix match), so DS1's "
-           "'...Patch' categories also match and the len==3 check always fails.",
-    strict=False,
-)
 def test_msg_directory_item_text_helpers(ptde_msg_directory):
     msg = ptde_msg_directory
     names = msg.get_item_fmgs("weapon")
@@ -331,10 +317,6 @@ def test_msg_directory_resolve_item_type_rejects(given):
         MSGDirectory.resolve_item_type(given)
 
 
-@pytest.mark.xfail(
-    reason="H16: `get_item_fmgs()` uses `re.match` (prefix), which also matches '...Patch' categories.",
-    strict=False,
-)
 def test_msg_directory_set_and_delete_item_text(ptde_msg_directory):
     msg = ptde_msg_directory
     new_id = 990001

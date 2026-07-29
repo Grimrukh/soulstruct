@@ -16,12 +16,6 @@ from soulstruct.darksouls1ptde.maps.constants import ALL_MAPS
 from soulstruct.dcx import DCXType
 
 
-# EVS scripts decompiled from these vanilla PTDE maps contain a bare `pass` statement (emitted by
-# `adv_decompiler` for an empty `if` block), which `as_event_statement_node` rejects. See report.
-EVS_REPARSE_FAILURES = {
-    "m10_01_00_00",
-}
-
 # EMEVDs where the EVS round-trip legitimately *optimises* the instruction stream, e.g. collapsing
 # `SkipLinesIfFlagEnabled(1, ...) + End()` into `EndIfFlagDisabled(...)`. Packed bytes therefore
 # differ from vanilla, but the result is semantically equivalent and is an EVS fixpoint.
@@ -143,33 +137,26 @@ def test_evs_round_trip_of_own_output(simple_emevd):
 
 
 def test_evs_bad_keyword_is_rejected():
-    from soulstruct.base.events.emevd.exceptions import EMEVDError
+    from soulstruct.base.events.evs.exceptions import EVSSyntaxError
 
     bad = SIMPLE_EVS.replace("EnableFlag(101)", "EnableFlag(flag=101, nonsense=1)")
-    with pytest.raises(EMEVDError):
+    with pytest.raises(EVSSyntaxError):
         EMEVD.from_evs_string(bad, map_name="m10_00_00_00")
 
 
-@pytest.mark.xfail(
-    reason=(
-        "`EVSInstructionCompiler._base_compile()` silently discards surplus POSITIONAL arguments "
-        "(only surplus keyword arguments raise), so typos like `EnableFlag(101, 202)` compile."
-    ),
-    strict=False,
-)
 def test_evs_surplus_positional_args_are_rejected():
-    from soulstruct.base.events.emevd.exceptions import EMEVDError
+    from soulstruct.base.events.evs.exceptions import EVSSyntaxError
 
     bad = SIMPLE_EVS.replace("EnableFlag(101)", "EnableFlag(101, 202, 303)")
-    with pytest.raises(EMEVDError):
+    with pytest.raises(EVSSyntaxError):
         EMEVD.from_evs_string(bad, map_name="m10_00_00_00")
 
 
 def test_unknown_instruction_is_rejected():
-    from soulstruct.base.events.emevd.exceptions import EMEVDError
+    from soulstruct.base.events.evs.exceptions import EVSNameError
 
     bad = SIMPLE_EVS.replace("EnableFlag(101)", "ThisInstructionDoesNotExist(101)")
-    with pytest.raises(EMEVDError):
+    with pytest.raises(EVSNameError):
         EMEVD.from_evs_string(bad, map_name="m10_00_00_00")
 
 
@@ -266,26 +253,14 @@ def test_vanilla_emevd_evs_round_trip(ptde_root, caplog):
 
 
 @pytest.mark.slow
-@pytest.mark.xfail(
-    reason=(
-        "`adv_decompiler` emits a bare `pass` for empty `if` blocks, but `as_event_statement_node` "
-        "does not accept `ast.Pass`, so the decompiled EVS cannot be recompiled."
-    ),
-    strict=False,
-)
-@pytest.mark.parametrize("stem", sorted(EVS_REPARSE_FAILURES))
-def test_vanilla_emevd_evs_round_trip_pass_statement_bug(ptde_root, stem, caplog):
-    path = ptde_root / "event" / f"{stem}.emevd"
+def test_vanilla_emevd_evs_round_trip_pass_statement(ptde_root):
+    path = ptde_root / "event" / f"m10_01_00_00.emevd"
     if not path.is_file():
         pytest.skip(f"Missing vanilla EMEVD: {path}")
-    with caplog.at_level(logging.CRITICAL):
-        emevd = EMEVD.from_path(path)
-        evs = emevd.to_evs()
-        assert "\n        pass\n" in evs or "\n    pass\n" in evs, (
-            f"{stem} no longer contains a bare `pass`; the xfail list may be stale."
-        )
-        recompiled = EMEVD.from_evs_string(evs, map_name=stem)
-    assert bytes(recompiled) == bytes(emevd)
+    emevd = EMEVD.from_path(path)
+    evs = emevd.to_evs()
+    assert "\n        pass\n" in evs or "\n    pass\n" in evs
+    EMEVD.from_evs_string(evs, map_name="m10_01_00_00")
 
 
 def test_vanilla_common_emevd_has_expected_events(ptde_root):

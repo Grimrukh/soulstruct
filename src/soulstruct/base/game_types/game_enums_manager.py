@@ -88,8 +88,8 @@ class GameEnumsManager(abc.ABC):
     class AmbiguousEnumValueError(EnumManagerError):
         """Indicates a specific enum value was found in multiple NON-STAR modules, and should not be used."""
 
-    # List of `GameObjectInt` types that are valid enum keys (e.g. can appear as EMEVD instruction/event arguments).
-    VALID_GAME_TYPES: dict[GAME_INT_TYPE, dict[int, GameObjectInt]]
+    # Tuple of `GameObjectInt` types that are valid enum keys (e.g. can appear as EMEVD instruction/event arguments).
+    VALID_GAME_TYPES: tuple[GameObjectInt, ...]
 
     # Dictionary of reserved global ID variables like `PLAYER`.
     RESERVED_GLOBAL_IDS: dict[int, str]

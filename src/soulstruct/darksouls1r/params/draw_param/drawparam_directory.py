@@ -11,6 +11,7 @@ from dataclasses import field
 from pathlib import Path
 
 from soulstruct.base.game_file_directory import GameFileDirectory
+from soulstruct.utilities.progress import ProgressCallback, report_progress
 from .drawparambnd import DrawParamBND
 
 _LOGGER = logging.getLogger(__name__)
@@ -110,7 +111,11 @@ class DrawParamDirectory(GameFileDirectory[DrawParamBND], abc.ABC):
         return cls(directory=directory_path, files=files)
 
     def write(
-        self, directory_path: Path | str | None = None, force=False, no_partial_write=True
+        self,
+        directory_path: Path | str | None = None,
+        force=False,
+        no_partial_write=True,
+        progress: ProgressCallback | None = None,
     ) -> list[Path]:
         """Same as `GameFileDirectory`, but reports unknown files and if any DrawParamBNDs are missing."""
         if directory_path is None:
@@ -133,18 +138,21 @@ class DrawParamDirectory(GameFileDirectory[DrawParamBND], abc.ABC):
                 f"{', '.join(all_bnd_stems)}"
             )
 
-        written_paths = self._write(file_paths, force, no_partial_write)
+        written_paths = self._write(file_paths, force, no_partial_write, progress=progress)
         self._log_directory_write(directory_path, len(written_paths))
         return written_paths
 
     @classmethod
-    def from_json_directory(cls, directory: Path | str) -> tp.Self:
+    def from_json_directory(cls, directory: Path | str, progress: ProgressCallback | None = None) -> tp.Self:
         directory = Path(directory)
         files = {}
 
         all_bnd_stems = cls.get_all_file_stems()
+        # `all_bnd_stems` is consumed below, so the progress total is captured first.
+        total = len(all_bnd_stems)
 
-        for bnd_stem in tuple(all_bnd_stems):
+        for i, bnd_stem in enumerate(tuple(all_bnd_stems)):
+            report_progress(progress, i, total, bnd_stem)
             if (bnd_json_directory := directory / bnd_stem).is_dir():
                 drawparambnd = cls.FILE_CLASS.from_json_directory(bnd_json_directory)
             elif (bnd_json := directory / f"{bnd_stem}.json").is_file():
@@ -161,9 +169,16 @@ class DrawParamDirectory(GameFileDirectory[DrawParamBND], abc.ABC):
                 f"{', '.join(all_bnd_stems)}"
             )
 
+        report_progress(progress, total, total, "")
         return cls(directory=directory, files=files)
 
-    def write_json_directory(self, directory: Path | str = None, ignore_pads=True, ignore_defaults=True):
+    def write_json_directory(
+        self,
+        directory: Path | str = None,
+        ignore_pads=True,
+        ignore_defaults=True,
+        progress: ProgressCallback | None = None,
+    ):
         """Write all `DrawParamBND` files into their own nested directories of `DrawParam` JSONs."""
         if directory is None:
             directory = self.directory
@@ -172,7 +187,8 @@ class DrawParamDirectory(GameFileDirectory[DrawParamBND], abc.ABC):
 
         all_bnd_stems = self.get_all_file_stems()
 
-        for file_stem, drawparambnd in self.files.items():
+        for i, (file_stem, drawparambnd) in enumerate(self.files.items()):
+            report_progress(progress, i, len(self.files), file_stem)
             if file_stem in all_bnd_stems:
                 all_bnd_stems.remove(file_stem)
             else:
@@ -180,6 +196,8 @@ class DrawParamDirectory(GameFileDirectory[DrawParamBND], abc.ABC):
                     f"Writing JSON for unknown `DrawParamBND` file found in `{self.__class__.__name__}`: {file_stem}"
                 )
             drawparambnd.write_json_directory(directory / file_stem, ignore_pads, ignore_defaults)
+
+        report_progress(progress, len(self.files), len(self.files), "")
 
     def __getitem__(self, area_name: str) -> DrawParamBND:
         if not area_name.endswith("_DrawParam"):

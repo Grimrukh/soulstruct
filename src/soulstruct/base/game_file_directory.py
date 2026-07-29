@@ -10,6 +10,7 @@ from dataclasses import field
 from pathlib import Path
 
 from soulstruct.utilities.files import create_bak, write_data_to_path
+from soulstruct.utilities.progress import ProgressCallback, report_progress
 from .base_binary_file import BaseBinaryFile
 from .metaclasses import PathDataclassMeta
 
@@ -58,12 +59,18 @@ class GameFileDirectory[BASE_BINARY_FILE_T: BaseBinaryFile](abc.ABC, metaclass=P
 
     @staticmethod
     def _write(
-        paths_instances: dict[Path, BaseBinaryFile], force=False, no_partial_write=True
+        paths_instances: dict[Path, BaseBinaryFile],
+        force=False,
+        no_partial_write=True,
+        progress: ProgressCallback | None = None,
     ) -> list[Path]:
         """Internal write method. Subclasses may determine file paths differently, then call this."""
         packed_files = {}  # type: dict[Path, bytes]
-        for file_path, instance in paths_instances.items():
+        # Packing and writing both count towards one total, so the caller's bar advances monotonically.
+        total = len(paths_instances) * 2
+        for i, (file_path, instance) in enumerate(paths_instances.items()):
             file_path = instance.get_file_path(file_path)
+            report_progress(progress, i, total, file_path.name)
             try:
                 packed_dcx = bytes(instance)
             except Exception as ex:
@@ -76,11 +83,13 @@ class GameFileDirectory[BASE_BINARY_FILE_T: BaseBinaryFile](abc.ABC, metaclass=P
 
         # All files packed successfully (or partial write permitted).
         written_paths = []
-        for file_path, packed_dcx in packed_files.items():
+        for i, (file_path, packed_dcx) in enumerate(packed_files.items()):
+            report_progress(progress, len(paths_instances) + i, total, file_path.name)
             create_bak(file_path)
             if write_data_to_path(packed_dcx, file_path, force=force):
                 written_paths.append(file_path)
 
+        report_progress(progress, total, total, "")
         return written_paths
 
     def _log_directory_write(self, directory_path: Path, file_count: int):
@@ -97,6 +106,7 @@ class GameFileDirectory[BASE_BINARY_FILE_T: BaseBinaryFile](abc.ABC, metaclass=P
         directory_path: Path | str | None = None,
         force: bool = False,
         no_partial_write: bool = True,
+        progress: ProgressCallback | None = None,
     ) -> list[Path]:
         if directory_path is None:
             if self.directory is None:
@@ -109,7 +119,9 @@ class GameFileDirectory[BASE_BINARY_FILE_T: BaseBinaryFile](abc.ABC, metaclass=P
             for file_stem, instance in self.files.items()
         }
 
-        written_paths = self._write(file_paths, force=force, no_partial_write=no_partial_write)
+        written_paths = self._write(
+            file_paths, force=force, no_partial_write=no_partial_write, progress=progress
+        )
         self._log_directory_write(directory_path, len(written_paths))
         return written_paths
 
@@ -184,7 +196,11 @@ class GameFileMapDirectory[BASE_BINARY_FILE_T](GameFileDirectory[BASE_BINARY_FIL
         return cls(directory=directory_path, files=files)
 
     def write(
-        self, directory_path: Path | str | None = None, force=False, no_partial_write=True
+        self,
+        directory_path: Path | str | None = None,
+        force=False,
+        no_partial_write=True,
+        progress: ProgressCallback | None = None,
     ) -> list[Path]:
         """Same as `GameFileDirectory`, but reports unknown files and if any maps are missing."""
         if directory_path is None:
@@ -207,7 +223,7 @@ class GameFileMapDirectory[BASE_BINARY_FILE_T](GameFileDirectory[BASE_BINARY_FIL
                 f"{', '.join(all_map_stems)}"
             )
 
-        written_paths = self._write(file_paths, force, no_partial_write)
+        written_paths = self._write(file_paths, force, no_partial_write, progress=progress)
         if written_paths:
             _LOGGER.info(
                 f"`{self.__class__.__name__}` written to `{directory_path}` successfully "

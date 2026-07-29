@@ -178,11 +178,6 @@ def test_paramdef_field_check_python_type_dummy8():
         f.check_python_type(0)
 
 
-@pytest.mark.xfail(
-    reason="H3: `check_python_type()` uses `isinstance(value, self.display_type)`, but `display_type` "
-           "is a memberless IntEnum/plain class, so every non-dummy8 value is rejected.",
-    strict=False,
-)
 @pytest.mark.parametrize("def_str, value", [("s32 f", 0), ("u8 f", 1), ("f32 f", 1.0)])
 def test_paramdef_field_check_python_type_accepts_valid_values(def_str, value):
     node = _xml_node(f'<Field Def="{def_str}" />')
@@ -256,10 +251,6 @@ def test_paramdef_from_paramdex_xml_missing_paramtype(tmp_path):
         ParamDef.from_paramdex_xml(path)
 
 
-@pytest.mark.xfail(
-    reason="M5: `bool(child.text)` is used for `<BigEndian>`/`<Unicode>`, and `bool('False') is True`.",
-    strict=False,
-)
 def test_paramdef_paramdex_booleans(paramdex_xml_path):
     pd = ParamDef.from_paramdex_xml(paramdex_xml_path)
     assert pd.big_endian is False
@@ -362,11 +353,6 @@ def test_paramdef_internal_names_match_generated_row_class(ptde_paramdefbnd):
     assert list(pd.fields) == list(NPC_PARAM_ST.get_internal_names())
 
 
-@pytest.mark.xfail(
-    reason="M4: `get_py_default()` short-circuits on falsy defaults, so integer fields with a zero "
-           "default keep the float `0.0` from the ParamDef.",
-    strict=False,
-)
 def test_paramdef_integer_default_is_int(ptde_paramdefbnd):
     pd = ptde_paramdefbnd.get_paramdef("NPC_PARAM_ST")
     field = pd["behaviorVariationId"]

@@ -23,7 +23,7 @@ from types import MappingProxyType, ModuleType
 
 from constrata.metadata import *
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.maths import BaseVector, Vector2, Vector3, Vector4, EulerDeg, EulerRad
+from soulstruct.utilities.maths import BaseEuler, BaseVector, Vector2, Vector3, Vector4, EulerDeg, EulerRad
 from soulstruct.utilities.misc import IDList
 from soulstruct.utilities.text import pad_chars
 
@@ -387,6 +387,26 @@ class MSBEntry(abc.ABC):
                 copied_dict[f.name] = copy.deepcopy(value)
 
         return self.from_dict(copied_dict)
+
+    def __deepcopy__(self, memo: dict[int, tp.Any]) -> tp.Self:
+        """Deep copy this entry, *rebuilding* its referring-entry tracker instead of copying it.
+
+        Needed because the default `slots=True` dataclass copy protocol restores slots in an arbitrary order: setting
+        an `MSBEntry`-typed field appends to the *referenced* entry's `referring_entry_fields`, and that entry may
+        still be a bare `cls.__new__(cls)` shell with no slots assigned yet, which raised `AttributeError` on the
+        name-mangled `__referring_entry_fields` slot. Assigning that slot first, before any other field, removes the
+        ordering dependency.
+
+        The tracker is not copied. It is repopulated naturally as `__setattr__` records each reference in the copied
+        graph, which is the only way to get trackers that point at the *copies* rather than the originals.
+        """
+        cls = self.__class__
+        new_entry = cls.__new__(cls)
+        memo[id(self)] = new_entry  # registered before recursion, so reference cycles resolve to this copy
+        new_entry.__referring_entry_fields = []
+        for f in self.get_entry_fields():
+            setattr(new_entry, f.name, copy.deepcopy(getattr(self, f.name), memo))
+        return new_entry
 
     @classmethod
     def get_field_names(cls, visible_only=False) -> tuple[str, ...]:
@@ -766,6 +786,24 @@ class MSBEntry(abc.ABC):
                             f"field `{self.cls_name}.{field_name}`, not: {value}"
                         )
                     super(MSBEntry, self).__setattr__(key, vector_value)
+                    return
+
+                if field_type in {"EulerDeg", "EulerRad"}:
+                    euler_type = {"EulerDeg": EulerDeg, "EulerRad": EulerRad}[field_type]
+                    if isinstance(value, BaseEuler):
+                        # Wrong `BaseEuler` unit: convert rather than reinterpret.
+                        euler_value = value.to_rad() if euler_type is EulerRad else value.to_deg()
+                    else:
+                        # Any three-element sequence (including `Vector3`) is taken to already be in this field's
+                        # unit, which is what makes `rotate=[0.0, 90.0, 0.0]` work like `translate=[...]` does.
+                        try:
+                            euler_value = euler_type(value)
+                        except (ValueError, TypeError):
+                            raise ValueError(
+                                f"Can only assign three-element sequences or `BaseEuler` instances to `{field_type}` "
+                                f"field `{self.cls_name}.{field_name}`, not: {value}"
+                            )
+                    super(MSBEntry, self).__setattr__(key, euler_value)
                     return
 
                 if field_type in {"bool", "int", "float", "str"}:

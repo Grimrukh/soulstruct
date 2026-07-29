@@ -12,6 +12,7 @@ classes for other tests in the same session.
 from __future__ import annotations
 
 import copy
+import math
 from dataclasses import dataclass, field
 
 import pytest
@@ -29,7 +30,7 @@ from soulstruct.base.maps.msb.msb_entry import (
 )
 from soulstruct.base.maps.msb.region_shapes import BoxShape, PointShape, RegionShapeType, SphereShape
 from soulstruct.base.maps.msb.utils import BitSet128, BitSet256, MSBBrokenEntryReference
-from soulstruct.utilities.maths import EulerDeg, Vector2, Vector3, Vector4
+from soulstruct.utilities.maths import EulerDeg, EulerRad, Vector2, Vector3, Vector4
 from soulstruct.utilities.misc import IDList
 
 
@@ -363,6 +364,68 @@ def test_copy_shallow_copies_entry_references_and_deep_copies_values():
     assert part.counts[0] == 1
 
 
+def test_deepcopy_rebuilds_referring_entry_tracker():
+    """`copy.deepcopy` on an entry graph must rebuild the referrer tracker, not copy it.
+
+    The default `copy._reconstruct` path used to fail outright: it `setattr`s slots in arbitrary
+    order, and `MSBEntry.__setattr__` appends to the *referenced* entry's tracker, which may still
+    be a bare `cls.__new__(cls)` shell with no tracker slot assigned yet.
+    """
+    model = MSBFakeModel(name="m0")
+    region = MSBFakeRegion(name="r0")
+    part = _new_part(name="p0", model=model)
+    part.patrol_regions = [region]
+
+    part2 = copy.deepcopy(part)
+
+    assert part2 is not part
+    assert part2.model is not model and part2.model.name == "m0"
+    assert part2.patrol_regions[0] is not region
+    # The copy's referrers point at the *copies*, and the originals are untouched.
+    assert [ref.referrer for ref in part2.model.referring_entry_fields] == [part2]
+    assert [ref.referrer for ref in model.referring_entry_fields] == [part]
+    # `MSBEntry.__eq__` compares by name, so also assert identity explicitly.
+    assert part2.model.referring_entry_fields[0].referrer is part2
+    assert model.referring_entry_fields[0].referrer is part
+
+
+def test_deepcopy_of_entry_list_preserves_subtype_state():
+    """`IDList.copy()`/`__setstate__` must preserve subclass `__dict__`, or a deep-copied
+    `MSBEntryList` loses `supertype`/`entry_class` and the MSB can no longer be packed."""
+    entries = IDList([MSBFakeModel(name="m0"), MSBFakeModel(name="m1")])
+    entries.supertype = "MODEL_PARAM_ST"  # stand-in for `MSBEntryList` subclass state
+
+    for duplicate in (entries.copy(), copy.deepcopy(entries)):
+        assert type(duplicate) is type(entries)
+        assert duplicate.supertype == "MODEL_PARAM_ST"
+        assert [e.name for e in duplicate] == ["m0", "m1"]
+        # `_index_dict` is keyed by `id()`, so it must be rebuilt for the new items.
+        assert duplicate.index(duplicate[1]) == 1
+
+
+@pytest.mark.parametrize("value", [[10.0, 20.0, 30.0], (10.0, 20.0, 30.0), Vector3((10, 20, 30))])
+def test_setattr_coerces_sequences_to_euler_fields(value):
+    """`rotate` fields are annotated `EulerDeg` but callers pass plain sequences everywhere."""
+    part = _new_part()
+    part.rotate = value
+    assert isinstance(part.rotate, EulerDeg)
+    assert tuple(part.rotate) == (10.0, 20.0, 30.0)
+
+
+def test_setattr_converts_euler_units():
+    """Assigning `EulerRad` to an `EulerDeg` field converts rather than silently storing radians."""
+    part = _new_part()
+    part.rotate = EulerRad((0.0, math.pi, 0.0))
+    assert isinstance(part.rotate, EulerDeg)
+    assert part.rotate[1] == pytest.approx(180.0)
+
+
+def test_setattr_rejects_wrong_length_sequence_for_euler_field():
+    part = _new_part()
+    with pytest.raises(ValueError):
+        part.rotate = [1.0, 2.0]
+
+
 def test_eq_compares_references_by_name():
     m1, m2 = MSBFakeModel(name="m0"), MSBFakeModel(name="m0")
     a = _new_part(model=m1)
@@ -516,29 +579,6 @@ def test_consume_index_twice_raises():
     part.indices_to_objects(entry_lists)
     with pytest.raises(TypeError):
         part.indices_to_objects(entry_lists)
-
-
-def test_bitset_field_with_set_default_factory_breaks_ignore_defaults():
-    """`BaseMSBPart` declares `draw_groups: BIT_SET_T = field(default_factory=set)`.
-
-    `get_default_values()` returns the *raw* factory output (an empty `set`), but `__setattr__`
-    converts assigned values to `BitSet`, and `BitSet128() != set()`. Any game subclass that does
-    not override the default factory will therefore always serialise its group fields, even when
-    empty. (DS1/ER override it with `BitSet128.all_off`; Bloodborne does not.)
-    """
-
-    @dataclass(slots=True, eq=False, repr=False)
-    class MSBSetDefaultPart(MSBEntry):
-        NAME_ENCODING = "utf-8"
-        SUPERTYPE_ENUM = MSBSupertype.PARTS
-        SUBTYPE_ENUM = FakePartSubtype.OtherPart
-        STRUCTS = {}
-        draw_groups: BitSet128 = field(default_factory=set)
-
-    part = MSBSetDefaultPart(name="p")
-    assert isinstance(part.draw_groups, BitSet128)
-    assert MSBSetDefaultPart.get_default_values()["draw_groups"] == set()
-    assert "draw_groups" in part.to_dict(ignore_defaults=True)
 
 
 def test_try_index_round_trips_single_and_array():

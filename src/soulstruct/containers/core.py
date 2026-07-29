@@ -513,6 +513,8 @@ class Binder(BaseBinaryFile):
                 f"containing one."
             )
         manifest = read_json(manifest_path, encoding="shift-jis")
+        if not isinstance(manifest, dict):
+            raise ValueError("Binder manifest JSON top-level object must be a dictionary.")
         manifest = cls.process_manifest_header(manifest)
 
         # 'entries' is a dictionary mapping entry path roots to either (a) entry dictionaries containing 'flags', 'id',

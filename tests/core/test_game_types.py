@@ -163,13 +163,6 @@ def test_game_object_int_meta_rejects_unknown_kwargs():
             A = enum.auto()
 
 
-@pytest.mark.xfail(
-    reason="BUG: the `max_count` guard in `GameObjectIntMeta.__prepare__._generate_next_value_` formats "
-           "`cls.__name__`, but `cls` there is the class NAME STRING passed to `__prepare__`. Exceeding "
-           "`max_count` raises `AttributeError: 'str' object has no attribute '__name__'` instead of the "
-           "intended, informative `ValueError`.",
-    strict=False,
-)
 def test_game_object_int_meta_max_count_raises_value_error():
     with pytest.raises(ValueError):
         class Things(GameObjectInt, first_value=1000, max_count=2):
@@ -301,20 +294,10 @@ def test_supertype_subtype_names(game_type, singular, plural):
     assert supertype in {"Models", "Events", "Regions", "Parts"}
 
 
-@pytest.mark.xfail(
-    reason="BUG: `NavmeshModel.get_msb_entry_supertype_subtype(True)` returns the typo 'NavmesheModels' "
-           "instead of 'NavmeshModels'.",
-    strict=False,
-)
 def test_navmesh_model_plural_typo():
     assert NavmeshModel.get_msb_entry_supertype_subtype(True) == ("Models", "NavmeshModels")
 
 
-@pytest.mark.xfail(
-    reason="BUG: `DummyAsset.get_msb_entry_supertype_subtype` is a copy-paste of `DummyObject`'s and returns "
-           "'DummyObject'/'DummyObjects' instead of 'DummyAsset'/'DummyAssets'.",
-    strict=False,
-)
 def test_dummy_asset_subtype_names():
     assert DummyAsset.get_msb_entry_supertype_subtype() == ("Parts", "DummyAsset")
     assert DummyAsset.get_msb_entry_supertype_subtype(True) == ("Parts", "DummyAssets")
@@ -391,10 +374,9 @@ def test_map_no_map():
     assert tuple(m) == (0, 0, 0, 0)
 
 
-def test_map_base_flag_is_a_short_prefix_not_a_full_flag():
-    """GOTCHA: despite the field docstring's '11020000' example, `base_flag` is computed as a 4-digit prefix."""
+def test_map_default_base_flag_is_correct():
     m = Map(10, 2)
-    assert m.base_flag == 1102
+    assert m.base_flag == 11020000
 
 
 def test_map_explicit_base_flag_is_respected():

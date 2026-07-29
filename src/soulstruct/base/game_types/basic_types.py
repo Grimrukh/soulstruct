@@ -95,7 +95,7 @@ class GameObjectIntMeta(EnumMeta):
         # noinspection PyUnusedLocal
         def _generate_next_value_(name, start, count, last_values):
             if max_count is not None and count >= max_count:
-                raise ValueError(f"Max count {max_count} exceeded for `auto()` values in `{cls.__name__}`.")
+                raise ValueError(f"Max count {max_count} exceeded for `auto()` values in `{cls}`.")
             return first_value + count
 
         enum_dict["_generate_next_value_"] = _generate_next_value_

@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added this Changelog (with rough collected history).
 - `ARMOR_SETS` constants for DS1.
 - `write_data_to_file`, `sync_file`, `sync_directory` functions with smart diffing.
+- `ProgressCallback` optional argument added to large classes (e.g. directories).
+- Added `default` field to `ParamFieldMetadata`.
 
 ### Changed
 - Minimum Python version raised to 3.13.
@@ -67,11 +69,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fixed `EnumModuleGenerator` for Regions with no subtyping.
 - Fixed missing data files in built Python wheel.
 - Fixed MANY assorted bugs across EMEVD, ESD, Param.
+- Fixed `goals/unknown_scripts` initialization in LuaBND from `from_unpacked_path()`.
+- Fixed referrer entry tracking copying for `MSBEntry` deep copy.
 
 ### Removed
 - Removed placeholder DeSR (Demon's Souls Remastered) support stub.
 - Removed support for Python < 3.13.
 - Removed vanilla EVS scripts/enums (moved to `soulstruct-vanilla` repo).
+- Removed `ParamDict` fallback class; `ParamRow` types MUST be complete/valid for game support.
 
 ---
 

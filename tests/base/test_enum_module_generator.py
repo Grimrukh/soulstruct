@@ -300,14 +300,6 @@ def test_output_path_defaults_to_msb_directory(ptde_msb_path, tmp_path):
     assert (tmp_path / f"{MAP_STEM}_enums.py").is_file()
 
 
-@pytest.mark.xfail(
-    reason=(
-        "`EnumModuleGenerator.__init__` does `self.path.name` unconditionally when `map_stem` is "
-        "not given, so an in-memory MSB (path `None`) raises `AttributeError` instead of a clear "
-        "`ValueError` like the one `write_enums_module` raises for the same situation."
-    ),
-    strict=False,
-)
 def test_pathless_msb_without_map_stem_raises_value_error(msb):
     with pytest.raises(ValueError):
         EnumModuleGenerator(msb)

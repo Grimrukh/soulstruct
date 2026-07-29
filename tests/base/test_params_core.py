@@ -130,6 +130,21 @@ def test_param_row_internal_names_and_metadata():
     assert TOY_PARAM_ST.get_field_metadata("_Pad0").is_pad is True
 
 
+def test_param_field_metadata_records_paramdef_default():
+    """`ParamField(default=...)` is recorded on the metadata so callers (e.g. GUIs highlighting
+    modified values) don't have to guess what "unmodified" means."""
+    metadata = TOY_PARAM_ST.get_all_field_metadata()
+    assert metadata["Alpha"].default == 0
+    assert metadata["Beta"].default == pytest.approx(1.5)
+    assert metadata["FlagA"].default is False
+    assert metadata["FlagB"].default is True
+    # Padding fields have no explicit `default=`, but still get their real default recorded.
+    assert metadata["_BitPad0"].default == 0
+    assert metadata["_Pad0"].default == b"\0\0\0"
+    # Every field must have a default: the row can be constructed with no arguments at all.
+    assert all(meta.default is not None for meta in metadata.values())
+
+
 def test_param_row_metadata_cached():
     a = TOY_PARAM_ST.get_all_field_metadata()
     b = TOY_PARAM_ST.get_all_field_metadata()
@@ -540,6 +555,32 @@ def test_ptde_gameparambnd_json_directory_roundtrip(ptde_gameparambnd, tmp_path)
     assert set(reloaded.params) == set(ptde_gameparambnd.params)
     for stem, param in ptde_gameparambnd.params.items():
         assert_bytes_equal(bytes(reloaded.params[stem]), bytes(param), f"{stem} via JSON directory")
+
+
+def test_ptde_gameparambnd_json_directory_reports_progress(ptde_gameparambnd, tmp_path):
+    """Directory-wide operations accept an optional `progress` callback (see `utilities.progress`)."""
+    from soulstruct.darksouls1ptde.params import GameParamBND
+
+    write_calls = []
+    ptde_gameparambnd.write_json_directory(
+        tmp_path / "gp", progress=lambda *call: write_calls.append(call)
+    )
+    read_calls = []
+    GameParamBND.from_json_directory(tmp_path / "gp", progress=lambda *call: read_calls.append(call))
+
+    for calls in (write_calls, read_calls):
+        assert calls, "no progress reported"
+        totals = {total for _, total, _ in calls}
+        assert len(totals) == 1, f"`total` changed mid-operation: {totals}"
+        total = totals.pop()
+        currents = [current for current, _, _ in calls]
+        assert currents == sorted(currents), "`current` must not go backwards"
+        assert currents[0] == 0, "first call reports 0 completed items"
+        assert currents[-1] == total, "last call reports the batch as finished"
+        assert all(isinstance(label, str) for _, _, label in calls)
+
+    # Both directions cover the same params, so they report the same number of items.
+    assert {total for _, total, _ in write_calls} == {total for _, total, _ in read_calls}
 
 
 def test_ptde_gameparambnd_entry_autogen_and_write(ptde_gameparambnd, tmp_path):

@@ -30,7 +30,6 @@ class BaseVector(abc.ABC):
     _RE_FROM_REPR = re.compile(r"^(\w+)\((.+)\)$")  # e.g. "Vector3(1, 2, 3)"
 
     LENGTH: tp.ClassVar[int]
-    REPR_PRECISION: tp.ClassVar[int] = 5
 
     _data: np.ndarray
 
@@ -44,8 +43,8 @@ class BaseVector(abc.ABC):
         arr.flags.writeable = False
         object.__setattr__(self, "_data", arr)
 
-    def __array__(self, dtype=None):
-        return self._data if dtype is None else self._data.astype(dtype, copy=False)
+    def __array__(self, dtype=None, copy=None):
+        return self._data if dtype is None else self._data.astype(dtype, copy=copy)
 
     # READ-ONLY
 

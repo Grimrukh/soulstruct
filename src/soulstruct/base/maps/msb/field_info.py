@@ -673,7 +673,7 @@ FIELD_INFO = {
     ),
 
     # DS1
-    "NPCInvasion[base_region_name]": (
+    "NPCInvasion[attached_region]": (
         "Invasion Region",
         "Region in which NPC Invasion event can be triggered (e.g. with Black Eye Orb).",
     ),
@@ -684,10 +684,6 @@ FIELD_INFO = {
     "NPCInvasion[invasion_flag_id]": (
         "Invasion Flag",
         "Flag that is enabled while the invasion is active, which should trigger changes to the world.",
-    ),
-    "NPCInvasion[spawn_point_region_name]": (
-        "Spawn Point Region",
-        "Region where player will spawn during invasion event.",
     ),
     "NPCInvasion[activate_good_id]": (
         "Activate Good ID",

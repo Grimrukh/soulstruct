@@ -88,7 +88,7 @@ class EVSParser(abc.ABC):
 
         if self.name is not None and (map_id_match := MAP_ID_RE.match(self.name)):
             area, block = map_id_match.groups()
-            self.map_base_flag = 10000000 + int(area) * 100000 + int(block) * 10000  # e.g. 11020000 for m10_02
+            self.map_base_flag = 1000_0000 + int(area) * 10_0000 + int(block) * 1_0000  # e.g. "m10_02" -> 1102_0000
         else:
             self.map_base_flag = None
 

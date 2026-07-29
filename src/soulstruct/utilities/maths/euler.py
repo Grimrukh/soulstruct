@@ -38,7 +38,6 @@ class BaseEuler(abc.ABC):
 
     __array_priority__ = 1000  # for numpy array operations
     _RE_FROM_REPR: tp.ClassVar[re.Pattern] = re.compile(r"^(\w+)\((.+)\)$")  # e.g. "EulerDeg(1, 2, 3)"
-    REPR_PRECISION: tp.ClassVar[int] = 5
     ORDER = "XZY"
 
     _data: np.ndarray

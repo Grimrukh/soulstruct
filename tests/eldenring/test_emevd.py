@@ -228,7 +228,7 @@ def test_evs_string_compiles_minimal_script():
 
 
 def test_evs_rejects_duplicate_event_ids():
-    from soulstruct.base.events.emevd.exceptions import EMEVDError
+    from soulstruct.base.events.evs.exceptions import EVSSyntaxError
 
     evs = (
         "from soulstruct.eldenring.events import *\n"
@@ -249,7 +249,7 @@ def test_evs_rejects_duplicate_event_ids():
         '    """1000"""\n'
         "    End()\n"
     )
-    with pytest.raises(EMEVDError):
+    with pytest.raises(EVSSyntaxError):
         EMEVD.from_evs_string(evs, map_name="m10_00_00_00")
 
 

@@ -14,6 +14,7 @@ from soulstruct.containers import Binder, BinderEntry
 from soulstruct.exceptions import SoulstructError
 from soulstruct.utilities.files import read_json, write_json
 from soulstruct.utilities.misc import BiDict
+from soulstruct.utilities.progress import ProgressCallback, report_progress
 
 from .param import Param, TypedParam
 
@@ -141,7 +142,7 @@ class GameParamBND(Binder, abc.ABC):
         return data
 
     @classmethod
-    def from_json_directory(cls, directory: Path | str) -> tp.Self:
+    def from_json_directory(cls, directory: Path | str, progress: ProgressCallback | None = None) -> tp.Self:
         """Load individual Param JSON files from an unpacked Binder folder (e.g. produced by `write_json_directory()`).
 
         The stems of the Param JSON files to be loaded from the folder are recorded in the `entries` key of the
@@ -161,7 +162,9 @@ class GameParamBND(Binder, abc.ABC):
             raise ValueError(f"`entries` key not in `GameParamBND` JSON manifest: {manifest_path}")
 
         manifest["params"] = {}
-        for json_stem in manifest.pop("entries"):
+        json_stems = list(manifest.pop("entries"))
+        for i, json_stem in enumerate(json_stems):
+            report_progress(progress, i, len(json_stems), json_stem)
             param_stem = cls.PARAM_NICKNAMES[json_stem]  # JSON nickname stem -> internal stem
             param_dict = read_json(directory / f"{json_stem}.json")
             try:
@@ -173,11 +176,18 @@ class GameParamBND(Binder, abc.ABC):
             typed_param_class = TypedParam(row_type)
             manifest["params"][param_stem] = typed_param_class.from_dict(param_dict)
 
+        report_progress(progress, len(json_stems), len(json_stems), "")
         gameparambnd = cls.from_dict(manifest)
         gameparambnd.path = directory  # TODO: auto-detect better default path, e.g. for binary?
         return gameparambnd
 
-    def write_json_directory(self, directory: Path | str, ignore_pads=True, ignore_defaults=True):
+    def write_json_directory(
+        self,
+        directory: Path | str,
+        ignore_pads=True,
+        ignore_defaults=True,
+        progress: ProgressCallback | None = None,
+    ):
         """Write a folder containing a `GameParamBND_manifest.json` file with standard `Binder` header information and
         a list of Param JSON file stems to load from the same folder.
 
@@ -189,11 +199,13 @@ class GameParamBND(Binder, abc.ABC):
         manifest.pop("use_id_prefix")
         manifest["entries"] = []
 
-        for param_stem, param in self.params.items():
+        for i, (param_stem, param) in enumerate(self.params.items()):
             json_stem = self.PARAM_NICKNAMES[param_stem]
+            report_progress(progress, i, len(self.params), json_stem)
             param.write_json(directory / f"{json_stem}.json", ignore_pads=ignore_pads, ignore_defaults=ignore_defaults)
             manifest["entries"].append(json_stem)
 
+        report_progress(progress, len(self.params), len(self.params), "")
         write_json(directory / "GameParamBND_manifest.json", manifest)
 
     def get_param(self, param_name: str) -> Param:

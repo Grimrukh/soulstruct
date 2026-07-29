@@ -17,7 +17,7 @@ import abc
 import ast
 import logging
 import typing as tp
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, MISSING
 from types import MappingProxyType
 
 from soulstruct.base.game_types import GAME_INT_TYPE
@@ -148,6 +148,9 @@ class ParamRow(BinaryStruct):
                 if not metadata.game_type:
                     # Set `game_type` from type hint if not set explicitly in `ParamRow` subclass.
                     metadata.game_type = field_types[f.name]
+                if metadata.default is None and f.default is not MISSING:
+                    # Backfill from the `dataclasses` default, so the two can never disagree.
+                    metadata.default = f.default
                 field_metadata[f.name] = metadata
             cls._FIELD_PARAM_METADATA = MappingProxyType(field_metadata)
 
@@ -256,6 +259,10 @@ class ParamFieldMetadata:
     dynamic_callback: DynamicParamField | None = None
     tooltip: str = "TOOLTIP-TODO"
     is_pad: bool = False
+    # Value this field has in the game's `ParamDef`, i.e. the value a brand-new row of this type gets. Mirrors the
+    # `dataclasses.Field.default` that `ParamField()` sets, so consumers with only the metadata (the GUI, which dims
+    # untouched fields) don't have to reach back into `dataclasses.fields()`. `None` means "not recorded".
+    default: tp.Any = None
 
     def get_display_type(self) -> type:
         """Prefers `param_enum` to `game_type`, but redirects basic BOOL enums to Python `bool`."""
@@ -300,6 +307,7 @@ def ParamField(
             hide=hide,
             dynamic_callback=dynamic_callback,
             tooltip=tooltip,
+            default=default,
         ),
     }
 
@@ -319,6 +327,7 @@ def ParamPad(size: int, internal_name: str):
             dynamic_callback=None,
             tooltip=f"Null padding ({size} bytes).",
             is_pad=True,
+            default=b"\0" * size,
         ),
     }
     return field(default=b"\0" * size, **metadata)
@@ -337,6 +346,7 @@ def ParamBitPad(field_type: type[PRIMITIVE_FIELD_TYPING], internal_name: str, bi
             hide=True,
             dynamic_callback=None,
             tooltip=f"Null padding ({bit_count} bits).",
+            default=0,
         ),
     }
     return field(default=0, **metadata)

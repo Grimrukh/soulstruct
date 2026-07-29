@@ -44,35 +44,34 @@ class LuaBND(Binder):
     pack_luainfo: bool = True
     pack_luagnl: bool = True
 
-    @classmethod
-    def from_reader(cls, reader: BinaryReader, bdt_reader: BinaryReader | None = None) -> tp.Self:
-        if bdt_reader is not None:
-            raise TypeError("Cannot read `LuaBND` from a split `BXF` file.")
+    def load_from_entries(self):
+        """Load goals and unknown scripts from current Binder entries.
 
-        luabnd = tp.cast(tp.Self, super(LuaBND, cls).from_reader(reader))
+        Called from `from_reader()` and `from_unpacked_path()` overrides.
+        """
 
         # Load goals and unknown scripts.
         try:
-            info_entry = luabnd.find_entry_by_id(1000001)
+            info_entry = self.find_entry_by_id(1000001)
         except KeyError:
             # TODO: 'eventCommon.luabnd' has no '.luainfo' file. Not handling this yet.
             pass
         else:
             # Load initial goals from `LuaInfo`. We will still scan below for other 'loose' goals and files.
-            luabnd.goals = info_entry.to_binary_file(LuaInfo).goals
+            self.goals = info_entry.to_binary_file(LuaInfo).goals
 
-        for entry in luabnd.entries:
+        for entry in self.entries:
             goal_match = _GOAL_SCRIPT_RE.match(entry.name)
             if goal_match:
                 goal_id, goal_type = goal_match.group(1, 2)
                 goal_id = int(goal_id)
-                luabnd.load_goal_entry(entry, goal_id, GoalType(goal_type))
+                self.load_goal_entry(entry, goal_id, GoalType(goal_type))
             elif entry.entry_id not in {1000000, 1000001}:
                 lua_match = _LUA_SCRIPT_RE.match(entry.name)
                 if not lua_match:
                     _LOGGER.warning(f"Found non-Lua file with BND path '{entry.path}'. File will be ignored.")
                     continue
-                for goal in luabnd.goals:
+                for goal in self.goals:
                     # Try to find existing goal from `LuaInfo`.
                     snake_name = _SNAKE_CASE_RE.sub("_", goal.goal_name).lower()
                     if lua_match.group(1) == snake_name:
@@ -81,10 +80,23 @@ class LuaBND(Binder):
                         break
                 else:
                     # Unknown Lua script file.
-                    luabnd.unknown_scripts.append(LuaUnknownScript(bytecode=bytes(entry), name=entry.stem))
+                    self.unknown_scripts.append(LuaUnknownScript(bytecode=bytes(entry), name=entry.stem))
 
         # TODO: Not sorting goals by default, as their order in the LuaBND does appear to matter for loading.
         # self.sort_goals()
+
+    @classmethod
+    def from_reader(cls, reader: BinaryReader, bdt_reader: BinaryReader | None = None) -> tp.Self:
+        if bdt_reader is not None:
+            raise TypeError("Cannot read `LuaBND` from a split `BXF` file.")
+        luabnd = tp.cast(tp.Self, super(LuaBND, cls).from_reader(reader))
+        luabnd.load_from_entries()
+        return luabnd
+
+    @classmethod
+    def from_unpacked_path(cls, path: str | Path) -> tp.Self:
+        luabnd = tp.cast(tp.Self, super(LuaBND, cls).from_unpacked_path(path))
+        luabnd.load_from_entries()
         return luabnd
 
     def sort_goals(self, key: tp.Callable[[LuaGoalScript], tp.Any] | None = None):

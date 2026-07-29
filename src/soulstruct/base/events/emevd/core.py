@@ -53,8 +53,8 @@ class EMEVDHeaderStruct(BinaryStruct):
     base_arg_data_offset: varuint
     packed_strings_size: varuint
     packed_strings_offset: varuint
-    # TODO: only in 32-bit versions (PTDE, DSR). Can maybe just do a `pad_align(8)` to save the struct subclasses.
-    # _pad2: bytes = binary_pad(4)
+    # 32-bit headers (DeS, PTDE, DSR) have a 4-byte alignment pad here, but we always seek immediately
+    # after reading the header, so don't need the special cases.
 
 
 class EMEVD(GameFile, abc.ABC):
@@ -124,14 +124,13 @@ class EMEVD(GameFile, abc.ABC):
         script_directory: Path | str | None = None,
         common_func_evs: EVSParser | None = None,
     ) -> tp.Self:
-        try:
-            parser = cls.EVS_PARSER(
-                evs_string, name=map_name, script_directory=script_directory, common_func_evs=common_func_evs
-            )
-        except Exception as ex:
-            import traceback
-            traceback.print_exc()
-            raise EMEVDError(f"Error occurred while parsing EVS string: {ex}") from ex
+        """Load an `EMEVD` from an EVS script string, using a new EVS parser instance.
+
+        Raises an `EVSError` (or subclass thereof) if parsing fails.
+        """
+        parser = cls.EVS_PARSER(
+            evs_string, name=map_name, script_directory=script_directory, common_func_evs=common_func_evs
+        )
         return cls.from_evs_parser(parser)
 
     @classmethod

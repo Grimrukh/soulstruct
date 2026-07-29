@@ -55,6 +55,7 @@ __all__ = [
     "CollisionTyping",
     "AnimatedEntityTyping",
     "CoordEntityTyping",
+    "LightEventTyping",
     "SoundEventTyping",
     "NavigationEventTyping",
     "EnvironmentEventTyping",
@@ -131,9 +132,9 @@ class Map(GameObject):
 
             # We can set defaults for base entity ID and base flag from area and block IDs.
             if self.base_entity_id == 0:
-                self.base_entity_id = 100000 * self.area_id + 10000 * self.block_id
+                self.base_entity_id = self.area_id * 10_0000 + self.block_id * 1_0000
             if self.base_flag == 0:
-                self.base_flag = 1000 + 10 * self.area_id + self.block_id
+                self.base_flag = 1000_0000 + self.area_id * 10_0000 + self.block_id * 1_0000  # e.g. 11020000 for m10_02
         else:
             self.map_stem = None
 
@@ -272,7 +273,7 @@ class NavmeshModel(MapModel):
     """Navmesh model (e.g. n0000)."""
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
-        return ("Models", "NavmesheModels") if pluralized_subtype else ("Models", "NavmeshModel")
+        return ("Models", "NavmeshModels") if pluralized_subtype else ("Models", "NavmeshModel")
 # endregion
 
 
@@ -512,10 +513,10 @@ class DummyObject(Object):
 
 
 class DummyAsset(Asset):
-    """Unused (or cutscene-only) asset in MSB."""
+    """Unused (or cutscene-only) asset in MSB (later games)."""
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
-        return ("Parts", "DummyObjects") if pluralized_subtype else ("Parts", "DummyObject")
+        return ("Parts", "DummyAssets") if pluralized_subtype else ("Parts", "DummyAsset")
 
 
 class DummyCharacter(Character):

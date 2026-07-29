@@ -79,12 +79,11 @@ def test_map_stems_are_well_formed():
 
 
 def test_base_entity_ids_and_flags():
-    """DS1 convention: base entity ID is `aa * 100000 + bb * 10000`; base flag is `1000 + 10 * aa + bb`."""
     for game_map in ALL_MAPS:
         if game_map in NON_ASSET_MAPS:
             continue
         assert game_map.base_entity_id == 100000 * game_map.area_id + 10000 * game_map.block_id
-        assert game_map.base_flag == 1000 + 10 * game_map.area_id + game_map.block_id
+        assert game_map.base_flag == 10000000 + 100000 * game_map.area_id + 10000 * game_map.block_id
 
 
 def test_darkroot_garden_uses_dlc_msb():

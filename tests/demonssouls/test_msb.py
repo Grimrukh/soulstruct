@@ -380,13 +380,6 @@ def test_new_light_event_with_point_creates_region():
     assert msb.regions[0].name == "_LightEvent_light0"
 
 
-@pytest.mark.xfail(
-    reason="BUG: `MSB.new_light_event_with_point` guards against the key 'base_region_name' "
-           "(demonssouls/maps/msb.py:383) but actually assigns `attached_region`; the other "
-           "`new_*_with_*` helpers correctly guard `attached_region`. Passing `attached_region=` "
-           "silently has its value overwritten instead of raising.",
-    strict=False,
-)
 def test_new_light_event_with_point_rejects_attached_region_kwarg():
     msb = MSB()
     with pytest.raises(KeyError):
@@ -504,15 +497,8 @@ def test_map_studio_directory_loads(des_root):
     assert directory.files
 
 
-@pytest.mark.xfail(
-    reason="BUG: the `MSB.new_*_with_*` helpers are all annotated "
-           "`rotate: EulerDeg | tuple[float, float, float] | list[float]`, but "
-           "`MSBEntry.__setattr__` only auto-converts sequences for `Vector2/3/4` field types -- "
-           "not `EulerDeg` -- so passing a tuple raises "
-           "`ValueError: Could not set/convert value ... MSBRegion.rotate` "
-           "(base/maps/msb/msb_entry.py:756-767).",
-    strict=False,
-)
 def test_new_light_event_accepts_tuple_rotate_as_annotated():
+    """The `MSB.new_*_with_*` helpers annotate `rotate` as `EulerDeg | tuple | list`, and
+    `MSBEntry.__setattr__` now coerces sequences for euler field types as well as vectors."""
     msb = MSB()
     msb.new_light_event_with_point((0.0, 0.0, 0.0), (0.0, 0.0, 0.0), name="light0")

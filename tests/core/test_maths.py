@@ -233,11 +233,6 @@ def test_vector_repr_roundtrip_single_max():
     assert Vector3.from_repr(repr(v)) == v
 
 
-@pytest.mark.xfail(
-    reason="BUG: `BaseVector.__init__` calls `arr.flags.writeable = False` on a NumPy array it does not own "
-           "(`np.asarray` does not copy float64 input), permanently freezing the CALLER's array.",
-    strict=False,
-)
 def test_vector_construction_does_not_freeze_source_array():
     source = np.array([1.0, 2.0, 3.0])
     Vector3(source)
@@ -464,11 +459,6 @@ def test_ndarray_matmul_matrix3_is_unsupported():
         _ = np.identity(3) @ a
 
 
-@pytest.mark.xfail(
-    reason="BUG: `@dataclass(slots=True)`-generated `Matrix3.__eq__` compares NumPy arrays, returning an array "
-           "instead of a bool; `bool(m1 == m2)` raises 'truth value of an array is ambiguous'.",
-    strict=False,
-)
 def test_matrix3_equality_returns_bool():
     assert bool(Matrix3.identity() == Matrix3.identity()) is True
     assert bool(Matrix3.identity() == Matrix3.zero()) is False

@@ -233,8 +233,10 @@ class IDList[ELEMENT_T]:
             return self._index_dict[item_id]
         raise ValueError(f"Item `{item.name}` (ID {item_id}) is not in `IDList`.")
 
-    def copy(self) -> IDList[ELEMENT_T]:
-        new_list = IDList()
+    def copy(self) -> tp.Self:
+        new_list = self.__class__.__new__(self.__class__)
+        # Subclass attributes (e.g. `MSBEntryList.supertype`) must survive the copy.
+        new_list.__dict__.update(self.__dict__)
         new_list._list = self._list.copy()
         new_list._index_dict = self._index_dict.copy()
         new_list._size = self._size
@@ -283,12 +285,17 @@ class IDList[ELEMENT_T]:
         return hash(tuple(self._index_dict))
 
     def __setstate__(self, state):
-        """We need to reconstruct the index dictionary from the list."""
-        self._list = state["_list"]
-        self._index_dict = state["_index_dict"]
-        self._size = state["_size"]
-        # Refresh indices in dict.
+        """Restore all attributes, then rebuild the index dictionary.
+
+        The unpickled/copied `_index_dict` is keyed by the *source* objects' `id()` values, which mean nothing in this
+        process (and may even have been reused), so it must be regenerated from the restored list. Everything else in
+        `state` is restored verbatim so that subclass attributes — e.g. `MSBEntryList.supertype` and `entry_class` —
+        survive `copy.deepcopy()` and pickling.
+        """
+        self.__dict__.update(state)
+        self._list = list(state["_list"])
         self._index_dict = {id(item): i for i, item in enumerate(self._list)}
+        self._size = len(self._list)
 
     def __repr__(self) -> str:
         return f"IDList({self._list})"

@@ -11,11 +11,11 @@ from .euler import BaseEuler, EulerDeg, EulerRad, EULER_DEG_LIKE, EULER_RAD_LIKE
 from .vector import Vector3, Vector4
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False)
 class Matrix3:
     """Basic wrapper for 3x3 `np.ndarray` that can be constructed from various input types."""
 
-    _data: np.ndarray = field(default_factory=lambda: np.zeros((3, 3), dtype=float))
+    _data: np.ndarray
 
     def __init__(self, data: np.ndarray | list | tuple):
         """Construct `Matrix3` from an existing `ndarray` or a input that can be converted to a 3x3 `np.ndarray`."""
@@ -61,6 +61,11 @@ class Matrix3:
     def inverse(self) -> Matrix3:
         """Return the inverse of this matrix."""
         return Matrix3(np.linalg.inv(self._data))
+
+    def __eq__(self, value: object) -> bool:
+        if not isinstance(value, Matrix3):
+            return NotImplemented
+        return np.array_equal(self._data, value._data)
 
     def __matmul__(self, other: Matrix3 | Vector3 | BaseEuler | np.ndarray):
         """Multiply a matrix, vector, or Euler angles by this matrix, returning the appropriate type."""
@@ -185,11 +190,11 @@ class Matrix3:
         ], dtype=float))
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False)
 class Matrix4:
     """Basic wrapper for 3x3 `np.ndarray` that can be constructed from various input types."""
 
-    _data: np.ndarray = field(default_factory=lambda: np.zeros((4, 4), dtype=float))
+    _data: np.ndarray
 
     def __init__(self, data: np.ndarray | list | tuple):
         """Construct `Matrix4` from an existing `ndarray` or a input that can be converted to a 4x4 `np.ndarray`."""
@@ -235,6 +240,11 @@ class Matrix4:
     def inverse(self) -> Matrix4:
         """Return the inverse of this matrix."""
         return Matrix4(np.linalg.inv(self._data))
+
+    def __eq__(self, value: object) -> bool:
+        if not isinstance(value, Matrix4):
+            return NotImplemented
+        return np.array_equal(self._data, value._data)
 
     def __matmul__(self, other: Matrix4 | Vector4 | Vector3 | np.ndarray):
         if isinstance(other, Matrix4):

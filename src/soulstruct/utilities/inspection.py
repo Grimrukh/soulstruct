@@ -47,7 +47,7 @@ def get_dataclass_repr(dataclass_instance: tp.Any, _indent=0, _recursed_ids=None
     s = f"{indent}{dataclass_instance.__class__.__name__}(\n"
     for field in dataclasses.fields(dataclass_instance):
         value = getattr(dataclass_instance, field.name)
-        if dataclasses.is_dataclass(value) and not isinstance(value, BaseVector):
+        if dataclasses.is_dataclass(value):
             if id(value) in _recursed_ids:
                 s += f"{indent}    {field.name} = <{id(value)}>,\n"
             else:
@@ -319,7 +319,7 @@ def print_binary_as_integers(file_path: Path):
     with file_path.open("rb") as file:
         offset = 0
         data = file.read(4)
-        while data != -1:
+        while data != b"":
             try:
                 integer = struct.unpack("<i", data)
             except struct.error:
@@ -377,11 +377,21 @@ def profile_function(print_count: int, sort="tottime", strip_dirs=True):
 
 class Timer:
 
+    __slots__ = ("_name", "_start")
+
     def __init__(self, name: str):
         self._name = name
+        self._start = -1
 
-    def __enter__(self):
+    @property
+    def elapsed(self) -> float:
+        if self._start < 0:
+            return 0.0
+        return time.perf_counter() - self._start
+
+    def __enter__(self) -> Timer:
         self._start = time.perf_counter()
+        return self
 
     def __exit__(self, *exc):
         if any(exc):
@@ -405,10 +415,10 @@ def find_errant_prints():
 
     builtins.print = new_print
 
-    yield
-
-    # Exit
-    builtins.print = original_print
+    try:
+        yield
+    finally:
+        builtins.print = original_print
 
 
 @contextlib.contextmanager
