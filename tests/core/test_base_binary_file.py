@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from soulstruct.base.base_binary_file import BaseBinaryFile, BaseJSONEncoder
+from soulstruct.base.base_binary_file import BaseBinaryFile
 from soulstruct.base.game_file import GameFile
 from soulstruct.base.game_file_directory import GameFileDirectory
 from soulstruct.base.metaclasses import DataclassMeta, PathDataclassMeta
@@ -316,34 +316,6 @@ def test_from_json_rejects_non_dict(tmp_path: Path):
     bad.write_text("[1, 2, 3]", encoding="utf-8")
     with pytest.raises(TypeError):
         DummyFile.from_json(bad)
-
-
-@pytest.mark.xfail(
-    reason="DEAD CODE: `BaseJSONEncoder.default()` claims to handle `DCXType`, but `DCXType` is an `IntEnum`, "
-           "so `json` serialises it as a bare integer and never calls `default()`. The branch is unreachable "
-           "and any `DCXType` that reaches the encoder directly is written as e.g. `10`, not \"DCX_KRAK\".",
-    strict=False,
-)
-def test_base_json_encoder_handles_dcx_type():
-    assert json.dumps(DCXType.DCX_KRAK, cls=BaseJSONEncoder) == '"DCX_KRAK"'
-
-
-def test_base_json_encoder_dcx_type_actual_behaviour():
-    """Documents the current (surprising) behaviour: `DCXType` serialises as its integer value."""
-    assert json.dumps(DCXType.DCX_KRAK, cls=BaseJSONEncoder) == "10"
-    # `to_dict()` sidesteps this by converting to the member name itself.
-    assert _dummy().to_dict()["dcx_type"] == "Null"
-
-
-@pytest.mark.xfail(
-    reason="BUG: `BaseJSONEncoder.default()` returns `None` for any unhandled object instead of calling "
-           "`super().default(o)`. Unserialisable values are silently written as JSON `null` rather than "
-           "raising `TypeError`, producing quietly-corrupt JSON.",
-    strict=False,
-)
-def test_base_json_encoder_rejects_unknown_objects():
-    with pytest.raises(TypeError):
-        json.dumps(object(), cls=BaseJSONEncoder)
 
 
 # ---------------------------------------------------------------------------

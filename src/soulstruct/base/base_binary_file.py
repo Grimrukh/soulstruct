@@ -2,7 +2,6 @@ from __future__ import annotations
 
 __all__ = [
     "BaseBinaryFile",
-    "BaseJSONEncoder",
 ]
 
 import abc
@@ -283,7 +282,7 @@ class BaseBinaryFile(abc.ABC, metaclass=PathDataclassMeta):
             _file_path = Path(file_path)
         if _file_path.suffix != ".json":
             _file_path = _file_path.with_suffix(_file_path.suffix + ".json")
-        write_json(_file_path, json_dict, indent=indent, encoding=encoding, encoder=BaseJSONEncoder)
+        write_json(_file_path, json_dict, indent=indent, encoding=encoding)
 
     def copy(self):
         return copy.deepcopy(self)
@@ -415,14 +414,6 @@ BaseBinaryFile.path = property(
     fget=lambda self: self._path,
     fset=lambda self, path: setattr(self, "_path", Path(path) if path else None),
 )
-
-
-class BaseJSONEncoder(json.JSONEncoder):
-    """Handles `DCXType`."""
-    def default(self, o):
-        if isinstance(o, DCXType):
-            return o.name
-        return None
 
 
 # Type variable for generics below.

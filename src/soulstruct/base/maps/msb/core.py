@@ -78,12 +78,12 @@ class MSB[
     class JSONEncoder(json.JSONEncoder):
         """Handles a few extra types that appear as `MSBEntry` field types."""
 
-        def default(self, obj):
-            if isinstance(obj, RegionShape):
-                return obj.to_json_dict()
-            if isinstance(obj, (EulerDeg, Vector2, Vector3, Vector4, BitSet)):
-                return repr(obj)
-            return None  # not handled
+        def default(self, o):
+            if isinstance(o, RegionShape):
+                return o.to_json_dict()
+            if isinstance(o, (EulerDeg, Vector2, Vector3, Vector4, BitSet)):
+                return repr(o)
+            return super().default(o)
 
     EXT: tp.ClassVar[str] = ".msb"
 
