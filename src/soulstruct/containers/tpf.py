@@ -267,8 +267,8 @@ class TPFTexture:
         writer.fill_with_position("stem_offset", obj=self)
         if encoding_type == 1:  # UTF-16
             stem = self.stem.encode(encoding=writer.byte_order.get_utf_16_encoding()) + b"\0\0"
-        elif encoding_type in {0, 2}:  # shift-jis
-            stem = self.stem.encode(encoding="shift-jis") + b"\0"
+        elif encoding_type in {0, 2}:  # shift_jis_2004
+            stem = self.stem.encode(encoding="shift_jis_2004") + b"\0"
         else:
             raise ValueError(f"Invalid TPF texture encoding type: {encoding_type}. Must be 0, 1, or 2.")
         writer.append(stem)
@@ -572,11 +572,13 @@ class TPFStruct(BinaryStruct):
     file_count: int
     platform: TPFPlatform = binary(byte)
     tpf_flags: byte = field(**(Binary(asserted=[0, 1, 2, 3])))
-    encoding_type: byte = binary(asserted=[0, 1, 2])  # 2 == UTF-16, 0/1 == shift_jis_2004
+    encoding_type: byte = binary(asserted=[0, 1, 2])  # 1 == UTF-16, 0/2 == shift_jis_2004
     _pad1: bytes = binary_pad(1)
 
 
 class TPF(GameFile):
+
+    MANIFEST_NAME: tp.ClassVar[str] = "tpf_manifest.json"
 
     textures: list[TPFTexture] = field(default_factory=list)
     platform: TPFPlatform = TPFPlatform.PC
@@ -604,10 +606,10 @@ class TPF(GameFile):
         path = Path(path)
         if path.is_dir():
             directory = path
-            manifest_path = directory / "tpf_manifest.json"
+            manifest_path = directory / cls.MANIFEST_NAME
             if not manifest_path.exists():
                 raise FileNotFoundError(f"Binder manifest JSON file not found: {manifest_path}")
-        elif path.name == "tpf_manifest.json":
+        elif path.name == cls.MANIFEST_NAME:
             directory = path.parent
             manifest_path = path
         else:
@@ -743,8 +745,8 @@ class TPF(GameFile):
         tpf_manifest = self.get_json_header()
         tpf_manifest["entries"] = texture_entries
 
-        # NOTE: Binder manifest is always encoded in shift-JIS, not `shift_jis_2004`.
-        write_json(directory / "tpf_manifest.json", tpf_manifest, encoding="shift-jis", indent=4)
+        # NOTE: Binder manifest is always encoded in `shift-jis`, not `shift_jis_2004`.
+        write_json(directory / self.MANIFEST_NAME, tpf_manifest, encoding="shift-jis", indent=4)
 
     def get_json_header(self):
         return {

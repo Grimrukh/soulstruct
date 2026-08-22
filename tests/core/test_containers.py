@@ -440,10 +440,10 @@ def test_add_or_replace_entry_with_id():
     assert binder.find_entry_by_id(5).data == b"NEW"
 
 
-def test_or_operator_merges_by_name():
+def test_ior_operator_merges_by_name():
     binder = _populated(Binder.empty_bnd4())
     other = [_entry(0, "alpha.txt", b"REPLACED"), _entry(9, "delta.txt", b"NEW")]
-    binder | other
+    binder |= other
     assert len(binder) == 4
     assert binder["alpha.txt"].data == b"REPLACED"
     assert binder["delta.txt"].entry_id == 9

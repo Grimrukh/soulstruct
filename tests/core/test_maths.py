@@ -223,11 +223,6 @@ def test_vector_repr_roundtrip_is_lossless():
     assert Vector3.from_repr(repr(v)).allclose(v, rtol=1e-9)
 
 
-@pytest.mark.xfail(
-    reason="BUG: `__repr__` emits `<SINGLE_MAX>`/`<SINGLE_MIN>` placeholders that `from_repr` cannot parse, "
-           "so `AABB.invalid()`-style vectors cannot be repr-serialized and restored.",
-    strict=False,
-)
 def test_vector_repr_roundtrip_single_max():
     v = Vector3.single_max()
     assert Vector3.from_repr(repr(v)) == v

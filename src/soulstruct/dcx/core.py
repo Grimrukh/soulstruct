@@ -251,8 +251,7 @@ def _decompress_dcx_edge(reader: BinaryReader, header: DCXHeaderStruct) -> tuple
     if subheader.last_block_decompressed_size not in {0x10000, header.decompressed_size % 0x10000}:
         raise DCXError("DCX_EDGE subheader 'last_block_decompressed_size' does not match expected value.")
     if subheader.egdt_size != 0x24 + subheader.chunk_count * 0x10:
-        print(subheader)
-        raise DCXError("DCX_EDGE subheader 'egdt_size' does not match expected value.")
+        raise DCXError(f"DCX_EDGE subheader 'egdt_size' does not match expected value. Subheader: {subheader}")
 
     chunks_offset = dca_start + subheader.dca_size
     decompressed = bytearray()

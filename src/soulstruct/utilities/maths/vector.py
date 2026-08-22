@@ -215,6 +215,9 @@ class BaseVector(abc.ABC):
         if name != cls.__name__:
             raise ValueError(f"Cannot parse vector string: {s!r} is a {name}, not a {cls.__name__}.")
 
+        # Replace '<SINGLE_MIN>' and '<SINGLE_MAX>' with their float values for parsing.
+        payload = payload.replace("<SINGLE_MIN>", str(SINGLE_MIN)).replace("<SINGLE_MAX>", str(SINGLE_MAX))
+
         try:
             values = list(ast.literal_eval(f"({payload})"))
         except Exception as e:

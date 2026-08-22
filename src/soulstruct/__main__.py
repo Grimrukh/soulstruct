@@ -78,7 +78,7 @@ def undcx(path: Path):
     from soulstruct.dcx import decompress
 
     uncompressed, _dcx_type = decompress(path)
-    out = path.with_suffix("") if path.suffix == ".dcx" else path.with_suffix(".undcx")
+    out = path.with_suffix("") if path.suffix == ".dcx" else path.with_suffix(path.suffix + ".undcx")
     if out.exists():
         create_bak(out)
     out.write_bytes(uncompressed)

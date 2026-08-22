@@ -541,6 +541,7 @@ class Binder(BaseBinaryFile):
         for required_key in ("binder_type", "signature", "flags", "big_endian", "bit_big_endian"):
             if required_key not in binder_kwargs:
                 raise BinderError(f"Binder manifest JSON file does not contain '{required_key}' key.")
+        # NOTE: `dcx_type` key can be omitted and will default to `DCXType.Null` (no compression).
 
         binder_type = binder_kwargs.pop("binder_type")
         if binder_type[:3] == "BXF":
@@ -564,7 +565,7 @@ class Binder(BaseBinaryFile):
         binder_kwargs["is_split_bxf"] = is_split_bxf
         binder_kwargs["version"] = version
         binder_kwargs["flags"] = BinderFlags(manifest["flags"])
-        binder_kwargs["dcx_type"] = DCXType[manifest["dcx_type"]]
+        binder_kwargs["dcx_type"] = DCXType[manifest["dcx_type"]] if "dcx_type" in manifest else DCXType.Null
 
         if version == BinderVersion.V4:
             # Read V4-specific info.
@@ -977,7 +978,7 @@ class Binder(BaseBinaryFile):
         json_dict["entries"] = entry_tree_dict
 
         # NOTE: Binder manifest is always encoded in shift-JIS, not `shift_jis_2004`.
-        write_json(directory / "binder_manifest.json", json_dict, encoding="shift-jis")
+        write_json(directory / self.MANIFEST_NAME, json_dict, encoding="shift-jis")
 
     def to_dict(self) -> dict:
         raise TypeError("Base `Binder` cannot be written to dictionary. Use `write_unpacked_directory()` instead.")
@@ -1066,7 +1067,7 @@ class Binder(BaseBinaryFile):
             self.entries.remove(existing_entry)
         self.entries.append(entry)
 
-    def __or__(self, other: Binder | list[BinderEntry]):
+    def __ior__(self, other: Binder | list[BinderEntry]) -> tp.Self:
         """Add all entries from another `Binder` or list of `BinderEntry`s to this `Binder`, replacing any entries
         with the same name."""
         if isinstance(other, Binder):

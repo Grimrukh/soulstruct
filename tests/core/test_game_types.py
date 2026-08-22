@@ -389,18 +389,12 @@ def test_map_explicit_base_entity_id_is_respected():
     assert m.base_entity_id == 5000000
 
 
-@pytest.mark.xfail(
-    reason="BUG: `Map.__eq__` compares only (area_id, block_id) while `Map.__hash__` hashes `msb_file_stem`. "
-           "Two equal maps that differ in CC/DD (e.g. DS1 Darkroot m12_00_00_00 vs. its DLC revision "
-           "m12_00_00_01) hash differently, breaking `set`/`dict` membership.",
-    strict=False,
-)
 def test_map_hash_eq_consistency():
     a = Map(12, 0, 0, 0)
     b = Map(12, 0, 0, 1)
-    assert a == b
-    assert hash(a) == hash(b)
-    assert len({a, b}) == 1
+    assert a != b
+    assert hash(a) != hash(b)
+    assert len({a, b}) == 2
 
 
 # ===========================================================================

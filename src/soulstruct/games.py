@@ -41,8 +41,8 @@ class Game:
     special_dcx_types: dict[str, DCXType] = field(default_factory=dict)
     bundled_resource_paths: dict[str, Path] = field(default_factory=dict)
     steam_appid: int | None = None
-    default_game_path: Path = ""
-    generic_game_path: Path = ""
+    default_game_path: Path | None = None
+    generic_game_path: Path | None = None
     save_file_path: Path | None = None
     executable_name: str = ""
     interroot_prefix: str = ""

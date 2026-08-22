@@ -39,7 +39,7 @@ class GameFileDirectory[BASE_BINARY_FILE_T: BaseBinaryFile](abc.ABC, metaclass=P
 
     @classmethod
     def from_path(cls, directory_path: Path | str):
-        if cls.FILE_NAME_PATTERN is None or cls.FILE_CLASS is None:
+        if not hasattr(cls, "FILE_NAME_PATTERN") or not hasattr(cls, "FILE_CLASS"):
             raise TypeError(
                 f"`GameFileDirectory` subclass `{cls.__name__}` must define `FILE_NAME_PATTERN` and `FILE_CLASS` class "
                 f"variables, or override `from_path()` with its own different logic."
@@ -85,7 +85,6 @@ class GameFileDirectory[BASE_BINARY_FILE_T: BaseBinaryFile](abc.ABC, metaclass=P
         written_paths = []
         for i, (file_path, packed_dcx) in enumerate(packed_files.items()):
             report_progress(progress, len(paths_instances) + i, total, file_path.name)
-            create_bak(file_path)
             if write_data_to_path(packed_dcx, file_path, force=force):
                 written_paths.append(file_path)
 
@@ -162,7 +161,7 @@ class GameFileMapDirectory[BASE_BINARY_FILE_T](GameFileDirectory[BASE_BINARY_FIL
     @classmethod
     def from_path(cls, directory_path: Path | str):
         # NOTE: Pattern is still used in combination with `Map` stems.
-        if cls.FILE_NAME_PATTERN is None or not hasattr(cls, "FILE_CLASS"):
+        if not hasattr(cls, "FILE_NAME_PATTERN") or not hasattr(cls, "FILE_CLASS"):
             raise TypeError(
                 f"`GameFileDirectory` subclass `{cls.__name__}` must define `FILE_NAME_PATTERN` and `FILE_CLASS` class "
                 f"variables, or override `from_path()` with its own different logic."
