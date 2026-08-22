@@ -41,8 +41,8 @@ if tp.TYPE_CHECKING:
     from rich.console import Console
 
 # Console and file format strings for log records.
-_CONSOLE_FMT = "{level_col} ┃ {modulepath:<40} ┃ {lineno:>4d} ┃ {message}"
-_FILE_FMT    = "{asctime} ┃ {levelname:>7} ┃ {pathname:<35} ┃ line {lineno:>4d} ┃ {message}"
+_CONSOLE_FMT = "{level_col} | {modulepath:<40} | {lineno:>4d} | {message}"
+_FILE_FMT    = "{asctime} | {levelname:>7} | {pathname:<35} | line {lineno:>4d} | {message}"
 
 
 _CONSOLE = Console(soft_wrap=True)
@@ -167,8 +167,23 @@ def setup(
         if issubclass(exc_type, KeyboardInterrupt):
             # Keep default behaviour for Ctrl-C
             sys.__excepthook__(exc_type, exc_val, exc_tb)
-        else:
+            return
+        try:
             logger.critical("Unhandled exception:", exc_info=(exc_type, exc_val, exc_tb))
+        except Exception:
+            # The logging/rendering machinery itself must never crash harder than the original exception
+            # (e.g. an encoding error from a legacy Windows console). Fall back to a minimal, encoding-safe
+            # printout of the original traceback so it's still visible, then try the default hook too.
+            try:
+                import traceback
+                lines = traceback.format_exception(exc_type, exc_val, exc_tb)
+                sys.stderr.write("".join(lines).encode("ascii", "backslashreplace").decode("ascii"))
+            except Exception:
+                pass
+            try:
+                sys.__excepthook__(exc_type, exc_val, exc_tb)
+            except Exception:
+                pass  # already did our best above; never propagate from an excepthook
 
     sys.excepthook = _excepthook
 

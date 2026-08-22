@@ -195,7 +195,7 @@ def compress(
     """Compress data with Oodle. Default parameters are appropriate for Sekiro and Elden Ring (DCX_KRAK)."""
     raw_buf_size = len(raw_buf)
     # noinspection PyCallingNonCallable,PyTypeChecker
-    raw_buf_array = (c.c_char * raw_buf_size)(*raw_buf)
+    raw_buf_array = c.create_string_buffer(raw_buf)
     max_comp_buf_size = __DLL_GetCompressedBufferSizeNeeded(raw_buf_size)
     comp_buf_array = (c.c_char * max_comp_buf_size)()
 
@@ -227,7 +227,7 @@ def decompress(comp_buf: bytes, decompressed_size: int):
     """
     comp_buf_size = len(comp_buf)
     # noinspection PyCallingNonCallable,PyTypeChecker
-    comp_buf_array = (c.c_char * comp_buf_size)(*comp_buf)
+    comp_buf_array = c.create_string_buffer(comp_buf)
     max_raw_buf_size = __DLL_GetDecodeBufferSize(decompressed_size, True)
     raw_buf_array = (c.c_char * max_raw_buf_size)()
 

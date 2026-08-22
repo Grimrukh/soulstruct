@@ -122,7 +122,7 @@ class DX10Header(BinaryStruct):
 
 
 class DDS(GameFile):
-    """Unpacks DDS header information. Does NOT handle the DDS `data` bytes."""
+    """Unpacks DDS header information. Does NOT handle the DDS `data` bytes (passed through)."""
 
     header: DDSHeader = None
     dx10_header: DX10Header | None = None

@@ -790,12 +790,6 @@ def test_real_tpf_roundtrip(tests_dir: Path, tmp_path: Path):
     assert bytes(reloaded) == bytes(TPF.from_bytes(bytes(reloaded)))
 
 
-@pytest.mark.xfail(
-    reason="BUG: `TPFTexture.to_tpf_writer()` recomputes `mipmap_count` (and `texture_type`) from the DDS "
-           "header for PC TPFs instead of preserving the value stored in the TPF. Vanilla files that store 0 "
-           "('all mipmaps') are silently rewritten with the real count, so the first pack is not faithful.",
-    strict=False,
-)
 def test_tpf_preserves_mipmap_count(tests_dir: Path):
     path = tests_dir / "darksouls1r" / "resources" / "m10_00_arch_01.tpf.dcx"
     if not path.is_file():

@@ -4,6 +4,7 @@ __all__ = [
     "BinderFlags",
     "BinderError",
     "EntryNotFoundError",
+    "MultipleEntriesFoundError",
     "BinderVersion",
     "BinderHeaderV3",
     "BinderHeaderV4",
@@ -1244,10 +1245,10 @@ class Binder(BaseBinaryFile):
         found = None
         for entry in self.entries:
             if getattr(entry, attr) == value:
-                if found:
+                if found is not None:
                     raise MultipleEntriesFoundError(f"Multiple entries found with `{attr} == {value}`.")
                 found = entry
-        if found:
+        if found is not None:
             return found
         raise EntryNotFoundError(f"No entry found in '{self.path_name or '<unknown>'}' with `{attr} == {value}`.")
 

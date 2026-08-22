@@ -62,6 +62,9 @@ class SoulstructConfig:
     PARAMDEX_PATH: Path | str = ""  # empty str → default to soulstruct package path
 
     # --- Logging ---
+    # NOTE: True by default so users get console/file logging out of the box. The installed `sys.excepthook`
+    # (see `logging_utils.setup()`) is defensive and falls back to the default hook if it ever fails itself, so
+    # this no longer risks burying the original exception (see M13 in the core I/O audit).
     AUTO_SETUP_LOG: bool = True
     LOG_PATH: Path = field(default_factory=lambda: _SOULSTRUCT_APPDATA / "soulstruct.log")
     CONSOLE_LOG_LEVEL: str = "INFO"

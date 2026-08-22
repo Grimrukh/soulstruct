@@ -108,7 +108,7 @@ class TPFTexture:
     stem: str = ""  # no file extension
     format: int = 1
     texture_type: TextureType = TextureType.Texture
-    mipmap_count: int = 0
+    mipmap_count: int = 0  # NOTE: may differ from stored DDS mipmap count
     texture_flags: int = 0  # {2, 3} -> DCX-compressed (i.e. bit 1); unknown otherwise
     data: bytes = b""
 
@@ -216,10 +216,14 @@ class TPFTexture:
                 texture_type = TextureType.Volume
             else:
                 texture_type = TextureType.Texture
-            mipmap_count = dds.header.mipmap_count
+            if texture_type != self.texture_type:
+                _LOGGER.warning(
+                    f"PC `TPFTexture` {self.stem} stores a different `texture_type` ({self.texture_type}) than "
+                    f"its wrapped DDS header ({texture_type}). The DDS value will be written."
+                )
+            # NOTE: SoulsFormats forces `mipmap_count` from DDS here, but this breaks vanilla round trips.
         else:
             texture_type = self.texture_type
-            mipmap_count = self.mipmap_count
 
         self.STRUCT.object_to_writer(
             self,
@@ -227,7 +231,6 @@ class TPFTexture:
             data_offset=RESERVED,
             data_size=RESERVED,
             texture_type=texture_type,
-            mipmap_count=mipmap_count,
         )
 
         if platform != TPFPlatform.PC:
