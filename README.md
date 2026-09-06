@@ -1,7 +1,7 @@
 # soulstruct
-Python tools for inspecting and modding From Software games, including an "all-in-one" graphical interface.
+Python tools for inspecting and modding FromSoftware games.
 
-**YouTube channel with tutorials: https://youtube.com/grimrukh**
+**YouTube channel with some tutorials: https://youtube.com/grimrukh**
 
 **Like my stuff? Consider supporting me on Patreon <3 https://patreon.com/Grimrukh**
 
@@ -13,6 +13,18 @@ Game abbreviations used below and in package:
 - **DS3**: Dark Souls III
 - **SEK**: Sekiro: Shadows Die Twice
 - **ER**: Elden Ring
+
+**Related libraries:**
+- [soulstruct-havok](https://github.com/Grimrukh/soulstruct-havok): Havok classes and tools for Soulstruct,
+supporting map collision, character collision, animation, ragdolls, and more.
+- [soulstruct-vanilla](https://github.com/Grimrukh/soulstruct-vanilla): Vanilla event scripts (`.evs.py`)
+and other vanilla dumps from Soulstruct.
+- [soulstruct-gui](https://github.com/Grimrukh/soulstruct-gui): Graphical interface for Soulstruct-based
+modding projects, including tabs for Maps, Events, Params, Lighting, Text, AI, and Talk scripts (plus some
+Runtime utilities for supported games).
+- [Firelink](https://github.com/Grimrukh/Firelink): My FromSoftware modding framework written in C++, which
+is MUCH faster than Soulstruct for core classes such as FLVERs and Binders. Also includes memory-hooking
+implementations for supported games and an Elden Ring MSB class (Python is generally too slow for these).
 
 Features
 --------
@@ -36,5 +48,3 @@ loaded into Python structures, edited, and repacked.
 
 - Unpack/repack **BND** archives and automatically manage **DCX** compression.
     - Supported games: all
-
-- Includes some of my ongoing documentation for vanilla game IDs in *Dark Souls* and *Bloodborne*.

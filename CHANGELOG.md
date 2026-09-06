@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- Added links to related repos in README.
+
+## [2.4.0] - 2026-09-06
+
+### Added
 - GitHub publish to PyPI workflow added.
 - `BoneTree` class for manipulating bones outside index-based `FLVER`.
 - `soulstruct.containers.Binder` methods refactored to match signatures of new `pyrelink.core.Binder`.
