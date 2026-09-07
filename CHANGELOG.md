@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+---
+
+## [2.4.1] - 2026-09-07
+
 ### Added
 - Added links to related repos in README.
 
@@ -85,8 +89,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Removed support for Python < 3.13.
 - Removed vanilla EVS scripts/enums (moved to `soulstruct-vanilla` repo).
 - Removed `ParamDict` fallback class; `ParamRow` types MUST be complete/valid for game support.
-
----
 
 ## [2.3.3] - 2026-03-30
 
