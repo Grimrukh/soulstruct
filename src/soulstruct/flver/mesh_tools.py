@@ -1281,8 +1281,9 @@ class MergedMesh:
             t_i = int(tangent_name.removeprefix("tangent_"))
             combined_array[f"tangent_{t_i}"] = self.loop_data.tangents[t_i]  # (loop_count, 4)
 
-        # Combined array still uses global UV layer names.
-        uv_layer_names = [n for n in names if n.startswith("uv_")]
+        # Combined array still uses global UV layer names (e.g. 'UVTexture0', 'UVMap1'), NOT the tightly packed
+        # 'uv_{i}' names used by `true_material_dtypes`, so we cannot filter by an 'uv_' name prefix here.
+        uv_layer_names = [n for n in names if n in self.loop_data.uvs]
         for uv_layer_name in uv_layer_names:
             combined_array[uv_layer_name] = self.loop_data.uvs[uv_layer_name]
 

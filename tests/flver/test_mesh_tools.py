@@ -461,25 +461,24 @@ def test_split_mesh_def_from_flver():
     assert len(defs) == 2
     assert defs[0].is_dynamic is False
     assert defs[1].is_dynamic is True
-    assert defs[0].kwargs["default_bone_index"] == 0
-    assert defs[0].kwargs["use_backface_culling"] is True
-    assert defs[0].kwargs["uses_bounding_boxes"] is True
-    assert "is_dynamic" not in defs[0].kwargs  # see `test_split_mesh_with_canonical_defs`
+    assert defs[0].default_bone_index == 0
+    assert defs[0].use_backface_culling is True
+    assert defs[0].uses_bounding_boxes is True
 
 
 def test_split_mesh_def_uv_layer_name_validation():
     layout = make_layout()
-    mesh_def = SplitMeshDef(make_material(), layout, False, {}, uv_layer_names=["UVTexture0"])
+    mesh_def = SplitMeshDef(make_material(), layout, False, uv_layer_names=["UVTexture0"])
     assert mesh_def.get_validated_uv_layer_names({"UVTexture0": None}, 0) == ["UVTexture0"]
     # Default names when none given:
-    default_def = SplitMeshDef(make_material(), layout, False, {})
+    default_def = SplitMeshDef(make_material(), layout, False)
     assert default_def.get_validated_uv_layer_names({"UVMap0": None}, 0) == ["UVMap0"]
     # Wrong count:
-    bad_count = SplitMeshDef(make_material(), layout, False, {}, uv_layer_names=["a", "b"])
+    bad_count = SplitMeshDef(make_material(), layout, False, uv_layer_names=["a", "b"])
     with pytest.raises(ValueError, match="do not match layout UV count"):
         bad_count.get_validated_uv_layer_names({"a": None, "b": None}, 0)
     # Name not present in merged mesh:
-    missing = SplitMeshDef(make_material(), layout, False, {}, uv_layer_names=["Nope"])
+    missing = SplitMeshDef(make_material(), layout, False, uv_layer_names=["Nope"])
     with pytest.raises(ValueError, match="Not all UV layer names"):
         missing.get_validated_uv_layer_names({"UVMap0": None}, 0)
 
@@ -552,7 +551,7 @@ def test_split_mesh_face_set_count_duplicates_lods():
     flver = make_flver()
     merged = MergedMesh.from_flver(flver)
     defs = make_split_defs(flver)
-    defs[0].kwargs["face_set_count"] = 3
+    defs[0] = defs[0]._replace(face_set_count=3)
     split_meshes = merged.split_mesh(defs)
     assert [fs.flags for fs in split_meshes[0].face_sets] == [0, 1, 2]
 
@@ -561,7 +560,7 @@ def test_split_mesh_face_set_count_validation():
     flver = make_flver()
     merged = MergedMesh.from_flver(flver)
     defs = make_split_defs(flver)
-    defs[0].kwargs["face_set_count"] = 4
+    defs[0] = defs[0]._replace(face_set_count=4)
     with pytest.raises(ValueError, match="face_set_count"):
         merged.split_mesh(defs)
 
