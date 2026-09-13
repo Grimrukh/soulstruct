@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+---
+
+## [2.4.3] - 2026-09-13
+
 ### Changed
 - Vector types `__eq__` now require another Vector, not just any array-like.
   - Can still compare Vector `.data` to array-likes with `np.array_equal`.
@@ -15,8 +19,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 - Removed enums/configs and stopped pretending that Demon's Souls Remake will ever be supported :/.
-
----
 
 ## [2.4.2] - 2026-09-08
 
