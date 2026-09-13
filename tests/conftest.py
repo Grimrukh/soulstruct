@@ -38,7 +38,6 @@ TESTS_DIR = Path(__file__).parent
 # Maps fixture name -> (Config attribute, human-readable game name).
 _GAME_ROOTS = {
     "des_root": ("DES_PATH", "Demon's Souls"),
-    "desr_root": ("DESR_PATH", "Demon's Souls Remake"),
     "ptde_root": ("PTDE_PATH", "Dark Souls: Prepare to Die Edition"),
     "dsr_root": ("DSR_PATH", "Dark Souls: Remastered"),
     "ds2_root": ("DS2_PATH", "Dark Souls II"),

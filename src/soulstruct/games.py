@@ -4,6 +4,7 @@ These `Game` instances are also used as singletons for game checking."""
 from __future__ import annotations
 
 __all__ = [
+    "GameType",
     "Game",
     "GAMES",
     "get_game",
@@ -21,6 +22,7 @@ __all__ = [
 import importlib
 import typing as tp
 from dataclasses import dataclass, field
+from enum import IntEnum
 from functools import singledispatchmethod
 from pathlib import Path
 
@@ -29,9 +31,23 @@ from soulstruct.dcx import DCXType
 from soulstruct.utilities.files import SOULSTRUCT_PATH
 
 
+class GameType(IntEnum):
+    """Game identifier."""
+    DemonsSouls = 0
+    DarkSoulsPTDE = 1
+    DarkSoulsDSR = 2
+    DarkSouls2 = 3
+    DarkSouls2SOTFS = 4
+    Bloodborne = 5
+    DarkSouls3 = 6
+    Sekiro = 7
+    EldenRing = 8
+
+
 @dataclass(slots=True, kw_only=True, frozen=True)
 class Game:
 
+    game_type: GameType
     variable_name: str
     name: str
     abbreviated_name: str
@@ -109,6 +125,7 @@ class Game:
 
 
 DEMONS_SOULS = Game(
+    game_type=GameType.DemonsSouls,
     variable_name="DEMONS_SOULS",
     name="Demon's Souls",
     abbreviated_name="des",
@@ -142,6 +159,7 @@ DEMONS_SOULS = Game(
 
 
 DARK_SOULS_PTDE = Game(
+    game_type=GameType.DarkSoulsPTDE,
     variable_name="DARK_SOULS_PTDE",
     name="Dark Souls: Prepare to Die Edition",
     abbreviated_name="ptde",
@@ -173,6 +191,7 @@ DARK_SOULS_PTDE = Game(
 
 
 DARK_SOULS_DSR = Game(
+    game_type=GameType.DarkSoulsDSR,
     variable_name="DARK_SOULS_DSR",
     name="Dark Souls: Remastered",
     abbreviated_name="ds1r",
@@ -214,6 +233,7 @@ DARK_SOULS_DSR = Game(
 
 
 DARK_SOULS_2 = Game(
+    game_type=GameType.DarkSouls2,
     variable_name="DARK_SOULS_2",
     name="Dark Souls II",
     abbreviated_name="ds2",
@@ -225,6 +245,7 @@ DARK_SOULS_2 = Game(
 
 
 DARK_SOULS_2_SOTFS = Game(
+    game_type=GameType.DarkSouls2SOTFS,
     variable_name="DARK_SOULS_2_SOTFS",
     name="Dark Souls II: Scholar of the First Sin",
     abbreviated_name="ds2sotfs",
@@ -239,6 +260,7 @@ DARK_SOULS_2_SOTFS = Game(
 
 
 BLOODBORNE = Game(
+    game_type=GameType.Bloodborne,
     variable_name="BLOODBORNE",
     name="Bloodborne",
     abbreviated_name="bb",
@@ -267,6 +289,7 @@ BLOODBORNE = Game(
 
 
 DARK_SOULS_3 = Game(
+    game_type=GameType.DarkSouls3,
     variable_name="DARK_SOULS_3",
     name="Dark Souls III",
     abbreviated_name="ds3",
@@ -281,6 +304,7 @@ DARK_SOULS_3 = Game(
 
 
 SEKIRO = Game(
+    game_type=GameType.Sekiro,
     variable_name="SEKIRO",
     name="Sekiro: Shadows Die Twice",
     abbreviated_name="sdt",
@@ -294,6 +318,7 @@ SEKIRO = Game(
 
 
 ELDEN_RING = Game(
+    game_type=GameType.EldenRing,
     variable_name="ELDEN_RING",
     name="Elden Ring",
     abbreviated_name="er",
@@ -335,10 +360,20 @@ GAMES = (
 )
 
 
-def get_game(game_name: str | Game):
+def get_game(game_name: str | GameType | Game):
     """Spaces, case, apostrophes, and colons in aliases don't matter."""
     if isinstance(game_name, Game):
         return game_name
+
+    if isinstance(game_name, GameType):
+        for game in GAMES:
+            if game.game_type == game_name:
+                return game
+        raise ValueError(f"Invalid game type: {game_name}")
+
+    if not isinstance(game_name, str):
+        raise TypeError(f"Invalid game name type: {type(game_name)}. Must be str, GameType, or Game.")
+
     game_name = game_name.lower()
     for old, new in ((" ", ""), ("'", ""), (":", ""), ("iii", "3"), ("ii", "2")):
         game_name = game_name.replace(old, new)

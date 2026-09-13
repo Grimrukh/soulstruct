@@ -5,6 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Changed
+- Vector types `__eq__` now require another Vector, not just any array-like.
+  - Can still compare Vector `.data` to array-likes with `np.array_equal`.
+
+### Added
+- Added `GameType` enum for supported games.
+- Added `__format__` to Vector types (passed to component floats).
+
+### Removed
+- Removed enums/configs and stopped pretending that Demon's Souls Remake will ever be supported :/.
+
 ---
 
 ## [2.4.2] - 2026-09-08

@@ -127,8 +127,12 @@ class BaseVector(abc.ABC):
         # noinspection PyTypeChecker
         return self._data[index]
 
-    def __eq__(self, other_vector: VECTOR_LIKE):
-        return np.array_equal(self._data, other_vector)
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, BaseVector):
+            return False
+        if self.LENGTH != other.LENGTH:
+            return False
+        return bool(np.array_equal(self._data, other._data))
 
     def __iter__(self) -> tp.Iterator[float]:
         return iter(self._data)
@@ -144,6 +148,13 @@ class BaseVector(abc.ABC):
                 # `repr()` of a Python float always round-trips exactly.
                 elements.append(repr(float(x)))
         return f"{self.__class__.__name__}(({', '.join(elements)}))"
+
+    def __format__(self, format_spec: str) -> str:
+        """Propagate `format_spec` (e.g. '.3f') to each element, e.g. 'Vector3(1.000, 2.000, 3.000)'."""
+        if not format_spec:
+            return str(self)
+        elements = (format(float(x), format_spec) for x in self._data)
+        return f"{self.__class__.__name__}({', '.join(elements)})"
 
     def __abs__(self) -> float:
         """Get norm of `Vector`."""

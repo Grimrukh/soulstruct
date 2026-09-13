@@ -4,7 +4,6 @@ __all__ = [
 
     # Backward-compat module-level aliases (read once at import; use `Config.<FIELD>` for live values).
     "DES_PATH",
-    "DESR_PATH",
     "PTDE_PATH",
     "DSR_PATH",
     "DS2_PATH",
@@ -46,7 +45,6 @@ class SoulstructConfig:
 
     # --- Game roots ---
     DES_PATH: Path = field(default_factory=lambda: Path(r"C:/Demon's Souls/PS3_GAME/USRDIR"))
-    DESR_PATH: Path = field(default_factory=lambda: Path(r"C:/Demon's Souls Remake/dvdroot_ps5"))
     PTDE_PATH: Path = field(default_factory=lambda: _DEFAULT_STEAM_PATH / "Dark Souls Prepare to Die Edition/DATA")
     DSR_PATH: Path = field(default_factory=lambda: _DEFAULT_STEAM_PATH / "DARK SOULS REMASTERED")
     DS2_PATH: Path = field(default_factory=lambda: _DEFAULT_STEAM_PATH / "Dark Souls II/Game")
@@ -208,7 +206,6 @@ else:
 # ---------------------------------------------------------------------------
 
 DES_PATH: Path = Config.DES_PATH
-DESR_PATH: Path = Config.DESR_PATH
 PTDE_PATH: Path = Config.PTDE_PATH
 DSR_PATH: Path = Config.DSR_PATH
 DS2_PATH: Path = Config.DS2_PATH
