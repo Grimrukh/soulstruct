@@ -25,7 +25,7 @@ from soulstruct.games import (
     GAMES,
     Game,
     SEKIRO,
-    get_game,
+    get_game, GameType,
 )
 
 
@@ -106,6 +106,10 @@ def test_get_game_is_case_insensitive():
 
 def test_get_game_passthrough():
     assert get_game(DARK_SOULS_PTDE) is DARK_SOULS_PTDE
+
+
+def test_get_game_by_type():
+    assert get_game(GameType.DarkSoulsPTDE) is DARK_SOULS_PTDE
 
 
 @pytest.mark.parametrize("name", ["darksouls", "darksouls1", "dks", "ds1", "ds"])
