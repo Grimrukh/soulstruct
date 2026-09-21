@@ -5,14 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+---
+
+## [2.5.0] - 2026-09-21
+
 ### Added
 - `RemoTAE` class for TAE variant found in RemoBND cutscene binders.
 
 ### Fixed
 - `SIBCAM` doesn't require any FoV keyframes to write.
 - `SIBCAM` aligns end to 16 on write rather than padding 16.
-
----
 
 ## [2.4.3] - 2026-09-13
 
