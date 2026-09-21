@@ -264,8 +264,8 @@ class SIBCAM(GameFile):
 
         if not self.full_camera_animation:
             raise ValueError("Cannot write SIBCAM with no camera animation data.")
-        if not self.fov_keyframes:
-            raise ValueError("Cannot write SIBCAM with no FoV keyframes.")
+        # NOTE: Zero FoV keyframes is valid (e.g. DSR `scn100101` cut0080 and every cut of `scn120002`), in which case
+        # the game presumably just uses `initial_fov`.
 
         writer = BinaryWriter(byte_order=ByteOrder.big_endian_bool(self.big_endian))
 
@@ -339,7 +339,9 @@ class SIBCAM(GameFile):
         writer.fill_with_position("vectors_end_offset_1", header)
         writer.fill_with_position("vectors_end_offset_2", header)
 
-        writer.pad(16)  # align finished file to 16 bytes
+        # Vanilla DSR files are padded to a 16-byte boundary with 0-12 null bytes (never a fixed 16). The "eight null
+        # bytes at EOF" mentioned above are just the most common alignment padding size.
+        writer.pad_align(16)
 
         return writer
 
