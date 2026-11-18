@@ -1179,9 +1179,7 @@ class FLVER(GameFile):
                 print(f"FLVER {self.path_name} is already deboned (only has one bone at the origin).")
                 return
 
-        bone_transforms = {}
-        for i, bone in enumerate(self.bones):
-            bone_transforms[i] = (bone.translate, Matrix3.from_euler_angles_rad(bone.rotate), bone.scale)
+        bone_transforms = self.get_bone_tree().get_bone_armature_space_transforms()
 
         for mesh in self.meshes:
             for vertex_array in mesh.vertex_arrays:
