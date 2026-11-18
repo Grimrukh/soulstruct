@@ -426,6 +426,19 @@ def test_debone_map_piece_bakes_bone_translation_into_vertices():
     assert np.all(mesh.vertices["bone_indices"] == 0)
 
 
+def test_debone_map_piece_bakes_parent_transforms_into_vertices():
+    mesh = make_mesh(bone_indices=(1,))
+    flver = make_flver(
+        meshes=[mesh],
+        bones=[
+            FLVERBone(name="parent", translate=Vector3((10.0, 0.0, 0.0))),
+            FLVERBone(name="child", translate=Vector3((2.0, 0.0, 0.0)), parent_bone_index=0),
+        ],
+    )
+    flver.debone_map_piece(default_bone_name="m0000B0A10")
+    np.testing.assert_allclose(mesh.vertices["position"], np.array(QUAD_POSITIONS) + [12.0, 0.0, 0.0])
+
+
 def test_debone_map_piece_rejects_dynamic_meshes():
     flver = make_flver(meshes=[make_mesh(is_dynamic=True, rigged=True)])
     with pytest.raises(ValueError, match="is_dynamic"):
