@@ -2,9 +2,6 @@
 
 Rewritten from the old `unittest` module; the binary/JSON round-trip intent is preserved, but the tests now
 use the `resource` fixture and `tmp_path` instead of the current working directory.
-
-NOTE: Bloodborne MSB unpacking is currently broken (see `_UNPACK_XFAIL` reason), so the round-trip tests are
-marked `xfail(strict=False)`. The static registry checks above them are pure-unit and always run.
 """
 from __future__ import annotations
 
@@ -185,45 +182,30 @@ def test_entity_game_types_populated():
 # ---------------------------------------------------------------------------
 
 
-_UNPACK_XFAIL = pytest.mark.xfail(
-    reason=(
-        "Bloodborne MSB unpacking is broken. `maps/events.py` registers its supertype struct under the key "
-        "'supertype_data_struct' instead of 'supertype_data', so `MSBEntry.reader_to_entry_kwargs` raises "
-        "`ValueError: Struct offset not found for 'supertype_data_struct'`. Patching that reveals two more "
-        "layout bugs: `RegionHeaderStruct` is missing a 4-byte field at 0x2C (all four struct offsets then "
-        "read misaligned), and `MSBMapPiece` declares `scene_gparam_data: None` although vanilla map pieces "
-        "have a non-zero scene GParam offset."
-    ),
-    strict=False,
-)
-
-
 @pytest.fixture
 def vanilla_msb(resource) -> MSB:
     return MSB.from_path(resource(MSB_NAME))
 
 
-@_UNPACK_XFAIL
 def test_msb_from_path(vanilla_msb):
     """Just opening the (vanilla) Hunter's Dream MSB."""
-    assert len(vanilla_msb.parts) > 0
-    assert len(vanilla_msb.models) > 0
+    assert len(vanilla_msb.get_parts()) > 0
+    assert len(vanilla_msb.get_models()) > 0
     assert len(vanilla_msb.regions) > 0
 
 
-@_UNPACK_XFAIL
 def test_msb_binary_roundtrip(vanilla_msb, tmp_path):
     """Duplicate two entries, write, re-read, and compare every entry field (original test's intent)."""
     source_chr = vanilla_msb.characters.find_entry_name("c5400_0000")
     vanilla_msb.characters.duplicate(
-        source_chr, name="c5400_0000_COPY", entity_id=2100999, translate=(1.0, 2.0, 3.0)
+        source_chr, name="c5400_0000_COPY", entity_id=2100999, translate=(1.0, 2.0, 3.0), instance_index=7
     )
     vanilla_msb.treasures.duplicate(0, name="TREASURE_0_COPY")
 
     written = vanilla_msb.write(tmp_path / MSB_NAME)
     reloaded = MSB.from_path(written[0])
 
-    assert reloaded.characters.find_entry_name("c5400_0000_COPY") is not None
+    assert reloaded.characters.find_entry_name("c5400_0000_COPY").instance_index == 7
     assert reloaded.treasures.find_entry_name("TREASURE_0_COPY") is not None
 
     for subtype in MSB.get_subtype_list_names():
@@ -234,7 +216,36 @@ def test_msb_binary_roundtrip(vanilla_msb, tmp_path):
             assert source_entry == test_entry
 
 
-@_UNPACK_XFAIL
+def test_msb_spawner_and_platoon_references(vanilla_msb):
+    character = vanilla_msb.characters[0]
+    region = vanilla_msb.regions[0]
+    parent = vanilla_msb.map_pieces[0]
+    vanilla_msb.spawners.new(
+        name="Test spawner",
+        unk_x11=1,
+        unk_x12=2,
+        unk_x13=3,
+        spawn_parts=[character] + [None] * 31,
+        spawn_regions=[region] + [None] * 7,
+    )
+    vanilla_msb.platoons.new(
+        name="Test platoon",
+        platoon_characters=[character] + [None] * 29,
+        platoon_parents=[parent, None],
+    )
+    vanilla_msb.dark_locks.new(name="Test dark lock")
+
+    reloaded = MSB.from_bytes(bytes(vanilla_msb))
+    spawner = reloaded.spawners.find_entry_name("Test spawner")
+    platoon = reloaded.platoons.find_entry_name("Test platoon")
+    assert (spawner.unk_x11, spawner.unk_x12, spawner.unk_x13) == (1, 2, 3)
+    assert spawner.spawn_parts[0] is reloaded.characters[0]
+    assert spawner.spawn_regions[0] is reloaded.regions[0]
+    assert platoon.platoon_characters[0] is reloaded.characters[0]
+    assert platoon.platoon_parents[0] is reloaded.map_pieces[0]
+    assert reloaded.dark_locks.find_entry_name("Test dark lock") is not None
+
+
 def test_msb_json_roundtrip(vanilla_msb, tmp_path):
     json_path = tmp_path / "m21_00_00_00.msb.json"
     vanilla_msb.write_json(json_path)
@@ -253,7 +264,6 @@ def test_msb_json_roundtrip(vanilla_msb, tmp_path):
 
 @pytest.mark.game_data
 @pytest.mark.slow
-@_UNPACK_XFAIL
 def test_all_vanilla_msbs_roundtrip(bb_root, tmp_path):
     """Read every vanilla MSB and confirm unpack -> pack -> unpack stability."""
     map_studio = bb_root / "map/MapStudio"
