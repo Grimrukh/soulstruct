@@ -274,17 +274,17 @@ class MSBEntry(abc.ABC):
 
         for struct_name, struct_type in cls.STRUCTS.items():
             try:
-                struct_offset = entry_offset + kwargs.pop(f"{struct_name}_offset")
+                relative_offset = kwargs.pop(f"{struct_name}_offset")
             except KeyError:
                 raise ValueError(f"Struct offset not found for `{struct_name}` in `{cls.__name__}`.")
             if struct_type is None:
-                if struct_offset != 0:
+                if relative_offset != 0:
                     raise ValueError(f"Offset for unused struct `{struct_name}` in `{cls.__name__}` is non-zero.")
                 continue
-            if struct_offset == 0:
+            if relative_offset == 0:
                 # `STRUCTS` class attribute enforces which structs must be present in subtype.
                 raise ValueError(f"Offset for used struct `{struct_name}` in `{cls.__name__}` is 0.")
-            reader.seek(struct_offset)
+            reader.seek(entry_offset + relative_offset)
             kwargs |= struct_type.reader_to_entry_kwargs(reader, cls, entry_offset)
 
         return kwargs

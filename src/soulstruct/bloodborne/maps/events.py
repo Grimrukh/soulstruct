@@ -175,10 +175,13 @@ class SpawnerEventDataStruct(MSBBinaryStruct):
     min_interval: float
     max_interval: float
     initial_spawn_count: byte
-    _pad1: bytes = binary_pad(31)
+    unk_x11: byte
+    unk_x12: byte
+    unk_x13: byte
+    _pad1: bytes = binary_pad(28)
     _spawn_regions_indices: list[int] = field(**EntryRef("POINT_PARAM_ST", array_size=8))
     _spawn_parts_indices: list[int] = field(**EntryRef("PARTS_PARAM_ST", array_size=32))
-    _pad2: bytes = binary_pad(64)
+    _pad2: bytes = binary_pad(48)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -199,6 +202,9 @@ class MSBSpawnerEvent(MSBEvent):
     min_interval: float = 1.0
     max_interval: float = 1.0
     initial_spawn_count: int = 1
+    unk_x11: int = 0
+    unk_x12: int = 0
+    unk_x13: int = 0
     spawn_parts: list[MSBPart] = field(
         default_factory=lambda: [None] * 32, **MapFieldInfo(game_type=GameObjectIntSequence((Character, 32))))
     spawn_regions: list[MSBRegion] = field(
@@ -322,7 +328,7 @@ class MSBPatrolRouteEvent(MSBEvent):
 
 class DarkLockEventDataStruct(MSBBinaryStruct):
     """No data."""
-    _pad1: bytes = binary_pad(32)
+    _pad1: bytes = binary_pad(16)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -338,10 +344,10 @@ class MSBDarkLockEvent(MSBEvent):
 class PlatoonEventDataStruct(MSBBinaryStruct):
     platoon_id_script_activate: int
     state: int
-    _pad1: bytes = binary_pad(16)
-    # TODO: Confirm these are actually Character subtype indices.
-    _platoon_character_indices: list[int] = field(**EntryRef("characters", array_size=30))
-    _platoon_parent_indices: list[int] = field(**EntryRef("PARTS_PARAM_ST", array_size=2))
+    _pad1: bytes = binary_pad(8)
+    # Both public lists address the same 32-entry part-index array on disk.
+    _platoon_characters_indices: list[int] = field(**EntryRef("PARTS_PARAM_ST", array_size=30))
+    _platoon_parents_indices: list[int] = field(**EntryRef("PARTS_PARAM_ST", array_size=2))
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -368,8 +374,7 @@ class MSBPlatoonEvent(MSBEvent):
 
     def indices_to_objects(self, entry_lists: dict[str, IDList[MSBEntry]]):
         super(MSBPlatoonEvent, self).indices_to_objects(entry_lists)
-        # TODO: Confirm these are actually Character subtype indices.
-        self._consume_indices(entry_lists, "characters", "platoon_characters")
+        self._consume_indices(entry_lists, "PARTS_PARAM_ST", "platoon_characters")
         self._consume_indices(entry_lists, "PARTS_PARAM_ST", "platoon_parents")
 
 

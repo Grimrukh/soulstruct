@@ -160,6 +160,8 @@ class MSBPart(BaseMSBPart, abc.ABC):
     draw_groups: BitSet256 = field(default_factory=BitSet256.all_on)
     display_groups: BitSet256 = field(default_factory=BitSet256.all_off)
 
+    instance_index: int = 0
+
     # NOTE: `model` defined by subclasses.
     backread_groups: BitSet256 = field(default_factory=BitSet256.all_off)
     part_unk_x04_x05: int = field(default=-1, **MapFieldInfo(
